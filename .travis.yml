@@ -1,0 +1,20 @@
+language: scala
+jdk:
+- oraclejdk7
+cache:
+  directories:
+  - $HOME/.ivy2
+  - $HOME/.m2
+install:
+- git clone https://github.com/CommBank/ci.git
+- chmod ugo+x ci/*
+- ci/sbt-setup.sh
+- ci/sbt-setup-version.sh
+script:
+- sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci '; test; package'
+after_script:
+- rm -rf ci
+env:
+  global:
+  - secure: J3DBVdqz3/ZrUHQWmx3oAaRLzlyapZnIEn/pT/mvdqD8L7hixqc7+Wl3pJUvrCZTqxuRPePJ2sA1yM1jzG89F8UbT0pVLrz6pKuGRa6P6BIXHsLnPVr0IcqnpcORE+MqWFf3agmat4TOnQeNuZ6TwyxiNpV35MMWwCY+d3uzlnM=
+  - secure: oh+A1i14+GR6/JL+xZzk/XVF3YNrrqN7O3x0w5PoSse8PRjKWIRnH6lQonbEJMhvsPBHVsw1dzeZlQCo1ItWYqT8ch7wx5JrXBi3MlEKmln7cVWRC2BjmztpvF5Zje+etvHZMXXWWiPtksHOs8BLk1FZkY52DvNUZXWjKccTeIE=

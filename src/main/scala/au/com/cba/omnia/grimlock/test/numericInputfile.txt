@@ -1,0 +1,8 @@
+iid:0221707|fid:A|continuous|long|1
+iid:0221707|fid:B|continuous|long|2
+iid:0221707|fid:C|continuous|long|4
+iid:0221707|fid:D|continuous|long|8
+iid:0364354|fid:A|continuous|long|128
+iid:0364354|fid:B|continuous|long|64
+iid:0364354|fid:C|continuous|long|32
+iid:0364354|fid:D|continuous|long|16
