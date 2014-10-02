@@ -1,7 +1,7 @@
 Grimlock
 ========
 
-[![Build Status](https://travis-ci.org/CommBank/grimlock.svg&branch=master)](https://travis-ci.org/CommBank/grimlock)
+[![Build Status](https://travis-ci.org/CommBank/grimlock.svg?branch=master)](https://travis-ci.org/CommBank/grimlock)
 [![Gitter chat](https://badges.gitter.im/CommBank.png)](https://gitter.im/CommBank)
 
 Overview
