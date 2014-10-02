@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grimlock
+package au.com.cba.omnia.grimlock
 
-import scala.util.matching.Regex
+import au.com.cba.omnia.grimlock.position._
 
+import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.TDsl._, Dsl._
-import cascading.flow.FlowDef
 
-import grimlock.position._
+import scala.util.matching.Regex
 
 /**
  * Rich wrapper around a `TypedPipe[(`[[position.Position]]`, Long)]`.
@@ -44,14 +44,17 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    *
    * @param regex     The regular expression to match on.
    * @param keep      Indicator if the matched names should be kept or removed.
-   * @param spearator Separator used to convert each [[position.Position]] to string.
+   * @param spearator Separator used to convert each [[position.Position]] to
+   *                  string.
    *
    * @return A `TypedPipe[(P, Long)]` with only the names of interest.
    *
    * @note The matching is done by convertion each [[position.Position]] to its
-   *       short string reprensentation and then applying the regular expression.
+   *       short string reprensentation and then applying the regular
+   *       expression.
    */
-  def slice(regex: Regex, keep: Boolean, separator: String): TypedPipe[(P, Long)] = {
+  def slice(regex: Regex, keep: Boolean,
+    separator: String): TypedPipe[(P, Long)] = {
     slice(keep, p => regex.pattern.matcher(p.toShortString(separator)).matches)
   }
 
@@ -65,7 +68,8 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    *
    * @see [[position.PositionListable]]
    */
-  def slice[T](positions: T, keep: Boolean)(implicit ev: PositionListable[T, P]): TypedPipe[(P, Long)] = {
+  def slice[T](positions: T, keep: Boolean)(
+    implicit ev: PositionListable[T, P]): TypedPipe[(P, Long)] = {
     slice(keep, p => ev.convert(positions).contains(p))
   }
 
@@ -79,7 +83,8 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    *
    * @see [[position.Positionable]]
    */
-  def set[T](position: T, index: Long)(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
+  def set[T](position: T, index: Long)(
+    implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
     set(Map(position -> index))
   }
 
@@ -93,7 +98,8 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    *
    * @see [[position.Positionable]]
    */
-  def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
+  def set[T](positions: Map[T, Long])(
+    implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
     val converted = positions.map { case (k, v) => ev.convert(k) -> v }
 
     data.map { case (p, i) => (p, converted.getOrElse(p, i)) }
@@ -109,8 +115,11 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    *
    * @see [[position.Positionable]]
    */
-  def moveToFront[T](position: T)(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
-    data.map { case (p, i) => (p, if (p == ev.convert(position)) 0 else i + 1) }
+  def moveToFront[T](position: T)(
+    implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
+    data.map {
+      case (p, i) => (p, if (p == ev.convert(position)) 0 else i + 1)
+    }
   }
 
   /**
@@ -123,16 +132,22 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    *
    * @see [[position.Positionable]]
    */
-  def moveToBack[T](position: T)(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
+  def moveToBack[T](position: T)(
+    implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
     val state = data
       .map { case (p, i) => Map(p -> i) }
       .sum
-      .map { case m => Map("max" -> m.values.max, "curr" -> m(ev.convert(position))) }
+      .map {
+        case m => Map("max" -> m.values.max, "curr" -> m(ev.convert(position)))
+      }
 
     data
       .flatMapWithValue(state) {
         case ((p, i), so) => so.map {
-          case s => (p, if (s("curr") < i) i - 1 else if (p == ev.convert(position)) s("max") else i)
+          case s => (p,
+            if (s("curr") < i) i - 1
+            else if (p == ev.convert(position)) s("max")
+            else i)
         }
       }
   }
@@ -141,13 +156,15 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    * Persist [[Names]] to disk.
    *
    * @param file        Name of the output file.
-   * @param separator   Separator to use between [[position.Position]] and index.
+   * @param separator   Separator to use between [[position.Position]] and
+   *                    index.
    * @param descriptive Indicates if the output should be descriptive.
    *
    * @return A Scalding `TypedPipe[(P, Long)]` which is this [[Names]].
    */
-  def persist(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[(P, Long)] = {
+  def persist(file: String, separator: String = "|",
+    descriptive: Boolean = false)(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[(P, Long)] = {
     data
       .map {
         case (p, i) => descriptive match {
@@ -163,8 +180,12 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
 }
 
 object Names {
-  /** Conversion from `TypedPipe[(`[[position.Position]]`, Long)]` to a [[Names]]. */
-  implicit def typedPipePositionLong[P <: Position](data: TypedPipe[(P, Long)]): Names[P] = {
+  /**
+   * Conversion from `TypedPipe[(`[[position.Position]]`, Long)]` to a
+   * [[Names]].
+   */
+  implicit def typedPipePositionLong[P <: Position](
+    data: TypedPipe[(P, Long)]): Names[P] = {
     new Names(data)
   }
 
@@ -175,8 +196,8 @@ object Names {
    *
    * @return A `TypedPipe[(`[[position.Position]]`, Long)]`.
    *
-   * @note No ordering is defined on the indices for each [[position.Position]],
-   *       but each index will be unique.
+   * @note No ordering is defined on the indices for each
+   *       [[position.Position]], but each index will be unique.
    */
   def number[P <: Position](data: TypedPipe[P]): TypedPipe[(P, Long)] = {
     data
@@ -201,22 +222,28 @@ object Nameable {
    * Converts a `TypedPipe[(Q, Long)]` into a `TypedPipe[(Q, Long)]`; that is,
    * it is a pass through.
    */
-  implicit def NamesNameable[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[(Q, Long)], P, Q, D] =
+  implicit def NamesNameable[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[(Q, Long)], P, Q, D] = {
     new Nameable[TypedPipe[(Q, Long)], P, Q, D] {
-      def convert(m: Matrix[P], s: Slice[P, D], t: TypedPipe[(Q, Long)]): TypedPipe[(Q, Long)] = t
+      def convert(m: Matrix[P], s: Slice[P, D],
+        t: TypedPipe[(Q, Long)]): TypedPipe[(Q, Long)] = t
     }
+  }
   /** Converts a `TypedPipe[Q]` into a `TypedPipe[(Q, Long)]`. */
-  implicit def PositionPipeNameable[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[Q], P, Q, D] =
+  implicit def PositionPipeNameable[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[Q], P, Q, D] = {
     new Nameable[TypedPipe[Q], P, Q, D] {
-      def convert(m: Matrix[P], s: Slice[P, D], t: TypedPipe[Q]): TypedPipe[(Q, Long)] = Names.number(t)
+      def convert(m: Matrix[P], s: Slice[P, D],
+        t: TypedPipe[Q]): TypedPipe[(Q, Long)] = Names.number(t)
     }
+  }
   /** Converts a [[position.PositionListable]] into a `TypedPipe[(Q, Long)]`. */
   implicit def PositionListableNameable[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
-    ev2: PosDimDep[P, D]): Nameable[T, P, Q, D] =
+    ev2: PosDimDep[P, D]): Nameable[T, P, Q, D] = {
     new Nameable[T, P, Q, D] {
       def convert(m: Matrix[P], s: Slice[P, D], t: T): TypedPipe[(Q, Long)] = {
-        new Names(m.names(s).asInstanceOf[TypedPipe[(Q, Long)]]).slice(t, true) // TODO: Is there a way not to use asInstanceOf?
+        // TODO: Is there a way not to use asInstanceOf?
+        new Names(m.names(s).asInstanceOf[TypedPipe[(Q, Long)]]).slice(t, true)
       }
     }
+  }
 }
 

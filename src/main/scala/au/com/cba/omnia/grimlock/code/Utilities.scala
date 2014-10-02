@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grimlock.utilities
+package au.com.cba.omnia.grimlock.utilities
 
 /** Hetrogeneous comparison results. */
 trait CompareResult
 
-/** Invalid comparison, for example when comparing to values of different types. */
+/**
+ * Invalid comparison, for example when comparing to values of different types.
+ */
 case object Invalid extends CompareResult
 /** Result when x >= y. */
 case object GreaterEqual extends CompareResult

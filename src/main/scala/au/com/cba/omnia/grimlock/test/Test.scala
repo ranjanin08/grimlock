@@ -12,35 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grimlock.test
+package au.com.cba.omnia.grimlock.test
 
+import au.com.cba.omnia.grimlock._
+import au.com.cba.omnia.grimlock.contents._
+import au.com.cba.omnia.grimlock.contents.ContentPipe._
+import au.com.cba.omnia.grimlock.contents.encoding._
+import au.com.cba.omnia.grimlock.contents.metadata._
+import au.com.cba.omnia.grimlock.contents.variable._
+import au.com.cba.omnia.grimlock.contents.variable.Type._
+import au.com.cba.omnia.grimlock.derive._
+import au.com.cba.omnia.grimlock.Matrix._
+import au.com.cba.omnia.grimlock.Names._
+import au.com.cba.omnia.grimlock.partition._
+import au.com.cba.omnia.grimlock.partition.Partitions._
+import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.position.coordinate._
+import au.com.cba.omnia.grimlock.position.PositionPipe._
+import au.com.cba.omnia.grimlock.reduce._
+import au.com.cba.omnia.grimlock.sample._
+import au.com.cba.omnia.grimlock.transform._
+import au.com.cba.omnia.grimlock.Types._
+
+import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.TDsl._, Dsl._
-import cascading.flow.FlowDef
-
-import grimlock._
-import grimlock.contents._
-import grimlock.contents.ContentPipe._
-import grimlock.contents.encoding._
-import grimlock.contents.events._
-import grimlock.contents.metadata._
-import grimlock.contents.variable._
-import grimlock.contents.variable.Type._
-import grimlock.derive._
-import grimlock.Matrix._
-import grimlock.Names._
-import grimlock.NLP._
-import grimlock.partition._
-import grimlock.partition.Partitions._
-import grimlock.partition.Partitioners._
-import grimlock.position._
-import grimlock.position.coordinate._
-import grimlock.position.PositionPipe._
-import grimlock.reduce._
-import grimlock.sample.Samplers._
-import grimlock.transform._
-import grimlock.Types._
-import grimlock.utilities._
+import com.twitter.scalding.typed.IterablePipe
 
 object TestReader {
   def read4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[(Position3D, Content)] = {
@@ -250,36 +247,43 @@ class Test9(args : Args) extends Job(args) {
 
   val data = TestReader.read4TupleDataAddDate(args("input"))
 
-  def stringPartitioner(dim: Dimension): Partitioner.Partition[String, Position2D] =
-    (pos: Position, smo: Option[SliceMap]) => {
+  case class StringPartitioner(dim: Dimension) extends Partitioner with Assign {
+    type T = String
+
+    def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
       Some(Right(List(pos.get(dim) match {
         case StringCoordinate("fid:A", _) => "training"
         case StringCoordinate("fid:B", _) => "testing"
       }, "scoring")))
     }
+  }
 
   val prt1 = data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, preservingMaxPosition)
-    .partition(stringPartitioner(Second))
+    .partition(StringPartitioner(Second))
 
   prt1
     .persist("./tmp/prt1.out", descriptive=true)
 
-  def intTuplePartitioner(dim: Dimension): Partitioner.Partition[(Int, Int, Int), Position2D] =
-    (pos: Position, smo: Option[SliceMap]) => {
+  case class IntTuplePartitioner(dim: Dimension) extends Partitioner
+    with Assign {
+    type T = (Int, Int, Int)
+
+    def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
       Some(Right(List(pos.get(dim) match {
         case StringCoordinate("fid:A", _) => (1, 0, 0)
         case StringCoordinate("fid:B", _) => (0, 1, 0)
       }, (0, 0, 1))))
     }
+  }
 
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, preservingMaxPosition)
-    .partition(intTuplePartitioner(Second))
+    .partition(IntTuplePartitioner(Second))
     .persist("./tmp/prt2.out", descriptive=true)
 
   prt1
@@ -417,14 +421,16 @@ class Test15(args : Args) extends Job(args) {
 
 class Test16(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data: Matrix3D = TestReader.read4TupleDataAddDate(args("input"))
 
-  def sampler() = (pos: Position3D) => {
-    (pos.get(First).toString.hashCode % 25) == 0
+  case class HashSample() extends Sampler with Select {
+    def select[P <: Position](pos: P): Boolean = {
+      (pos.get(First).toString.hashCode % 25) == 0
+    }
   }
 
   data
-    .sample(sampler)
+    .sample(HashSample())
     .persist("./tmp/smp1.out")
 }
 
@@ -438,7 +444,7 @@ class Test17(args : Args) extends Job(args) {
 
   val stats = data
     .reduceAndExpand(Along(First), List(Count(), Moments(only=List(1)), Min(), Max(), MaxAbs()))
-    .toSliceMap(Over(First))
+    .toMap(Over(First))
 
   data
     .transformWithValue(Normalise(Second), stats)
@@ -448,9 +454,9 @@ class Test17(args : Args) extends Job(args) {
     .refine((pos: Position2D, con: Content) => con.value gtr 500)
     .writeCSV(Over(Second), "./tmp/flt1.csv")
 
-  def removeGreaterThanMean(pos: Position2D, con: Content, sm: SliceMap): Boolean = {
+  def removeGreaterThanMean(pos: Position2D, con: Content, ext: Map[Position1D, Map[Position1D, Content]]): Boolean = {
     if (con.schema.kind.isSpecialisationOf(Numerical)) {
-      con.value leq sm(Position1D(pos.get(Second)))(Position1D("mean")).value
+      con.value leq ext(Position1D(pos.get(Second)))(Position1D("mean")).value
     } else {
       true
     }
@@ -489,14 +495,19 @@ class Test19(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, preservingMaxPosition)
 
-  def CustomPartition[T, P <: Position](dim: Dimension, left: T, right: T): Partitioner.Partition[T, P] =
-    (pos: P, smo: Option[SliceMap]) => {
+  case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S)
+    extends Partitioner with Assign {
+    type T = S
+
+    val bhs = BinaryHashSplit(dim, 7, left, right, base=10)
+    def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
       if (pos.get(dim).toShortString == "iid:0364354") {
         Some(Left(right))
       } else {
-        BinaryHashSplit(dim, 7, left, right, base=10)(pos, smo)
+        bhs.assign(pos)
       }
     }
+  }
 
   val parts = raw
     .partition(CustomPartition(First, "train", "test"))
@@ -513,7 +524,7 @@ class Test19(args : Args) extends Job(args) {
     parts
       .get(p)
       .slice(Over(Second), rem, false)
-      .transformWithValue(List(Indicator(Second), Binarise(Second), Normalise(Second)), stats.toSliceMap(Over(First)))
+      .transformWithValue(List(Indicator(Second), Binarise(Second), Normalise(Second)), stats.toMap(Over(First)))
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
       .writeCSV(Over(Second), "./tmp/pln_" + p + ".csv")
   }

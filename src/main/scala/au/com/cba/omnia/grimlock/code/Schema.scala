@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grimlock.contents.metadata
+package au.com.cba.omnia.grimlock.contents.metadata
 
-import grimlock.contents._
-import grimlock.contents.encoding._
-import grimlock.contents.variable._
+import au.com.cba.omnia.grimlock.contents._
+import au.com.cba.omnia.grimlock.contents.encoding._
+import au.com.cba.omnia.grimlock.contents.variable._
 
 /** Base trait for variable schemas. */
 trait Schema {
@@ -42,7 +42,8 @@ trait Schema {
    */
   def decode(str: String): Option[Content] = {
     codex.decode(str) match {
-      case Some(v) if isValid(v) => Some(new Content { val schema = Schema.this; val value = v })
+      case Some(v) if isValid(v) =>
+        Some(new Content { val schema = Schema.this; val value = v })
       case _ => None
     }
   }
@@ -52,7 +53,9 @@ trait Schema {
    *
    * @param separator Separator to use between various fields.
    */
-  def toShortString(separator: String): String = kind.name + separator + codex.name
+  def toShortString(separator: String): String = {
+    kind.name + separator + codex.name
+  }
 }
 
 object Schema {
@@ -67,16 +70,26 @@ object Schema {
    */
   def fromString(codex: String, kind: String): Option[Schema] = {
     (kind, codex) match {
-      case (Type.Continuous.name, DoubleCodex.name) => Some(ContinuousSchema[Codex.DoubleCodex]())
-      case (Type.Continuous.name, LongCodex.name) => Some(ContinuousSchema[Codex.LongCodex]())
-      case (Type.Discrete.name, LongCodex.name) => Some(DiscreteSchema[Codex.LongCodex]())
-      case (Type.Nominal.name, StringCodex.name) => Some(NominalSchema[Codex.StringCodex]())
-      case (Type.Nominal.name, DoubleCodex.name) => Some(NominalSchema[Codex.DoubleCodex]())
-      case (Type.Nominal.name, LongCodex.name) => Some(NominalSchema[Codex.LongCodex]())
-      case (Type.Ordinal.name, StringCodex.name) => Some(OrdinalSchema[Codex.StringCodex]())
-      case (Type.Ordinal.name, DoubleCodex.name) => Some(OrdinalSchema[Codex.DoubleCodex]())
-      case (Type.Ordinal.name, LongCodex.name) => Some(OrdinalSchema[Codex.LongCodex]())
-      case (Type.Date.name, DateCodex.name) => Some(DateSchema[Codex.DateCodex]())
+      case (Type.Continuous.name, DoubleCodex.name) =>
+        Some(ContinuousSchema[Codex.DoubleCodex]())
+      case (Type.Continuous.name, LongCodex.name) =>
+        Some(ContinuousSchema[Codex.LongCodex]())
+      case (Type.Discrete.name, LongCodex.name) =>
+        Some(DiscreteSchema[Codex.LongCodex]())
+      case (Type.Nominal.name, StringCodex.name) =>
+        Some(NominalSchema[Codex.StringCodex]())
+      case (Type.Nominal.name, DoubleCodex.name) =>
+        Some(NominalSchema[Codex.DoubleCodex]())
+      case (Type.Nominal.name, LongCodex.name) =>
+        Some(NominalSchema[Codex.LongCodex]())
+      case (Type.Ordinal.name, StringCodex.name) =>
+        Some(OrdinalSchema[Codex.StringCodex]())
+      case (Type.Ordinal.name, DoubleCodex.name) =>
+        Some(OrdinalSchema[Codex.DoubleCodex]())
+      case (Type.Ordinal.name, LongCodex.name) =>
+        Some(OrdinalSchema[Codex.LongCodex]())
+      case (Type.Date.name, DateCodex.name) =>
+        Some(DateSchema[Codex.DateCodex]())
       case _ => None
     }
   }
@@ -99,8 +112,9 @@ trait NumericalSchema[T] extends Schema {
  * @note The constructor is private to ensure a clean interface as
  *       provided by the `apply` methods of the companion object.
  */
-case class ContinuousSchema[C <: Codex with ValueCodex] private (minimum: Option[C#T],
-  maximum: Option[C#T])(implicit val codex: C, num: Numeric[C#T]) extends NumericalSchema[C#T] {
+case class ContinuousSchema[C <: Codex with ValueCodex] private (
+  minimum: Option[C#T], maximum: Option[C#T])(implicit val codex: C,
+    num: Numeric[C#T]) extends NumericalSchema[C#T] {
   val kind = Type.Continuous
 
   def isValid[V <: Value](value: V): Boolean = {
@@ -126,7 +140,8 @@ case class ContinuousSchema[C <: Codex with ValueCodex] private (minimum: Option
 /** Companion object to [[ContinuousSchema]]. */
 object ContinuousSchema {
   /** Construct a [[ContinuousSchema]] with unbounded range. */
-  def apply[C <: Codex with ValueCodex]()(implicit codex: C, num: Numeric[C#T]): ContinuousSchema[C] = {
+  def apply[C <: Codex with ValueCodex]()(implicit codex: C,
+    num: Numeric[C#T]): ContinuousSchema[C] = {
     ContinuousSchema(None, None)
   }
   /**
@@ -135,8 +150,8 @@ object ContinuousSchema {
    * @param minimum The lower bound (minimum value).
    * @param maximum The upper bound (maximum value).
    */
-  def apply[C <: Codex with ValueCodex](minimum: C#T, maximum: C#T)(implicit codex: C,
-    num: Numeric[C#T]): ContinuousSchema[C] = {
+  def apply[C <: Codex with ValueCodex](minimum: C#T, maximum: C#T)(
+    implicit codex: C, num: Numeric[C#T]): ContinuousSchema[C] = {
     ContinuousSchema(Some(minimum), Some(maximum))
   }
 }
@@ -151,8 +166,9 @@ object ContinuousSchema {
  * @note The constructor is private to ensure a clean interface as
  *       provided by the `apply` methods of the companion object.
  */
-case class DiscreteSchema[C <: Codex with ValueCodex] private (minimum: Option[C#T],
-  maximum: Option[C#T], step: Option[C#T])(implicit val codex: C, int: Integral[C#T]) extends NumericalSchema[C#T] {
+case class DiscreteSchema[C <: Codex with ValueCodex] private (
+  minimum: Option[C#T], maximum: Option[C#T], step: Option[C#T])(
+    implicit val codex: C, int: Integral[C#T]) extends NumericalSchema[C#T] {
   val kind = Type.Discrete
 
   def isValid[V <: Value](value: V): Boolean = {
@@ -167,7 +183,8 @@ case class DiscreteSchema[C <: Codex with ValueCodex] private (minimum: Option[C
 
   override def toString(): String = {
     val params = (minimum, maximum, step) match {
-      case (Some(l), Some(u), Some(s)) => l.toString + "," + u.toString + "," + s.toString
+      case (Some(l), Some(u), Some(s)) =>
+        l.toString + "," + u.toString + "," + s.toString
       case _ => ""
     }
 
@@ -178,7 +195,8 @@ case class DiscreteSchema[C <: Codex with ValueCodex] private (minimum: Option[C
 /** Companion object to [[DiscreteSchema]]. */
 object DiscreteSchema {
   /** Construct a [[DiscreteSchema]] with unbounded range and step size 1. */
-  def apply[C <: Codex with ValueCodex]()(implicit codex: C, int: Integral[C#T]): DiscreteSchema[C] = {
+  def apply[C <: Codex with ValueCodex]()(implicit codex: C,
+    int: Integral[C#T]): DiscreteSchema[C] = {
     DiscreteSchema(None, None, None)
   }
   /**
@@ -188,8 +206,8 @@ object DiscreteSchema {
    * @param maximum The upper bound (maximum value).
    * @param step    The step size.
    */
-  def apply[C <: Codex with ValueCodex](minimum: C#T, maximum: C#T, step: C#T)(implicit codex: C,
-    int: Integral[C#T]): DiscreteSchema[C] = {
+  def apply[C <: Codex with ValueCodex](minimum: C#T, maximum: C#T,
+    step: C#T)(implicit codex: C, int: Integral[C#T]): DiscreteSchema[C] = {
     DiscreteSchema(Some(minimum), Some(maximum), Some(step))
   }
 }
@@ -216,7 +234,8 @@ trait CategoricalSchema[T] extends Schema {
  * @note The constructor is private to ensure a clean interface as
  *       provided by the `apply` methods of the companion object.
  */
-case class NominalSchema[C <: Codex with ValueCodex] private (domain: Option[List[C#T]])(implicit val codex: C)
+case class NominalSchema[C <: Codex with ValueCodex] private (
+  domain: Option[List[C#T]])(implicit val codex: C)
   extends CategoricalSchema[C#T] {
   val kind = Type.Nominal
 
@@ -233,13 +252,15 @@ case class NominalSchema[C <: Codex with ValueCodex] private (domain: Option[Lis
 /** Companion object to [[NominalSchema]]. */
 object NominalSchema {
   /** Construct a [[NominalSchema]] that can take on any value. */
-  def apply[C <: Codex with ValueCodex]()(implicit codex: C): NominalSchema[C] = NominalSchema(None)
+  def apply[C <: Codex with ValueCodex]()(
+    implicit codex: C): NominalSchema[C] = NominalSchema(None)
   /**
    * Construct a [[NominalSchema]].
    *
    * @param domain A list of values the variable can take on.
    */
-  def apply[C <: Codex with ValueCodex](domain: List[C#T])(implicit codex: C): NominalSchema[C] = NominalSchema(Some(domain))
+  def apply[C <: Codex with ValueCodex](domain: List[C#T])(
+    implicit codex: C): NominalSchema[C] = NominalSchema(Some(domain))
 }
 
 /**
@@ -250,7 +271,8 @@ object NominalSchema {
  * @note The constructor is private to ensure a clean interface as
  *       provided by the `apply` methods of the companion object.
  */
-case class OrdinalSchema[C <: Codex with ValueCodex] private (domain: Option[List[C#T]])(implicit val codex: C)
+case class OrdinalSchema[C <: Codex with ValueCodex] private (
+  domain: Option[List[C#T]])(implicit val codex: C)
   extends CategoricalSchema[C#T] {
   val kind = Type.Ordinal
 
@@ -267,17 +289,20 @@ case class OrdinalSchema[C <: Codex with ValueCodex] private (domain: Option[Lis
 /** Companion object to [[OrdinalSchema]]. */
 object OrdinalSchema {
   /** Construct a [[OrdinalSchema]] that can take on any value. */
-  def apply[C <: Codex with ValueCodex]()(implicit codex: C): OrdinalSchema[C] = OrdinalSchema(None)
+  def apply[C <: Codex with ValueCodex]()(
+    implicit codex: C): OrdinalSchema[C] = OrdinalSchema(None)
   /**
    * Construct a [[OrdinalSchema]].
    *
    * @param domain A list of values the variable can take on.
    */
-  def apply[C <: Codex with ValueCodex](domain: List[C#T])(implicit codex: C): OrdinalSchema[C] = OrdinalSchema(Some(domain))
+  def apply[C <: Codex with ValueCodex](domain: List[C#T])(
+    implicit codex: C): OrdinalSchema[C] = OrdinalSchema(Some(domain))
 }
 
 /** Schema for date variables. */
-case class DateSchema[C <: Codex with ValueCodex]()(implicit val codex: C) extends Schema {
+case class DateSchema[C <: Codex with ValueCodex]()(
+  implicit val codex: C) extends Schema {
   val kind = Type.Date
 
   def isValid[V <: Value](value: V): Boolean = {

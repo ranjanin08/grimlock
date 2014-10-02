@@ -12,14 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grimlock.contents.events
-
-import scala.util.matching.Regex
-
-import grimlock.contents._
-import grimlock.contents.encoding._
-import grimlock.contents.variable._
-import grimlock.position._
+package au.com.cba.omnia.grimlock.contents.events
 
 /** Base trait for representing events. */
 trait Event

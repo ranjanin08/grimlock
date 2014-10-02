@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grimlock.position
+package au.com.cba.omnia.grimlock.position
 
 /** Base trait for dimensions of a [[Matrix]]. */
 sealed trait Dimension {
@@ -31,12 +31,15 @@ case object Fourth extends Dimension { val index = 3 }
 /** Type for fifth dimension. */
 case object Fifth extends Dimension { val index = 4 }
 
-/** Trait for capturing functional dependency between a [[Position]] and a [[Dimension]]. */
+/**
+ * Trait for capturing functional dependency between a [[Position]] and a
+ * [[Dimension]].
+ */
 trait PosDimDep[A, B]
 
 /**
- * Companion object of [[Dimension]] trait. This defines the (implicit) permitted
- * dependencies between [[Position]] and [[Dimension]].
+ * Companion object of [[Dimension]] trait. This defines the (implicit)
+ * permitted dependencies between [[Position]] and [[Dimension]].
  */
 object Dimension {
   /** List of all available dimensions ordered by index. */

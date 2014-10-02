@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grimlock.contents.variable
+package au.com.cba.omnia.grimlock.contents.variable
+
+import au.com.cba.omnia.grimlock.contents.encoding._
+import au.com.cba.omnia.grimlock.contents.encoding.Codex._
+import au.com.cba.omnia.grimlock.contents.events._
+import au.com.cba.omnia.grimlock.utilities._
+
+import java.util.Date
 
 import scala.util.matching.Regex
-
-import grimlock.contents.encoding._
-import grimlock.contents.events._
-import grimlock.contents.metadata._
-import grimlock.utilities._
 
 /**
  * Base class for variable types.
@@ -107,7 +109,9 @@ trait Value {
    *
    * @note This always applies [[Value.toShortString]] before matching.
    */
-  def like(that: Regex): Boolean = that.pattern.matcher(this.toShortString).matches
+  def like(that: Regex): Boolean = {
+    that.pattern.matcher(this.toShortString).matches
+  }
 
   // Note: These next 4 methods implement comparison in a non-standard
   //       way when comparing two objects that can't be compared. In
@@ -119,7 +123,8 @@ trait Value {
    *
    * @param that Value to compare against.
    *
-   * @note If `that` is of a different type than `this`, then the result is always `false`.
+   * @note If `that` is of a different type than `this`, then the result
+   *       is always `false`.
    *
    * @see [[Valueable]]
    */
@@ -130,7 +135,8 @@ trait Value {
    *
    * @param that Value to compare against.
    *
-   * @note If `that` is of a different type than `this`, then the result is always `false`.
+   * @note If `that` is of a different type than `this`, then the result
+   *       is always `false`.
    *
    * @see [[Valueable]]
    */
@@ -141,7 +147,8 @@ trait Value {
    *
    * @param that Value to compare against.
    *
-   * @note If `that` is of a different type than `this`, then the result is always `false`.
+   * @note If `that` is of a different type than `this`, then the result
+   *       is always `false`.
    *
    * @see [[Valueable]]
    */
@@ -152,14 +159,15 @@ trait Value {
    *
    * @param that Value to compare against.
    *
-   * @note If `that` is of a different type than `this`, then the result is always `false`.
+   * @note If `that` is of a different type than `this`, then the result
+   *       is always `false`.
    *
    * @see [[Valueable]]
    */
   def geq[T: Valueable](that: T): Boolean = eval(that, GreaterEqual)
 
   /** Return value as `java.util.Date`. */
-  def asDate: Option[java.util.Date] = None
+  def asDate: Option[Date] = None
   /** Return value as `String`. */
   def asString: Option[String] = None
   /** Return value as `Double`. */
@@ -175,7 +183,8 @@ trait Value {
   def toShortString: String = codex.toShortString(this)
 
   private def eval[T: Valueable](that: T, op: CompareResult): Boolean = {
-    CompareResult.evaluate(codex.compare(this, implicitly[Valueable[T]].convert(that)), op)
+    CompareResult.evaluate(codex.compare(this,
+      implicitly[Valueable[T]].convert(that)), op)
   }
 }
 
@@ -183,9 +192,10 @@ trait Value {
  * Value for when the data is of type `java.util.Date`
  *
  * @param value A `java.util.Date`.
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding `value`.
+ * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ *              `value`.
  */
-case class DateValue(value: java.util.Date, codex: DateAndTimeCodex) extends Value {
+case class DateValue(value: Date, codex: DateAndTimeCodex) extends Value {
   override def asDate = Some(value)
 }
 
@@ -193,9 +203,10 @@ case class DateValue(value: java.util.Date, codex: DateAndTimeCodex) extends Val
  * Value for when the data is of type `String`.
  *
  * @param value A `String`.
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding `value`.
+ * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ *              `value`.
  */
-case class StringValue(value: String, codex: Codex with ValueCodex) extends Value {
+case class StringValue(value: String, codex: StringCodex) extends Value {
   override def asString = Some(value.toString)
 }
 
@@ -203,9 +214,10 @@ case class StringValue(value: String, codex: Codex with ValueCodex) extends Valu
  * Value for when the data is of type `Double`.
  *
  * @param value A `Double`.
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding `value`.
+ * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ *              `value`.
  */
-case class DoubleValue(value: Double, codex: Codex with ValueCodex) extends Value {
+case class DoubleValue(value: Double, codex: DoubleCodex) extends Value {
   override def asDouble = Some(value)
 }
 
@@ -213,9 +225,10 @@ case class DoubleValue(value: Double, codex: Codex with ValueCodex) extends Valu
  * Value for when the data is of type `Long`.
  *
  * @param value A `Long`.
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding `value`.
+ * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ *              `value`.
  */
-case class LongValue(value: Long, codex: Codex with ValueCodex) extends Value {
+case class LongValue(value: Long, codex: LongCodex) extends Value {
   override def asDouble = Some(value)
   override def asLong = Some(value)
 }
@@ -224,9 +237,10 @@ case class LongValue(value: Long, codex: Codex with ValueCodex) extends Value {
  * Value for when the data is of type `Boolean`.
  *
  * @param value A `Boolean`.
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding `value`.
+ * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ *              `value`.
  */
-case class BooleanValue(value: Boolean, codex: Codex with ValueCodex) extends Value {
+case class BooleanValue(value: Boolean, codex: BooleanCodex) extends Value {
   override def asBoolean = Some(value)
 }
 
@@ -234,7 +248,8 @@ case class BooleanValue(value: Boolean, codex: Codex with ValueCodex) extends Va
  * Value for when the data is of type [[contents.events.Event]].
  *
  * @param value A [[contents.events.Event]].
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding `value`.
+ * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ *              `value`.
  */
 case class EventValue[T <: Event](value: T, codex: EventCodex) extends Value {
   override def asEvent = Some(value)

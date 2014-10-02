@@ -12,28 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grimlock.examples
+package au.com.cba.omnia.grimlock.examples
+
+import au.com.cba.omnia.grimlock._
+import au.com.cba.omnia.grimlock.contents._
+import au.com.cba.omnia.grimlock.Matrix._
+import au.com.cba.omnia.grimlock.Names._
+import au.com.cba.omnia.grimlock.partition._
+import au.com.cba.omnia.grimlock.partition.Partitions._
+import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.position.PositionPipe._
+import au.com.cba.omnia.grimlock.reduce._
+import au.com.cba.omnia.grimlock.transform._
+import au.com.cba.omnia.grimlock.Types._
 
 import com.twitter.scalding._
-
-import grimlock._
-import grimlock.contents._
-import grimlock.contents.ContentPipe._
-import grimlock.contents.encoding._
-import grimlock.contents.metadata._
-import grimlock.contents.variable._
-import grimlock.contents.variable.Type._
-import grimlock.Matrix._
-import grimlock.Names._
-import grimlock.partition._
-import grimlock.partition.Partitions._
-import grimlock.partition.Partitioners._
-import grimlock.position._
-import grimlock.position.coordinate._
-import grimlock.position.PositionPipe._
-import grimlock.reduce._
-import grimlock.transform._
-import grimlock.Types._
 
 class BasicOperations(args : Args) extends Job(args) {
   // Read the data. This returns a 2D matrix (instance x feature).
@@ -93,14 +86,19 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   // Define a custom partition. If the instance is 'iid:0364354' then assign
   // it to the right (test) partition. In all other cases perform standard
   // 70-30 split of the training data based on the hash of the instance id.
-  def CustomPartition[T, P <: Position](dim: Dimension, left: T, right: T): Partitioner.Partition[T, P] =
-    (pos: P, smo: Option[SliceMap]) => {
+  case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S)
+    extends Partitioner with Assign {
+    type T = S
+
+    val bhs = BinaryHashSplit(dim, 7, left, right, base=10)
+    def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
       if (pos.get(dim).toShortString == "iid:0364354") {
         Some(Left(right))
       } else {
-        BinaryHashSplit(dim, 7, left, right, base=10)(pos, smo)
+        bhs.assign(pos)
       }
     }
+  }
 
   // Perform a split of the data into a training and test set.
   val parts = data
@@ -157,7 +155,7 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
 
     val csb = d
       .slice(Over(Second), rem2, false)
-      .transformWithValue(List(Clamp(Second, andThen=Some(Standardise(Second))), Binarise(Second)), stats.toSliceMap(Over(First)))
+      .transformWithValue(List(Clamp(Second, andThen=Some(Standardise(Second))), Binarise(Second)), stats.toMap(Over(First)))
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
@@ -170,9 +168,9 @@ class Scoring(args : Args) extends Job(args) {
   // Read the data. This returns a 2D matrix (instance x feature).
   val data = read2D("exampleInput.txt")
   // Read the statistics from the above example.
-  val stats = read2D("./demo/stats.out").toSliceMap(Over(First))
+  val stats = read2D("./demo/stats.out").toMap(Over(First))
   // Read externally learned weights.
-  val weights = read2D("exampleWeights.txt").toSliceMap(Over(First))
+  val weights = read2D("exampleWeights.txt").toMap(Over(First))
 
   // For the data do:
   //  1/ Create indicators, binarise categorical, and clamp &
