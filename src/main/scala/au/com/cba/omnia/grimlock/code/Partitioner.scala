@@ -14,7 +14,8 @@
 
 package au.com.cba.omnia.grimlock.partition
 
-import au.com.cba.omnia.grimlock.contents._
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
 import cascading.flow.FlowDef
@@ -79,13 +80,12 @@ trait AssignAndWithValue extends Assign with AssignWithValue {
 
 /**
  * Rich wrapper around a `TypedPipe[(T, (`[[position.Position]]`,
- * `[[contents.Content]]`))]`.
+ * `[[content.Content]]`))]`.
  *
  * @param data `TypedPipe[(T, (`[[position.Position]]`,
- *             `[[contents.Content]]`))]`.
+ *             `[[content.Content]]`))]`.
  */
-class Partitions[T: Ordering, P <: Position](
-  data: TypedPipe[(T, (P, Content))]) {
+class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
   // TODO: Add 'keys'/'hasKey'/'set'/'modify' methods?
   // TODO: Add 'foreach' method - to apply function to all data for each key
 
@@ -94,9 +94,9 @@ class Partitions[T: Ordering, P <: Position](
    *
    * @param key The partition for which to get the data.
    *
-   * @return A `TypedPipe[(`[[position.Position]]`, `[[contents.Content]]`)]`.
+   * @return A `TypedPipe[(`[[position.Position]]`, `[[content.Content]]`)]`.
    */
-  def get(key: T): TypedPipe[(P, Content)] = {
+  def get(key: T): TypedPipe[Cell[P]] = {
     data.collect { case (t, pc) if (key == t) => pc }
   }
 
@@ -105,15 +105,15 @@ class Partitions[T: Ordering, P <: Position](
    *
    * @param file        Name of the output file.
    * @param separator   Separator to use between `T`, [[position.Position]]
-   *                    and [[contents.Content]].
+   *                    and [[content.Content]].
    * @param descriptive Indicates if the output should be descriptive.
    *
-   * @return A Scalding `TypedPipe[(T, (P, `[[contents.Content]]`))]` which
+   * @return A Scalding `TypedPipe[(T, (P, `[[content.Content]]`))]` which
    *         is this [[Partitions]].
    */
   def persist(file: String, separator: String = "|",
     descriptive: Boolean = false)(implicit flow: FlowDef,
-      mode: Mode): TypedPipe[(T, (P, Content))] = {
+      mode: Mode): TypedPipe[(T, Cell[P])] = {
     data
       .map {
         case (t, (p, c)) => descriptive match {
@@ -134,10 +134,10 @@ class Partitions[T: Ordering, P <: Position](
 object Partitions {
   /**
    * Conversion from `TypedPipe[(T, (`[[position.Position]]`,
-   * `[[contents.Content]]`))]` to a [[Partitions]].
+   * `[[content.Content]]`))]` to a [[Partitions]].
    */
   implicit def typedPipeTPositionContent[T: Ordering, P <: Position](
-    data: TypedPipe[(T, (P, Content))]): Partitions[T, P] = {
+    data: TypedPipe[(T, Cell[P])]): Partitions[T, P] = {
     new Partitions(data)
   }
 }

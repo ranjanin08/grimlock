@@ -12,32 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.contents.metadata
+package au.com.cba.omnia.grimlock.content.metadata
 
-import au.com.cba.omnia.grimlock.contents._
-import au.com.cba.omnia.grimlock.contents.encoding._
-import au.com.cba.omnia.grimlock.contents.variable._
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.content.encoding._
+import au.com.cba.omnia.grimlock.content.variable._
 
 /** Base trait for variable schemas. */
 trait Schema {
   /** The type of variable. */
   val kind: Type
-  /** The [[contents.encoding.Codex]] used to encode/decode a variable value. */
+  /** The [[content.encoding.Codex]] used to encode/decode a variable value. */
   val codex: Codex with ValueCodex
 
   /**
-   * Check if a [[contents.variable.Value]] is valid according to this schema.
+   * Check if a [[content.variable.Value]] is valid according to this schema.
    *
-   * @param value The [[contents.variable.Value]] to validate.
+   * @param value The [[content.variable.Value]] to validate.
    */
   def isValid[V <: Value](value: V): Boolean
 
   /**
-   * Decode a string into a [[contents.Content]].
+   * Decode a string into a [[content.Content]].
    *
    * @param str The string to decode
    *
-   * @return `Some(`[[contents.Content]]`)` if the string can successfull be
+   * @return `Some(`[[content.Content]]`)` if the string can successfull be
    *         decoded and is valid according to this schema, `None` otherwise.
    */
   def decode(str: String): Option[Content] = {
@@ -62,8 +62,8 @@ object Schema {
   /**
    * Convert a codex and type string to a [[Schema]].
    *
-   * @param codex The string name of the [[contents.encoding.Codex]].
-   * @param kind  The string name of the [[contents.variable.Type]].
+   * @param codex The string name of the [[content.encoding.Codex]].
+   * @param kind  The string name of the [[content.variable.Type]].
    *
    * @return `Some(`[[Schema]]`)` if an approriate [[Schema]] is
    *         found, `None` otherwise.

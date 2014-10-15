@@ -14,7 +14,8 @@
 
 package au.com.cba.omnia.grimlock.derive
 
-import au.com.cba.omnia.grimlock.contents._
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
 /**
@@ -36,17 +37,6 @@ trait Deriver {
   type T
 
   /**
-   * Prepare the state using the first cell (ordered according to its
-   * [[position.Position]]).
-   *
-   * @param curr The current cell.
-   *
-   * @return The state for this object.
-   */
-  // TODO: Add with value version
-  def prepare[P <: Position](curr: (P, Content)): T
-
-  /**
    * Update state with the current cell and, optionally, output
    * derived data.
    *
@@ -60,7 +50,48 @@ trait Deriver {
    *       be selective in when derived data is returned. An `Either` is
    *       used to allow a deriver to return more than one derived data.
    */
-  def present[P <: Position with ModifyablePosition](curr: (P, Content),
-    t: T): (T, Option[Either[(P#S, Content), List[(P#S, Content)]]])
+  def present[P <: Position with ModifyablePosition](curr: Cell[P],
+    t: T): (T, Option[Either[Cell[P#S], List[Cell[P#S]]]])
+}
+
+/** Base trait for initialising a [[Deriver]]. */
+trait Initialise { self: Deriver =>
+  /**
+   * Initialise the state using the first cell (ordered according to its
+   * [[position.Position]]).
+   *
+   * @param curr The current cell.
+   *
+   * @return The state for this object.
+   */
+  def initialise[P <: Position](curr: Cell[P]): T
+}
+
+/** Base trait for initialising a [[Deriver]] with a user supplied value . */
+trait InitialiseWithValue { self: Deriver =>
+  /** Type of the external value. */
+  type V
+
+  /**
+   * Initialise the state using the first cell (ordered according to its
+   * [[position.Position]]).
+   *
+   * @param curr The current cell.
+   * @param ext  The user define the value.
+   *
+   * @return The state for this object.
+   */
+  def initialise[P <: Position](curr: Cell[P], ext: V): T
+}
+
+/**
+ * Convenience trait for [[Deriver]]s that initialise with or without using a
+ * user supplied value.
+ */
+trait InitialiseAndWithValue extends Initialise
+  with InitialiseWithValue { self: Deriver =>
+  type V = Any
+
+  def initialise[P <: Position](curr: Cell[P], ext: V): T = initialise(curr)
 }
 

@@ -240,7 +240,6 @@ object Nameable {
     ev2: PosDimDep[P, D]): Nameable[T, P, Q, D] = {
     new Nameable[T, P, Q, D] {
       def convert(m: Matrix[P], s: Slice[P, D], t: T): TypedPipe[(Q, Long)] = {
-        // TODO: Is there a way not to use asInstanceOf?
         new Names(m.names(s).asInstanceOf[TypedPipe[(Q, Long)]]).slice(t, true)
       }
     }

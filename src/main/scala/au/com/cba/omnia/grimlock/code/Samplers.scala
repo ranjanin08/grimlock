@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.sample
 
-import au.com.cba.omnia.grimlock.contents._
+import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.position._
 
 import scala.util.Random

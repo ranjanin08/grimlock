@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.contents
+package au.com.cba.omnia.grimlock.content
 
-import au.com.cba.omnia.grimlock.contents.encoding._
-import au.com.cba.omnia.grimlock.contents.metadata._
-import au.com.cba.omnia.grimlock.contents.variable._
+import au.com.cba.omnia.grimlock.content.encoding._
+import au.com.cba.omnia.grimlock.content.metadata._
+import au.com.cba.omnia.grimlock.content.variable._
 
 import cascading.flow.FlowDef
 import com.twitter.scalding._

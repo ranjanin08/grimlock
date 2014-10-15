@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.contents.variable
+package au.com.cba.omnia.grimlock.content.variable
 
-import au.com.cba.omnia.grimlock.contents.encoding._
-import au.com.cba.omnia.grimlock.contents.encoding.Codex._
-import au.com.cba.omnia.grimlock.contents.events._
-import au.com.cba.omnia.grimlock.utilities._
+import au.com.cba.omnia.grimlock.content.encoding._
+import au.com.cba.omnia.grimlock.content.encoding.Codex._
+import au.com.cba.omnia.grimlock.content.events._
+import au.com.cba.omnia.grimlock.utility._
 
 import java.util.Date
 
@@ -81,7 +81,7 @@ object Type {
 
 /** Base trait for variable values. */
 trait Value {
-  /** The [[contents.encoding.Codex]] used to encode/decode this [[Value]]. */
+  /** The [[content.encoding.Codex]] used to encode/decode this [[Value]]. */
   val codex: Codex with ValueCodex
 
   /**
@@ -176,7 +176,7 @@ trait Value {
   def asLong: Option[Long] = None
   /** Return value as `Boolean`. */
   def asBoolean: Option[Boolean] = None
-  /** Return value as [[contents.events.Event]]. */
+  /** Return value as [[content.events.Event]]. */
   def asEvent: Option[Event] = None
 
   /** Return a consise (terse) string representation of a [[Value]]. */
@@ -192,7 +192,7 @@ trait Value {
  * Value for when the data is of type `java.util.Date`
  *
  * @param value A `java.util.Date`.
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ * @param codex The [[content.encoding.Codex]] used for encoding/decoding
  *              `value`.
  */
 case class DateValue(value: Date, codex: DateAndTimeCodex) extends Value {
@@ -203,7 +203,7 @@ case class DateValue(value: Date, codex: DateAndTimeCodex) extends Value {
  * Value for when the data is of type `String`.
  *
  * @param value A `String`.
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ * @param codex The [[content.encoding.Codex]] used for encoding/decoding
  *              `value`.
  */
 case class StringValue(value: String, codex: StringCodex) extends Value {
@@ -214,7 +214,7 @@ case class StringValue(value: String, codex: StringCodex) extends Value {
  * Value for when the data is of type `Double`.
  *
  * @param value A `Double`.
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ * @param codex The [[content.encoding.Codex]] used for encoding/decoding
  *              `value`.
  */
 case class DoubleValue(value: Double, codex: DoubleCodex) extends Value {
@@ -225,7 +225,7 @@ case class DoubleValue(value: Double, codex: DoubleCodex) extends Value {
  * Value for when the data is of type `Long`.
  *
  * @param value A `Long`.
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ * @param codex The [[content.encoding.Codex]] used for encoding/decoding
  *              `value`.
  */
 case class LongValue(value: Long, codex: LongCodex) extends Value {
@@ -237,7 +237,7 @@ case class LongValue(value: Long, codex: LongCodex) extends Value {
  * Value for when the data is of type `Boolean`.
  *
  * @param value A `Boolean`.
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ * @param codex The [[content.encoding.Codex]] used for encoding/decoding
  *              `value`.
  */
 case class BooleanValue(value: Boolean, codex: BooleanCodex) extends Value {
@@ -245,10 +245,10 @@ case class BooleanValue(value: Boolean, codex: BooleanCodex) extends Value {
 }
 
 /**
- * Value for when the data is of type [[contents.events.Event]].
+ * Value for when the data is of type [[content.events.Event]].
  *
- * @param value A [[contents.events.Event]].
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ * @param value A [[content.events.Event]].
+ * @param codex The [[content.encoding.Codex]] used for encoding/decoding
  *              `value`.
  */
 case class EventValue[T <: Event](value: T, codex: EventCodex) extends Value {

@@ -15,8 +15,8 @@
 package au.com.cba.omnia.grimlock.position
 
 import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.contents._
-import au.com.cba.omnia.grimlock.contents.encoding._
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.content.encoding._
 import au.com.cba.omnia.grimlock.position.coordinate._
 
 import cascading.flow.FlowDef
@@ -529,7 +529,7 @@ class PositionPipe[P <: Position](data: TypedPipe[P]) {
    *
    * @param file        Name of the output file.
    * @param separator   Separator to use between [[position.Position]] and
-   *                    [[contents.Content]].
+   *                    [[content.Content]].
    * @param descriptive Indicates if the output should be descriptive.
    *
    * @return A Scalding `TypedPipe[`[[Position]]`]` which is this

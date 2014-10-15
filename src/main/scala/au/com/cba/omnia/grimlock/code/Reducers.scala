@@ -15,10 +15,11 @@
 package au.com.cba.omnia.grimlock.reduce
 
 import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.contents._
-import au.com.cba.omnia.grimlock.contents.encoding._
-import au.com.cba.omnia.grimlock.contents.metadata._
-import au.com.cba.omnia.grimlock.contents.variable.Type._
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.content.encoding._
+import au.com.cba.omnia.grimlock.content.metadata._
+import au.com.cba.omnia.grimlock.content.variable.Type._
+import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
 /**
@@ -70,12 +71,11 @@ case class Moments(strict: Boolean = true, nan: Boolean = false,
     else if (rt.mean.isNaN) { if (strict) { rt } else { lt } }
     else { com.twitter.algebird.Monoid.plus(lt, rt) }
   }
-  def presentSingle[P <: Position](pos: P,
-    t: T): Option[(P, Content)] = {
+  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = {
     content(t).map { case cl => (pos, cl(only(0))) }
   }
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[(P#M, Content), List[(P#M, Content)]]] = {
+    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
     content(t).map {
       case cl => Right(only.map {
         case i => (pos.append(names(i - 1)), cl(i - 1))
@@ -164,7 +164,7 @@ case class Sum(strict: Boolean = true, nan: Boolean = false,
  * Compute histogram.
  *
  * @param all       Indicator if histogram should apply to all data, or just
- *                  [[contents.variable.Type.Categorical]].
+ *                  [[content.variable.Type.Categorical]].
  * @param meta      Return meta data statistics of the histogram (num
  *                  categories, frequency ratio, entropy) also.
  * @param names     Names for the meta data statistics.
@@ -201,7 +201,7 @@ case class Histogram(all: Boolean = false, meta: Boolean = true,
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[(P#M, Content), List[(P#M, Content)]]] = {
+    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
     t.map {
       case m =>
         val counts = m.values.toList.sorted
@@ -269,7 +269,7 @@ case class ThresholdCount(strict: Boolean = true, nan: Boolean = false,
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[(P#M, Content), List[(P#M, Content)]]] = {
+    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
     content(t).map {
       case cl => Right(names.zip(cl).map { case (n, c) => (pos.append(n), c) })
     }
@@ -312,7 +312,7 @@ case class WeightedSum(dim: Dimension, state: String = "weight")
     }
   }
   def reduce(lt: T, rt: T): T = lt + rt
-  def presentSingle[P <: Position](pos: P, t: T): Option[(P, Content)] = {
+  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = {
     content(t).map { case c => (pos, c) }
   }
 
@@ -371,7 +371,7 @@ case class Percentiles(percentiles: Int,
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[(P#M, Content), List[(P#M, Content)]]] = {
+    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
 
     val keys = t.keys.toList
     val values = t.values

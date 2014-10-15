@@ -15,15 +15,16 @@
 package au.com.cba.omnia.grimlock.test
 
 import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.contents._
-import au.com.cba.omnia.grimlock.contents.ContentPipe._
-import au.com.cba.omnia.grimlock.contents.encoding._
-import au.com.cba.omnia.grimlock.contents.metadata._
-import au.com.cba.omnia.grimlock.contents.variable._
-import au.com.cba.omnia.grimlock.contents.variable.Type._
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.content.ContentPipe._
+import au.com.cba.omnia.grimlock.content.encoding._
+import au.com.cba.omnia.grimlock.content.metadata._
+import au.com.cba.omnia.grimlock.content.variable._
+import au.com.cba.omnia.grimlock.content.variable.Type._
 import au.com.cba.omnia.grimlock.derive._
 import au.com.cba.omnia.grimlock.Matrix._
 import au.com.cba.omnia.grimlock.Names._
+import au.com.cba.omnia.grimlock.pairwise._
 import au.com.cba.omnia.grimlock.partition._
 import au.com.cba.omnia.grimlock.partition.Partitions._
 import au.com.cba.omnia.grimlock.position._
@@ -31,6 +32,7 @@ import au.com.cba.omnia.grimlock.position.coordinate._
 import au.com.cba.omnia.grimlock.position.PositionPipe._
 import au.com.cba.omnia.grimlock.reduce._
 import au.com.cba.omnia.grimlock.sample._
+import au.com.cba.omnia.grimlock.squash._
 import au.com.cba.omnia.grimlock.transform._
 import au.com.cba.omnia.grimlock.Types._
 
@@ -154,24 +156,24 @@ class Test5(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .persist("./tmp/sqs1.out", descriptive=true)
 
   data
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .persist("./tmp/sqs2.out", descriptive=true)
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707",
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .writeCSV(Over(First), "./tmp/sqs3.out")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707",
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .writeCSV(Over(First), "./tmp/sqs4.out")
 }
 
@@ -218,28 +220,28 @@ class Test8(args : Args) extends Job(args) {
 
   data
     .slice(Over(Second), "fid:B", true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .unique
     .persist("./tmp/uniq.out", descriptive=true)
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .writeCSV(Over(Second), "./tmp/test.csv")
     .writeCSV(Over(First), "./tmp/tset.csv", writeHeader=false, separator=",")
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .permute(Second, First)
     .persist("./tmp/trs1.out", descriptive=true)
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .persist("./tmp/data.txt")
 }
 
@@ -261,7 +263,7 @@ class Test9(args : Args) extends Job(args) {
   val prt1 = data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .partition(StringPartitioner(Second))
 
   prt1
@@ -282,7 +284,7 @@ class Test9(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .partition(IntTuplePartitioner(Second))
     .persist("./tmp/prt2.out", descriptive=true)
 
@@ -310,14 +312,14 @@ class Test10(args : Args) extends Job(args) {
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707",
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .reduceAndExpand(Along(Second), Count())
     .writeCSV(Over(Second), "./tmp/agg2.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707",
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .reduceAndExpand(Along(First), List(Count(), Moments(), Min(), Max(), MaxAbs()))
     .writeCSV(Over(Second), "./tmp/agg3.csv")
 }
@@ -335,7 +337,7 @@ class Test11(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .transform(Binarise(Second))
     .writeCSV(Over(Second), "./tmp/trn3.out")
 }
@@ -347,7 +349,7 @@ class Test12(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
   data
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
     .writeCSV(Over(Second), "./tmp/fll1.out")
 
@@ -363,7 +365,7 @@ class Test13(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707",
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
 
   val inds = data
     .transform(Indicator(Second))
@@ -406,7 +408,7 @@ class Test15(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707",
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .transform(Indicator(Second))
     .writeCSV(Over(Second), "./tmp/trn1.csv")
 
@@ -414,7 +416,7 @@ class Test15(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707",
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
     .join(Over(First), inds)
     .writeCSV(Over(Second), "./tmp/jn1.csv")
 }
@@ -440,7 +442,7 @@ class Test17(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707",
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
 
   val stats = data
     .reduceAndExpand(Along(First), List(Count(), Moments(only=List(1)), Min(), Max(), MaxAbs()))
@@ -473,7 +475,7 @@ class Test18(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707",
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
 
   val stats = data
     .reduceAndExpand(Along(First), List(Count(), Moments(only=List(1)), Min(), Max(), MaxAbs()))
@@ -493,7 +495,7 @@ class Test19(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707",
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, preservingMaxPosition)
+    .squash(Third, PreservingMaxPosition())
 
   case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S)
     extends Partitioner with Assign {
@@ -531,7 +533,7 @@ class Test19(args : Args) extends Job(args) {
 }
 
 class Test20(args : Args) extends Job(args) {
-  readIvory("./ivoryInputfile1.txt", Dictionary.read("./dict.txt"))
+  read3DWithDictionary("./ivoryInputfile1.txt", Dictionary.read("./dict.txt"))
     .persist("./tmp/ivr1.out")
 }
 
@@ -560,17 +562,18 @@ class Test22(args : Args) extends Job(args) {
 
   val data = read2D("numericInputfile.txt")
 
-  case class Diff(dim: Dimension) extends Deriver {
+  case class Diff(dim: Dimension) extends Deriver with Initialise {
     type T = (Position, Content)
 
-    def prepare[P <: Position](curr: (P, Content)): T = curr
+    def initialise[P <: Position](curr: (P, Content)): T = curr
     def present[P <: Position with ModifyablePosition](curr: (P, Content),
-                                                       t: T): (T, Option[Either[(P#S, Content), List[(P#S, Content)]]]) = {
+      t: T): (T, Option[Either[(P#S, Content), List[(P#S, Content)]]]) = {
       (curr, (curr._2.value.asDouble, t._2.value.asDouble) match {
         case (Some(c), Some(l)) =>
-          Some(Left((curr._1.set(dim, curr._1.get(dim).toShortString + "-" + t._1.get(dim).toShortString),
-                     Content(ContinuousSchema[Codex.DoubleCodex](), c - l))))
-        case _                  => None
+          Some(Left((curr._1.set(dim, curr._1.get(dim).toShortString + "-" +
+            t._1.get(dim).toShortString),
+            Content(ContinuousSchema[Codex.DoubleCodex](), c - l))))
+        case _ => None
       })
     }
   }
@@ -588,19 +591,23 @@ class Test23(args : Args) extends Job(args) {
 
   val data = read2D("somePairwise.txt")
 
-  def diffSquared[P <: Position with ModifyablePosition](l: (P, Content), r: (P, Content)): Option[(P#S, Content)] = {
-    val lc = l._1.get(Second).toShortString
-    val rc = r._1.get(Second).toShortString
+  case class DiffSquared() extends Operator with ComputeAndWithValue {
+    def compute[P <: Position with ModifyablePosition, D <: Dimension](
+      slc: Slice[P, D], x: Cell[P], y: Cell[P]): Option[Cell[P#S]] = {
+      val xc = x._1.get(Second).toShortString
+      val yc = y._1.get(Second).toShortString
 
-    (lc < rc && lc != rc) match {
-      case true => Some((l._1.set(Second, "(" + lc + "-" + rc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
-        math.pow(l._2.value.asLong.get - r._2.value.asLong.get, 2))))
-      case false => None
+      (xc < yc && xc != yc) match {
+        case true => Some((x._1.set(Second, "(" + xc + "-" + yc + ")^2"),
+          Content(ContinuousSchema[Codex.DoubleCodex](),
+          math.pow(x._2.value.asLong.get - y._2.value.asLong.get, 2))))
+        case false => None
+      }
     }
   }
 
   data
-    .pairwise(Over(Second), diffSquared)
+    .pairwise(Over(Second), DiffSquared())
     .persist("./tmp/pws1.out")
 }
 

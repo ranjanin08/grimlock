@@ -14,9 +14,10 @@
 
 package au.com.cba.omnia.grimlock.transform
 
-import au.com.cba.omnia.grimlock.contents._
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utilities.{ Miscellaneous => Misc }
+import au.com.cba.omnia.grimlock.utility.{ Miscellaneous => Misc }
 
 // TODO: Add the ability to compose individual transformers. For example,
 //       first clamp a variable, then normalise. Perhaps use an andThen
@@ -28,18 +29,18 @@ trait Transformer
 /** Base trait for transformers that do not modify the number of dimensions. */
 trait Present { self: Transformer =>
   /**
-   * Present the transformed [[contents.Content]](s).
+   * Present the transformed [[content.Content]](s).
    *
    * @param pos The [[position.Position]] of the content.
-   * @param con The [[contents.Content]] to transform.
+   * @param con The [[content.Content]] to transform.
    *
    * @return Optional of either a `(`[[position.Position.S]]`,
-   *         `[[contents.Content]]`)` or a `List` of these tuples where the
+   *         `[[content.Content]]`)` or a `List` of these tuples where the
    *         [[position.Position]] is creating by modifiying `pos` and the
-   *         [[contents.Content]] is derived from `con`.
+   *         [[content.Content]] is derived from `con`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[contents.Content]] they apply to. For example,
+   *       selective in what [[content.Content]] they apply to. For example,
    *       normalising is undefined for categorical variables. The transformer
    *       now has the option to return `None`. This in turn permits an
    *       external API, for simple cases, where the user need not know about
@@ -50,7 +51,7 @@ trait Present { self: Transformer =>
    * @see [[transform.Transformable]]
    */
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[(P#S, Content), List[(P#S, Content)]]]
+    con: Content): Option[Either[Cell[P#S], List[Cell[P#S]]]]
 }
 
 /**
@@ -62,19 +63,19 @@ trait PresentWithValue { self: Transformer =>
   type V
 
   /**
-   * Present the transformed [[contents.Content]](s).
+   * Present the transformed [[content.Content]](s).
    *
    * @param pos The [[position.Position]] of the content.
-   * @param con The [[contents.Content]] to transform.
+   * @param con The [[content.Content]] to transform.
    * @param ext The external value.
    *
    * @return Optional of either a `(`[[position.Position.S]]`,
-   *         `[[contents.Content]]`)` or a `List` of these tuples where the
+   *         `[[content.Content]]`)` or a `List` of these tuples where the
    *         [[position.Position]] is creating by modifiying `pos` and the
-   *         [[contents.Content]] is derived from `con`.
+   *         [[content.Content]] is derived from `con`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[contents.Content]] they apply to. For example,
+   *       selective in what [[content.Content]] they apply to. For example,
    *       normalising is undefined for categorical variables. The transformer
    *       now has the option to return `None`. This in turn permits an
    *       external API, for simple cases, where the user need not know about
@@ -85,7 +86,7 @@ trait PresentWithValue { self: Transformer =>
    * @see [[transform.TransformableWithValue]]
    */
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[(P#S, Content), List[(P#S, Content)]]]
+    ext: V): Option[Either[Cell[P#S], List[Cell[P#S]]]]
 }
 
 /**
@@ -106,18 +107,18 @@ trait PresentAndWithValue extends Present with PresentWithValue {
  */
 trait PresentExpanded { self: Transformer =>
   /**
-   * Present the transformed [[contents.Content]](s).
+   * Present the transformed [[content.Content]](s).
    *
    * @param pos The [[position.Position]] of the content.
-   * @param con The [[contents.Content]] to transform.
+   * @param con The [[content.Content]] to transform.
    *
    * @return Optional of either a `(`[[position.ExpandablePosition.M]]`,
-   *         `[[contents.Content]]`)` or a `List` of these tuples where the
+   *         `[[content.Content]]`)` or a `List` of these tuples where the
    *         [[position.Position]] is creating by appending to `pos` and the
-   *         [[contents.Content]] is derived from `con`.
+   *         [[content.Content]] is derived from `con`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[contents.Content]] they apply to. For example,
+   *       selective in what [[content.Content]] they apply to. For example,
    *       normalising is undefined for categorical variables. The transformer
    *       now has the option to return `None`. This in turn permits an
    *       external API, for simple cases, where the user need not know about
@@ -128,7 +129,7 @@ trait PresentExpanded { self: Transformer =>
    * @see [[position.ExpandablePosition]], [[transform.TransformableExpanded]]
    */
   def present[P <: Position with ExpandablePosition](pos: P,
-    con: Content): Option[Either[(P#M, Content), List[(P#M, Content)]]]
+    con: Content): Option[Either[Cell[P#M], List[Cell[P#M]]]]
 }
 
 /**
@@ -140,19 +141,19 @@ trait PresentExpandedWithValue { self: Transformer =>
   type V
 
   /**
-   * Present the transformed [[contents.Content]](s).
+   * Present the transformed [[content.Content]](s).
    *
    * @param pos The [[position.Position]] of the content.
-   * @param con The [[contents.Content]] to transform.
+   * @param con The [[content.Content]] to transform.
    * @param ext The external value.
    *
    * @return Optional of either a `(`[[position.ExpandablePosition.M]]`,
-   *         `[[contents.Content]]`)` or a `List` of these tuples where the
+   *         `[[content.Content]]`)` or a `List` of these tuples where the
    *         [[position.Position]] is creating by appending to `pos` and the
-   *         [[contents.Content]] is derived from `con`.
+   *         [[content.Content]] is derived from `con`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[contents.Content]] they apply to. For example,
+   *       selective in what [[content.Content]] they apply to. For example,
    *       normalising is undefined for categorical variables. The transformer
    *       now has the option to return `None`. This in turn permits an
    *       external API, for simple cases, where the user need not know about
@@ -164,7 +165,7 @@ trait PresentExpandedWithValue { self: Transformer =>
    *      [[transform.TransformableExpandedWithValue]]
    */
   def present[P <: Position with ExpandablePosition](pos: P, con: Content,
-    ext: V): Option[Either[(P#M, Content), List[(P#M, Content)]]]
+    ext: V): Option[Either[Cell[P#M], List[Cell[P#M]]]]
 }
 
 /**

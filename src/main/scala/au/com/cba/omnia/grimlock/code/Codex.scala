@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.contents.encoding
+package au.com.cba.omnia.grimlock.content.encoding
 
-import au.com.cba.omnia.grimlock.contents.events._
-import au.com.cba.omnia.grimlock.contents.variable._
+import au.com.cba.omnia.grimlock.content.events._
+import au.com.cba.omnia.grimlock.content.variable._
 import au.com.cba.omnia.grimlock.position.coordinate._
 
 import java.text.SimpleDateFormat
@@ -65,32 +65,32 @@ trait Codex {
 
 /**
  * Base trait for encoding/decoding basic data types as
- * [[contents.variable.Value]].
+ * [[content.variable.Value]].
  */
 trait ValueCodex { self: Codex =>
-  /** The specific type of [[contents.variable.Value]]. */
+  /** The specific type of [[content.variable.Value]]. */
   type V <: Value
 
   /**
-   * Convert a basic data type to a [[contents.variable.Value]].
+   * Convert a basic data type to a [[content.variable.Value]].
    *
-   * @param value Data type to wrap in a [[contents.variable.Value]].
+   * @param value Data type to wrap in a [[content.variable.Value]].
    */
   def toValue(value: T): V
 
   /**
-   * Extract a basic data type from a [[contents.variable.Value]].
+   * Extract a basic data type from a [[content.variable.Value]].
    *
-   * @param value [[contents.variable.Value]] from which to extract the data.
+   * @param value [[content.variable.Value]] from which to extract the data.
    */
   def fromValue(value: Value): T
 
   /**
-   * Decode a basic data type into a [[contents.variable.Value]].
+   * Decode a basic data type into a [[content.variable.Value]].
    *
-   * @param value String to decode into a [[contents.variable.Value]].
+   * @param value String to decode into a [[content.variable.Value]].
    *
-   * @return `Some(`[[contents.variable.Value]]`)` if the decode was
+   * @return `Some(`[[content.variable.Value]]`)` if the decode was
    *         successful, `None` otherwise.
    */
   def decode(value: String): Option[V] = {
@@ -98,19 +98,19 @@ trait ValueCodex { self: Codex =>
   }
 
   /**
-   * Converts a [[contents.variable.Value]] to a consise (terse) string.
+   * Converts a [[content.variable.Value]] to a consise (terse) string.
    *
-   * @param t The [[contents.variable.Value]] to convert to string.
+   * @param t The [[content.variable.Value]] to convert to string.
    *
-   * @return Short string representation of the [[contents.variable.Value]].
+   * @return Short string representation of the [[content.variable.Value]].
    */
   def toShortString(value: Value): String = toShortString(fromValue(value))
 
   /**
-   * Compare two [[contents.variable.Value]]s.
+   * Compare two [[content.variable.Value]]s.
    *
-   * @param x The first [[contents.variable.Value]] compare.
-   * @param y The second [[contents.variable.Value]] compare.
+   * @param x The first [[content.variable.Value]] compare.
+   * @param y The second [[content.variable.Value]] compare.
    *
    * @return `Some[Int]` if `x` and `y` could be compare, `None` otherwise. If
    *         successful, then the returned value is < 0 iff x < y, 0 iff x = y,
@@ -202,63 +202,63 @@ object Codex {
 
   /**
    * Shorthand for [[DateCodex]] type (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   type DateCodex = DateCodex.type
   /**
    * Shorthand for [[DateTimeCodex]] type (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   type DateTimeCodex = DateTimeCodex.type
   /**
    * Shorthand for [[StringCodex]] type (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   type StringCodex = StringCodex.type
   /**
    * Shorthand for [[DoubleCodex]] type (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   type DoubleCodex = DoubleCodex.type
   /**
    * Shorthand for [[LongCodex]] type (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   type LongCodex = LongCodex.type
   /**
    * Shorthand for [[BooleanCodex]] type (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   type BooleanCodex = BooleanCodex.type
 
   /**
    * Implicit value for [[DateCodex]] (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   implicit val tc: DateCodex = DateCodex
   /**
    * Implicit value for [[DateTimeCodex]] (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   implicit val dtc: DateTimeCodex = DateTimeCodex
   /**
    * Implicit value for [[StringCodex]] (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   implicit val sc: StringCodex = StringCodex
   /**
    * Implicit value for [[DoubleCodex]] (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   implicit val dc: DoubleCodex = DoubleCodex
   /**
    * Implicit value for [[LongCodex]] (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   implicit val lc: LongCodex = LongCodex
   /**
    * Implicit value for [[BooleanCodex]] (for use with
-   * [[contents.metadata.Schema]]).
+   * [[content.metadata.Schema]]).
    */
   implicit val bc: BooleanCodex = BooleanCodex
 }
@@ -420,7 +420,7 @@ case object BooleanCodex extends Codex with ValueCodex {
   }
 }
 
-/** Base trait for dealing with [[contents.events.Event]]. */
+/** Base trait for dealing with [[content.events.Event]]. */
 trait EventCodex extends Codex with ValueCodex {
   type T <: Event
 }

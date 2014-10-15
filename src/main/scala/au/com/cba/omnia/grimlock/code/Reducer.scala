@@ -15,9 +15,10 @@
 package au.com.cba.omnia.grimlock.reduce
 
 import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.contents._
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utilities.{ Miscellaneous => Misc }
+import au.com.cba.omnia.grimlock.utility.{ Miscellaneous => Misc }
 
 /**
  * Base trait for reductions.
@@ -47,9 +48,9 @@ trait Prepare { self: Reducer =>
    * Prepare for reduction.
    *
    * @param pos Original [[position.Position]] corresponding to the
-   *            [[contents.Content]]. That is, it's the position prior
+   *            [[content.Content]]. That is, it's the position prior
    *            to [[Slice.selected]] being applied.
-   * @param con [[contents.Content]] which is to be reduced.
+   * @param con [[content.Content]] which is to be reduced.
    *
    * @return State to reduce.
    */
@@ -65,9 +66,9 @@ trait PrepareWithValue { self: Reducer =>
    * Prepare for reduction.
    *
    * @param pos Original [[position.Position]] corresponding to the
-   *            [[contents.Content]]. That is, it's the position prior
+   *            [[content.Content]]. That is, it's the position prior
    *            to [[Slice.selected]] being applied.
-   * @param con [[contents.Content]] which is to be reduced.
+   * @param con [[content.Content]] which is to be reduced.
    * @param ext User provided data required for preparation.
    *
    * @return State to reduce.
@@ -91,50 +92,50 @@ trait PrepareAndWithValue extends Prepare with PrepareWithValue {
 /** Base trait for reductions that return a single value. */
 trait PresentSingle { self: Reducer =>
   /**
-   * Present the reduced [[contents.Content]].
+   * Present the reduced [[content.Content]].
    *
    * @param pos The reduced [[position.Position]]. That is, the position
    *            returned by [[Slice.selected]].
    * @param t   The reduced state.
    *
-   * @return Optional ([[position.Position]], [[contents.Content]]) tuple
+   * @return Optional ([[position.Position]], [[content.Content]]) tuple
    *         where the [[position.Position]] is `pos` and the
-   *         [[contents.Content]] is derived from `t`.
+   *         [[content.Content]] is derived from `t`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[contents.Content]] they apply to. For example,
+   *       selective in what [[content.Content]] they apply to. For example,
    *       computing the mean is undefined for categorical variables. The
    *       reducer now has the option to return `None`. This in turn permits
    *       an external API, for simple cases, where the user need not know
    *       about the types of variables of their data.
    */
-  def presentSingle[P <: Position](pos: P, t: T): Option[(P, Content)]
+  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]]
 }
 
 /** Base trait for reductions that return multiple values. */
 trait PresentMultiple { self: Reducer =>
   /**
-   * Present the reduced [[contents.Content]](s).
+   * Present the reduced [[content.Content]](s).
    *
    * @param pos The reduced [[position.Position]]. That is, the position
    *            returned by [[Slice.selected]].
    * @param t   The reduced state.
    *
    * @return Optional ([[position.ExpandablePosition.M]],
-   *         [[contents.Content]]) tuple where the [[position.Position]] is
+   *         [[content.Content]]) tuple where the [[position.Position]] is
    *         creating by appending to `pos`
    *         ([[position.ExpandablePosition.append]]) and the
-   *         [[contents.Content]](s) is derived from `t`.
+   *         [[content.Content]](s) is derived from `t`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[contents.Content]] they apply to. For example,
+   *       selective in what [[content.Content]] they apply to. For example,
    *       computing the mean is undefined for categorical variables. The
    *       reducer now has the option to return `None`. This in turn permits
    *       an external API, for simple cases, where the user need not know
    *       about the types of variables of their data.
    */
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[(P#M, Content), List[(P#M, Content)]]]
+    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]]
 }
 
 /**
@@ -151,9 +152,9 @@ trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple {
   val name: String // TODO: Make into Coordinateable?
 
   def presentSingle[P <: Position](pos: P,
-    t: T): Option[(P, Content)] = content(t).map { case c => (pos, c) }
+    t: T): Option[Cell[P]] = content(t).map { case c => (pos, c) }
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[(P#M, Content), List[(P#M, Content)]]] = {
+    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
     content(t).map { case c => Left((pos.append(name), c)) }
   }
 
@@ -186,7 +187,7 @@ case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMult
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[(P#M, Content), List[(P#M, Content)]]] = {
+    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
     Some(Right((reducers, t).zipped.flatMap {
       case (reducer, s) => Misc.mapFlatten(reducer.presentMultiple(pos,
         s.asInstanceOf[reducer.T]))
@@ -224,7 +225,7 @@ case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValu
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[(P#M, Content), List[(P#M, Content)]]] = {
+    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
     Some(Right((reducers, t).zipped.flatMap {
       case (reducer, s) => Misc.mapFlatten(reducer.presentMultiple(pos,
         s.asInstanceOf[reducer.T]))

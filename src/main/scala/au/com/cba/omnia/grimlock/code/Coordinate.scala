@@ -14,8 +14,8 @@
 
 package au.com.cba.omnia.grimlock.position.coordinate
 
-import au.com.cba.omnia.grimlock.contents.encoding._
-import au.com.cba.omnia.grimlock.utilities._
+import au.com.cba.omnia.grimlock.content.encoding._
+import au.com.cba.omnia.grimlock.utility._
 
 import java.util.Date
 
@@ -26,7 +26,7 @@ import scala.util.matching.Regex
 /** Base trait for coordinates in a [[Position]]. */
 trait Coordinate {
   /**
-   * The [[contents.encoding.Codex]] used to encode/decode this
+   * The [[content.encoding.Codex]] used to encode/decode this
    * [[Coordinate]].
    */
   val codex: Codex with CoordinateCodex
@@ -162,7 +162,7 @@ object Coordinate {
  * [[Coordinate]] for `java.util.Date` values.
  *
  * @param value `java.util.Date` value of the [[Coordinate]].
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ * @param codex The [[content.encoding.Codex]] used for encoding/decoding
  *              `value`.
  */
 case class DateCoordinate(value: Date, codex: Codex with CoordinateCodex)
@@ -174,7 +174,7 @@ case class DateCoordinate(value: Date, codex: Codex with CoordinateCodex)
  * [[Coordinate]] for `String` values.
  *
  * @param value `String` value of the [[Coordinate]].
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ * @param codex The [[content.encoding.Codex]] used for encoding/decoding
  *        `value`.
  */
 case class StringCoordinate(value: String, codex: Codex with CoordinateCodex)
@@ -186,7 +186,7 @@ case class StringCoordinate(value: String, codex: Codex with CoordinateCodex)
  * [[Coordinate]] for `Long` values.
  *
  * @param value `Long` value of the [[Coordinate]].
- * @param codex The [[contents.encoding.Codex]] used for encoding/decoding
+ * @param codex The [[content.encoding.Codex]] used for encoding/decoding
  *              `value`.
  */
 case class LongCoordinate(value: Long, codex: Codex with CoordinateCodex)

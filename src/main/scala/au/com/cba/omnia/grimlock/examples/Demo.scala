@@ -15,7 +15,7 @@
 package au.com.cba.omnia.grimlock.examples
 
 import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.contents._
+import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.Matrix._
 import au.com.cba.omnia.grimlock.Names._
 import au.com.cba.omnia.grimlock.partition._

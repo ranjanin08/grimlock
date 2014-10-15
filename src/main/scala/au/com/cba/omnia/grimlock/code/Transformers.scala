@@ -14,10 +14,11 @@
 
 package au.com.cba.omnia.grimlock.transform
 
-import au.com.cba.omnia.grimlock.contents._
-import au.com.cba.omnia.grimlock.contents.encoding._
-import au.com.cba.omnia.grimlock.contents.metadata._
-import au.com.cba.omnia.grimlock.contents.variable.Type._
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.content.encoding._
+import au.com.cba.omnia.grimlock.content.metadata._
+import au.com.cba.omnia.grimlock.content.variable.Type._
+import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.position.coordinate._
 
@@ -38,7 +39,7 @@ trait AsDouble {
 
   protected def returnSingle[P <: Position with ModifyablePosition](pos: P,
     dim: Dimension, name: String,
-    value: Double): Option[Either[(P#S, Content), List[(P#S, Content)]]] = {
+    value: Double): Option[Either[Cell[P#S], List[Cell[P#S]]]] = {
     Some(Left((pos.set(dim, name),
       Content(ContinuousSchema[Codex.DoubleCodex](), value))))
   }
@@ -96,15 +97,15 @@ case class Indicator(dim: Dimension, suffix: String = ".ind")
  * @param dim       [[position.Dimension]] for for which to create binarised
  *                  variables.
  * @param separator Sparator between [[position.coordinate.Coordinate]] and
- *                  [[contents.variable.Value]].
+ *                  [[content.variable.Value]].
  *
- * @note Binarisation is only applied to [[contents.variable.Type.Categorical]]
+ * @note Binarisation is only applied to [[content.variable.Type.Categorical]]
  *       variables.
  * @note The returned [[position.Position]] will have a
  *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
  *       the [[position.coordinate.Coordinate]] is the string representation of
  *       the original [[position.coordinate.Coordinate]] at `dim` with
- *       [[contents.variable.Value]] appended (separated by `separator`).
+ *       [[content.variable.Value]] appended (separated by `separator`).
  */
 case class Binarise(dim: Dimension, separator: String = "=")
   extends Transformer with PresentAndWithValue {
@@ -129,7 +130,7 @@ case class Binarise(dim: Dimension, separator: String = "=")
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  *
  * @note Normalisation scales a variable in the range [-1, 1].
- * @note Normalisation is only applied to [[contents.variable.Type.Numerical]]
+ * @note Normalisation is only applied to [[content.variable.Type.Numerical]]
  *       variables.
  * @note The returned [[position.Position]] will have a
  *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
@@ -163,7 +164,7 @@ case class Normalise(dim: Dimension, state: String = "max.abs",
  * @note Standardisation results in a variable with zero mean and variance
  *       of one.
  * @note Standardisation is only applied to
- *       [[contents.variable.Type.Numerical]] variables.
+ *       [[content.variable.Type.Numerical]] variables.
  * @note The returned [[position.Position]] will have a
  *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
  *       the [[position.coordinate.Coordinate]] is the string representation of
@@ -201,7 +202,7 @@ case class Standardise(dim: Dimension,
  *
  * @note Clamping results in a variable not smaller (or greater) than the
  *       clamping constants.
- * @note Clamping is only applied to [[contents.variable.Type.Numerical]]
+ * @note Clamping is only applied to [[content.variable.Type.Numerical]]
  *       variables.
  * @note The returned [[position.Position]] will have a
  *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
@@ -248,7 +249,7 @@ case class Clamp[T <: Transformer with PresentWithValue](dim: Dimension,
  * @param upper Upper bound filtering; terms appearing in more than this
  *              documents are removed.
  *
- * @note Idf is only applied to [[contents.variable.Type.Numerical]] variables.
+ * @note Idf is only applied to [[content.variable.Type.Numerical]] variables.
  * @note The returned [[position.Position]] will have an extra dimension
  *       appended.
  */
@@ -275,7 +276,7 @@ case class Idf(from: Dimension, state: String = "size", name: String = "idf",
  *               frequencies.
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  *
- * @note Boolean tf is only applied to [[contents.variable.Type.Numerical]]
+ * @note Boolean tf is only applied to [[content.variable.Type.Numerical]]
  *       variables.
  * @note The returned [[position.Position]] will have a
  *       [[position.coordinate.StringCoordinate]] at index `dim`. The value
@@ -302,7 +303,7 @@ case class BooleanTf(dim: Dimension, suffix: String = "") extends Transformer
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  * @param log    Log function to use.
  *
- * @note Logarithmic tf is only applied to [[contents.variable.Type.Numerical]]
+ * @note Logarithmic tf is only applied to [[content.variable.Type.Numerical]]
  *       variables.
  * @note The returned [[position.Position]] will have a
  *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
@@ -331,7 +332,7 @@ case class LogarithmicTf(dim: Dimension, suffix: String = "",
  *               maximum term frequency.
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  *
- * @note Augmented tf is only applied to [[contents.variable.Type.Numerical]]
+ * @note Augmented tf is only applied to [[content.variable.Type.Numerical]]
  *       variables.
  * @note The returned [[position.Position]] will have a
  *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
@@ -360,7 +361,7 @@ case class AugmentedTf(dim: Dimension, state: String = "max",
  *               inverse document frequency.
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  *
- * @note Tf-idf is only applied to [[contents.variable.Type.Numerical]]
+ * @note Tf-idf is only applied to [[content.variable.Type.Numerical]]
  *       variables.
  * @note The returned [[position.Position]] will have a
  *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of

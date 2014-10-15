@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.contents.variable._
+import au.com.cba.omnia.grimlock.content.variable._
 import au.com.cba.omnia.grimlock.position._
 
 import cascading.flow.FlowDef
@@ -23,12 +23,12 @@ import com.twitter.scalding.TDsl._, Dsl._
 
 /**
  * Rich wrapper around a `TypedPipe[(`[[position.Position]]`,
- * `[[contents.variable.Type]]`)]`.
+ * `[[content.variable.Type]]`)]`.
  *
  * @param data `TypedPipe[(`[[position.Position]]`,
- *             `[[contents.variable.Type]]`)]`.
+ *             `[[content.variable.Type]]`)]`.
  *
- * @note This class represents the [[contents.variable.Type]] along the
+ * @note This class represents the [[content.variable.Type]] along the
  *       dimensions of a [[Matrix]].
  */
 class Types[P <: Position](data: TypedPipe[(P, Type)]) {
@@ -37,10 +37,10 @@ class Types[P <: Position](data: TypedPipe[(P, Type)]) {
    *
    * @param file        Name of the output file.
    * @param separator   Separator to use between [[position.Position]] and
-   *                    [[contents.variable.Type]].
+   *                    [[content.variable.Type]].
    * @param descriptive Indicates if the output should be descriptive.
    *
-   * @return A Scalding `TypedPipe[(P, `[[contents.variable.Type]]`)]` which
+   * @return A Scalding `TypedPipe[(P, `[[content.variable.Type]]`)]` which
    *         is this [[Types]].
    */
   def persist(file: String, separator: String = "|",
@@ -63,7 +63,7 @@ class Types[P <: Position](data: TypedPipe[(P, Type)]) {
 object Types {
   /**
    * Conversion from `TypedPipe[(`[[position.Position]]`,
-   * `[[contents.variable.Type]]`)]` to a [[Types]].
+   * `[[content.variable.Type]]`)]` to a [[Types]].
    */
   implicit def typedPipePositionType[P <: Position](
     data: TypedPipe[(P, Type)]): Types[P] = {
