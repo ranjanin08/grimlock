@@ -20,20 +20,22 @@ import au.com.cba.omnia.grimlock.position._
 /** Base trait that encapsulates dimension on which to operate. */
 sealed trait Slice[P <: Position, D <: Dimension] {
   /**
-   * Return type of [[Slice.selected]]; a position of dimension less than `P`.
+   * Return type of the `selected` method; a position of dimension less
+   * than `P`.
    *
-   * @note [[Slice.S]] and [[Slice.R]] together make `P`.
+   * @note `S` and `R` together make `P`.
    */
   type S <: Position with ExpandablePosition
 
   /**
-   * Return type of [[Slice.remainder]]; a position of dimension less than `P`.
+   * Return type of the `remainder` method; a position of dimension less
+   * than `P`.
    *
-   * @note [[Slice.S]] and [[Slice.R]] together make `P`.
+   * @note `S` and `R` together make `P`.
    */
   type R <: Position
 
-  /** Return type of [[Slice.inverse]].  */
+  /** Return type of `inverse` method.  */
   type I <: Slice[P, D]
 
   val dimension: D
@@ -60,9 +62,9 @@ trait Mapable[P <: Position with ReduceablePosition, D <: Dimension] {
 /**
  * Indicates that the selected coordinate is indexed by `dimension`. In
  * other words, when a groupBy is performed, it is performed using a
- * [[position.Position1D]] consisting of the coordinate at index `dimension`.
+ * `Position1D` consisting of the coordinate at index `dimension`.
  *
- * @param dimension [[position.Dimension]] of the selected coordinate.
+ * @param dimension Dimension of the selected coordinate.
  */
 case class Over[P <: Position with ReduceablePosition, D <: Dimension](
   dimension: D) extends Slice[P, D] with Mapable[P, D] {
@@ -90,11 +92,10 @@ case class Over[P <: Position with ReduceablePosition, D <: Dimension](
 /**
  * Indicates that the selected coordinates are all except the one indexed
  * by `dimension`. In other words, when a groupBy is performed, it is
- * performed using a [[position.Position]] (type
- * [[position.ReduceablePosition.L]]) consisting of all coordinates except
- * that at index `dimension`.
+ * performed using a `Position` (type `ReduceablePosition.L`) consisting
+ * of all coordinates except that at index `dimension`.
  *
- * @param dimension [[position.Dimension]] of the coordinate to exclude.
+ * @param dimension Dimension of the coordinate to exclude.
  */
 case class Along[P <: Position with ReduceablePosition, D <: Dimension](
   dimension: D) extends Slice[P, D] with Mapable[P, D] {

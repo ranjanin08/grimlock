@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.position
 
-/** Base trait for dimensions of a [[Matrix]]. */
+/** Base trait for dimensions of a matrix. */
 sealed trait Dimension {
   /** Index of the dimension (starting at 0). */
   val index: Int
@@ -31,49 +31,46 @@ case object Fourth extends Dimension { val index = 3 }
 /** Type for fifth dimension. */
 case object Fifth extends Dimension { val index = 4 }
 
-/**
- * Trait for capturing functional dependency between a [[Position]] and a
- * [[Dimension]].
- */
+/** Trait for capturing the dependency between a position and a dimension. */
 trait PosDimDep[A, B]
 
 /**
- * Companion object of [[Dimension]] trait. This defines the (implicit)
- * permitted dependencies between [[Position]] and [[Dimension]].
+ * Companion object of `Dimension` trait. This defines the (implicit)
+ * permitted dependencies between position and dimension.
  */
 object Dimension {
   /** List of all available dimensions ordered by index. */
   val All = List(First, Second, Third, Fourth, Fifth)
 
-  /** Define dependency between [[Position1D]] and [[First]]. */
+  /** Define dependency between `Position1D` and `First`. */
   implicit object P1D1 extends PosDimDep[Position1D, First.type]
-  /** Define dependency between [[Position2D]] and [[First]]. */
+  /** Define dependency between `Position2D` and `First`. */
   implicit object P2D1 extends PosDimDep[Position2D, First.type]
-  /** Define dependency between [[Position2D]] and [[Second]]. */
+  /** Define dependency between `Position2D` and `Second`. */
   implicit object P2D2 extends PosDimDep[Position2D, Second.type]
-  /** Define dependency between [[Position3D]] and [[First]]. */
+  /** Define dependency between `Position3D` and `First`. */
   implicit object P3D1 extends PosDimDep[Position3D, First.type]
-  /** Define dependency between [[Position3D]] and [[Second]]. */
+  /** Define dependency between `Position3D` and `Second`. */
   implicit object P3D2 extends PosDimDep[Position3D, Second.type]
-  /** Define dependency between [[Position3D]] and [[Third]]. */
+  /** Define dependency between `Position3D` and `Third`. */
   implicit object P3D3 extends PosDimDep[Position3D, Third.type]
-  /** Define dependency between [[Position4D]] and [[First]]. */
+  /** Define dependency between `Position4D` and `First`. */
   implicit object P4D1 extends PosDimDep[Position4D, First.type]
-  /** Define dependency between [[Position4D]] and [[Second]]. */
+  /** Define dependency between `Position4D` and `Second`. */
   implicit object P4D2 extends PosDimDep[Position4D, Second.type]
-  /** Define dependency between [[Position4D]] and [[Third]]. */
+  /** Define dependency between `Position4D` and `Third`. */
   implicit object P4D3 extends PosDimDep[Position4D, Third.type]
-  /** Define dependency between [[Position4D]] and [[Fourth]]. */
+  /** Define dependency between `Position4D` and `Fourth`. */
   implicit object P4D4 extends PosDimDep[Position4D, Fourth.type]
-  /** Define dependency between [[Position5D]] and [[First]]. */
+  /** Define dependency between `Position5D` and `First`. */
   implicit object P5D1 extends PosDimDep[Position5D, First.type]
-  /** Define dependency between [[Position5D]] and [[Second]]. */
+  /** Define dependency between `Position5D` and `Second`. */
   implicit object P5D2 extends PosDimDep[Position5D, Second.type]
-  /** Define dependency between [[Position5D]] and [[Third]]. */
+  /** Define dependency between `Position5D` and `Third`. */
   implicit object P5D3 extends PosDimDep[Position5D, Third.type]
-  /** Define dependency between [[Position5D]] and [[Fourth]]. */
+  /** Define dependency between `Position5D` and `Fourth`. */
   implicit object P5D4 extends PosDimDep[Position5D, Fourth.type]
-  /** Define dependency between [[Position5D]] and [[Fifth]]. */
+  /** Define dependency between `Position5D` and `Fifth`. */
   implicit object P5D5 extends PosDimDep[Position5D, Fifth.type]
 }
 

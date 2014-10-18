@@ -29,26 +29,23 @@ trait Transformer
 /** Base trait for transformers that do not modify the number of dimensions. */
 trait Present { self: Transformer =>
   /**
-   * Present the transformed [[content.Content]](s).
+   * Present the transformed content(s).
    *
-   * @param pos The [[position.Position]] of the content.
-   * @param con The [[content.Content]] to transform.
+   * @param pos The position of the cell.
+   * @param con The content to transform.
    *
-   * @return Optional of either a `(`[[position.Position.S]]`,
-   *         `[[content.Content]]`)` or a `List` of these tuples where the
-   *         [[position.Position]] is creating by modifiying `pos` and the
-   *         [[content.Content]] is derived from `con`.
+   * @return Optional of either a cell or a `List` of cells where the position
+   *         is creating by modifiying `pos` and the content is derived from
+   *         `con`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[content.Content]] they apply to. For example,
-   *       normalising is undefined for categorical variables. The transformer
-   *       now has the option to return `None`. This in turn permits an
-   *       external API, for simple cases, where the user need not know about
-   *       the types of variables of their data.
+   *       selective in what content they apply to. For example, normalising is
+   *       undefined for categorical variables. The transformer now has the
+   *       option to return `None`. This in turn permits an external API, for
+   *       simple cases, where the user need not know about the types of
+   *       variables of their data.
    * @note An `Either` is used to all either one-to-one or one-to-many
    *       transformations.
-   *
-   * @see [[transform.Transformable]]
    */
   def present[P <: Position with ModifyablePosition](pos: P,
     con: Content): Option[Either[Cell[P#S], List[Cell[P#S]]]]
@@ -63,34 +60,31 @@ trait PresentWithValue { self: Transformer =>
   type V
 
   /**
-   * Present the transformed [[content.Content]](s).
+   * Present the transformed content(s).
    *
-   * @param pos The [[position.Position]] of the content.
-   * @param con The [[content.Content]] to transform.
+   * @param pos The position of the cell.
+   * @param con The content to transform.
    * @param ext The external value.
    *
-   * @return Optional of either a `(`[[position.Position.S]]`,
-   *         `[[content.Content]]`)` or a `List` of these tuples where the
-   *         [[position.Position]] is creating by modifiying `pos` and the
-   *         [[content.Content]] is derived from `con`.
+   * @return Optional of either a cell or a `List` of cells where the position
+   *         is creating by modifiying `pos` and the content is derived from
+   *         `con`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[content.Content]] they apply to. For example,
-   *       normalising is undefined for categorical variables. The transformer
-   *       now has the option to return `None`. This in turn permits an
-   *       external API, for simple cases, where the user need not know about
-   *       the types of variables of their data.
+   *       selective in what content they apply to. For example, normalising is
+   *       undefined for categorical variables. The transformer now has the
+   *       option to return `None`. This in turn permits an external API, for
+   *       simple cases, where the user need not know about the types of
+   *       variables of their data.
    * @note An `Either` is used to all either one-to-one or one-to-many
    *       transformations.
-   *
-   * @see [[transform.TransformableWithValue]]
    */
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V): Option[Either[Cell[P#S], List[Cell[P#S]]]]
 }
 
 /**
- * Convenience trait for [[Transformer]]s that present with or without using a
+ * Convenience trait for transformers that present with or without using a
  * user supplied value.
  */
 trait PresentAndWithValue extends Present with PresentWithValue {
@@ -102,31 +96,28 @@ trait PresentAndWithValue extends Present with PresentWithValue {
 }
 
 /**
- * Base trait for transformers that expand the [[position.Position]] by
- * appending a dimension.
+ * Base trait for transformers that expand the position by appending
+ * a dimension.
  */
 trait PresentExpanded { self: Transformer =>
   /**
-   * Present the transformed [[content.Content]](s).
+   * Present the transformed content(s).
    *
-   * @param pos The [[position.Position]] of the content.
-   * @param con The [[content.Content]] to transform.
+   * @param pos The position of the cell.
+   * @param con The content to transform.
    *
-   * @return Optional of either a `(`[[position.ExpandablePosition.M]]`,
-   *         `[[content.Content]]`)` or a `List` of these tuples where the
-   *         [[position.Position]] is creating by appending to `pos` and the
-   *         [[content.Content]] is derived from `con`.
+   * @return Optional of either a cell or a `List` of cells where the position
+   *         is creating by appending to `pos` and the content is derived from
+   *         `con`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[content.Content]] they apply to. For example,
-   *       normalising is undefined for categorical variables. The transformer
-   *       now has the option to return `None`. This in turn permits an
-   *       external API, for simple cases, where the user need not know about
-   *       the types of variables of their data.
+   *       selective in what content they apply to. For example, normalising is
+   *       undefined for categorical variables. The transformer now has the
+   *       option to return `None`. This in turn permits an external API, for
+   *       simple cases, where the user need not know about the types of
+   *       variables of their data.
    * @note An `Either` is used to all either one-to-one or one-to-many
    *       transformations.
-   *
-   * @see [[position.ExpandablePosition]], [[transform.TransformableExpanded]]
    */
   def present[P <: Position with ExpandablePosition](pos: P,
     con: Content): Option[Either[Cell[P#M], List[Cell[P#M]]]]
@@ -134,51 +125,45 @@ trait PresentExpanded { self: Transformer =>
 
 /**
  * Base trait for transformers that use a user supplied value and expand the
- * [[position.Position]] by appending a dimension.
+ * position by appending a dimension.
  */
 trait PresentExpandedWithValue { self: Transformer =>
   /** Type of the external value. */
   type V
 
   /**
-   * Present the transformed [[content.Content]](s).
+   * Present the transformed content(s).
    *
-   * @param pos The [[position.Position]] of the content.
-   * @param con The [[content.Content]] to transform.
+   * @param pos The position of the cell.
+   * @param con The content to transform.
    * @param ext The external value.
    *
-   * @return Optional of either a `(`[[position.ExpandablePosition.M]]`,
-   *         `[[content.Content]]`)` or a `List` of these tuples where the
-   *         [[position.Position]] is creating by appending to `pos` and the
-   *         [[content.Content]] is derived from `con`.
+   * @return Optional of either a cell or a `List` of cells where the position
+   *         is creating by appending to `pos` and the content is derived from
+   *         `con`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[content.Content]] they apply to. For example,
-   *       normalising is undefined for categorical variables. The transformer
-   *       now has the option to return `None`. This in turn permits an
-   *       external API, for simple cases, where the user need not know about
-   *       the types of variables of their data.
+   *       selective in what content they apply to. For example, normalising is
+   *       undefined for categorical variables. The transformer now has the
+   *       option to return `None`. This in turn permits an external API, for
+   *       simple cases, where the user need not know about the types of
+   *       variables of their data.
    * @note An `Either` is used to all either one-to-one or one-to-many
    *       transformations.
-   *
-   * @see [[position.ExpandablePosition]],
-   *      [[transform.TransformableExpandedWithValue]]
    */
   def present[P <: Position with ExpandablePosition](pos: P, con: Content,
     ext: V): Option[Either[Cell[P#M], List[Cell[P#M]]]]
 }
 
 /**
- * Transformer that is a combination of one or more [[Transformer]] with
- * [[Present]].
+ * Transformer that is a combination of one or more transformers with
+ * `Present`.
  *
  * @param singles `List` of transformers that are combined together.
  *
- * @note This need not be called in an application. The [[Transformable]]
- *       type class will convert any `List[`[[Transformer]]`]`
- *       automatically to one of these.
- *
- * @see [[Transformable]]
+ * @note This need not be called in an application. The `Transformable` type
+ *       class will convert any `List[Transformer]` automatically to one of
+ *       these.
  */
 case class CombinationTransformer[T <: Transformer with Present](
   singles: List[T]) extends Transformer with Present {
@@ -190,18 +175,17 @@ case class CombinationTransformer[T <: Transformer with Present](
 }
 
 /**
- * Transformer that is a combination of one or more [[Transformer]] with
- * [[PresentWithValue]].
+ * Transformer that is a combination of one or more transformers with
+ * `PresentWithValue`.
  *
  * @param singles `List` of transformers that are combined together.
  *
  * @note This need not be called in an application. The
- *       [[TransformableWithValue]] type class will convert any
- *       `List[`[[Transformer]]`]` automatically to one of these.
- *
- * @see [[TransformableWithValue]]
+ *       `TransformableWithValue` type class will convert any
+ *       `List[Transformer]` automatically to one of these.
  */
-case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue, W](singles: List[T]) extends Transformer with PresentWithValue {
+case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue, W](singles: List[T]) extends Transformer
+  with PresentWithValue {
   type V = W
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
@@ -212,18 +196,17 @@ case class CombinationTransformerWithValue[T <: Transformer with PresentWithValu
 }
 
 /**
- * Transformer that is a combination of one or more [[Transformer]] with
- * [[PresentExpanded]].
+ * Transformer that is a combination of one or more transformers with
+ * `PresentExpanded`.
  *
  * @param singles `List` of transformers that are combined together.
  *
  * @note This need not be called in an application. The
- *       [[TransformableExpanded]] type class will convert any
- *       `List[`[[Transformer]]`]` automatically to one of these.
- *
- * @see [[TransformableExpanded]]
+ *       `TransformableExpanded` type class will convert any
+ *       `List[Transformer]` automatically to one of these.
  */
-case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded](singles: List[T]) extends Transformer with PresentExpanded {
+case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded](singles: List[T]) extends Transformer
+  with PresentExpanded {
   def present[P <: Position with ExpandablePosition](pos: P, con: Content) = {
     Some(Right(singles.flatMap {
       case s => Misc.mapFlatten(s.present(pos, con))
@@ -232,18 +215,17 @@ case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded]
 }
 
 /**
- * Transformer that is a combination of one or more [[Transformer]] with
- * [[PresentExpandedWithValue]].
+ * Transformer that is a combination of one or more transformers with
+ * `PresentExpandedWithValue`.
  *
  * @param singles `List` of transformers that are combined together.
  *
  * @note This need not be called in an application. The
- *       [[TransformableExpandedWithValue]] type class will convert any
- *       `List[`[[Transformer]]`]` automatically to one of these.
- *
- * @see [[TransformableExpandedWithValue]]
+ *       `TransformableExpandedWithValue` type class will convert any
+ *       `List[Transformer]` automatically to one of these.
  */
-case class CombinationTransformerExpandedWithValue[T <: Transformer with PresentExpandedWithValue, W](singles: List[T]) extends Transformer with PresentExpandedWithValue {
+case class CombinationTransformerExpandedWithValue[T <: Transformer with PresentExpandedWithValue, W](singles: List[T]) extends Transformer
+  with PresentExpandedWithValue {
   type V = W
   def present[P <: Position with ExpandablePosition](pos: P, con: Content,
     ext: W) = {
@@ -254,25 +236,24 @@ case class CombinationTransformerExpandedWithValue[T <: Transformer with Present
 }
 
 /**
- * Type class for transforming a type `T` to a [[Transformer]] with [[Present]].
+ * Type class for transforming a type `T` to a `Transformer with Present`.
  */
 trait Transformable[T] {
   /**
-   * Returns a [[Transformer]] with [[Present]] for type `T`.
+   * Returns a `Transformer with Present` for type `T`.
    *
-   * @param t Object that can be converted to a [[Transformer]] with
-   *          [[Present]].
+   * @param t Object that can be converted to a `Transformer with Present`.
    */
   def convert(t: T): Transformer with Present
 }
 
-/** Companion object for the [[Transformable]] type class. */
+/** Companion object for the `Transformable` type class. */
 object Transformable {
   /**
-   * Converts a `List[`[[Transformer]] with [[Present]]`]` to a single
-   * [[Transformer]] with [[Present]] using [[CombinationTransformer]].
+   * Converts a `List[Transformer with Present]` to a single
+   * `Transformer with Present` using `CombinationTransformer`.
    */
-  implicit def TransformerListTransformable[T <: Transformer with Present]: Transformable[List[T]] = {
+  implicit def LT2T[T <: Transformer with Present]: Transformable[List[T]] = {
     new Transformable[List[T]] {
       def convert(t: List[T]): Transformer with Present = {
         CombinationTransformer(t)
@@ -280,10 +261,10 @@ object Transformable {
     }
   }
   /**
-   * Converts a [[Transformer]] with [[Present]] to a [[Transformer]] with
-   * [[Present]]; that is, * it is a pass through.
+   * Converts a `Transformer with Present` to a `Transformer with Present`;
+   * that is, * it is a pass through.
    */
-  implicit def TransformerTransformable[T <: Transformer with Present]: Transformable[T] = {
+  implicit def T2T[T <: Transformer with Present]: Transformable[T] = {
     new Transformable[T] {
       def convert(t: T): Transformer with Present = t
     }
@@ -291,27 +272,27 @@ object Transformable {
 }
 
 /**
- * Type class for transforming a type `T` to a [[Transformer]] with
- * [[PresentWithValue]].
+ * Type class for transforming a type `T` to a
+ * `Transformer with PresentWithValue`.
  */
 trait TransformableWithValue[T, W] {
   /**
-   * Returns a [[Transformer]] with [[PresentWithValue]] for type `T`.
+   * Returns a `Transformer with PresentWithValue` for type `T`.
    *
-   * @param t Object that can be converted to a [[Transformer]] with
-   *          [[PresentWithValue]].
+   * @param t Object that can be converted to a
+   *          `Transformer with PresentWithValue`.
    */
   def convert(t: T): Transformer with PresentWithValue
 }
 
-/** Companion object for the [[TransformableWithValue]] type class. */
+/** Companion object for the `TransformableWithValue` type class. */
 object TransformableWithValue {
   /**
-   * Converts a `List[`[[Transformer]] with [[PresentWithValue]]`]` to a
-   * single [[Transformer]] with [[PresentWithValue]] using
-   * [[CombinationTransformerWithValue]].
+   * Converts a `List[Transformer with PresentWithValue]` to a single
+   * `Transformer with PresentWithValue` using
+   * `CombinationTransformerWithValue`.
    */
-  implicit def TransformerListTransformableWithValue[T <: Transformer with PresentWithValue { type V >: W }, W]: TransformableWithValue[List[T], W] = {
+  implicit def LT2TWV[T <: Transformer with PresentWithValue { type V >: W }, W]: TransformableWithValue[List[T], W] = {
     new TransformableWithValue[List[T], W] {
       def convert(t: List[T]): Transformer with PresentWithValue = {
         CombinationTransformerWithValue[Transformer with PresentWithValue, W](t)
@@ -319,10 +300,10 @@ object TransformableWithValue {
     }
   }
   /**
-   * Converts a [[Transformer]] with [[PresentWithValue]] to a [[Transformer]]
-   * with [[PresentWithValue]]; that is, * it is a pass through.
+   * Converts a `Transformer with PresentWithValue` to a
+   * `Transformer with PresentWithValue`; that is, * it is a pass through.
    */
-  implicit def TransformerTransformableWithValue[T <: Transformer with PresentWithValue { type V >: W }, W]: TransformableWithValue[T, W] = {
+  implicit def T2TWV[T <: Transformer with PresentWithValue { type V >: W }, W]: TransformableWithValue[T, W] = {
     new TransformableWithValue[T, W] {
       def convert(t: T): Transformer with PresentWithValue = t
     }
@@ -330,27 +311,26 @@ object TransformableWithValue {
 }
 
 /**
- * Type class for transforming a type `T` to a [[Transformer]] with
- * [[PresentExpanded]].
+ * Type class for transforming a type `T` to a
+ * `Transformer with PresentExpanded`.
  */
 trait TransformableExpanded[T] {
   /**
-   * Returns a [[Transformer]] with [[PresentExpanded]] for type `T`.
+   * Returns a `Transformer with PresentExpanded` for type `T`.
    *
-   * @param t Object that can be converted to a [[Transformer]] with
-   *          [[PresentExpanded]].
+   * @param t Object that can be converted to a
+   *          `Transformer with PresentExpanded`.
    */
   def convert(t: T): Transformer with PresentExpanded
 }
 
-/** Companion object for the [[TransformableExpanded]] type class. */
+/** Companion object for the `TransformableExpanded` type class. */
 object TransformableExpanded {
   /**
-   * Converts a `List[`[[Transformer]] with [[PresentExpanded]]`]` to a single
-   * [[Transformer]] with [[PresentExpanded]] using
-   * [[CombinationTransformerExpanded]].
+   * Converts a `List[Transformer with PresentExpanded]` to a single
+   * `Transformer with PresentExpanded` using `CombinationTransformerExpanded`.
    */
-  implicit def TransformerListTransformableExpanded[T <: Transformer with PresentExpanded]: TransformableExpanded[List[T]] = {
+  implicit def LT2TE[T <: Transformer with PresentExpanded]: TransformableExpanded[List[T]] = {
     new TransformableExpanded[List[T]] {
       def convert(t: List[T]): Transformer with PresentExpanded = {
         CombinationTransformerExpanded(t)
@@ -358,10 +338,10 @@ object TransformableExpanded {
     }
   }
   /**
-   * Converts a [[Transformer]] with [[PresentExpanded]] to a [[Transformer]]
-   * with [[PresentExpanded]]; that is, * it is a pass through.
+   * Converts a `Transformer with PresentExpanded` to a
+   * `Transformer with PresentExpanded`; that is, it is a pass through.
    */
-  implicit def TransformerTransformableExpanded[T <: Transformer with PresentExpanded]: TransformableExpanded[T] = {
+  implicit def T2TE[T <: Transformer with PresentExpanded]: TransformableExpanded[T] = {
     new TransformableExpanded[T] {
       def convert(t: T): Transformer with PresentExpanded = t
     }
@@ -369,27 +349,27 @@ object TransformableExpanded {
 }
 
 /**
- * Type class for transforming a type `T` to a [[Transformer]] with
- * [[PresentExpandedWithValue]].
+ * Type class for transforming a type `T` to a
+ * `Transformer with PresentExpandedWithValue`.
  */
 trait TransformableExpandedWithValue[T, W] {
   /**
-   * Returns a [[Transformer]] with [[PresentExpandedWithValue]] for type `T`.
+   * Returns a `Transformer with PresentExpandedWithValue` for type `T`.
    *
-   * @param t Object that can be converted to a [[Transformer]] with
-   *          [[PresentExpandedWithValue]].
+   * @param t Object that can be converted to a
+   *          `Transformer with PresentExpandedWithValue`.
    */
   def convert(t: T): Transformer with PresentExpandedWithValue
 }
 
-/** Companion object for the [[TransformableExpandedWithValue]] type class. */
+/** Companion object for the `TransformableExpandedWithValue` type class. */
 object TransformableExpandedWithValue {
   /**
-   * Converts a `List[`[[Transformer]] with [[PresentExpandedWithValue]]`]` to
-   * a single [[Transformer]] with [[PresentExpandedWithValue]] using
-   * [[CombinationTransformerExpandedWithValue]].
+   * Converts a `List[Transformer with PresentExpandedWithValue]` to
+   * a single `Transformer with PresentExpandedWithValue` using
+   * `CombinationTransformerExpandedWithValue`.
    */
-  implicit def TransformerListTransformableExpandedWithValue[T <: Transformer with PresentExpandedWithValue { type V >: W }, W]: TransformableExpandedWithValue[List[T], W] = {
+  implicit def LT2TEWV[T <: Transformer with PresentExpandedWithValue { type V >: W }, W]: TransformableExpandedWithValue[List[T], W] = {
     new TransformableExpandedWithValue[List[T], W] {
       def convert(t: List[T]): Transformer with PresentExpandedWithValue = {
         CombinationTransformerExpandedWithValue[Transformer with PresentExpandedWithValue, W](t)
@@ -397,11 +377,10 @@ object TransformableExpandedWithValue {
     }
   }
   /**
-   * Converts a [[Transformer]] with [[PresentExpandedWithValue]] to a
-   * [[Transformer]] with [[PresentExpandedWithValue]]; that is, it is a
-   * pass through.
+   * Converts a `Transformer with PresentExpandedWithValue` to a
+   * `Transformer with PresentExpandedWithValue`; that is, it is a pass through.
    */
-  implicit def TransformderTransformableExpandedWithValue[T <: Transformer with PresentExpandedWithValue { type V >: W }, W]: TransformableExpandedWithValue[T, W] = {
+  implicit def T2TEWV[T <: Transformer with PresentExpandedWithValue { type V >: W }, W]: TransformableExpandedWithValue[T, W] = {
     new TransformableExpandedWithValue[T, W] {
       def convert(t: T): Transformer with PresentExpandedWithValue = t
     }

@@ -16,18 +16,18 @@ package au.com.cba.omnia.grimlock.reduce
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.encoding._
 import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.content.variable.Type._
+import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.Type._
 
 /**
  * Count reductions.
  *
- * @param name [[position.coordinate.Coordinate]] for the count values.
+ * @param name Coordinate name for the count values.
  *
- * @note `name` is only used when presenting [[PresentMultiple]].
+ * @note `name` is only used when presenting `PresentMultiple`.
  */
 case class Count(name: String = "count") extends Reducer
   with PrepareAndWithValue with PresentSingleAndMultiple {
@@ -51,9 +51,9 @@ case class Count(name: String = "count") extends Reducer
  * @param nan    Indicator if 'NaN' string should be output if the reduction
  *               failed (for example due to non-numeric data).
  * @param only   Subset of moments (1..4) to compute.
- * @param names  Names of the computed moments.
+ * @param names  Coordinate names of the computed moments.
  *
- * @note `names` is only used when presenting [[PresentMultiple]].
+ * @note `names` is only used when presenting `PresentMultiple`.
  */
 case class Moments(strict: Boolean = true, nan: Boolean = false,
   only: List[Int] = List(1, 2, 3, 4),
@@ -164,16 +164,16 @@ case class Sum(strict: Boolean = true, nan: Boolean = false,
  * Compute histogram.
  *
  * @param all       Indicator if histogram should apply to all data, or just
- *                  [[content.variable.Type.Categorical]].
+ *                  categorical variables.
  * @param meta      Return meta data statistics of the histogram (num
  *                  categories, frequency ratio, entropy) also.
- * @param names     Names for the meta data statistics.
+ * @param names     Coordinate names for the meta data statistics.
  * @param prefix    Prefix string for use on categories.
  * @param separator If a `prefix` is used, this is the separator used in
- *                  [[position.Position.toShortString]].
+ *                  `Position.toShortString`.
  *
  * @note Usage of a `%s` in the prefix will be substituded with
- *       [[position.Position.toShortString]].
+ *       `Position.toShortString`.
  */
 // TODO: Add option to limit maximum number of categories
 case class Histogram(all: Boolean = false, meta: Boolean = true,
@@ -243,10 +243,10 @@ case class Histogram(all: Boolean = false, meta: Boolean = true,
  * @param strict    Indicates if strict data handling is required. If so then
  *                  any non-numeric value fails the reduction. If not then
  *                  non-numeric values are silently ignored.
- * @param na        The `String` to use if the reduction failed (for example
+ * @param nan       The `String` to use if the reduction failed (for example
  *                  due to non-numeric data).
  * @param threshold The threshold value.
- * @param names     Names of the counts.
+ * @param names     Coordinate names of the counts.
  */
 // TODO: Test this
 case class ThresholdCount(strict: Boolean = true, nan: Boolean = false,
@@ -324,9 +324,9 @@ case class WeightedSum(dim: Dimension, state: String = "weight")
 /**
  * Distinct count reductions.
  *
- * @param name [[position.coordinate.Coordinate]] for the distinct count values.
+ * @param name Coordinate name for the distinct count values.
  *
- * @note `name` is only used when presenting [[PresentMultiple]].
+ * @note `name` is only used when presenting `PresentMultiple`.
  */
 // TODO: Test this
 case class DistinctCount(name: String = "distinct.count") extends Reducer

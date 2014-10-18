@@ -16,19 +16,18 @@ package au.com.cba.omnia.grimlock.pairwise
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.encoding._
 import au.com.cba.omnia.grimlock.content.metadata._
+import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
-case class Multiply(separator: String = "|") extends Operator
-  with ComputeAndWithValue {
+case class Multiply() extends Operator with ComputeAndWithValue {
   def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slc: Slice[P, D], x: Cell[P], y: Cell[P]): Option[Cell[P#S]] = {
-    (slc.selected(x._1).compare(slc.selected(y._1)) > 0,
-      x._2.value.asDouble, y._2.value.asDouble) match {
+    slice: Slice[P, D], left: Cell[P], right: Cell[P]): Option[Cell[P#S]] = {
+    (slice.selected(left._1).compare(slice.selected(right._1)) > 0,
+      left._2.value.asDouble, right._2.value.asDouble) match {
         case (true, Some(l), Some(r)) =>
-          Some((x._1.merge(y._1, "(%s*%s)"),
+          Some((left._1.merge(right._1, "(%s*%s)"),
             Content(ContinuousSchema[Codex.DoubleCodex](), l * r)))
         case _ => None
       }

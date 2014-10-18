@@ -32,15 +32,15 @@ trait Assign { self: Partitioner =>
   /**
    * Assign the cell to a partition.
    *
-   * @param pos The [[position.Position]] of the content.
+   * @param pos The position of the content.
    *
    * @return Optional of either a `T` or a `List[T]`, where the instances
    *         of `T` identify the partitions.
    *
    * @note An `Option` is returned to allow partitioners to be selective in
-   *       which partition a [[position.Position]] is assigned to. An `Either`
-   *       is returned to allow a partitioner to assign a [[position.Position]]
-   *       to more than one partition.
+   *       which partition a position is assigned to. An `Either` is returned
+   *       to allow a partitioner to assign a position to more than one
+   *       partitions.
    */
   def assign[P <: Position](pos: P): Option[Either[T, List[T]]]
 }
@@ -53,22 +53,22 @@ trait AssignWithValue { self: Partitioner =>
   /**
    * Assign the cell to a partition using a user supplied value.
    *
-   * @param pos The [[position.Position]] of the content.
+   * @param pos The position of the content.
    * @param ext The user supplied value.
    *
    * @return Optional of either a `T` or a `List[T]`, where the instances
    *         of `T` identify the partitions.
    *
    * @note An `Option` is returned to allow partitioners to be selective in
-   *       which partition a [[position.Position]] is assigned to. An `Either`
-   *       is returned to allow a partitioner to assign a [[position.Position]]
-   *       to more than one partition.
+   *       which partition a position is assigned to. An `Either` is returned
+   *       to allow a partitioner to assign a position to more than one
+   *       partitions.
    */
   def assign[P <: Position](pos: P, ext: V): Option[Either[T, List[T]]]
 }
 
 /**
- * Convenience trait for [[Partitioner]]s that assigns with or without using a
+ * Convenience trait for partitioners that assigns with or without using a
  * user supplied value.
  */
 trait AssignAndWithValue extends Assign with AssignWithValue {
@@ -79,11 +79,9 @@ trait AssignAndWithValue extends Assign with AssignWithValue {
 }
 
 /**
- * Rich wrapper around a `TypedPipe[(T, (`[[position.Position]]`,
- * `[[content.Content]]`))]`.
+ * Rich wrapper around a `TypedPipe[(T, (Position, Content))]`.
  *
- * @param data `TypedPipe[(T, (`[[position.Position]]`,
- *             `[[content.Content]]`))]`.
+ * @param data The `TypedPipe[(T, (Position, Content))]`.
  */
 class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
   // TODO: Add 'keys'/'hasKey'/'set'/'modify' methods?
@@ -94,22 +92,21 @@ class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
    *
    * @param key The partition for which to get the data.
    *
-   * @return A `TypedPipe[(`[[position.Position]]`, `[[content.Content]]`)]`.
+   * @return A `TypedPipe[(Position, Content)]`; that is a matrix.
    */
   def get(key: T): TypedPipe[Cell[P]] = {
     data.collect { case (t, pc) if (key == t) => pc }
   }
 
   /**
-   * Persist a [[Partitions]] to disk.
+   * Persist partitions to disk.
    *
    * @param file        Name of the output file.
-   * @param separator   Separator to use between `T`, [[position.Position]]
-   *                    and [[content.Content]].
+   * @param separator   Separator to use between `T`, the position and content.
    * @param descriptive Indicates if the output should be descriptive.
    *
-   * @return A Scalding `TypedPipe[(T, (P, `[[content.Content]]`))]` which
-   *         is this [[Partitions]].
+   * @return A Scalding `TypedPipe[(T, (Position, Content))]` which is this
+   *         object's data.
    */
   def persist(file: String, separator: String = "|",
     descriptive: Boolean = false)(implicit flow: FlowDef,
@@ -133,12 +130,9 @@ class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
 
 object Partitions {
   /**
-   * Conversion from `TypedPipe[(T, (`[[position.Position]]`,
-   * `[[content.Content]]`))]` to a [[Partitions]].
+   * Conversion from `TypedPipe[(T, (Position, Content))]` to a `Partitions`.
    */
-  implicit def typedPipeTPositionContent[T: Ordering, P <: Position](
-    data: TypedPipe[(T, Cell[P])]): Partitions[T, P] = {
-    new Partitions(data)
-  }
+  implicit def TPTPC2P[T: Ordering, P <: Position](
+    data: TypedPipe[(T, Cell[P])]): Partitions[T, P] = new Partitions(data)
 }
 

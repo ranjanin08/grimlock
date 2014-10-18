@@ -14,24 +14,23 @@
 
 package au.com.cba.omnia.grimlock.partition
 
+import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.position.coordinate._
 
 import java.util.Date
 
 /**
- * Binary partition based on the hash code of a
- * [[position.coordinate.Coordinate]].
+ * Binary partition based on the hash code of a coordinate.
  *
- * @param dim   The [[position.Dimension]] to partition on.
+ * @param dim   The dimension to partition on.
  * @param ratio The binary split ratio (relative to `base`).
  * @param left  The identifier for the left partition.
  * @param right The identifier for the right partition.
  * @param base  The base for the ratio.
  *
  * @note The hash code modulo `base` is used for comparison with the ratio.
- * @note The [[position.Position]] is assigned to the left partition
- *       if it is less or equal to the `ratio` value.
+ * @note The position is assigned to the left partition if it is less or
+ *       equal to the `ratio` value.
  */
 case class BinaryHashSplit[S: Ordering](dim: Dimension, ratio: Int, left: S,
   right: S, base: Int = 100) extends Partitioner with AssignAndWithValue {
@@ -44,10 +43,9 @@ case class BinaryHashSplit[S: Ordering](dim: Dimension, ratio: Int, left: S,
 }
 
 /**
- * Ternary partition based on the hash code of a
- * [[position.coordinate.Coordinate]].
+ * Ternary partition based on the hash code of a coordinate.
  *
- * @param dim    The [[position.Dimension]] to partition on.
+ * @param dim    The dimension to partition on.
  * @param lower  The lower ternary split ratio (relative to `base`).
  * @param upper  The upper ternary split ratio (relative to `base`).
  * @param left   The identifier for the left partition.
@@ -56,9 +54,9 @@ case class BinaryHashSplit[S: Ordering](dim: Dimension, ratio: Int, left: S,
  * @param base   The base for the ratio.
  *
  * @note The hash code modulo `base` is used for comparison with lower/upper.
- * @note The [[position.Position]] is assigned to the partition `left` if
- *       it is less or equal to `lower`, `middle` if it is less of equal to
- *       `upper` or else to `right`.
+ * @note The position is assigned to the partition `left` if it is less or
+ *       equal to `lower`, `middle` if it is less of equal to `upper` or else
+ *       to `right`.
  */
 // TODO: Test this
 case class TernaryHashSplit[S: Ordering](dim: Dimension, lower: Int,
@@ -75,17 +73,17 @@ case class TernaryHashSplit[S: Ordering](dim: Dimension, lower: Int,
 }
 
 /**
- * Partition based on the hash code of a [[position.coordinate.Coordinate]].
+ * Partition based on the hash code of a coordinate.
  *
- * @param dim    The [[position.Dimension]] to partition on.
+ * @param dim    The dimension to partition on.
  * @param ranges A `Map` holding the partitions and hash code ranges
  *               (relative to `base`) for each partition.
  * @param base   The base for hash code.
  *
  * @note The hash code modulo `base` is used for comparison with the range.
- * @note A [[position.Position]] falls in a range if it is (strictly) greater
- *       than the lower value (first value in tuple) and less or equal to the
- *       upper value (second value in tuple).
+ * @note A position falls in a range if it is (strictly) greater than the
+ *       lower value (first value in tuple) and less or equal to the upper
+ *       value (second value in tuple).
  */
 // TODO: Test this
 case class HashSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Int, Int)],
@@ -103,58 +101,59 @@ case class HashSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Int, Int)],
 }
 
 /**
- * Binary partition based on the date of a [[position.coordinate.Coordinate]].
+ * Binary partition based on the date of a coordinate.
  *
- * @param dim   The [[position.Dimension]] to partition on.
+ * @param dim   The dimension to partition on.
  * @param date  The date around which to split.
  * @param left  The identifier for the left partition.
  * @param right The identifier for the right partition.
+ * @param codex  The date codex used for comparison.
  *
- * @note The [[position.Position]] is assigned to the `left` partition
- *       if it is less or equal to the `date` value, to `right` otherwise.
+ * @note The position is assigned to the `left` partition if it is less or
+ *       equal to the `date` value, to `right` otherwise.
  */
 // TODO: Test this
 case class BinaryDateSplit[S: Ordering](dim: Dimension, date: Date, left: S,
-  right: S) extends Partitioner with AssignAndWithValue {
+  right: S, codex: DateAndTimeCodex = DateCodex) extends Partitioner
+  with AssignAndWithValue {
   type T = S
 
   def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
     val coord = pos.get(dim)
-    val codex = coord.codex
 
-    codex.compare(coord, DateCoordinate(date, codex)).map {
+    codex.compare(coord, codex.toValue(date)).map {
       case cmp => Left(if (cmp <= 0) left else right)
     }
   }
 }
 
 /**
- * Ternary partition based on the date of a
- * [[position.coordinate.Coordinate]].
+ * Ternary partition based on the date of a coordinate.
  *
- * @param dim    The [[position.Dimension]] to partition on.
+ * @param dim    The dimension to partition on.
  * @param lower  The lower date around which to split.
  * @param upper  The upper date around which to split.
  * @param left   The identifier for the left partition.
  * @param middle The identifier for the middle partition.
  * @param right  The identifier for the right partition.
+ * @param codex  The date codex used for comparison.
  *
- * @note The [[position.Position]] is assigned to the partition `left` if
- *       it is less or equal to `lower`, `middle` if it is less of equal to
- *       `upper` or else to `right`.
+ * @note The position is assigned to the partition `left` if it is less or
+ *       equal to `lower`, `middle` if it is less of equal to `upper` or
+ *       else to `right`.
  */
 // TODO: Test this
 case class TernaryDateSplit[S: Ordering](dim: Dimension, lower: Date,
-  upper: Date, left: S, middle: S, right: S) extends Partitioner
+  upper: Date, left: S, middle: S, right: S,
+  codex: DateAndTimeCodex = DateCodex) extends Partitioner
   with AssignAndWithValue {
   type T = S
 
   def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
     val coord = pos.get(dim)
-    val codex = coord.codex
 
-    (codex.compare(coord, DateCoordinate(lower, codex)),
-      codex.compare(coord, DateCoordinate(upper, codex))) match {
+    (codex.compare(coord, codex.toValue(lower)),
+      codex.compare(coord, codex.toValue(upper))) match {
         case (Some(l), Some(u)) =>
           Some(Left(if (l <= 0) left else if (u <= 0) middle else right))
         case _ => None
@@ -163,28 +162,29 @@ case class TernaryDateSplit[S: Ordering](dim: Dimension, lower: Date,
 }
 
 /**
- * Partition based on the date of a [[position.coordinate.Coordinate]].
+ * Partition based on the date of a coordinate.
  *
- * @param dim    The [[position.Dimension]] to partition on.
+ * @param dim    The dimension to partition on.
  * @param ranges A `Map` holding the partitions and date ranges for each
  *               partition.
+ * @param codex  The date codex used for comparison.
  *
- * @note A [[position.Position]] falls in a range if it is (strictly)
- *       greater than the lower value (first value in tuple) and less or
- *       equal to the upper value (second value in tuple).
+ * @note A position falls in a range if it is (strictly) greater than the
+ *       lower value (first value in tuple) and less or equal to the upper
+ *       value (second value in tuple).
  */
 // TODO: Test this
-case class DateSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Date, Date)])
-  extends Partitioner with AssignAndWithValue {
+case class DateSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Date, Date)],
+  codex: DateAndTimeCodex = DateCodex) extends Partitioner
+  with AssignAndWithValue {
   type T = S
 
   def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
     val coord = pos.get(dim)
-    val codex = coord.codex
     val parts = ranges.flatMap {
       case (k, (lower, upper)) =>
-        (codex.compare(coord, DateCoordinate(lower, codex)),
-          codex.compare(coord, DateCoordinate(upper, codex))) match {
+        (codex.compare(coord, codex.toValue(lower)),
+          codex.compare(coord, codex.toValue(upper))) match {
             case (Some(l), Some(u)) if (l > 0 && u <= 0) => Some(k)
             case _ => None
           }

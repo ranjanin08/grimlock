@@ -23,9 +23,9 @@ import au.com.cba.omnia.grimlock.utility.{ Miscellaneous => Misc }
 /**
  * Base trait for reductions.
  *
- * @note Aggregator/aggregate are already available on a TypedPipe. So, to
+ * @note Aggregator/aggregate are already available on a `TypedPipe`. So, to
  *       prevent name clashes, Reducer/reduce are used instead. The net
- *       effect is still that Reducers aggregator over a [[Matrix]].
+ *       effect is still that Reducers aggregator over a matrix.
  */
 trait Reducer {
   /** Type of the state being reduced (aggregated). */
@@ -47,10 +47,10 @@ trait Prepare { self: Reducer =>
   /**
    * Prepare for reduction.
    *
-   * @param pos Original [[position.Position]] corresponding to the
-   *            [[content.Content]]. That is, it's the position prior
-   *            to [[Slice.selected]] being applied.
-   * @param con [[content.Content]] which is to be reduced.
+   * @param slc Encapsulates the dimension(s) over with to reduce.
+   * @param pos Original position corresponding to the cell. That is, it's the
+   *            position prior to `slc.selected` being applied.
+   * @param con Content which is to be reduced.
    *
    * @return State to reduce.
    */
@@ -65,10 +65,10 @@ trait PrepareWithValue { self: Reducer =>
   /**
    * Prepare for reduction.
    *
-   * @param pos Original [[position.Position]] corresponding to the
-   *            [[content.Content]]. That is, it's the position prior
-   *            to [[Slice.selected]] being applied.
-   * @param con [[content.Content]] which is to be reduced.
+   * @param slc Encapsulates the dimension(s) over with to reduce.
+   * @param pos Original position corresponding to the cell. That is, it's the
+   *            position prior to `slc.selected` being applied.
+   * @param con Content which is to be reduced.
    * @param ext User provided data required for preparation.
    *
    * @return State to reduce.
@@ -78,7 +78,7 @@ trait PrepareWithValue { self: Reducer =>
 }
 
 /**
- * Convenience trait for [[Reducer]]s that can prepare with or without a user
+ * Convenience trait for reducers that can prepare with or without a user
  * supplied value.
  */
 trait PrepareAndWithValue extends Prepare with PrepareWithValue {
@@ -92,22 +92,21 @@ trait PrepareAndWithValue extends Prepare with PrepareWithValue {
 /** Base trait for reductions that return a single value. */
 trait PresentSingle { self: Reducer =>
   /**
-   * Present the reduced [[content.Content]].
+   * Present the reduced content.
    *
-   * @param pos The reduced [[position.Position]]. That is, the position
-   *            returned by [[Slice.selected]].
+   * @param pos The reduced position. That is, the position returned by
+   *            `Slice.selected`.
    * @param t   The reduced state.
    *
-   * @return Optional ([[position.Position]], [[content.Content]]) tuple
-   *         where the [[position.Position]] is `pos` and the
-   *         [[content.Content]] is derived from `t`.
+   * @return Optional cell where the position is `pos` and the content is
+   *         derived from `t`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[content.Content]] they apply to. For example,
-   *       computing the mean is undefined for categorical variables. The
-   *       reducer now has the option to return `None`. This in turn permits
-   *       an external API, for simple cases, where the user need not know
-   *       about the types of variables of their data.
+   *       selective in what content they apply to. For example, computing
+   *       the mean is undefined for categorical variables. The reducer now
+   *       has the option to return `None`. This in turn permits an external
+   *       API, for simple cases, where the user need not know about the
+   *       types of variables of their data.
    */
   def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]]
 }
@@ -115,41 +114,37 @@ trait PresentSingle { self: Reducer =>
 /** Base trait for reductions that return multiple values. */
 trait PresentMultiple { self: Reducer =>
   /**
-   * Present the reduced [[content.Content]](s).
+   * Present the reduced content](s).
    *
-   * @param pos The reduced [[position.Position]]. That is, the position
-   *            returned by [[Slice.selected]].
+   * @param pos The reduced position. That is, the position returned by
+   *            `Slice.selected`.
    * @param t   The reduced state.
    *
-   * @return Optional ([[position.ExpandablePosition.M]],
-   *         [[content.Content]]) tuple where the [[position.Position]] is
-   *         creating by appending to `pos`
-   *         ([[position.ExpandablePosition.append]]) and the
-   *         [[content.Content]](s) is derived from `t`.
+   * @return Optional cell tuple where the position is creating by appending
+   *         to `pos` (`append` method) and the content(s) is derived from `t`.
    *
    * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what [[content.Content]] they apply to. For example,
-   *       computing the mean is undefined for categorical variables. The
-   *       reducer now has the option to return `None`. This in turn permits
-   *       an external API, for simple cases, where the user need not know
-   *       about the types of variables of their data.
+   *       selective in what content they apply to. For example, computing
+   *       the mean is undefined for categorical variables. The reducer now
+   *       has the option to return `None`. This in turn permits an external
+   *       API, for simple cases, where the user need not know about the
+   *       types of variables of their data.
    */
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
     t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]]
 }
 
 /**
- * Convenience trait for [[Reducer]]s that present a value both as
- * [[PresentSingle]] and [[PresentMultiple]].
+ * Convenience trait for reducers that present a value both as `PresentSingle`
+ * and `PresentMultiple`.
  */
 trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple {
   self: Reducer =>
 
   /**
-   * [[position.coordinate.Coordinate]] name to use when presenting the
-   * value as [[PresentMultiple]].
+   * Coordinate name to use when presenting the value as `PresentMultiple`.
    */
-  val name: String // TODO: Make into Coordinateable?
+  val name: String // TODO: Make into Valueable?
 
   def presentSingle[P <: Position](pos: P,
     t: T): Option[Cell[P]] = content(t).map { case c => (pos, c) }
@@ -162,16 +157,16 @@ trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple {
 }
 
 /**
- * Reducer that is a combination of one or more [[Reducer]] with
- * [[PresentMultiple]].
+ * Reducer that is a combination of one or more reducer with `PresentMultiple`.
  *
  * @param reducers `List` of reducers that are combined together.
  *
- * @note This need not be called in an application. The
- *       [[ReducerableMultiple]] type class will convert any
- *       `List[`[[Reducer]]`]` automatically to one of these.
+ * @note This need not be called in an application. The `ReducerableMultiple`
+ *       type class will convert any `List[Reducer]` automatically to one of
+ *       these.
  */
-case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMultiple](reducers: List[T]) extends Reducer with Prepare with PresentMultiple {
+case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMultiple](reducers: List[T]) extends Reducer with Prepare
+  with PresentMultiple {
   type T = List[Any]
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
@@ -196,16 +191,17 @@ case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMult
 }
 
 /**
- * Reducer that is a combination of one or more [[Reducer]] with
- * [[PrepareWithValue]] with [[PresentMultiple]].
+ * Reducer that is a combination of one or more reducers with
+ * `PrepareWithValue` with `PresentMultiple`.
  *
  * @param reducers `List` of reducers that are combined together.
  *
  * @note This need not be called in an application. The
- *       [[ReducerableMultipleWithValue]] type class will convert any
- *       `List[`[[Reducer]]`]` automatically to one of these.
+ *       `ReducerableMultipleWithValue` type class will convert any
+ *       `List[Reducer]` automatically to one of these.
  */
-case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValue with PresentMultiple, W](reducers: List[T]) extends Reducer with PrepareWithValue with PresentMultiple {
+case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValue with PresentMultiple, W](reducers: List[T])
+  extends Reducer with PrepareWithValue with PresentMultiple {
   type T = List[Any]
   type V = W
 
@@ -234,26 +230,24 @@ case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValu
 }
 
 /**
- * Type class for transforming a type `T` to a [[Reducer]] with
- * [[PresentMultiple]].
+ * Type class for transforming a type `T` to a reducer` with `PresentMultiple`.
  */
 trait ReducerableMultiple[T] {
   /**
-   * Returns a [[Reducer]] with [[PresentMultiple]] for type `T`.
+   * Returns a reducer with `PresentMultiple` for type `T`.
    *
-   * @param t Object that can be converted to a [[Reducer]] with
-   *          [[PresentMultiple]].
+   * @param t Object that can be converted to a reducer with `PresentMultiple`.
    */
   def convert(t: T): Reducer with Prepare with PresentMultiple
 }
 
-/** Companion object for the [[ReducerableMultiple]] type class. */
+/** Companion object for the `ReducerableMultiple` type class. */
 object ReducerableMultiple {
   /**
-   * Converts a `List[`[[Reducer]] with [[PresentMultiple]]`]` to a single
-   * [[Reducer]] with [[PresentMultiple]] using [[CombinationReducerMultiple]].
+   * Converts a `List[Reducer with PresentMultiple]` to a single
+   * reducer with `PresentMultiple` using `CombinationReducerMultiple`.
    */
-  implicit def ReducerListReducerableMultiple[T <: Reducer with Prepare with PresentMultiple]: ReducerableMultiple[List[T]] = {
+  implicit def LR2RM[T <: Reducer with Prepare with PresentMultiple]: ReducerableMultiple[List[T]] = {
     new ReducerableMultiple[List[T]] {
       def convert(t: List[T]): Reducer with Prepare with PresentMultiple = {
         CombinationReducerMultiple(t)
@@ -261,10 +255,10 @@ object ReducerableMultiple {
     }
   }
   /**
-   * Converts a [[Reducer]] with [[PresentMultiple]] to a [[Reducer]] with
-   * [[PresentMultiple]]; that is, it is a pass through.
+   * Converts a reducer with `PresentMultiple` to a reducer with
+   * `PresentMultiple`; that is, it is a pass through.
    */
-  implicit def ReducerReducerableMultiple[T <: Reducer with Prepare with PresentMultiple]: ReducerableMultiple[T] = {
+  implicit def R2RM[T <: Reducer with Prepare with PresentMultiple]: ReducerableMultiple[T] = {
     new ReducerableMultiple[T] {
       def convert(t: T): Reducer with Prepare with PresentMultiple = t
     }
@@ -272,28 +266,28 @@ object ReducerableMultiple {
 }
 
 /**
- * Type class for transforming a type `T` to a [[Reducer]] with
- * [[PrepareWithValue]] with [[PresentMultiple]].
+ * Type class for transforming a type `T` to a reducer with `PrepareWithValue`
+ * with `PresentMultiple`.
  */
 trait ReducerableMultipleWithValue[T, W] {
   /**
-   * Returns a [[Reducer]] with [[PrepareWithValue]] with [[PresentMultiple]]
+   * Returns a reducer with `PrepareWithValue` with `PresentMultiple`
    * for type `T`.
    *
-   * @param t Object that can be converted to a [[Reducer]] with
-   *          [[PrepareWithValue]] with [[PresentMultiple]].
+   * @param t Object that can be converted to a reducer with
+   *          `PrepareWithValue` with `PresentMultiple`.
    */
   def convert(t: T): Reducer with PrepareWithValue with PresentMultiple
 }
 
-/** Companion object for the [[ReducerableMultipleWithValue]] type class. */
+/** Companion object for the `ReducerableMultipleWithValue` type class. */
 object ReducerableMultipleWithValue {
   /**
-   * Converts a `List[`[[Reducer]] with [[PrepareWithValue]] with
-   * [[PresentMultiple]]`]` to a single [[Reducer]] with [[PrepareWithValue]]
-   * with [[PresentMultiple]] using [[CombinationReducerMultipleWithValue]].
+   * Converts a `List[Reducer with PrepareWithValue with PresentMultiple]` to
+   * a single `Reducer with PrepareWithValue with PresentMultiple` using
+   * 'CombinationReducerMultipleWithValue`.
    */
-  implicit def ReducerListReducerableMultipleWithValue[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W]: ReducerableMultipleWithValue[List[T], W] = {
+  implicit def LR2RMWV[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W]: ReducerableMultipleWithValue[List[T], W] = {
     new ReducerableMultipleWithValue[List[T], W] {
       def convert(t: List[T]): Reducer with PrepareWithValue with PresentMultiple = {
         CombinationReducerMultipleWithValue[Reducer with PrepareWithValue with PresentMultiple, W](t)
@@ -301,11 +295,11 @@ object ReducerableMultipleWithValue {
     }
   }
   /**
-   * Converts a [[Reducer]] with [[PrepareWithValue]] with [[PresentMultiple]]
-   * to a [[Reducer]] with [[PrepareWithValue]] with [[PresentMultiple]]; that
-   * is, it is a pass through.
+   * Converts a `Reducer with PrepareWithValue with PresentMultiple` to a
+   * `Reducer with PrepareWithValue with PresentMultiple`; that is, it is
+   * a pass through.
    */
-  implicit def ReducerReducerableMultipleWithValue[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W]: ReducerableMultipleWithValue[T, W] = {
+  implicit def R2RMWV[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W]: ReducerableMultipleWithValue[T, W] = {
     new ReducerableMultipleWithValue[T, W] {
       def convert(t: T): Reducer with PrepareWithValue with PresentMultiple = t
     }

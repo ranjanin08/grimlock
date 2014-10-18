@@ -14,41 +14,37 @@
 
 package au.com.cba.omnia.grimlock.utility
 
-/** Hetrogeneous comparison results. */
-trait CompareResult
+/**
+ * This code is a carbon copy of an answer on stackoverflow:
+ *
+ *   http://stackoverflow.com/questions/6909053/enforce-type-difference
+ *
+ * It can be used to ensure that the types of arguments are not equal.
+ */
+sealed class =!=[A, B]
 
 /**
- * Invalid comparison, for example when comparing to values of different types.
+ * This code is a carbon copy of an answer on stackoverflow:
+ *
+ *   http://stackoverflow.com/questions/6909053/enforce-type-difference
+ *
+ * It can be used to ensure that the types of arguments are not equal.
  */
-case object Invalid extends CompareResult
-/** Result when x >= y. */
-case object GreaterEqual extends CompareResult
-/** Result when x > y. */
-case object Greater extends CompareResult
-/** Result when x = y. */
-case object Equal extends CompareResult
-/** Result when x < y. */
-case object Less extends CompareResult
-/** Result when x <= y. */
-case object LessEqual extends CompareResult
+trait LowerPriorityImplicits {
+  /** do not call explicitly! */
+  implicit def equal[A]: =!=[A, A] = sys.error("should not be called")
+}
 
-object CompareResult {
-  /**
-   * Check if a standard comparison result matches a hetrogeneous comparison.
-   *
-   * @param cmp `Option` of standard comparison result.
-   * @param op  The hetrogeneous comparison result to compare against.
-   *
-   * @return Indicator if the comparison results match or not.
-   */
-  def evaluate(cmp: Option[Int], op: CompareResult): Boolean = {
-    cmp match {
-      case Some(0) => (op == Equal) || (op == GreaterEqual) || (op == LessEqual)
-      case Some(x) if (x > 0) => (op == Greater) || (op == GreaterEqual)
-      case Some(x) if (x < 0) => (op == Less) || (op == LessEqual)
-      case _ => false
-    }
-  }
+/**
+ * This code is a carbon copy of an answer on stackoverflow:
+ *
+ *   http://stackoverflow.com/questions/6909053/enforce-type-difference
+ *
+ * It can be used to ensure that the types of arguments are not equal.
+ */
+object =!= extends LowerPriorityImplicits {
+  /** do not call explicitly! */
+  implicit def nequal[A, B]: =!=[A, B] = new =!=[A, B]
 }
 
 /** Collection of simple utility functions. */

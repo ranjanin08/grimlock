@@ -24,7 +24,7 @@ trait Select { self: Sampler =>
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param pos The [[position.Position]] of the content.
+   * @param pos The position of the cell.
    */
   def select[P <: Position](pos: P): Boolean
 }
@@ -37,14 +37,14 @@ trait SelectWithValue { self: Sampler =>
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param pos The [[position.Position]] of the content.
+   * @param pos The position of the cell.
    * @param ext The user define the value.
    */
   def select[P <: Position](pos: P, ext: V): Boolean
 }
 
 /**
- * Convenience trait for [[Sampler]]s that selects with or without using a
+ * Convenience trait for samplers that selects with or without using a
  * user supplied value.
  */
 trait SelectAndWithValue extends Select with SelectWithValue { self: Sampler =>

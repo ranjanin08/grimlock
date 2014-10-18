@@ -25,7 +25,7 @@ import scala.util.Random
  * @param ratio The sampling ratio.
  * @param rnd   The random number generator.
  *
- * @note This randomly samples ignoring the [[position.Position]].
+ * @note This randomly samples ignoring the position.
  */
 case class RandomSample(ratio: Double, rnd: Random = new Random())
   extends Sampler with SelectAndWithValue {

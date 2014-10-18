@@ -7,8 +7,9 @@ Grimlock
 Overview
 --------
 
-Grimlock is a library for performing data-science and machine learning related data preparation, aggregation,
-manipulation and querying tasks. It can be used for such tasks as:
+Grimlock is a library for performing data-science and machine learning related
+data preparation, aggregation, manipulation and querying tasks. It can be used
+for such tasks as:
 
 * Normalisation/Standardisation/Bucketing of numeric variables;
 * Binarisation of categorical variables;
@@ -20,7 +21,8 @@ manipulation and querying tasks. It can be used for such tasks as:
 * Text analysis (tf-idf/LDA);
 * Computing pairwise distances.
 
-Grimlock has default implementations for many of the above tasks. It also has a number of useful properties:
+Grimlock has default implementations for many of the above tasks. It also has
+a number of useful properties:
 
 * Supports wide variety of variable types;
 * Is easily extensible;
@@ -34,8 +36,8 @@ Concepts
 
 ### Data Structures
 
-The basic data structure in Grimlock is a N-dimensional sparse __Matrix__ (N=1..5).  Each cell in matrix consists
-of a __Position__ and __Content__ tuple.
+The basic data structure in Grimlock is a N-dimensional sparse __Matrix__
+(N=1..5). Each cell in matrix consists of a __Position__ and __Content__ tuple.
 
 ```
          Matrix
@@ -45,8 +47,9 @@ of a __Position__ and __Content__ tuple.
   (Position, Content)
 ```
 
-The position is, essentialy, a list of N __Coordinate__s. The content consists of a __Schema__ together with a
-__Value__. The value contains the actual value of the cell, while the schema defines what type of variable is in
+The position is, essentialy, a list of N coordinates (__Value__). The content
+consists of a __Schema__ together with a __Value__. The value contains the
+actual value of the cell, while the schema defines what type of variable is in
 the cell, and what it's legal values are.
 
 ```
@@ -54,30 +57,33 @@ the cell, and what it's legal values are.
        ^ 1                  ^ 1
        |                    |
        | N           +------+------+
-  Coordinate         | 1           | 1
+     Value           | 1           | 1
                   Schema         Value
 ```
 
-Lastly, the __Codex__ singleton objects can be used to parse and write the basic data types used in both
-coordinates and values.
+Lastly, the __Codex__ singleton objects can be used to parse and write the
+basic data types used in both coordinates and values.
 
 ```
-  Coordinate      Schema       Value
-       ^ 1           ^ 1         ^ 1
-       |             |           |
-       | 1           | 1         | 1
-     Codex         Codex       Codex
+  Schema       Value
+     ^ 1         ^ 1
+     |           |
+     | 1         | 1
+   Codex       Codex
 ```
 
 ### Working with Dimensions
 
-Grimlock supports performing operations along all directions of the matrix. This is realised through a __Slice__.
-There are two realisations of Slice: __Along__ and __Over__. Both are constructed with a single __Dimension__,
-but differ in how the dimension is interpreted. When using Over, all data in the matrix is grouped by the
-dimension and operations, such as aggregation, are applied to the resulting groups. When using Along, the data is
-group by all dimensions *except* the dimension used when constructing the Slice. The differences between Over and
-Along are graphically presented below for a 3 dimensional matrix. Note that in 2 dimensions, Along and Over are
-each other's inverse.
+Grimlock supports performing operations along all directions of the matrix.
+This is realised through a __Slice__. There are two realisations of Slice:
+__Along__ and __Over__. Both are constructed with a single __Dimension__,
+but differ in how the dimension is interpreted. When using Over, all data in
+the matrix is grouped by the dimension and operations, such as aggregation,
+are applied to the resulting groups. When using Along, the data is group by
+all dimensions *except* the dimension used when constructing the Slice. The
+differences between Over and Along are graphically presented below for a 
+dimensional matrix. Note that in 2 dimensions, Along and Over are each
+other's inverse.
 
 ```
       Over(Second)       Along(Third)
@@ -95,14 +101,17 @@ each other's inverse.
 
 ### Data Format
 
-The basic data format used by Grimlock (though others are supported) is a row-oriented pipe separated file (each
-row is a single cell). The first N fields are the coordinates, optionally followed by the variable type and codex
-(again pipe separated). If the variable type and codex are omitted from the data then they have to be provided by
-a __Dictionary__. The last field of each row is the value.
+The basic data format used by Grimlock (though others are supported) is a
+row-oriented pipe separated file (each row is a single cell). The first N
+fields are the coordinates, optionally followed by the variable type and
+codex (again pipe separated). If the variable type and codex are omitted
+from the data then they have to be provided by a __Dictionary__. The last
+field of each row is the value.
 
-In the example below the first field is a coordinate identifying an instance, the second field is a coordinate
-identifying a feature. The third and fourth columns are the variable type and codex respectively. The last column
-has the actual value.
+In the example below the first field is a coordinate identifying an instance,
+the second field is a coordinate identifying a feature. The third and fourth
+columns are the variable type and codex respectively. The last column has the
+actual value.
 
 ```
 > head src/main/scala/au/com/cba/omnia/grimlock/examples/exampleInput.txt
@@ -135,7 +144,8 @@ iid:0066848|fid:H|B
 ...
 ```
 
-An external dictionary will then have to be provided to correctly decode and validate the values:
+An external dictionary will then have to be provided to correctly decode and
+validate the values:
 
 ```
 fid:A|long|continuous
@@ -153,11 +163,13 @@ Usage
 
 ### Setting up REPL
 
-The examples below are executed in the Scalding REPL. To use Grimlock in the REPL follow the following steps:
+The examples below are executed in the Scalding REPL. To use Grimlock in the
+REPL follow the following steps:
 
 1. Install Scalding; follow [these](https://github.com/twitter/scalding/wiki/Getting-Started) instructions.
 2. Check out tag (0.11.2); git checkout 0.11.2.
-3. Update scala version; edit project/Build.scala and set scala version to 2.10.4.
+3. Update scala version; edit project/Build.scala and set scala version to
+   2.10.4.
 4. In scalding-repl/src/main/scala add symlink to Grimlock's code folder.
 5. Start REPL; ./sbt scalding-repl/console.
 
@@ -187,8 +199,8 @@ Note, for readability, the REPL info is supressed from now on.
 
 ### Getting started
 
-When at the Scalding REPL console, the first step is to import Grimlock's functionality (be sure to press ctrl-D
-after the last import statement):
+When at the Scalding REPL console, the first step is to import Grimlock's
+functionality (be sure to press ctrl-D after the last import statement):
 
 ```
 > scala> :paste
@@ -196,93 +208,94 @@ after the last import statement):
 
 import grimlock._
 import grimlock.contents._
-import grimlock.contents.ContentPipe._
-import grimlock.contents.encoding._
+import grimlock.contents.Contents._
 import grimlock.contents.metadata._
-import grimlock.contents.variable._
-import grimlock.contents.variable.Type._
+import grimlock.encoding._
 import grimlock.Matrix._
 import grimlock.Names._
 import grimlock.partition._
 import grimlock.partition.Partitions._
-import grimlock.partition.Partitioners._
 import grimlock.position._
-import grimlock.position.coordinate._
-import grimlock.position.PositionPipe._
+import grimlock.position.Positions._
 import grimlock.reduce._
 import grimlock.transform._
+import grimlock.Type._
 import grimlock.Types._
 
 ```
 
-The next step is to read in data (be sure to change <path to> to the correct path to the Grimlock repo):
+The next step is to read in data (be sure to change <path to> to the correct
+path to the Grimlock repo):
 
 ```
 scala> val data = read2D("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/examples/exampleInput.txt")
 ```
 
-The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used
-in the REPL, use the matrix `persist` API for writing to disk:
+The returned `data` is a 2 dimensional matrix. To investigate it's content
+Scalding's `dump` command can be used in the REPL, use the matrix `persist`
+API for writing to disk:
 
 ```
 scala> data.dump
-(Position2D(StringCoordinate(iid:0064402,StringCodex),StringCoordinate(fid:B,StringCodex)),Content(NominalSchema[StringCodex](),StringValue(H,StringCodex)))
-(Position2D(StringCoordinate(iid:0064402,StringCodex),StringCoordinate(fid:E,StringCodex)),Content(ContinuousSchema[LongCodex](),LongValue(219,LongCodex)))
-(Position2D(StringCoordinate(iid:0064402,StringCodex),StringCoordinate(fid:H,StringCodex)),Content(NominalSchema[StringCodex](),StringValue(C,StringCodex)))
-(Position2D(StringCoordinate(iid:0066848,StringCodex),StringCoordinate(fid:A,StringCodex)),Content(ContinuousSchema[LongCodex](),LongValue(371,LongCodex)))
-(Position2D(StringCoordinate(iid:0066848,StringCodex),StringCoordinate(fid:B,StringCodex)),Content(NominalSchema[StringCodex](),StringValue(H,StringCodex)))
-(Position2D(StringCoordinate(iid:0066848,StringCodex),StringCoordinate(fid:C,StringCodex)),Content(ContinuousSchema[LongCodex](),LongValue(259,LongCodex)))
-(Position2D(StringCoordinate(iid:0066848,StringCodex),StringCoordinate(fid:D,StringCodex)),Content(NominalSchema[StringCodex](),StringValue(F,StringCodex)))
-(Position2D(StringCoordinate(iid:0066848,StringCodex),StringCoordinate(fid:E,StringCodex)),Content(ContinuousSchema[LongCodex](),LongValue(830,LongCodex)))
-(Position2D(StringCoordinate(iid:0066848,StringCodex),StringCoordinate(fid:F,StringCodex)),Content(NominalSchema[StringCodex](),StringValue(G,StringCodex)))
-(Position2D(StringCoordinate(iid:0066848,StringCodex),StringCoordinate(fid:H,StringCodex)),Content(NominalSchema[StringCodex](),StringValue(B,StringCodex)))
+(Position2D(StringValue(iid:0064402),StringValue(fid:B)),Content(NominalSchema[StringCodex](),StringValue(H)))
+(Position2D(StringValue(iid:0064402),StringValue(fid:E)),Content(ContinuousSchema[LongCodex](),LongValue(219)))
+(Position2D(StringValue(iid:0064402),StringValue(fid:H)),Content(NominalSchema[StringCodex](),StringValue(C)))
+(Position2D(StringValue(iid:0066848),StringValue(fid:A)),Content(ContinuousSchema[LongCodex](),LongValue(371)))
+(Position2D(StringValue(iid:0066848),StringValue(fid:B)),Content(NominalSchema[StringCodex](),StringValue(H)))
+(Position2D(StringValue(iid:0066848),StringValue(fid:C)),Content(ContinuousSchema[LongCodex](),LongValue(259)))
+(Position2D(StringValue(iid:0066848),StringValue(fid:D)),Content(NominalSchema[StringCodex](),StringValue(F)))
+(Position2D(StringValue(iid:0066848),StringValue(fid:E)),Content(ContinuousSchema[LongCodex](),LongValue(830)))
+(Position2D(StringValue(iid:0066848),StringValue(fid:F)),Content(NominalSchema[StringCodex](),StringValue(G)))
+(Position2D(StringValue(iid:0066848),StringValue(fid:H)),Content(NominalSchema[StringCodex](),StringValue(B)))
 ...
 ```
 
-The following shows a number of basic operations (get number of rows, get type of features, perform simple query):
+The following shows a number of basic operations (get number of rows, get type
+of features, perform simple query):
 
 ```
 scala> data.size(First).dump
-(Position2D(StringCoordinate(First,StringCodex),StringCoordinate(size,StringCodex)),Content(DiscreteSchema[LongCodex](),LongValue(9,LongCodex)))
+(Position2D(StringValue(First),StringValue(size)),Content(DiscreteSchema[LongCodex](),LongValue(9)))
 
 scala> data.types(Over(Second)).dump
-(Position1D(StringCoordinate(fid:A,StringCodex)),Numerical)
-(Position1D(StringCoordinate(fid:B,StringCodex)),Categorical)
-(Position1D(StringCoordinate(fid:C,StringCodex)),Numerical)
-(Position1D(StringCoordinate(fid:D,StringCodex)),Categorical)
-(Position1D(StringCoordinate(fid:E,StringCodex)),Numerical)
-(Position1D(StringCoordinate(fid:F,StringCodex)),Categorical)
-(Position1D(StringCoordinate(fid:G,StringCodex)),Numerical)
-(Position1D(StringCoordinate(fid:H,StringCodex)),Categorical)
+(Position1D(StringValue(fid:A)),Numerical)
+(Position1D(StringValue(fid:B)),Categorical)
+(Position1D(StringValue(fid:C)),Numerical)
+(Position1D(StringValue(fid:D)),Categorical)
+(Position1D(StringValue(fid:E)),Numerical)
+(Position1D(StringValue(fid:F)),Categorical)
+(Position1D(StringValue(fid:G)),Numerical)
+(Position1D(StringValue(fid:H)),Categorical)
 
 scala> data.which((pos: Position, con: Content) => (con.value gtr 995) || (con.value equ "F")).dump
-Position2D(StringCoordinate(iid:0066848,StringCodex),StringCoordinate(fid:D,StringCodex))
-Position2D(StringCoordinate(iid:0216406,StringCodex),StringCoordinate(fid:E,StringCodex))
-Position2D(StringCoordinate(iid:0444510,StringCodex),StringCoordinate(fid:D,StringCodex))
+Position2D(StringValue(iid:0066848),StringValue(fid:D))
+Position2D(StringValue(iid:0216406),StringValue(fid:E))
+Position2D(StringValue(iid:0444510),StringValue(fid:D))
 ```
 
-Now for something a little more intersting. Let's compute the number of features for each instance and then
-compute the moments of the distribution of counts:
+Now for something a little more intersting. Let's compute the number of
+features for each instance and then compute the moments of the distribution
+of counts:
 
 ```
 scala> val counts = data.reduce(Over(First), Count())
 
 scala> counts.dump
-(Position1D(StringCoordinate(iid:0064402,StringCodex)),Content(DiscreteSchema[LongCodex](),LongValue(3,LongCodex)))
-(Position1D(StringCoordinate(iid:0066848,StringCodex)),Content(DiscreteSchema[LongCodex](),LongValue(7,LongCodex)))
-(Position1D(StringCoordinate(iid:0216406,StringCodex)),Content(DiscreteSchema[LongCodex](),LongValue(5,LongCodex)))
-(Position1D(StringCoordinate(iid:0221707,StringCodex)),Content(DiscreteSchema[LongCodex](),LongValue(4,LongCodex)))
-(Position1D(StringCoordinate(iid:0262443,StringCodex)),Content(DiscreteSchema[LongCodex](),LongValue(2,LongCodex)))
-(Position1D(StringCoordinate(iid:0364354,StringCodex)),Content(DiscreteSchema[LongCodex](),LongValue(5,LongCodex)))
-(Position1D(StringCoordinate(iid:0375226,StringCodex)),Content(DiscreteSchema[LongCodex](),LongValue(3,LongCodex)))
-(Position1D(StringCoordinate(iid:0444510,StringCodex)),Content(DiscreteSchema[LongCodex](),LongValue(5,LongCodex)))
-(Position1D(StringCoordinate(iid:1004305,StringCodex)),Content(DiscreteSchema[LongCodex](),LongValue(2,LongCodex)))
+(Position1D(StringValue(iid:0064402)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
+(Position1D(StringValue(iid:0066848)),Content(DiscreteSchema[LongCodex](),LongValue(7)))
+(Position1D(StringValue(iid:0216406)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
+(Position1D(StringValue(iid:0221707)),Content(DiscreteSchema[LongCodex](),LongValue(4)))
+(Position1D(StringValue(iid:0262443)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
+(Position1D(StringValue(iid:0364354)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
+(Position1D(StringValue(iid:0375226)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
+(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
+(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
 
 scala> counts.reduceAndExpand(Along(First), Moments()).dump
-(Position1D(StringCoordinate(mean,StringCodex)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(4.0,DoubleCodex)))
-(Position1D(StringCoordinate(std,StringCodex)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
-(Position1D(StringCoordinate(skewness,StringCodex)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(0.348873899490999,DoubleCodex)))
-(Position1D(StringCoordinate(kurtosis,StringCodex)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
+(Position1D(StringValue(mean)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(4.0,DoubleCodex)))
+(Position1D(StringValue(std)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
+(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(0.348873899490999,DoubleCodex)))
+(Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
 ```
 
 For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/Demo.scala)

@@ -14,17 +14,17 @@
 
 package au.com.cba.omnia.grimlock.transform
 
+import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.encoding._
 import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.content.variable.Type._
+import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.position.coordinate._
+import au.com.cba.omnia.grimlock.Type._
 
 /** Convenience trait for transformations involving `Double` values. */
 trait AsDouble {
-  protected def getAsDouble[T: Coordinateable, U: Coordinateable](con: Content,
+  protected def getAsDouble[T: Valueable, U: Valueable](con: Content,
     ext: Map[Position1D, Map[Position1D, Content]], index1: T,
     index2: U): Option[Double] = {
     val key1 = Position1D(index1)
@@ -46,7 +46,7 @@ trait AsDouble {
 }
 
 /**
- * Convenience trait for [[Transformer]]s that present a `Double` value using a
+ * Convenience trait for transformers that present a `Double` value using a
  * user supplied value.
  */
 trait PresentAsDoubleWithValue extends PresentWithValue with AsDouble {
@@ -55,7 +55,7 @@ trait PresentAsDoubleWithValue extends PresentWithValue with AsDouble {
 }
 
 /**
- * Convenience trait for [[Transformer]]s that present a `Double` value with or
+ * Convenience trait for transformers that present a `Double` value with or
  * without using a user supplied value.
  */
 trait PresentAsDoubleAndWithValue extends PresentAndWithValue with AsDouble {
@@ -63,7 +63,7 @@ trait PresentAsDoubleAndWithValue extends PresentAndWithValue with AsDouble {
 }
 
 /**
- * Convenience trait for [[Transformer]]s that append a `Double` value using a
+ * Convenience trait for Transformers that append a `Double` value using a
  * user supplied value.
  */
 trait PresentExpandedAsDoubleWithValue extends PresentExpandedWithValue
@@ -74,14 +74,12 @@ trait PresentExpandedAsDoubleWithValue extends PresentExpandedWithValue
 /**
  * Create indicator variables.
  *
- * @param dim    [[position.Dimension]] for which to create indicator variables.
+ * @param dim    Dimension for which to create indicator variables.
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  *
- * @note The returned [[position.Position]] will have a
- *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
- *       the [[position.coordinate.Coordinate]] is the string representation of
- *       the original [[position.coordinate.Coordinate]] at `dim` with the
- *       `suffix` appended.
+ * @note The returned position will have a sting value at index `dim`. The
+ *       value of coordinate is the string representation of the original
+ *       coordinate at `dim` with the `suffix` appended.
  */
 case class Indicator(dim: Dimension, suffix: String = ".ind")
   extends Transformer with PresentAndWithValue {
@@ -94,18 +92,14 @@ case class Indicator(dim: Dimension, suffix: String = ".ind")
 /**
  * Binarise categorical variables.
  *
- * @param dim       [[position.Dimension]] for for which to create binarised
- *                  variables.
- * @param separator Sparator between [[position.coordinate.Coordinate]] and
- *                  [[content.variable.Value]].
+ * @param dim       Dimension for for which to create binarised variables.
+ * @param separator Sparator between position and content.
  *
- * @note Binarisation is only applied to [[content.variable.Type.Categorical]]
- *       variables.
- * @note The returned [[position.Position]] will have a
- *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
- *       the [[position.coordinate.Coordinate]] is the string representation of
- *       the original [[position.coordinate.Coordinate]] at `dim` with
- *       [[content.variable.Value]] appended (separated by `separator`).
+ * @note Binarisation is only applied to categorical variables.
+ * @note The returned position will have a string value at index `dim`. The
+ *       value of the coordinate is the string representation of the original
+ *       coordinate at `dim` with content value appended (separated by
+ *       `separator`).
  */
 case class Binarise(dim: Dimension, separator: String = "=")
   extends Transformer with PresentAndWithValue {
@@ -123,20 +117,16 @@ case class Binarise(dim: Dimension, separator: String = "=")
 /**
  * Normalise numeric variables.
  *
- * @param dim    [[position.Dimension]] for for which to create normalised
- *               variables.
+ * @param dim    Dimension for for which to create normalised variables.
  * @param state  Name of the field in user supplied value which is used as the
  *               normalisation constant.
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  *
  * @note Normalisation scales a variable in the range [-1, 1].
- * @note Normalisation is only applied to [[content.variable.Type.Numerical]]
- *       variables.
- * @note The returned [[position.Position]] will have a
- *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
- *       the [[position.coordinate.Coordinate]] is the string representation of
- *       the original [[position.coordinate.Coordinate]] at `dim` with the
- *       `suffix` appended.
+ * @note Normalisation is only applied to numerical variables.
+ * @note The returned position will have a string value at index `dim`. The
+ *       value of coordinate is the string representation of the original
+ *       coordinate at `dim` with the `suffix` appended.
  */
 case class Normalise(dim: Dimension, state: String = "max.abs",
   suffix: String = "") extends Transformer with PresentAsDoubleWithValue {
@@ -153,8 +143,7 @@ case class Normalise(dim: Dimension, state: String = "max.abs",
 /**
  * Standardise numeric variables.
  *
- * @param dim       [[position.Dimension]] for for which to create standardised
- *                  variables.
+ * @param dim       Dimension for for which to create standardised variables.
  * @param state     List of names of the fields in the user supplied value
  *                  which is used as the standardisation constants.
  * @param threshold Minimum standard deviation threshold. Values less than this
@@ -163,13 +152,10 @@ case class Normalise(dim: Dimension, state: String = "max.abs",
  *
  * @note Standardisation results in a variable with zero mean and variance
  *       of one.
- * @note Standardisation is only applied to
- *       [[content.variable.Type.Numerical]] variables.
- * @note The returned [[position.Position]] will have a
- *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
- *       the [[position.coordinate.Coordinate]] is the string representation of
- *       the original [[position.coordinate.Coordinate]] at `dim` with the
- *       `suffix` appended.
+ * @note Standardisation is only applied to numerical variables.
+ * @note The returned position will have a string value at index `dim`. The
+ *       value of coordinate is the string representation of the original
+ *       coordinate at `dim` with the `suffix` appended.
  */
 case class Standardise(dim: Dimension,
   state: List[String] = List("mean", "std"), threshold: Double = 1e-4,
@@ -193,8 +179,7 @@ case class Standardise(dim: Dimension,
 /**
  * Clamp numeric variables.
  *
- * @param dim       [[position.Dimension]] for for which to create clamped
- *                  variables.
+ * @param dim       Dimension for for which to create clamped variables.
  * @param state     List of names of the fields in user supplied value which
  *                  is used as the clamping constants.
  * @param suffix    Suffix for the new name of the coordinate at `dim`.
@@ -202,13 +187,10 @@ case class Standardise(dim: Dimension,
  *
  * @note Clamping results in a variable not smaller (or greater) than the
  *       clamping constants.
- * @note Clamping is only applied to [[content.variable.Type.Numerical]]
- *       variables.
- * @note The returned [[position.Position]] will have a
- *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
- *       the [[position.coordinate.Coordinate]] is the string representation of
- *       the original [[position.coordinate.Coordinate]] at `dim` with the
- *       `suffix` appended.
+ * @note Clamping is only applied to numerical variables.
+ * @note The returned position will have a string value at index `dim`. The
+ *       value of coordinate is the string representation of the original
+ *       coordinate at `dim` with the `suffix` appended.
  */
 case class Clamp[T <: Transformer with PresentWithValue](dim: Dimension,
   state: List[String] = List("min", "max"), suffix: String = "",
@@ -238,10 +220,10 @@ case class Clamp[T <: Transformer with PresentWithValue](dim: Dimension,
 /**
  * Compute the inverse document frequency.
  *
- * @param from  [[position.Dimension]] of the documents.
+ * @param from  Dimension of the documents.
  * @param state Name of the field in user supplied value which is used as the
  *              number of documents.
- * @param name  Name of the idf [[position.coordinate.Coordinate]].
+ * @param name  Name of the idf coordinate.
  * @param log   Log function to use.
  * @param add   Amount to add to the idf numerator.
  * @param lower Lower bound filtering; terms appearing in fewer than this
@@ -249,9 +231,8 @@ case class Clamp[T <: Transformer with PresentWithValue](dim: Dimension,
  * @param upper Upper bound filtering; terms appearing in more than this
  *              documents are removed.
  *
- * @note Idf is only applied to [[content.variable.Type.Numerical]] variables.
- * @note The returned [[position.Position]] will have an extra dimension
- *       appended.
+ * @note Idf is only applied to numerical variables.
+ * @note The returned position will have an extra dimension appended.
  */
 case class Idf(from: Dimension, state: String = "size", name: String = "idf",
   log: (Double) => Double = math.log, add: Int = 1,
@@ -272,17 +253,13 @@ case class Idf(from: Dimension, state: String = "size", name: String = "idf",
 /**
  * Create boolean term frequencies; all term frequencies are binarised.
  *
- * @param dim    [[position.Dimension]] for which to create boolean term
- *               frequencies.
+ * @param dim    Dimension for which to create boolean term frequencies.
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  *
- * @note Boolean tf is only applied to [[content.variable.Type.Numerical]]
- *       variables.
- * @note The returned [[position.Position]] will have a
- *       [[position.coordinate.StringCoordinate]] at index `dim`. The value
- *       of the [[position.coordinate.Coordinate]] is the string representation
- *       of the original [[position.coordinate.Coordinate]] at `dim` with the
- *       `suffix` appended.
+ * @note Boolean tf is only applied to numerical variables.
+ * @note The returned position will have a string value at index `dim`. The
+ *       value coordinate is the string representation of the original
+ *       coordinate at `dim` with the `suffix` appended.
  */
 case class BooleanTf(dim: Dimension, suffix: String = "") extends Transformer
   with PresentAsDoubleAndWithValue {
@@ -298,18 +275,14 @@ case class BooleanTf(dim: Dimension, suffix: String = "") extends Transformer
 /**
  * Create logarithmic term frequencies.
  *
- * @param dim    [[position.Dimension]] for which to create boolean term
- *               frequencies.
+ * @param dim    Dimension for which to create boolean term frequencies.
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  * @param log    Log function to use.
  *
- * @note Logarithmic tf is only applied to [[content.variable.Type.Numerical]]
- *       variables.
- * @note The returned [[position.Position]] will have a
- *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
- *       the [[position.coordinate.Coordinate]] is the string representation of
- *       the original [[position.coordinate.Coordinate]] at `dim` with the
- *       `suffix` appended.
+ * @note Logarithmic tf is only applied to numerical variables.
+ * @note The returned position will have a string value at index `dim`. The
+ *       value of coordinate is the string representation of the original
+ *       coordinate at `dim` with the `suffix` appended.
  */
 case class LogarithmicTf(dim: Dimension, suffix: String = "",
   log: (Double) => Double = math.log) extends Transformer
@@ -326,19 +299,15 @@ case class LogarithmicTf(dim: Dimension, suffix: String = "",
 /**
  * Create augmented term frequencies.
  *
- * @param dim    [[position.Dimension]] for which to create boolean term
- *               frequencies.
+ * @param dim    Dimension for which to create boolean term frequencies.
  * @param state  Name of the field in user supplied value which is used as the
  *               maximum term frequency.
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  *
- * @note Augmented tf is only applied to [[content.variable.Type.Numerical]]
- *       variables.
- * @note The returned [[position.Position]] will have a
- *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
- *       the [[position.coordinate.Coordinate]] is the string representation of
- *       the original [[position.coordinate.Coordinate]] at `dim` with the
- *       `suffix` appended.
+ * @note Augmented tf is only applied to numerical variables.
+ * @note The returned position will have a string value at index `dim`. The
+ *       value of the coordinate is the string representation of the original
+ *       coordinate at `dim` with the `suffix` appended.
  */
 case class AugmentedTf(dim: Dimension, state: String = "max",
   suffix: String = "") extends Transformer with PresentAsDoubleWithValue {
@@ -355,19 +324,15 @@ case class AugmentedTf(dim: Dimension, state: String = "max",
 /**
  * Create tf-idf values.
  *
- * @param dim    [[position.Dimension]] for which to create boolean term
- *               frequencies.
+ * @param dim    Dimension for which to create boolean term frequencies.
  * @param state  Name of the field in user supplied value which is used as the
  *               inverse document frequency.
  * @param suffix Suffix for the new name of the coordinate at `dim`.
  *
- * @note Tf-idf is only applied to [[content.variable.Type.Numerical]]
- *       variables.
- * @note The returned [[position.Position]] will have a
- *       [[position.coordinate.StringCoordinate]] at index `dim`. The value of
- *       the [[position.coordinate.Coordinate]] is the string representation of
- *       the original [[position.coordinate.Coordinate]] at `dim` with the
- *       `suffix` appended.
+ * @note Tf-idf is only applied to numerical variables.
+ * @note The returned position will have a string value at index `dim`. The
+ *       value of the coordinate is the string representation of the original
+ *       coordinate at `dim` with the `suffix` appended.
  */
 case class TfIdf(dim: Dimension, state: String = "idf", suffix: String = "")
   extends Transformer with PresentAsDoubleWithValue {

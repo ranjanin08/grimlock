@@ -23,11 +23,11 @@ import com.twitter.scalding.TDsl._, Dsl._
 import scala.util.matching.Regex
 
 /**
- * Rich wrapper around a `TypedPipe[(`[[position.Position]]`, Long)]`.
+ * Rich wrapper around a `TypedPipe[(Position, Long)]`.
  *
- * @param data `TypedPipe[(`[[position.Position]]`, Long)]`.
+ * @param data `TypedPipe[(Position, Long)]`.
  *
- * @note This class represents the names along the dimensions of a [[Matrix]].
+ * @note This class represents the names along the dimensions of a matrix.
  */
 class Names[P <: Position](data: TypedPipe[(P, Long)]) {
   /** Renumber the names. */
@@ -44,14 +44,12 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    *
    * @param regex     The regular expression to match on.
    * @param keep      Indicator if the matched names should be kept or removed.
-   * @param spearator Separator used to convert each [[position.Position]] to
-   *                  string.
+   * @param spearator Separator used to convert each position to string.
    *
    * @return A `TypedPipe[(P, Long)]` with only the names of interest.
    *
-   * @note The matching is done by convertion each [[position.Position]] to its
-   *       short string reprensentation and then applying the regular
-   *       expression.
+   * @note The matching is done by converting each position to its short string
+   *       reprensentation and then applying the regular expression.
    */
   def slice(regex: Regex, keep: Boolean,
     separator: String): TypedPipe[(P, Long)] = {
@@ -59,14 +57,12 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
   }
 
   /**
-   * Slice the names using `positions`.
+   * Slice the names using one or more positions.
    *
    * @param positions The positions to slice on.
    * @param keep      Indicator if the matched names should be kept or removed.
    *
    * @return A `TypedPipe[(P, Long)]` with only the names of interest.
-   *
-   * @see [[position.PositionListable]]
    */
   def slice[T](positions: T, keep: Boolean)(
     implicit ev: PositionListable[T, P]): TypedPipe[(P, Long)] = {
@@ -74,14 +70,13 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
   }
 
   /**
-   * Set the index of a single [[position.Position]].
+   * Set the index of a single position.
    *
    * @param position The position whose index is to be set.
    * @param index    The new index.
    *
-   * @return A `TypedPipe[(P, Long)]` with only `position`'s index updated.
-   *
-   * @see [[position.Positionable]]
+   * @return A `TypedPipe[(P, Long)]` with only the index at the specified
+   *         position updated.
    */
   def set[T](position: T, index: Long)(
     implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
@@ -89,14 +84,13 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
   }
 
   /**
-   * Set the index of multiple [[position.Position]].
+   * Set the index of multiple positions.
    *
    * @param positions A `Map` of positions (together with their new inxed)
-   *        whose index is to be set.
+   *                  whose index is to be set.
    *
-   * @return A `TypedPipe[(P, Long)]` with only `positions`' index updated.
-   *
-   * @see [[position.Positionable]]
+   * @return A `TypedPipe[(P, Long)]` with only the indices at the specified
+   *         positions updated.
    */
   def set[T](positions: Map[T, Long])(
     implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
@@ -112,8 +106,6 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    *
    * @return A `TypedPipe[(P, Long)]` with `position` at index 0 and all
    *         others renumbered but preserving their relative ordering.
-   *
-   * @see [[position.Positionable]]
    */
   def moveToFront[T](position: T)(
     implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
@@ -127,10 +119,8 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    *
    * @param position The position to move to the back.
    *
-   * @return A `TypedPipe[(P, Long)]` with `position` at the greates index and
+   * @return A `TypedPipe[(P, Long)]` with `position` at the greatest index and
    *         all others renumbered but preserving their relative ordering.
-   *
-   * @see [[position.Positionable]]
    */
   def moveToBack[T](position: T)(
     implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
@@ -153,14 +143,13 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
   }
 
   /**
-   * Persist [[Names]] to disk.
+   * Persist names to disk.
    *
    * @param file        Name of the output file.
-   * @param separator   Separator to use between [[position.Position]] and
-   *                    index.
+   * @param separator   Separator to use between position and index.
    * @param descriptive Indicates if the output should be descriptive.
    *
-   * @return A Scalding `TypedPipe[(P, Long)]` which is this [[Names]].
+   * @return A Scalding `TypedPipe[(P, Long)]` which is this object's data.
    */
   def persist(file: String, separator: String = "|",
     descriptive: Boolean = false)(implicit flow: FlowDef,
@@ -181,29 +170,25 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
 
 object Names {
   /**
-   * Conversion from `TypedPipe[(`[[position.Position]]`, Long)]` to a
-   * [[Names]].
-   */
-  implicit def typedPipePositionLong[P <: Position](
-    data: TypedPipe[(P, Long)]): Names[P] = {
-    new Names(data)
-  }
-
-  /**
-   * Number of `TypedPipe[`[[position.Position]]`]`
+   * Number a `TypedPipe[Position]`
    *
-   * @param data `TypedPipe` of [[position.Position]] to number.
+   * @param data `TypedPipe[Position]` to number.
    *
-   * @return A `TypedPipe[(`[[position.Position]]`, Long)]`.
+   * @return A `TypedPipe[(Position, Long)]`.
    *
-   * @note No ordering is defined on the indices for each
-   *       [[position.Position]], but each index will be unique.
+   * @note No ordering is defined on the indices for each position, but each
+   *       index will be unique.
    */
   def number[P <: Position](data: TypedPipe[P]): TypedPipe[(P, Long)] = {
     data
       .groupAll
       .mapValueStream { _.zipWithIndex }
       .map { case ((), (p, i)) => (p, i) }
+  }
+
+  /** Conversion from `TypedPipe[(Position, Long)]` to a `Names`. */
+  implicit def TPPL2N[P <: Position](data: TypedPipe[(P, Long)]): Names[P] = {
+    new Names(data)
   }
 }
 
@@ -212,6 +197,8 @@ trait Nameable[T, P <: Position, Q <: Position, D <: Dimension] {
   /**
    * Returns a `TypedPipe[(Q, Long)]` for type `T`.
    *
+   * @param m The matrix to get names from.
+   * @param s Encapsulates the dimension(s) for which to get names.
    * @param t Object that can be converted to a `TypedPipe[(Q, Long)]`.
    */
   def convert(m: Matrix[P], s: Slice[P, D], t: T): TypedPipe[(Q, Long)]
@@ -222,21 +209,22 @@ object Nameable {
    * Converts a `TypedPipe[(Q, Long)]` into a `TypedPipe[(Q, Long)]`; that is,
    * it is a pass through.
    */
-  implicit def NamesNameable[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[(Q, Long)], P, Q, D] = {
+  implicit def N2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[(Q, Long)], P, Q, D] = {
     new Nameable[TypedPipe[(Q, Long)], P, Q, D] {
       def convert(m: Matrix[P], s: Slice[P, D],
         t: TypedPipe[(Q, Long)]): TypedPipe[(Q, Long)] = t
     }
   }
   /** Converts a `TypedPipe[Q]` into a `TypedPipe[(Q, Long)]`. */
-  implicit def PositionPipeNameable[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[Q], P, Q, D] = {
+  implicit def PP2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[Q], P, Q, D] = {
     new Nameable[TypedPipe[Q], P, Q, D] {
       def convert(m: Matrix[P], s: Slice[P, D],
         t: TypedPipe[Q]): TypedPipe[(Q, Long)] = Names.number(t)
     }
   }
-  /** Converts a [[position.PositionListable]] into a `TypedPipe[(Q, Long)]`. */
-  implicit def PositionListableNameable[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
+  /** Converts a `PositionListable` into a `TypedPipe[(Q, Long)]`. */
+  implicit def PL2N[T, P <: Position, Q <: Position, D <: Dimension](
+    implicit ev1: PositionListable[T, Q],
     ev2: PosDimDep[P, D]): Nameable[T, P, Q, D] = {
     new Nameable[T, P, Q, D] {
       def convert(m: Matrix[P], s: Slice[P, D], t: T): TypedPipe[(Q, Long)] = {

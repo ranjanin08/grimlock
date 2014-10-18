@@ -27,11 +27,9 @@ trait Reduce { self: Squasher =>
   /**
    * Reduce two cells.
    *
-   * @param dim The [[position.Dimension]] along which to squash.
-   * @param x   The first `(`[[position.Position]], [[content.Content]]`)`
-   *            tuple to reduce.
-   * @param y   The second `(`[[position.Position]], [[content.Content]]`)`
-   *            tuple to reduce.
+   * @param dim The dimension along which to squash.
+   * @param x   The first cell to reduce.
+   * @param y   The second cell to reduce.
    */
   def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P]
 }
@@ -44,11 +42,9 @@ trait ReduceWithValue { self: Squasher =>
   /**
    * Reduce two cells with a user supplied value.
    *
-   * @param dim The [[position.Dimension]] along which to squash.
-   * @param x   The first `(`[[position.Position]], [[content.Content]]`)`
-   *            tuple to reduce.
-   * @param y   The second `(`[[position.Position]], [[content.Content]]`)`
-   *            tuple to reduce.
+   * @param dim The dimension along which to squash.
+   * @param x   The first cell to reduce.
+   * @param y   The second cell to reduce.
    * @param ext The user define the value.
    */
   def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P],
@@ -56,7 +52,7 @@ trait ReduceWithValue { self: Squasher =>
 }
 
 /**
- * Convenience trait for [[Squasher]]s that selects with or without using a
+ * Convenience trait for a squasher that selects with or without using a
  * user supplied value.
  */
 trait ReduceAndWithValue extends Reduce with ReduceWithValue { self: Squasher =>

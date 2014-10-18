@@ -18,7 +18,7 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
-/** Base trait for pairwise operation. */
+/** Base trait for pairwise operations. */
 trait Operator
 
 /** Base trait for computing pairwise values. */
@@ -26,18 +26,16 @@ trait Compute { self: Operator =>
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param slc Encapsulates the dimension(s) along which to compute.
-   * @param x   The first `(`[[position.Position]], [[content.Content]]`)` to
-   *            compute with.
-   * @param y   The second `(`[[position.Position]], [[content.Content]]`)` to
-   *            compute with.
+   * @param slice Encapsulates the dimension(s) along which to compute.
+   * @param left  The left cell to compute with.
+   * @param right The right cell to compute with.
    *
    * @note The return value is an `Option` to allow, for example, upper
    *       or lower triangular matrices to be returned (this can be done by
-   *       comparing the approriate [[position.coordinate.Coordinate]]s)
+   *       comparing the approriate coordinates)
    */
   def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slc: Slice[P, D], x: Cell[P], y: Cell[P]): Option[Cell[P#S]]
+    slice: Slice[P, D], left: Cell[P], right: Cell[P]): Option[Cell[P#S]]
 }
 
 /** Base trait for computing pairwise values with a user provided value. */
@@ -48,26 +46,31 @@ trait ComputeWithValue { self: Operator =>
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param pos The [[position.Position]] of the content.
-   * @param ext The user define the value.
+   * @param slice Encapsulates the dimension(s) along which to compute.
+   * @param left  The left cell to compute with.
+   * @param right The right cell to compute with.
+   * @param ext   The user define the value.
    *
    * @note The return value is an `Option` to allow, for example, upper
    *       or lower triangular matrices to be returned (this can be done by
-   *       comparing the approriate [[position.coordinate.Coordinate]]s)
+   *       comparing the approriate coordinates)
    */
   def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slc: Slice[P, D], x: Cell[P], y: Cell[P], ext: V): Option[Cell[P#S]]
+    slice: Slice[P, D], left: Cell[P], right: Cell[P],
+      ext: V): Option[Cell[P#S]]
 }
 
 /**
- * Convenience trait for [[Operator]]s that compute pairwise values with or
+ * Convenience trait for operators that compute pairwise values with or
  * without using a user supplied value.
  */
-trait ComputeAndWithValue extends Compute
-  with ComputeWithValue { self: Operator =>
+trait ComputeAndWithValue extends Compute with ComputeWithValue {
+  self: Operator =>
   type V = Any
 
   def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slc: Slice[P, D], x: Cell[P], y: Cell[P], ext: V) = compute(slc, x, y)
+    slice: Slice[P, D], left: Cell[P], right: Cell[P], ext: V) = {
+    compute(slice, left, right)
+  }
 }
 

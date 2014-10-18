@@ -21,7 +21,7 @@ import au.com.cba.omnia.grimlock.Names._
 import au.com.cba.omnia.grimlock.partition._
 import au.com.cba.omnia.grimlock.partition.Partitions._
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.position.PositionPipe._
+import au.com.cba.omnia.grimlock.position.Positions._
 import au.com.cba.omnia.grimlock.reduce._
 import au.com.cba.omnia.grimlock.transform._
 import au.com.cba.omnia.grimlock.Types._

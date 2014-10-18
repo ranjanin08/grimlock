@@ -14,15 +14,14 @@
 
 package au.com.cba.omnia.grimlock.content
 
-import au.com.cba.omnia.grimlock.content.encoding._
+import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.content.variable._
 
 import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.TDsl._, Dsl._
 
-/** Contents of a cell in a [[Matrix]]. */
+/** Contents of a cell in a matrix. */
 trait Content {
   /** Schema (description) of the value. */
   val schema: Schema
@@ -46,65 +45,61 @@ trait Content {
 }
 
 object Content {
-  /** Standard `unapply` method of pattern matching on [[Content]]. */
+  /** Standard `unapply` method for pattern matching. */
   def unapply(con: Content): Option[(Schema, Value)] = {
     Some((con.schema, con.value))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.ContinuousSchema]] and
-   * `Numeric` value.
+   * Construct a content using a continuous schema and numeric value.
    *
    * @param schema Schema of the variable value.
-   * @param value  `Numeric` value of the variable.
+   * @param value  Numeric value of the variable.
    */
-  def apply[T](schema: ContinuousSchema[Codex.DoubleCodex],
-    value: T)(implicit num: Numeric[T]): Content = {
+  def apply[T](schema: ContinuousSchema[Codex.DoubleCodex], value: T)(
+    implicit num: Numeric[T]): Content = {
     import num._
-    ContentImpl(schema, DoubleValue(value.toDouble, schema.codex))
+    ContentImpl(schema, DoubleValue(value.toDouble))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.ContinuousSchema]] and
-   * `Integral` value.
+   * Construct a content using a continuous schema and integral value.
    *
    * @param schema Schema of the variable value.
-   * @param value  `Integral` value of the variable.
+   * @param value  Integral value of the variable.
    */
-  def apply[T](schema: ContinuousSchema[Codex.LongCodex],
-    value: T)(implicit num: Integral[T]): Content = {
+  def apply[T](schema: ContinuousSchema[Codex.LongCodex], value: T)(
+    implicit num: Integral[T]): Content = {
     import num._
-    ContentImpl(schema, LongValue(value.toLong, schema.codex))
+    ContentImpl(schema, LongValue(value.toLong))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.DiscreteSchema]] and
-   * `Numeric` value.
+   * Construct a content using a discrete schema and numeric value.
    *
    * @param schema Schema of the variable value.
-   * @param value  `Numeric` value of the variable.
+   * @param value  Numeric value of the variable.
    */
-  def apply[T](schema: DiscreteSchema[Codex.DoubleCodex],
-    value: T)(implicit num: Numeric[T]): Content = {
+  def apply[T](schema: DiscreteSchema[Codex.DoubleCodex], value: T)(
+    implicit num: Numeric[T]): Content = {
     import num._
-    ContentImpl(schema, DoubleValue(value.toDouble, schema.codex))
+    ContentImpl(schema, DoubleValue(value.toDouble))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.DiscreteSchema]] and
-   * `Integral` value.
+   * Construct a content using a discrete schema and integral value.
    *
    * @param schema Schema of the variable value.
-   * @param value  `Integral` value of the variable.
+   * @param value  Integral value of the variable.
    */
-  def apply[T](schema: DiscreteSchema[Codex.LongCodex],
-    value: T)(implicit num: Integral[T]): Content = {
+  def apply[T](schema: DiscreteSchema[Codex.LongCodex], value: T)(
+    implicit num: Integral[T]): Content = {
     import num._
-    ContentImpl(schema, LongValue(value.toLong, schema.codex))
+    ContentImpl(schema, LongValue(value.toLong))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.NominalSchema]] and value.
+   * Construct a content using a nominal schema and value.
    *
    * @param schema Schema of the variable value.
    * @param value  Value of the variable.
@@ -112,77 +107,71 @@ object Content {
    * @note The value is converted, and stored, as `String`.
    */
   def apply[T](schema: NominalSchema[Codex.StringCodex], value: T): Content = {
-    ContentImpl(schema, StringValue(value.toString, schema.codex))
+    ContentImpl(schema, StringValue(value.toString))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.NominalSchema]] and
-   * `Numeric` value.
+   * Construct a content using a nominal schema and numeric value.
    *
    * @param schema Schema of the variable value.
-   * @param value  `Numeric` value of the variable.
+   * @param value  Numeric value of the variable.
    */
-  def apply[T](schema: NominalSchema[Codex.DoubleCodex],
-    value: T)(implicit num: Numeric[T]): Content = {
+  def apply[T](schema: NominalSchema[Codex.DoubleCodex], value: T)(
+    implicit num: Numeric[T]): Content = {
     import num._
-    ContentImpl(schema, DoubleValue(value.toDouble, schema.codex))
+    ContentImpl(schema, DoubleValue(value.toDouble))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.NominalSchema]] and
-   * `Integral` value.
+   * Construct a content using a nominal schema and integral value.
    *
    * @param schema Schema of the variable value.
-   * @param value  `Integral` value of the variable.
+   * @param value  Integral value of the variable.
    */
-  def apply[T](schema: NominalSchema[Codex.LongCodex],
-    value: T)(implicit num: Integral[T]): Content = {
+  def apply[T](schema: NominalSchema[Codex.LongCodex], value: T)(
+    implicit num: Integral[T]): Content = {
     import num._
-    ContentImpl(schema, LongValue(value.toLong, schema.codex))
+    ContentImpl(schema, LongValue(value.toLong))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.OrdinalSchema]] and value.
+   * Construct a content using a ordinal schema and value.
    *
    * @param schema Schema of the variable value.
    * @param value  Value of the variable.
    *
    * @note The value is converted, and stored, as `String`.
    */
-  def apply[T](schema: OrdinalSchema[Codex.StringCodex],
-    value: T): Content = {
-    ContentImpl(schema, StringValue(value.toString, schema.codex))
+  def apply[T](schema: OrdinalSchema[Codex.StringCodex], value: T): Content = {
+    ContentImpl(schema, StringValue(value.toString))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.OrdinalSchema]] and
-   * `Numeric` value.
+   * Construct a content using a ordinal schema and numeric value.
    *
    * @param schema Schema of the variable value.
-   * @param value  `Numeric` value of the variable.
+   * @param value  Numeric value of the variable.
    */
-  def apply[T](schema: OrdinalSchema[Codex.DoubleCodex],
-    value: T)(implicit num: Numeric[T]): Content = {
+  def apply[T](schema: OrdinalSchema[Codex.DoubleCodex], value: T)(
+    implicit num: Numeric[T]): Content = {
     import num._
-    ContentImpl(schema, DoubleValue(value.toDouble, schema.codex))
+    ContentImpl(schema, DoubleValue(value.toDouble))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.OrdinalSchema]] and
-   * `Integral` value.
+   * Construct a content using a ordinal schema and integral value.
    *
    * @param schema Schema of the variable value.
-   * @param value  `Integral` value of the variable.
+   * @param value  Integral value of the variable.
    */
-  def apply[T](schema: OrdinalSchema[Codex.LongCodex],
-    value: T)(implicit num: Integral[T]): Content = {
+  def apply[T](schema: OrdinalSchema[Codex.LongCodex], value: T)(
+    implicit num: Integral[T]): Content = {
     import num._
-    ContentImpl(schema, LongValue(value.toLong, schema.codex))
+    ContentImpl(schema, LongValue(value.toLong))
   }
 
   /**
-   * Construct a [[Content]] using a [[metadata.DateSchema]] and
-   * `java.util.Date` value.
+   * Construct a content using a date schema and `java.util.Date` value.
    *
    * @param schema Schema of the variable value.
    * @param value  Date value of the variable.
@@ -196,20 +185,19 @@ object Content {
 }
 
 /**
- * Rich wrapper around a `TypedPipe[`[[Content]]`]`.
+ * Rich wrapper around a `TypedPipe[Content]`.
  *
- * @param data The `TypedPipe[`[[Content]]`]`.
+ * @param data The `TypedPipe[Content]`.
  */
-class ContentPipe(data: TypedPipe[Content]) {
+class Contents(data: TypedPipe[Content]) {
   /**
-   * Persist a [[ContentPipe]] to disk.
+   * Persist a contents to disk.
    *
    * @param file        Name of the output file.
-   * @param separator   Separator to use between the fields of a [[Content]].
+   * @param separator   Separator to use between the fields of a content.
    * @param descriptive Indicates if the output should be descriptive.
    *
-   * @return A Scalding `TypedPipe[`[[Content]]`]` which is this
-   *         [[ContentPipe]].
+   * @return A Scalding `TypedPipe[Content]` which is this object's data.
    */
   def persist(file: String, separator: String = "|",
     descriptive: Boolean = false)(implicit flow: FlowDef,
@@ -228,11 +216,9 @@ class ContentPipe(data: TypedPipe[Content]) {
   }
 }
 
-/** Companion object for the [[ContentPipe]] class. */
-object ContentPipe {
-  /** Converts a `TypedPipe[`[[Content]]`]` to a [[ContentPipe]]. */
-  implicit def typedPipeContent(data: TypedPipe[Content]): ContentPipe = {
-    new ContentPipe(data)
-  }
+/** Companion object for the `Contents` class. */
+object Contents {
+  /** Converts a `TypedPipe[Content]` to a `Contents`. */
+  implicit def TPC2C(data: TypedPipe[Content]): Contents = new Contents(data)
 }
 

@@ -16,24 +16,22 @@ package au.com.cba.omnia.grimlock.test
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.ContentPipe._
-import au.com.cba.omnia.grimlock.content.encoding._
+import au.com.cba.omnia.grimlock.content.Contents._
 import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.content.variable._
-import au.com.cba.omnia.grimlock.content.variable.Type._
 import au.com.cba.omnia.grimlock.derive._
+import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix._
 import au.com.cba.omnia.grimlock.Names._
 import au.com.cba.omnia.grimlock.pairwise._
 import au.com.cba.omnia.grimlock.partition._
 import au.com.cba.omnia.grimlock.partition.Partitions._
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.position.coordinate._
-import au.com.cba.omnia.grimlock.position.PositionPipe._
+import au.com.cba.omnia.grimlock.position.Positions._
 import au.com.cba.omnia.grimlock.reduce._
 import au.com.cba.omnia.grimlock.sample._
 import au.com.cba.omnia.grimlock.squash._
 import au.com.cba.omnia.grimlock.transform._
+import au.com.cba.omnia.grimlock.Type._
 import au.com.cba.omnia.grimlock.Types._
 
 import cascading.flow.FlowDef
@@ -45,9 +43,9 @@ object TestReader {
   def read4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[(Position3D, Content)] = {
     def hashDate(v: String) = {
       val cal = java.util.Calendar.getInstance()
-      cal.setTime(DateCodex.parse("2014-05-14").get)
+      cal.setTime(DateCodex.fromValue(DateCodex.decode("2014-05-14").get))
       cal.add(java.util.Calendar.DATE, -(v.hashCode % 21)) // Generate 3 week window prior to date
-      DateCoordinate(cal.getTime(), DateCodex)
+      DateValue(cal.getTime(), DateCodex)
     }
 
     (TypedPsv[(String, String, String, String)](file))
@@ -74,7 +72,7 @@ class Test1(args : Args) extends Job(args) {
     .persist("./tmp/dat1.out", descriptive=true)
 
   data
-    .set(Position3D("iid:1548763", "fid:Y", DateCodex.read("2014-04-26").get), Content(ContinuousSchema[Codex.LongCodex](), 1234))
+    .set(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get), Content(ContinuousSchema[Codex.LongCodex](), 1234))
     .slice(Over(First), "iid:1548763", true)
     .persist("./tmp/dat2.out", descriptive=true)
 
@@ -205,12 +203,12 @@ class Test7(args : Args) extends Job(args) {
   val data = TestReader.read4TupleDataAddDate(args("input"))
 
   data
-    .get(Position3D("iid:1548763", "fid:Y", DateCodex.read("2014-04-26").get))
+    .get(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get))
     .persist("./tmp/get1.out", descriptive=true)
 
   data
-    .get(List(Position3D("iid:1548763", "fid:Y", DateCodex.read("2014-04-26").get),
-              Position3D("iid:1303823", "fid:A", DateCodex.read("2014-05-05").get)))
+    .get(List(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
+              Position3D("iid:1303823", "fid:A", DateCodex.decode("2014-05-05").get)))
     .persist("./tmp/get2.out", descriptive=true)
 }
 
@@ -254,8 +252,8 @@ class Test9(args : Args) extends Job(args) {
 
     def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
       Some(Right(List(pos.get(dim) match {
-        case StringCoordinate("fid:A", _) => "training"
-        case StringCoordinate("fid:B", _) => "testing"
+        case StringValue("fid:A") => "training"
+        case StringValue("fid:B") => "testing"
       }, "scoring")))
     }
   }
@@ -275,8 +273,8 @@ class Test9(args : Args) extends Job(args) {
 
     def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
       Some(Right(List(pos.get(dim) match {
-        case StringCoordinate("fid:A", _) => (1, 0, 0)
-        case StringCoordinate("fid:B", _) => (0, 1, 0)
+        case StringValue("fid:A") => (1, 0, 0)
+        case StringValue("fid:B") => (0, 1, 0)
       }, (0, 0, 1))))
     }
   }

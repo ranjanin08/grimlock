@@ -15,26 +15,27 @@
 package au.com.cba.omnia.grimlock.squash
 
 import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
 /**
- * Reduce two cells preserving the cell with maximal value for the
- * [[position.coordinate.Coordinate]] of the dimension being squashed.
+ * Reduce two cells preserving the cell with maximal value for the coordinate
+ * of the dimension being squashed.
  */
 case class PreservingMaxPosition() extends Squasher with ReduceAndWithValue {
   def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
-    if (x._1.get(dim).compare(y._1.get(dim)) > 0) x else y
+    if (Value.Ordering.compare(x._1.get(dim), y._1.get(dim)) > 0) x else y
   }
 }
 
 /**
- * Reduce two cells preserving the cell with minimal value for the
- * [[position.coordinate.Coordinate]] of the dimension being squashed.
+ * Reduce two cells preserving the cell with minimal value for the coordinate
+ * of the dimension being squashed.
  */
 case class PreservingMinPosition() extends Squasher with ReduceAndWithValue {
   def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
-    if (x._1.get(dim).compare(y._1.get(dim)) < 0) x else y
+    if (Value.Ordering.compare(x._1.get(dim), y._1.get(dim)) < 0) x else y
   }
 }
 
