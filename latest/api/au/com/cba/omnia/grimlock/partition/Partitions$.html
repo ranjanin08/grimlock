@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/f716760cbccd2e64cfd5dc82c965fb1da992d7cf//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -332,7 +332,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.partition.Partitions#typedPipeTPositionContent" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="typedPipeTPositionContent[T,P&lt;:au.com.cba.omnia.grimlock.position.Position](data:com.twitter.scalding.TypedPipe[(T,(P,au.com.cba.omnia.grimlock.contents.Content))])(implicitevidence$2:Ordering[T]):au.com.cba.omnia.grimlock.partition.Partitions[T,P]"></a>
+      <a id="typedPipeTPositionContent[T,P&lt;:au.com.cba.omnia.grimlock.position.Position](data:com.twitter.scalding.TypedPipe[(T,(P,au.com.cba.omnia.grimlock.content.Content))])(implicitevidence$2:Ordering[T]):au.com.cba.omnia.grimlock.partition.Partitions[T,P]"></a>
       <a id="typedPipeTPositionContent[T,P&lt;:Position](TypedPipe[(T,(P,Content))])(Ordering[T]):Partitions[T,P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -340,11 +340,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">typedPipeTPositionContent</span><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="data">data: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.typedPipeTPositionContent.T">T</span>, (<span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.typedPipeTPositionContent.P">P</span>, <a href="../contents/Content.html" class="extype" name="au.com.cba.omnia.grimlock.contents.Content">Content</a>))]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.typedPipeTPositionContent.T">T</span>]</span>)</span><span class="result">: <a href="Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions">Partitions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.typedPipeTPositionContent.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.typedPipeTPositionContent.P">P</span>]</span>
+        <span class="name">typedPipeTPositionContent</span><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="data">data: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.typedPipeTPositionContent.T">T</span>, (<span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.typedPipeTPositionContent.P">P</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>))]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.typedPipeTPositionContent.T">T</span>]</span>)</span><span class="result">: <a href="Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions">Partitions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.typedPipeTPositionContent.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.typedPipeTPositionContent.P">P</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Conversion from <code>TypedPipe[(T, (</code><a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a><code>,
-<code><a href="../contents/Content.html" class="extype" name="au.com.cba.omnia.grimlock.contents.Content">contents.Content</a></code>))]</code> to a <a href="Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions">Partitions</a>.</p>
+<code><a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a></code>))]</code> to a <a href="Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions">Partitions</a>.</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

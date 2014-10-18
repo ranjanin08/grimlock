@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Sample based on the hash code of a dimension.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to sample from.</p></dd><dt class="param">size</dt><dd class="cmt"><p>The size to sample to.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/f716760cbccd2e64cfd5dc82c965fb1da992d7cf//src/main/scala/au/com/cba/omnia/grimlock/code/Samplers.scala" target="_blank">Samplers.scala</a></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Samplers.scala" target="_blank">Samplers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.sample.SelectWithValue">SelectWithValue</a>, <a href="Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.sample.Sampler">Sampler</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -101,7 +101,7 @@
         <div id="types" class="types members">
               <h3>Type Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.sample.HashSampleToSize.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="V=Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.contents.Content]"></a>
+      <a id="V=Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]"></a>
       <a id="V:V"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -109,7 +109,7 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">V</span><span class="result"> = <span class="extype" name="scala.collection.immutable.Map">Map</span>[<a href="../position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <a href="../contents/Content.html" class="extype" name="au.com.cba.omnia.grimlock.contents.Content">Content</a>]</span>
+        <span class="name">V</span><span class="result"> = <span class="extype" name="scala.collection.immutable.Map">Map</span>[<a href="../position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.sample.HashSampleToSize">HashSampleToSize</a> → <a href="SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.sample.SelectWithValue">SelectWithValue</a></dd></dl></div>
@@ -336,7 +336,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">select</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.sample.HashSampleToSize.select.P">P</span></span>, <span name="ext">ext: <a href="#V=Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.contents.Content]" class="extmbr" name="au.com.cba.omnia.grimlock.sample.HashSampleToSize.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">select</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.sample.HashSampleToSize.select.P">P</span></span>, <span name="ext">ext: <a href="#V=Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]" class="extmbr" name="au.com.cba.omnia.grimlock.sample.HashSampleToSize.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Indicate if the cell is selected as part of the sample.</p><div class="fullcomment"><div class="comment cmt"><p>Indicate if the cell is selected as part of the sample.
