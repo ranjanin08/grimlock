@@ -35,16 +35,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">TernaryDateSplit</span><span class="tparams">[<span name="S">S</span>]</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="lower">lower: <span class="extype" name="java.util.Date">Date</span></span>, <span name="upper">upper: <span class="extype" name="java.util.Date">Date</span></span>, <span name="left">left: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>, <span name="middle">middle: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>, <span name="right">right: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="evidence$5">evidence$5: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span>]</span>)</span><span class="result"> extends <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">Partitioner</a> with <a href="AssignAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignAndWithValue">AssignAndWithValue</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">TernaryDateSplit</span><span class="tparams">[<span name="S">S</span>]</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="lower">lower: <span class="extype" name="java.util.Date">Date</span></span>, <span name="upper">upper: <span class="extype" name="java.util.Date">Date</span></span>, <span name="left">left: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>, <span name="middle">middle: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>, <span name="right">right: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>, <span name="codex">codex: <a href="../encoding/DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.DateAndTimeCodex">DateAndTimeCodex</a> = <span class="defval" name="au.com.cba.omnia.grimlock.encoding.DateCodex">...</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="evidence$5">evidence$5: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span>]</span>)</span><span class="result"> extends <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">Partitioner</a> with <a href="AssignAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignAndWithValue">AssignAndWithValue</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Ternary partition based on the date of a
-<a href="../position/coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">position.coordinate.Coordinate</a>.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> to partition on.</p></dd><dt class="param">lower</dt><dd class="cmt"><p>The lower date around which to split.</p></dd><dt class="param">upper</dt><dd class="cmt"><p>The upper date around which to split.</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">middle</dt><dd class="cmt"><p>The identifier for the middle partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> is assigned to the partition <code>left</code> if
-      it is less or equal to <code>lower</code>, <code>middle</code> if it is less of equal to
-      <code>upper</code> or else to <code>right</code>.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Ternary partition based on the date of a coordinate.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">lower</dt><dd class="cmt"><p>The lower date around which to split.</p></dd><dt class="param">upper</dt><dd class="cmt"><p>The upper date around which to split.</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">middle</dt><dd class="cmt"><p>The identifier for the middle partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The date codex used for comparison.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The position is assigned to the partition <code>left</code> if it is less or
+      equal to <code>lower</code>, <code>middle</code> if it is less of equal to <code>upper</code> or
+      else to <code>right</code>.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="AssignAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignAndWithValue">AssignAndWithValue</a>, <a href="AssignWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignWithValue">AssignWithValue</a>, <a href="Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a>, <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">Partitioner</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -86,7 +85,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(dim:au.com.cba.omnia.grimlock.position.Dimension,lower:java.util.Date,upper:java.util.Date,left:S,middle:S,right:S)(implicitevidence$5:Ordering[S]):au.com.cba.omnia.grimlock.partition.TernaryDateSplit[S]"></a>
+      <a id="&lt;init&gt;(dim:au.com.cba.omnia.grimlock.position.Dimension,lower:java.util.Date,upper:java.util.Date,left:S,middle:S,right:S,codex:au.com.cba.omnia.grimlock.encoding.DateAndTimeCodex)(implicitevidence$5:Ordering[S]):au.com.cba.omnia.grimlock.partition.TernaryDateSplit[S]"></a>
       <a id="&lt;init&gt;:TernaryDateSplit[S]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -94,10 +93,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">TernaryDateSplit</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="lower">lower: <span class="extype" name="java.util.Date">Date</span></span>, <span name="upper">upper: <span class="extype" name="java.util.Date">Date</span></span>, <span name="left">left: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>, <span name="middle">middle: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>, <span name="right">right: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span>]</span>)</span>
+        <span class="name">TernaryDateSplit</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="lower">lower: <span class="extype" name="java.util.Date">Date</span></span>, <span name="upper">upper: <span class="extype" name="java.util.Date">Date</span></span>, <span name="left">left: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>, <span name="middle">middle: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>, <span name="right">right: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span></span>, <span name="codex">codex: <a href="../encoding/DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.DateAndTimeCodex">DateAndTimeCodex</a> = <span class="defval" name="au.com.cba.omnia.grimlock.encoding.DateCodex">...</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.S">S</span>]</span>)</span>
       </span>
       </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> to partition on.</p></dd><dt class="param">lower</dt><dd class="cmt"><p>The lower date around which to split.</p></dd><dt class="param">upper</dt><dd class="cmt"><p>The upper date around which to split.</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">middle</dt><dd class="cmt"><p>The identifier for the middle partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">lower</dt><dd class="cmt"><p>The lower date around which to split.</p></dd><dt class="param">upper</dt><dd class="cmt"><p>The upper date around which to split.</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">middle</dt><dd class="cmt"><p>The identifier for the middle partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The date codex used for comparison.
 </p></dd></dl></div>
     </li></ol>
             </div>
@@ -228,13 +227,13 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Assign the cell to a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition.
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> of the content.
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the content.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances
         of <code>T</code> identify the partitions.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit">TernaryDateSplit</a> → <a href="Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is returned to allow partitioners to be selective in
-      which partition a <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> is assigned to. An <code>Either</code>
-      is returned to allow a partitioner to assign a <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>
-      to more than one partition.
+      which partition a position is assigned to. An <code>Either</code> is returned
+      to allow a partitioner to assign a position to more than one
+      partitions.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.partition.AssignAndWithValue#assign" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="assign[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P,ext:AssignAndWithValue.this.V):Option[Either[AssignAndWithValue.this.T,List[AssignAndWithValue.this.T]]]"></a>
@@ -249,13 +248,13 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Assign the cell to a partition using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition using a user supplied value.
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> of the content.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user supplied value.
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the content.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user supplied value.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances
         of <code>T</code> identify the partitions.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AssignAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignAndWithValue">AssignAndWithValue</a> → <a href="AssignWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignWithValue">AssignWithValue</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is returned to allow partitioners to be selective in
-      which partition a <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> is assigned to. An <code>Either</code>
-      is returned to allow a partitioner to assign a <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>
-      to more than one partition.
+      which partition a position is assigned to. An <code>Either</code> is returned
+      to allow a partitioner to assign a position to more than one
+      partitions.
 </p></span></dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
@@ -276,6 +275,19 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit#codex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="codex:au.com.cba.omnia.grimlock.encoding.DateAndTimeCodex"></a>
+      <a id="codex:DateAndTimeCodex"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">codex</span><span class="result">: <a href="../encoding/DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.DateAndTimeCodex">DateAndTimeCodex</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The date codex used for comparison.</p>
     </li><li name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit#dim" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="dim:au.com.cba.omnia.grimlock.position.Dimension"></a>
       <a id="dim:Dimension"></a>
@@ -288,7 +300,7 @@
         <span class="name">dim</span><span class="result">: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">The <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> to partition on.</p>
+      <p class="shortcomment cmt">The dimension to partition on.</p>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>

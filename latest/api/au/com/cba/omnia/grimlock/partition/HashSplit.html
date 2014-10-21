@@ -39,12 +39,12 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Partition based on the hash code of a <a href="../position/coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">position.coordinate.Coordinate</a>.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> to partition on.</p></dd><dt class="param">ranges</dt><dd class="cmt"><p>A <code>Map</code> holding the partitions and hash code ranges
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Partition based on the hash code of a coordinate.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ranges</dt><dd class="cmt"><p>A <code>Map</code> holding the partitions and hash code ranges
               (relative to <code>base</code>) for each partition.</p></dd><dt class="param">base</dt><dd class="cmt"><p>The base for hash code.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>A <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> falls in a range if it is (strictly) greater
-      than the lower value (first value in tuple) and less or equal to the
-      upper value (second value in tuple).
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>A position falls in a range if it is (strictly) greater than the
+      lower value (first value in tuple) and less or equal to the upper
+      value (second value in tuple).
 </p></span>, <span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the range.</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="AssignAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignAndWithValue">AssignAndWithValue</a>, <a href="AssignWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignWithValue">AssignWithValue</a>, <a href="Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a>, <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">Partitioner</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -97,7 +97,7 @@
         <span class="name">HashSplit</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="ranges">ranges: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.partition.HashSplit.S">S</span>, (<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Int">Int</span>)]</span>, <span name="base">base: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">100</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.partition.HashSplit.S">S</span>]</span>)</span>
       </span>
       </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> to partition on.</p></dd><dt class="param">ranges</dt><dd class="cmt"><p>A <code>Map</code> holding the partitions and hash code ranges
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ranges</dt><dd class="cmt"><p>A <code>Map</code> holding the partitions and hash code ranges
               (relative to <code>base</code>) for each partition.</p></dd><dt class="param">base</dt><dd class="cmt"><p>The base for hash code.
 </p></dd></dl></div>
     </li></ol>
@@ -229,13 +229,13 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Assign the cell to a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition.
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> of the content.
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the content.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances
         of <code>T</code> identify the partitions.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.partition.HashSplit">HashSplit</a> → <a href="Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is returned to allow partitioners to be selective in
-      which partition a <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> is assigned to. An <code>Either</code>
-      is returned to allow a partitioner to assign a <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>
-      to more than one partition.
+      which partition a position is assigned to. An <code>Either</code> is returned
+      to allow a partitioner to assign a position to more than one
+      partitions.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.partition.AssignAndWithValue#assign" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="assign[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P,ext:AssignAndWithValue.this.V):Option[Either[AssignAndWithValue.this.T,List[AssignAndWithValue.this.T]]]"></a>
@@ -250,13 +250,13 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Assign the cell to a partition using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition using a user supplied value.
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> of the content.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user supplied value.
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the content.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user supplied value.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances
         of <code>T</code> identify the partitions.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AssignAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignAndWithValue">AssignAndWithValue</a> → <a href="AssignWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignWithValue">AssignWithValue</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is returned to allow partitioners to be selective in
-      which partition a <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> is assigned to. An <code>Either</code>
-      is returned to allow a partitioner to assign a <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>
-      to more than one partition.
+      which partition a position is assigned to. An <code>Either</code> is returned
+      to allow a partitioner to assign a position to more than one
+      partitions.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.partition.HashSplit#base" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="base:Int"></a>
@@ -302,7 +302,7 @@
         <span class="name">dim</span><span class="result">: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">The <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> to partition on.</p>
+      <p class="shortcomment cmt">The dimension to partition on.</p>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>

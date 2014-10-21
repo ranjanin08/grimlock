@@ -39,9 +39,8 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[(</code><a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a><code>,
-<code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a></code>)]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[(Position, Content)]</code>.
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -98,7 +97,7 @@
         <span class="name">Predicate</span><span class="result"> = (<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Predicate used in, for example, the <code>which</code> methods of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>
+      <p class="shortcomment cmt">Predicate used in, for example, the <code>which</code> methods of a matrix
 for finding content.</p>
     </li></ol>
             </div>
@@ -130,10 +129,9 @@ for finding content.</p>
         <span class="name">domain</span><span class="params">()</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Return all possible <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>s of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Return all possible <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>s of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.
+      <p class="shortcomment cmt">Return all possible positions of a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Return all possible positions of a matrix.
 </p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[P]</code>
-</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="position/PositionPipe.html" class="extype" name="au.com.cba.omnia.grimlock.position.PositionPipe">position.PositionPipe</a>
-</p></span></dd></dl></div>
+</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -306,12 +304,11 @@ for finding content.</p>
         <span class="name">get</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.get.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PositionPipeable.html" class="extype" name="au.com.cba.omnia.grimlock.position.PositionPipeable">PositionPipeable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.get.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Return contents of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> at <code>positions</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return contents of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> at <code>positions</code>.
+      <p class="shortcomment cmt">Return contents of a matrix at <code>positions</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return contents of a matrix at <code>positions</code>.
 </p></div><dl class="paramcmts block"><dt class="param">positions</dt><dd class="cmt"><p>The positions for which to get the contents.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]' of the
-        </code>positions<code> together with their <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>.
-</code></p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="position/PositionPipeable.html" class="extype" name="au.com.cba.omnia.grimlock.position.PositionPipeable">position.PositionPipeable</a>
-</p></span></dd></dl></div>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]' of the </code>positions<code> together
+        with their content.
+</code></p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -364,9 +361,9 @@ for finding content.</p>
       </span>
       </h4>
       <p class="shortcomment cmt">Join two matrices.</p><div class="fullcomment"><div class="comment cmt"><p>Join two matrices.
-</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to join.</p></dd><dt class="param">that</dt><dd class="cmt"><p>The <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> to join with.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]</code> consisting of
-        the inner-join of the two matrices.
+</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to join.</p></dd><dt class="param">that</dt><dd class="cmt"><p>The matrix to join with.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code> consisting of the inner-join
+        of the two matrices.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#names" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="names[D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D])(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.S,Long)]"></a>
@@ -380,18 +377,15 @@ for finding content.</p>
         <span class="name">names</span><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.names.D">D</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.names.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">S</a>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Returns the distinct <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>(s) (or names) for a given
-<code>slice</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the distinct <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>(s) (or names) for a given
-<code>slice</code>.
+      <p class="shortcomment cmt">Returns the distinct position(s) (or names) for a given <code>slice</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the distinct position(s) (or names) for a given <code>slice</code>.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) for which the names are to
        be returned.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(</code><a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">Slice.S</a><code>, Long)]</code> of the distinct
-        <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>(s) together with a unique index.
-</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>(s) are returned with an index so the
-      return value can be used in various <code>write</code> methods. The index
-      itself is unique for each <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> but no ordering
-      is defined.
-</p></span></dd><dt>See also</dt><dd><span class="cmt"><p><a href="Names.html" class="extype" name="au.com.cba.omnia.grimlock.Names">Names</a>, <a href="Matrix2D.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix2D">Matrix2D</a>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Slice.S, Long)]</code> of the distinct
+        position(s) together with a unique index.
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The position(s) are returned with an index so the return value can
+      be used in various <code>persist</code> methods. The index itself is unique for
+      each position but no ordering is defined.
+</p></span></dd><dt>See also</dt><dd><span class="cmt"><p><a href="Names.html" class="extype" name="au.com.cba.omnia.grimlock.Names">Names</a>
 </p></span></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
@@ -444,13 +438,11 @@ for finding content.</p>
         <span class="name">partition</span><span class="tparams">[<span name="S">S</span>]</span><span class="params">(<span name="partitioner">partitioner: <a href="partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">Partitioner</a> with <a href="partition/Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a> { type T = S }</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.partition.S">S</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.partition.S">S</span>, (<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>))]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Partition a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to <code>partitioner</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Partition a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to <code>partitioner</code>.
-</p></div><dl class="paramcmts block"><dt class="param">partitioner</dt><dd class="cmt"><p>Assigns each <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> to zero, one or
-                   more partitions.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(T, (P, </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>))]</code> where
-        <code>T</code> is the partition for the corresponding tuple.
-</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">partition.Partitioner</a>
-</p></span></dd></dl></div>
+      <p class="shortcomment cmt">Partition a matrix according to <code>partitioner</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Partition a matrix according to <code>partitioner</code>.
+</p></div><dl class="paramcmts block"><dt class="param">partitioner</dt><dd class="cmt"><p>Assigns each position to zero, one or more partitions.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(T, (P, Content))]</code> where <code>T</code> is the
+        partition for the corresponding tuple.
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#partitionWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="partitionWithValue[S,W](partitioner:au.com.cba.omnia.grimlock.partition.Partitionerwithau.com.cba.omnia.grimlock.partition.AssignWithValue{typeV&gt;:W;typeT=S},value:com.twitter.scalding.ValuePipe[W])(implicitevidence$2:Ordering[S]):com.twitter.scalding.TypedPipe[(S,(P,au.com.cba.omnia.grimlock.content.Content))]"></a>
       <a id="partitionWithValue[S,W](PartitionerwithAssignWithValue{.../*2definitionsintyperefinement*/},ValuePipe[W])(Ordering[S]):TypedPipe[(S,(P,Content))]"></a>
@@ -463,15 +455,11 @@ for finding content.</p>
         <span class="name">partitionWithValue</span><span class="tparams">[<span name="S">S</span>, <span name="W">W</span>]</span><span class="params">(<span name="partitioner">partitioner: <a href="partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">Partitioner</a> with <a href="partition/AssignWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignWithValue">AssignWithValue</a> { ... /* 2 definitions in type refinement */ }</span>, <span name="value">value: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.partitionWithValue.W">W</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.partitionWithValue.S">S</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.partitionWithValue.S">S</span>, (<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>))]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Partition a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to <code>partitioner</code> using a user supplied
-value.</p><div class="fullcomment"><div class="comment cmt"><p>Partition a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to <code>partitioner</code> using a user supplied
-value.
-</p></div><dl class="paramcmts block"><dt class="param">partitioner</dt><dd class="cmt"><p>Assigns each <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> to zero, one or
-                   more partitions.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(T, (P, </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>))]</code> where
-        <code>T</code> is the partition for the corresponding tuple.
-</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">partition.Partitioner</a>
-</p></span></dd></dl></div>
+      <p class="shortcomment cmt">Partition a matrix according to <code>partitioner</code> using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Partition a matrix according to <code>partitioner</code> using a user supplied value.
+</p></div><dl class="paramcmts block"><dt class="param">partitioner</dt><dd class="cmt"><p>Assigns each position to zero, one or more partitions.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(T, (P, Content))]</code> where <code>T</code> is the
+        partition for the corresponding tuple.
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#persist" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="persist(file:String,separator:String,descriptive:Boolean)(implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
       <a id="persist(String,String,Boolean)(FlowDef,Mode):TypedPipe[(P,Content)]"></a>
@@ -484,11 +472,9 @@ value.
         <span class="name">persist</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;|&quot;</span></span>, <span name="descriptive">descriptive: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Persist a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> to disk.</p><div class="fullcomment"><div class="comment cmt"><p>Persist a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> to disk.
-</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> and
-                   <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>.</p></dd><dt class="param">descriptive</dt><dd class="cmt"><p>Indicates if the output should be descriptive.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]</code> which is
-        this <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.
+      <p class="shortcomment cmt">Persist a matrix to disk.</p><div class="fullcomment"><div class="comment cmt"><p>Persist a matrix to disk.
+</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between position and content.</p></dd><dt class="param">descriptive</dt><dd class="cmt"><p>Indicates if the output should be descriptive.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code> which is this object's data.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#reduceAndExpand" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="reduceAndExpand[T,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D],reducers:T)(implicitev1:au.com.cba.omnia.grimlock.reduce.ReducerableMultiple[T],implicitev2:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.S#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -502,21 +488,14 @@ value.
         <span class="name">reduceAndExpand</span><span class="tparams">[<span name="T">T</span>, <span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.reduceAndExpand.D">D</span>]</span>, <span name="reducers">reducers: <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.reduceAndExpand.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="reduce/ReducerableMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ReducerableMultiple">ReducerableMultiple</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.reduceAndExpand.T">T</span>]</span>, <span name="ev2">ev2: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.reduceAndExpand.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">Slice.S.M</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Reduce a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> and return the reductions with an expanded
-<a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> and return the reductions with an expanded
-<a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>.
+      <p class="shortcomment cmt">Reduce a matrix and return the reductions with an expanded position.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce a matrix and return the reductions with an expanded position.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to reduce.</p></dd><dt class="param">reducers</dt><dd class="cmt"><p>The reducer(s) to apply to the data.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(</code><a href="position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">position.ExpandablePosition.M</a><code>,
-        </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]</code>. Where the
-        <a href="position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">position.ExpandablePosition.M</a> is relative to <a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">Slice.S</a>.
-</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>If the <code>slice</code> is an <a href="Over.html" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> then the returned
-      <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> will be a <a href="position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position2D">position.Position2D</a> since
-      <a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">Slice.S</a> for <a href="Over.html" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> is a <a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">position.Position1D</a> and that
-      expands to <a href="position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position2D">position.Position2D</a>. Analogously, if the <code>slice</code>
-      is an <a href="Along.html" class="extype" name="au.com.cba.omnia.grimlock.Along">Along</a> then the returned <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> will be
-      equal to <code>P</code>.
-</p></span></dd><dt>See also</dt><dd><span class="cmt"><p><a href="reduce/ReducerableMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ReducerableMultiple">reduce.ReducerableMultiple</a>, <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>,
-     <a href="position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">position.ExpandablePosition</a>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ExpandablePosition.M, Content)]</code>. Where the
+        <code>ExpandablePosition.M</code> is relative to <code>Slice.S</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>If the <code>slice</code> is an <code>Over</code> then the returned position will be a
+      <code>Position2D</code> since <code>Slice.S</code> for <code>Over</code> is a <code>Position1D</code> and that
+      expands to <code>Position2D</code>. Analogously, if the <code>slice</code> is an <code>Along</code>
+      then the returned position will be equal to <code>P</code>.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#reduceAndExpandWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="reduceAndExpandWithValue[T,D&lt;:au.com.cba.omnia.grimlock.position.Dimension,V](slice:au.com.cba.omnia.grimlock.Slice[P,D],reducers:T,value:com.twitter.scalding.ValuePipe[V])(implicitev1:au.com.cba.omnia.grimlock.reduce.ReducerableMultipleWithValue[T,V],implicitev2:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.S#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -530,21 +509,16 @@ value.
         <span class="name">reduceAndExpandWithValue</span><span class="tparams">[<span name="T">T</span>, <span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="V">V</span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.reduceAndExpandWithValue.D">D</span>]</span>, <span name="reducers">reducers: <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.reduceAndExpandWithValue.T">T</span></span>, <span name="value">value: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.reduceAndExpandWithValue.V">V</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="reduce/ReducerableMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ReducerableMultipleWithValue">ReducerableMultipleWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.reduceAndExpandWithValue.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.reduceAndExpandWithValue.V">V</span>]</span>, <span name="ev2">ev2: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.reduceAndExpandWithValue.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">Slice.S.M</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Reduce a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>, using a user supplied value, and return the
-reductions with an expanded <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>, using a user supplied value, and return the
-reductions with an expanded <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>.
+      <p class="shortcomment cmt">Reduce a matrix, using a user supplied value, and return the
+reductions with an expanded position.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce a matrix, using a user supplied value, and return the
+reductions with an expanded position.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to reduce.</p></dd><dt class="param">reducers</dt><dd class="cmt"><p>The reducer(s) to apply to the data.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(</code><a href="position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">position.ExpandablePosition.M</a><code>,
-        </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]</code>. Where the
-        <a href="position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">position.ExpandablePosition.M</a> is relative to <a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">Slice.S</a>.
-</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>If the <code>slice</code> is an <a href="Over.html" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> then the returned
-      <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> will be a <a href="position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position2D">position.Position2D</a> since
-      <a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">Slice.S</a> for <a href="Over.html" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> is a <a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">position.Position1D</a> and that
-      expands to <a href="position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position2D">position.Position2D</a>. Analogously, if the <code>slice</code>
-      is an <a href="Along.html" class="extype" name="au.com.cba.omnia.grimlock.Along">Along</a> then the returned <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> will be
-      equal to <code>P</code>.
-</p></span></dd><dt>See also</dt><dd><span class="cmt"><p><a href="reduce/ReducerableMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ReducerableMultiple">reduce.ReducerableMultiple</a>, <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>,
-     <a href="position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">position.ExpandablePosition</a>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ExpandablePosition.M, Content)]</code>. Where the
+        <code>ExpandablePosition.M</code> is relative to <code>Slice.S</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>If the <code>slice</code> is an <code>Over</code> then the returned position will be a
+      <code>Position2D</code> since <code>Slice.S</code> for <code>Over</code> is a <code>Position1D</code> and that
+      expands to <code>Position2D</code>. Analogously, if the <code>slice</code> is an <code>Along</code>
+      then the returned position will be equal to <code>P</code>.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#refine" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="refine(f:(P,au.com.cba.omnia.grimlock.content.Content)=&gt;Boolean):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -558,10 +532,10 @@ reductions with an expanded <a href="position/Position.html" class="extype" name
         <span class="name">refine</span><span class="params">(<span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Refine (filter) a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to some function <code>f</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Refine (filter) a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to some function <code>f</code>. It keeps
-only those cells for which <code>f</code> returns true.
+      <p class="shortcomment cmt">Refine (filter) a matrix according to some function <code>f</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Refine (filter) a matrix according to some function <code>f</code>. It keeps only
+those cells for which <code>f</code> returns true.
 </p></div><dl class="paramcmts block"><dt class="param">f</dt><dd class="cmt"><p>Filtering function.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#refineWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="refineWithValue[V](f:(P,au.com.cba.omnia.grimlock.content.Content,V)=&gt;Boolean,value:com.twitter.scalding.ValuePipe[V]):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -575,12 +549,11 @@ only those cells for which <code>f</code> returns true.
         <span class="name">refineWithValue</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.refineWithValue.V">V</span>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="value">value: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.refineWithValue.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Refine (filter) a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to some function <code>f</code> using a
-user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Refine (filter) a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to some function <code>f</code> using a
-user supplied value. It keeps only those cells for which <code>f</code> returns
-true.
+      <p class="shortcomment cmt">Refine (filter) a matrix according to some function <code>f</code> using a user
+supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Refine (filter) a matrix according to some function <code>f</code> using a user
+supplied value. It keeps only those cells for which <code>f</code> returns true.
 </p></div><dl class="paramcmts block"><dt class="param">f</dt><dd class="cmt"><p>Filtering function.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#sample" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sample(sampler:au.com.cba.omnia.grimlock.sample.Samplerwithau.com.cba.omnia.grimlock.sample.Select):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -594,10 +567,10 @@ true.
         <span class="name">sample</span><span class="params">(<span name="sampler">sampler: <a href="sample/Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.sample.Sampler">Sampler</a> with <a href="sample/Select.html" class="extype" name="au.com.cba.omnia.grimlock.sample.Select">Select</a></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Sample a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to some function <code>f</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Sample a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to some function <code>f</code>. It keeps only those
-cells for which <code>f</code> returns true.
+      <p class="shortcomment cmt">Sample a matrix according to some function <code>f</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Sample a matrix according to some function <code>f</code>. It keeps only those cells
+for which <code>f</code> returns true.
 </p></div><dl class="paramcmts block"><dt class="param">sampler</dt><dd class="cmt"><p>Sampling function.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#sampleWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sampleWithValue[W](sampler:au.com.cba.omnia.grimlock.sample.Samplerwithau.com.cba.omnia.grimlock.sample.SelectWithValue{typeV&gt;:W},value:com.twitter.scalding.ValuePipe[W]):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -611,11 +584,11 @@ cells for which <code>f</code> returns true.
         <span class="name">sampleWithValue</span><span class="tparams">[<span name="W">W</span>]</span><span class="params">(<span name="sampler">sampler: <a href="sample/Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.sample.Sampler">Sampler</a> with <a href="sample/SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.sample.SelectWithValue">SelectWithValue</a> { type V &gt;: W }</span>, <span name="value">value: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.sampleWithValue.W">W</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Sample a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to some function <code>f</code> using a user supplied
-value.</p><div class="fullcomment"><div class="comment cmt"><p>Sample a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> according to some function <code>f</code> using a user supplied
+      <p class="shortcomment cmt">Sample a matrix according to some function <code>f</code> using a user supplied
+value.</p><div class="fullcomment"><div class="comment cmt"><p>Sample a matrix according to some function <code>f</code> using a user supplied
 value. It keeps only those cells for which <code>f</code> returns true.
 </p></div><dl class="paramcmts block"><dt class="param">sampler</dt><dd class="cmt"><p>Sampling function.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#shape" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="shape():com.twitter.scalding.TypedPipe[(au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -629,13 +602,11 @@ value. It keeps only those cells for which <code>f</code> returns true.
         <span class="name">shape</span><span class="params">()</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Returns the shape of the <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the shape of the <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(</code><a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">position.Position1D</a><code>,
-        </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]</code>. The <a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">position.Position1D</a> consists
-        a <a href="position/coordinate/StringCoordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.StringCoordinate">position.coordinate.StringCoordinate</a> with the name of the
-        dimension (<code>dim.toString</code>). The <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> has the
-        actual size in it as a <a href="content/variable/Type$.html#Discrete:au.com.cba.omnia.grimlock.content.variable.Type" class="extmbr" name="au.com.cba.omnia.grimlock.content.variable.Type#Discrete">content.variable.Type.Discrete</a>
-        variable.
+      <p class="shortcomment cmt">Returns the shape of the matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the shape of the matrix.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position1D, Content)]</code>. The position
+        consists of a string value with the name of the dimension
+        (<code>dim.toString</code>). The content has the actual size in it as a
+        discrete variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#size" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="size[D&lt;:au.com.cba.omnia.grimlock.position.Dimension](dim:D,distinct:Boolean)(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -649,16 +620,14 @@ value. It keeps only those cells for which <code>f</code> returns true.
         <span class="name">size</span><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="dim">dim: <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.size.D">D</span></span>, <span name="distinct">distinct: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.size.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Returns the size of the <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> in dimension <code>dim</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the size of the <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> in dimension <code>dim</code>.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> for which to get the size.</p></dd><dt class="param">distinct</dt><dd class="cmt"><p>Indicates if the <a href="position/coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">position.coordinate.Coordinate</a>s in
-                dimension <code>dim</code> are unique. If this is the case, then
-                enabling this flag has better run-time performance.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(</code><a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">position.Position1D</a><code>,
-        </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]</code>. The <a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">position.Position1D</a> consists
-        a <a href="position/coordinate/StringCoordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.StringCoordinate">position.coordinate.StringCoordinate</a> with the name of the
-        dimension (<code>dim.toString</code>). The <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> has the
-        actual size in it as a <a href="content/variable/Type$.html#Discrete:au.com.cba.omnia.grimlock.content.variable.Type" class="extmbr" name="au.com.cba.omnia.grimlock.content.variable.Type#Discrete">content.variable.Type.Discrete</a>
-        variable.
+      <p class="shortcomment cmt">Returns the size of the matrix in dimension <code>dim</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the size of the matrix in dimension <code>dim</code>.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension for which to get the size.</p></dd><dt class="param">distinct</dt><dd class="cmt"><p>Indicates if the coordinates in dimension <code>dim</code> are
+                unique. If this is the case, then enabling this flag
+                has better run-time performance.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position1D, Content)]</code>. The position
+        consists of a string value with the name of the dimension
+        (<code>dim.toString</code>). The content has the actual size in it as a
+        discrete variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#slice" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="slice[T,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D],positions:T,keep:Boolean)(implicitev1:au.com.cba.omnia.grimlock.Nameable[T,P,slice.S,D],implicitev2:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -672,13 +641,10 @@ value. It keeps only those cells for which <code>f</code> returns true.
         <span class="name">slice</span><span class="tparams">[<span name="T">T</span>, <span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.slice.D">D</span>]</span>, <span name="positions">positions: <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.slice.T">T</span></span>, <span name="keep">keep: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="Nameable.html" class="extype" name="au.com.cba.omnia.grimlock.Nameable">Nameable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.slice.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">S</a>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.slice.D">D</span>]</span>, <span name="ev2">ev2: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.slice.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Slice a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Slice a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.
-</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) to slice.</p></dd><dt class="param">positions</dt><dd class="cmt"><p>The <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>(s) within the dimension(s)
-                 to slice.</p></dd><dt class="param">keep</dt><dd class="cmt"><p>Indicates if the <code>positions</code> should be kept or removed.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, </code><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)]' of the
-        remaining content.
-</code></p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Nameable.html" class="extype" name="au.com.cba.omnia.grimlock.Nameable">Nameable</a>
-</p></span></dd></dl></div>
+      <p class="shortcomment cmt">Slice a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Slice a matrix.
+</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) to slice.</p></dd><dt class="param">positions</dt><dd class="cmt"><p>The position(s) within the dimension(s) to slice.</p></dd><dt class="param">keep</dt><dd class="cmt"><p>Indicates if the <code>positions</code> should be kept or removed.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]' of the remaining content.
+</code></p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -704,10 +670,10 @@ value. It keeps only those cells for which <code>f</code> returns true.
         <span class="name">toMap</span><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.toMap.D">D</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.toMap.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">S</a>, <a href="Slice.html#C" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.C">C</a>]]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Convert a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> to an in-memory <code>Map</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Convert a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> to an in-memory <code>Map</code>.
+      <p class="shortcomment cmt">Convert a matrix to an in-memory <code>Map</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Convert a matrix to an in-memory <code>Map</code>.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to convert.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>ValuePipe[Map[</code><a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">Slice.S</a>, <a href="Slice.html#C" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.C">Slice.C</a><code>]]</code> containing
-        the Map representation of this <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>ValuePipe[Map[Slice.S, Slice.C]]</code> containing
+        the Map representation of this matrix.
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Avoid using this for very large matrices.
 </p></span></dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -724,7 +690,7 @@ value. It keeps only those cells for which <code>f</code> returns true.
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#types" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="types[D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D],specific:Boolean)(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.S,au.com.cba.omnia.grimlock.content.variable.Type)]"></a>
+      <a id="types[D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D],specific:Boolean)(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.S,au.com.cba.omnia.grimlock.Type)]"></a>
       <a id="types[D&lt;:Dimension](Slice[P,D],Boolean)(PosDimDep[P,D]):TypedPipe[(S,Type)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -732,21 +698,18 @@ value. It keeps only those cells for which <code>f</code> returns true.
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">types</span><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.types.D">D</span>]</span>, <span name="specific">specific: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.types.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">S</a>, <a href="content/variable/Type.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Type">Type</a>)]</span>
+        <span class="name">types</span><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.types.D">D</span>]</span>, <span name="specific">specific: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.types.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">S</a>, <a href="Type.html" class="extype" name="au.com.cba.omnia.grimlock.Type">Type</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Returns the <a href="content/variable/Type.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Type">content.variable.Type</a> of the <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>(s)
-for a given <code>slice</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the <a href="content/variable/Type.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Type">content.variable.Type</a> of the <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>(s)
-for a given <code>slice</code>.
+      <p class="shortcomment cmt">Returns the variable type of the content(s) for a given <code>slice</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the variable type of the content(s) for a given <code>slice</code>.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) for this the types are
                 to be returned.</p></dd><dt class="param">specific</dt><dd class="cmt"><p>Indicates if the most specific type should be returned,
                 or it's generalisation (default).
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(</code><a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">Slice.S</a><code>,
-        </code><a href="content/variable/Type.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Type">content.variable.Type</a><code>)]</code> of the distinct
-        <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>(s) together with their type.
-</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Types.html" class="extype" name="au.com.cba.omnia.grimlock.Types">Types</a>, <a href="content/variable/Type.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Type">content.variable.Type</a>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Slice.S, Type)]</code> of the distinct
+        position(s) together with their type.
+</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Types.html" class="extype" name="au.com.cba.omnia.grimlock.Types">Types</a>
 </p></span></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.Matrix#unique" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="au.com.cba.omnia.grimlock.Matrix#unique" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="unique():com.twitter.scalding.TypedPipe[au.com.cba.omnia.grimlock.content.Content]"></a>
       <a id="unique():TypedPipe[Content]"></a>
       <h4 class="signature">
@@ -758,9 +721,7 @@ for a given <code>slice</code>.
         <span class="name">unique</span><span class="params">()</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Return the unique (distinct) <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>s of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Return the unique (distinct) <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>s of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.
-</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="content/ContentPipe.html" class="extype" name="au.com.cba.omnia.grimlock.content.ContentPipe">content.ContentPipe</a>
-</p></span></dd></dl></div>
+      <p class="shortcomment cmt">Return the unique (distinct) contents of a matrix.</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -830,15 +791,13 @@ for a given <code>slice</code>.
         <span class="name">which</span><span class="tparams">[<span name="T">T</span>, <span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.which.D">D</span>]</span>, <span name="positions">positions: <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.which.T">T</span></span>, <span name="predicate">predicate: (<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="Nameable.html" class="extype" name="au.com.cba.omnia.grimlock.Nameable">Nameable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.which.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">S</a>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.which.D">D</span>]</span>, <span name="ev2">ev2: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.which.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Query the <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>s of the <code>positions</code> of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> and
-return the <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>s of those that match the predicate.</p><div class="fullcomment"><div class="comment cmt"><p>Query the <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>s of the <code>positions</code> of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> and
-return the <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>s of those that match the predicate.
-</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) to query.</p></dd><dt class="param">positions</dt><dd class="cmt"><p>The <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>(s) within the dimension(s)
-                 to query.</p></dd><dt class="param">predicate</dt><dd class="cmt"><p>The predicate used to filter the contents.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P)]' of the <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>s for
-        which the <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> matches </code>predicate<code>.
-</code></p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>, <a href="Nameable.html" class="extype" name="au.com.cba.omnia.grimlock.Nameable">Nameable</a>
-</p></span></dd></dl></div>
+      <p class="shortcomment cmt">Query the contents of the <code>positions</code> of a matrix and return the positions
+of those that match the predicate.</p><div class="fullcomment"><div class="comment cmt"><p>Query the contents of the <code>positions</code> of a matrix and return the positions
+of those that match the predicate.
+</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) to query.</p></dd><dt class="param">positions</dt><dd class="cmt"><p>The position(s) within the dimension(s) to query.</p></dd><dt class="param">predicate</dt><dd class="cmt"><p>The predicate used to filter the contents.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P)]' of the positions for which the content
+        matches </code>predicate<code>.
+</code></p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#which" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="which(predicate:(P,au.com.cba.omnia.grimlock.content.Content)=&gt;Boolean):com.twitter.scalding.TypedPipe[P]"></a>
       <a id="which((P,Content)⇒Boolean):TypedPipe[P]"></a>
@@ -851,14 +810,13 @@ return the <a href="position/Position.html" class="extype" name="au.com.cba.omni
         <span class="name">which</span><span class="params">(<span name="predicate">predicate: (<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Query the <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>s of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> and return the
-<a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>s of those that match the predicate.</p><div class="fullcomment"><div class="comment cmt"><p>Query the <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>s of a <a href="" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a> and return the
-<a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>s of those that match the predicate.
+      <p class="shortcomment cmt">Query the contents of a matrix and return the positions of those that
+match the predicate.</p><div class="fullcomment"><div class="comment cmt"><p>Query the contents of a matrix and return the positions of those that
+match the predicate.
 </p></div><dl class="paramcmts block"><dt class="param">predicate</dt><dd class="cmt"><p>The predicate used to filter the contents.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P)]' of the <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>s for
-        which the <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> matches </code>predicate<code>.
-</code></p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>
-</p></span></dd></dl></div>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P)]' of the positions for which the content
+        matches </code>predicate<code>.
+</code></p></dd></dl></div>
     </li></ol>
             </div>
 

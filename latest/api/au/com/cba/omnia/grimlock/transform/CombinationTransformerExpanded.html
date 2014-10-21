@@ -39,13 +39,12 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transformer that is a combination of one or more <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with
-<a href="PresentExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpanded">PresentExpanded</a>.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transformer that is a combination of one or more transformers with
+<code>PresentExpanded</code>.
 </p></div><dl class="paramcmts block"><dt class="param">singles</dt><dd class="cmt"><p><code>List</code> of transformers that are combined together.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Transformer.scala" target="_blank">Transformer.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This need not be called in an application. The
-      <a href="TransformableExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.TransformableExpanded">TransformableExpanded</a> type class will convert any
-      <code>List[</code><a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a><code>]</code> automatically to one of these.
-</p></span></dd><dt>See also</dt><dd><span class="cmt"><p><a href="TransformableExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.TransformableExpanded">TransformableExpanded</a>
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Transformer.scala" target="_blank">Transformer.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This need not be called in an application. The
+      <code>TransformableExpanded</code> type class will convert any
+      <code>List[Transformer]</code> automatically to one of these.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="PresentExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpanded">PresentExpanded</a>, <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -315,21 +314,19 @@
         <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.transform.CombinationTransformerExpanded.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <span class="extype" name="scala.Some">Some</span>[<span class="extype" name="scala.util.Right">Right</span>[<span class="extype" name="scala.Nothing">Nothing</span>, <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">present.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Present the transformed <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>(s).
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> of the content.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> to transform.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>(</code><a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">position.ExpandablePosition.M</a><code>,
-        </code><a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)</code> or a <code>List</code> of these tuples where the
-        <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> is creating by appending to <code>pos</code> and the
-        <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> is derived from <code>con</code>.
+      <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the cell.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The content to transform.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a cell or a <code>List</code> of cells where the position
+        is creating by appending to <code>pos</code> and the content is derived from
+        <code>con</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.transform.CombinationTransformerExpanded">CombinationTransformerExpanded</a> → <a href="PresentExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpanded">PresentExpanded</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Either</code> is used to all either one-to-one or one-to-many
       transformations.
 </p></span>, <span class="cmt"><p>An <code>Option</code> is used in the return type to allow reducers to be
-      selective in what <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> they apply to. For example,
-      normalising is undefined for categorical variables. The transformer
-      now has the option to return <code>None</code>. This in turn permits an
-      external API, for simple cases, where the user need not know about
-      the types of variables of their data.</p></span></dd><dt>See also</dt><dd><span class="cmt"><p><a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">position.ExpandablePosition</a>, <a href="TransformableExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.TransformableExpanded">transform.TransformableExpanded</a>
-</p></span></dd></dl></div>
+      selective in what content they apply to. For example, normalising is
+      undefined for categorical variables. The transformer now has the
+      option to return <code>None</code>. This in turn permits an external API, for
+      simple cases, where the user need not know about the types of
+      variables of their data.</p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.transform.CombinationTransformerExpanded#singles" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="singles:List[T]"></a>
       <a id="singles:List[T]"></a>

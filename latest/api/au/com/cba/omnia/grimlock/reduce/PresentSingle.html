@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for reductions that return a single value.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a> with <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Reducer.scala" target="_blank">Reducer.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for reductions that return a single value.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a> with <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Reducer.scala" target="_blank">Reducer.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -98,18 +98,17 @@
         <span class="name">presentSingle</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle.presentSingle.P">P</span></span>, <span name="t">t: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer.T">T</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle.presentSingle.P">P</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Present the reduced <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>.
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>. That is, the position
-           returned by <a href="../Slice.html#selected(pos:P):Slice.this.S" class="extmbr" name="au.com.cba.omnia.grimlock.Slice#selected">Slice.selected</a>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Optional (<a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>) tuple
-        where the <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> is <code>pos</code> and the
-        <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> is derived from <code>t</code>.
+      <p class="shortcomment cmt">Present the reduced content.</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content.
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by
+           <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell where the position is <code>pos</code> and the content is
+        derived from <code>t</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow reducers to be
-      selective in what <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> they apply to. For example,
-      computing the mean is undefined for categorical variables. The
-      reducer now has the option to return <code>None</code>. This in turn permits
-      an external API, for simple cases, where the user need not know
-      about the types of variables of their data.
+      selective in what content they apply to. For example, computing
+      the mean is undefined for categorical variables. The reducer now
+      has the option to return <code>None</code>. This in turn permits an external
+      API, for simple cases, where the user need not know about the
+      types of variables of their data.
 </p></span></dd></dl></div>
     </li></ol>
             </div>

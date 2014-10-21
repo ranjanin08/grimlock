@@ -40,16 +40,12 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Create tf-idf values.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p><a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> for which to create boolean term
-              frequencies.</p></dd><dt class="param">state</dt><dd class="cmt"><p>Name of the field in user supplied value which is used as the
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for which to create boolean term frequencies.</p></dd><dt class="param">state</dt><dd class="cmt"><p>Name of the field in user supplied value which is used as the
               inverse document frequency.</p></dd><dt class="param">suffix</dt><dd class="cmt"><p>Suffix for the new name of the coordinate at <code>dim</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Transformers.scala" target="_blank">Transformers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The returned <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> will have a
-      <a href="../position/coordinate/StringCoordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.StringCoordinate">position.coordinate.StringCoordinate</a> at index <code>dim</code>. The value of
-      the <a href="../position/coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">position.coordinate.Coordinate</a> is the string representation of
-      the original <a href="../position/coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">position.coordinate.Coordinate</a> at <code>dim</code> with the
-      <code>suffix</code> appended.
-</p></span>, <span class="cmt"><p>Tf-idf is only applied to <a href="../content/variable/Type$.html#Numerical:au.com.cba.omnia.grimlock.content.variable.Type" class="extmbr" name="au.com.cba.omnia.grimlock.content.variable.Type#Numerical">content.variable.Type.Numerical</a>
-      variables.</p></span></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Transformers.scala" target="_blank">Transformers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The returned position will have a string value at index <code>dim</code>. The
+      value of the coordinate is the string representation of the original
+      coordinate at <code>dim</code> with the <code>suffix</code> appended.
+</p></span>, <span class="cmt"><p>Tf-idf is only applied to numerical variables.</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="PresentAsDoubleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentAsDoubleWithValue">PresentAsDoubleWithValue</a>, <a href="AsDouble.html" class="extype" name="au.com.cba.omnia.grimlock.transform.AsDouble">AsDouble</a>, <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a>, <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -101,8 +97,7 @@
         <span class="name">TfIdf</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="state">state: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;idf&quot;</span></span>, <span name="suffix">suffix: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>)</span>
       </span>
       </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p><a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> for which to create boolean term
-              frequencies.</p></dd><dt class="param">state</dt><dd class="cmt"><p>Name of the field in user supplied value which is used as the
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for which to create boolean term frequencies.</p></dd><dt class="param">state</dt><dd class="cmt"><p>Name of the field in user supplied value which is used as the
               inverse document frequency.</p></dd><dt class="param">suffix</dt><dd class="cmt"><p>Suffix for the new name of the coordinate at <code>dim</code>.
 </p></dd></dl></div>
     </li></ol>
@@ -239,8 +234,7 @@
         <span class="name">dim</span><span class="result">: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt"><a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> for which to create boolean term
-              frequencies.</p>
+      <p class="shortcomment cmt">Dimension for which to create boolean term frequencies.</p>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -274,15 +268,15 @@
               
         </dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.transform.AsDouble#getAsDouble" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="getAsDouble[T,U](con:au.com.cba.omnia.grimlock.content.Content,ext:Map[au.com.cba.omnia.grimlock.position.Position1D,Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]],index1:T,index2:U)(implicitevidence$1:au.com.cba.omnia.grimlock.position.coordinate.Coordinateable[T],implicitevidence$2:au.com.cba.omnia.grimlock.position.coordinate.Coordinateable[U]):Option[Double]"></a>
-      <a id="getAsDouble[T,U](Content,Map[Position1D,Map[Position1D,Content]],T,U)(Coordinateable[T],Coordinateable[U]):Option[Double]"></a>
+      <a id="getAsDouble[T,U](con:au.com.cba.omnia.grimlock.content.Content,ext:Map[au.com.cba.omnia.grimlock.position.Position1D,Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]],index1:T,index2:U)(implicitevidence$1:au.com.cba.omnia.grimlock.encoding.Valueable[T],implicitevidence$2:au.com.cba.omnia.grimlock.encoding.Valueable[U]):Option[Double]"></a>
+      <a id="getAsDouble[T,U](Content,Map[Position1D,Map[Position1D,Content]],T,U)(Valueable[T],Valueable[U]):Option[Double]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getAsDouble</span><span class="tparams">[<span name="T">T</span>, <span name="U">U</span>]</span><span class="params">(<span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>]]</span>, <span name="index1">index1: <span class="extype" name="au.com.cba.omnia.grimlock.transform.AsDouble.getAsDouble.T">T</span></span>, <span name="index2">index2: <span class="extype" name="au.com.cba.omnia.grimlock.transform.AsDouble.getAsDouble.U">U</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../position/coordinate/Coordinateable.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinateable">Coordinateable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.AsDouble.getAsDouble.T">T</span>]</span>, <span name="arg1">arg1: <a href="../position/coordinate/Coordinateable.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinateable">Coordinateable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.AsDouble.getAsDouble.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>
+        <span class="name">getAsDouble</span><span class="tparams">[<span name="T">T</span>, <span name="U">U</span>]</span><span class="params">(<span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>]]</span>, <span name="index1">index1: <span class="extype" name="au.com.cba.omnia.grimlock.transform.AsDouble.getAsDouble.T">T</span></span>, <span name="index2">index2: <span class="extype" name="au.com.cba.omnia.grimlock.transform.AsDouble.getAsDouble.U">U</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.AsDouble.getAsDouble.T">T</span>]</span>, <span name="arg1">arg1: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.AsDouble.getAsDouble.U">U</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Double">Double</span>]</span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="AsDouble.html" class="extype" name="au.com.cba.omnia.grimlock.transform.AsDouble">AsDouble</a></dd></dl></div>
@@ -363,21 +357,19 @@
         <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ModifyablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ModifyablePosition">ModifyablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.transform.TfIdf.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <a href="#V=Map[au.com.cba.omnia.grimlock.position.Position1D,Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.transform.TfIdf.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Either">Either</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.Position.S">present.P.S</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>), <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.Position.S">present.P.S</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Present the transformed <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>(s).
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> of the content.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> to transform.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The external value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>(</code><a href="../position/Position.html#S&lt;:au.com.cba.omnia.grimlock.position.Position" class="extmbr" name="au.com.cba.omnia.grimlock.position.Position.S">position.Position.S</a><code>,
-        </code><a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)</code> or a <code>List</code> of these tuples where the
-        <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> is creating by modifiying <code>pos</code> and the
-        <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> is derived from <code>con</code>.
+      <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the cell.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The content to transform.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The external value.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a cell or a <code>List</code> of cells where the position
+        is creating by modifiying <code>pos</code> and the content is derived from
+        <code>con</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.transform.TfIdf">TfIdf</a> → <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Either</code> is used to all either one-to-one or one-to-many
       transformations.
 </p></span>, <span class="cmt"><p>An <code>Option</code> is used in the return type to allow reducers to be
-      selective in what <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a> they apply to. For example,
-      normalising is undefined for categorical variables. The transformer
-      now has the option to return <code>None</code>. This in turn permits an
-      external API, for simple cases, where the user need not know about
-      the types of variables of their data.</p></span></dd><dt>See also</dt><dd><span class="cmt"><p><a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.TransformableWithValue">transform.TransformableWithValue</a>
-</p></span></dd></dl></div>
+      selective in what content they apply to. For example, normalising is
+      undefined for categorical variables. The transformer now has the
+      option to return <code>None</code>. This in turn permits an external API, for
+      simple cases, where the user need not know about the types of
+      variables of their data.</p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.transform.AsDouble#returnSingle" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="returnSingle[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ModifyablePosition](pos:P,dim:au.com.cba.omnia.grimlock.position.Dimension,name:String,value:Double):Option[Either[(P#S,au.com.cba.omnia.grimlock.content.Content),List[(P#S,au.com.cba.omnia.grimlock.content.Content)]]]"></a>
       <a id="returnSingle[P&lt;:PositionwithModifyablePosition](P,Dimension,String,Double):Option[Either[(AsDouble.returnSingle.P.S,Content),List[(AsDouble.returnSingle.P.S,Content)]]]"></a>

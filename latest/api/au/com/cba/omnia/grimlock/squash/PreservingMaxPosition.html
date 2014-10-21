@@ -39,9 +39,9 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Reduce two cells preserving the cell with maximal value for the
-<a href="../position/coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">position.coordinate.Coordinate</a> of the dimension being squashed.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Squashers.scala" target="_blank">Squashers.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Reduce two cells preserving the cell with maximal value for the coordinate
+of the dimension being squashed.
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Squashers.scala" target="_blank">Squashers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="ReduceAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue">ReduceAndWithValue</a>, <a href="ReduceWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceWithValue">ReduceWithValue</a>, <a href="Reduce.html" class="extype" name="au.com.cba.omnia.grimlock.squash.Reduce">Reduce</a>, <a href="Squasher.html" class="extype" name="au.com.cba.omnia.grimlock.squash.Squasher">Squasher</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -326,9 +326,7 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Reduce two cells.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce two cells.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> along which to squash.</p></dd><dt class="param">x</dt><dd class="cmt"><p>The first <code>(</code><a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)</code>
-           tuple to reduce.</p></dd><dt class="param">y</dt><dd class="cmt"><p>The second <code>(</code><a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)</code>
-           tuple to reduce.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension along which to squash.</p></dd><dt class="param">x</dt><dd class="cmt"><p>The first cell to reduce.</p></dd><dt class="param">y</dt><dd class="cmt"><p>The second cell to reduce.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.squash.PreservingMaxPosition">PreservingMaxPosition</a> → <a href="Reduce.html" class="extype" name="au.com.cba.omnia.grimlock.squash.Reduce">Reduce</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="reduce[P&lt;:au.com.cba.omnia.grimlock.position.Position](dim:au.com.cba.omnia.grimlock.position.Dimension,x:(P,au.com.cba.omnia.grimlock.content.Content),y:(P,au.com.cba.omnia.grimlock.content.Content),ext:ReduceAndWithValue.this.V):(P,au.com.cba.omnia.grimlock.content.Content)"></a>
@@ -343,9 +341,7 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Reduce two cells with a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce two cells with a user supplied value.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">position.Dimension</a> along which to squash.</p></dd><dt class="param">x</dt><dd class="cmt"><p>The first <code>(</code><a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)</code>
-           tuple to reduce.</p></dd><dt class="param">y</dt><dd class="cmt"><p>The second <code>(</code><a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)</code>
-           tuple to reduce.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user define the value.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension along which to squash.</p></dd><dt class="param">x</dt><dd class="cmt"><p>The first cell to reduce.</p></dd><dt class="param">y</dt><dd class="cmt"><p>The second cell to reduce.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user define the value.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ReduceAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue">ReduceAndWithValue</a> → <a href="ReduceWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceWithValue">ReduceWithValue</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>

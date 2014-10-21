@@ -39,8 +39,8 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[(</code><a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a><code>, Long)]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Names.scala" target="_blank">Names.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This class represents the names along the dimensions of a <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[(Position, Long)]</code>.
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Names.scala" target="_blank">Names.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This class represents the names along the dimensions of a matrix.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -93,7 +93,7 @@
         <span class="name">Names</span><span class="params">(<span name="data">data: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>)</span>
       </span>
       </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p><code>TypedPipe[(</code><a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a><code>, Long)]</code>.
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p><code>TypedPipe[(Position, Long)]</code>.
 </p></dd></dl></div>
     </li></ol>
             </div>
@@ -299,10 +299,9 @@
       </h4>
       <p class="shortcomment cmt">Renumber the indices such that <code>position</code> is last.</p><div class="fullcomment"><div class="comment cmt"><p>Renumber the indices such that <code>position</code> is last.
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position to move to the back.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with <code>position</code> at the greates index and
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with <code>position</code> at the greatest index and
         all others renumbered but preserving their relative ordering.
-</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.position.Positionable">position.Positionable</a>
-</p></span></dd></dl></div>
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Names#moveToFront" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="moveToFront[T](position:T)(implicitev:au.com.cba.omnia.grimlock.position.Positionable[T,P]):com.twitter.scalding.TypedPipe[(P,Long)]"></a>
       <a id="moveToFront[T](T)(Positionable[T,P]):TypedPipe[(P,Long)]"></a>
@@ -319,8 +318,7 @@
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position to move to the front.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with <code>position</code> at index 0 and all
         others renumbered but preserving their relative ordering.
-</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.position.Positionable">position.Positionable</a>
-</p></span></dd></dl></div>
+</p></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -372,10 +370,9 @@
         <span class="name">persist</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;|&quot;</span></span>, <span name="descriptive">descriptive: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Persist <a href="" class="extype" name="au.com.cba.omnia.grimlock.Names">Names</a> to disk.</p><div class="fullcomment"><div class="comment cmt"><p>Persist <a href="" class="extype" name="au.com.cba.omnia.grimlock.Names">Names</a> to disk.
-</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> and
-                   index.</p></dd><dt class="param">descriptive</dt><dd class="cmt"><p>Indicates if the output should be descriptive.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Long)]</code> which is this <a href="" class="extype" name="au.com.cba.omnia.grimlock.Names">Names</a>.
+      <p class="shortcomment cmt">Persist names to disk.</p><div class="fullcomment"><div class="comment cmt"><p>Persist names to disk.
+</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between position and index.</p></dd><dt class="param">descriptive</dt><dd class="cmt"><p>Indicates if the output should be descriptive.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Long)]</code> which is this object's data.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Names#renumber" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="renumber():com.twitter.scalding.TypedPipe[(P,Long)]"></a>
@@ -402,12 +399,12 @@
         <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Names.set.T">T</span>, <span class="extype" name="scala.Long">Long</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Names.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Names.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Set the index of multiple <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Set the index of multiple <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>.
+      <p class="shortcomment cmt">Set the index of multiple positions.</p><div class="fullcomment"><div class="comment cmt"><p>Set the index of multiple positions.
 </p></div><dl class="paramcmts block"><dt class="param">positions</dt><dd class="cmt"><p>A <code>Map</code> of positions (together with their new inxed)
-       whose index is to be set.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only <code>positions</code>' index updated.
-</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.position.Positionable">position.Positionable</a>
-</p></span></dd></dl></div>
+                 whose index is to be set.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only the indices at the specified
+        positions updated.
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Names#set" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="set[T](position:T,index:Long)(implicitev:au.com.cba.omnia.grimlock.position.Positionable[T,P]):com.twitter.scalding.TypedPipe[(P,Long)]"></a>
       <a id="set[T](T,Long)(Positionable[T,P]):TypedPipe[(P,Long)]"></a>
@@ -420,11 +417,11 @@
         <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.Names.set.T">T</span></span>, <span name="index">index: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Names.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Names.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Set the index of a single <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Set the index of a single <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>.
+      <p class="shortcomment cmt">Set the index of a single position.</p><div class="fullcomment"><div class="comment cmt"><p>Set the index of a single position.
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position whose index is to be set.</p></dd><dt class="param">index</dt><dd class="cmt"><p>The new index.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only <code>position</code>'s index updated.
-</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.position.Positionable">position.Positionable</a>
-</p></span></dd></dl></div>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only the index at the specified
+        position updated.
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Names#slice" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="slice[T](positions:T,keep:Boolean)(implicitev:au.com.cba.omnia.grimlock.position.PositionListable[T,P]):com.twitter.scalding.TypedPipe[(P,Long)]"></a>
       <a id="slice[T](T,Boolean)(PositionListable[T,P]):TypedPipe[(P,Long)]"></a>
@@ -437,11 +434,10 @@
         <span class="name">slice</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="au.com.cba.omnia.grimlock.Names.slice.T">T</span></span>, <span name="keep">keep: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PositionListable.html" class="extype" name="au.com.cba.omnia.grimlock.position.PositionListable">PositionListable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Names.slice.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Names.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Slice the names using <code>positions</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Slice the names using <code>positions</code>.
+      <p class="shortcomment cmt">Slice the names using one or more positions.</p><div class="fullcomment"><div class="comment cmt"><p>Slice the names using one or more positions.
 </p></div><dl class="paramcmts block"><dt class="param">positions</dt><dd class="cmt"><p>The positions to slice on.</p></dd><dt class="param">keep</dt><dd class="cmt"><p>Indicator if the matched names should be kept or removed.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only the names of interest.
-</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="position/PositionListable.html" class="extype" name="au.com.cba.omnia.grimlock.position.PositionListable">position.PositionListable</a>
-</p></span></dd></dl></div>
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Names#slice" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="slice(regex:scala.util.matching.Regex,keep:Boolean,separator:String):com.twitter.scalding.TypedPipe[(P,Long)]"></a>
       <a id="slice(Regex,Boolean,String):TypedPipe[(P,Long)]"></a>
@@ -456,9 +452,8 @@
       </h4>
       <p class="shortcomment cmt">Slice the names using a regular expression.</p><div class="fullcomment"><div class="comment cmt"><p>Slice the names using a regular expression.
 </p></div><dl class="paramcmts block"><dt class="param">regex</dt><dd class="cmt"><p>The regular expression to match on.</p></dd><dt class="param">keep</dt><dd class="cmt"><p>Indicator if the matched names should be kept or removed.</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only the names of interest.
-</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The matching is done by convertion each <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> to its
-      short string reprensentation and then applying the regular
-      expression.
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The matching is done by converting each position to its short string
+      reprensentation and then applying the regular expression.
 </p></span></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>

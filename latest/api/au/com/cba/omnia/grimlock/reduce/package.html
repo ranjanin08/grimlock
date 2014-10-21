@@ -70,8 +70,7 @@
         <a href="CombinationReducerMultiple.html"><span class="name">CombinationReducerMultiple</span></a><span class="tparams">[<span name="T">T &lt;: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>]</span><span class="params">(<span name="reducers">reducers: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple.T">T</span>]</span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Reducer that is a combination of one or more <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with
-<a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>.</p>
+      <p class="comment cmt">Reducer that is a combination of one or more reducer with <code>PresentMultiple</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultipleWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="CombinationReducerMultipleWithValue[T&lt;:au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.PrepareWithValuewithau.com.cba.omnia.grimlock.reduce.PresentMultiple,W]extendsReducerwithPrepareWithValuewithPresentMultiplewithProductwithSerializable"></a>
       <a id="CombinationReducerMultipleWithValue[T&lt;:ReducerwithPrepareWithValuewithPresentMultiple,W]:CombinationReducerMultipleWithValue[T,W]"></a>
@@ -84,8 +83,8 @@
         <a href="CombinationReducerMultipleWithValue.html"><span class="name">CombinationReducerMultipleWithValue</span></a><span class="tparams">[<span name="T">T &lt;: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="reducers">reducers: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultipleWithValue.T">T</span>]</span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Reducer that is a combination of one or more <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with
-<a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>.</p>
+      <p class="comment cmt">Reducer that is a combination of one or more reducers with
+<code>PrepareWithValue</code> with <code>PresentMultiple</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Count" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="CountextendsReducerwithPrepareAndWithValuewithPresentSingleAndMultiplewithProductwithSerializable"></a>
       <a id="Count:Count"></a>
@@ -228,7 +227,7 @@
         <a href="PrepareAndWithValue.html"><span class="name">PrepareAndWithValue</span></a><span class="result"> extends <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></span>
       </span>
       </h4>
-      <p class="comment cmt">Convenience trait for <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a>s that can prepare with or without a user
+      <p class="comment cmt">Convenience trait for reducers that can prepare with or without a user
 supplied value.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PrepareWithValueextendsAnyRef"></a>
@@ -281,8 +280,8 @@ supplied value.</p>
         <a href="PresentSingleAndMultiple.html"><span class="name">PresentSingleAndMultiple</span></a><span class="result"> extends <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
       </span>
       </h4>
-      <p class="comment cmt">Convenience trait for <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a>s that present a value both as
-<a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a> and <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>.</p>
+      <p class="comment cmt">Convenience trait for reducers that present a value both as <code>PresentSingle</code>
+and <code>PresentMultiple</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Reducer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ReducerextendsAnyRef"></a>
       <a id="Reducer:Reducer"></a>
@@ -308,8 +307,8 @@ supplied value.</p>
         <a href="ReducerableMultiple.html"><span class="name">ReducerableMultiple</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with
-<a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>.</p>
+      <p class="comment cmt">Type class for transforming a type <code>T</code> to a reducer<code> with </code>PresentMultiple<code>.
+</code></p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.ReducerableMultipleWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ReducerableMultipleWithValue[T,W]extendsAnyRef"></a>
       <a id="ReducerableMultipleWithValue[T,W]:ReducerableMultipleWithValue[T,W]"></a>
@@ -322,8 +321,8 @@ supplied value.</p>
         <a href="ReducerableMultipleWithValue.html"><span class="name">ReducerableMultipleWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with
-<a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>.</p>
+      <p class="comment cmt">Type class for transforming a type <code>T</code> to a reducer with <code>PrepareWithValue</code>
+with <code>PresentMultiple</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Sum" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="SumextendsDoubleReducerwithProductwithSerializable"></a>
       <a id="Sum:Sum"></a>
@@ -382,7 +381,7 @@ supplied value.</p>
         <a href="ReducerableMultiple$.html"><span class="name">ReducerableMultiple</span></a>
       </span>
       </h4>
-      <p class="comment cmt">Companion object for the <a href="ReducerableMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ReducerableMultiple">ReducerableMultiple</a> type class.</p>
+      <p class="comment cmt">Companion object for the <code>ReducerableMultiple</code> type class.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.ReducerableMultipleWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ReducerableMultipleWithValue"></a>
       <a id="ReducerableMultipleWithValue:ReducerableMultipleWithValue"></a>
@@ -395,7 +394,7 @@ supplied value.</p>
         <a href="ReducerableMultipleWithValue$.html"><span class="name">ReducerableMultipleWithValue</span></a>
       </span>
       </h4>
-      <p class="comment cmt">Companion object for the <a href="ReducerableMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ReducerableMultipleWithValue">ReducerableMultipleWithValue</a> type class.</p>
+      <p class="comment cmt">Companion object for the <code>ReducerableMultipleWithValue</code> type class.</p>
     </li></ol>
             </div>
 

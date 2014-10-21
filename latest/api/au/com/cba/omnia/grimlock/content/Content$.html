@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Content.scala" target="_blank">Content.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Content.scala" target="_blank">Content.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -151,7 +151,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T&lt;:au.com.cba.omnia.grimlock.content.encoding.DateAndTimeCodex](schema:au.com.cba.omnia.grimlock.content.metadata.DateSchema[T],value:java.util.Date):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T&lt;:au.com.cba.omnia.grimlock.encoding.DateAndTimeCodex](schema:au.com.cba.omnia.grimlock.content.metadata.DateSchema[T],value:java.util.Date):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T&lt;:DateAndTimeCodex](DateSchema[T],Date):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -159,16 +159,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T &lt;: <a href="encoding/DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.content.encoding.DateAndTimeCodex">DateAndTimeCodex</a></span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/DateSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DateSchema">DateSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>, <span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T &lt;: <a href="../encoding/DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.DateAndTimeCodex">DateAndTimeCodex</a></span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/DateSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DateSchema">DateSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>, <span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/DateSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DateSchema">metadata.DateSchema</a> and
-<code>java.util.Date</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/DateSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DateSchema">metadata.DateSchema</a> and
-<code>java.util.Date</code> value.
+      <p class="shortcomment cmt">Construct a content using a date schema and <code>java.util.Date</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a date schema and <code>java.util.Date</code> value.
 </p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Date value of the variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema[au.com.cba.omnia.grimlock.content.encoding.Codex.LongCodex],value:T)(implicitnum:Integral[T]):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema[au.com.cba.omnia.grimlock.encoding.Codex.LongCodex],value:T)(implicitnum:Integral[T]):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T](OrdinalSchema[LongCodex],T)(Integral[T]):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -176,16 +174,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">OrdinalSchema</a>[<a href="encoding/Codex$.html#LongCodex=au.com.cba.omnia.grimlock.content.encoding.LongCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.content.encoding.Codex.LongCodex">LongCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">OrdinalSchema</a>[<a href="../encoding/Codex$.html#LongCodex=au.com.cba.omnia.grimlock.encoding.LongCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.encoding.Codex.LongCodex">LongCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">metadata.OrdinalSchema</a> and
-<code>Integral</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">metadata.OrdinalSchema</a> and
-<code>Integral</code> value.
-</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p><code>Integral</code> value of the variable.
+      <p class="shortcomment cmt">Construct a content using a ordinal schema and integral value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a ordinal schema and integral value.
+</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Integral value of the variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema[au.com.cba.omnia.grimlock.content.encoding.Codex.DoubleCodex],value:T)(implicitnum:Numeric[T]):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema[au.com.cba.omnia.grimlock.encoding.Codex.DoubleCodex],value:T)(implicitnum:Numeric[T]):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T](OrdinalSchema[DoubleCodex],T)(Numeric[T]):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -193,16 +189,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">OrdinalSchema</a>[<a href="encoding/Codex$.html#DoubleCodex=au.com.cba.omnia.grimlock.content.encoding.DoubleCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.content.encoding.Codex.DoubleCodex">DoubleCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">OrdinalSchema</a>[<a href="../encoding/Codex$.html#DoubleCodex=au.com.cba.omnia.grimlock.encoding.DoubleCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.encoding.Codex.DoubleCodex">DoubleCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">metadata.OrdinalSchema</a> and
-<code>Numeric</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">metadata.OrdinalSchema</a> and
-<code>Numeric</code> value.
-</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p><code>Numeric</code> value of the variable.
+      <p class="shortcomment cmt">Construct a content using a ordinal schema and numeric value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a ordinal schema and numeric value.
+</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Numeric value of the variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema[au.com.cba.omnia.grimlock.content.encoding.Codex.StringCodex],value:T):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema[au.com.cba.omnia.grimlock.encoding.Codex.StringCodex],value:T):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T](OrdinalSchema[StringCodex],T):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -210,15 +204,15 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">OrdinalSchema</a>[<a href="encoding/Codex$.html#StringCodex=au.com.cba.omnia.grimlock.content.encoding.StringCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.content.encoding.Codex.StringCodex">StringCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">OrdinalSchema</a>[<a href="../encoding/Codex$.html#StringCodex=au.com.cba.omnia.grimlock.encoding.StringCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.encoding.Codex.StringCodex">StringCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">metadata.OrdinalSchema</a> and value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">metadata.OrdinalSchema</a> and value.
+      <p class="shortcomment cmt">Construct a content using a ordinal schema and value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a ordinal schema and value.
 </p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Value of the variable.
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The value is converted, and stored, as <code>String</code>.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.NominalSchema[au.com.cba.omnia.grimlock.content.encoding.Codex.LongCodex],value:T)(implicitnum:Integral[T]):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.NominalSchema[au.com.cba.omnia.grimlock.encoding.Codex.LongCodex],value:T)(implicitnum:Integral[T]):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T](NominalSchema[LongCodex],T)(Integral[T]):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -226,16 +220,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">NominalSchema</a>[<a href="encoding/Codex$.html#LongCodex=au.com.cba.omnia.grimlock.content.encoding.LongCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.content.encoding.Codex.LongCodex">LongCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">NominalSchema</a>[<a href="../encoding/Codex$.html#LongCodex=au.com.cba.omnia.grimlock.encoding.LongCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.encoding.Codex.LongCodex">LongCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">metadata.NominalSchema</a> and
-<code>Integral</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">metadata.NominalSchema</a> and
-<code>Integral</code> value.
-</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p><code>Integral</code> value of the variable.
+      <p class="shortcomment cmt">Construct a content using a nominal schema and integral value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a nominal schema and integral value.
+</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Integral value of the variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.NominalSchema[au.com.cba.omnia.grimlock.content.encoding.Codex.DoubleCodex],value:T)(implicitnum:Numeric[T]):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.NominalSchema[au.com.cba.omnia.grimlock.encoding.Codex.DoubleCodex],value:T)(implicitnum:Numeric[T]):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T](NominalSchema[DoubleCodex],T)(Numeric[T]):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -243,16 +235,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">NominalSchema</a>[<a href="encoding/Codex$.html#DoubleCodex=au.com.cba.omnia.grimlock.content.encoding.DoubleCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.content.encoding.Codex.DoubleCodex">DoubleCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">NominalSchema</a>[<a href="../encoding/Codex$.html#DoubleCodex=au.com.cba.omnia.grimlock.encoding.DoubleCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.encoding.Codex.DoubleCodex">DoubleCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">metadata.NominalSchema</a> and
-<code>Numeric</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">metadata.NominalSchema</a> and
-<code>Numeric</code> value.
-</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p><code>Numeric</code> value of the variable.
+      <p class="shortcomment cmt">Construct a content using a nominal schema and numeric value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a nominal schema and numeric value.
+</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Numeric value of the variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.NominalSchema[au.com.cba.omnia.grimlock.content.encoding.Codex.StringCodex],value:T):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.NominalSchema[au.com.cba.omnia.grimlock.encoding.Codex.StringCodex],value:T):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T](NominalSchema[StringCodex],T):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -260,15 +250,15 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">NominalSchema</a>[<a href="encoding/Codex$.html#StringCodex=au.com.cba.omnia.grimlock.content.encoding.StringCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.content.encoding.Codex.StringCodex">StringCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">NominalSchema</a>[<a href="../encoding/Codex$.html#StringCodex=au.com.cba.omnia.grimlock.encoding.StringCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.encoding.Codex.StringCodex">StringCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">metadata.NominalSchema</a> and value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/NominalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.NominalSchema">metadata.NominalSchema</a> and value.
+      <p class="shortcomment cmt">Construct a content using a nominal schema and value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a nominal schema and value.
 </p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Value of the variable.
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The value is converted, and stored, as <code>String</code>.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema[au.com.cba.omnia.grimlock.content.encoding.Codex.LongCodex],value:T)(implicitnum:Integral[T]):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema[au.com.cba.omnia.grimlock.encoding.Codex.LongCodex],value:T)(implicitnum:Integral[T]):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T](DiscreteSchema[LongCodex],T)(Integral[T]):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -276,16 +266,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema">DiscreteSchema</a>[<a href="encoding/Codex$.html#LongCodex=au.com.cba.omnia.grimlock.content.encoding.LongCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.content.encoding.Codex.LongCodex">LongCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema">DiscreteSchema</a>[<a href="../encoding/Codex$.html#LongCodex=au.com.cba.omnia.grimlock.encoding.LongCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.encoding.Codex.LongCodex">LongCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema">metadata.DiscreteSchema</a> and
-<code>Integral</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema">metadata.DiscreteSchema</a> and
-<code>Integral</code> value.
-</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p><code>Integral</code> value of the variable.
+      <p class="shortcomment cmt">Construct a content using a discrete schema and integral value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a discrete schema and integral value.
+</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Integral value of the variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema[au.com.cba.omnia.grimlock.content.encoding.Codex.DoubleCodex],value:T)(implicitnum:Numeric[T]):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema[au.com.cba.omnia.grimlock.encoding.Codex.DoubleCodex],value:T)(implicitnum:Numeric[T]):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T](DiscreteSchema[DoubleCodex],T)(Numeric[T]):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -293,16 +281,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema">DiscreteSchema</a>[<a href="encoding/Codex$.html#DoubleCodex=au.com.cba.omnia.grimlock.content.encoding.DoubleCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.content.encoding.Codex.DoubleCodex">DoubleCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema">DiscreteSchema</a>[<a href="../encoding/Codex$.html#DoubleCodex=au.com.cba.omnia.grimlock.encoding.DoubleCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.encoding.Codex.DoubleCodex">DoubleCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema">metadata.DiscreteSchema</a> and
-<code>Numeric</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/DiscreteSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.DiscreteSchema">metadata.DiscreteSchema</a> and
-<code>Numeric</code> value.
-</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p><code>Numeric</code> value of the variable.
+      <p class="shortcomment cmt">Construct a content using a discrete schema and numeric value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a discrete schema and numeric value.
+</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Numeric value of the variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema[au.com.cba.omnia.grimlock.content.encoding.Codex.LongCodex],value:T)(implicitnum:Integral[T]):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema[au.com.cba.omnia.grimlock.encoding.Codex.LongCodex],value:T)(implicitnum:Integral[T]):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T](ContinuousSchema[LongCodex],T)(Integral[T]):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -310,16 +296,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema">ContinuousSchema</a>[<a href="encoding/Codex$.html#LongCodex=au.com.cba.omnia.grimlock.content.encoding.LongCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.content.encoding.Codex.LongCodex">LongCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema">ContinuousSchema</a>[<a href="../encoding/Codex$.html#LongCodex=au.com.cba.omnia.grimlock.encoding.LongCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.encoding.Codex.LongCodex">LongCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Integral">Integral</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema">metadata.ContinuousSchema</a> and
-<code>Integral</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema">metadata.ContinuousSchema</a> and
-<code>Integral</code> value.
-</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p><code>Integral</code> value of the variable.
+      <p class="shortcomment cmt">Construct a content using a continuous schema and integral value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a continuous schema and integral value.
+</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Integral value of the variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema[au.com.cba.omnia.grimlock.content.encoding.Codex.DoubleCodex],value:T)(implicitnum:Numeric[T]):au.com.cba.omnia.grimlock.content.Content"></a>
+      <a id="apply[T](schema:au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema[au.com.cba.omnia.grimlock.encoding.Codex.DoubleCodex],value:T)(implicitnum:Numeric[T]):au.com.cba.omnia.grimlock.content.Content"></a>
       <a id="apply[T](ContinuousSchema[DoubleCodex],T)(Numeric[T]):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -327,13 +311,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema">ContinuousSchema</a>[<a href="encoding/Codex$.html#DoubleCodex=au.com.cba.omnia.grimlock.content.encoding.DoubleCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.content.encoding.Codex.DoubleCodex">DoubleCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema">ContinuousSchema</a>[<a href="../encoding/Codex$.html#DoubleCodex=au.com.cba.omnia.grimlock.encoding.DoubleCodex.type" class="extmbr" name="au.com.cba.omnia.grimlock.encoding.Codex.DoubleCodex">DoubleCodex</a>]</span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.Content.apply.T">T</span>]</span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema">metadata.ContinuousSchema</a> and
-<code>Numeric</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a> using a <a href="metadata/ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.ContinuousSchema">metadata.ContinuousSchema</a> and
-<code>Numeric</code> value.
-</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p><code>Numeric</code> value of the variable.
+      <p class="shortcomment cmt">Construct a content using a continuous schema and numeric value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a continuous schema and numeric value.
+</p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Numeric value of the variable.
 </p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
@@ -517,7 +499,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.Content#unapply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="unapply(con:au.com.cba.omnia.grimlock.content.Content):Option[(au.com.cba.omnia.grimlock.content.metadata.Schema,au.com.cba.omnia.grimlock.content.variable.Value)]"></a>
+      <a id="unapply(con:au.com.cba.omnia.grimlock.content.Content):Option[(au.com.cba.omnia.grimlock.content.metadata.Schema,au.com.cba.omnia.grimlock.encoding.Value)]"></a>
       <a id="unapply(Content):Option[(Schema,Value)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -525,10 +507,10 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">unapply</span><span class="params">(<span name="con">con: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[(<a href="metadata/Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a>, <a href="variable/Value.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Value">Value</a>)]</span>
+        <span class="name">unapply</span><span class="params">(<span name="con">con: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[(<a href="metadata/Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a>, <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Standard <code>unapply</code> method of pattern matching on <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>.</p>
+      <p class="shortcomment cmt">Standard <code>unapply</code> method for pattern matching.</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

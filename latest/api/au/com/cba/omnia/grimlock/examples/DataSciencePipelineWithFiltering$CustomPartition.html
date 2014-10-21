@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/examples/Demo.scala" target="_blank">Demo.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/examples/Demo.scala" target="_blank">Demo.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../partition/Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a>, <a href="../partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">Partitioner</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -208,13 +208,13 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Assign the cell to a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition.
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> of the content.
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the content.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances
         of <code>T</code> identify the partitions.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.examples.DataSciencePipelineWithFiltering.CustomPartition">CustomPartition</a> → <a href="../partition/Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is returned to allow partitioners to be selective in
-      which partition a <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a> is assigned to. An <code>Either</code>
-      is returned to allow a partitioner to assign a <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">position.Position</a>
-      to more than one partition.
+      which partition a position is assigned to. An <code>Either</code> is returned
+      to allow a partitioner to assign a position to more than one
+      partitions.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.examples.DataSciencePipelineWithFiltering.CustomPartition#bhs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="bhs:au.com.cba.omnia.grimlock.partition.BinaryHashSplit[S]"></a>

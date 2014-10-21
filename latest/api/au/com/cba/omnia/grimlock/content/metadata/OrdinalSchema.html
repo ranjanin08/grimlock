@@ -35,16 +35,16 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">OrdinalSchema</span><span class="tparams">[<span name="C">C &lt;: <a href="../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.content.encoding.Codex">Codex</a> with <a href="../encoding/ValueCodex.html" class="extype" name="au.com.cba.omnia.grimlock.content.encoding.ValueCodex">ValueCodex</a></span>]</span><span class="result"> extends <a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema">CategoricalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.content.encoding.Codex.T">metadata.OrdinalSchema.C.T</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">OrdinalSchema</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Codex">Codex</a></span>]</span><span class="result"> extends <a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema">CategoricalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.encoding.Codex.T">metadata.OrdinalSchema.C.T</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Schema for ordinal variables.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Schema.scala" target="_blank">Schema.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The constructor is private to ensure a clean interface as
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Schema.scala" target="_blank">Schema.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The constructor is private to ensure a clean interface as
       provided by the <code>apply</code> methods of the companion object.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema">CategoricalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.content.encoding.Codex.T">C.T</span>], <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema">CategoricalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.encoding.Codex.T">C.T</span>], <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -197,7 +197,7 @@
         <span class="name">codex</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema.C">C</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">The <a href="../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.content.encoding.Codex">content.encoding.Codex</a> used to encode/decode a variable value.</p><div class="fullcomment"><div class="comment cmt"><p>The <a href="../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.content.encoding.Codex">content.encoding.Codex</a> used to encode/decode a variable value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">OrdinalSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a></dd></dl></div>
+      <p class="shortcomment cmt">The codex used to encode/decode a variable value.</p><div class="fullcomment"><div class="comment cmt"><p>The codex used to encode/decode a variable value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">OrdinalSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.metadata.Schema#decode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="decode(str:String):Option[au.com.cba.omnia.grimlock.content.Content]"></a>
       <a id="decode(String):Option[Content]"></a>
@@ -210,10 +210,10 @@
         <span class="name">decode</span><span class="params">(<span name="str">str: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Decode a string into a <a href="../Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Decode a string into a <a href="../Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a>.
+      <p class="shortcomment cmt">Decode a string into a content.</p><div class="fullcomment"><div class="comment cmt"><p>Decode a string into a content.
 </p></div><dl class="paramcmts block"><dt class="param">str</dt><dd class="cmt"><p>The string to decode
-</p></dd><dt>returns</dt><dd class="cmt"><p><code>Some(</code><a href="../Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">content.Content</a><code>)</code> if the string can successfull be
-        decoded and is valid according to this schema, <code>None</code> otherwise.
+</p></dd><dt>returns</dt><dd class="cmt"><p><code>Some[Content]</code> if the string can successfull be decoded and is
+        valid according to this schema, <code>None</code> otherwise.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema#domain" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="domain:Option[List[C#T]]"></a>
@@ -224,7 +224,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">domain</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.content.encoding.Codex.T">C.T</span>]]</span>
+        <span class="name">domain</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.encoding.Codex.T">C.T</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">The optional values of the variable.</p><div class="fullcomment"><div class="comment cmt"><p>The optional values of the variable.
@@ -288,7 +288,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema#isValid" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="isValid[V&lt;:au.com.cba.omnia.grimlock.content.variable.Value](value:V):Boolean"></a>
+      <a id="isValid[V&lt;:au.com.cba.omnia.grimlock.encoding.Value](value:V):Boolean"></a>
       <a id="isValid[V&lt;:Value](V):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -296,14 +296,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isValid</span><span class="tparams">[<span name="V">V &lt;: <a href="../variable/Value.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Value">Value</a></span>]</span><span class="params">(<span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema.isValid.V">V</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">isValid</span><span class="tparams">[<span name="V">V &lt;: <a href="../../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a></span>]</span><span class="params">(<span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema.isValid.V">V</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Check if a <a href="../variable/Value.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Value">content.variable.Value</a> is valid according to this schema.</p><div class="fullcomment"><div class="comment cmt"><p>Check if a <a href="../variable/Value.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Value">content.variable.Value</a> is valid according to this schema.
-</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>The <a href="../variable/Value.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Value">content.variable.Value</a> to validate.
+      <p class="shortcomment cmt">Check if a value is valid according to this schema.</p><div class="fullcomment"><div class="comment cmt"><p>Check if a value is valid according to this schema.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>The value to validate.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema">CategoricalSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema#kind" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="kind:au.com.cba.omnia.grimlock.content.variable.Type"></a>
+      <a id="kind:au.com.cba.omnia.grimlock.Type"></a>
       <a id="kind:Type"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -311,7 +311,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">kind</span><span class="result">: <a href="../variable/Type.html" class="extype" name="au.com.cba.omnia.grimlock.content.variable.Type">Type</a></span>
+        <span class="name">kind</span><span class="result">: <a href="../../Type.html" class="extype" name="au.com.cba.omnia.grimlock.Type">Type</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">The type of variable.</p><div class="fullcomment"><div class="comment cmt"><p>The type of variable.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema">OrdinalSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a></dd></dl></div>
@@ -379,7 +379,7 @@
         <span class="name">toShortString</span><span class="params">(<span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Return a consise (terse) string representation of a <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Return a consise (terse) string representation of a <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a>.
+      <p class="shortcomment cmt">Return a consise (terse) string representation of a schema.</p><div class="fullcomment"><div class="comment cmt"><p>Return a consise (terse) string representation of a schema.
 </p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between various fields.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.content.metadata.OrdinalSchema#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -470,7 +470,7 @@
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema">
-              <h3>Inherited from <a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema">CategoricalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.content.encoding.Codex.T">C.T</span>]</h3>
+              <h3>Inherited from <a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.CategoricalSchema">CategoricalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.encoding.Codex.T">C.T</span>]</h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.content.metadata.Schema">
               <h3>Inherited from <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.content.metadata.Schema">Schema</a></h3>
             </div><div class="parent" name="scala.AnyRef">

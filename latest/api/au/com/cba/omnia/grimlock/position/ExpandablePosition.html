@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for operations that expand a position by one dimension.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a> with <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/70857b9583cc76e3047b5177cab6d961a683f3b9//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for operations that expand a position by one dimension.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a> with <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -96,22 +96,22 @@
         <span class="name">M</span><span class="result"> &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ReduceablePosition">ReduceablePosition</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Type for positions of one more (M) number of dimensions.</p>
+      <p class="shortcomment cmt">Type for positions of one more number of dimensions.</p>
     </li></ol>
             </div>
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.position.ExpandablePosition#more" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="more(cl:List[au.com.cba.omnia.grimlock.position.coordinate.Coordinate]):ExpandablePosition.this.M"></a>
-      <a id="more(List[Coordinate]):(ExpandablePosition.this)#M"></a>
+      <a id="more(cl:List[au.com.cba.omnia.grimlock.encoding.Value]):ExpandablePosition.this.M"></a>
+      <a id="more(List[Value]):(ExpandablePosition.this)#M"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">more</span><span class="params">(<span name="cl">cl: <span class="extype" name="scala.List">List</span>[<a href="coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">Coordinate</a>]</span>)</span><span class="result">: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</span></span>
+        <span class="name">more</span><span class="params">(<span name="cl">cl: <span class="extype" name="scala.List">List</span>[<a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a>]</span>)</span><span class="result">: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
@@ -186,22 +186,21 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.position.ExpandablePosition#append" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="append[T](t:T)(implicitevidence$2:au.com.cba.omnia.grimlock.position.coordinate.Coordinateable[T]):ExpandablePosition.this.M"></a>
-      <a id="append[T](T)(Coordinateable[T]):(ExpandablePosition.this)#M"></a>
+      <a id="append[T](t:T)(implicitevidence$2:au.com.cba.omnia.grimlock.encoding.Valueable[T]):ExpandablePosition.this.M"></a>
+      <a id="append[T](T)(Valueable[T]):(ExpandablePosition.this)#M"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">append</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.append.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="coordinate/Coordinateable.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinateable">Coordinateable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.append.T">T</span>]</span>)</span><span class="result">: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</span></span>
+        <span class="name">append</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.append.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.append.T">T</span>]</span>)</span><span class="result">: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Append a <a href="coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">coordinate.Coordinate</a> to the position.</p><div class="fullcomment"><div class="comment cmt"><p>Append a <a href="coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">coordinate.Coordinate</a> to the position.
-</p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>The <a href="coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">coordinate.Coordinate</a> to append.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A new <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with the <a href="coordinate/Coordinate.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinate">coordinate.Coordinate</a> <code>t</code> appended.
-</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="coordinate/Coordinateable.html" class="extype" name="au.com.cba.omnia.grimlock.position.coordinate.Coordinateable">coordinate.Coordinateable</a>
-</p></span></dd></dl></div>
+      <p class="shortcomment cmt">Append a coordinate to the position.</p><div class="fullcomment"><div class="comment cmt"><p>Append a coordinate to the position.
+</p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>The coordinate to append.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A new position with the coordinate <code>t</code> appended.
+</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
