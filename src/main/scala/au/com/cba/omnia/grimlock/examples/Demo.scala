@@ -16,6 +16,8 @@ package au.com.cba.omnia.grimlock.examples
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.content.metadata._
+import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix._
 import au.com.cba.omnia.grimlock.Names._
 import au.com.cba.omnia.grimlock.partition._
@@ -83,19 +85,19 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   // Read the data. This returns a 2D matrix (instance x feature).
   val data = read2D("exampleInput.txt")
 
-  // Define a custom partition. If the instance is 'iid:0364354' then assign
-  // it to the right (test) partition. In all other cases perform standard
-  // 70-30 split of the training data based on the hash of the instance id.
+  // Define a custom partition. If the instance is 'iid:0364354' or
+  // 'iid:0216406' then assign it to the right (test) partition. In
+  // all other cases assing it to the left (train) partition.
   case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S)
     extends Partitioner with Assign {
     type T = S
 
-    val bhs = BinaryHashSplit(dim, 7, left, right, base=10)
     def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
-      if (pos.get(dim).toShortString == "iid:0364354") {
+      if (pos.get(dim).toShortString == "iid:0364354" ||
+          pos.get(dim).toShortString == "iid:0216406") {
         Some(Left(right))
       } else {
-        bhs.assign(pos)
+        Some(Left(left))
       }
     }
   }
@@ -109,7 +111,8 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   // written to file.
   val stats = parts
     .get("train")
-    .reduceAndExpand(Along(First), List(Count(), Moments(), Min(), Max(), MaxAbs(), Histogram()))
+    .reduceAndExpand(Along(First), List(Count(), Moments(), Min(), Max(),
+      MaxAbs(), Histogram()))
     .persist("./demo/stats.out")
 
   // Determine which features to filter based on statistics. In this
@@ -117,21 +120,24 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   // These are removed first to prevent indicator features from being
   // created.
   val rem1 = stats
-    .which((pos: Position, con: Content) => (pos.get(Second) equ "count") && (con.value leq 2))
+    .which((pos: Position, con: Content) =>
+      (pos.get(Second) equ "count") && (con.value leq 2))
     .names(Over(First))
 
   // Also remove constant features (standard deviation is 0, or 1
   // category). These are removed after indicators have been created.
   val rem2 = stats
-    .which((pos: Position, con: Content) => ((pos.get(Second) equ "std")     && (con.value equ 0)) ||
-                                            ((pos.get(Second) equ "num.cat") && (con.value equ 1)))
+    .which((pos: Position, con: Content) =>
+      ((pos.get(Second) equ "std")     && (con.value equ 0)) ||
+      ((pos.get(Second) equ "num.cat") && (con.value equ 1)))
     .names(Over(First))
 
   // Finally remove categoricals for which an individual category
   // has only 1 value. These are removed after binarized features
   // have been created.
   val rem3 = stats
-    .which((pos: Position, con: Content) => (pos.get(Second) like ".*=.*".r) && (con.value equ 1))
+    .which((pos: Position, con: Content) =>
+      (pos.get(Second) like ".*=.*".r) && (con.value equ 1))
     .names(Over(Second))
 
   // For each partition:
@@ -155,7 +161,9 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
 
     val csb = d
       .slice(Over(Second), rem2, false)
-      .transformWithValue(List(Clamp(Second, andThen=Some(Standardise(Second))), Binarise(Second)), stats.toMap(Over(First)))
+      .transformWithValue(List(Clamp(Second,
+        andThen=Some(Standardise(Second))), Binarise(Second)),
+        stats.toMap(Over(First)))
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
@@ -178,7 +186,8 @@ class Scoring(args : Args) extends Job(args) {
   //  3/ Compute the scored (as a weighted sum);
   //  4/ Save the results.
   data
-    .transformWithValue(List(Indicator(Second), Binarise(Second), Clamp(Second, andThen=Some(Standardise(Second)))), stats)
+    .transformWithValue(List(Indicator(Second), Binarise(Second),
+      Clamp(Second, andThen=Some(Standardise(Second)))), stats)
     .reduceWithValue(Over(First), WeightedSum(Second), weights)
     .persist("./demo/scores.out")
 }
@@ -209,5 +218,54 @@ class DataQualityAndAnalysis(args : Args) extends Job(args) {
     .persist("./demo/instance_count.out")
     .reduceAndExpand(Along(First), Moments())
     .persist("./demo/instance_density.out")
+}
+
+class LabelWeighting(args: Args) extends Job(args) {
+
+  // Read labels and melt the date into the instance id to generate a 1D matrix.
+  val labels = readLabels("exampleLabels.txt",
+      ContinuousSchema[Codex.DoubleCodex]())
+    .melt(Second, First, ":")
+
+  // Compute histogram over the label values.
+  val histogram = labels
+    .reduceAndExpand(Along(First), Histogram(all=true, meta=false, prefix=None))
+
+  // Compute the total number of labels and store result in a Map.
+  val sum = labels
+    .size(First)
+    .toMap(Over(First))
+
+  // Compute the ratio of (total number of labels) / (count for each label).
+  val ratio = histogram
+    .transformWithValue(Ratio(First, First.toString, inverse=true), sum)
+
+  // Find the minimum ratio, and store the result as a Map.
+  val min = ratio
+    .reduceAndExpand(Along(First), Min())
+    .toMap(Over(First))
+
+  // Divide the ratio by the minimum ratio, and store the result as a Map.
+  val weights = ratio
+    .transformWithValue(Ratio(First, "min"), min)
+    .toMap(Over(First))
+
+  case class AddWeight() extends Transformer with PresentExpandedWithValue {
+    type V = Map[Position1D, Content]
+
+    // Adding the weight is a straight forward lookup by the value of the
+    // content. Also return this cell (pos.append("label"), con) so no
+    // additional join is needed with the original label data.
+    def present[P <: Position with ExpandablePosition](pos: P, con: Content,
+      ext: V) = {
+      Some(Right(List((pos.append("label"), con), (pos.append("weight"),
+        ext(Position1D(con.value.toShortString))))))
+    }
+  }
+
+  // Read labels and add the computed weight.
+  readLabels("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+    .transformAndExpandWithValue(AddWeight(), weights)
+    .persist("./demo/weighted.out")
 }
 

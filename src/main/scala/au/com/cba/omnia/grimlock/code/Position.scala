@@ -137,10 +137,70 @@ trait ModifyablePosition { self: Position =>
   protected def same(cl: List[Value]): S
 }
 
+/** Base trait for converting a position to a `Map`. */
+trait Mapable[P <: Position, T] {
+  /** Convert a cell to `Map` content value.
+   *
+   * @param pos Position of the cell.
+   * @param con Content of the cell.
+   *
+   * @return The value placed in a `Map` after a call to `toMap` on a `Slice`.
+   */
+  def toMapValue(pos: P, con: Content): T
+
+  /** Combine two map values.
+   *
+   * @param x An optional `Map` content value.
+   * @param y The `Map` content value to combine with.
+   *
+   * @return The combined `Map` content value.
+   */
+  def combineMapValues(x: Option[T], y: T): T
+}
+
+/** Trait for converting 1D positions to `Map` values. */
+trait Mapable1D[P <: Position] extends Mapable[P, Content] {
+  def toMapValue(r: P, c: Content): Content = c
+  def combineMapValues(x: Option[Content], y: Content): Content = y
+}
+
+/** Trait for converting (2..N)D positions to `Map` values. */
+trait MapableXD[P <: Position] extends Mapable[P, Map[P, Content]] {
+  def toMapValue(r: P, c: Content): Map[P, Content] = Map(r -> c)
+  def combineMapValues(x: Option[Map[P, Content]],
+    y: Map[P, Content]): Map[P, Content] = {
+    x match {
+      case Some(l) => l ++ y
+      case None => y
+    }
+  }
+}
+
+/** `Mapable` object for `PositionXD` with `Along`. */
+case object PositionXDAlong extends MapableXD[Position1D] { }
+
 /** Trait for operations that reduce a position by one dimension. */
 trait ReduceablePosition { self: Position =>
   /** Type for positions of one less number of dimensions. */
   type L <: Position with ExpandablePosition
+
+  /** Type of the `Map` content when `Over.toMap` is called. */
+  type O
+
+  /** Type of the `Map` content when `Along.toMap` is called. */
+  type A
+
+  /**
+   * Object with `Mapable` implementation to `Over.toMap` and
+   * `Over.combineMaps`.
+   */
+  val over: Mapable[L, O]
+
+  /**
+   * Object with `Mapable` implementation to `Along.toMap` and
+   * `Along.combineMaps`.
+   */
+  val along: Mapable[Position1D, A]
 
   /**
    * Remove the coordinate at dimension `dim`.
@@ -154,14 +214,6 @@ trait ReduceablePosition { self: Position =>
 
     less(h ::: t.drop(1))
   }
-
-  // TODO: Can this be put into a case object that?
-  type O
-  type A
-  def toOverMapValue(r: L, c: Content): O
-  def toAlongMapValue(r: Position1D, c: Content): A
-  def combineOverMapValues(x: Option[O], y: O): O
-  def combineAlongMapValues(x: Option[A], y: A): A
 
   /**
    * Melt dimension `dim` into `into`.
@@ -233,21 +285,23 @@ case class Position1D(first: Value) extends Position with ModifyablePosition
   type L = Position0D
   type S = Position1D
   type M = Position2D
-
   type O = Content
   type A = Content
-  def toOverMapValue(r: L, c: Content): O = c
-  def toAlongMapValue(r: Position1D, c: Content): A = c
-  def combineOverMapValues(x: Option[O], y: O): O = combineMapValues(x, y)
-  def combineAlongMapValues(x: Option[A], y: A): A = combineMapValues(x, y)
-  private def combineMapValues(l: Option[Content], r: Content): Content = r
 
+  val over = Position1DOver
+  val along = Position1DAlong
   val coordinates = List(first)
 
   protected def less(cl: List[Value]): L = Position0D()
   protected def same(cl: List[Value]): S = Position1D(cl(0))
   protected def more(cl: List[Value]): M = Position2D(cl(0), cl(1))
 }
+
+/** `Mapable` object for `Position1D` with `Over`. */
+case object Position1DOver extends Mapable1D[Position0D] { }
+
+/** `Mapable` object for `Position1D` with `Along`. */
+case object Position1DAlong extends Mapable1D[Position1D] { }
 
 /** Companion object to `Position1D`. */
 object Position1D {
@@ -273,27 +327,20 @@ case class Position2D(first: Value, second: Value) extends Position
   type L = Position1D
   type S = Position2D
   type M = Position3D
-
   type O = Map[Position1D, Content]
   type A = Map[Position1D, Content]
-  def toOverMapValue(r: L, c: Content): O = Map(r -> c)
-  def toAlongMapValue(r: Position1D, c: Content): A = Map(r -> c)
-  def combineOverMapValues(x: Option[O], y: O): O = combineMapValues(x, y)
-  def combineAlongMapValues(x: Option[A], y: A): A = combineMapValues(x, y)
-  private def combineMapValues(l: Option[Map[Position1D, Content]],
-    r: Map[Position1D, Content]): Map[Position1D, Content] = {
-    l match {
-      case Some(x) => x ++ r
-      case None => r
-    }
-  }
 
+  val over = Position2DOver
+  val along = PositionXDAlong
   val coordinates = List(first, second)
 
   protected def less(cl: List[Value]): L = Position1D(cl(0))
   protected def same(cl: List[Value]): S = Position2D(cl(0), cl(1))
   protected def more(cl: List[Value]): M = Position3D(cl(0), cl(1), cl(2))
 }
+
+/** `Mapable` object for `Position2D` with `Over`. */
+case object Position2DOver extends MapableXD[Position1D] { }
 
 /** Companion object to `Position2D`. */
 object Position2D {
@@ -323,21 +370,11 @@ case class Position3D(first: Value, second: Value, third: Value)
   type L = Position2D
   type S = Position3D
   type M = Position4D
-
   type O = Map[Position2D, Content]
   type A = Map[Position1D, Content]
-  def toOverMapValue(r: L, c: Content): O = Map(r -> c)
-  def toAlongMapValue(r: Position1D, c: Content): A = Map(r -> c)
-  def combineOverMapValues(x: Option[O], y: O): O = combineMapValues(x, y)
-  def combineAlongMapValues(x: Option[A], y: A): A = combineMapValues(x, y)
-  private def combineMapValues[P <: Position](l: Option[Map[P, Content]],
-    r: Map[P, Content]): Map[P, Content] = {
-    l match {
-      case Some(x) => x ++ r
-      case None => r
-    }
-  }
 
+  val over = Position3DOver
+  val along = PositionXDAlong
   val coordinates = List(first, second, third)
 
   protected def less(cl: List[Value]): L = Position2D(cl(0), cl(1))
@@ -346,6 +383,9 @@ case class Position3D(first: Value, second: Value, third: Value)
     Position4D(cl(0), cl(1), cl(2), cl(3))
   }
 }
+
+/** `Mapable` object for `Position3D` with `Over`. */
+case object Position3DOver extends MapableXD[Position2D] { }
 
 /** Companion object to `Position3D`. */
 object Position3D {
@@ -378,21 +418,11 @@ case class Position4D(first: Value, second: Value, third: Value, fourth: Value)
   type L = Position3D
   type S = Position4D
   type M = Position5D
-
   type O = Map[Position3D, Content]
   type A = Map[Position1D, Content]
-  def toOverMapValue(r: L, c: Content): O = Map(r -> c)
-  def toAlongMapValue(r: Position1D, c: Content): A = Map(r -> c)
-  def combineOverMapValues(x: Option[O], y: O): O = combineMapValues(x, y)
-  def combineAlongMapValues(x: Option[A], y: A): A = combineMapValues(x, y)
-  private def combineMapValues[P <: Position](l: Option[Map[P, Content]],
-    r: Map[P, Content]): Map[P, Content] = {
-    l match {
-      case Some(x) => x ++ r
-      case None => r
-    }
-  }
 
+  val over = Position4DOver
+  val along = PositionXDAlong
   val coordinates = List(first, second, third, fourth)
 
   protected def less(cl: List[Value]): L = Position3D(cl(0), cl(1), cl(2))
@@ -403,6 +433,9 @@ case class Position4D(first: Value, second: Value, third: Value, fourth: Value)
     Position5D(cl(0), cl(1), cl(2), cl(3), cl(4))
   }
 }
+
+/** `Mapable` object for `Position4D` with `Over`. */
+case object Position4DOver extends MapableXD[Position3D] { }
 
 /** Companion object to `Position4D`. */
 object Position4D {
@@ -437,21 +470,11 @@ case class Position5D(first: Value, second: Value, third: Value, fourth: Value,
   with ReduceablePosition {
   type L = Position4D
   type S = Position5D
-
   type O = Map[Position4D, Content]
   type A = Map[Position1D, Content]
-  def toOverMapValue(r: L, c: Content): O = Map(r -> c)
-  def toAlongMapValue(r: Position1D, c: Content): A = Map(r -> c)
-  def combineOverMapValues(x: Option[O], y: O): O = combineMapValues(x, y)
-  def combineAlongMapValues(x: Option[A], y: A): A = combineMapValues(x, y)
-  private def combineMapValues[P <: Position](l: Option[Map[P, Content]],
-    r: Map[P, Content]): Map[P, Content] = {
-    l match {
-      case Some(x) => x ++ r
-      case None => r
-    }
-  }
 
+  val over = Position5DOver
+  val along = PositionXDAlong
   val coordinates = List(first, second, third, fourth, fifth)
 
   protected def less(cl: List[Value]): L = {
@@ -461,6 +484,9 @@ case class Position5D(first: Value, second: Value, third: Value, fourth: Value,
     Position5D(cl(0), cl(1), cl(2), cl(3), cl(4))
   }
 }
+
+/** `Mapable` object for `Position5D` with `Over`. */
+case object Position5DOver extends MapableXD[Position4D] { }
 
 /** Companion object to `Position5D`. */
 object Position5D {

@@ -47,8 +47,13 @@ sealed trait Slice[P <: Position, D <: Dimension] {
   /** Returns the inverse of this. */
   def inverse(): I
 
+  /** Type of the content in an in-memory version of a matrix. */
   type C
+
+  /** Convert a cell to an in-memory map. */
   def toMap(pos: P, con: Content): Map[S, C]
+
+  /** Combine two in-memory cells. */
   def combineMaps(pos: P, x: Map[S, C], y: Map[S, C]): Map[S, C]
 }
 
@@ -78,12 +83,12 @@ case class Over[P <: Position with ReduceablePosition, D <: Dimension](
   def inverse(): I = Along(dimension)
 
   def toMap(pos: P, con: Content): Map[S, C] = {
-    Map(single(pos) -> pos.toOverMapValue(remove(pos), con))
+    Map(single(pos) -> pos.over.toMapValue(remove(pos), con))
   }
   def combineMaps(pos: P, x: Map[S, C], y: Map[S, C]): Map[S, C] = {
     x ++ y.map {
       case (k, v) =>
-        k -> pos.combineOverMapValues(x.get(k).asInstanceOf[Option[pos.O]],
+        k -> pos.over.combineMapValues(x.get(k).asInstanceOf[Option[pos.O]],
           v.asInstanceOf[pos.O])
     }
   }
@@ -109,12 +114,12 @@ case class Along[P <: Position with ReduceablePosition, D <: Dimension](
   def inverse(): I = Over(dimension)
 
   def toMap(pos: P, con: Content): Map[S, C] = {
-    Map(remove(pos) -> pos.toAlongMapValue(single(pos), con))
+    Map(remove(pos) -> pos.along.toMapValue(single(pos), con))
   }
   def combineMaps(pos: P, x: Map[S, C], y: Map[S, C]): Map[S, C] = {
     x ++ y.map {
       case (k, v) =>
-        k -> pos.combineAlongMapValues(x.get(k).asInstanceOf[Option[pos.A]],
+        k -> pos.along.combineMapValues(x.get(k).asInstanceOf[Option[pos.A]],
           v.asInstanceOf[pos.A])
     }
   }

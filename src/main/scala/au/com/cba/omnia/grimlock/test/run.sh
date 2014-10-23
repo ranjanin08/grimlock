@@ -67,12 +67,20 @@ then
     hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.Scoring --local
   export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
     hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DataQualityAndAnalysis --local
+  export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
+    hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.LabelWeighting --local
+
+  if [ -d "demo.old" ]
+  then
+    diff -r demo demo.old
+  fi
 
   if [ ${DO_INIT} = "true" ]
   then
     hadoop fs -mkdir -p demo
     hadoop fs -put exampleInput.txt
     hadoop fs -put exampleWeights.txt
+    hadoop fs -put exampleLabels.txt
   fi
 
   if [ ${DO_CLUSTER} = "true" ]
@@ -85,6 +93,8 @@ then
       hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.Scoring --hdfs
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
       hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DataQualityAndAnalysis --hdfs
+  export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
+    hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.LabelWeighting --hdfs
   fi
 fi
 

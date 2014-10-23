@@ -392,15 +392,24 @@ case class Divide(dim: Dimension, state: String, suffix: String = "",
   }
 }
 
-case class Ratio(dim: Dimension, from: Dimension, state: String = "size",
-  suffix: String = "", inverse: Boolean = false) extends Transformer
-  with PresentAsDoubleWithValue {
+case class Ratio(dim: Dimension, key: String, suffix: String = "",
+  inverse: Boolean = false) extends Transformer with PresentWithValue {
+  type V = Map[Position1D, Content]
+
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
-    (con.value.asDouble, getAsDouble(con, ext, from.toString, state)) match {
-      case (Some(l), Some(r)) => returnSingle(pos, dim,
-        pos.get(dim).toShortString + suffix, if (inverse) r / l else l / r)
-      case _ => None
+    val k = Position1D(key)
+
+    if (con.schema.kind.isSpecialisationOf(Numerical) && ext.isDefinedAt(k)) {
+      (con.value.asDouble, ext(k).value.asDouble) match {
+        case (Some(l), Some(r)) => Some(Left(
+          (pos.set(dim, pos.get(dim).toShortString + suffix),
+           Content(ContinuousSchema[Codex.DoubleCodex](),
+             if (inverse) r / l else l / r))))
+        case _ => None
+      }
+    } else {
+      None
     }
   }
 }
