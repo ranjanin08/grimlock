@@ -43,7 +43,7 @@
 other words, when a groupBy is performed, it is performed using a
 <code>Position1D</code> consisting of the coordinate at index <code>dimension</code>.
 </p></div><dl class="paramcmts block"><dt class="param">dimension</dt><dd class="cmt"><p>Dimension of the selected coordinate.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/bbfc828ed1725c75cb526d71b01ded4db1b22752//src/main/scala/au/com/cba/omnia/grimlock/code/Slice.scala" target="_blank">Slice.scala</a></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/196fd6fccf96adb84eb395c83f3649ce27536309//src/main/scala/au/com/cba/omnia/grimlock/code/Slice.scala" target="_blank">Slice.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Over.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Over.D">D</span>], <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Over.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Over.D">D</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -114,7 +114,7 @@ other words, when a groupBy is performed, it is performed using a
         <span class="name">C</span><span class="result"> = <span class="extype" name="au.com.cba.omnia.grimlock.position.ReduceablePosition.O">P.O</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a></dd></dl></div>
+      <p class="shortcomment cmt">Type of the content in an in-memory version of a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the content in an in-memory version of a matrix.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Over.I" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="I=au.com.cba.omnia.grimlock.Along[P,D]"></a>
       <a id="I:I"></a>
@@ -278,7 +278,7 @@ than <code>P</code>.
         <span class="name">combineMaps</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.Over.P">P</span></span>, <span name="x">x: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.Over.S">S</a>, <a href="#C=P#O" class="extmbr" name="au.com.cba.omnia.grimlock.Over.C">C</a>]</span>, <span name="y">y: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.Over.S">S</a>, <a href="#C=P#O" class="extmbr" name="au.com.cba.omnia.grimlock.Over.C">C</a>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.Over.S">S</a>, <a href="#C=P#O" class="extmbr" name="au.com.cba.omnia.grimlock.Over.C">C</a>]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a></dd></dl></div>
+      <p class="shortcomment cmt">Combine two in-memory cells.</p><div class="fullcomment"><div class="comment cmt"><p>Combine two in-memory cells.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Over#dimension" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="dimension:D"></a>
       <a id="dimension:D"></a>
@@ -480,7 +480,7 @@ than <code>P</code>.
         <span class="name">toMap</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.Over.P">P</span></span>, <span name="con">con: <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.Over.S">S</a>, <a href="#C=P#O" class="extmbr" name="au.com.cba.omnia.grimlock.Over.C">C</a>]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a></dd></dl></div>
+      <p class="shortcomment cmt">Convert a cell to an in-memory map.</p><div class="fullcomment"><div class="comment cmt"><p>Convert a cell to an in-memory map.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
