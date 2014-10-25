@@ -300,7 +300,8 @@ object OrdinalSchema {
 }
 
 /** Schema for date variables. */
-case class DateSchema[C <: Codex]()(implicit val codex: C) extends Schema {
+case class DateSchema[C <: DateAndTimeCodex]()(implicit val codex: C)
+  extends Schema {
   val kind = Type.Date
 
   def isValid[V <: Value](value: V): Boolean = {
@@ -309,6 +310,20 @@ case class DateSchema[C <: Codex]()(implicit val codex: C) extends Schema {
 
   override def toString(): String = {
     "DateSchema[" + codex.toString + "]()"
+  }
+}
+
+/** Schema for event variables. */
+case class EventSchema[C <: EventCodex]()(implicit val codex: C)
+  extends Schema {
+  val kind = Type.Event
+
+  def isValid[V <: Value](value: V): Boolean = {
+    !value.asEvent.isEmpty
+  }
+
+  override def toString(): String = {
+    "EventSchema[" + codex.toString + "]()"
   }
 }
 

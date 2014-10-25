@@ -156,6 +156,18 @@ trait PresentExpandedWithValue { self: Transformer =>
 }
 
 /**
+ * Convenience trait for transformers that present an expanded position
+ * with or without using a user supplied value.
+ */
+trait PresentExpandedAndWithValue extends PresentExpanded
+  with PresentExpandedWithValue { self: Transformer =>
+  type V = Any
+
+  def present[P <: Position with ExpandablePosition](pos: P, con: Content,
+    ext: V) = present(pos, con)
+}
+
+/**
  * Transformer that is a combination of one or more transformers with
  * `Present`.
  *

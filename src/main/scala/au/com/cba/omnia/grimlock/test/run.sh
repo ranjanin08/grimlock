@@ -69,6 +69,8 @@ then
     hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DataQualityAndAnalysis --local
   export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
     hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.LabelWeighting --local
+  export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
+    hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.InstanceCentricTfIdf --local
 
   if [ -d "demo.old" ]
   then
@@ -95,6 +97,8 @@ then
       hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DataQualityAndAnalysis --hdfs
   export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
     hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.LabelWeighting --hdfs
+  export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
+    hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.InstanceCentricTfIdf --hdfs
   fi
 fi
 

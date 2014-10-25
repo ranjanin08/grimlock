@@ -220,9 +220,7 @@ case class Clamp[T <: Transformer with PresentWithValue](dim: Dimension,
 /**
  * Compute the inverse document frequency.
  *
- * @param from  Dimension of the documents.
- * @param state Name of the field in user supplied value which is used as the
- *              number of documents.
+ * @param key   Key into the user supplied value map.
  * @param name  Name of the idf coordinate.
  * @param log   Log function to use.
  * @param add   Amount to add to the idf numerator.
@@ -234,18 +232,26 @@ case class Clamp[T <: Transformer with PresentWithValue](dim: Dimension,
  * @note Idf is only applied to numerical variables.
  * @note The returned position will have an extra dimension appended.
  */
-case class Idf(from: Dimension, state: String = "size", name: String = "idf",
+case class Idf(key: String, name: String = "idf",
   log: (Double) => Double = math.log, add: Int = 1,
   lower: Long = Long.MinValue, upper: Long = Long.MaxValue) extends Transformer
-  with PresentExpandedAsDoubleWithValue {
+  with PresentExpandedWithValue {
+  type V = Map[Position1D, Content]
+
   def present[P <: Position with ExpandablePosition](pos: P, con: Content,
     ext: V) = {
-    (con.value.asDouble, getAsDouble(con, ext, from.toString, state)) match {
-      case (Some(df), Some(n)) if ((df > lower) && (df < upper)) =>
-        Some(Left((pos.append(name),
-          Content(ContinuousSchema[Codex.DoubleCodex](),
-            log(n / (add + df.toDouble))))))
-      case _ => None
+    val k = Position1D(key)
+
+    if (con.schema.kind.isSpecialisationOf(Numerical) && ext.isDefinedAt(k)) {
+      (con.value.asDouble, ext(k).value.asDouble) match {
+        case (Some(df), Some(n)) if ((df > lower) && (df < upper)) =>
+          Some(Left((pos.append(name),
+            Content(ContinuousSchema[Codex.DoubleCodex](),
+              log(n / (add + df.toDouble))))))
+        case _ => None
+      }
+    } else {
+      None
     }
   }
 }
@@ -310,13 +316,23 @@ case class LogarithmicTf(dim: Dimension, suffix: String = "",
  *       coordinate at `dim` with the `suffix` appended.
  */
 case class AugmentedTf(dim: Dimension, state: String = "max",
-  suffix: String = "") extends Transformer with PresentAsDoubleWithValue {
+  suffix: String = "") extends Transformer with PresentWithValue {
+  type V = Map[Position1D, Content]
+
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
-    (con.value.asDouble, getAsDouble(con, ext, pos.get(dim), state)) match {
-      case (Some(tf), Some(m)) => returnSingle(pos, dim,
-        pos.get(dim).toShortString + suffix, 0.5 + (0.5 * tf) / m)
-      case _ => None
+    val k = Position1D(pos.get(dim))
+
+    if (con.schema.kind.isSpecialisationOf(Numerical) && ext.isDefinedAt(k)) {
+      (con.value.asDouble, ext(k).value.asDouble) match {
+        case (Some(tf), Some(m)) =>
+          Some(Left((pos.set(dim, pos.get(dim).toShortString + suffix),
+            Content(ContinuousSchema[Codex.DoubleCodex](),
+            0.5 + (0.5 * tf) / m))))
+        case _ => None
+      }
+    } else {
+      None
     }
   }
 }
