@@ -22,7 +22,14 @@ import au.com.cba.omnia.grimlock.position._
 trait Operator
 
 /** Base trait for computing pairwise values. */
-trait Compute { self: Operator =>
+trait Compute extends ComputeWithValue { self: Operator =>
+  type V = Any
+
+  def compute[P <: Position with ModifyablePosition, D <: Dimension](
+    slice: Slice[P, D], left: Cell[P], right: Cell[P], ext: V) = {
+    compute(slice, left, right)
+  }
+
   /**
    * Indicate if the cell is selected as part of the sample.
    *
@@ -57,20 +64,6 @@ trait ComputeWithValue { self: Operator =>
    */
   def compute[P <: Position with ModifyablePosition, D <: Dimension](
     slice: Slice[P, D], left: Cell[P], right: Cell[P],
-      ext: V): Option[Cell[P#S]]
-}
-
-/**
- * Convenience trait for operators that compute pairwise values with or
- * without using a user supplied value.
- */
-trait ComputeAndWithValue extends Compute with ComputeWithValue {
-  self: Operator =>
-  type V = Any
-
-  def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slice: Slice[P, D], left: Cell[P], right: Cell[P], ext: V) = {
-    compute(slice, left, right)
-  }
+    ext: V): Option[Cell[P#S]]
 }
 

@@ -28,7 +28,7 @@ import scala.util.Random
  * @note This randomly samples ignoring the position.
  */
 case class RandomSample(ratio: Double, rnd: Random = new Random())
-  extends Sampler with SelectAndWithValue {
+  extends Sampler with Select {
   def select[P <: Position](pos: P): Boolean = rnd.nextDouble() < ratio
 }
 
@@ -40,7 +40,7 @@ case class RandomSample(ratio: Double, rnd: Random = new Random())
  * @param base  The base of the sampling ratio.
  */
 case class HashSample(dim: Dimension, ratio: Int, base: Int) extends Sampler
-  with SelectAndWithValue {
+  with Select {
   def select[P <: Position](pos: P): Boolean = {
     math.abs(pos.get(dim).hashCode % base) < ratio
   }

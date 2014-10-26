@@ -589,7 +589,7 @@ class Test23(args : Args) extends Job(args) {
 
   val data = read2D("somePairwise.txt")
 
-  case class DiffSquared() extends Operator with ComputeAndWithValue {
+  case class DiffSquared() extends Operator with Compute {
     def compute[P <: Position with ModifyablePosition, D <: Dimension](
       slc: Slice[P, D], x: Cell[P], y: Cell[P]): Option[Cell[P#S]] = {
       val xc = x._1.get(Second).toShortString

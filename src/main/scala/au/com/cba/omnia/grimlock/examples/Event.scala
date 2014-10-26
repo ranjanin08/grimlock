@@ -94,7 +94,7 @@ case object ExampleEventCodex extends EventCodex {
 // Transformer for denormalising events; that is, create a separate cell in
 // the matrix for each (event, instance) pair. Assumes that the initial
 // position is 1D with event id (as is the output from `read` above).
-case class Denormalise() extends Transformer with PresentExpandedAndWithValue {
+case class Denormalise() extends Transformer with PresentExpanded {
   def present[P <: Position with ExpandablePosition](pos: P, con: Content) = {
     con match {
       case Content(_,
@@ -111,7 +111,7 @@ case class Denormalise() extends Transformer with PresentExpandedAndWithValue {
 // for each term (word or ngram) in the document (i.e. event).
 case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1,
   separator: String = "_", stopwords: List[String] = Stopwords.English)
-  extends Transformer with PresentExpandedAndWithValue {
+  extends Transformer with PresentExpanded {
   def present[P <: Position with ExpandablePosition](pos: P, con: Content) = {
     con match {
       case Content(_, EventValue(ExampleEvent(_, _, _, _, _, details), _)) =>

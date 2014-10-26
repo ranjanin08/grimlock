@@ -20,7 +20,7 @@ JAR=grimlock.jar
 NUM_TEST=24
 DO_BUILD=true
 DO_LOCAL=true
-DO_DEMO=false
+DO_DEMO=true
 DO_CLUSTER=false
 DO_CLEANUP=true
 DO_INIT=false
@@ -83,6 +83,7 @@ then
     hadoop fs -put exampleInput.txt
     hadoop fs -put exampleWeights.txt
     hadoop fs -put exampleLabels.txt
+    hadoop fs -put exampleEvents.txt
   fi
 
   if [ ${DO_CLUSTER} = "true" ]
@@ -95,10 +96,10 @@ then
       hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.Scoring --hdfs
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
       hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DataQualityAndAnalysis --hdfs
-  export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-    hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.LabelWeighting --hdfs
-  export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-    hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.InstanceCentricTfIdf --hdfs
+    export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.LabelWeighting --hdfs
+    export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.InstanceCentricTfIdf --hdfs
   fi
 fi
 

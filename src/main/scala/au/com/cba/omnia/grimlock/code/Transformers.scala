@@ -38,36 +38,27 @@ trait AsDouble {
   }
 
   protected def returnSingle[P <: Position with ModifyablePosition](pos: P,
-    dim: Dimension, name: String,
+    dim: Dimension, suffix: String,
     value: Double): Option[Either[Cell[P#S], List[Cell[P#S]]]] = {
-    Some(Left((pos.set(dim, name),
+    Some(Left((pos.suffix(dim, suffix),
       Content(ContinuousSchema[Codex.DoubleCodex](), value))))
   }
-}
-
-/**
- * Convenience trait for transformers that present a `Double` value using a
- * user supplied value.
- */
-trait PresentAsDoubleWithValue extends PresentWithValue with AsDouble {
-  self: Transformer =>
-  type V = Map[Position1D, Map[Position1D, Content]]
 }
 
 /**
  * Convenience trait for transformers that present a `Double` value with or
  * without using a user supplied value.
  */
-trait PresentAsDoubleAndWithValue extends PresentAndWithValue with AsDouble {
+trait PresentAsDouble extends Present with AsDouble {
   self: Transformer =>
 }
 
 /**
- * Convenience trait for Transformers that append a `Double` value using a
+ * Convenience trait for transformers that present a `Double` value using a
  * user supplied value.
  */
-trait PresentExpandedAsDoubleWithValue extends PresentExpandedWithValue
-  with AsDouble { self: Transformer =>
+trait PresentWithValueAsDouble extends PresentWithValue with AsDouble {
+  self: Transformer =>
   type V = Map[Position1D, Map[Position1D, Content]]
 }
 
@@ -82,9 +73,9 @@ trait PresentExpandedAsDoubleWithValue extends PresentExpandedWithValue
  *       coordinate at `dim` with the `suffix` appended.
  */
 case class Indicator(dim: Dimension, suffix: String = ".ind")
-  extends Transformer with PresentAndWithValue {
+  extends Transformer with Present {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content) = {
-    Some(Left((pos.set(dim, pos.get(dim).toShortString + suffix),
+    Some(Left((pos.suffix(dim, suffix),
       Content(DiscreteSchema[Codex.LongCodex](), 1))))
   }
 }
@@ -102,12 +93,11 @@ case class Indicator(dim: Dimension, suffix: String = ".ind")
  *       `separator`).
  */
 case class Binarise(dim: Dimension, separator: String = "=")
-  extends Transformer with PresentAndWithValue {
+  extends Transformer with Present {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content) = {
     (con.schema.kind.isSpecialisationOf(Categorical)) match {
       case true =>
-        Some(Left((pos.set(dim,
-          pos.get(dim).toShortString + separator + con.value.toShortString),
+        Some(Left((pos.suffix(dim, separator + con.value.toShortString),
           Content(DiscreteSchema[Codex.LongCodex](), 1))))
       case false => None
     }
@@ -129,12 +119,11 @@ case class Binarise(dim: Dimension, separator: String = "=")
  *       coordinate at `dim` with the `suffix` appended.
  */
 case class Normalise(dim: Dimension, state: String = "max.abs",
-  suffix: String = "") extends Transformer with PresentAsDoubleWithValue {
+  suffix: String = "") extends Transformer with PresentWithValueAsDouble {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
     (con.value.asDouble, getAsDouble(con, ext, pos.get(dim), state)) match {
-      case (Some(v), Some(m)) =>
-        returnSingle(pos, dim, pos.get(dim).toShortString + suffix, v / m)
+      case (Some(v), Some(m)) => returnSingle(pos, dim, suffix, v / m)
       case _ => None
     }
   }
@@ -159,14 +148,13 @@ case class Normalise(dim: Dimension, state: String = "max.abs",
  */
 case class Standardise(dim: Dimension,
   state: List[String] = List("mean", "std"), threshold: Double = 1e-4,
-  suffix: String = "") extends Transformer with PresentAsDoubleWithValue {
+  suffix: String = "") extends Transformer with PresentWithValueAsDouble {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
     (con.value.asDouble, getAsDouble(con, ext, pos.get(dim), state(0)),
       getAsDouble(con, ext, pos.get(dim), state(1))) match {
         case (Some(v), Some(m), Some(s)) =>
-          returnSingle(pos, dim, pos.get(dim).toShortString + suffix,
-            standardise(v, m, s))
+          returnSingle(pos, dim, suffix, standardise(v, m, s))
         case _ => None
       }
   }
@@ -183,7 +171,6 @@ case class Standardise(dim: Dimension,
  * @param state     List of names of the fields in user supplied value which
  *                  is used as the clamping constants.
  * @param suffix    Suffix for the new name of the coordinate at `dim`.
- * @param andThen   Optional transformation to apply after clamping.
  *
  * @note Clamping results in a variable not smaller (or greater) than the
  *       clamping constants.
@@ -192,22 +179,14 @@ case class Standardise(dim: Dimension,
  *       value of coordinate is the string representation of the original
  *       coordinate at `dim` with the `suffix` appended.
  */
-case class Clamp[T <: Transformer with PresentWithValue](dim: Dimension,
-  state: List[String] = List("min", "max"), suffix: String = "",
-  andThen: Option[T] = None) extends Transformer with PresentAsDoubleWithValue {
+case class Clamp(dim: Dimension, state: List[String] = List("min", "max"),
+  suffix: String = "") extends Transformer with PresentWithValueAsDouble {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
     (con.value.asDouble, getAsDouble(con, ext, pos.get(dim), state(0)),
       getAsDouble(con, ext, pos.get(dim), state(1))) match {
         case (Some(v), Some(l), Some(u)) =>
-          val cell = (pos.set(dim, pos.get(dim).toShortString + suffix),
-            Content(ContinuousSchema[Codex.DoubleCodex](), clamp(v, l, u)))
-
-          andThen match {
-            case Some(t) => t.present(cell._1.asInstanceOf[P], cell._2,
-              ext.asInstanceOf[t.V])
-            case None => Some(Left(cell))
-          }
+          returnSingle(pos, dim, suffix, clamp(v, l, u))
         case _ => None
       }
   }
@@ -268,11 +247,10 @@ case class Idf(key: String, name: String = "idf",
  *       coordinate at `dim` with the `suffix` appended.
  */
 case class BooleanTf(dim: Dimension, suffix: String = "") extends Transformer
-  with PresentAsDoubleAndWithValue {
+  with PresentAsDouble {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content) = {
     (con.schema.kind.isSpecialisationOf(Numerical)) match {
-      case true =>
-        returnSingle(pos, dim, pos.get(dim).toShortString + suffix, 1)
+      case true => returnSingle(pos, dim, suffix, 1)
       case false => None
     }
   }
@@ -291,12 +269,10 @@ case class BooleanTf(dim: Dimension, suffix: String = "") extends Transformer
  *       coordinate at `dim` with the `suffix` appended.
  */
 case class LogarithmicTf(dim: Dimension, suffix: String = "",
-  log: (Double) => Double = math.log) extends Transformer
-  with PresentAsDoubleAndWithValue {
+  log: (Double) => Double = math.log) extends Transformer with PresentAsDouble {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content) = {
     (con.schema.kind.isSpecialisationOf(Numerical), con.value.asDouble) match {
-      case (true, Some(tf)) =>
-        returnSingle(pos, dim, pos.get(dim).toShortString + suffix, log(tf + 1))
+      case (true, Some(tf)) => returnSingle(pos, dim, suffix, log(tf + 1))
       case _ => None
     }
   }
@@ -326,9 +302,9 @@ case class AugmentedTf(dim: Dimension, state: String = "max",
     if (con.schema.kind.isSpecialisationOf(Numerical) && ext.isDefinedAt(k)) {
       (con.value.asDouble, ext(k).value.asDouble) match {
         case (Some(tf), Some(m)) =>
-          Some(Left((pos.set(dim, pos.get(dim).toShortString + suffix),
+          Some(Left((pos.suffix(dim, suffix),
             Content(ContinuousSchema[Codex.DoubleCodex](),
-            0.5 + (0.5 * tf) / m))))
+              0.5 + (0.5 * tf) / m))))
         case _ => None
       }
     } else {
@@ -351,58 +327,54 @@ case class AugmentedTf(dim: Dimension, state: String = "max",
  *       coordinate at `dim` with the `suffix` appended.
  */
 case class TfIdf(dim: Dimension, state: String = "idf", suffix: String = "")
-  extends Transformer with PresentAsDoubleWithValue {
+  extends Transformer with PresentWithValueAsDouble {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
     (con.value.asDouble, getAsDouble(con, ext, pos.get(dim), state)) match {
-      case (Some(tf), Some(idf)) =>
-        returnSingle(pos, dim, pos.get(dim).toShortString + suffix, tf * idf)
+      case (Some(tf), Some(idf)) => returnSingle(pos, dim, suffix, tf * idf)
       case _ => None
     }
   }
 }
 
 case class Subtract(dim: Dimension, state: String, suffix: String = "")
-  extends Transformer with PresentAsDoubleWithValue {
+  extends Transformer with PresentWithValueAsDouble {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
     (con.value.asDouble, getAsDouble(con, ext, pos.get(dim), state)) match {
-      case (Some(l), Some(r)) =>
-        returnSingle(pos, dim, pos.get(dim).toShortString + suffix, l - r)
+      case (Some(l), Some(r)) => returnSingle(pos, dim, suffix, l - r)
       case _ => None
     }
   }
 }
 
 case class Square(dim: Dimension, suffix: String = "") extends Transformer
-  with PresentAsDoubleAndWithValue {
+  with PresentAsDouble {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content) = {
     con.value.asDouble match {
-      case Some(v) =>
-        returnSingle(pos, dim, pos.get(dim).toShortString + suffix, v * v)
+      case Some(v) => returnSingle(pos, dim, suffix, v * v)
       case _ => None
     }
   }
 }
 
 case class SquareRoot(dim: Dimension, suffix: String = "") extends Transformer
-  with PresentAsDoubleAndWithValue {
+  with PresentAsDouble {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content) = {
     con.value.asDouble match {
-      case Some(v) => returnSingle(pos, dim,
-        pos.get(dim).toShortString + suffix, math.sqrt(v))
+      case Some(v) => returnSingle(pos, dim, suffix, math.sqrt(v))
       case _ => None
     }
   }
 }
 
 case class Divide(dim: Dimension, state: String, suffix: String = "",
-  inverse: Boolean = false) extends Transformer with PresentAsDoubleWithValue {
+  inverse: Boolean = false) extends Transformer with PresentWithValueAsDouble {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
     (con.value.asDouble, getAsDouble(con, ext, pos.get(dim), state)) match {
-      case (Some(l), Some(r)) => returnSingle(pos, dim,
-        pos.get(dim).toShortString + suffix, if (inverse) r / l else l / r)
+      case (Some(l), Some(r)) =>
+        returnSingle(pos, dim, suffix, if (inverse) r / l else l / r)
       case _ => None
     }
   }
@@ -418,10 +390,9 @@ case class Ratio(dim: Dimension, key: String, suffix: String = "",
 
     if (con.schema.kind.isSpecialisationOf(Numerical) && ext.isDefinedAt(k)) {
       (con.value.asDouble, ext(k).value.asDouble) match {
-        case (Some(l), Some(r)) => Some(Left(
-          (pos.set(dim, pos.get(dim).toShortString + suffix),
-           Content(ContinuousSchema[Codex.DoubleCodex](),
-             if (inverse) r / l else l / r))))
+        case (Some(l), Some(r)) => Some(Left((pos.suffix(dim, suffix),
+          Content(ContinuousSchema[Codex.DoubleCodex](),
+            if (inverse) r / l else l / r))))
         case _ => None
       }
     } else {

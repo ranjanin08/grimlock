@@ -19,15 +19,16 @@ import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility.{ Miscellaneous => Misc }
 
-// TODO: Add the ability to compose individual transformers. For example,
-//       first clamp a variable, then normalise. Perhaps use an andThen
-//       construct. See Clamp() for an example.
-
 /** Base trait for transformations. */
 trait Transformer
 
 /** Base trait for transformers that do not modify the number of dimensions. */
-trait Present { self: Transformer =>
+trait Present extends PresentWithValue { self: Transformer =>
+  type V = Any
+
+  def present[P <: Position with ModifyablePosition](pos: P, con: Content,
+    ext: V) = present(pos, con)
+
   /**
    * Present the transformed content(s).
    *
@@ -49,6 +50,10 @@ trait Present { self: Transformer =>
    */
   def present[P <: Position with ModifyablePosition](pos: P,
     con: Content): Option[Either[Cell[P#S], List[Cell[P#S]]]]
+
+  def andThen(that: Transformer with Present): AndThenPresent = {
+    AndThenPresent(this, that)
+  }
 }
 
 /**
@@ -81,25 +86,22 @@ trait PresentWithValue { self: Transformer =>
    */
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V): Option[Either[Cell[P#S], List[Cell[P#S]]]]
-}
 
-/**
- * Convenience trait for transformers that present with or without using a
- * user supplied value.
- */
-trait PresentAndWithValue extends Present with PresentWithValue {
-  self: Transformer =>
-  type V = Any
-
-  def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V) = present(pos, con)
+  def andThen[W <: V](that: Transformer with PresentWithValue { type V = W }): AndThenPresentWithValue[W] = {
+    AndThenPresentWithValue[W](this, that)
+  }
 }
 
 /**
  * Base trait for transformers that expand the position by appending
  * a dimension.
  */
-trait PresentExpanded { self: Transformer =>
+trait PresentExpanded extends PresentExpandedWithValue { self: Transformer =>
+  type V = Any
+
+  def present[P <: Position with ExpandablePosition](pos: P, con: Content,
+    ext: V) = present(pos, con)
+
   /**
    * Present the transformed content(s).
    *
@@ -156,15 +158,49 @@ trait PresentExpandedWithValue { self: Transformer =>
 }
 
 /**
- * Convenience trait for transformers that present an expanded position
- * with or without using a user supplied value.
+ * Transformer that is a composition of two transformers with `Present`.
+ *
+ * @param first  The first transformation to appy.
+ * @param second The second transformation to appy.
+ *
+ * @note This need not be called in an application. The `andThen` method
+ *       will create it.
  */
-trait PresentExpandedAndWithValue extends PresentExpanded
-  with PresentExpandedWithValue { self: Transformer =>
-  type V = Any
+case class AndThenPresent(first: Transformer with Present,
+  second: Transformer with Present) extends Transformer with Present {
+  def present[P <: Position with ModifyablePosition](pos: P, con: Content) = {
+    Some(Right(
+      Misc.mapFlatten(first.present(pos, con))
+        .flatMap {
+          case (p, c) => Misc.mapFlatten(second.present(p.asInstanceOf[P], c))
+        }))
+  }
+}
 
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content,
-    ext: V) = present(pos, con)
+/**
+ * Transformer that is a composition of two transformers with
+ * `PresentWithValue`.
+ *
+ * @param first  The first transformation to appy.
+ * @param second The second transformation to appy.
+ *
+ * @note This need not be called in an application. The `andThen` method
+ *       will create it.
+ */
+case class AndThenPresentWithValue[W](
+  first: Transformer with PresentWithValue { type V >: W },
+  second: Transformer with PresentWithValue { type V >: W })
+  extends Transformer with PresentWithValue {
+  type V = W
+  def present[P <: Position with ModifyablePosition](pos: P, con: Content,
+    ext: V) = {
+    Some(Right(
+      Misc.mapFlatten(first.present(pos, con, ext.asInstanceOf[first.V]))
+        .flatMap {
+          case (p, c) => Misc.mapFlatten(
+            second.present(p.asInstanceOf[P], c, ext.asInstanceOf[second.V]))
+        }))
+  }
 }
 
 /**
@@ -196,8 +232,7 @@ case class CombinationTransformer[T <: Transformer with Present](
  *       `TransformableWithValue` type class will convert any
  *       `List[Transformer]` automatically to one of these.
  */
-case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue, W](singles: List[T]) extends Transformer
-  with PresentWithValue {
+case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue, W](singles: List[T]) extends Transformer with PresentWithValue {
   type V = W
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
@@ -217,8 +252,7 @@ case class CombinationTransformerWithValue[T <: Transformer with PresentWithValu
  *       `TransformableExpanded` type class will convert any
  *       `List[Transformer]` automatically to one of these.
  */
-case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded](singles: List[T]) extends Transformer
-  with PresentExpanded {
+case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded](singles: List[T]) extends Transformer with PresentExpanded {
   def present[P <: Position with ExpandablePosition](pos: P, con: Content) = {
     Some(Right(singles.flatMap {
       case s => Misc.mapFlatten(s.present(pos, con))
@@ -236,8 +270,7 @@ case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded]
  *       `TransformableExpandedWithValue` type class will convert any
  *       `List[Transformer]` automatically to one of these.
  */
-case class CombinationTransformerExpandedWithValue[T <: Transformer with PresentExpandedWithValue, W](singles: List[T]) extends Transformer
-  with PresentExpandedWithValue {
+case class CombinationTransformerExpandedWithValue[T <: Transformer with PresentExpandedWithValue, W](singles: List[T]) extends Transformer with PresentExpandedWithValue {
   type V = W
   def present[P <: Position with ExpandablePosition](pos: P, con: Content,
     ext: W) = {

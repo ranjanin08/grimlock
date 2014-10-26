@@ -28,7 +28,11 @@ trait Partitioner {
 }
 
 /** Base trait for partitioners. */
-trait Assign { self: Partitioner =>
+trait Assign extends AssignWithValue { self: Partitioner =>
+  type V = Any
+
+  def assign[P <: Position](pos: P, ext: V) = assign(pos)
+
   /**
    * Assign the cell to a partition.
    *
@@ -65,17 +69,6 @@ trait AssignWithValue { self: Partitioner =>
    *       partitions.
    */
   def assign[P <: Position](pos: P, ext: V): Option[Either[T, List[T]]]
-}
-
-/**
- * Convenience trait for partitioners that assigns with or without using a
- * user supplied value.
- */
-trait AssignAndWithValue extends Assign with AssignWithValue {
-  self: Partitioner =>
-  type V = Any
-
-  def assign[P <: Position](pos: P, ext: V) = assign(pos)
 }
 
 /**

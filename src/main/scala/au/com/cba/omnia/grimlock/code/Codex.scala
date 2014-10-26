@@ -49,7 +49,7 @@ trait Codex {
    * @return `Some[Value]` if the decode was successful, `None` otherwise.
    */
   def decode(value: String): Option[V] = {
-     scala.util.Try(fromString(value)).toOption.map { case t => toValue(t) }
+    scala.util.Try(fromString(value)).toOption.map { case t => toValue(t) }
   }
 
   /**

@@ -21,7 +21,7 @@ import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
-case class Multiply() extends Operator with ComputeAndWithValue {
+case class Multiply() extends Operator with Compute {
   def compute[P <: Position with ModifyablePosition, D <: Dimension](
     slice: Slice[P, D], left: Cell[P], right: Cell[P]): Option[Cell[P#S]] = {
     (slice.selected(left._1).compare(slice.selected(right._1)) > 0,

@@ -33,7 +33,7 @@ import java.util.Date
  *       equal to the `ratio` value.
  */
 case class BinaryHashSplit[S: Ordering](dim: Dimension, ratio: Int, left: S,
-  right: S, base: Int = 100) extends Partitioner with AssignAndWithValue {
+  right: S, base: Int = 100) extends Partitioner with Assign {
   type T = S
 
   def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
@@ -61,7 +61,7 @@ case class BinaryHashSplit[S: Ordering](dim: Dimension, ratio: Int, left: S,
 // TODO: Test this
 case class TernaryHashSplit[S: Ordering](dim: Dimension, lower: Int,
   upper: Int, left: S, middle: S, right: S, base: Int = 100)
-  extends Partitioner with AssignAndWithValue {
+  extends Partitioner with Assign {
   type T = S
 
   def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
@@ -87,7 +87,7 @@ case class TernaryHashSplit[S: Ordering](dim: Dimension, lower: Int,
  */
 // TODO: Test this
 case class HashSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Int, Int)],
-  base: Int = 100) extends Partitioner with AssignAndWithValue {
+  base: Int = 100) extends Partitioner with Assign {
   type T = S
 
   def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
@@ -115,7 +115,7 @@ case class HashSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Int, Int)],
 // TODO: Test this
 case class BinaryDateSplit[S: Ordering](dim: Dimension, date: Date, left: S,
   right: S, codex: DateAndTimeCodex = DateCodex) extends Partitioner
-  with AssignAndWithValue {
+  with Assign {
   type T = S
 
   def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
@@ -145,8 +145,7 @@ case class BinaryDateSplit[S: Ordering](dim: Dimension, date: Date, left: S,
 // TODO: Test this
 case class TernaryDateSplit[S: Ordering](dim: Dimension, lower: Date,
   upper: Date, left: S, middle: S, right: S,
-  codex: DateAndTimeCodex = DateCodex) extends Partitioner
-  with AssignAndWithValue {
+  codex: DateAndTimeCodex = DateCodex) extends Partitioner with Assign {
   type T = S
 
   def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
@@ -175,8 +174,7 @@ case class TernaryDateSplit[S: Ordering](dim: Dimension, lower: Date,
  */
 // TODO: Test this
 case class DateSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Date, Date)],
-  codex: DateAndTimeCodex = DateCodex) extends Partitioner
-  with AssignAndWithValue {
+  codex: DateAndTimeCodex = DateCodex) extends Partitioner with Assign {
   type T = S
 
   def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {

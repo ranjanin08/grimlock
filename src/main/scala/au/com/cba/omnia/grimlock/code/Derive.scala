@@ -53,7 +53,11 @@ trait Deriver {
 }
 
 /** Base trait for initialising a deriver. */
-trait Initialise { self: Deriver =>
+trait Initialise extends InitialiseWithValue { self: Deriver =>
+  type V = Any
+
+  def initialise[P <: Position](curr: Cell[P], ext: V): T = initialise(curr)
+
   /**
    * Initialise the state using the first cell (ordered according to its
    * position).
@@ -80,16 +84,5 @@ trait InitialiseWithValue { self: Deriver =>
    * @return The state for this object.
    */
   def initialise[P <: Position](curr: Cell[P], ext: V): T
-}
-
-/**
- * Convenience trait for derivers that initialise with or without using a
- * user supplied value.
- */
-trait InitialiseAndWithValue extends Initialise
-  with InitialiseWithValue { self: Deriver =>
-  type V = Any
-
-  def initialise[P <: Position](curr: Cell[P], ext: V): T = initialise(curr)
 }
 

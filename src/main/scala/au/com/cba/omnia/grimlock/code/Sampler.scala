@@ -20,7 +20,11 @@ import au.com.cba.omnia.grimlock.position._
 trait Sampler
 
 /** Base trait for selecting samples. */
-trait Select { self: Sampler =>
+trait Select extends SelectWithValue { self: Sampler =>
+  type V = Any
+
+  def select[P <: Position](pos: P, ext: V) = select(pos)
+
   /**
    * Indicate if the cell is selected as part of the sample.
    *
@@ -41,15 +45,5 @@ trait SelectWithValue { self: Sampler =>
    * @param ext The user define the value.
    */
   def select[P <: Position](pos: P, ext: V): Boolean
-}
-
-/**
- * Convenience trait for samplers that selects with or without using a
- * user supplied value.
- */
-trait SelectAndWithValue extends Select with SelectWithValue { self: Sampler =>
-  type V = Any
-
-  def select[P <: Position](pos: P, ext: V) = select(pos)
 }
 

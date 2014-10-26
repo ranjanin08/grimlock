@@ -23,7 +23,7 @@ import au.com.cba.omnia.grimlock.position._
  * Reduce two cells preserving the cell with maximal value for the coordinate
  * of the dimension being squashed.
  */
-case class PreservingMaxPosition() extends Squasher with ReduceAndWithValue {
+case class PreservingMaxPosition() extends Squasher with Reduce {
   def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
     if (Value.Ordering.compare(x._1.get(dim), y._1.get(dim)) > 0) x else y
   }
@@ -33,7 +33,7 @@ case class PreservingMaxPosition() extends Squasher with ReduceAndWithValue {
  * Reduce two cells preserving the cell with minimal value for the coordinate
  * of the dimension being squashed.
  */
-case class PreservingMinPosition() extends Squasher with ReduceAndWithValue {
+case class PreservingMinPosition() extends Squasher with Reduce {
   def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
     if (Value.Ordering.compare(x._1.get(dim), y._1.get(dim)) < 0) x else y
   }

@@ -23,7 +23,13 @@ trait Squasher {
 }
 
 /** Base trait for reducing two cells. */
-trait Reduce { self: Squasher =>
+trait Reduce extends ReduceWithValue { self: Squasher =>
+  type V = Any
+
+  def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P], ext: V) = {
+    reduce(dim, x, y)
+  }
+
   /**
    * Reduce two cells.
    *
@@ -49,17 +55,5 @@ trait ReduceWithValue { self: Squasher =>
    */
   def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P],
     ext: V): Cell[P]
-}
-
-/**
- * Convenience trait for a squasher that selects with or without using a
- * user supplied value.
- */
-trait ReduceAndWithValue extends Reduce with ReduceWithValue { self: Squasher =>
-  type V = Any
-
-  def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P], ext: V) = {
-    reduce(dim, x, y)
-  }
 }
 

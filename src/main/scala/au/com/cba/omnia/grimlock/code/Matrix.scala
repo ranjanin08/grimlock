@@ -1169,12 +1169,10 @@ object Matrix {
   /** Conversion from `TypedPipe[(Position3D, Content)]` to a `Matrix3D`. */
   implicit def typedPipePosition3DContent(
     data: TypedPipe[Cell[Position3D]]): Matrix3D = new Matrix3D(data)
-  /** Conversion from `TypedPipe[(Position4D, Content)]` to a `Matrix4D`.
-   */
+  /** Conversion from `TypedPipe[(Position4D, Content)]` to a `Matrix4D`. */
   implicit def typedPipePosition4DContent(
     data: TypedPipe[Cell[Position4D]]): Matrix4D = new Matrix4D(data)
-  /** Conversion from `TypedPipe[(Position5D, Content)]` to a `Matrix5D`.
-   */
+  /** Conversion from `TypedPipe[(Position5D, Content)]` to a `Matrix5D`. */
   implicit def typedPipePosition5DContent(
     data: TypedPipe[Cell[Position5D]]): Matrix5D = new Matrix5D(data)
 }

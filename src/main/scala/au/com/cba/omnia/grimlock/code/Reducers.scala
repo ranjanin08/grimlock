@@ -29,14 +29,15 @@ import au.com.cba.omnia.grimlock.Type._
  *
  * @note `name` is only used when presenting `PresentMultiple`.
  */
-case class Count(name: String = "count") extends Reducer
-  with PrepareAndWithValue with PresentSingleAndMultiple {
+case class Count[N](name: N = "count")(implicit ev: Valueable[N])
+  extends Reducer with Prepare with PresentSingleAndMultiple {
   type T = Long
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
     con: Content): T = 1
   def reduce(lt: T, rt: T): T = lt + rt
 
+  protected val coordinate = ev.convert(name)
   protected def content(t: T): Option[Content] = {
     Some(Content(DiscreteSchema[Codex.LongCodex](), t))
   }
@@ -58,8 +59,7 @@ case class Count(name: String = "count") extends Reducer
 case class Moments(strict: Boolean = true, nan: Boolean = false,
   only: List[Int] = List(1, 2, 3, 4),
   names: List[String] = List("mean", "std", "skewness", "kurtosis"))
-  extends Reducer with PrepareAndWithValue with PresentSingle
-  with PresentMultiple {
+  extends Reducer with Prepare with PresentSingle with PresentMultiple {
   type T = com.twitter.algebird.Moments
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
@@ -100,8 +100,7 @@ case class Moments(strict: Boolean = true, nan: Boolean = false,
 }
 
 /** Base trait for reducers that return a `Double` value. */
-trait DoubleReducer extends Reducer with PrepareAndWithValue
-  with PresentSingleAndMultiple {
+trait DoubleReducer extends Reducer with Prepare with PresentSingleAndMultiple {
   type T = Double
 
   /**
@@ -137,27 +136,31 @@ trait DoubleReducer extends Reducer with PrepareAndWithValue
 }
 
 /** Minimum value reduction. */
-case class Min(strict: Boolean = true, nan: Boolean = false,
-  name: String = "min") extends DoubleReducer {
+case class Min[N](strict: Boolean = true, nan: Boolean = false,
+  name: N = "min")(implicit ev: Valueable[N]) extends DoubleReducer {
   def reduction(x: T, y: T): T = math.min(x, y)
+  protected val coordinate = ev.convert(name)
 }
 
 /** Maximum value reduction. */
-case class Max(strict: Boolean = true, nan: Boolean = false,
-  name: String = "max") extends DoubleReducer {
+case class Max[N](strict: Boolean = true, nan: Boolean = false,
+  name: N = "max")(implicit ev: Valueable[N]) extends DoubleReducer {
   def reduction(x: T, y: T): T = math.max(x, y)
+  protected val coordinate = ev.convert(name)
 }
 
 /** Maximum absolute value reduction. */
-case class MaxAbs(strict: Boolean = true, nan: Boolean = false,
-  name: String = "max.abs") extends DoubleReducer {
+case class MaxAbs[N](strict: Boolean = true, nan: Boolean = false,
+  name: N = "max.abs")(implicit ev: Valueable[N]) extends DoubleReducer {
   def reduction(x: T, y: T): T = math.max(math.abs(x), math.abs(y))
+  protected val coordinate = ev.convert(name)
 }
 
 /** Sum value reduction. */
-case class Sum(strict: Boolean = true, nan: Boolean = false,
-  name: String = "sum") extends DoubleReducer {
+case class Sum[N](strict: Boolean = true, nan: Boolean = false,
+  name: N = "sum")(implicit ev: Valueable[N]) extends DoubleReducer {
   def reduction(x: T, y: T): T = x + y
+  protected val coordinate = ev.convert(name)
 }
 
 /**
@@ -179,7 +182,7 @@ case class Sum(strict: Boolean = true, nan: Boolean = false,
 case class Histogram(all: Boolean = false, meta: Boolean = true,
   names: List[String] = List("num.cat", "entropy", "freq.ratio"),
   prefix: Option[String] = Some("%s="), separator: String = "")
-  extends Reducer with PrepareAndWithValue with PresentMultiple {
+  extends Reducer with Prepare with PresentMultiple {
   type T = Option[Map[String, Long]]
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
@@ -251,7 +254,7 @@ case class Histogram(all: Boolean = false, meta: Boolean = true,
 // TODO: Test this
 case class ThresholdCount(strict: Boolean = true, nan: Boolean = false,
   threshold: Double = 0, names: List[String] = List("leq.count", "gtr.count"))
-  extends Reducer with PrepareAndWithValue with PresentMultiple {
+  extends Reducer with Prepare with PresentMultiple {
   type T = (Long, Long) // (leq, gtr)
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
@@ -329,14 +332,16 @@ case class WeightedSum(dim: Dimension, state: String = "weight")
  * @note `name` is only used when presenting `PresentMultiple`.
  */
 // TODO: Test this
-case class DistinctCount(name: String = "distinct.count") extends Reducer
-  with PrepareAndWithValue with PresentSingleAndMultiple {
+case class DistinctCount[N](name: N = "distinct.count")(
+  implicit ev: Valueable[N]) extends Reducer with Prepare
+  with PresentSingleAndMultiple {
   type T = Set[String]
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
     con: Content): T = Set(con.value.toShortString)
   def reduce(lt: T, rt: T): T = lt ++ rt
 
+  protected val coordinate = ev.convert(name)
   protected def content(t: T): Option[Content] = {
     Some(Content(DiscreteSchema[Codex.LongCodex](), t.size))
   }
@@ -353,7 +358,7 @@ case class DistinctCount(name: String = "distinct.count") extends Reducer
 // TODO: Test this
 case class Percentiles(percentiles: Int,
   name: Option[String] = Some("percentile.%d")) extends Reducer
-  with PrepareAndWithValue with PresentMultiple {
+  with Prepare with PresentMultiple {
   type T = Map[Double, Long]
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,

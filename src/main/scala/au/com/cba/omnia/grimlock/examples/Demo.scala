@@ -161,9 +161,8 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
 
     val csb = d
       .slice(Over(Second), rem2, false)
-      .transformWithValue(List(Clamp(Second,
-        andThen=Some(Standardise(Second))), Binarise(Second)),
-        stats.toMap(Over(First)))
+      .transformWithValue(List(Clamp(Second) andThen Standardise(Second),
+        Binarise(Second)), stats.toMap(Over(First)))
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
@@ -187,7 +186,7 @@ class Scoring(args : Args) extends Job(args) {
   //  4/ Save the results.
   data
     .transformWithValue(List(Indicator(Second), Binarise(Second),
-      Clamp(Second, andThen=Some(Standardise(Second)))), stats)
+      Clamp(Second) andThen Standardise(Second)), stats)
     .reduceWithValue(Over(First), WeightedSum(Second), weights)
     .persist("./demo/scores.out")
 }

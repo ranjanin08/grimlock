@@ -119,10 +119,10 @@ trait ModifyablePosition { self: Position =>
    * @param that    The position to merge with.
    * @param pattern The pattern for the merge position's name.
    *
-   * @return A position of size min(this, that) with the
-   *         coordinates named according to the pattern.
+   * @return A position of with the coordinates named according to the pattern.
    *
    * @note The short string name of the coordinates is used in `pattern`.
+   * @note The size of `that` must be the same as this object.
    */
   def merge(that: Position, pattern: String = "%sx%s"): S = {
     same(coordinates
@@ -134,12 +134,27 @@ trait ModifyablePosition { self: Position =>
       })
   }
 
+  /**
+   * Convenience function that adds a suffix to a dimensions.
+   *
+   * @param dim    Dimension to add suffix to.
+   * @param suffix The suffix to add.
+   *
+   * @return Position of the same size, but with the coordinate at `dimension`
+   *         updated to include the `suffix`. Note that the updated coordinate
+   *         is always a string value.
+   */
+  def suffix(dim: Dimension, suffix: String): S = {
+    set(dim, get(dim).toShortString + suffix)
+  }
+
   protected def same(cl: List[Value]): S
 }
 
 /** Base trait for converting a position to a `Map`. */
 trait Mapable[P <: Position, T] {
-  /** Convert a cell to `Map` content value.
+  /**
+   * Convert a cell to `Map` content value.
    *
    * @param pos Position of the cell.
    * @param con Content of the cell.
@@ -148,7 +163,8 @@ trait Mapable[P <: Position, T] {
    */
   def toMapValue(pos: P, con: Content): T
 
-  /** Combine two map values.
+  /**
+   * Combine two map values.
    *
    * @param x An optional `Map` content value.
    * @param y The `Map` content value to combine with.
@@ -177,7 +193,7 @@ trait MapableXD[P <: Position] extends Mapable[P, Map[P, Content]] {
 }
 
 /** `Mapable` object for `PositionXD` with `Along`. */
-case object PositionXDAlong extends MapableXD[Position1D] { }
+case object PositionXDAlong extends MapableXD[Position1D] {}
 
 /** Trait for operations that reduce a position by one dimension. */
 trait ReduceablePosition { self: Position =>
@@ -298,10 +314,10 @@ case class Position1D(first: Value) extends Position with ModifyablePosition
 }
 
 /** `Mapable` object for `Position1D` with `Over`. */
-case object Position1DOver extends Mapable1D[Position0D] { }
+case object Position1DOver extends Mapable1D[Position0D] {}
 
 /** `Mapable` object for `Position1D` with `Along`. */
-case object Position1DAlong extends Mapable1D[Position1D] { }
+case object Position1DAlong extends Mapable1D[Position1D] {}
 
 /** Companion object to `Position1D`. */
 object Position1D {
@@ -340,7 +356,7 @@ case class Position2D(first: Value, second: Value) extends Position
 }
 
 /** `Mapable` object for `Position2D` with `Over`. */
-case object Position2DOver extends MapableXD[Position1D] { }
+case object Position2DOver extends MapableXD[Position1D] {}
 
 /** Companion object to `Position2D`. */
 object Position2D {
@@ -385,7 +401,7 @@ case class Position3D(first: Value, second: Value, third: Value)
 }
 
 /** `Mapable` object for `Position3D` with `Over`. */
-case object Position3DOver extends MapableXD[Position2D] { }
+case object Position3DOver extends MapableXD[Position2D] {}
 
 /** Companion object to `Position3D`. */
 object Position3D {
@@ -435,7 +451,7 @@ case class Position4D(first: Value, second: Value, third: Value, fourth: Value)
 }
 
 /** `Mapable` object for `Position4D` with `Over`. */
-case object Position4DOver extends MapableXD[Position3D] { }
+case object Position4DOver extends MapableXD[Position3D] {}
 
 /** Companion object to `Position4D`. */
 object Position4D {
@@ -486,7 +502,7 @@ case class Position5D(first: Value, second: Value, third: Value, fourth: Value,
 }
 
 /** `Mapable` object for `Position5D` with `Over`. */
-case object Position5DOver extends MapableXD[Position4D] { }
+case object Position5DOver extends MapableXD[Position4D] {}
 
 /** Companion object to `Position5D`. */
 object Position5D {

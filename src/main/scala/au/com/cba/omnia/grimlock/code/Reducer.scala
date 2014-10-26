@@ -16,6 +16,7 @@ package au.com.cba.omnia.grimlock.reduce
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility.{ Miscellaneous => Misc }
@@ -43,7 +44,12 @@ trait Reducer {
 }
 
 /** Base trait for reduction preparation. */
-trait Prepare { self: Reducer =>
+trait Prepare extends PrepareWithValue { self: Reducer =>
+  type V = Any
+
+  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
+    con: Content, ext: V): T = prepare(slc, pos, con)
+
   /**
    * Prepare for reduction.
    *
@@ -75,18 +81,6 @@ trait PrepareWithValue { self: Reducer =>
    */
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
     con: Content, ext: V): T
-}
-
-/**
- * Convenience trait for reducers that can prepare with or without a user
- * supplied value.
- */
-trait PrepareAndWithValue extends Prepare with PrepareWithValue {
-  self: Reducer =>
-  type V = Any
-
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
-    con: Content, ext: V): T = prepare(slc, pos, con)
 }
 
 /** Base trait for reductions that return a single value. */
@@ -141,18 +135,14 @@ trait PresentMultiple { self: Reducer =>
 trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple {
   self: Reducer =>
 
-  /**
-   * Coordinate name to use when presenting the value as `PresentMultiple`.
-   */
-  val name: String // TODO: Make into Valueable?
-
   def presentSingle[P <: Position](pos: P,
     t: T): Option[Cell[P]] = content(t).map { case c => (pos, c) }
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
     t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
-    content(t).map { case c => Left((pos.append(name), c)) }
+    content(t).map { case c => Left((pos.append(coordinate), c)) }
   }
 
+  protected val coordinate: Value
   protected def content(t: T): Option[Content]
 }
 
