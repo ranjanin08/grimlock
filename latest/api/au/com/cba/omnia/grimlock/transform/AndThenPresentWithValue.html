@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>ReduceAndWithValue - au.com.cba.omnia.grimlock.squash.ReduceAndWithValue</title>
-          <meta name="description" content="ReduceAndWithValue - au.com.cba.omnia.grimlock.squash.ReduceAndWithValue" />
-          <meta name="keywords" content="ReduceAndWithValue au.com.cba.omnia.grimlock.squash.ReduceAndWithValue" />
+          <title>AndThenPresentWithValue - au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue</title>
+          <meta name="description" content="AndThenPresentWithValue - au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue" />
+          <meta name="keywords" content="AndThenPresentWithValue au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../index.html';
-            var hash = 'au.com.cba.omnia.grimlock.squash.ReduceAndWithValue';
+            var hash = 'au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -24,29 +24,29 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../../../../../lib/trait_big.png" />
-        <p id="owner"><a href="../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.squash">squash</a></p>
-        <h1>ReduceAndWithValue</h1>
+        <img src="../../../../../../lib/class_big.png" />
+        <p id="owner"><a href="../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.transform">transform</a></p>
+        <h1>AndThenPresentWithValue</h1>
       </div>
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">trait</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ReduceAndWithValue</span><span class="result"> extends <a href="Reduce.html" class="extype" name="au.com.cba.omnia.grimlock.squash.Reduce">Reduce</a> with <a href="ReduceWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceWithValue">ReduceWithValue</a></span>
+        <span class="name">AndThenPresentWithValue</span><span class="tparams">[<span name="W">W</span>]</span><span class="params">(<span name="first">first: <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a> { type V &gt;: W }</span>, <span name="second">second: <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a> { type V &gt;: W }</span>)</span><span class="result"> extends <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Convenience trait for a squasher that selects with or without using a
-user supplied value.
-</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue">ReduceAndWithValue</a> with <a href="Squasher.html" class="extype" name="au.com.cba.omnia.grimlock.squash.Squasher">Squasher</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/77ee55fe73ed8751df1bbca08f3f734f961e56a9//src/main/scala/au/com/cba/omnia/grimlock/code/Squasher.scala" target="_blank">Squasher.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transformer that is a composition of two transformers with
+<code>PresentWithValue</code>.
+</p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>The first transformation to appy.</p></dd><dt class="param">second</dt><dd class="cmt"><p>The second transformation to appy.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/3461d8412d2d940fe1222935f0e9f69796e0d277//src/main/scala/au/com/cba/omnia/grimlock/code/Transformer.scala" target="_blank">Transformer.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This need not be called in an application. The <code>andThen</code> method
+      will create it.
+</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="ReduceWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceWithValue">ReduceWithValue</a>, <a href="Reduce.html" class="extype" name="au.com.cba.omnia.grimlock.squash.Reduce">Reduce</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
-        </div><div class="toggleContainer block">
-          <span class="toggle">Known Subclasses</span>
-          <div class="subClasses hiddenContent"><a href="PreservingMaxPosition.html" class="extype" name="au.com.cba.omnia.grimlock.squash.PreservingMaxPosition">PreservingMaxPosition</a>, <a href="PreservingMinPosition.html" class="extype" name="au.com.cba.omnia.grimlock.squash.PreservingMinPosition">PreservingMinPosition</a></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a>, <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -64,7 +64,7 @@ user supplied value.
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue"><span>ReduceAndWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.squash.ReduceWithValue"><span>ReduceWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.squash.Reduce"><span>Reduce</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue"><span>AndThenPresentWithValue</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.transform.PresentWithValue"><span>PresentWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.transform.Transformer"><span>Transformer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -82,48 +82,47 @@ user supplied value.
 
       <div id="template">
         <div id="allMembers">
-        
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(first:au.com.cba.omnia.grimlock.transform.Transformerwithau.com.cba.omnia.grimlock.transform.PresentWithValue{typeV&gt;:W},second:au.com.cba.omnia.grimlock.transform.Transformerwithau.com.cba.omnia.grimlock.transform.PresentWithValue{typeV&gt;:W}):au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue[W]"></a>
+      <a id="&lt;init&gt;:AndThenPresentWithValue[W]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">AndThenPresentWithValue</span><span class="params">(<span name="first">first: <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a> { type V &gt;: W }</span>, <span name="second">second: <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a> { type V &gt;: W }</span>)</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>The first transformation to appy.</p></dd><dt class="param">second</dt><dd class="cmt"><p>The second transformation to appy.
+</p></dd></dl></div>
+    </li></ol>
+            </div>
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="V=Any"></a>
-      <a id="V:(ReduceAndWithValue.this)#V"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="V=W"></a>
+      <a id="V:V"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">V</span><span class="result"> = <span class="extype" name="scala.Any">Any</span></span>
+        <span class="name">V</span><span class="result"> = <span class="extype" name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue.W">W</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue">ReduceAndWithValue</a> → <a href="ReduceWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceWithValue">ReduceWithValue</a></dd></dl></div>
+      <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue">AndThenPresentWithValue</a> → <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a></dd></dl></div>
     </li></ol>
             </div>
 
-        <div id="values" class="values members">
-              <h3>Abstract Value Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.squash.Reduce#reduce" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="reduce[P&lt;:au.com.cba.omnia.grimlock.position.Position](dim:au.com.cba.omnia.grimlock.position.Dimension,x:(P,au.com.cba.omnia.grimlock.content.Content),y:(P,au.com.cba.omnia.grimlock.content.Content)):(P,au.com.cba.omnia.grimlock.content.Content)"></a>
-      <a id="reduce[P&lt;:Position](Dimension,(P,Content),(P,Content)):(P,Content)"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">reduce</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="x">x: (<span class="extype" name="au.com.cba.omnia.grimlock.squash.Reduce.reduce.P">P</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)</span>, <span name="y">y: (<span class="extype" name="au.com.cba.omnia.grimlock.squash.Reduce.reduce.P">P</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)</span>)</span><span class="result">: (<span class="extype" name="au.com.cba.omnia.grimlock.squash.Reduce.reduce.P">P</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Reduce two cells.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce two cells.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension along which to squash.</p></dd><dt class="param">x</dt><dd class="cmt"><p>The first cell to reduce.</p></dd><dt class="param">y</dt><dd class="cmt"><p>The second cell to reduce.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Reduce.html" class="extype" name="au.com.cba.omnia.grimlock.squash.Reduce">Reduce</a></dd></dl></div>
-    </li></ol>
-            </div>
+        
 
         <div id="values" class="values members">
-              <h3>Concrete Value Members</h3>
+              <h3>Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:AnyRef):Boolean"></a>
       <a id="!=(AnyRef):Boolean"></a>
@@ -189,6 +188,19 @@ user supplied value.
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.transform.PresentWithValue#andThen" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThen[W&lt;:PresentWithValue.this.V](that:au.com.cba.omnia.grimlock.transform.Transformerwithau.com.cba.omnia.grimlock.transform.PresentWithValue{typeV=W}):au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue[W]"></a>
+      <a id="andThen[W&lt;:V](TransformerwithPresentWithValue{typeV=W}):AndThenPresentWithValue[W]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">andThen</span><span class="tparams">[<span name="W">W &lt;: <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue.V">V</a></span>]</span><span class="params">(<span name="that">that: <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a> { type V = W }</span>)</span><span class="result">: <a href="" class="extype" name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue">AndThenPresentWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue.andThen.W">W</span>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -234,19 +246,6 @@ user supplied value.
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="equals(x$1:Any):Boolean"></a>
-      <a id="equals(Any):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -266,6 +265,19 @@ user supplied value.
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue#first" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="first:au.com.cba.omnia.grimlock.transform.Transformerwithau.com.cba.omnia.grimlock.transform.PresentWithValue{typeV&gt;:W}"></a>
+      <a id="first:TransformerwithPresentWithValue{typeV&gt;:W}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">first</span><span class="result">: <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a> { type V &gt;: W }</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The first transformation to appy.</p>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -276,19 +288,6 @@ user supplied value.
       </span>
       <span class="symbol">
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hashCode():Int"></a>
-      <a id="hashCode():Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -344,21 +343,44 @@ user supplied value.
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="reduce[P&lt;:au.com.cba.omnia.grimlock.position.Position](dim:au.com.cba.omnia.grimlock.position.Dimension,x:(P,au.com.cba.omnia.grimlock.content.Content),y:(P,au.com.cba.omnia.grimlock.content.Content),ext:ReduceAndWithValue.this.V):(P,au.com.cba.omnia.grimlock.content.Content)"></a>
-      <a id="reduce[P&lt;:Position](Dimension,(P,Content),(P,Content),(ReduceAndWithValue.this)#V):(P,Content)"></a>
+    </li><li name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ModifyablePosition](pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:AndThenPresentWithValue.this.V):Some[scala.util.Right[Nothing,List[(P#S,au.com.cba.omnia.grimlock.content.Content)]]]"></a>
+      <a id="present[P&lt;:PositionwithModifyablePosition](P,Content,V):Some[Right[Nothing,List[(present.P.S,Content)]]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">reduce</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="x">x: (<span class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue.reduce.P">P</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)</span>, <span name="y">y: (<span class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue.reduce.P">P</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)</span>, <span name="ext">ext: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue">ReduceAndWithValue</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue.V">V</span></span>)</span><span class="result">: (<span class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue.reduce.P">P</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)</span>
+        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ModifyablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ModifyablePosition">ModifyablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.Some">Some</span>[<span class="extype" name="scala.util.Right">Right</span>[<span class="extype" name="scala.Nothing">Nothing</span>, <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.Position.S">present.P.S</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Reduce two cells with a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce two cells with a user supplied value.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension along which to squash.</p></dd><dt class="param">x</dt><dd class="cmt"><p>The first cell to reduce.</p></dd><dt class="param">y</dt><dd class="cmt"><p>The second cell to reduce.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user define the value.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceAndWithValue">ReduceAndWithValue</a> → <a href="ReduceWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceWithValue">ReduceWithValue</a></dd></dl></div>
+      <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the cell.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The content to transform.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The external value.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a cell or a <code>List</code> of cells where the position
+        is creating by modifiying <code>pos</code> and the content is derived from
+        <code>con</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue">AndThenPresentWithValue</a> → <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Either</code> is used to all either one-to-one or one-to-many
+      transformations.
+</p></span>, <span class="cmt"><p>An <code>Option</code> is used in the return type to allow reducers to be
+      selective in what content they apply to. For example, normalising is
+      undefined for categorical variables. The transformer now has the
+      option to return <code>None</code>. This in turn permits an external API, for
+      simple cases, where the user need not know about the types of
+      variables of their data.</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.transform.AndThenPresentWithValue#second" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="second:au.com.cba.omnia.grimlock.transform.Transformerwithau.com.cba.omnia.grimlock.transform.PresentWithValue{typeV&gt;:W}"></a>
+      <a id="second:TransformerwithPresentWithValue{typeV&gt;:W}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">second</span><span class="result">: <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a> { type V &gt;: W }</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The second transformation to appy.</p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -372,19 +394,6 @@ user supplied value.
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString():String"></a>
-      <a id="toString():String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -451,10 +460,18 @@ user supplied value.
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="au.com.cba.omnia.grimlock.squash.ReduceWithValue">
-              <h3>Inherited from <a href="ReduceWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.squash.ReduceWithValue">ReduceWithValue</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.squash.Reduce">
-              <h3>Inherited from <a href="Reduce.html" class="extype" name="au.com.cba.omnia.grimlock.squash.Reduce">Reduce</a></h3>
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.Product">
+              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
+            </div><div class="parent" name="scala.Equals">
+              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">
+              <h3>Inherited from <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.transform.Transformer">
+              <h3>Inherited from <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

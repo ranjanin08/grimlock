@@ -35,16 +35,16 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">DistinctCount</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;distinct.count&quot;</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a> with <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">DistinctCount</span><span class="tparams">[<span name="N">N</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.N">N</span> = <span class="symbol">&quot;distinct.count&quot;</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.N">N</span>]</span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Distinct count reductions.
 </p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Coordinate name for the distinct count values.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/77ee55fe73ed8751df1bbca08f3f734f961e56a9//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p><code>name</code> is only used when presenting <code>PresentMultiple</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/3461d8412d2d940fe1222935f0e9f69796e0d277//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p><code>name</code> is only used when presenting <code>PresentMultiple</code>.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a>, <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>, <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a>, <a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a>, <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a>, <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a>, <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a>, <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>, <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a>, <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a>, <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a>, <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -62,7 +62,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.reduce.DistinctCount"><span>DistinctCount</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple"><span>PresentSingleAndMultiple</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple"><span>PresentMultiple</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentSingle"><span>PresentSingle</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue"><span>PrepareAndWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue"><span>PrepareWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Prepare"><span>Prepare</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Reducer"><span>Reducer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.reduce.DistinctCount"><span>DistinctCount</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple"><span>PresentSingleAndMultiple</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple"><span>PresentMultiple</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentSingle"><span>PresentSingle</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Prepare"><span>Prepare</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue"><span>PrepareWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Reducer"><span>Reducer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -83,15 +83,15 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.reduce.DistinctCount#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(name:String):au.com.cba.omnia.grimlock.reduce.DistinctCount"></a>
-      <a id="&lt;init&gt;:DistinctCount"></a>
+      <a id="&lt;init&gt;(name:N)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[N]):au.com.cba.omnia.grimlock.reduce.DistinctCount[N]"></a>
+      <a id="&lt;init&gt;:DistinctCount[N]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DistinctCount</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;distinct.count&quot;</span></span>)</span>
+        <span class="name">DistinctCount</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.N">N</span> = <span class="symbol">&quot;distinct.count&quot;</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.N">N</span>]</span>)</span>
       </span>
       </h4>
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Coordinate name for the distinct count values.
@@ -114,7 +114,7 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Type of the state being reduced (aggregated).</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state being reduced (aggregated).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount">DistinctCount</a> → <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Prepare.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="V=Any"></a>
       <a id="V:V"></a>
       <h4 class="signature">
@@ -126,7 +126,7 @@
         <span class="name">V</span><span class="result"> = <span class="extype" name="scala.Any">Any</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a> → <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> → <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -244,6 +244,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount">DistinctCount</a> → <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.DistinctCount#coordinate" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="coordinate:au.com.cba.omnia.grimlock.encoding.Value"></a>
+      <a id="coordinate:Value"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">coordinate</span><span class="result">: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount">DistinctCount</a> → <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -302,20 +315,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.DistinctCount#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="name:String"></a>
-      <a id="name:String"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.DistinctCount#name" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="name:N"></a>
+      <a id="name:N"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">name</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">name</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.N">N</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Coordinate name for the distinct count values.</p><div class="fullcomment"><div class="comment cmt"><p>Coordinate name for the distinct count values.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount">DistinctCount</a> → <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a></dd></dl></div>
+      <p class="shortcomment cmt">Coordinate name for the distinct count values.</p>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -372,8 +384,8 @@
            position prior to <code>slc.selected</code> being applied.</p></dd><dt class="param">con</dt><dd class="cmt"><p>Content which is to be reduced.
 </p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount">DistinctCount</a> → <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepare[P&lt;:au.com.cba.omnia.grimlock.position.Position,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slc:au.com.cba.omnia.grimlock.Slice[P,D],pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:PrepareAndWithValue.this.V):PrepareAndWithValue.this.T"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Prepare#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="prepare[P&lt;:au.com.cba.omnia.grimlock.position.Position,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slc:au.com.cba.omnia.grimlock.Slice[P,D],pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:Prepare.this.V):Prepare.this.T"></a>
       <a id="prepare[P&lt;:Position,D&lt;:Dimension](Slice[P,D],P,Content,V):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -381,14 +393,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepare</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slc">slc: <a href="../Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue.prepare.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue.prepare.D">D</span>]</span>, <span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue.prepare.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.V">V</a></span>)</span><span class="result">: <a href="#T=Set[String]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.T">T</a></span>
+        <span class="name">prepare</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slc">slc: <a href="../Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare.prepare.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare.prepare.D">D</span>]</span>, <span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare.prepare.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.V">V</a></span>)</span><span class="result">: <a href="#T=Set[String]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.T">T</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
 </p></div><dl class="paramcmts block"><dt class="param">slc</dt><dd class="cmt"><p>Encapsulates the dimension(s) over with to reduce.</p></dd><dt class="param">pos</dt><dd class="cmt"><p>Original position corresponding to the cell. That is, it's the
            position prior to <code>slc.selected</code> being applied.</p></dd><dt class="param">con</dt><dd class="cmt"><p>Content which is to be reduced.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for preparation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a> → <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></dd></dl></div>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> → <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple#presentMultiple" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="presentMultiple[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,t:PresentSingleAndMultiple.this.T):Option[Either[(P#M,au.com.cba.omnia.grimlock.content.Content),List[(P#M,au.com.cba.omnia.grimlock.content.Content)]]]"></a>
       <a id="presentMultiple[P&lt;:PositionwithExpandablePosition](P,T):Option[Either[(PresentSingleAndMultiple.presentMultiple.P.M,Content),List[(PresentSingleAndMultiple.presentMultiple.P.M,Content)]]]"></a>
@@ -546,12 +558,10 @@
               <h3>Inherited from <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">
               <h3>Inherited from <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">
-              <h3>Inherited from <a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">
-              <h3>Inherited from <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.Prepare">
               <h3>Inherited from <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">
+              <h3>Inherited from <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.Reducer">
               <h3>Inherited from <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></h3>
             </div><div class="parent" name="scala.AnyRef">

@@ -86,33 +86,33 @@
       <p class="comment cmt">Reducer that is a combination of one or more reducers with
 <code>PrepareWithValue</code> with <code>PresentMultiple</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Count" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CountextendsReducerwithPrepareAndWithValuewithPresentSingleAndMultiplewithProductwithSerializable"></a>
-      <a id="Count:Count"></a>
+      <a id="Count[N]extendsReducerwithPreparewithPresentSingleAndMultiplewithProductwithSerializable"></a>
+      <a id="Count[N]:Count[N]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Count.html"><span class="name">Count</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;count&quot;</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a> with <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Count.html"><span class="name">Count</span></a><span class="tparams">[<span name="N">N</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Count.N">N</span> = <span class="symbol">&quot;count&quot;</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Count.N">N</span>]</span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Count reductions.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.DistinctCount" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DistinctCountextendsReducerwithPrepareAndWithValuewithPresentSingleAndMultiplewithProductwithSerializable"></a>
-      <a id="DistinctCount:DistinctCount"></a>
+      <a id="DistinctCount[N]extendsReducerwithPreparewithPresentSingleAndMultiplewithProductwithSerializable"></a>
+      <a id="DistinctCount[N]:DistinctCount[N]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DistinctCount.html"><span class="name">DistinctCount</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;distinct.count&quot;</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a> with <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DistinctCount.html"><span class="name">DistinctCount</span></a><span class="tparams">[<span name="N">N</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.N">N</span> = <span class="symbol">&quot;distinct.count&quot;</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.DistinctCount.N">N</span>]</span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Distinct count reductions.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.DoubleReducer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="DoubleReducerextendsReducerwithPrepareAndWithValuewithPresentSingleAndMultiple"></a>
+      <a id="DoubleReducerextendsReducerwithPreparewithPresentSingleAndMultiple"></a>
       <a id="DoubleReducer:DoubleReducer"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -120,12 +120,12 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="DoubleReducer.html"><span class="name">DoubleReducer</span></a><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a> with <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a></span>
+        <a href="DoubleReducer.html"><span class="name">DoubleReducer</span></a><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a></span>
       </span>
       </h4>
       <p class="comment cmt">Base trait for reducers that return a <code>Double</code> value.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="HistogramextendsReducerwithPrepareAndWithValuewithPresentMultiplewithProductwithSerializable"></a>
+      <a id="HistogramextendsReducerwithPreparewithPresentMultiplewithProductwithSerializable"></a>
       <a id="Histogram:Histogram"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -133,51 +133,51 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Histogram.html"><span class="name">Histogram</span></a><span class="params">(<span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="meta">meta: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="names">names: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="immutable.this.List.apply[String](&quot;num.cat&quot;, &quot;entropy&quot;, &quot;freq.ratio&quot;)">...</span></span>, <span name="prefix">prefix: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.Some.apply[String](&quot;%s=&quot;)</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Histogram.html"><span class="name">Histogram</span></a><span class="params">(<span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="meta">meta: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="names">names: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="immutable.this.List.apply[String](&quot;num.cat&quot;, &quot;entropy&quot;, &quot;freq.ratio&quot;)">...</span></span>, <span name="prefix">prefix: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.Some.apply[String](&quot;%s=&quot;)</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Compute histogram.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Max" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="MaxextendsDoubleReducerwithProductwithSerializable"></a>
-      <a id="Max:Max"></a>
+      <a id="Max[N]extendsDoubleReducerwithProductwithSerializable"></a>
+      <a id="Max[N]:Max[N]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Max.html"><span class="name">Max</span></a><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;max&quot;</span></span>)</span><span class="result"> extends <a href="DoubleReducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DoubleReducer">DoubleReducer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Max.html"><span class="name">Max</span></a><span class="tparams">[<span name="N">N</span>]</span><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Max.N">N</span> = <span class="symbol">&quot;max&quot;</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Max.N">N</span>]</span>)</span><span class="result"> extends <a href="DoubleReducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DoubleReducer">DoubleReducer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Maximum value reduction.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.MaxAbs" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="MaxAbsextendsDoubleReducerwithProductwithSerializable"></a>
-      <a id="MaxAbs:MaxAbs"></a>
+      <a id="MaxAbs[N]extendsDoubleReducerwithProductwithSerializable"></a>
+      <a id="MaxAbs[N]:MaxAbs[N]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="MaxAbs.html"><span class="name">MaxAbs</span></a><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;max.abs&quot;</span></span>)</span><span class="result"> extends <a href="DoubleReducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DoubleReducer">DoubleReducer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="MaxAbs.html"><span class="name">MaxAbs</span></a><span class="tparams">[<span name="N">N</span>]</span><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.MaxAbs.N">N</span> = <span class="symbol">&quot;max.abs&quot;</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.MaxAbs.N">N</span>]</span>)</span><span class="result"> extends <a href="DoubleReducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DoubleReducer">DoubleReducer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Maximum absolute value reduction.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Min" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="MinextendsDoubleReducerwithProductwithSerializable"></a>
-      <a id="Min:Min"></a>
+      <a id="Min[N]extendsDoubleReducerwithProductwithSerializable"></a>
+      <a id="Min[N]:Min[N]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Min.html"><span class="name">Min</span></a><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;min&quot;</span></span>)</span><span class="result"> extends <a href="DoubleReducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DoubleReducer">DoubleReducer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Min.html"><span class="name">Min</span></a><span class="tparams">[<span name="N">N</span>]</span><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Min.N">N</span> = <span class="symbol">&quot;min&quot;</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Min.N">N</span>]</span>)</span><span class="result"> extends <a href="DoubleReducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DoubleReducer">DoubleReducer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Minimum value reduction.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Moments" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="MomentsextendsReducerwithPrepareAndWithValuewithPresentSinglewithPresentMultiplewithProductwithSerializable"></a>
+      <a id="MomentsextendsReducerwithPreparewithPresentSinglewithPresentMultiplewithProductwithSerializable"></a>
       <a id="Moments:Moments"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -185,12 +185,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Moments.html"><span class="name">Moments</span></a><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="only">only: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="defval" name="immutable.this.List.apply[Int](1, 2, 3, 4)">...</span></span>, <span name="names">names: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="immutable.this.List.apply[String](&quot;mean&quot;, &quot;std&quot;, &quot;skewness&quot;, &quot;kurtosis&quot;)">...</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Moments.html"><span class="name">Moments</span></a><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="only">only: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="defval" name="immutable.this.List.apply[Int](1, 2, 3, 4)">...</span></span>, <span name="names">names: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="immutable.this.List.apply[String](&quot;mean&quot;, &quot;std&quot;, &quot;skewness&quot;, &quot;kurtosis&quot;)">...</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Moments of a distribution.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Percentiles" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="PercentilesextendsReducerwithPrepareAndWithValuewithPresentMultiplewithProductwithSerializable"></a>
+      <a id="PercentilesextendsReducerwithPreparewithPresentMultiplewithProductwithSerializable"></a>
       <a id="Percentiles:Percentiles"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -198,12 +198,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Percentiles.html"><span class="name">Percentiles</span></a><span class="params">(<span name="percentiles">percentiles: <span class="extype" name="scala.Int">Int</span></span>, <span name="name">name: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="scala.Some.apply[String](&quot;percentile.%d&quot;)">...</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Percentiles.html"><span class="name">Percentiles</span></a><span class="params">(<span name="percentiles">percentiles: <span class="extype" name="scala.Int">Int</span></span>, <span name="name">name: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="scala.Some.apply[String](&quot;percentile.%d&quot;)">...</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Compute percentiles.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Prepare" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PrepareextendsAnyRef"></a>
+      <a id="PrepareextendsPrepareWithValue"></a>
       <a id="Prepare:Prepare"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -211,24 +211,10 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Prepare.html"><span class="name">Prepare</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Prepare.html"><span class="name">Prepare</span></a><span class="result"> extends <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></span>
       </span>
       </h4>
       <p class="comment cmt">Base trait for reduction preparation.</p>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PrepareAndWithValueextendsPreparewithPrepareWithValue"></a>
-      <a id="PrepareAndWithValue:PrepareAndWithValue"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="PrepareAndWithValue.html"><span class="name">PrepareAndWithValue</span></a><span class="result"> extends <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Convenience trait for reducers that can prepare with or without a user
-supplied value.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PrepareWithValueextendsAnyRef"></a>
       <a id="PrepareWithValue:PrepareWithValue"></a>
@@ -324,20 +310,20 @@ and <code>PresentMultiple</code>.</p>
       <p class="comment cmt">Type class for transforming a type <code>T</code> to a reducer with <code>PrepareWithValue</code>
 with <code>PresentMultiple</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Sum" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SumextendsDoubleReducerwithProductwithSerializable"></a>
-      <a id="Sum:Sum"></a>
+      <a id="Sum[N]extendsDoubleReducerwithProductwithSerializable"></a>
+      <a id="Sum[N]:Sum[N]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Sum.html"><span class="name">Sum</span></a><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;sum&quot;</span></span>)</span><span class="result"> extends <a href="DoubleReducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DoubleReducer">DoubleReducer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Sum.html"><span class="name">Sum</span></a><span class="tparams">[<span name="N">N</span>]</span><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Sum.N">N</span> = <span class="symbol">&quot;sum&quot;</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Sum.N">N</span>]</span>)</span><span class="result"> extends <a href="DoubleReducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DoubleReducer">DoubleReducer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Sum value reduction.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.ThresholdCount" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ThresholdCountextendsReducerwithPrepareAndWithValuewithPresentMultiplewithProductwithSerializable"></a>
+      <a id="ThresholdCountextendsReducerwithPreparewithPresentMultiplewithProductwithSerializable"></a>
       <a id="ThresholdCount:ThresholdCount"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -345,7 +331,7 @@ with <code>PresentMultiple</code>.</p>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ThresholdCount.html"><span class="name">ThresholdCount</span></a><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="threshold">threshold: <span class="extype" name="scala.Double">Double</span> = <span class="symbol">0</span></span>, <span name="names">names: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="immutable.this.List.apply[String](&quot;leq.count&quot;, &quot;gtr.count&quot;)">...</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareAndWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareAndWithValue">PrepareAndWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ThresholdCount.html"><span class="name">ThresholdCount</span></a><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="threshold">threshold: <span class="extype" name="scala.Double">Double</span> = <span class="symbol">0</span></span>, <span name="names">names: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="immutable.this.List.apply[String](&quot;leq.count&quot;, &quot;gtr.count&quot;)">...</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Compute counts of values less-or-equal or greater than some <code>threshold</code>.</p>

@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for operations that modify a position (but keep the number of
 dimensions the same).
-</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.ModifyablePosition">ModifyablePosition</a> with <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/77ee55fe73ed8751df1bbca08f3f734f961e56a9//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.ModifyablePosition">ModifyablePosition</a> with <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/3461d8412d2d940fe1222935f0e9f69796e0d277//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -302,10 +302,9 @@ dimensions the same).
       <p class="shortcomment cmt">Merge two positions
 </p><div class="fullcomment"><div class="comment cmt"><p>Merge two positions
 </p></div><dl class="paramcmts block"><dt class="param">that</dt><dd class="cmt"><p>The position to merge with.</p></dd><dt class="param">pattern</dt><dd class="cmt"><p>The pattern for the merge position's name.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A position of size min(this, that) with the
-        coordinates named according to the pattern.
-</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The short string name of the coordinates is used in <code>pattern</code>.
-</p></span></dd></dl></div>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A position of with the coordinates named according to the pattern.
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The size of <code>that</code> must be the same as this object.
+</p></span>, <span class="cmt"><p>The short string name of the coordinates is used in <code>pattern</code>.</p></span></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -379,6 +378,24 @@ dimensions the same).
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to set.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The coordinate to set.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A position of the same size as <code>this</code> but with <code>t</code> set
         at index <code>dim</code>.
+</p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.position.ModifyablePosition#suffix" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="suffix(dim:au.com.cba.omnia.grimlock.position.Dimension,suffix:String):ModifyablePosition.this.S"></a>
+      <a id="suffix(Dimension,String):(ModifyablePosition.this)#S"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">suffix</span><span class="params">(<span name="dim">dim: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="suffix">suffix: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.position.ModifyablePosition">ModifyablePosition</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.position.Position.S">S</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Convenience function that adds a suffix to a dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Convenience function that adds a suffix to a dimensions.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension to add suffix to.</p></dd><dt class="param">suffix</dt><dd class="cmt"><p>The suffix to add.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Position of the same size, but with the coordinate at <code>dimension</code>
+        updated to include the <code>suffix</code>. Note that the updated coordinate
+        is always a string value.
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
