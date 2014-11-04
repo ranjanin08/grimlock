@@ -157,11 +157,12 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
       .slice(Over(Second), rem1, false)
 
     val ind = d
-      .transform(Indicator(Second))
+      .transform(Indicator(Second, name="%1$s.ind"))
 
     val csb = d
       .slice(Over(Second), rem2, false)
-      .transformWithValue(List(Clamp(Second) andThen Standardise(Second),
+      .transformWithValue(List(Clamp(Second, lower="min", upper="max") andThen
+        Standardise(Second, mean="mean", std="std"),
         Binarise(Second)), stats.toMap(Over(First)))
       .slice(Over(Second), rem3, false)
 
@@ -185,8 +186,9 @@ class Scoring(args : Args) extends Job(args) {
   //  3/ Compute the scored (as a weighted sum);
   //  4/ Save the results.
   data
-    .transformWithValue(List(Indicator(Second), Binarise(Second),
-      Clamp(Second) andThen Standardise(Second)), stats)
+    .transformWithValue(List(Indicator(Second, name="%1$s.ind"),
+      Binarise(Second), Clamp(Second, lower="min", upper="max") andThen
+      Standardise(Second, mean="mean", std="std")), stats)
     .reduceWithValue(Over(First), WeightedSum(Second), weights)
     .persist("./demo/scores.out")
 }
@@ -237,7 +239,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Compute the ratio of (total number of labels) / (count for each label).
   val ratio = histogram
-    .transformWithValue(Ratio(First, First.toString, inverse=true), sum)
+    .transformWithValue(Divide(First, key=First.toString, inverse=true), sum)
 
   // Find the minimum ratio, and store the result as a Map.
   val min = ratio
@@ -246,7 +248,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Divide the ratio by the minimum ratio, and store the result as a Map.
   val weights = ratio
-    .transformWithValue(Ratio(First, "min"), min)
+    .transformWithValue(Divide(First, key="min"), min)
     .toMap(Over(First))
 
   case class AddWeight() extends Transformer with PresentExpandedWithValue {

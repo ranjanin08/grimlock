@@ -329,7 +329,7 @@ class Test11(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .transform(Indicator(Second))
+    .transform(Indicator(Second, name="%1$s.ind"))
     .persist("./tmp/trn2.out", descriptive=true)
 
   data
@@ -366,7 +366,7 @@ class Test13(args : Args) extends Job(args) {
     .squash(Third, PreservingMaxPosition())
 
   val inds = data
-    .transform(Indicator(Second))
+    .transform(Indicator(Second, name="%1$s.ind"))
     .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
 
   data
@@ -407,7 +407,7 @@ class Test15(args : Args) extends Job(args) {
                          "iid:0262443", "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
-    .transform(Indicator(Second))
+    .transform(Indicator(Second, name="%1$s.ind"))
     .writeCSV(Over(Second), "./tmp/trn1.csv")
 
   data
@@ -447,7 +447,7 @@ class Test17(args : Args) extends Job(args) {
     .toMap(Over(First))
 
   data
-    .transformWithValue(Normalise(Second), stats)
+    .transformWithValue(Normalise(Second, key="max.abs"), stats)
     .writeCSV(Over(Second), "./tmp/trn6.csv")
 
   data
@@ -524,7 +524,7 @@ class Test19(args : Args) extends Job(args) {
     parts
       .get(p)
       .slice(Over(Second), rem, false)
-      .transformWithValue(List(Indicator(Second), Binarise(Second), Normalise(Second)), stats.toMap(Over(First)))
+      .transformWithValue(List(Indicator(Second, name="%1$s.ind"), Binarise(Second), Normalise(Second, key="max.abs")), stats.toMap(Over(First)))
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
       .writeCSV(Over(Second), "./tmp/pln_" + p + ".csv")
   }

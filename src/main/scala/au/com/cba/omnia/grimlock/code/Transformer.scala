@@ -51,8 +51,8 @@ trait Present extends PresentWithValue { self: Transformer =>
   def present[P <: Position with ModifyablePosition](pos: P,
     con: Content): Option[Either[Cell[P#S], List[Cell[P#S]]]]
 
-  def andThen(that: Transformer with Present): AndThenPresent = {
-    AndThenPresent(this, that)
+  def andThen(that: Transformer with Present): AndThenTransformer = {
+    AndThenTransformer(this, that)
   }
 }
 
@@ -87,8 +87,8 @@ trait PresentWithValue { self: Transformer =>
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V): Option[Either[Cell[P#S], List[Cell[P#S]]]]
 
-  def andThen[W <: V](that: Transformer with PresentWithValue { type V = W }): AndThenPresentWithValue[W] = {
-    AndThenPresentWithValue[W](this, that)
+  def andThen[W <: V](that: Transformer with PresentWithValue { type V = W }): AndThenTransformerWithValue[W] = {
+    AndThenTransformerWithValue[W](this, that)
   }
 }
 
@@ -166,7 +166,7 @@ trait PresentExpandedWithValue { self: Transformer =>
  * @note This need not be called in an application. The `andThen` method
  *       will create it.
  */
-case class AndThenPresent(first: Transformer with Present,
+case class AndThenTransformer(first: Transformer with Present,
   second: Transformer with Present) extends Transformer with Present {
   def present[P <: Position with ModifyablePosition](pos: P, con: Content) = {
     Some(Right(
@@ -187,7 +187,7 @@ case class AndThenPresent(first: Transformer with Present,
  * @note This need not be called in an application. The `andThen` method
  *       will create it.
  */
-case class AndThenPresentWithValue[W](
+case class AndThenTransformerWithValue[W](
   first: Transformer with PresentWithValue { type V >: W },
   second: Transformer with PresentWithValue { type V >: W })
   extends Transformer with PresentWithValue {

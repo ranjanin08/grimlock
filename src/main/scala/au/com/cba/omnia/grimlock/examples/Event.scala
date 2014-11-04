@@ -157,7 +157,7 @@ class InstanceCentricTfIdf(args : Args) extends Job(args) {
   // For each event, append the word counts to the 3D matrix. The result
   // is a 3D matrix (event id x instance id x word count). Then reduce
   // (aggregate) out the event id. The result is a 2D matrix (instance x word
-  // count) where the counts are the sums of all events.
+  // count) where the counts are the sums over all events.
   val tf = data
     .transformAndExpand(WordCounts(stopwords=List()))
     .reduce(Along(First), Sum())
@@ -173,7 +173,8 @@ class InstanceCentricTfIdf(args : Args) extends Job(args) {
   //  3/ Save as Map for use in Tf-Idf below.
   val idf = tf
     .reduce(Along(First), Count())
-    .transformAndExpandWithValue(Idf(First.toString, log=math.log10, add=0), n)
+    .transformWithValue(Idf(First, key=First.toString,
+      idf=Idf.Transform(math.log10, 0)), n)
     .toMap(Over(First))
 
   // Apply TfIdf to the term frequency matrix with the Idf values, then

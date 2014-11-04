@@ -72,7 +72,7 @@ case class Moments(strict: Boolean = true, nan: Boolean = false,
     else { com.twitter.algebird.Monoid.plus(lt, rt) }
   }
   def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = {
-    content(t).map { case cl => (pos, cl(only(0))) }
+    content(t).map { case cl => (pos, cl(only(0) - 1)) }
   }
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
     t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {

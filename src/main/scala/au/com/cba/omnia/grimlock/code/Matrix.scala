@@ -1229,23 +1229,23 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     }
 
     val mean = data
-      .reduceAndExpand(slice, Moments(only = List(1)))
+      .reduce(slice, Moments(only = List(1)))
       .toMap(Over(First))
 
     val centered = data
-      .transformWithValue(Subtract(slice.dimension, "mean"), mean)
+      .transformWithValue(Subtract(slice.dimension), mean)
 
-    val squared = centered
-      .transform(Square(slice.dimension))
-      .reduceAndExpand(slice, Sum())
-      .pairwise(slice.inverse, Multiply())
-      .transform(SquareRoot(slice.dimension))
+    val denom = centered
+      .transform(Power(slice.dimension, 2))
+      .reduce(slice, Sum())
+      .pairwise(Over(First), Multiply())
+      .transform(SquareRoot(First))
       .toMap(Over(First))
 
     centered
       .pairwise(slice, Multiply())
       .reduce(slice, Sum())
-      .transformWithValue(Divide(First, "sum"), squared)
+      .transformWithValue(Divide(First), denom)
   }
 
   /**
