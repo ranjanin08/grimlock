@@ -21,77 +21,341 @@ import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.Type._
+import au.com.cba.omnia.grimlock.utility.=!=
+
+/**
+ * Trait for reducers that can be lenient or strict when it comes to
+ * invalid (or unexpected) values.
+ */
+trait StrictReduce { self: Reducer =>
+  /**
+   * Indicates if strict data handling is required. If so then any invalid
+   * value fails the reduction. If not, then invalid values are silently
+   * ignored.
+   */
+  val strict: Boolean
+
+  /**
+   * Standard reduce method.
+   *
+   * @param lt Left state to reduce.
+   * @param rt Right state to reduce.
+   *
+   * @return Reduced state
+   */
+  def reduce(lt: T, rt: T): T = {
+    if (invalid(lt)) { if (strict) { lt } else { rt } }
+    else if (invalid(rt)) { if (strict) { rt } else { lt } }
+    else { reduction(lt, rt) }
+  }
+
+  protected def invalid(t: T): Boolean
+  protected def reduction(lt: T, rt: T): T
+}
+
+/** Trait with default values for various reducer arguments. */
+trait DefaultReducerValues {
+  /** Default indicator for strict handling or invalid values. */
+  val DefaultStrict: Boolean = true
+
+  /** Default indicator for presenting invalid (NaN) reduced values or None. */
+  val DefaultNaN: Boolean = false
+}
 
 /**
  * Count reductions.
  *
- * @param name Coordinate name for the count values.
- *
- * @note `name` is only used when presenting `PresentMultiple`.
+ * @param name Optional coordinate name for the count values. Name must be
+ *             provided when presenting `PresentMultiple`.
  */
-case class Count[N](name: N = "count")(implicit ev: Valueable[N])
-  extends Reducer with Prepare with PresentSingleAndMultiple {
+case class Count private (name: Option[Value]) extends Reducer with Prepare
+  with PresentSingleAndMultiple {
   type T = Long
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
-    con: Content): T = 1
-  def reduce(lt: T, rt: T): T = lt + rt
+    con: Content): T = {
+    1
+  }
 
-  protected val coordinate = ev.convert(name)
+  def reduce(lt: T, rt: T): T = {
+    lt + rt
+  }
+
   protected def content(t: T): Option[Content] = {
     Some(Content(DiscreteSchema[Codex.LongCodex](), t))
+  }
+}
+
+/** Companion object to `Count` reducer class. */
+object Count {
+  /** Count reductions. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    Count(None)
+  }
+
+  /**
+   * Count reductions.
+   *
+   * @param name Coordinate name for the count values.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Count(Some(ev.convert(name)))
+  }
+}
+
+/** Trait for moments of a distribution. */
+sealed trait Moment {
+  /** Index of the moment (starting at 0). */
+  val index: Int
+}
+
+/** Object for computing the mean. */
+case object Mean extends Moment {
+  val index = 0
+
+  /** Mean of a distribution. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    Moments(Mean)
+  }
+
+  /**
+   * Mean of a distribution.
+   *
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare
+    with PresentSingle = {
+    Moments(Mean, strict, nan)
+  }
+
+  /**
+   * Mean of a distribution.
+   *
+   * @param name Coordinate name of the computed mean.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Moments((Mean, name))
+  }
+
+  /**
+   * Mean of a distribution.
+   *
+   * @param name   Coordinate name of the computed mean.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply[V](name: V, strict: Boolean, nan: Boolean)(
+    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    Moments((Mean, name), strict, nan)
+  }
+}
+
+/** Object for computing the standard deviation. */
+object StandardDeviation extends Moment {
+  val index = 1
+
+  /** Standard deviation of a distribution. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    Moments(StandardDeviation)
+  }
+
+  /**
+   * Standard deviation of a distribution.
+   *
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare
+    with PresentSingle = {
+    Moments(StandardDeviation, strict, nan)
+  }
+
+  /**
+   * Standard deviation of a distribution.
+   *
+   * @param name Coordinate name of the computed standard deviation.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Moments((StandardDeviation, name))
+  }
+
+  /**
+   * Standard deviation of a distribution.
+   *
+   * @param name   Coordinate name of the computed standard deviation.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply[V](name: V, strict: Boolean, nan: Boolean)(
+    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    Moments((StandardDeviation, name), strict, nan)
+  }
+}
+
+/** Object for computing the skewness. */
+object Skewness extends Moment {
+  val index = 2
+
+  /** Skewness of a distribution. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    Moments(Skewness)
+  }
+
+  /**
+   * Skewness of a distribution.
+   *
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare
+    with PresentSingle = {
+    Moments(Skewness, strict, nan)
+  }
+
+  /**
+   * Skewness of a distribution.
+   *
+   * @param name Coordinate name of the computed skewness.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Moments((Skewness, name))
+  }
+
+  /**
+   * Skewness of a distribution.
+   *
+   * @param name   Coordinate name of the computed skewness.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply[V](name: V, strict: Boolean, nan: Boolean)(
+    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    Moments((Skewness, name), strict, nan)
+  }
+}
+
+/** Object for computing the kurtosis. */
+object Kurtosis extends Moment {
+  val index = 3
+
+  /** Kurtosis of a distribution. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    Moments(Kurtosis)
+  }
+
+  /**
+   * Kurtosis of a distribution.
+   *
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare
+    with PresentSingle = {
+    Moments(Kurtosis, strict, nan)
+  }
+
+  /**
+   * Kurtosis of a distribution.
+   *
+   * @param name Coordinate name of the computed kurtosis.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Moments((Kurtosis, name))
+  }
+
+  /**
+   * Kurtosis of a distribution.
+   *
+   * @param name   Coordinate name of the computed kurtosis.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply[V](name: V, strict: Boolean, nan: Boolean)(
+    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    Moments((Kurtosis, name), strict, nan)
   }
 }
 
 /**
  * Moments of a distribution.
  *
- * @param strict Indicates if strict data handling is required. If so then any
- *               non-numeric value fails the reduction. If not then non-numeric
- *               values are silently ignored.
- * @param nan    Indicator if 'NaN' string should be output if the reduction
- *               failed (for example due to non-numeric data).
- * @param only   Subset of moments (1..4) to compute.
- * @param names  Coordinate names of the computed moments.
- *
- * @note `names` is only used when presenting `PresentMultiple`.
+ * @param strict  Indicates if strict data handling is required. If so then any
+ *                non-numeric value fails the reduction. If not then non-numeric
+ *                values are silently ignored.
+ * @param nan     Indicator if 'NaN' string should be output if the reduction
+ *                failed (for example due to non-numeric data).
+ * @param moments Subset of moments (0 to 3) to compute.
+ * @param names   Coordinate names of the computed moments. Names must be
+ *                provided when presenting `PresentMultiple`.
  */
-case class Moments(strict: Boolean = true, nan: Boolean = false,
-  only: List[Int] = List(1, 2, 3, 4),
-  names: List[String] = List("mean", "std", "skewness", "kurtosis"))
-  extends Reducer with Prepare with PresentSingle with PresentMultiple {
+case class Moments private (strict: Boolean, nan: Boolean, moments: List[Int],
+  names: List[Value]) extends Reducer with Prepare with PresentSingle
+  with PresentMultiple with StrictReduce {
   type T = com.twitter.algebird.Moments
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
     con: Content): T = {
     com.twitter.algebird.Moments(con.value.asDouble.getOrElse(Double.NaN))
   }
-  def reduce(lt: T, rt: T): T = {
-    if (lt.mean.isNaN) { if (strict) { lt } else { rt } }
-    else if (rt.mean.isNaN) { if (strict) { rt } else { lt } }
-    else { com.twitter.algebird.Monoid.plus(lt, rt) }
-  }
+
   def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = {
-    content(t).map { case cl => (pos, cl(only(0) - 1)) }
+    content(t).map { case cl => (pos, cl(moments(0))) }
   }
+
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
     t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
     content(t).map {
-      case cl => Right(only.map {
-        case i => (pos.append(names(i - 1)), cl(i - 1))
-      })
+      case cl => Right(moments.map { case m => (pos.append(names(m)), cl(m)) })
     }
+  }
+
+  protected def invalid(t: T): Boolean = {
+    t.mean.isNaN
+  }
+
+  protected def reduction(lt: T, rt: T): T = {
+    com.twitter.algebird.Monoid.plus(lt, rt)
   }
 
   protected def content(t: T): Option[List[Content]] = {
     if (t.mean.isNaN && !nan) {
       None
     } else if (t.mean.isNaN) {
-      val con = Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN)
-
-      Some(List(con, con, con, con))
+      Some(List.fill(4)(
+        Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN)))
     } else {
-      Some(List(Content(ContinuousSchema[Codex.DoubleCodex](), t.mean),
+      Some(List(
+        Content(ContinuousSchema[Codex.DoubleCodex](), t.mean),
         Content(ContinuousSchema[Codex.DoubleCodex](), t.stddev),
         Content(ContinuousSchema[Codex.DoubleCodex](), t.skewness),
         Content(ContinuousSchema[Codex.DoubleCodex](), t.kurtosis)))
@@ -99,34 +363,345 @@ case class Moments(strict: Boolean = true, nan: Boolean = false,
   }
 }
 
-/** Base trait for reducers that return a `Double` value. */
-trait DoubleReducer extends Reducer with Prepare with PresentSingleAndMultiple {
-  type T = Double
+/** Companion object to `Moments` reducer class. */
+object Moments extends DefaultReducerValues {
+  /**
+   * Moment of a distribution.
+   *
+   * @param moment Moment to compute.
+   */
+  def apply(moment: Moment): Reducer with Prepare with PresentSingle = {
+    Moments(DefaultStrict, DefaultNaN, List(moment.index), List())
+  }
 
   /**
-   * Indicates if strict data handling is required. If so then any non-numeric
-   * value fails the reduction. If not then non-numeric values are silently
-   * ignored.
+   * Moment of a distribution.
+   *
+   * @param moment Moment to compute.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
    */
-  val strict: Boolean
+  def apply(moment: Moment, strict: Boolean, nan: Boolean): Reducer
+    with Prepare with PresentSingle = {
+    Moments(strict, nan, List(moment.index), List())
+  }
+
+  /**
+   * Moment of a distribution.
+   *
+   * @param moment1 Tuple of moment to compute togeter with the name of the
+   *                coordinate.
+   */
+  def apply[M <: Moment, T](moment1: (M, T))(
+    implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
+    Moments(DefaultStrict, DefaultNaN, List(moment1._1.index),
+      List(ev1.convert(moment1._2)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param moment1 First tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment2 Second tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   */
+  def apply[M <: Moment, N <: Moment, T, U](moment1: (M, T), moment2: (N, U))(
+    implicit ev1: Valueable[T], ev2: Valueable[U], ne1: M =!= N): Reducer
+    with Prepare with PresentMultiple = {
+    Moments(DefaultStrict, DefaultNaN, List(moment1._1.index, moment2._1.index),
+      List(ev1.convert(moment1._2), ev2.convert(moment2._2)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param moment1 First tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment2 Second tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment3 Third tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   */
+  def apply[M <: Moment, N <: Moment, O <: Moment, T, U, V](moment1: (M, T),
+    moment2: (N, U), moment3: (O, V))(implicit ev1: Valueable[T],
+      ev2: Valueable[U], ev3: Valueable[V], ne1: M =!= N, ne2: M =!= O,
+      ne3: N =!= O): Reducer with Prepare with PresentMultiple = {
+    Moments(DefaultStrict, DefaultNaN, List(moment1._1.index, moment2._1.index,
+      moment3._1.index), List(ev1.convert(moment1._2), ev2.convert(moment2._2),
+      ev3.convert(moment3._2)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param moment1 First tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment2 Second tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment3 Third tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment4 Fourth tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   */
+  def apply[M <: Moment, N <: Moment, O <: Moment, P <: Moment, T, U, V, S](
+    moment1: (M, T), moment2: (N, U), moment3: (O, V), moment4: (P, S))(
+      implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V],
+      ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O,
+      ne5: N =!= P, ne6: O =!= P): Reducer with Prepare with PresentMultiple = {
+    Moments(DefaultStrict, DefaultNaN, List(moment1._1.index, moment2._1.index,
+      moment3._1.index, moment4._1.index), List(ev1.convert(moment1._2),
+      ev2.convert(moment2._2), ev3.convert(moment3._2),
+      ev4.convert(moment4._2)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param moment1 Tuple of moment to compute togeter with the name of the
+   *                coordinate.
+   * @param strict  Indicates if strict data handling is required. If so then
+   *                any non-numeric value fails the reduction. If not then
+   *                non-numeric values are silently ignored.
+   * @param nan     Indicator if 'NaN' string should be output if the reduction
+   *                failed (for example due to non-numeric data).
+   */
+  def apply[M <: Moment, T](moment1: (M, T), strict: Boolean, nan: Boolean)(
+    implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
+    Moments(strict, nan, List(moment1._1.index), List(ev1.convert(moment1._2)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param moment1 First tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment2 Second tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param strict  Indicates if strict data handling is required. If so then
+   *                any non-numeric value fails the reduction. If not then
+   *                non-numeric values are silently ignored.
+   * @param nan     Indicator if 'NaN' string should be output if the reduction
+   *                failed (for example due to non-numeric data).
+   */
+  def apply[M <: Moment, N <: Moment, T, U](moment1: (M, T), moment2: (N, U),
+    strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T],
+    ev2: Valueable[U], ne1: M =!= N): Reducer with Prepare
+    with PresentMultiple = {
+    Moments(strict, nan, List(moment1._1.index, moment2._1.index),
+      List(ev1.convert(moment1._2), ev2.convert(moment2._2)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param moment1 First tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment2 Second tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment3 Third tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param strict  Indicates if strict data handling is required. If so then
+   *                any non-numeric value fails the reduction. If not then
+   *                non-numeric values are silently ignored.
+   * @param nan     Indicator if 'NaN' string should be output if the reduction
+   *                failed (for example due to non-numeric data).
+   */
+  def apply[M <: Moment, N <: Moment, O <: Moment, T, U, V](moment1: (M, T),
+    moment2: (N, U), moment3: (O, V), strict: Boolean, nan: Boolean)(
+    implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V],
+    ne1: M =!= N, ne2: M =!= O, ne3: N =!= O): Reducer with Prepare
+    with PresentMultiple = {
+    Moments(strict, nan, List(moment1._1.index, moment2._1.index,
+      moment3._1.index), List(ev1.convert(moment1._2), ev2.convert(moment2._2),
+      ev3.convert(moment3._2)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param moment1 First tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment2 Second tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment3 Third tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param moment4 Fourth tuple of moment to compute togeter with the name of
+   *                the coordinate.
+   * @param strict  Indicates if strict data handling is required. If so then
+   *                any non-numeric value fails the reduction. If not then
+   *                non-numeric values are silently ignored.
+   * @param nan     Indicator if 'NaN' string should be output if the reduction
+   *                failed (for example due to non-numeric data).
+   */
+  def apply[M <: Moment, N <: Moment, O <: Moment, P <: Moment, T, U, V, S](
+    moment1: (M, T), moment2: (N, U), moment3: (O, V), moment4: (P, S),
+    strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T],
+    ev2: Valueable[U], ev3: Valueable[V], ev4: Valueable[S], ne1: M =!= N,
+    ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
+      ne6: O =!= P): Reducer with Prepare with PresentMultiple = {
+    Moments(strict, nan, List(moment1._1.index, moment2._1.index,
+      moment3._1.index, moment4._1.index), List(ev1.convert(moment1._2),
+      ev2.convert(moment2._2), ev3.convert(moment3._2),
+      ev4.convert(moment4._2)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param mean Name of the coordinate of the mean.
+   */
+  def apply[T](mean: T)(implicit ev1: Valueable[T]): Reducer with Prepare
+    with PresentMultiple = {
+    Moments(DefaultStrict, DefaultNaN, List(Mean.index),
+      List(ev1.convert(mean)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param mean Name of the coordinate of the mean.
+   * @param sd   Name of the coordinate of the standard deviation.
+   */
+  def apply[T, U](mean: T, sd: U)(implicit ev1: Valueable[T],
+    ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
+    Moments(DefaultStrict, DefaultNaN,
+      List(Mean.index, StandardDeviation.index),
+      List(ev1.convert(mean), ev2.convert(sd)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param mean     Name of the coordinate of the mean.
+   * @param sd       Name of the coordinate of the standard deviation.
+   * @param skewness Name of the coordinate of the skewness.
+   */
+  def apply[T, U, V](mean: T, sd: U, skewness: V)(implicit ev1: Valueable[T],
+    ev2: Valueable[U], ev3: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Moments(DefaultStrict, DefaultNaN,
+      List(Mean.index, StandardDeviation.index, Skewness.index),
+      List(ev1.convert(mean), ev2.convert(sd), ev3.convert(skewness)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param mean     Name of the coordinate of the mean.
+   * @param sd       Name of the coordinate of the standard deviation.
+   * @param skewness Name of the coordinate of the skewness.
+   * @param kurtosis Name of the coordinate of the kurtosis.
+   */
+  def apply[T, U, V, W](mean: T, sd: U, skewness: V, kurtosis: W)(
+    implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V],
+    ev4: Valueable[W]): Reducer with Prepare with PresentMultiple = {
+    Moments(DefaultStrict, DefaultNaN,
+      List(Mean.index, StandardDeviation.index, Skewness.index, Kurtosis.index),
+      List(ev1.convert(mean), ev2.convert(sd), ev3.convert(skewness),
+        ev4.convert(kurtosis)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param mean   Name of the coordinate of the mean.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the
+   *               reduction failed (for example due to non-numeric data).
+   */
+  def apply[T](mean: T, strict: Boolean, nan: Boolean)(
+    implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
+    Moments(strict, nan, List(Mean.index), List(ev1.convert(mean)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param mean   Name of the coordinate of the mean.
+   * @param sd     Name of the coordinate of the standard deviation.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the
+   *               reduction failed (for example due to non-numeric data).
+   */
+  def apply[T, U](mean: T, sd: U, strict: Boolean, nan: Boolean)(
+    implicit ev1: Valueable[T], ev2: Valueable[U]): Reducer with Prepare
+    with PresentMultiple = {
+    Moments(strict, nan, List(Mean.index, StandardDeviation.index),
+      List(ev1.convert(mean), ev2.convert(sd)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param mean     Name of the coordinate of the mean.
+   * @param sd       Name of the coordinate of the standard deviation.
+   * @param skewness Name of the coordinate of the skewness.
+   * @param strict   Indicates if strict data handling is required. If so then
+   *                 any non-numeric value fails the reduction. If not then
+   *                 non-numeric values are silently ignored.
+   * @param nan      Indicator if 'NaN' string should be output if the
+   *                 reduction failed (for example due to non-numeric data).
+   */
+  def apply[T, U, V](mean: T, sd: U, skewness: V, strict: Boolean,
+    nan: Boolean)(implicit ev1: Valueable[T], ev2: Valueable[U],
+      ev3: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    Moments(strict, nan,
+      List(Mean.index, StandardDeviation.index, Skewness.index),
+      List(ev1.convert(mean), ev2.convert(sd), ev3.convert(skewness)))
+  }
+
+  /**
+   * Moments of a distribution.
+   *
+   * @param mean     Name of the coordinate of the mean.
+   * @param sd       Name of the coordinate of the standard deviation.
+   * @param skewness Name of the coordinate of the skewness.
+   * @param kurtosis Name of the coordinate of the kurtosis.
+   * @param strict   Indicates if strict data handling is required. If so then
+   *                 any non-numeric value fails the reduction. If not then
+   *                 non-numeric values are silently ignored.
+   * @param nan      Indicator if 'NaN' string should be output if the
+   *                 reduction failed (for example due to non-numeric data).
+   */
+  def apply[T, U, V, W](mean: T, sd: U, skewness: V, kurtosis: W,
+    strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T],
+    ev2: Valueable[U], ev3: Valueable[V], ev4: Valueable[W]): Reducer
+    with Prepare with PresentMultiple = {
+    Moments(strict, nan,
+      List(Mean.index, StandardDeviation.index, Skewness.index, Kurtosis.index),
+      List(ev1.convert(mean), ev2.convert(sd), ev3.convert(skewness),
+        ev4.convert(kurtosis)))
+  }
+}
+
+/** Base trait for reducers that return a `Double` value. */
+trait DoubleReducer extends Reducer with Prepare with PresentSingleAndMultiple
+  with StrictReduce {
+  type T = Double
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
     con: Content): T = {
     con.value.asDouble.getOrElse(Double.NaN)
   }
-  def reduce(lt: T, rt: T): T = {
-    if (lt.isNaN) { if (strict) { lt } else { rt } }
-    else if (rt.isNaN) { if (strict) { rt } else { lt } }
-    else { reduction(lt, rt) }
-  }
 
   /**
-   * Indicator if 'NaN' string should be output if the reduction failed
+   * Indicator if 'NaN' value should be output if the reduction failed
    * (for example due to non-numeric data).
    */
   val nan: Boolean
 
-  protected def reduction(x: T, y: T): T
+  protected def invalid(t: T): Boolean = {
+    t.isNaN
+  }
+
   protected def content(t: T): Option[Content] = {
     (t.isNaN && !nan) match {
       case true => None
@@ -136,70 +711,250 @@ trait DoubleReducer extends Reducer with Prepare with PresentSingleAndMultiple {
 }
 
 /** Minimum value reduction. */
-case class Min[N](strict: Boolean = true, nan: Boolean = false,
-  name: N = "min")(implicit ev: Valueable[N]) extends DoubleReducer {
-  def reduction(x: T, y: T): T = math.min(x, y)
-  protected val coordinate = ev.convert(name)
+case class Min private (strict: Boolean, nan: Boolean, name: Option[Value])
+  extends DoubleReducer {
+  protected def reduction(lt: T, rt: T): T = {
+    math.min(lt, rt)
+  }
+}
+
+/** Companion object to `Min` reducer class. */
+object Min extends DefaultReducerValues {
+  /** Minimum value reduction. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    Min(DefaultStrict, DefaultNaN, None)
+  }
+
+  /**
+   * Minimum value reduction.
+   *
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare
+    with PresentSingle = {
+    Min(strict, nan, None)
+  }
+
+  /**
+   * Minimum value reduction.
+   *
+   * @param name Coordinate name of the computed minimum.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Min(DefaultStrict, DefaultNaN, Some(ev.convert(name)))
+  }
+
+  /**
+   * Minimum value reduction.
+   *
+   * @param name   Coordinate name of the computed minimum.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply[V](name: V, strict: Boolean, nan: Boolean)(
+    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    Min(strict, nan, Some(ev.convert(name)))
+  }
 }
 
 /** Maximum value reduction. */
-case class Max[N](strict: Boolean = true, nan: Boolean = false,
-  name: N = "max")(implicit ev: Valueable[N]) extends DoubleReducer {
-  def reduction(x: T, y: T): T = math.max(x, y)
-  protected val coordinate = ev.convert(name)
+case class Max private (strict: Boolean, nan: Boolean, name: Option[Value])
+  extends DoubleReducer {
+  protected def reduction(lt: T, rt: T): T = {
+    math.max(lt, rt)
+  }
+}
+
+/** Companion object to `Max` reducer class. */
+object Max extends DefaultReducerValues {
+  /** Maximum value reduction. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    Max(DefaultStrict, DefaultNaN, None)
+  }
+
+  /**
+   * Maximum value reduction.
+   *
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare
+    with PresentSingle = {
+    Max(strict, nan, None)
+  }
+
+  /**
+   * Maximum value reduction.
+   *
+   * @param name Coordinate name of the computed maximum.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Max(DefaultStrict, DefaultNaN, Some(ev.convert(name)))
+  }
+
+  /**
+   * Maximum value reduction.
+   *
+   * @param name   Coordinate name of the computed maximum.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply[V](name: V, strict: Boolean, nan: Boolean)(
+    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    Max(strict, nan, Some(ev.convert(name)))
+  }
 }
 
 /** Maximum absolute value reduction. */
-case class MaxAbs[N](strict: Boolean = true, nan: Boolean = false,
-  name: N = "max.abs")(implicit ev: Valueable[N]) extends DoubleReducer {
-  def reduction(x: T, y: T): T = math.max(math.abs(x), math.abs(y))
-  protected val coordinate = ev.convert(name)
+case class MaxAbs private (strict: Boolean, nan: Boolean, name: Option[Value])
+  extends DoubleReducer {
+  protected def reduction(lt: T, rt: T): T = {
+    math.max(math.abs(lt), math.abs(rt))
+  }
+}
+
+/** Companion object to `MaxAbs` reducer class. */
+object MaxAbs extends DefaultReducerValues {
+  /** Maximum absolute value reduction. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    MaxAbs(DefaultStrict, DefaultNaN, None)
+  }
+
+  /**
+   * Maximum absolute value reduction.
+   *
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare
+    with PresentSingle = {
+    MaxAbs(strict, nan, None)
+  }
+
+  /**
+   * Maximum absolute value reduction.
+   *
+   * @param name Coordinate name of the computed absolute maximum.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    MaxAbs(DefaultStrict, DefaultNaN, Some(ev.convert(name)))
+  }
+
+  /**
+   * Maximum absolute value reduction.
+   *
+   * @param name   Coordinate name of the computed absolute maximum.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply[V](name: V, strict: Boolean, nan: Boolean)(
+    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    MaxAbs(strict, nan, Some(ev.convert(name)))
+  }
 }
 
 /** Sum value reduction. */
-case class Sum[N](strict: Boolean = true, nan: Boolean = false,
-  name: N = "sum")(implicit ev: Valueable[N]) extends DoubleReducer {
-  def reduction(x: T, y: T): T = x + y
-  protected val coordinate = ev.convert(name)
+case class Sum private (strict: Boolean, nan: Boolean, name: Option[Value])
+  extends DoubleReducer {
+  protected def reduction(lt: T, rt: T): T = {
+    lt + rt
+  }
+}
+
+/** Companion object to `Sum` reducer class. */
+object Sum extends DefaultReducerValues {
+  /** Sum value reduction. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    Sum(DefaultStrict, DefaultNaN, None)
+  }
+
+  /**
+   * Sum value reduction.
+   *
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare
+    with PresentSingle = {
+    Sum(strict, nan, None)
+  }
+
+  /**
+   * Sum value reduction.
+   *
+   * @param name Coordinate name of the computed sum.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Sum(DefaultStrict, DefaultNaN, Some(ev.convert(name)))
+  }
+
+  /**
+   * Sum value reduction.
+   *
+   * @param name   Coordinate name of the computed sum.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   */
+  def apply[V](name: V, strict: Boolean, nan: Boolean)(
+    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    Sum(strict, nan, Some(ev.convert(name)))
+  }
 }
 
 /**
  * Compute histogram.
  *
- * @param all       Indicator if histogram should apply to all data, or just
- *                  categorical variables.
- * @param meta      Return meta data statistics of the histogram (num
- *                  categories, frequency ratio, entropy) also.
- * @param names     Coordinate names for the meta data statistics.
- * @param prefix    Prefix string for use on categories.
- * @param separator If a `prefix` is used, this is the separator used in
- *                  `Position.toShortString`.
- *
- * @note Usage of a `%s` in the prefix will be substituded with
- *       `Position.toShortString`.
+ * @param strict     Indicates if strict data handling is required. If so then
+ *                   any non-numeric value fails the reduction. If not then
+ *                   non-numeric values are silently ignored.
+ * @param all        Indicator if histogram should apply to all data, or only
+ *                   to categorical variables.
+ * @param statistics List of statistics to compute on the histogram.
+ * @param name       Name pattern for the histogram bin names. Use `%[12]$``s`
+ *                   for the string representations of the position, and the
+ *                   content.
+ * @param separator  The separator used in `pos.toShortString`.
  */
 // TODO: Add option to limit maximum number of categories
-case class Histogram(all: Boolean = false, meta: Boolean = true,
-  names: List[String] = List("num.cat", "entropy", "freq.ratio"),
-  prefix: Option[String] = Some("%s="), separator: String = "")
-  extends Reducer with Prepare with PresentMultiple {
+case class Histogram private (strict: Boolean, all: Boolean,
+  statistics: List[Histogram.Statistic], name: String, separator: String)
+  extends Reducer with Prepare with PresentMultiple with StrictReduce {
   type T = Option[Map[String, Long]]
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
     con: Content): T = {
-    (con.schema.kind.isSpecialisationOf(Categorical) || all) match {
+    (all || con.schema.kind.isSpecialisationOf(Categorical)) match {
       case true => Some(Map(con.value.toShortString -> 1))
       case false => None
-    }
-  }
-
-  def reduce(lt: T, rt: T): T = {
-    (lt, rt) match {
-      case (Some(lm), Some(rm)) =>
-        Some(lm ++ rm.map { case (k, v) => k -> (v + lm.getOrElse(k, 0L)) })
-      case (Some(_), None) => lt
-      case (None, Some(_)) => rt
-      case _ => None
     }
   }
 
@@ -207,36 +962,242 @@ case class Histogram(all: Boolean = false, meta: Boolean = true,
     t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
     t.map {
       case m =>
-        val counts = m.values.toList.sorted
-        val stats = (pos.append(names(0)),
-          Content(DiscreteSchema[Codex.LongCodex](), counts.size)) +:
-          ((counts.size > 1) match {
-            case true =>
-              val ratio = counts.last.toDouble / counts(counts.length - 2)
-              val entropy = -counts.map {
-                case c =>
-                  val f = c.toDouble / counts.sum
-                  f * (math.log(f) / math.log(2))
-              }.sum
-
-              List((pos.append(names(1)),
-                Content(ContinuousSchema[Codex.DoubleCodex](), entropy)),
-                (pos.append(names(2)),
-                  Content(ContinuousSchema[Codex.DoubleCodex](), ratio)))
-            case false => List()
-          })
+        val stats = statistics.map {
+          case f =>
+            f(pos, m.values.toList.sorted).asInstanceOf[Option[Cell[P#M]]]
+        }.flatten
         val vals = (m.map {
-          case (k, v) => prefix match {
-            case Some(fmt) =>
-              (pos.append(fmt.format(pos.toShortString(separator)) + k),
-                Content(DiscreteSchema[Codex.LongCodex](), v))
-            case None => (pos.append(k),
+          case (k, v) =>
+            (pos.append(name.format(pos.toShortString(separator), k)),
               Content(DiscreteSchema[Codex.LongCodex](), v))
-          }
         }).toList
 
-        Right(if (meta) stats ++ vals else vals)
+        Right(stats ++ vals)
     }
+  }
+
+  protected def invalid(t: T): Boolean = {
+    t.isEmpty
+  }
+
+  protected def reduction(lt: T, rt: T): T = {
+    (lt, rt) match {
+      case (Some(lm), Some(rm)) =>
+        Some(lm ++ rm.map { case (k, v) => k -> (v + lm.getOrElse(k, 0L)) })
+      case _ => throw new Exception("None where Some expected")
+    }
+  }
+}
+
+/** Companion object to `Histogram` reducer class. */
+object Histogram extends DefaultReducerValues {
+  /**
+   * Default value for indicator whether to apply histogram to all data or not.
+   */
+  val DefaultAll: Boolean = false
+
+  /** Default separator to use in `pos.toShortString`. */
+  val DefaultSeparator: String = "|"
+
+  /**
+   * Signature for functions that compute a statistic on a histogram. The
+   * `ExpandablePosition` is the position of the cell, while the `List[Long]`
+   * are the (ordered) counts in each bin.
+   */
+  type Statistic = (ExpandablePosition, List[Long]) => Option[Cell[ExpandablePosition#M]]
+
+  /**
+   * Compute histogram.
+   *
+   * @param name Name pattern for the histogram bin names. Use `%[12]$``s` for
+   *             the string representations of the position, and the content.
+   */
+  def apply(name: String): Reducer with Prepare with PresentMultiple = {
+    Histogram(DefaultStrict, DefaultAll, List(), name, DefaultSeparator)
+  }
+
+  /**
+   * Compute histogram.
+   *
+   * @param name      Name pattern for the histogram bin names. Use `%[12]$``s`
+   *                  for the string representations of the position, and the
+   *                  content.
+   * @param separator The separator used in `pos.toShortString`.
+   */
+  def apply(name: String, separator: String): Reducer with Prepare
+    with PresentMultiple = {
+    Histogram(DefaultStrict, DefaultAll, List(), name, separator)
+  }
+
+  /**
+   * Compute histogram.
+   *
+   * @param name   Name pattern for the histogram bin names. Use `%[12]$``s`
+   *               for the string representations of the position, and the
+   *               content.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param all    Indicator if histogram should apply to all data, or only
+   *               to categorical variables.
+   */
+  def apply(name: String, strict: Boolean, all: Boolean): Reducer with Prepare
+    with PresentMultiple = {
+    Histogram(strict, all, List(), name, DefaultSeparator)
+  }
+
+  /**
+   * Compute histogram.
+   *
+   * @param name      Name pattern for the histogram bin names. Use `%[12]$``s`
+   *                  for the string representations of the position, and the
+   *                  content.
+   * @param strict    Indicates if strict data handling is required. If so then
+   *                  any non-numeric value fails the reduction. If not then
+   *                  non-numeric values are silently ignored.
+   * @param all       Indicator if histogram should apply to all data, or only
+   *                  to categorical variables.
+   * @param separator The separator used in `pos.toShortString`.
+   */
+  def apply(name: String, strict: Boolean, all: Boolean,
+    separator: String): Reducer with Prepare with PresentMultiple = {
+    Histogram(strict, all, List(), name, separator)
+  }
+
+  /**
+   * Compute histogram.
+   *
+   * @param name       Name pattern for the histogram bin names. Use `%[12]$``s`
+   *                   for the string representations of the position, and the
+   *                   content.
+   * @param statistics List of statistics to compute on the histogram.
+   */
+  def apply(name: String, statistics: List[Statistic]): Reducer with Prepare
+    with PresentMultiple = {
+    Histogram(DefaultStrict, DefaultAll, statistics, name, DefaultSeparator)
+  }
+
+  /**
+   * Compute histogram.
+   *
+   * @param name       Name pattern for the histogram bin names. Use `%[12]$``s`
+   *                   for the string representations of the position, and the
+   *                   content.
+   * @param statistics List of statistics to compute on the histogram.
+   * @param separator  The separator used in `pos.toShortString`.
+   */
+  def apply(name: String, statistics: List[Statistic],
+    separator: String): Reducer with Prepare with PresentMultiple = {
+    Histogram(DefaultStrict, DefaultAll, statistics, name, separator)
+  }
+
+  /**
+   * Compute histogram.
+   *
+   * @param name       Name pattern for the histogram bin names. Use `%[12]$``s`
+   *                   for the string representations of the position, and the
+   *                   content.
+   * @param statistics List of statistics to compute on the histogram.
+   * @param strict     Indicates if strict data handling is required. If so then
+   *                   any non-numeric value fails the reduction. If not then
+   *                   non-numeric values are silently ignored.
+   * @param all        Indicator if histogram should apply to all data, or only
+   *                   to categorical variables.
+   */
+  def apply(name: String, statistics: List[Statistic], strict: Boolean,
+    all: Boolean): Reducer with Prepare with PresentMultiple = {
+    Histogram(strict, all, statistics, name, DefaultSeparator)
+  }
+
+  /**
+   * Compute histogram.
+   *
+   * @param name       Name pattern for the histogram bin names. Use `%[12]$``s`
+   *                   for the string representations of the position, and the
+   *                   content.
+   * @param statistics List of statistics to compute on the histogram.
+   * @param strict     Indicates if strict data handling is required. If so then
+   *                   any non-numeric value fails the reduction. If not then
+   *                   non-numeric values are silently ignored.
+   * @param all        Indicator if histogram should apply to all data, or only
+   *                   to categorical variables.
+   * @param separator  The separator used in `pos.toShortString`.
+   */
+  def apply(name: String, statistics: List[Statistic], strict: Boolean,
+    all: Boolean, separator: String): Reducer with Prepare
+      with PresentMultiple = {
+    Histogram(strict, all, statistics, name, separator)
+  }
+
+  /**
+   * Returns the statistic for computing the number of categories (bins) of
+   * a histogram.
+   *
+   * @param name Name to use for the coordinate of the statistic.
+   */
+  def NumberOfCategories[V](name: V)(implicit ev: Valueable[V]): Statistic = {
+    val n = ev.convert(name)
+
+    (pos: ExpandablePosition, counts: List[Long]) =>
+      Some((pos.append(n),
+        Content(DiscreteSchema[Codex.LongCodex](), counts.size)))
+  }
+
+  /**
+   * Returns the statistic for computing the entropy of categories (bins) of
+   * a histogram.
+   *
+   * @param name Name to use for the coordinate of the statistic.
+   * @param nan  Indicator if 'NaN' string should be output if the reduction
+   *             failed (for example if only 1 bins is present).
+   */
+  def Entropy[V](name: V, nan: Boolean = false)(
+    implicit ev: Valueable[V]): Statistic = {
+    val n = ev.convert(name)
+
+    (pos: ExpandablePosition, counts: List[Long]) =>
+      (counts.size > 1, nan) match {
+        case (true, _) =>
+          val entropy = -counts.map {
+            case cnt =>
+              val f = cnt.toDouble / counts.sum
+              f * (math.log(f) / math.log(2))
+          }.sum
+
+          Some((pos.append(n),
+            Content(ContinuousSchema[Codex.DoubleCodex](), entropy)))
+        case (false, true) =>
+          Some((pos.append(n),
+            Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN)))
+        case (false, false) => None
+      }
+  }
+
+  /**
+   * Returns the statistic for computing the frequency ratio (ratio of highest
+   * bin count over second highest) of categories (bins) of a histogram. This
+   * gives an indication on the skewness of the underlying distribution.
+   *
+   * @param name Name to use for the coordinate of the statistic.
+   * @param nan  Indicator if 'NaN' string should be output if the reduction
+   *             failed (for example if only 1 bins is present).
+   */
+  def FrequencyRatio[V](name: V, nan: Boolean = false)(
+    implicit ev: Valueable[V]): Statistic = {
+    val n = ev.convert(name)
+
+    (pos: ExpandablePosition, counts: List[Long]) =>
+      (counts.size > 1, nan) match {
+        case (true, _) =>
+          val ratio = counts.last.toDouble / counts(counts.length - 2)
+
+          Some((pos.append(n),
+            Content(ContinuousSchema[Codex.DoubleCodex](), ratio)))
+        case (false, true) =>
+          Some((pos.append(n),
+            Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN)))
+        case (false, false) => None
+      }
   }
 }
 
@@ -246,15 +1207,16 @@ case class Histogram(all: Boolean = false, meta: Boolean = true,
  * @param strict    Indicates if strict data handling is required. If so then
  *                  any non-numeric value fails the reduction. If not then
  *                  non-numeric values are silently ignored.
- * @param nan       The `String` to use if the reduction failed (for example
- *                  due to non-numeric data).
+ * @param nan       Indicator if 'NaN' string should be output if the reduction
+ *                  failed (for example due to non-numeric data).
  * @param threshold The threshold value.
- * @param names     Coordinate names of the counts.
+ * @param names     Coordinate names of the counts. Names must be provided
+ *                  when presenting `PresentMultiple`.
  */
 // TODO: Test this
-case class ThresholdCount(strict: Boolean = true, nan: Boolean = false,
-  threshold: Double = 0, names: List[String] = List("leq.count", "gtr.count"))
-  extends Reducer with Prepare with PresentMultiple {
+case class ThresholdCount private (strict: Boolean, nan: Boolean,
+  threshold: Double, names: List[Value]) extends Reducer with Prepare
+  with PresentMultiple with StrictReduce {
   type T = (Long, Long) // (leq, gtr)
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
@@ -265,12 +1227,6 @@ case class ThresholdCount(strict: Boolean = true, nan: Boolean = false,
     }
   }
 
-  def reduce(lt: T, rt: T): T = {
-    if (lt._1 < 0) { if (strict) { lt } else { rt } }
-    else if (rt._1 < 0) { if (strict) { rt } else { lt } }
-    else { (lt._1 + rt._1, lt._2 + rt._2) }
-  }
-
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
     t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
     content(t).map {
@@ -278,13 +1234,89 @@ case class ThresholdCount(strict: Boolean = true, nan: Boolean = false,
     }
   }
 
+  protected def invalid(t: T): Boolean = {
+    t._1 < 0
+  }
+
+  protected def reduction(lt: T, rt: T): T = {
+    (lt._1 + rt._1, lt._2 + rt._2)
+  }
+
   private def content(t: T): Option[List[Content]] = {
-    if (t._1 < 0 && !nan) {
-      None
-    } else {
-      Some(List(Content(DiscreteSchema[Codex.LongCodex](), t._1),
+    (t._1 < 0 && !nan) match {
+      case true => None
+      case false => Some(List(
+        Content(DiscreteSchema[Codex.LongCodex](), t._1),
         Content(DiscreteSchema[Codex.LongCodex](), t._2)))
     }
+  }
+}
+
+/** Companion object to `ThresholdCount` reducer class. */
+object ThresholdCount extends DefaultReducerValues {
+  /** Default threshold value. */
+  val DefaultThreshold: Double = 0
+
+  /**
+   * Compute counts of values less-or-equal or greater-than some `threshold`.
+   *
+   * @param leq Name for the coordinate of the less-or-equal value.
+   * @param gtr Name for the coordinate of the greater-than value.
+   */
+  def apply[T, U](leq: T, gtr: U)(implicit ev1: Valueable[T],
+    ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
+    ThresholdCount(DefaultStrict, DefaultNaN, DefaultThreshold,
+      List(ev1.convert(leq), ev2.convert(gtr)))
+  }
+
+  /**
+   * Compute counts of values less-or-equal or greater-than some `threshold`.
+   *
+   * @param leq    Name for the coordinate of the less-or-equal value.
+   * @param gtr    Name for the coordinate of the greater-than value.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the
+   *               reduction failed (for example due to non-numeric data).
+   */
+  def apply[T, U](leq: T, gtr: U, strict: Boolean, nan: Boolean)(
+    implicit ev1: Valueable[T], ev2: Valueable[U]): Reducer with Prepare
+    with PresentMultiple = {
+    ThresholdCount(strict, nan, DefaultThreshold,
+      List(ev1.convert(leq), ev2.convert(gtr)))
+  }
+
+  /**
+   * Compute counts of values less-or-equal or greater-than some `threshold`.
+   *
+   * @param leq       Name for the coordinate of the less-or-equal value.
+   * @param gtr       Name for the coordinate of the greater-than value.
+   * @param threshold The threshold value.
+   */
+  def apply[T, U](leq: T, gtr: U, threshold: Double)(implicit ev1: Valueable[T],
+    ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
+    ThresholdCount(DefaultStrict, DefaultNaN, threshold,
+      List(ev1.convert(leq), ev2.convert(gtr)))
+  }
+
+  /**
+   * Compute counts of values less-or-equal or greater-than some `threshold`.
+   *
+   * @param leq       Name for the coordinate of the less-or-equal value.
+   * @param gtr       Name for the coordinate of the greater-than value.
+   * @param strict    Indicates if strict data handling is required. If so then
+   *                  any non-numeric value fails the reduction. If not then
+   *                  non-numeric values are silently ignored.
+   * @param nan       Indicator if 'NaN' string should be output if the
+   *                  reduction failed (for example due to non-numeric data).
+   * @param threshold The threshold value.
+   */
+  def apply[T, U](leq: T, gtr: U, strict: Boolean, nan: Boolean,
+    threshold: Double)(implicit ev1: Valueable[T],
+      ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
+    ThresholdCount(strict, nan, threshold,
+      List(ev1.convert(leq), ev2.convert(gtr)))
   }
 }
 
@@ -292,29 +1324,26 @@ case class ThresholdCount(strict: Boolean = true, nan: Boolean = false,
  * Weighted sum reduction. This is particularly useful for scoring linear
  * models.
  *
- * @param dim    Dimension for for which to create weigthed variables.
- * @param state  Name of the field in the user supplied value which is used
- *               as the weights.
+ * @param dim Dimension for for which to create weigthed variables.
  */
-case class WeightedSum(dim: Dimension, state: String = "weight")
-  extends Reducer with PrepareWithValue with PresentSingle {
+case class WeightedSum(dim: Dimension) extends Reducer with PrepareWithValue
+  with PresentSingle {
   type T = Double
-  type V = Map[Position1D, Map[Position1D, Content]]
+  type V = Map[Position1D, Content]
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
     con: Content, ext: V): T = {
-    val key = Position1D(pos.get(dim))
-
-    if (con.schema.kind.isSpecialisationOf(Numerical) && ext.isDefinedAt(key)) {
-      (con.value.asDouble, ext(key)(Position1D(state)).value.asDouble) match {
-        case (Some(v), Some(w)) => v * w
-        case _ => throw new Exception("Unable to compute weighted sum with non-numeric value")
+    (con.schema.kind.isSpecialisationOf(Numerical), con.value.asDouble,
+      ext.get(Position1D(pos.get(dim))).flatMap(_.value.asDouble)) match {
+        case (true, Some(v), Some(w)) => v * w
+        case _ => 0
       }
-    } else {
-      0
-    }
   }
-  def reduce(lt: T, rt: T): T = lt + rt
+
+  def reduce(lt: T, rt: T): T = {
+    lt + rt
+  }
+
   def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = {
     content(t).map { case c => (pos, c) }
   }
@@ -327,38 +1356,56 @@ case class WeightedSum(dim: Dimension, state: String = "weight")
 /**
  * Distinct count reductions.
  *
- * @param name Coordinate name for the distinct count values.
- *
- * @note `name` is only used when presenting `PresentMultiple`.
+ * @param name Optional coordinate name for the count values. Name must be
+ *             provided when presenting `PresentMultiple`.
  */
 // TODO: Test this
-case class DistinctCount[N](name: N = "distinct.count")(
-  implicit ev: Valueable[N]) extends Reducer with Prepare
-  with PresentSingleAndMultiple {
-  type T = Set[String]
+case class DistinctCount private (name: Option[Value]) extends Reducer
+  with Prepare with PresentSingleAndMultiple {
+  type T = Set[Value]
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
-    con: Content): T = Set(con.value.toShortString)
-  def reduce(lt: T, rt: T): T = lt ++ rt
+    con: Content): T = {
+    Set(con.value)
+  }
 
-  protected val coordinate = ev.convert(name)
+  def reduce(lt: T, rt: T): T = {
+    lt ++ rt
+  }
+
   protected def content(t: T): Option[Content] = {
     Some(Content(DiscreteSchema[Codex.LongCodex](), t.size))
   }
 }
 
+/** Companion object to `DistinctCount` reducer class. */
+object DistinctCount {
+  /** Distinct count reductions. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    DistinctCount(None)
+  }
+
+  /**
+   * Distinct count reductions.
+   *
+   * @param name Coordinate name for the count values.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    DistinctCount(Some(ev.convert(name)))
+  }
+}
+
 /**
- * Compute percentiles.
+ * Compute quantiles.
  *
- * @param percentiles Number of percentiles to compute.
- * @param name        Name format for the percentiles.
- *
- * @note Usage of a `%d` in the name will be substituded with percentile index.
+ * @param quantiles Number of quantiles to compute.
+ * @param name      Name format for the quantiles. Usage of a `%d` in the name
+ *                  will be substituded with percentile index.
  */
 // TODO: Test this
-case class Percentiles(percentiles: Int,
-  name: Option[String] = Some("percentile.%d")) extends Reducer
-  with Prepare with PresentMultiple {
+case class Quantiles(quantiles: Int, name: String = "quantile.%d")
+  extends Reducer with Prepare with PresentMultiple {
   type T = Map[Double, Long]
 
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
@@ -384,16 +1431,13 @@ case class Percentiles(percentiles: Int,
     val cumsum = values.tail.scanLeft(values.head)(_ + _).toList
     val N = cumsum.last.toDouble
 
-    val boundaries = for (cnt <- (0.0 until N by (N / percentiles)).tail) yield keys(cumsum.indexWhere(_ >= cnt))
+    val boundaries = for (cnt <- (0.0 until N by (N / quantiles)).tail)
+      yield keys(cumsum.indexWhere(_ >= cnt))
 
     Some(Right((boundaries.zipWithIndex.map {
-      case (p, i) => name match {
-        case Some(fmt) => (pos.append(fmt.format(i + 1)),
-          Content(ContinuousSchema[Codex.DoubleCodex](), p))
-        case None => (pos.append((i + 1).toString),
-          Content(ContinuousSchema[Codex.DoubleCodex](), p))
-      }
-    }).toList))
+      case (quant, idx) => (pos.append(name.format(idx + 1)),
+        Content(ContinuousSchema[Codex.DoubleCodex](), quant))
+      }).toList))
   }
 }
 

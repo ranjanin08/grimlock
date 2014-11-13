@@ -109,10 +109,19 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
 
   // Compute statistics on the training data. The results are
   // written to file.
+  val statistics = List(
+    Count("count"),
+    Moments("mean", "sd", "skewness", "kurtosis"),
+    Min("min"),
+    Max("max"),
+    MaxAbs("max.abs"),
+    Histogram("%1$s=%2$s", List(Histogram.NumberOfCategories("num.cat"),
+                                Histogram.Entropy("entropy"),
+                                Histogram.FrequencyRatio("freq.ratio"))))
+
   val stats = parts
     .get("train")
-    .reduceAndExpand(Along(First), List(Count(), Moments(), Min(), Max(),
-      MaxAbs(), Histogram()))
+    .reduceAndExpand(Along(First), statistics)
     .persist("./demo/stats.out")
 
   // Determine which features to filter based on statistics. In this
@@ -128,7 +137,7 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   // category). These are removed after indicators have been created.
   val rem2 = stats
     .which((pos: Position, con: Content) =>
-      ((pos.get(Second) equ "std")     && (con.value equ 0)) ||
+      ((pos.get(Second) equ "sd")     && (con.value equ 0)) ||
       ((pos.get(Second) equ "num.cat") && (con.value equ 1)))
     .names(Over(First))
 
@@ -151,6 +160,11 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   //  4a/ Combine preprocessed data sets;
   //  4b/ Optionally fill the matrix (note: this is expensive);
   //  4c/ Save the result as pipe separated CSV for use in modelling.
+  val transforms = List(
+    Clamp(Second, lower="min", upper="max") andThen
+      Standardise(Second, mean="mean", sd="sd"),
+    Binarise(Second))
+
   for (p <- List("train", "test")) {
     val d = parts
       .get(p)
@@ -161,9 +175,7 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
 
     val csb = d
       .slice(Over(Second), rem2, false)
-      .transformWithValue(List(Clamp(Second, lower="min", upper="max") andThen
-        Standardise(Second, mean="mean", std="std"),
-        Binarise(Second)), stats.toMap(Over(First)))
+      .transformWithValue(transforms, stats.toMap(Over(First)))
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
@@ -178,17 +190,21 @@ class Scoring(args : Args) extends Job(args) {
   // Read the statistics from the above example.
   val stats = read2D("./demo/stats.out").toMap(Over(First))
   // Read externally learned weights.
-  val weights = read2D("exampleWeights.txt").toMap(Over(First))
+  val weights = read1D("exampleWeights.txt").toMap(Over(First))
 
   // For the data do:
   //  1/ Create indicators, binarise categorical, and clamp &
   //     standardise numerical features;
-  //  3/ Compute the scored (as a weighted sum);
-  //  4/ Save the results.
+  //  2/ Compute the scored (as a weighted sum);
+  //  3/ Save the results.
+  val transforms = List(
+    Indicator(Second, name="%1$s.ind"),
+    Binarise(Second),
+    Clamp(Second, lower="min", upper="max") andThen
+      Standardise(Second, mean="mean", sd="sd"))
+
   data
-    .transformWithValue(List(Indicator(Second, name="%1$s.ind"),
-      Binarise(Second), Clamp(Second, lower="min", upper="max") andThen
-      Standardise(Second, mean="mean", std="std")), stats)
+    .transformWithValue(transforms, stats)
     .reduceWithValue(Over(First), WeightedSum(Second), weights)
     .persist("./demo/scores.out")
 }
@@ -205,7 +221,8 @@ class DataQualityAndAnalysis(args : Args) extends Job(args) {
   data
     .reduce(Over(First), Count())
     .persist("./demo/feature_count.out")
-    .reduceAndExpand(Along(First), Moments())
+    .reduceAndExpand(Along(First),
+      Moments("mean", "sd", "skewness", "kurtosis"))
     .persist("./demo/feature_density.out")
 
   // For the features:
@@ -217,7 +234,8 @@ class DataQualityAndAnalysis(args : Args) extends Job(args) {
   data
     .reduce(Over(Second), Count())
     .persist("./demo/instance_count.out")
-    .reduceAndExpand(Along(First), Moments())
+    .reduceAndExpand(Along(First),
+      Moments("mean", "sd", "skewness", "kurtosis"))
     .persist("./demo/instance_density.out")
 }
 
@@ -230,7 +248,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Compute histogram over the label values.
   val histogram = labels
-    .reduceAndExpand(Along(First), Histogram(all=true, meta=false, prefix=None))
+    .reduceAndExpand(Along(First), Histogram("%2$s", strict=true, all=true))
 
   // Compute the total number of labels and store result in a Map.
   val sum = labels
@@ -243,7 +261,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Find the minimum ratio, and store the result as a Map.
   val min = ratio
-    .reduceAndExpand(Along(First), Min())
+    .reduceAndExpand(Along(First), Min("min"))
     .toMap(Over(First))
 
   // Divide the ratio by the minimum ratio, and store the result as a Map.
@@ -264,7 +282,7 @@ class LabelWeighting(args: Args) extends Job(args) {
     }
   }
 
-  // Read labels and add the computed weight.
+  // Re-read labels and add the computed weight.
   readLabels("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
     .transformAndExpandWithValue(AddWeight(), weights)
     .persist("./demo/weighted.out")

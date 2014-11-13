@@ -28,7 +28,7 @@ import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.TDsl._, Dsl._
 
-// Define a simple event (strutured) data type. It has an id, a type, a
+// Define a simple event (structured) data type. It has an id, a type, a
 // start time and duration. It applies to one or more instances and has
 // a detailed information field.
 case class ExampleEvent(

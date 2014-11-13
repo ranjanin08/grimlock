@@ -994,6 +994,48 @@ object Matrix {
 
   /**
    * Read column oriented, pipe separated matrix data into a
+   * `TypedPipe[(Position1D, Content)]`.
+   *
+   * @param file  The file to read from.
+   * @param first The codex for decoding the first dimension.
+   */
+  def read1D(file: String, first: Codex = StringCodex)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[Cell[Position1D]] = {
+    (TypedPsv[(String, String, String, String)](file))
+      .flatMap {
+        case (r, t, e, v) =>
+          Schema.fromString(e, t).flatMap {
+            case s => (s.decode(v), first.decode(r)) match {
+              case (Some(con), Some(c1)) => Some((Position1D(c1), con))
+              case _ => None
+            }
+          }
+      }
+  }
+
+  /**
+   * Read column oriented, pipe separated data into a
+   * `TypedPipe[(Position1D, Content)]`.
+   *
+   * @param file   The file to read from.
+   * @param dict   The dictionary describing the features in the data.
+   * @param first  The codex for decoding the first dimension.
+   */
+  def read1DWithDictionary[D <: Dimension](file: String, dict: Dictionary,
+    first: Codex = StringCodex)(implicit ev: PosDimDep[Position2D, D],
+      flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
+    (TypedPsv[(String, String)](file))
+      .flatMap {
+        case (e, v) =>
+          (dict(e).decode(v), first.decode(e)) match {
+            case (Some(con), Some(c1)) => Some((Position1D(c1), con))
+            case _ => None
+          }
+      }
+  }
+
+  /**
+   * Read column oriented, pipe separated matrix data into a
    * `TypedPipe[(Position2D, Content)]`.
    *
    * @param file   The file to read from.
@@ -1229,7 +1271,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     }
 
     val mean = data
-      .reduce(slice, Moments(only = List(1)))
+      .reduce(slice, Mean())
       .toMap(Over(First))
 
     val centered = data

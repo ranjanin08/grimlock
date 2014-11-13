@@ -132,7 +132,7 @@ trait PresentCell[T] {
 
 /**
  * Convenience trait defining common functionality patterns for implementing
- * transformersi returning `Long` values.
+ * transformers returning `Long` values.
  */
 trait PresentLong extends PresentCell[Long] {
   protected def getContent(value: Long): Content = {
@@ -143,7 +143,7 @@ trait PresentLong extends PresentCell[Long] {
 
 /**
  * Convenience trait defining common functionality patterns for implementing
- * transformersi returning `Double` values.
+ * transformers returning `Double` values.
  */
 trait PresentDouble extends PresentCell[Double] {
   protected def getContent(value: Double): Content = {
@@ -269,7 +269,7 @@ object Normalise {
  * @param dim       Dimension for for which to create standardised variables.
  * @param mean      Key into the inner map of `V`, identifying the
  *                  standardisation constant for the mean.
- * @param std       Key into the inner map of `V`, identifying the
+ * @param sd        Key into the inner map of `V`, identifying the
  *                  standardisation constant for the standard deviation.
  * @param name      Optional pattern for the new name of the coordinate at
  *                  `dim`. Use `%[12]$``s` for the string representations of
@@ -281,13 +281,13 @@ object Normalise {
  *       of one. It is only applied to numerical variables.
  */
 case class Standardise private (dim: Dimension, mean: Position1D,
-  std: Position1D, name: Option[String], threshold: Double) extends Transformer
+  sd: Position1D, name: Option[String], threshold: Double) extends Transformer
   with PresentWithValue with PresentDouble {
   type V = Map[Position1D, Map[Position1D, Content]]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
     ext: V) = {
-    present(dim, pos, con, ext, mean, std, name, Some(Numerical), standardise _)
+    present(dim, pos, con, ext, mean, sd, name, Some(Numerical), standardise _)
   }
 
   private def standardise(v: Double, m: Double, s: Double) = {
@@ -303,13 +303,13 @@ object Standardise {
    * @param dim  Dimension for for which to create standardised variables.
    * @param mean Key into the inner map of `V`, identifying the standardisation
    *             constant for the mean.
-   * @param std  Key into the inner map of `V`, identifying the standardisation
+   * @param sd   Key into the inner map of `V`, identifying the standardisation
    *             constant for the standard deviation.
    */
-  def apply[T, U](dim: Dimension, mean: T, std: U)(
+  def apply[T, U](dim: Dimension, mean: T, sd: U)(
     implicit ev1: Positionable[T, Position1D],
     ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(std), None,
+    Standardise(dim, ev1.convert(mean), ev2.convert(sd), None,
       DefaultThreshold)
   }
 
@@ -319,16 +319,16 @@ object Standardise {
    * @param dim  Dimension for for which to create standardised variables.
    * @param mean Key into the inner map of `V`, identifying the standardisation
    *             constant for the mean.
-   * @param std  Key into the inner map of `V`, identifying the standardisation
+   * @param sd   Key into the inner map of `V`, identifying the standardisation
    *             constant for the standard deviation.
    * @param name Pattern for the new name of the coordinate at `dim`. Use
    *             `%[12]$``s` for the string representations of the coordinate,
    *             and the content.
    */
-  def apply[T, U](dim: Dimension, mean: T, std: U, name: String)(
+  def apply[T, U](dim: Dimension, mean: T, sd: U, name: String)(
     implicit ev1: Positionable[T, Position1D],
     ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(std), Some(name),
+    Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name),
       DefaultThreshold)
   }
 
@@ -338,15 +338,15 @@ object Standardise {
    * @param dim       Dimension for for which to create standardised variables.
    * @param mean      Key into the inner map of `V`, identifying the
    *                  standardisation constant for the mean.
-   * @param std       Key into the inner map of `V`, identifying the
+   * @param sd        Key into the inner map of `V`, identifying the
    *                  standardisation constant for the standard deviation.
    * @param threshold Minimum standard deviation threshold. Values less than
    *                  this result in standardised value of zero.
    */
-  def apply[T, U](dim: Dimension, mean: T, std: U, threshold: Double)(
+  def apply[T, U](dim: Dimension, mean: T, sd: U, threshold: Double)(
     implicit ev1: Positionable[T, Position1D],
     ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(std), None, threshold)
+    Standardise(dim, ev1.convert(mean), ev2.convert(sd), None, threshold)
   }
 
   /**
@@ -355,7 +355,7 @@ object Standardise {
    * @param dim       Dimension for for which to create standardised variables.
    * @param mean      Key into the inner map of `V`, identifying the
    *                  standardisation constant for the mean.
-   * @param std       Key into the inner map of `V`, identifying the
+   * @param sd        Key into the inner map of `V`, identifying the
    *                  standardisation constant for the standard deviation.
    * @param name      Pattern for the new name of the coordinate at `dim`. Use
    *                  `%[12]$``s` for the string representations of the
@@ -363,10 +363,10 @@ object Standardise {
    * @param threshold Minimum standard deviation threshold. Values less than
    *                  this result in standardised value of zero.
    */
-  def apply[T, U](dim: Dimension, mean: T, std: U, name: String,
+  def apply[T, U](dim: Dimension, mean: T, sd: U, name: String,
     threshold: Double)(implicit ev1: Positionable[T, Position1D],
       ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(std), Some(name), threshold)
+    Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name), threshold)
   }
 
   private val DefaultThreshold = 1e-4

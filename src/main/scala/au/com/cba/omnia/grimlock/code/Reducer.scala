@@ -66,6 +66,7 @@ trait Prepare extends PrepareWithValue { self: Reducer =>
 
 /** Base trait for reduction preparation with a user supplied value. */
 trait PrepareWithValue { self: Reducer =>
+  /** Type of the external value. */
   type V
 
   /**
@@ -108,7 +109,7 @@ trait PresentSingle { self: Reducer =>
 /** Base trait for reductions that return multiple values. */
 trait PresentMultiple { self: Reducer =>
   /**
-   * Present the reduced content](s).
+   * Present the reduced content(s).
    *
    * @param pos The reduced position. That is, the position returned by
    *            `Slice.selected`.
@@ -135,14 +136,23 @@ trait PresentMultiple { self: Reducer =>
 trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple {
   self: Reducer =>
 
-  def presentSingle[P <: Position](pos: P,
-    t: T): Option[Cell[P]] = content(t).map { case c => (pos, c) }
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
-    content(t).map { case c => Left((pos.append(coordinate), c)) }
+  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = {
+    content(t).map { case c => (pos, c) }
   }
 
-  protected val coordinate: Value
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P,
+    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
+    name match {
+      case Some(n) => content(t).map {
+        case con => Left((pos.append(n), con))
+      }
+      case None => Option.empty[Either[Cell[P#M], List[Cell[P#M]]]]
+    }
+  }
+
+  /** Name of the coordinate when presenting as multiple. */
+  val name: Option[Value]
+
   protected def content(t: T): Option[Content]
 }
 
