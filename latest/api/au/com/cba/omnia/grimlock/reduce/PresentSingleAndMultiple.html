@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Convenience trait for reducers that present a value both as <code>PresentSingle</code>
 and <code>PresentMultiple</code>.
-</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> with <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/ed3a0b34992c3af841431fbe8c8be5a564ca0cc7//src/main/scala/au/com/cba/omnia/grimlock/code/Reducer.scala" target="_blank">Reducer.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> with <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7109d9d505619b3099b2f5de0be5e99ff135b49a//src/main/scala/au/com/cba/omnia/grimlock/code/Reducer.scala" target="_blank">Reducer.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>, <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -101,19 +101,19 @@ and <code>PresentMultiple</code>.
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple#coordinate" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="coordinate:au.com.cba.omnia.grimlock.encoding.Value"></a>
-      <a id="coordinate:Value"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple#name" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="name:Option[au.com.cba.omnia.grimlock.encoding.Value]"></a>
+      <a id="name:Option[Value]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">coordinate</span><span class="result">: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a></span>
+        <span class="name">name</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a>]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+      <p class="shortcomment cmt">Name of the coordinate when presenting as multiple.</p>
     </li></ol>
             </div>
 
@@ -351,7 +351,7 @@ and <code>PresentMultiple</code>.
         <span class="name">presentMultiple</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple.presentMultiple.P">P</span></span>, <span name="t">t: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer.T">T</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Either">Either</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">presentMultiple.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>), <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">presentMultiple.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Present the reduced content](s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content](s).
+      <p class="shortcomment cmt">Present the reduced content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content(s).
 </p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by
            <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell tuple where the position is creating by appending

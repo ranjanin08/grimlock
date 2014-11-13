@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>Percentiles - au.com.cba.omnia.grimlock.reduce.Percentiles</title>
-          <meta name="description" content="Percentiles - au.com.cba.omnia.grimlock.reduce.Percentiles" />
-          <meta name="keywords" content="Percentiles au.com.cba.omnia.grimlock.reduce.Percentiles" />
+          <title>Quantiles - au.com.cba.omnia.grimlock.reduce.Quantiles</title>
+          <meta name="description" content="Quantiles - au.com.cba.omnia.grimlock.reduce.Quantiles" />
+          <meta name="keywords" content="Quantiles au.com.cba.omnia.grimlock.reduce.Quantiles" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../index.html';
-            var hash = 'au.com.cba.omnia.grimlock.reduce.Percentiles';
+            var hash = 'au.com.cba.omnia.grimlock.reduce.Quantiles';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -26,7 +26,7 @@
       <div id="definition">
         <img src="../../../../../../lib/class_big.png" />
         <p id="owner"><a href="../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.reduce">reduce</a></p>
-        <h1>Percentiles</h1>
+        <h1>Quantiles</h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,14 +35,14 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Percentiles</span><span class="params">(<span name="percentiles">percentiles: <span class="extype" name="scala.Int">Int</span></span>, <span name="name">name: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="scala.Some.apply[String](&quot;percentile.%d&quot;)">...</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">Quantiles</span><span class="params">(<span name="quantiles">quantiles: <span class="extype" name="scala.Int">Int</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;quantile.%d&quot;</span></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Compute percentiles.
-</p></div><dl class="paramcmts block"><dt class="param">percentiles</dt><dd class="cmt"><p>Number of percentiles to compute.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Name format for the percentiles.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/ed3a0b34992c3af841431fbe8c8be5a564ca0cc7//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Usage of a <code>%d</code> in the name will be substituded with percentile index.
-</p></span></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Compute quantiles.
+</p></div><dl class="paramcmts block"><dt class="param">quantiles</dt><dd class="cmt"><p>Number of quantiles to compute.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Name format for the quantiles. Usage of a <code>%d</code> in the name
+                 will be substituded with percentile index.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7109d9d505619b3099b2f5de0be5e99ff135b49a//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>, <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a>, <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a>, <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -62,7 +62,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.reduce.Percentiles"><span>Percentiles</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple"><span>PresentMultiple</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Prepare"><span>Prepare</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue"><span>PrepareWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Reducer"><span>Reducer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.reduce.Quantiles"><span>Quantiles</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple"><span>PresentMultiple</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Prepare"><span>Prepare</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue"><span>PrepareWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Reducer"><span>Reducer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -82,26 +82,27 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.reduce.Percentiles#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(percentiles:Int,name:Option[String]):au.com.cba.omnia.grimlock.reduce.Percentiles"></a>
-      <a id="&lt;init&gt;:Percentiles"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.reduce.Quantiles#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(quantiles:Int,name:String):au.com.cba.omnia.grimlock.reduce.Quantiles"></a>
+      <a id="&lt;init&gt;:Quantiles"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Percentiles</span><span class="params">(<span name="percentiles">percentiles: <span class="extype" name="scala.Int">Int</span></span>, <span name="name">name: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="scala.Some.apply[String](&quot;percentile.%d&quot;)">...</span></span>)</span>
+        <span class="name">Quantiles</span><span class="params">(<span name="quantiles">quantiles: <span class="extype" name="scala.Int">Int</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;quantile.%d&quot;</span></span>)</span>
       </span>
       </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">percentiles</dt><dd class="cmt"><p>Number of percentiles to compute.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Name format for the percentiles.
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">quantiles</dt><dd class="cmt"><p>Number of quantiles to compute.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Name format for the quantiles. Usage of a <code>%d</code> in the name
+                 will be substituded with percentile index.
 </p></dd></dl></div>
     </li></ol>
             </div>
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.reduce.Percentiles.T" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.reduce.Quantiles.T" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="T=Map[Double,Long]"></a>
       <a id="T:T"></a>
       <h4 class="signature">
@@ -113,7 +114,7 @@
         <span class="name">T</span><span class="result"> = <span class="extype" name="scala.collection.immutable.Map">Map</span>[<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Type of the state being reduced (aggregated).</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state being reduced (aggregated).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Percentiles">Percentiles</a> → <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd></dl></div>
+      <p class="shortcomment cmt">Type of the state being reduced (aggregated).</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state being reduced (aggregated).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Quantiles">Quantiles</a> → <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Prepare.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="V=Any"></a>
       <a id="V:V"></a>
@@ -126,7 +127,7 @@
         <span class="name">V</span><span class="result"> = <span class="extype" name="scala.Any">Any</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> → <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></dd></dl></div>
+      <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> → <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -289,19 +290,21 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Percentiles#name" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="name:Option[String]"></a>
-      <a id="name:Option[String]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Quantiles#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="name:String"></a>
+      <a id="name:String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">name</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">name</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Name format for the percentiles.</p>
+      <p class="shortcomment cmt">Name format for the quantiles.</p><div class="fullcomment"><div class="comment cmt"><p>Name format for the quantiles. Usage of a <code>%d</code> in the name
+                 will be substituded with percentile index.
+</p></div></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -341,21 +344,8 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Percentiles#percentiles" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="percentiles:Int"></a>
-      <a id="percentiles:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">percentiles</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Number of percentiles to compute.</p>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Percentiles#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepare[P&lt;:au.com.cba.omnia.grimlock.position.Position,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slc:au.com.cba.omnia.grimlock.Slice[P,D],pos:P,con:au.com.cba.omnia.grimlock.content.Content):Percentiles.this.T"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Quantiles#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="prepare[P&lt;:au.com.cba.omnia.grimlock.position.Position,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slc:au.com.cba.omnia.grimlock.Slice[P,D],pos:P,con:au.com.cba.omnia.grimlock.content.Content):Quantiles.this.T"></a>
       <a id="prepare[P&lt;:Position,D&lt;:Dimension](Slice[P,D],P,Content):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -363,14 +353,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepare</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slc">slc: <a href="../Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Percentiles.prepare.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Percentiles.prepare.D">D</span>]</span>, <span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Percentiles.prepare.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Percentiles.T">T</a></span>
+        <span class="name">prepare</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slc">slc: <a href="../Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Quantiles.prepare.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Quantiles.prepare.D">D</span>]</span>, <span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Quantiles.prepare.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Quantiles.T">T</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
 </p></div><dl class="paramcmts block"><dt class="param">slc</dt><dd class="cmt"><p>Encapsulates the dimension(s) over with to reduce.</p></dd><dt class="param">pos</dt><dd class="cmt"><p>Original position corresponding to the cell. That is, it's the
            position prior to <code>slc.selected</code> being applied.</p></dd><dt class="param">con</dt><dd class="cmt"><p>Content which is to be reduced.
 </p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Percentiles">Percentiles</a> → <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a></dd></dl></div>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Quantiles">Quantiles</a> → <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Prepare#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="prepare[P&lt;:au.com.cba.omnia.grimlock.position.Position,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slc:au.com.cba.omnia.grimlock.Slice[P,D],pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:Prepare.this.V):Prepare.this.T"></a>
       <a id="prepare[P&lt;:Position,D&lt;:Dimension](Slice[P,D],P,Content,V):T"></a>
@@ -380,7 +370,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepare</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slc">slc: <a href="../Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare.prepare.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare.prepare.D">D</span>]</span>, <span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare.prepare.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Percentiles.V">V</a></span>)</span><span class="result">: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Percentiles.T">T</a></span>
+        <span class="name">prepare</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slc">slc: <a href="../Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare.prepare.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare.prepare.D">D</span>]</span>, <span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare.prepare.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Quantiles.V">V</a></span>)</span><span class="result">: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Quantiles.T">T</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
@@ -388,8 +378,8 @@
            position prior to <code>slc.selected</code> being applied.</p></dd><dt class="param">con</dt><dd class="cmt"><p>Content which is to be reduced.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for preparation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> → <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Percentiles#presentMultiple" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="presentMultiple[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,t:Percentiles.this.T):Option[Either[(P#M,au.com.cba.omnia.grimlock.content.Content),List[(P#M,au.com.cba.omnia.grimlock.content.Content)]]]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Quantiles#presentMultiple" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="presentMultiple[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,t:Quantiles.this.T):Option[Either[(P#M,au.com.cba.omnia.grimlock.content.Content),List[(P#M,au.com.cba.omnia.grimlock.content.Content)]]]"></a>
       <a id="presentMultiple[P&lt;:PositionwithExpandablePosition](P,T):Option[Either[(presentMultiple.P.M,Content),List[(presentMultiple.P.M,Content)]]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -397,23 +387,36 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">presentMultiple</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Percentiles.presentMultiple.P">P</span></span>, <span name="t">t: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Percentiles.T">T</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Either">Either</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">presentMultiple.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>), <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">presentMultiple.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]]</span>
+        <span class="name">presentMultiple</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Quantiles.presentMultiple.P">P</span></span>, <span name="t">t: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Quantiles.T">T</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Either">Either</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">presentMultiple.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>), <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">presentMultiple.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Present the reduced content](s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content](s).
+      <p class="shortcomment cmt">Present the reduced content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content(s).
 </p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by
            <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell tuple where the position is creating by appending
         to <code>pos</code> (<code>append</code> method) and the content(s) is derived from <code>t</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Percentiles">Percentiles</a> → <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow reducers to be
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Quantiles">Quantiles</a> → <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow reducers to be
       selective in what content they apply to. For example, computing
       the mean is undefined for categorical variables. The reducer now
       has the option to return <code>None</code>. This in turn permits an external
       API, for simple cases, where the user need not know about the
       types of variables of their data.
 </p></span></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Percentiles#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="reduce(lt:Percentiles.this.T,rt:Percentiles.this.T):Percentiles.this.T"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Quantiles#quantiles" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="quantiles:Int"></a>
+      <a id="quantiles:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">quantiles</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Number of quantiles to compute.</p>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Quantiles#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reduce(lt:Quantiles.this.T,rt:Quantiles.this.T):Quantiles.this.T"></a>
       <a id="reduce(T,T):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -421,13 +424,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">reduce</span><span class="params">(<span name="lt">lt: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Percentiles.T">T</a></span>, <span name="rt">rt: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Percentiles.T">T</a></span>)</span><span class="result">: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Percentiles.T">T</a></span>
+        <span class="name">reduce</span><span class="params">(<span name="lt">lt: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Quantiles.T">T</a></span>, <span name="rt">rt: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Quantiles.T">T</a></span>)</span><span class="result">: <a href="#T=Map[Double,Long]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Quantiles.T">T</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Standard reduce method.</p><div class="fullcomment"><div class="comment cmt"><p>Standard reduce method.
 </p></div><dl class="paramcmts block"><dt class="param">lt</dt><dd class="cmt"><p>Left state to reduce.</p></dd><dt class="param">rt</dt><dd class="cmt"><p>Right state to reduce.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Reduced state
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Percentiles">Percentiles</a> → <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd></dl></div>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Quantiles">Quantiles</a> → <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
