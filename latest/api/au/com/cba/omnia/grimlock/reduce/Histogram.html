@@ -35,14 +35,14 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Histogram</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">Histogram</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a> with <a href="ElementCounts.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">ElementCounts</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Compute histogram.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7109d9d505619b3099b2f5de0be5e99ff135b49a//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/08e49aa228d64ae4ba73f42c437c89d738eeda88//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a>, <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>, <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a>, <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a>, <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="ElementCounts.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">ElementCounts</a>, <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a>, <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>, <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a>, <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a>, <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -60,7 +60,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.reduce.Histogram"><span>Histogram</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.StrictReduce"><span>StrictReduce</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple"><span>PresentMultiple</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Prepare"><span>Prepare</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue"><span>PrepareWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Reducer"><span>Reducer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.reduce.Histogram"><span>Histogram</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.ElementCounts"><span>ElementCounts</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.StrictReduce"><span>StrictReduce</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple"><span>PresentMultiple</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Prepare"><span>Prepare</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue"><span>PrepareWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Reducer"><span>Reducer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -82,7 +82,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.reduce.Histogram.T" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.reduce.ElementCounts.T" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="T=Option[Map[String,Long]]"></a>
       <a id="T:T"></a>
       <h4 class="signature">
@@ -94,7 +94,7 @@
         <span class="name">T</span><span class="result"> = <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Long">Long</span>]]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Type of the state being reduced (aggregated).</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state being reduced (aggregated).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram">Histogram</a> → <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd></dl></div>
+      <p class="shortcomment cmt">Type of the state being reduced (aggregated).</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state being reduced (aggregated).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ElementCounts.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">ElementCounts</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Prepare.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="V=Any"></a>
       <a id="V:V"></a>
@@ -180,20 +180,20 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#all" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="all:Boolean"></a>
-      <a id="all:Boolean"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#all" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="all:Option[au.com.cba.omnia.grimlock.Type]"></a>
+      <a id="all:Option[Type]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">all</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">all</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../Type.html" class="extype" name="au.com.cba.omnia.grimlock.Type">Type</a>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Indicator if histogram should apply to all data, or only
-                  to categorical variables.</p>
+      <p class="shortcomment cmt">Optional variable type that the content must adhere to.</p><div class="fullcomment"><div class="comment cmt"><p>Optional variable type that the content must adhere to.
+                  to categorical variables.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram">Histogram</a> → <a href="ElementCounts.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">ElementCounts</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -258,6 +258,20 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#frequency" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="frequency:Boolean"></a>
+      <a id="frequency:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">frequency</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Indicator if categories should be returned as frequency or
+                  as distribution.</p>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -271,8 +285,8 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#invalid" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="invalid(t:Histogram.this.T):Boolean"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.ElementCounts#invalid" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="invalid(t:ElementCounts.this.T):Boolean"></a>
       <a id="invalid(T):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -283,7 +297,7 @@
         <span class="name">invalid</span><span class="params">(<span name="t">t: <a href="#T=Option[Map[String,Long]]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Histogram.T">T</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram">Histogram</a> → <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ElementCounts.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">ElementCounts</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -351,8 +365,8 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepare[P&lt;:au.com.cba.omnia.grimlock.position.Position,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slc:au.com.cba.omnia.grimlock.Slice[P,D],pos:P,con:au.com.cba.omnia.grimlock.content.Content):Histogram.this.T"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.ElementCounts#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="prepare[P&lt;:au.com.cba.omnia.grimlock.position.Position,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slc:au.com.cba.omnia.grimlock.Slice[P,D],pos:P,con:au.com.cba.omnia.grimlock.content.Content):ElementCounts.this.T"></a>
       <a id="prepare[P&lt;:Position,D&lt;:Dimension](Slice[P,D],P,Content):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -360,14 +374,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepare</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slc">slc: <a href="../Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.prepare.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.prepare.D">D</span>]</span>, <span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.prepare.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <a href="#T=Option[Map[String,Long]]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Histogram.T">T</a></span>
+        <span class="name">prepare</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slc">slc: <a href="../Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts.prepare.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts.prepare.D">D</span>]</span>, <span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts.prepare.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <a href="#T=Option[Map[String,Long]]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Histogram.T">T</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
 </p></div><dl class="paramcmts block"><dt class="param">slc</dt><dd class="cmt"><p>Encapsulates the dimension(s) over with to reduce.</p></dd><dt class="param">pos</dt><dd class="cmt"><p>Original position corresponding to the cell. That is, it's the
            position prior to <code>slc.selected</code> being applied.</p></dd><dt class="param">con</dt><dd class="cmt"><p>Content which is to be reduced.
 </p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram">Histogram</a> → <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a></dd></dl></div>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ElementCounts.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">ElementCounts</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Prepare#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="prepare[P&lt;:au.com.cba.omnia.grimlock.position.Position,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slc:au.com.cba.omnia.grimlock.Slice[P,D],pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:Prepare.this.V):Prepare.this.T"></a>
       <a id="prepare[P&lt;:Position,D&lt;:Dimension](Slice[P,D],P,Content,V):T"></a>
@@ -425,8 +439,8 @@
 </p></div><dl class="paramcmts block"><dt class="param">lt</dt><dd class="cmt"><p>Left state to reduce.</p></dd><dt class="param">rt</dt><dd class="cmt"><p>Right state to reduce.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Reduced state
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#reduction" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="reduction(lt:Histogram.this.T,rt:Histogram.this.T):Histogram.this.T"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.ElementCounts#reduction" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reduction(lt:ElementCounts.this.T,rt:ElementCounts.this.T):ElementCounts.this.T"></a>
       <a id="reduction(T,T):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -437,7 +451,7 @@
         <span class="name">reduction</span><span class="params">(<span name="lt">lt: <a href="#T=Option[Map[String,Long]]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Histogram.T">T</a></span>, <span name="rt">rt: <a href="#T=Option[Map[String,Long]]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Histogram.T">T</a></span>)</span><span class="result">: <a href="#T=Option[Map[String,Long]]" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.Histogram.T">T</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram">Histogram</a> → <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ElementCounts.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">ElementCounts</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#separator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="separator:String"></a>
       <a id="separator:String"></a>
@@ -566,6 +580,8 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">
+              <h3>Inherited from <a href="ElementCounts.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">ElementCounts</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">
               <h3>Inherited from <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">

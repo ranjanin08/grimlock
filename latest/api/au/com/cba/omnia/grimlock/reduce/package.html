@@ -137,8 +137,34 @@
       </span>
       </h4>
       <p class="comment cmt">Base trait for reducers that return a <code>Double</code> value.</p>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.ElementCounts" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ElementCountsextendsAnyRef"></a>
+      <a id="ElementCounts:ElementCounts"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ElementCounts.html"><span class="name">ElementCounts</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Trait for reducers that require counts of all unique elements.</p>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EntropyextendsReducerwithPreparewithPresentSingleAndMultiplewithStrictReducewithElementCountswithProductwithSerializable"></a>
+      <a id="Entropy:Entropy"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Entropy.html"><span class="name">Entropy</span></a><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> with <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a> with <a href="ElementCounts.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">ElementCounts</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Compute entropy.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="HistogramextendsReducerwithPreparewithPresentMultiplewithStrictReducewithProductwithSerializable"></a>
+      <a id="HistogramextendsReducerwithPreparewithPresentMultiplewithStrictReducewithElementCountswithProductwithSerializable"></a>
       <a id="Histogram:Histogram"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -146,7 +172,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Histogram.html"><span class="name">Histogram</span></a><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Histogram.html"><span class="name">Histogram</span></a><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a> with <a href="ElementCounts.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.ElementCounts">ElementCounts</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Compute histogram.</p>
@@ -421,6 +447,19 @@ invalid (or unexpected) values.</p>
       </span>
       </h4>
       <p class="comment cmt">Companion object to <code>DistinctCount</code> reducer class.</p>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Entropy"></a>
+      <a id="Entropy:Entropy"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Entropy$.html"><span class="name">Entropy</span></a><span class="result"> extends <a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Companion object to <code>Entropy</code> reducer class.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Histogram"></a>
       <a id="Histogram:Histogram"></a>

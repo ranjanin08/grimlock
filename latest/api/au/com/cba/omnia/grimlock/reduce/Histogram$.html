@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>Histogram</code> reducer class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7109d9d505619b3099b2f5de0be5e99ff135b49a//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>Histogram</code> reducer class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/08e49aa228d64ae4ba73f42c437c89d738eeda88//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -170,18 +170,31 @@ are the (ordered) counts in each bin.
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#DefaultAll" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DefaultAll:Boolean"></a>
-      <a id="DefaultAll:Boolean"></a>
+      <a id="DefaultAll:Option[au.com.cba.omnia.grimlock.Type]"></a>
+      <a id="DefaultAll:Option[Type]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">DefaultAll</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">DefaultAll</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../Type.html" class="extype" name="au.com.cba.omnia.grimlock.Type">Type</a>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Default value for indicator whether to apply histogram to all data or not.</p>
+      <p class="shortcomment cmt">Default value for the variable type the content must adhere to.</p>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#DefaultFrequency" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DefaultFrequency:Boolean"></a>
+      <a id="DefaultFrequency:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">DefaultFrequency</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Default value for indicator whether to return frequency or density.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues#DefaultNaN" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="DefaultNaN:Boolean"></a>
       <a id="DefaultNaN:Boolean"></a>
@@ -221,70 +234,16 @@ are the (ordered) counts in each bin.
       </span>
       </h4>
       <p class="shortcomment cmt">Default indicator for strict handling or invalid values.</p><div class="fullcomment"><div class="comment cmt"><p>Default indicator for strict handling or invalid values.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#Entropy" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Entropy[V](name:V,nan:Boolean)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="Entropy[V](V,Boolean)(Valueable[V]):(ExpandablePosition,List[Long])⇒Option[(M,Content)]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">Entropy</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.Entropy.V">V</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.Entropy.V">V</span>]</span>)</span><span class="result">: (<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Returns the statistic for computing the entropy of categories (bins) of
-a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the entropy of categories (bins) of
-a histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction
-            failed (for example if only 1 bins is present).
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#FrequencyRatio" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="FrequencyRatio[V](name:V,nan:Boolean)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="FrequencyRatio[V](V,Boolean)(Valueable[V]):(ExpandablePosition,List[Long])⇒Option[(M,Content)]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">FrequencyRatio</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.FrequencyRatio.V">V</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.FrequencyRatio.V">V</span>]</span>)</span><span class="result">: (<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Returns the statistic for computing the frequency ratio (ratio of highest
-bin count over second highest) of categories (bins) of a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the frequency ratio (ratio of highest
-bin count over second highest) of categories (bins) of a histogram. This
-gives an indication on the skewness of the underlying distribution.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction
-            failed (for example if only 1 bins is present).
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#NumberOfCategories" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="NumberOfCategories[V](name:V)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="NumberOfCategories[V](V)(Valueable[V]):(ExpandablePosition,List[Long])⇒Option[(M,Content)]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">NumberOfCategories</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.NumberOfCategories.V">V</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.NumberOfCategories.V">V</span>]</span>)</span><span class="result">: (<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Returns the statistic for computing the number of categories (bins) of
-a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the number of categories (bins) of
-a histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.
-</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(name:String,statistics:List[(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]],strict:Boolean,all:Boolean,separator:String):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
-      <a id="apply(String,List[(ExpandablePosition,List[Long])⇒Option[(M,Content)]],Boolean,Boolean,String):ReducerwithPreparewithPresentMultiple"></a>
+      <a id="apply(name:String,statistics:List[(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]],strict:Boolean,all:Boolean,frequency:Boolean,separator:String):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
+      <a id="apply(String,List[(ExpandablePosition,List[Long])⇒Option[(M,Content)]],Boolean,Boolean,Boolean,String):ReducerwithPreparewithPresentMultiple"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="statistics">statistics: <span class="extype" name="scala.List">List</span>[(<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]</span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
+        <span class="name">apply</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="statistics">statistics: <span class="extype" name="scala.List">List</span>[(<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]</span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="frequency">frequency: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
@@ -293,18 +252,19 @@ a histogram.
                   content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
                   any non-numeric value fails the reduction. If not then
                   non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only
-                  to categorical variables.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
+                  to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency
+                  or as distribution.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(name:String,statistics:List[(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]],strict:Boolean,all:Boolean):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
-      <a id="apply(String,List[(ExpandablePosition,List[Long])⇒Option[(M,Content)]],Boolean,Boolean):ReducerwithPreparewithPresentMultiple"></a>
+      <a id="apply(name:String,statistics:List[(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]],strict:Boolean,all:Boolean,frequency:Boolean):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
+      <a id="apply(String,List[(ExpandablePosition,List[Long])⇒Option[(M,Content)]],Boolean,Boolean,Boolean):ReducerwithPreparewithPresentMultiple"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="statistics">statistics: <span class="extype" name="scala.List">List</span>[(<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]</span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
+        <span class="name">apply</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="statistics">statistics: <span class="extype" name="scala.List">List</span>[(<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]</span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="frequency">frequency: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
@@ -313,7 +273,8 @@ a histogram.
                   content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
                   any non-numeric value fails the reduction. If not then
                   non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only
-                  to categorical variables.
+                  to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency
+                  or as distribution.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(name:String,statistics:List[(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]],separator:String):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -350,15 +311,15 @@ a histogram.
                   content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(name:String,strict:Boolean,all:Boolean,separator:String):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
-      <a id="apply(String,Boolean,Boolean,String):ReducerwithPreparewithPresentMultiple"></a>
+      <a id="apply(name:String,strict:Boolean,all:Boolean,frequency:Boolean,separator:String):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
+      <a id="apply(String,Boolean,Boolean,Boolean,String):ReducerwithPreparewithPresentMultiple"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
+        <span class="name">apply</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="frequency">frequency: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
@@ -367,27 +328,29 @@ a histogram.
                  content.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
                  any non-numeric value fails the reduction. If not then
                  non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only
-                 to categorical variables.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
+                 to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency
+                 or as distribution.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(name:String,strict:Boolean,all:Boolean):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
-      <a id="apply(String,Boolean,Boolean):ReducerwithPreparewithPresentMultiple"></a>
+      <a id="apply(name:String,strict:Boolean,all:Boolean,frequency:Boolean):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
+      <a id="apply(String,Boolean,Boolean,Boolean):ReducerwithPreparewithPresentMultiple"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
+        <span class="name">apply</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="frequency">frequency: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
 </p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code>
-              for the string representations of the position, and the
-              content.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
-              any non-numeric value fails the reduction. If not then
-              non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only
-              to categorical variables.
+                 for the string representations of the position, and the
+                 content.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
+                 any non-numeric value fails the reduction. If not then
+                 non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only
+                 to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency
+                 or as distribution.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(name:String,separator:String):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -454,6 +417,24 @@ a histogram.
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#entropy" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="entropy[V](name:V,nan:Boolean)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
+      <a id="entropy[V](V,Boolean)(Valueable[V]):(ExpandablePosition,List[Long])⇒Option[(M,Content)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">entropy</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.entropy.V">V</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.entropy.V">V</span>]</span>)</span><span class="result">: (<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns the statistic for computing the entropy of categories (bins) of
+a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the entropy of categories (bins) of
+a histogram.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction
+            failed (for example if only 1 bins is present).
+</p></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -499,6 +480,25 @@ a histogram.
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#frequencyRatio" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="frequencyRatio[V](name:V,nan:Boolean)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
+      <a id="frequencyRatio[V](V,Boolean)(Valueable[V]):(ExpandablePosition,List[Long])⇒Option[(M,Content)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">frequencyRatio</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.frequencyRatio.V">V</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.frequencyRatio.V">V</span>]</span>)</span><span class="result">: (<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns the statistic for computing the frequency ratio (ratio of highest
+bin count over second highest) of categories (bins) of a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the frequency ratio (ratio of highest
+bin count over second highest) of categories (bins) of a histogram. This
+gives an indication on the skewness of the underlying distribution.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction
+            failed (for example if only 1 bins is present).
+</p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -577,6 +577,23 @@ a histogram.
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#numberOfCategories" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="numberOfCategories[V](name:V)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
+      <a id="numberOfCategories[V](V)(Valueable[V]):(ExpandablePosition,List[Long])⇒Option[(M,Content)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">numberOfCategories</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.numberOfCategories.V">V</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.numberOfCategories.V">V</span>]</span>)</span><span class="result">: (<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns the statistic for computing the number of categories (bins) of
+a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the number of categories (bins) of
+a histogram.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.
+</p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
