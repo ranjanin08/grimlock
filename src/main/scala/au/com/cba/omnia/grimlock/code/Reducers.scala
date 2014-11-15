@@ -65,7 +65,7 @@ trait DefaultReducerValues {
 /**
  * Count reductions.
  *
- * @param name Optional coordinate name for the count values. Name must be
+ * @param name Optional coordinate name for the count value. Name must be
  *             provided when presenting `PresentMultiple`.
  */
 case class Count private (name: Option[Value]) extends Reducer with Prepare
@@ -930,49 +930,29 @@ object Sum extends DefaultReducerValues {
   }
 }
 
-/**
- * Compute histogram.
- *
- * @param strict     Indicates if strict data handling is required. If so then
- *                   any non-numeric value fails the reduction. If not then
- *                   non-numeric values are silently ignored.
- * @param all        Indicator if histogram should apply to all data, or only
- *                   to categorical variables.
- * @param statistics List of statistics to compute on the histogram.
- * @param name       Name pattern for the histogram bin names. Use `%[12]$``s`
- *                   for the string representations of the position, and the
- *                   content.
- * @param separator  The separator used in `pos.toShortString`.
- */
-// TODO: Add option to limit maximum number of categories
-case class Histogram private (strict: Boolean, all: Boolean,
-  statistics: List[Histogram.Statistic], name: String, separator: String)
-  extends Reducer with Prepare with PresentMultiple with StrictReduce {
+/** Trait for reducers that require counts of all unique elements. */
+trait ElementCounts { self: Reducer with Prepare with StrictReduce =>
+  /** Type of the state being reduced (aggregated). */
   type T = Option[Map[String, Long]]
 
+  /** Optional variable type that the content must adhere to. */
+  val all: Option[Type]
+
+  /**
+   * Prepare for reduction.
+   *
+   * @param slc Encapsulates the dimension(s) over with to reduce.
+   * @param pos Original position corresponding to the cell. That is, it's the
+   *            position prior to `slc.selected` being applied.
+   * @param con Content which is to be reduced.
+   *
+   * @return State to reduce.
+   */
   def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P,
     con: Content): T = {
-    (all || con.schema.kind.isSpecialisationOf(Categorical)) match {
+    (all.isEmpty || con.schema.kind.isSpecialisationOf(all.get)) match {
       case true => Some(Map(con.value.toShortString -> 1))
       case false => None
-    }
-  }
-
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
-    t.map {
-      case m =>
-        val stats = statistics.map {
-          case f =>
-            f(pos, m.values.toList.sorted).asInstanceOf[Option[Cell[P#M]]]
-        }.flatten
-        val vals = (m.map {
-          case (k, v) =>
-            (pos.append(name.format(pos.toShortString(separator), k)),
-              Content(DiscreteSchema[Codex.LongCodex](), v))
-        }).toList
-
-        Right(stats ++ vals)
     }
   }
 
@@ -989,15 +969,61 @@ case class Histogram private (strict: Boolean, all: Boolean,
   }
 }
 
+/**
+ * Compute histogram.
+ *
+ * @param strict     Indicates if strict data handling is required. If so then
+ *                   any non-numeric value fails the reduction. If not then
+ *                   non-numeric values are silently ignored.
+ * @param all        Optional variable type that the content must adhere to.
+ *                   to categorical variables.
+ * @param frequency  Indicator if categories should be returned as frequency or
+ *                   as distribution.
+ * @param statistics List of statistics to compute on the histogram.
+ * @param name       Name pattern for the histogram bin names. Use `%[12]$``s`
+ *                   for the string representations of the position, and the
+ *                   content.
+ * @param separator  The separator used in `pos.toShortString`.
+ */
+// TODO: Add option to limit maximum number of categories
+case class Histogram private (strict: Boolean, all: Option[Type],
+  frequency: Boolean, statistics: List[Histogram.Statistic], name: String,
+  separator: String) extends Reducer with Prepare with PresentMultiple
+  with StrictReduce with ElementCounts {
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P,
+    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
+    t.map {
+      case m =>
+        val counts = m.values.toList.sorted
+        val stats = statistics.map {
+          case f =>
+            f(pos, counts).asInstanceOf[Option[Cell[P#M]]]
+        }.flatten
+        val vals = (m.map {
+          case (k, v) =>
+            (pos.append(name.format(pos.toShortString(separator), k)),
+              frequency match {
+                case true => Content(DiscreteSchema[Codex.LongCodex](), v)
+                case false => Content(ContinuousSchema[Codex.DoubleCodex](),
+                  v.toDouble / counts.sum)
+              })
+        }).toList
+
+        Right(stats ++ vals)
+    }
+  }
+}
+
 /** Companion object to `Histogram` reducer class. */
 object Histogram extends DefaultReducerValues {
-  /**
-   * Default value for indicator whether to apply histogram to all data or not.
-   */
-  val DefaultAll: Boolean = false
+  /** Default value for the variable type the content must adhere to. */
+  val DefaultAll: Option[Type] = Some(Categorical)
 
   /** Default separator to use in `pos.toShortString`. */
   val DefaultSeparator: String = "|"
+
+  /** Default value for indicator whether to return frequency or density. */
+  val DefaultFrequency: Boolean = true
 
   /**
    * Signature for functions that compute a statistic on a histogram. The
@@ -1013,7 +1039,8 @@ object Histogram extends DefaultReducerValues {
    *             the string representations of the position, and the content.
    */
   def apply(name: String): Reducer with Prepare with PresentMultiple = {
-    Histogram(DefaultStrict, DefaultAll, List(), name, DefaultSeparator)
+    Histogram(DefaultStrict, DefaultAll, DefaultFrequency, List(), name,
+      DefaultSeparator)
   }
 
   /**
@@ -1026,24 +1053,8 @@ object Histogram extends DefaultReducerValues {
    */
   def apply(name: String, separator: String): Reducer with Prepare
     with PresentMultiple = {
-    Histogram(DefaultStrict, DefaultAll, List(), name, separator)
-  }
-
-  /**
-   * Compute histogram.
-   *
-   * @param name   Name pattern for the histogram bin names. Use `%[12]$``s`
-   *               for the string representations of the position, and the
-   *               content.
-   * @param strict Indicates if strict data handling is required. If so then
-   *               any non-numeric value fails the reduction. If not then
-   *               non-numeric values are silently ignored.
-   * @param all    Indicator if histogram should apply to all data, or only
-   *               to categorical variables.
-   */
-  def apply(name: String, strict: Boolean, all: Boolean): Reducer with Prepare
-    with PresentMultiple = {
-    Histogram(strict, all, List(), name, DefaultSeparator)
+    Histogram(DefaultStrict, DefaultAll, DefaultFrequency, List(), name,
+      separator)
   }
 
   /**
@@ -1057,11 +1068,34 @@ object Histogram extends DefaultReducerValues {
    *                  non-numeric values are silently ignored.
    * @param all       Indicator if histogram should apply to all data, or only
    *                  to categorical variables.
-   * @param separator The separator used in `pos.toShortString`.
+   * @param frequency Indicator if categories should be returned as frequency
+   *                  or as distribution.
    */
   def apply(name: String, strict: Boolean, all: Boolean,
+    frequency: Boolean): Reducer with Prepare with PresentMultiple = {
+    Histogram(strict, if (all) None else DefaultAll, frequency, List(), name,
+      DefaultSeparator)
+  }
+
+  /**
+   * Compute histogram.
+   *
+   * @param name      Name pattern for the histogram bin names. Use `%[12]$``s`
+   *                  for the string representations of the position, and the
+   *                  content.
+   * @param strict    Indicates if strict data handling is required. If so then
+   *                  any non-numeric value fails the reduction. If not then
+   *                  non-numeric values are silently ignored.
+   * @param all       Indicator if histogram should apply to all data, or only
+   *                  to categorical variables.
+   * @param frequency Indicator if categories should be returned as frequency
+   *                  or as distribution.
+   * @param separator The separator used in `pos.toShortString`.
+   */
+  def apply(name: String, strict: Boolean, all: Boolean, frequency: Boolean,
     separator: String): Reducer with Prepare with PresentMultiple = {
-    Histogram(strict, all, List(), name, separator)
+    Histogram(strict, if (all) None else DefaultAll, frequency, List(), name,
+      separator)
   }
 
   /**
@@ -1074,7 +1108,8 @@ object Histogram extends DefaultReducerValues {
    */
   def apply(name: String, statistics: List[Statistic]): Reducer with Prepare
     with PresentMultiple = {
-    Histogram(DefaultStrict, DefaultAll, statistics, name, DefaultSeparator)
+    Histogram(DefaultStrict, DefaultAll, DefaultFrequency, statistics, name,
+      DefaultSeparator)
   }
 
   /**
@@ -1088,7 +1123,8 @@ object Histogram extends DefaultReducerValues {
    */
   def apply(name: String, statistics: List[Statistic],
     separator: String): Reducer with Prepare with PresentMultiple = {
-    Histogram(DefaultStrict, DefaultAll, statistics, name, separator)
+    Histogram(DefaultStrict, DefaultAll, DefaultFrequency, statistics, name,
+      separator)
   }
 
   /**
@@ -1103,10 +1139,14 @@ object Histogram extends DefaultReducerValues {
    *                   non-numeric values are silently ignored.
    * @param all        Indicator if histogram should apply to all data, or only
    *                   to categorical variables.
+   * @param frequency  Indicator if categories should be returned as frequency
+   *                   or as distribution.
    */
   def apply(name: String, statistics: List[Statistic], strict: Boolean,
-    all: Boolean): Reducer with Prepare with PresentMultiple = {
-    Histogram(strict, all, statistics, name, DefaultSeparator)
+    all: Boolean, frequency: Boolean): Reducer with Prepare
+    with PresentMultiple = {
+    Histogram(strict, if (all) None else DefaultAll, frequency, statistics,
+      name, DefaultSeparator)
   }
 
   /**
@@ -1121,12 +1161,15 @@ object Histogram extends DefaultReducerValues {
    *                   non-numeric values are silently ignored.
    * @param all        Indicator if histogram should apply to all data, or only
    *                   to categorical variables.
+   * @param frequency  Indicator if categories should be returned as frequency
+   *                   or as distribution.
    * @param separator  The separator used in `pos.toShortString`.
    */
   def apply(name: String, statistics: List[Statistic], strict: Boolean,
-    all: Boolean, separator: String): Reducer with Prepare
+    all: Boolean, frequency: Boolean, separator: String): Reducer with Prepare
       with PresentMultiple = {
-    Histogram(strict, all, statistics, name, separator)
+    Histogram(strict, if (all) None else DefaultAll, frequency, statistics,
+      name, separator)
   }
 
   /**
@@ -1135,7 +1178,7 @@ object Histogram extends DefaultReducerValues {
    *
    * @param name Name to use for the coordinate of the statistic.
    */
-  def NumberOfCategories[V](name: V)(implicit ev: Valueable[V]): Statistic = {
+  def numberOfCategories[V](name: V)(implicit ev: Valueable[V]): Statistic = {
     val n = ev.convert(name)
 
     (pos: ExpandablePosition, counts: List[Long]) =>
@@ -1151,26 +1194,15 @@ object Histogram extends DefaultReducerValues {
    * @param nan  Indicator if 'NaN' string should be output if the reduction
    *             failed (for example if only 1 bins is present).
    */
-  def Entropy[V](name: V, nan: Boolean = false)(
+  def entropy[V](name: V, nan: Boolean = false)(
     implicit ev: Valueable[V]): Statistic = {
     val n = ev.convert(name)
 
-    (pos: ExpandablePosition, counts: List[Long]) =>
-      (counts.size > 1, nan) match {
-        case (true, _) =>
-          val entropy = -counts.map {
-            case cnt =>
-              val f = cnt.toDouble / counts.sum
-              f * (math.log(f) / math.log(2))
-          }.sum
-
-          Some((pos.append(n),
-            Content(ContinuousSchema[Codex.DoubleCodex](), entropy)))
-        case (false, true) =>
-          Some((pos.append(n),
-            Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN)))
-        case (false, false) => None
+    (pos: ExpandablePosition, counts: List[Long]) => {
+      Entropy.compute(counts, nan, false, Entropy.DefaultLog()).map {
+        case con => (pos.append(n), con)
       }
+    }
   }
 
   /**
@@ -1182,22 +1214,19 @@ object Histogram extends DefaultReducerValues {
    * @param nan  Indicator if 'NaN' string should be output if the reduction
    *             failed (for example if only 1 bins is present).
    */
-  def FrequencyRatio[V](name: V, nan: Boolean = false)(
+  def frequencyRatio[V](name: V, nan: Boolean = false)(
     implicit ev: Valueable[V]): Statistic = {
     val n = ev.convert(name)
 
     (pos: ExpandablePosition, counts: List[Long]) =>
-      (counts.size > 1, nan) match {
+      ((counts.size > 1, nan) match {
         case (true, _) =>
-          val ratio = counts.last.toDouble / counts(counts.length - 2)
-
-          Some((pos.append(n),
-            Content(ContinuousSchema[Codex.DoubleCodex](), ratio)))
+          Some(Content(ContinuousSchema[Codex.DoubleCodex](),
+            counts.last.toDouble / counts(counts.length - 2)))
         case (false, true) =>
-          Some((pos.append(n),
-            Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN)))
+          Some(Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN))
         case (false, false) => None
-      }
+      }).map { case con => (pos.append(n), con) }
   }
 }
 
@@ -1356,7 +1385,7 @@ case class WeightedSum(dim: Dimension) extends Reducer with PrepareWithValue
 /**
  * Distinct count reductions.
  *
- * @param name Optional coordinate name for the count values. Name must be
+ * @param name Optional coordinate name for the count value. Name must be
  *             provided when presenting `PresentMultiple`.
  */
 // TODO: Test this
@@ -1438,6 +1467,177 @@ case class Quantiles(quantiles: Int, name: String = "quantile.%d")
       case (quant, idx) => (pos.append(name.format(idx + 1)),
         Content(ContinuousSchema[Codex.DoubleCodex](), quant))
       }).toList))
+  }
+}
+
+/**
+ * Compute entropy.
+ *
+ * @param strict     Indicates if strict data handling is required. If so then
+ *                   any non-numeric value fails the reduction. If not then
+ *                   non-numeric values are silently ignored.
+ * @param nan        Indicator if 'NaN' string should be output if the reduction
+ *                   failed (for example due to non-numeric data).
+ * @param negate     Indicator if negative entropy should be returned.
+ * @param name       Optional coordinate name for the entropy value. Name must
+ *                   be provided when presenting `PresentMultiple`.
+ * @param log        The log function to use.
+ */
+case class Entropy private (strict: Boolean, nan: Boolean, negate: Boolean,
+  name: Option[Value], log: (Double) => Double) extends Reducer with Prepare
+  with PresentSingleAndMultiple with StrictReduce with ElementCounts {
+
+  val all = None
+
+  protected def content(t: T): Option[Content] = {
+    t.flatMap {
+      case m => Entropy.compute(m.values.toList.sorted, nan, negate, log)
+    }
+  }
+}
+
+/** Companion object to `Entropy` reducer class. */
+object Entropy extends DefaultReducerValues {
+  /** Default value for negative entropy. */
+  val DefaultNegate: Boolean = false
+
+  /** Default logarithm (base 2). */
+  def DefaultLog(): (Double) => Double = {
+    (x: Double) => math.log(x) / math.log(2)
+  }
+
+  /**
+   * Compute entropy from value counts.
+   *
+   * @param counts     Counts of each of a variable's values.
+   * @param nan        Indicator if 'NaN' string should be output if the
+   *                   reduction failed (for example due to non-numeric data).
+   * @param negate     Indicator if negative entropy should be returned.
+   * @param log        The log function to use.
+   */
+  def compute(counts: List[Long], nan: Boolean,
+    negate: Boolean, log: (Double) => Double): Option[Content] = {
+    (counts.size > 1, nan) match {
+      case (true, _) =>
+        val entropy = -counts.map {
+          case cnt =>
+            val f = cnt.toDouble / counts.sum
+            f * log(f)
+        }.sum
+
+        Some(Content(ContinuousSchema[Codex.DoubleCodex](),
+          if (negate) -entropy else entropy))
+      case (false, true) =>
+        Some(Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN))
+      case (false, false) => None
+    }
+  }
+
+  /** Compute entropy. */
+  def apply(): Reducer with Prepare with PresentSingle = {
+    Entropy(DefaultStrict, DefaultNaN, DefaultNegate, None, DefaultLog())
+  }
+
+  /**
+   * Compute entropy.
+   *
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   * @param negate Indicator if negative entropy should be returned.
+   */
+  def apply(strict: Boolean, nan: Boolean, negate: Boolean): Reducer
+    with Prepare with PresentSingle = {
+    Entropy(strict, nan, negate, None, DefaultLog())
+  }
+
+  /**
+   * Compute entropy.
+   *
+   * @param log The log function to use.
+   */
+  def apply(log: (Double) => Double): Reducer with Prepare
+    with PresentSingle = {
+    Entropy(DefaultStrict, DefaultNaN, DefaultNegate, None, log)
+  }
+
+  /**
+   * Compute entropy.
+   *
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   * @param negate Indicator if negative entropy should be returned.
+   * @param log    The log function to use.
+   */
+  def apply(strict: Boolean, nan: Boolean, negate: Boolean,
+    log: (Double) => Double): Reducer with Prepare with PresentSingle = {
+    Entropy(strict, nan, negate, None, log)
+  }
+
+  /**
+   * Compute entropy.
+   *
+   * @param name Coordinate name for the entropy value. Name must be provided
+   *             when presenting `PresentMultiple`.
+   */
+  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Entropy(DefaultStrict, DefaultNaN, DefaultNegate, Some(ev.convert(name)),
+      DefaultLog)
+  }
+
+  /**
+   * Compute entropy.
+   *
+   * @param name   Coordinate name for the entropy value. Name must be provided
+   *               when presenting `PresentMultiple`.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   * @param negate Indicator if negative entropy should be returned.
+   */
+  def apply[V](name: V, strict: Boolean, nan: Boolean, negate: Boolean)(
+    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    Entropy(strict, nan, negate, Some(ev.convert(name)), DefaultLog)
+  }
+
+  /**
+   * Compute entropy.
+   *
+   * @param name Coordinate name for the entropy value. Name must be provided
+   *             when presenting `PresentMultiple`.
+   * @param log  The log function to use.
+   */
+  def apply[V](name: V, log: (Double) => Double)(
+    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    Entropy(DefaultStrict, DefaultNaN, DefaultNegate, Some(ev.convert(name)),
+      log)
+  }
+
+  /**
+   * Compute entropy.
+   *
+   * @param name   Coordinate name for the entropy value. Name must be provided
+   *               when presenting `PresentMultiple`.
+   * @param strict Indicates if strict data handling is required. If so then
+   *               any non-numeric value fails the reduction. If not then
+   *               non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction
+   *               failed (for example due to non-numeric data).
+   * @param negate Indicator if negative entropy should be returned.
+   * @param log    The log function to use.
+   */
+  def apply[V](name: V, strict: Boolean, nan: Boolean, negate: Boolean,
+    log: (Double) => Double)(implicit ev: Valueable[V]): Reducer with Prepare
+    with PresentMultiple = {
+    Entropy(strict, nan, negate, Some(ev.convert(name)), log)
   }
 }
 

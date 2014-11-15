@@ -115,9 +115,9 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
     Min("min"),
     Max("max"),
     MaxAbs("max.abs"),
-    Histogram("%1$s=%2$s", List(Histogram.NumberOfCategories("num.cat"),
-                                Histogram.Entropy("entropy"),
-                                Histogram.FrequencyRatio("freq.ratio"))))
+    Histogram("%1$s=%2$s", List(Histogram.numberOfCategories("num.cat"),
+                                Histogram.entropy("entropy"),
+                                Histogram.frequencyRatio("freq.ratio"))))
 
   val stats = parts
     .get("train")
@@ -248,7 +248,8 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Compute histogram over the label values.
   val histogram = labels
-    .reduceAndExpand(Along(First), Histogram("%2$s", strict=true, all=true))
+    .reduceAndExpand(Along(First),
+      Histogram("%2$s", strict=true, all=true, frequency=true))
 
   // Compute the total number of labels and store result in a Map.
   val sum = labels

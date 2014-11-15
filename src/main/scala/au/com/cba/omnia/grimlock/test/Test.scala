@@ -679,3 +679,10 @@ class Test24(args: Args) extends Job(args) {
     .persist("./tmp/pws3.out")
 }
 
+class Test25(args: Args) extends Job(args) {
+
+  read2D("mutualInputfile.txt")
+    .mutualInformation(Over(Second))
+    .persist("./tmp/mi.out")
+}
+
