@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Position for 5 dimensional data.
 </p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>Coordinate for the first dimension.</p></dd><dt class="param">second</dt><dd class="cmt"><p>Coordinate for the second dimension.</p></dd><dt class="param">third</dt><dd class="cmt"><p>Coordinate for the third dimension.</p></dd><dt class="param">fourth</dt><dd class="cmt"><p>Coordinate for the fourth dimension.</p></dd><dt class="param">fifth</dt><dd class="cmt"><p>Coordinate for the fifth dimension.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/08e49aa228d64ae4ba73f42c437c89d738eeda88//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6d63ace5166db165082624c9e3e8bee4ad6b1487//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ReduceablePosition">ReduceablePosition</a>, <a href="ModifyablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ModifyablePosition">ModifyablePosition</a>, <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -151,7 +151,7 @@
         <span class="name">S</span><span class="result"> = <a href="" class="extype" name="au.com.cba.omnia.grimlock.position.Position5D">Position5D</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Type for positions of same number of dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Type for positions of same number of dimensions.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.Position5D">Position5D</a> → <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd></dl></div>
+      <p class="shortcomment cmt">Type for positions of same number of dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Type for positions of same number of dimensions.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.Position5D">Position5D</a> → <a href="ModifyablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ModifyablePosition">ModifyablePosition</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -451,24 +451,6 @@
         <code>separator</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ReduceablePosition">ReduceablePosition</a></dd><dt>Note</dt><dd><span class="cmt"><p><code>dim</code> and <code>into</code> must not be the same.
 </p></span></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.position.ModifyablePosition#merge" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="merge(that:au.com.cba.omnia.grimlock.position.Position,pattern:String):ModifyablePosition.this.S"></a>
-      <a id="merge(Position,String):S"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">merge</span><span class="params">(<span name="that">that: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>, <span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;%sx%s&quot;</span></span>)</span><span class="result">: <a href="#S=au.com.cba.omnia.grimlock.position.Position5D" class="extmbr" name="au.com.cba.omnia.grimlock.position.Position5D.S">S</a></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Merge two positions
-</p><div class="fullcomment"><div class="comment cmt"><p>Merge two positions
-</p></div><dl class="paramcmts block"><dt class="param">that</dt><dd class="cmt"><p>The position to merge with.</p></dd><dt class="param">pattern</dt><dd class="cmt"><p>The pattern for the merge position's name.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A position of with the coordinates named according to the pattern.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ModifyablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ModifyablePosition">ModifyablePosition</a></dd><dt>Note</dt><dd><span class="cmt"><p>The size of <code>that</code> must be the same as this object.
-</p></span>, <span class="cmt"><p>The short string name of the coordinates is used in <code>pattern</code>.</p></span></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
