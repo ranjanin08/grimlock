@@ -15,8 +15,37 @@
 package au.com.cba.omnia.grimlock.pairwise
 
 import au.com.cba.omnia.grimlock._
+import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
+
+trait Comparer {
+  def check(l: Position, r: Position): Boolean
+}
+
+case object All extends Comparer {
+  def check(l: Position, r: Position): Boolean = true
+}
+
+case object Diagonal extends Comparer {
+  def check(l: Position, r: Position): Boolean = l.compare(r) == 0
+}
+
+case object Upper extends Comparer {
+  def check(l: Position, r: Position): Boolean = r.compare(l) > 0
+}
+
+case object UpperDiagonal extends Comparer {
+  def check(l: Position, r: Position): Boolean = r.compare(l) >= 0
+}
+
+case object Lower extends Comparer {
+  def check(l: Position, r: Position): Boolean = l.compare(r) > 0
+}
+
+case object LowerDiagonal extends Comparer {
+  def check(l: Position, r: Position): Boolean = l.compare(r) >= 0
+}
 
 /** Base trait for pairwise operations. */
 trait Operator
@@ -26,23 +55,30 @@ trait Compute extends ComputeWithValue { self: Operator =>
   type V = Any
 
   def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slice: Slice[P, D], left: Cell[P], right: Cell[P], ext: V) = {
-    compute(slice, left, right)
+    slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
+    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R,
+      ext: V): Option[Cell[rem.M]] = {
+    compute(slice, leftPos, leftCon, rightPos, rightCon, rem)
   }
 
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param slice Encapsulates the dimension(s) along which to compute.
-   * @param left  The left cell to compute with.
-   * @param right The right cell to compute with.
+   * @param slice    Encapsulates the dimension(s) along which to compute.
+   * @param leftPos  The selected left cell position to compute for.
+   * @param leftCon  The contents of the left cell position to compute with.
+   * @param rightPos The selected right cell position to compute for.
+   * @param rightCon The contents of the right cell position to compute with.
+   * @param rem      The remaining coordinates.
    *
    * @note The return value is an `Option` to allow, for example, upper
    *       or lower triangular matrices to be returned (this can be done by
-   *       comparing the approriate coordinates)
+   *       comparing the selected coordinates)
    */
   def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slice: Slice[P, D], left: Cell[P], right: Cell[P]): Option[Cell[P#S]]
+    slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
+    rightPos: Slice[P, D]#S, rightCon: Content,
+      rem: Slice[P, D]#R): Option[Cell[rem.M]]
 }
 
 /** Base trait for computing pairwise values with a user provided value. */
@@ -53,17 +89,22 @@ trait ComputeWithValue { self: Operator =>
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param slice Encapsulates the dimension(s) along which to compute.
-   * @param left  The left cell to compute with.
-   * @param right The right cell to compute with.
-   * @param ext   The user define the value.
+   * @param slice    Encapsulates the dimension(s) along which to compute.
+   * @param leftPos  The selected left cell position to compute for.
+   * @param leftCon  The contents of the left cell position to compute with.
+   * @param rightPos The selected right cell position to compute for.
+   * @param rightCon The contents of the right cell position to compute with.
+   * @param rem      The remaining coordinates.
+   * @param ext      The user define the value.
    *
    * @note The return value is an `Option` to allow, for example, upper
    *       or lower triangular matrices to be returned (this can be done by
-   *       comparing the approriate coordinates)
+   *       comparing the selected coordinates)
    */
   def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slice: Slice[P, D], left: Cell[P], right: Cell[P],
-    ext: V): Option[Cell[P#S]]
+    slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
+    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R,
+      ext: V): Option[Cell[rem.M]]
 }
 
+// TODO: Add listable versions

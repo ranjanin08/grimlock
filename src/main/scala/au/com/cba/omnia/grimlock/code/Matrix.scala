@@ -508,7 +508,7 @@ trait Matrix[P <: Position] {
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations
   // TODO: Add read/write[CSV|Hive|VW|LibSVM] operations
-  // TODO: Add (pairwise) distance operations
+  // TODO: Add (pairwise) distance operations (between two matrices)
   // TODO: Add statistics/dictionary into memory (from HDFS) operations
   // TODO: Is there a way not to use asInstanceOf[]?
 
@@ -753,20 +753,22 @@ trait ModifyableMatrix[P <: Position with ModifyablePosition] {
 
   private def pairwise[D <: Dimension](slice: Slice[P, D])(
     implicit ev: PosDimDep[P, D]) = {
-    val inverse = slice.inverse
     val wanted = names(slice).map { case (p, i) => p }
     val values = data
-      .groupBy { case (p, c) => (slice.selected(p), inverse.selected(p)) }
+      .groupBy { case (p, c) => (slice.selected(p), slice.remainder(p)) }
 
     wanted
       .cross(wanted)
-      .cross(names(inverse))
+      .cross(names(slice.inverse).asInstanceOf[TypedPipe[(slice.R, Long)]])
       .map { case ((l, r), (o, i)) => (l, r, o) }
       .groupBy { case (l, r, o) => (l, o) }
       .join(values)
       .groupBy { case (_, ((l, r, o), x)) => (r, o) }
       .join(values)
-      .map { case (_, ((_, (c, x)), y)) => (c, x, y) }
+      .map {
+        case (_, ((_, ((lp, rp, r), (_, lc))), (_, rc))) =>
+          ((lp, lc), (rp, rc), r)
+      }
   }
 
   /**
@@ -781,9 +783,12 @@ trait ModifyableMatrix[P <: Position with ModifyablePosition] {
    */
   def pairwise[D <: Dimension](slice: Slice[P, D],
     operator: Operator with Compute)(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P#S]] = {
+    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
     pairwise(slice)
-      .flatMap { case (c, x, y) => operator.compute(slice, x, y) }
+      .flatMap {
+        case ((lp, lc), (rp, rc), r) =>
+          operator.compute(slice, lp, lc, rp, rc, r)
+      }
   }
 
   /**
@@ -800,10 +805,11 @@ trait ModifyableMatrix[P <: Position with ModifyablePosition] {
    */
   def pairwiseWithValue[D <: Dimension, W](slice: Slice[P, D],
     operator: Operator with ComputeWithValue { type V >: W },
-    value: ValuePipe[W])(implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P#S]] = {
+    value: ValuePipe[W])(implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
     pairwise(slice)
       .flatMapWithValue(value) {
-        case ((c, x, y), vo) => operator.compute(slice, x, y, vo.get)
+        case (((lp, lc), (rp, rc), r), vo) =>
+          operator.compute(slice, lp, lc, rp, rc, r, vo.get)
       }
   }
 }
@@ -1257,67 +1263,25 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     data.map { case (p, c) => (p.permute(List(first, second)), c) }
   }
 
+  // TODO: Make this work on more than 2D matrices
   def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(
-    implicit ev: PosDimDep[Position2D, D]): TypedPipe[(Position1D, Content)] = {
-
-    case class Joint() extends Operator with Compute {
-      def compute[P <: Position with ModifyablePosition, D <: Dimension](
-        slice: Slice[P, D], left: Cell[P], right: Cell[P]): Option[Cell[P#S]] = {
-        val lp = left._1.get(Second).toShortString
-        val rp = right._1.get(Second).toShortString
-        val lv = left._2.value.toShortString
-        val rv = right._2.value.toShortString
-        val lo = left._1.get(First).toShortString
-
-        (lp.compare(rp) >= 0) match {
-          case true => None
-          case false => Some((Position2D(lp + "," + rp, lo).asInstanceOf[P#S],
-            Content(NominalSchema[Codex.StringCodex](), lv + "," + rv)))
-        }
-      }
-    }
-
-    case class Cross() extends Operator with Compute {
-      def compute[P <: Position with ModifyablePosition, D <: Dimension](
-        slice: Slice[P, D], left: Cell[P], right: Cell[P]): Option[Cell[P#S]] = {
-        val lp = left._1.get(First).toShortString
-        val rp = right._1.get(First).toShortString
-        val lv = left._2.value.asDouble.get
-        val rv = right._2.value.asDouble.get
-
-        (lp.compare(rp) >= 0) match {
-          case true => None
-          case false => Some((Position2D(lp + "," + rp, "cross").asInstanceOf[P#S],
-            Content(ContinuousSchema[Codex.DoubleCodex](), lv + rv)))
-        }
-      }
-    }
-
-    val entropy = data
-      .reduceAndExpand(Over(Second), Entropy("entropy"))
-      .pairwise(Over(First), Cross())
+    implicit ev: PosDimDep[Position2D, D]): TypedPipe[Cell[Position1D]] = {
+    val single = data
+      .reduceAndExpand(slice, Entropy("single"))
+      .pairwise(Over(First), Plus(name="%s,%s", comparer=Upper))
 
     val joint = data
-      .pairwise(Over(Second), Joint())
+      .pairwise(slice, Concatenate(name="%s,%s", comparer=Upper))
       .reduceAndExpand(Over(First),
         Entropy("joint", strict=true, nan=true, negate=true))
 
-    (entropy ++ joint)
+    (single ++ joint)
       .reduce(Over(First), Sum())
   }
 
+  // TODO: Make this work on more than 2D matrices
   def correlation[D <: Dimension](slice: Slice[Position2D, D])(
     implicit ev: PosDimDep[Position2D, D]): TypedPipe[Cell[Position1D]] = {
-    implicit def typedPipeSliceSMContent(
-      data: TypedPipe[Cell[slice.S#M]]): Matrix2D = {
-      new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
-    }
-
-    implicit def typedPipeSliceSContent(
-      data: TypedPipe[Cell[slice.S]]): Matrix1D = {
-      new Matrix1D(data.asInstanceOf[TypedPipe[Cell[Position1D]]])
-    }
-
     val mean = data
       .reduce(slice, Mean())
       .toMap(Over(First))
@@ -1328,14 +1292,14 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     val denom = centered
       .transform(Power(slice.dimension, 2))
       .reduce(slice, Sum())
-      .pairwise(Over(First), Multiply())
+      .pairwise(Over(First), Times())
       .transform(SquareRoot(First))
       .toMap(Over(First))
 
     centered
-      .pairwise(slice, Multiply())
-      .reduce(slice, Sum())
-      .transformWithValue(Divide(First), denom)
+      .pairwise(slice, Times())
+      .reduce(Over(First), Sum())
+      .transformWithValue(Fraction(First), denom)
   }
 
   /**
@@ -1615,6 +1579,19 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
       .write(new TextLine(file))
 
     data
+  }
+
+  protected implicit def typedPipeSlicePosition2DSContent[D <: Dimension](
+    data: TypedPipe[Cell[Slice[Position2D, D]#S]]): Matrix1D = {
+    new Matrix1D(data.asInstanceOf[TypedPipe[Cell[Position1D]]])
+  }
+  protected implicit def typedPipeSlicePosition2DSMContent[D <: Dimension](
+    data: TypedPipe[Cell[Slice[Position2D, D]#S#M]]): Matrix2D = {
+    new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
+  }
+  protected implicit def typedPipeSlicePosition2DRMContent[D <: Dimension](
+    data: TypedPipe[Cell[Slice[Position2D, D]#R#M]]): Matrix2D = {
+    new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
   }
 }
 

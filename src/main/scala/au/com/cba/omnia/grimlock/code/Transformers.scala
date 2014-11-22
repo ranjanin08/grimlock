@@ -806,6 +806,129 @@ object TfIdf {
 }
 
 /**
+ * Add a value.
+ *
+ * @param dim     Dimension for which to add.
+ * @param key     Optional key into the map `V` identifying the value to add.
+ * @param name    Optional pattern for the new name of the coordinate at `dim`.
+ *                Use `%[12]$``s` for the string representations of the
+ *                coordinate, and the content.
+ * @param inverse Indicator specifying order of add.
+ *
+ * @note Add is only applied to numerical variables.
+ */
+case class Add private (dim: Dimension, key: Option[Position1D],
+  name: Option[String], inverse: Boolean) extends Transformer
+  with PresentWithValue with PresentDouble {
+  type V = Map[Position1D, Content]
+
+  def present[P <: Position with ModifyablePosition](pos: P, con: Content,
+    ext: V) = {
+    present(dim, pos, con, ext, key, name, Some(Numerical),
+      (l: Double, r: Double) => l + r, inverse)
+  }
+}
+
+/** Companion object to the `Add` class defining constructors. */
+object Add {
+  /**
+   * Add a value.
+   *
+   * @param dim Dimension for which to add.
+   */
+  def apply(dim: Dimension): Add = {
+    Add(dim, None, None, false)
+  }
+
+  /**
+   * Add a value.
+   *
+   * @param dim  Dimension for which to add.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use
+   *             `%[12]$``s` for the string representations of the coordinate,
+   *             and the content.
+   */
+  def apply(dim: Dimension, name: String): Add = {
+    Add(dim, None, Some(name), false)
+  }
+
+  /**
+   * Add a value.
+   *
+   * @param dim Dimension for which to add.
+   * @param key Key into the map `V` identifying the value to add.
+   */
+  def apply[T](dim: Dimension, key: T)(
+    implicit ev: Positionable[T, Position1D]): Add = {
+    Add(dim, Some(ev.convert(key)), None, false)
+  }
+
+  /**
+   * Add a value.
+   *
+   * @param dim     Dimension for which to add.
+   * @param inverse Indicator specifying order of add.
+   */
+  def apply(dim: Dimension, inverse: Boolean): Add = {
+    Add(dim, None, None, inverse)
+  }
+
+  /**
+   * Add a value.
+   *
+   * @param dim  Dimension for which to add.
+   * @param key  Key into the map `V` identifying the value to add.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use
+   *             `%[12]$``s` for the string representations of the coordinate,
+   *             and the content.
+   */
+  def apply[T](dim: Dimension, key: T, name: String)(
+    implicit ev: Positionable[T, Position1D]): Add = {
+    Add(dim, Some(ev.convert(key)), Some(name), false)
+  }
+
+  /**
+   * Add a value.
+   *
+   * @param dim     Dimension for which to add.
+   * @param key     Key into the map `V` identifying the value to add.
+   * @param inverse Indicator specifying order of add.
+   */
+  def apply[T](dim: Dimension, key: T, inverse: Boolean)(
+    implicit ev: Positionable[T, Position1D]): Add = {
+    Add(dim, Some(ev.convert(key)), None, inverse)
+  }
+
+  /**
+   * Add a value.
+   *
+   * @param dim     Dimension for which to add.
+   * @param name    Pattern for the new name of the coordinate at `dim`. Use
+   *                `%[12]$``s` for the string representations of the
+   *                coordinate, and the content.
+   * @param inverse Indicator specifying order of add.
+   */
+  def apply(dim: Dimension, name: String, inverse: Boolean): Add = {
+    Add(dim, None, Some(name), inverse)
+  }
+
+  /**
+   * Add a value.
+   *
+   * @param dim     Dimension for which to add.
+   * @param key     Key into the map `V` identifying the value to add.
+   * @param name    Pattern for the new name of the coordinate at `dim`. Use
+   *                `%[12]$``s` for the string representations of the
+   *                coordinate, and the content.
+   * @param inverse Indicator specifying order of add.
+   */
+  def apply[T](dim: Dimension, key: T, name: String, inverse: Boolean)(
+    implicit ev: Positionable[T, Position1D]): Add = {
+    Add(dim, Some(ev.convert(key)), Some(name), inverse)
+  }
+}
+
+/**
  * Subtract a value.
  *
  * @param dim     Dimension for which to subtract.
@@ -930,6 +1053,254 @@ object Subtract {
 }
 
 /**
+ * Multiply a value.
+ *
+ * @param dim     Dimension for which to multiply.
+ * @param key     Optional key into the map `V` identifying the value to
+ *                multiply by.
+ * @param name    Optional pattern for the new name of the coordinate at `dim`.
+ *                Use `%[12]$``s` for the string representations of the
+ *                coordinate, and the content.
+ * @param inverse Indicator specifying order of division.
+ *
+ * @note Multiply is only applied to numerical variables.
+ */
+case class Multiply private (dim: Dimension, key: Option[Position1D],
+  name: Option[String], inverse: Boolean) extends Transformer
+  with PresentWithValue with PresentDouble {
+  type V = Map[Position1D, Content]
+
+  def present[P <: Position with ModifyablePosition](pos: P, con: Content,
+    ext: V) = {
+    present(dim, pos, con, ext, key, name, Some(Numerical),
+      (l: Double, r: Double) => l * r, inverse)
+  }
+}
+
+/** Companion object to the `Multiply` class defining constructors. */
+object Multiply {
+  /**
+   * Multiply a value.
+   *
+   * @param dim Dimension for which to multiply.
+   */
+  def apply(dim: Dimension): Multiply = {
+    Multiply(dim, None, None, false)
+  }
+
+  /**
+   * Multiply a value.
+   *
+   * @param dim  Dimension for which to multiply.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use
+   *             `%[12]$``s` for the string representations of the
+   *             coordinate, and the content.
+   */
+  def apply(dim: Dimension, name: String): Multiply = {
+    Multiply(dim, None, Some(name), false)
+  }
+
+  /**
+   * Multiply a value.
+   *
+   * @param dim Dimension for which to multiply.
+   * @param key Key into the map `V` identifying the value to multiply by.
+   */
+  def apply[T](dim: Dimension, key: T)(
+    implicit ev: Positionable[T, Position1D]): Multiply = {
+    Multiply(dim, Some(ev.convert(key)), None, false)
+  }
+
+  /**
+   * Multiply a value.
+   *
+   * @param dim     Dimension for which to multiply.
+   * @param inverse Indicator specifying order of division.
+   */
+  def apply(dim: Dimension, inverse: Boolean): Multiply = {
+    Multiply(dim, None, None, inverse)
+  }
+
+  /**
+   * Multiply a value.
+   *
+   * @param dim  Dimension for which to multiply.
+   * @param key  Key into the map `V` identifying the value to multiply by.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use
+   *             `%[12]$``s` for the string representations of the
+   *             coordinate, and the content.
+   */
+  def apply[T](dim: Dimension, key: T, name: String)(
+    implicit ev: Positionable[T, Position1D]): Multiply = {
+    Multiply(dim, Some(ev.convert(key)), Some(name), false)
+  }
+
+  /**
+   * Multiply a value.
+   *
+   * @param dim     Dimension for which to multiply.
+   * @param key     Key into the map `V` identifying the value to multiply by.
+   * @param inverse Indicator specifying order of division.
+   */
+  def apply[T](dim: Dimension, key: T, inverse: Boolean)(
+    implicit ev: Positionable[T, Position1D]): Multiply = {
+    Multiply(dim, Some(ev.convert(key)), None, inverse)
+  }
+
+  /**
+   * Multiply a value.
+   *
+   * @param dim     Dimension for which to multiply.
+   * @param name    Pattern for the new name of the coordinate at `dim`. Use
+   *                `%[12]$``s` for the string representations of the
+   *                coordinate, and the content.
+   * @param inverse Indicator specifying order of division.
+   */
+  def apply(dim: Dimension, name: String, inverse: Boolean): Multiply = {
+    Multiply(dim, None, Some(name), inverse)
+  }
+
+  /**
+   * Multiply a value.
+   *
+   * @param dim     Dimension for which to multiply.
+   * @param key     Key into the map `V` identifying the value to multiply by.
+   * @param name    Pattern for the new name of the coordinate at `dim`. Use
+   *                `%[12]$``s` for the string representations of the
+   *                coordinate, and the content.
+   * @param inverse Indicator specifying order of division.
+   */
+  def apply[T](dim: Dimension, key: T, name: String, inverse: Boolean)(
+    implicit ev: Positionable[T, Position1D]): Multiply = {
+    Multiply(dim, Some(ev.convert(key)), Some(name), inverse)
+  }
+}
+
+/**
+ * Divide a value.
+ *
+ * @param dim     Dimension for which to divide.
+ * @param key     Optional key into the map `V` identifying the value to
+ *                divide by.
+ * @param name    Optional pattern for the new name of the coordinate at `dim`.
+ *                Use `%[12]$``s` for the string representations of the
+ *                coordinate, and the content.
+ * @param inverse Indicator specifying order of division.
+ *
+ * @note Fraction is only applied to numerical variables.
+ */
+case class Fraction private (dim: Dimension, key: Option[Position1D],
+  name: Option[String], inverse: Boolean) extends Transformer
+  with PresentWithValue with PresentDouble {
+  type V = Map[Position1D, Content]
+
+  def present[P <: Position with ModifyablePosition](pos: P, con: Content,
+    ext: V) = {
+    present(dim, pos, con, ext, key, name, Some(Numerical),
+      (l: Double, r: Double) => l / r, inverse)
+  }
+}
+
+/** Companion object to the `Fraction` class defining constructors. */
+object Fraction {
+  /**
+   * Divide a value.
+   *
+   * @param dim Dimension for which to divide.
+   */
+  def apply(dim: Dimension): Fraction = {
+    Fraction(dim, None, None, false)
+  }
+
+  /**
+   * Divide a value.
+   *
+   * @param dim  Dimension for which to divide.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use
+   *             `%[12]$``s` for the string representations of the
+   *             coordinate, and the content.
+   */
+  def apply(dim: Dimension, name: String): Fraction = {
+    Fraction(dim, None, Some(name), false)
+  }
+
+  /**
+   * Divide a value.
+   *
+   * @param dim Dimension for which to divide.
+   * @param key Key into the map `V` identifying the value to divide by.
+   */
+  def apply[T](dim: Dimension, key: T)(
+    implicit ev: Positionable[T, Position1D]): Fraction = {
+    Fraction(dim, Some(ev.convert(key)), None, false)
+  }
+
+  /**
+   * Divide a value.
+   *
+   * @param dim     Dimension for which to divide.
+   * @param inverse Indicator specifying order of division.
+   */
+  def apply(dim: Dimension, inverse: Boolean): Fraction = {
+    Fraction(dim, None, None, inverse)
+  }
+
+  /**
+   * Divide a value.
+   *
+   * @param dim  Dimension for which to divide.
+   * @param key  Key into the map `V` identifying the value to divide by.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use
+   *             `%[12]$``s` for the string representations of the
+   *             coordinate, and the content.
+   */
+  def apply[T](dim: Dimension, key: T, name: String)(
+    implicit ev: Positionable[T, Position1D]): Fraction = {
+    Fraction(dim, Some(ev.convert(key)), Some(name), false)
+  }
+
+  /**
+   * Divide a value.
+   *
+   * @param dim     Dimension for which to divide.
+   * @param key     Key into the map `V` identifying the value to divide by.
+   * @param inverse Indicator specifying order of division.
+   */
+  def apply[T](dim: Dimension, key: T, inverse: Boolean)(
+    implicit ev: Positionable[T, Position1D]): Fraction = {
+    Fraction(dim, Some(ev.convert(key)), None, inverse)
+  }
+
+  /**
+   * Divide a value.
+   *
+   * @param dim     Dimension for which to divide.
+   * @param name    Pattern for the new name of the coordinate at `dim`. Use
+   *                `%[12]$``s` for the string representations of the
+   *                coordinate, and the content.
+   * @param inverse Indicator specifying order of division.
+   */
+  def apply(dim: Dimension, name: String, inverse: Boolean): Fraction = {
+    Fraction(dim, None, Some(name), inverse)
+  }
+
+  /**
+   * Divide a value.
+   *
+   * @param dim     Dimension for which to divide.
+   * @param key     Key into the map `V` identifying the value to divide by.
+   * @param name    Pattern for the new name of the coordinate at `dim`. Use
+   *                `%[12]$``s` for the string representations of the
+   *                coordinate, and the content.
+   * @param inverse Indicator specifying order of division.
+   */
+  def apply[T](dim: Dimension, key: T, name: String, inverse: Boolean)(
+    implicit ev: Positionable[T, Position1D]): Fraction = {
+    Fraction(dim, Some(ev.convert(key)), Some(name), inverse)
+  }
+}
+
+/**
  * Raise value to a power.
  *
  * @param dim   Dimension for which to raise to a power.
@@ -1011,130 +1382,6 @@ object SquareRoot {
    */
   def apply(dim: Dimension, name: String): SquareRoot = {
     SquareRoot(dim, Some(name))
-  }
-}
-
-/**
- * Divide a value.
- *
- * @param dim     Dimension for which to divide.
- * @param key     Optional key into the map `V` identifying the value to
- *                divide by.
- * @param name    Optional pattern for the new name of the coordinate at `dim`.
- *                Use `%[12]$``s` for the string representations of the
- *                coordinate, and the content.
- * @param inverse Indicator specifying order of division.
- *
- * @note Divide is only applied to numerical variables.
- */
-case class Divide private (dim: Dimension, key: Option[Position1D],
-  name: Option[String], inverse: Boolean) extends Transformer
-  with PresentWithValue with PresentDouble {
-  type V = Map[Position1D, Content]
-
-  def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V) = {
-    present(dim, pos, con, ext, key, name, Some(Numerical),
-      (l: Double, r: Double) => l / r, inverse)
-  }
-}
-
-/** Companion object to the `Divide` class defining constructors. */
-object Divide {
-  /**
-   * Divide a value.
-   *
-   * @param dim Dimension for which to divide.
-   */
-  def apply(dim: Dimension): Divide = {
-    Divide(dim, None, None, false)
-  }
-
-  /**
-   * Divide a value.
-   *
-   * @param dim  Dimension for which to divide.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use
-   *             `%[12]$``s` for the string representations of the
-   *             coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): Divide = {
-    Divide(dim, None, Some(name), false)
-  }
-
-  /**
-   * Divide a value.
-   *
-   * @param dim Dimension for which to divide.
-   * @param key Key into the map `V` identifying the value to divide by.
-   */
-  def apply[T](dim: Dimension, key: T)(
-    implicit ev: Positionable[T, Position1D]): Divide = {
-    Divide(dim, Some(ev.convert(key)), None, false)
-  }
-
-  /**
-   * Divide a value.
-   *
-   * @param dim     Dimension for which to divide.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply(dim: Dimension, inverse: Boolean): Divide = {
-    Divide(dim, None, None, inverse)
-  }
-
-  /**
-   * Divide a value.
-   *
-   * @param dim  Dimension for which to divide.
-   * @param key  Key into the map `V` identifying the value to divide by.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use
-   *             `%[12]$``s` for the string representations of the
-   *             coordinate, and the content.
-   */
-  def apply[T](dim: Dimension, key: T, name: String)(
-    implicit ev: Positionable[T, Position1D]): Divide = {
-    Divide(dim, Some(ev.convert(key)), Some(name), false)
-  }
-
-  /**
-   * Divide a value.
-   *
-   * @param dim     Dimension for which to divide.
-   * @param key     Key into the map `V` identifying the value to divide by.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply[T](dim: Dimension, key: T, inverse: Boolean)(
-    implicit ev: Positionable[T, Position1D]): Divide = {
-    Divide(dim, Some(ev.convert(key)), None, inverse)
-  }
-
-  /**
-   * Divide a value.
-   *
-   * @param dim     Dimension for which to divide.
-   * @param name    Pattern for the new name of the coordinate at `dim`. Use
-   *                `%[12]$``s` for the string representations of the
-   *                coordinate, and the content.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply(dim: Dimension, name: String, inverse: Boolean): Divide = {
-    Divide(dim, None, Some(name), inverse)
-  }
-
-  /**
-   * Divide a value.
-   *
-   * @param dim     Dimension for which to divide.
-   * @param key     Key into the map `V` identifying the value to divide by.
-   * @param name    Pattern for the new name of the coordinate at `dim`. Use
-   *                `%[12]$``s` for the string representations of the
-   *                coordinate, and the content.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply[T](dim: Dimension, key: T, name: String, inverse: Boolean)(
-    implicit ev: Positionable[T, Position1D]): Divide = {
-    Divide(dim, Some(ev.convert(key)), Some(name), inverse)
   }
 }
 

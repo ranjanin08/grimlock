@@ -21,16 +21,72 @@ import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
-case class Multiply() extends Operator with Compute {
+trait DoubleOperator { self: Operator with Compute =>
+  val name: String
+  val separator: String
+  val inverse: Boolean
+  val comparer: Comparer
+
   def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slice: Slice[P, D], left: Cell[P], right: Cell[P]): Option[Cell[P#S]] = {
-    (slice.selected(left._1).compare(slice.selected(right._1)) > 0,
-      left._2.value.asDouble, right._2.value.asDouble) match {
+    slice: Slice[P, D], lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S,
+      rc: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
+    val coordinate = name.format(lp.toShortString(separator),
+      rp.toShortString(separator))
+
+    (comparer.check(lp, rp), lc.value.asDouble, rc.value.asDouble) match {
         case (true, Some(l), Some(r)) =>
-          Some((left._1.merge(right._1, "(%s*%s)"),
-            Content(ContinuousSchema[Codex.DoubleCodex](), l * r)))
+          Some((rem.prepend(coordinate),
+            Content(ContinuousSchema[Codex.DoubleCodex](),
+              if (inverse) compute(r, l) else compute(l, r))))
         case _ => None
       }
+  }
+
+  protected def compute(l: Double, r: Double): Double
+}
+
+case class Plus(name: String = "(%s+%s)", separator: String = "|",
+  comparer: Comparer = Lower) extends Operator with Compute
+  with DoubleOperator {
+  val inverse: Boolean = false
+  protected def compute(l: Double, r: Double) = l + r
+}
+
+case class Minus(name: String = "(%s-%s)", separator: String = "|",
+  inverse: Boolean = false, comparer: Comparer = Lower) extends Operator
+  with Compute with DoubleOperator {
+  protected def compute(l: Double, r: Double) = l - r
+}
+
+case class Times(name: String = "(%s*%s)", separator: String = "|",
+  comparer: Comparer = Lower) extends Operator with Compute
+  with DoubleOperator {
+  val inverse: Boolean = false
+  protected def compute(l: Double, r: Double) = l * r
+}
+
+case class Divide(name: String = "(%s/%s)", separator: String = "|",
+  inverse: Boolean = false, comparer: Comparer = Lower) extends Operator
+  with Compute with DoubleOperator {
+  protected def compute(l: Double, r: Double) = l / r
+}
+
+case class Concatenate(name: String = "(%s,%s)", value: String = "%s,%s",
+  separator: String = "|", inverse: Boolean = false,
+  comparer: Comparer = Lower) extends Operator with Compute {
+  def compute[P <: Position with ModifyablePosition, D <: Dimension](
+    slice: Slice[P, D], lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S,
+      rc: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
+    val coordinate = name.format(lp.toShortString(separator),
+      rp.toShortString(separator))
+    val content = value.format(lc.value.toShortString,
+      rc.value.toShortString)
+
+    comparer.check(lp, rp) match {
+      case true => Some((rem.prepend(coordinate),
+        Content(NominalSchema[Codex.StringCodex](), content)))
+      case false => None
+    }
   }
 }
 

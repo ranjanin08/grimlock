@@ -33,7 +33,7 @@ sealed trait Slice[P <: Position, D <: Dimension] {
    *
    * @note `S` and `R` together make `P`.
    */
-  type R <: Position
+  type R <: Position with ExpandablePosition
 
   /** Return type of `inverse` method.  */
   type I <: Slice[P, D]

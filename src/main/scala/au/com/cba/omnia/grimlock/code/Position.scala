@@ -25,9 +25,6 @@ import com.twitter.scalding.typed.IterablePipe
 
 /** Base trait for dealing with positions. */
 trait Position {
-  /** Type for positions of same number of dimensions. */
-  type S <: Position
-
   /** List of coordinates of the position. */
   val coordinates: List[Value]
 
@@ -86,6 +83,9 @@ trait Position {
  * dimensions the same).
  */
 trait ModifyablePosition { self: Position =>
+  /** Type for positions of same number of dimensions. */
+  type S <: Position
+
   /**
    * Update the coordinate at `dim` with `t`.
    *
@@ -111,27 +111,6 @@ trait ModifyablePosition { self: Position =>
    */
   def permute(order: List[Dimension]): S = {
     same(order.map { case d => coordinates(d.index) })
-  }
-
-  /**
-   * Merge two positions
-   *
-   * @param that    The position to merge with.
-   * @param pattern The pattern for the merge position's name.
-   *
-   * @return A position of with the coordinates named according to the pattern.
-   *
-   * @note The short string name of the coordinates is used in `pattern`.
-   * @note The size of `that` must be the same as this object.
-   */
-  def merge(that: Position, pattern: String = "%sx%s"): S = {
-    same(coordinates
-      .zip(that.coordinates)
-      .map {
-        case (l, r) if (l != r) =>
-          StringValue(pattern.format(l.toShortString, r.toShortString))
-        case (l, r) => l
-      })
   }
 
   /**
@@ -264,6 +243,17 @@ trait ExpandablePosition { self: Position =>
   type M <: Position with ReduceablePosition
 
   /**
+   * Prepend a coordinate to the position.
+   *
+   * @param t The coordinate to prepend.
+   *
+   * @return A new position with the coordinate `t` prepended.
+   */
+  def prepend[T: Valueable](t: T): M = {
+    more(implicitly[Valueable[T]].convert(t) +: coordinates)
+  }
+
+  /**
    * Append a coordinate to the position.
    *
    * @param t The coordinate to append.
@@ -283,7 +273,6 @@ trait ExpandablePosition { self: Position =>
  * @note Position0D exists so things like `names(Over(1))` work.
  */
 case class Position0D() extends Position with ExpandablePosition {
-  type S = Position0D
   type M = Position1D
 
   val coordinates = List()

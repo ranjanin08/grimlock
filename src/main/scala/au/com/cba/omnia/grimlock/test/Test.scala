@@ -637,14 +637,16 @@ class Test23(args : Args) extends Job(args) {
 
   case class DiffSquared() extends Operator with Compute {
     def compute[P <: Position with ModifyablePosition, D <: Dimension](
-      slc: Slice[P, D], x: Cell[P], y: Cell[P]): Option[Cell[P#S]] = {
-      val xc = x._1.get(Second).toShortString
-      val yc = y._1.get(Second).toShortString
+      slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
+      rightPos: Slice[P, D]#S, rightCon: Content,
+        rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
+      val xc = leftPos.toShortString("")
+      val yc = rightPos.toShortString("")
 
       (xc < yc && xc != yc) match {
-        case true => Some((x._1.set(Second, "(" + xc + "-" + yc + ")^2"),
+        case true => Some((rem.append("(" + xc + "-" + yc + ")^2"),
           Content(ContinuousSchema[Codex.DoubleCodex](),
-          math.pow(x._2.value.asLong.get - y._2.value.asLong.get, 2))))
+          math.pow(leftCon.value.asLong.get - rightCon.value.asLong.get, 2))))
         case false => None
       }
     }
