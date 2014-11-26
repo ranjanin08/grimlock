@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that modify a matrix.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix">ModifyableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6d63ace5166db165082624c9e3e8bee4ad6b1487//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that modify a matrix.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix">ModifyableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7951f899fae2f39ee2a2177427ce8d03ac62be84//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -394,44 +394,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.ModifyableMatrix#pairwise" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="pairwise[D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D],operator:au.com.cba.omnia.grimlock.pairwise.Operatorwithau.com.cba.omnia.grimlock.pairwise.Compute)(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.R#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="pairwise[D&lt;:Dimension](Slice[P,D],OperatorwithCompute)(PosDimDep[P,D]):TypedPipe[(Slice.R.M,Content)]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">pairwise</span><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.pairwise.D">D</span>]</span>, <span name="operator">operator: <a href="pairwise/Operator.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Operator">Operator</a> with <a href="pairwise/Compute.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Compute">Compute</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.pairwise.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">Slice.R.M</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Compute pairwise values between all pairs of values given a slice.</p><div class="fullcomment"><div class="comment cmt"><p>Compute pairwise values between all pairs of values given a slice.
-</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to compute
-                values.</p></dd><dt class="param">operator</dt><dd class="cmt"><p>The pairwise operator to apply.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> where the content
-        contains the pairwise value.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.ModifyableMatrix#pairwiseWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="pairwiseWithValue[D&lt;:au.com.cba.omnia.grimlock.position.Dimension,W](slice:au.com.cba.omnia.grimlock.Slice[P,D],operator:au.com.cba.omnia.grimlock.pairwise.Operatorwithau.com.cba.omnia.grimlock.pairwise.ComputeWithValue{typeV&gt;:W},value:com.twitter.scalding.ValuePipe[W])(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.R#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="pairwiseWithValue[D&lt;:Dimension,W](Slice[P,D],OperatorwithComputeWithValue{typeV&gt;:W},ValuePipe[W])(PosDimDep[P,D]):TypedPipe[(Slice.R.M,Content)]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">pairwiseWithValue</span><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.pairwiseWithValue.D">D</span>]</span>, <span name="operator">operator: <a href="pairwise/Operator.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Operator">Operator</a> with <a href="pairwise/ComputeWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.ComputeWithValue">ComputeWithValue</a> { type V &gt;: W }</span>, <span name="value">value: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.pairwiseWithValue.W">W</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.pairwiseWithValue.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">Slice.R.M</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Compute pairwise values between all pairs of values given a slice
-with a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Compute pairwise values between all pairs of values given a slice
-with a user supplied value.
-</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to compute
-                values.</p></dd><dt class="param">operator</dt><dd class="cmt"><p>The pairwise operator to apply.</p></dd><dt class="param">value</dt><dd class="cmt"><p>The user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> where the content
-        contains the pairwise value.
-</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ModifyableMatrix#rename" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="rename[D&lt;:au.com.cba.omnia.grimlock.position.Dimension](dim:D,renamer:(au.com.cba.omnia.grimlock.position.Dimension,P,au.com.cba.omnia.grimlock.content.Content)=&gt;P#S)(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(P#S,au.com.cba.omnia.grimlock.content.Content)]"></a>
       <a id="rename[D&lt;:Dimension](D,(Dimension,P,Content)⇒P.S)(PosDimDep[P,D]):TypedPipe[(P.S,Content)]"></a>
