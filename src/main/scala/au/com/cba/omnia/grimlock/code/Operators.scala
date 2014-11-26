@@ -27,9 +27,9 @@ trait DoubleOperator { self: Operator with Compute =>
   val inverse: Boolean
   val comparer: Comparer
 
-  def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slice: Slice[P, D], lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S,
-      rc: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
+    lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S, rc: Content,
+      rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
     val coordinate = name.format(lp.toShortString(separator),
       rp.toShortString(separator))
 
@@ -74,9 +74,9 @@ case class Divide(name: String = "(%s/%s)", separator: String = "|",
 case class Concatenate(name: String = "(%s,%s)", value: String = "%s,%s",
   separator: String = "|", inverse: Boolean = false,
   comparer: Comparer = Lower) extends Operator with Compute {
-  def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slice: Slice[P, D], lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S,
-      rc: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
+    lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S, rc: Content,
+      rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
     val coordinate = name.format(lp.toShortString(separator),
       rp.toShortString(separator))
     val content = value.format(lc.value.toShortString,

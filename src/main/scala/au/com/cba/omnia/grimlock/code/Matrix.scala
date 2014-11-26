@@ -516,6 +516,138 @@ trait Matrix[P <: Position] {
   //       element wise) - use Spark instead?
   // TODO: Add machine learning operations (SVD/bucketing/finding
   //       cliques/etc.) - use Spark instead?
+
+  private def pairwise[D <: Dimension](slice: Slice[P, D])(
+    implicit ev: PosDimDep[P, D]) = {
+    val wanted = names(slice).map { case (p, i) => p }
+    val values = data
+      .groupBy { case (p, c) => (slice.selected(p), slice.remainder(p)) }
+
+    wanted
+      .cross(wanted)
+      .cross(names(slice.inverse).asInstanceOf[TypedPipe[(slice.R, Long)]])
+      .map { case ((l, r), (o, i)) => (l, r, o) }
+      .groupBy { case (l, r, o) => (l, o) }
+      .join(values)
+      .groupBy { case (_, ((l, r, o), x)) => (r, o) }
+      .join(values)
+      .map {
+        case (_, ((_, ((lp, rp, r), (_, lc))), (_, rc))) =>
+          ((lp, lc), (rp, rc), r)
+      }
+  }
+
+  /**
+   * Compute pairwise values between all pairs of values given a slice.
+   *
+   * @param slice    Encapsulates the dimension(s) along which to compute
+   *                 values.
+   * @param operator The pairwise operator to apply.
+   *
+   * @return A Scalding `TypedPipe[(Position.S, Content)]` where the content
+   *         contains the pairwise value.
+   */
+  def pairwise[D <: Dimension](slice: Slice[P, D],
+    operator: Operator with Compute)(
+    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
+    pairwise(slice)
+      .flatMap {
+        case ((lp, lc), (rp, rc), r) =>
+          operator.compute(slice, lp, lc, rp, rc, r)
+      }
+  }
+
+  /**
+   * Compute pairwise values between all pairs of values given a slice
+   * with a user supplied value.
+   *
+   * @param slice    Encapsulates the dimension(s) along which to compute
+   *                 values.
+   * @param operator The pairwise operator to apply.
+   * @param value    The user supplied value.
+   *
+   * @return A Scalding `TypedPipe[(Position.S, Content)]` where the content
+   *         contains the pairwise value.
+   */
+  def pairwiseWithValue[D <: Dimension, W](slice: Slice[P, D],
+    operator: Operator with ComputeWithValue { type V >: W },
+    value: ValuePipe[W])(
+    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
+    pairwise(slice)
+      .flatMapWithValue(value) {
+        case (((lp, lc), (rp, rc), r), vo) =>
+          operator.compute(slice, lp, lc, rp, rc, r, vo.get)
+      }
+  }
+
+  private def pairwiseBetween[D <: Dimension](slice: Slice[P, D],
+    that: Matrix[P])(implicit ev: PosDimDep[P, D]) = {
+    val thisWanted = names(slice).map { case (p, i) => p }
+    val thisValues = data
+      .groupBy { case (p, c) => (slice.selected(p), slice.remainder(p)) }
+
+    val thatWanted = that.names(slice).map { case (p, i) => p }
+    val thatValues = that.data
+      .groupBy { case (p, c) => (slice.selected(p), slice.remainder(p)) }
+
+    thisWanted
+      .cross(thatWanted)
+      .cross(names(slice.inverse).asInstanceOf[TypedPipe[(slice.R, Long)]])
+      .map { case ((l, r), (o, i)) => (l, r, o) }
+      .groupBy { case (l, r, o) => (l, o) }
+      .join(thisValues)
+      .groupBy { case (_, ((l, r, o), x)) => (r, o) }
+      .join(thatValues)
+      .map {
+        case (_, ((_, ((lp, rp, r), (_, lc))), (_, rc))) =>
+          ((lp, lc), (rp, rc), r)
+      }
+  }
+
+  /**
+   * Compute pairwise values between all values of this and that given a slice.
+   *
+   * @param slice    Encapsulates the dimension(s) along which to compute
+   *                 values.
+   * @param that     Other matrix to compute pairwise values with.
+   * @param operator The pairwise operator to apply.
+   *
+   * @return A Scalding `TypedPipe[(Position.S, Content)]` where the content
+   *         contains the pairwise value.
+   */
+  def pairwiseBetween[D <: Dimension](slice: Slice[P, D], that: Matrix[P],
+    operator: Operator with Compute)(
+    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
+    pairwiseBetween(slice, that)
+      .flatMap {
+        case ((lp, lc), (rp, rc), r) =>
+          operator.compute(slice, lp, lc, rp, rc, r)
+      }
+  }
+
+  /**
+   * Compute pairwise values between all values of this and that given a slice
+   * with a user supplied value.
+   *
+   * @param slice    Encapsulates the dimension(s) along which to compute
+   *                 values.
+   * @param that     Other matrix to compute pairwise values with.
+   * @param operator The pairwise operator to apply.
+   * @param value    The user supplied value.
+   *
+   * @return A Scalding `TypedPipe[(Position.S, Content)]` where the content
+   *         contains the pairwise value.
+   */
+  def pairwiseBetweenWithValue[D <: Dimension, W](slice: Slice[P, D],
+    that: Matrix[P], operator: Operator with ComputeWithValue { type V >: W },
+    value: ValuePipe[W])(
+    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
+    pairwiseBetween(slice, that)
+      .flatMapWithValue(value) {
+        case (((lp, lc), (rp, rc), r), vo) =>
+          operator.compute(slice, lp, lc, rp, rc, r, vo.get)
+      }
+  }
 }
 
 /** Define operations that modify a matrix. */
@@ -749,68 +881,6 @@ trait ModifyableMatrix[P <: Position with ModifyablePosition] {
     data.mapWithValue(value) {
       case ((p, c), vo) => (renamer(dim, p, c, vo.get), c)
     }
-  }
-
-  private def pairwise[D <: Dimension](slice: Slice[P, D])(
-    implicit ev: PosDimDep[P, D]) = {
-    val wanted = names(slice).map { case (p, i) => p }
-    val values = data
-      .groupBy { case (p, c) => (slice.selected(p), slice.remainder(p)) }
-
-    wanted
-      .cross(wanted)
-      .cross(names(slice.inverse).asInstanceOf[TypedPipe[(slice.R, Long)]])
-      .map { case ((l, r), (o, i)) => (l, r, o) }
-      .groupBy { case (l, r, o) => (l, o) }
-      .join(values)
-      .groupBy { case (_, ((l, r, o), x)) => (r, o) }
-      .join(values)
-      .map {
-        case (_, ((_, ((lp, rp, r), (_, lc))), (_, rc))) =>
-          ((lp, lc), (rp, rc), r)
-      }
-  }
-
-  /**
-   * Compute pairwise values between all pairs of values given a slice.
-   *
-   * @param slice    Encapsulates the dimension(s) along which to compute
-   *                 values.
-   * @param operator The pairwise operator to apply.
-   *
-   * @return A Scalding `TypedPipe[(Position.S, Content)]` where the content
-   *         contains the pairwise value.
-   */
-  def pairwise[D <: Dimension](slice: Slice[P, D],
-    operator: Operator with Compute)(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
-    pairwise(slice)
-      .flatMap {
-        case ((lp, lc), (rp, rc), r) =>
-          operator.compute(slice, lp, lc, rp, rc, r)
-      }
-  }
-
-  /**
-   * Compute pairwise values between all pairs of values given a slice
-   * with a user supplied value.
-   *
-   * @param slice    Encapsulates the dimension(s) along which to compute
-   *                 values.
-   * @param operator The pairwise operator to apply.
-   * @param value    The user supplied value.
-   *
-   * @return A Scalding `TypedPipe[(Position.S, Content)]` where the content
-   *         contains the pairwise value.
-   */
-  def pairwiseWithValue[D <: Dimension, W](slice: Slice[P, D],
-    operator: Operator with ComputeWithValue { type V >: W },
-    value: ValuePipe[W])(implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
-    pairwise(slice)
-      .flatMapWithValue(value) {
-        case (((lp, lc), (rp, rc), r), vo) =>
-          operator.compute(slice, lp, lc, rp, rc, r, vo.get)
-      }
   }
 }
 

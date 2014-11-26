@@ -54,10 +54,9 @@ trait Operator
 trait Compute extends ComputeWithValue { self: Operator =>
   type V = Any
 
-  def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R,
-      ext: V): Option[Cell[rem.M]] = {
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
+    leftPos: Slice[P, D]#S, leftCon: Content, rightPos: Slice[P, D]#S,
+      rightCon: Content, rem: Slice[P, D]#R, ext: V): Option[Cell[rem.M]] = {
     compute(slice, leftPos, leftCon, rightPos, rightCon, rem)
   }
 
@@ -75,10 +74,9 @@ trait Compute extends ComputeWithValue { self: Operator =>
    *       or lower triangular matrices to be returned (this can be done by
    *       comparing the selected coordinates)
    */
-  def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content,
-      rem: Slice[P, D]#R): Option[Cell[rem.M]]
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
+    leftPos: Slice[P, D]#S, leftCon: Content, rightPos: Slice[P, D]#S,
+      rightCon: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]]
 }
 
 /** Base trait for computing pairwise values with a user provided value. */
@@ -101,10 +99,10 @@ trait ComputeWithValue { self: Operator =>
    *       or lower triangular matrices to be returned (this can be done by
    *       comparing the selected coordinates)
    */
-  def compute[P <: Position with ModifyablePosition, D <: Dimension](
-    slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R,
-      ext: V): Option[Cell[rem.M]]
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
+    leftPos: Slice[P, D]#S, leftCon: Content, rightPos: Slice[P, D]#S,
+      rightCon: Content, rem: Slice[P, D]#R, ext: V): Option[Cell[rem.M]]
 }
 
 // TODO: Add listable versions
+

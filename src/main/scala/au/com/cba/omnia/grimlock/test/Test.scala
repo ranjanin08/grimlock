@@ -636,10 +636,9 @@ class Test23(args : Args) extends Job(args) {
   val data = read2D("somePairwise.txt")
 
   case class DiffSquared() extends Operator with Compute {
-    def compute[P <: Position with ModifyablePosition, D <: Dimension](
-      slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-      rightPos: Slice[P, D]#S, rightCon: Content,
-        rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
+    def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
+      leftPos: Slice[P, D]#S, leftCon: Content, rightPos: Slice[P, D]#S,
+        rightCon: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
       val xc = leftPos.toShortString("")
       val yc = rightPos.toShortString("")
 
@@ -686,5 +685,15 @@ class Test25(args: Args) extends Job(args) {
   read2D("mutualInputfile.txt")
     .mutualInformation(Over(Second))
     .persist("./tmp/mi.out")
+}
+
+class Test26(args: Args) extends Job(args) {
+
+  val left = read2D("algebraInputfile1.txt")
+  val right = read2D("algebraInputfile2.txt")
+
+  left
+    .pairwiseBetween(Over(First), right, Times(comparer=All))
+    .persist("./tmp/alg.out")
 }
 
