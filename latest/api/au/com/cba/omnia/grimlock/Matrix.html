@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[(Position, Content)]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7951f899fae2f39ee2a2177427ce8d03ac62be84//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/ece47f4c23f050aaa7dcb09825d9804262a5ef2a//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -893,6 +893,32 @@ match the predicate.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P)]' of the positions for which the content
         matches </code>predicate<code>.
 </code></p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.Matrix#writeDictionary" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeDictionary(names:com.twitter.scalding.TypedPipe[(au.com.cba.omnia.grimlock.position.Position1D,Long)],file:String,dictionary:String,separator:String,dim:au.com.cba.omnia.grimlock.position.Dimension)(implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.typed.Grouped[au.com.cba.omnia.grimlock.position.Position1D,(au.com.cba.omnia.grimlock.position.Position1D,Long)]"></a>
+      <a id="writeDictionary(TypedPipe[(Position1D,Long)],String,String,String,Dimension)(FlowDef,Mode):Grouped[Position1D,(Position1D,Long)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeDictionary</span><span class="params">(<span name="names">names: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <span class="extype" name="scala.Long">Long</span>)]</span>, <span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dictionary">dictionary: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dim">dim: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.typed.Grouped">Grouped</span>[<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, (<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <span class="extype" name="scala.Long">Long</span>)]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.Matrix#writeDictionary" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="writeDictionary(names:com.twitter.scalding.TypedPipe[(au.com.cba.omnia.grimlock.position.Position1D,Long)],file:String,dictionary:String,separator:String)(implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.typed.Grouped[au.com.cba.omnia.grimlock.position.Position1D,(au.com.cba.omnia.grimlock.position.Position1D,Long)]"></a>
+      <a id="writeDictionary(TypedPipe[(Position1D,Long)],String,String,String)(FlowDef,Mode):Grouped[Position1D,(Position1D,Long)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeDictionary</span><span class="params">(<span name="names">names: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <span class="extype" name="scala.Long">Long</span>)]</span>, <span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dictionary">dictionary: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.typed.Grouped">Grouped</span>[<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, (<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>, <span class="extype" name="scala.Long">Long</span>)]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li></ol>
             </div>
 
