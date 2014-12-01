@@ -16,7 +16,6 @@ package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.content.metadata.Dictionary._
 import au.com.cba.omnia.grimlock.derive._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix._
@@ -505,18 +504,6 @@ trait Matrix[P <: Position] {
     data
   }
 
-  // TODO: Add more compile-time type checking
-  // TODO: Add label join operations
-  // TODO: Add read/write[CSV|Hive|VW|LibSVM] operations
-  // TODO: Add (pairwise) distance operations (between two matrices)
-  // TODO: Add statistics/dictionary into memory (from HDFS) operations
-  // TODO: Is there a way not to use asInstanceOf[]?
-
-  // TODO: Add matrix algebra operations (add/sub/div/mul - traditional &
-  //       element wise) - use Spark instead?
-  // TODO: Add machine learning operations (SVD/bucketing/finding
-  //       cliques/etc.) - use Spark instead?
-
   private def pairwise[D <: Dimension](slice: Slice[P, D])(
     implicit ev: PosDimDep[P, D]) = {
     val wanted = names(slice).map { case (p, i) => p }
@@ -648,6 +635,40 @@ trait Matrix[P <: Position] {
           operator.compute(slice, lp, lc, rp, rc, r, vo.get)
       }
   }
+
+  protected def writeDictionary(names: TypedPipe[(Position1D, Long)],
+    file: String, dictionary: String, separator: String)(
+    implicit flow: FlowDef, mode: Mode) = {
+    val dict = names.groupBy { case (p, i) => p }
+
+    dict
+      .map { case (_, (p, i)) => p.toShortString(separator) + separator + i }
+      .toPipe('line)
+      .write(new TextLine(dictionary.format(file)))
+
+    dict
+  }
+
+  protected def writeDictionary(names: TypedPipe[(Position1D, Long)],
+    file: String, dictionary: String, separator: String,
+      dim: Dimension)(implicit flow: FlowDef, mode: Mode) = {
+    val dict = names.groupBy { case (p, j) => p }
+
+    dict
+      .map { case (_, (p, i)) => p.toShortString(separator) + separator + i }
+      .toPipe('line)
+      .write(new TextLine(dictionary.format(file, dim.index)))
+
+    dict
+  }
+
+  // TODO: Add more compile-time type checking
+  // TODO: Add label join operations
+  // TODO: Add read/write[CSV|Hive|VW|LibSVM] operations
+  // TODO: Add statistics/dictionary into memory (from HDFS) operations
+  // TODO: Is there a way not to use asInstanceOf[]?
+  // TODO: Add machine learning operations (SVD/bucketing/finding
+  //       cliques/etc.) - use Spark instead?
 }
 
 /** Define operations that modify a matrix. */
@@ -1093,12 +1114,33 @@ object Matrix {
    * `TypedPipe[(Position1D, Content)]`.
    *
    * @param file   The file to read from.
+   * @param schema The schema for decoding the data.
+   * @param first  The codex for decoding the first dimension.
+   */
+  def read1DWithSchema(file: String, schema: Schema,
+    first: Codex = StringCodex)(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position1D]] = {
+    (TypedPsv[(String, String)](file))
+      .flatMap {
+        case (e, v) =>
+          (schema.decode(v), first.decode(e)) match {
+            case (Some(con), Some(c1)) => Some((Position1D(c1), con))
+            case _ => None
+          }
+      }
+  }
+
+  /**
+   * Read column oriented, pipe separated data into a
+   * `TypedPipe[(Position1D, Content)]`.
+   *
+   * @param file   The file to read from.
    * @param dict   The dictionary describing the features in the data.
    * @param first  The codex for decoding the first dimension.
    */
-  def read1DWithDictionary[D <: Dimension](file: String, dict: Dictionary,
-    first: Codex = StringCodex)(implicit ev: PosDimDep[Position2D, D],
-      flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
+  def read1DWithDictionary(file: String, dict: Map[String, Schema],
+    first: Codex = StringCodex)(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position1D]] = {
     (TypedPsv[(String, String)](file))
       .flatMap {
         case (e, v) =>
@@ -1138,15 +1180,38 @@ object Matrix {
    * `TypedPipe[(Position2D, Content)]`.
    *
    * @param file   The file to read from.
+   * @param schema The schema for decoding the data.
+   * @param first  The codex for decoding the first dimension.
+   * @param second The codex for decoding the second dimension.
+   */
+  def read2DWithSchema(file: String, schema: Schema, first: Codex = StringCodex,
+    second: Codex = StringCodex)(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position2D]] = {
+    (TypedPsv[(String, String, String)](file))
+      .flatMap {
+        case (e, a, v) =>
+          (schema.decode(v), first.decode(e), second.decode(a)) match {
+            case (Some(con), Some(c1), Some(c2)) =>
+              Some((Position2D(c1, c2), con))
+            case _ => None
+          }
+      }
+  }
+
+  /**
+   * Read column oriented, pipe separated data into a
+   * `TypedPipe[(Position2D, Content)]`.
+   *
+   * @param file   The file to read from.
    * @param dict   The dictionary describing the features in the data.
    * @param dim    The dimension on which to apply the dictionary.
    * @param first  The codex for decoding the first dimension.
    * @param second The codex for decoding the second dimension.
    */
-  def read2DWithDictionary[D <: Dimension](file: String, dict: Dictionary,
-    dim: D = Second, first: Codex = StringCodex, second: Codex = StringCodex)(
-      implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
-      mode: Mode): TypedPipe[Cell[Position2D]] = {
+  def read2DWithDictionary[D <: Dimension](file: String,
+    dict: Map[String, Schema], dim: D = Second, first: Codex = StringCodex,
+    second: Codex = StringCodex)(implicit ev: PosDimDep[Position2D, D],
+      flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
     (TypedPsv[(String, String, String)](file))
       .flatMap {
         case (e, a, v) =>
@@ -1194,16 +1259,42 @@ object Matrix {
    * `TypedPipe[(Position3D, Content)]`.
    *
    * @param file   The file to read from.
+   * @param schema The schema for decoding the data.
+   * @param first  The codex for decoding the first dimension.
+   * @param second The codex for decoding the second dimension.
+   * @param third  The codex for decoding the third dimension.
+   */
+  def read3DWithSchema(file: String, schema: Schema, first: Codex = StringCodex,
+    second: Codex = StringCodex, third: Codex = DateCodex)(
+      implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
+    (TypedPsv[(String, String, String, String)](file))
+      .flatMap {
+        case (e, a, t, v) =>
+          (schema.decode(v), first.decode(e), second.decode(a),
+            third.decode(t)) match {
+            case (Some(con), Some(c1), Some(c2), Some(c3)) =>
+              Some((Position3D(c1, c2, c3), con))
+            case _ => None
+          }
+      }
+  }
+
+  /**
+   * Read column oriented, pipe separated data into a
+   * `TypedPipe[(Position3D, Content)]`.
+   *
+   * @param file   The file to read from.
    * @param dict   The dictionary describing the features in the data.
    * @param dim    The dimension on which to apply the dictionary.
    * @param first  The codex for decoding the first dimension.
    * @param second The codex for decoding the second dimension.
    * @param third  The codex for decoding the third dimension.
    */
-  def read3DWithDictionary[D <: Dimension](file: String, dict: Dictionary,
-    dim: D = Second, first: Codex = StringCodex, second: Codex = StringCodex,
-    third: Codex = DateCodex)(implicit ev: PosDimDep[Position3D, D],
-      flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
+  def read3DWithDictionary[D <: Dimension](file: String,
+    dict: Map[String, Schema], dim: D = Second, first: Codex = StringCodex,
+    second: Codex = StringCodex, third: Codex = DateCodex)(
+    implicit ev: PosDimDep[Position3D, D], flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position3D]] = {
     (TypedPsv[(String, String, String, String)](file))
       .flatMap {
         case (e, a, t, v) =>
@@ -1213,7 +1304,8 @@ object Matrix {
             case Third => dict(t)
           }
 
-          (s.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
+          (s.decode(v), first.decode(e), second.decode(a),
+            third.decode(t)) match {
             case (Some(con), Some(c1), Some(c2), Some(c3)) =>
               Some((Position3D(c1, c2, c3), con))
             case _ => None
@@ -1254,29 +1346,6 @@ object Matrix {
       }
   }
 
-  /**
-   * Read label data (instance id|date|value) into a
-   * `TypedPipe[(Position2D, Content)]`.
-   *
-   * @param file   The label file to read from.
-   * @param schema The schema for decoding the label value.
-   * @param first  The codex for decoding the first dimension.
-   * @param second The codex for decoding the second dimension.
-   */
-  def readLabels(file: String, schema: Schema, first: Codex = StringCodex,
-    second: Codex = DateCodex)(implicit flow: FlowDef,
-      mode: Mode): TypedPipe[Cell[Position2D]] = {
-    (TypedPsv[(String, String, String)](file))
-      .flatMap {
-        case (i, d, l) =>
-          (schema.decode(l), first.decode(i), second.decode(d)) match {
-            case (Some(con), Some(c1), Some(c2)) =>
-              Some((Position2D(c1, c2), con))
-            case _ => None
-          }
-      }
-  }
-
   /** Conversion from `TypedPipe[(Position1D, Content)]` to a `Matrix1D`. */
   implicit def typedPipePosition1DContent(
     data: TypedPipe[Cell[Position1D]]): Matrix1D = new Matrix1D(data)
@@ -1303,6 +1372,52 @@ class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D]
   with ModifyableMatrix[Position1D] with ExpandableMatrix[Position1D] {
   def domain(): TypedPipe[Position1D] = {
     names(Over(First)).map { case (p, i) => p }
+  }
+
+  /**
+   * Persist a `Matrix1D` as sparse matrix file (index, value).
+   *
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `TypedPipe[(Position1D, Content)]`; that is it returns `data`.
+   */
+  def writeIV(file: String, dictionary: String = "%1$s.dict.%2$d",
+    separator: String = "|")(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position1D]] = {
+    writeIVWithNames(file, names(Over(First)), dictionary, separator)
+  }
+
+  /**
+   * Persist a `Matrix1D` as sparse matrix file (index, value).
+   *
+   * @param file       File to write to.
+   * @param names      The names to use for the first dimension (according to
+   *                   their ordering).
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `TypedPipe[(Position1D, Content)]`; that is it returns `data`.
+   *
+   * @note If `names` contains a subset of the columns, then only those columns
+   *       get persisted to file.
+   */
+  def writeIVWithNames(file: String, names: TypedPipe[(Position1D, Long)],
+    dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
+      implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
+    val dict = writeDictionary(names, file, dictionary, separator, First)
+
+    data
+      .groupBy { case (p, c) => p }
+      .join(dict)
+      .map {
+        case (_, ((_, c), (_, i))) => i + separator + c.value.toShortString
+      }
+      .toPipe('line)
+      .write(new TextLine(file))
+
+    data
   }
 }
 
@@ -1336,8 +1451,8 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
   // TODO: Make this work on more than 2D matrices
   def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(
     implicit ev: PosDimDep[Position2D, D]): TypedPipe[Cell[Position1D]] = {
-    val single = data
-      .reduceAndExpand(slice, Entropy("single"))
+    val marginal = data
+      .reduceAndExpand(slice, Entropy("marginal"))
       .pairwise(Over(First), Plus(name="%s,%s", comparer=Upper))
 
     val joint = data
@@ -1345,7 +1460,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
       .reduceAndExpand(Over(First),
         Entropy("joint", strict=true, nan=true, negate=true))
 
-    (single ++ joint)
+    (marginal ++ joint)
       .reduce(Over(First), Sum())
   }
 
@@ -1375,39 +1490,39 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
   /**
    * Persist a `Matrix2D` as a CSV file.
    *
-   * @param slice         Encapsulates the dimension that makes up the columns.
-   * @param file          File to write to.
-   * @param separator     Column separator to use.
-   * @param writeHeader   Indicator of the header should be written to a
-   *                      separate file.
-   * @param headerPostfix Postfix for the header file name.
-   * @param writeRowId    Indicator if row names should be written.
-   * @param rowId         Column name of row names.
+   * @param slice       Encapsulates the dimension that makes up the columns.
+   * @param file        File to write to.
+   * @param separator   Column separator to use.
+   * @param writeHeader Indicator of the header should be written to a separate
+   *                    file.
+   * @param header      Postfix for the header file name.
+   * @param writeRowId  Indicator if row names should be written.
+   * @param rowId       Column name of row names.
    *
    * @return A `TypedPipe[(Position2D, Content)]`; that is it returns `data`.
    */
   def writeCSV[D <: Dimension](slice: Slice[Position2D, D], file: String,
     separator: String = "|", writeHeader: Boolean = true,
-    headerPostfix: String = ".header", writeRowId: Boolean = true,
+    header: String = "%s.header", writeRowId: Boolean = true,
     rowId: String = "id")(implicit ev: PosDimDep[Position2D, D],
       flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
     writeCSVWithNames(slice, file, names(slice), separator, writeHeader,
-      headerPostfix, writeRowId, rowId)
+      header, writeRowId, rowId)
   }
 
   /**
    * Persist a `Matrix2D` as a CSV file.
    *
-   * @param slice         Encapsulates the dimension that makes up the columns.
-   * @param file          File to write to.
-   * @param names         The names to use for the columns (according to their
-   *                      ordering).
-   * @param separator     Column separator to use.
-   * @param writeHeader   Indicator of the header should be written to a
-   *                      separate file.
-   * @param headerPostfix Postfix for the header file name.
-   * @param writeRowId    Indicator if row names should be written.
-   * @param rowId         Column name of row names.
+   * @param slice       Encapsulates the dimension that makes up the columns.
+   * @param file        File to write to.
+   * @param names       The names to use for the columns (according to their
+   *                    ordering).
+   * @param separator   Column separator to use.
+   * @param writeHeader Indicator of the header should be written to a separate
+   *                    file.
+   * @param header      Postfix for the header file name.
+   * @param writeRowId  Indicator if row names should be written.
+   * @param rowId       Column name of row names.
    *
    * @return A `TypedPipe[(Position2D, Content)]`; that is it returns `data`.
    *
@@ -1416,10 +1531,10 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    */
   def writeCSVWithNames[T, D <: Dimension](slice: Slice[Position2D, D],
     file: String, names: T, separator: String = "|",
-    writeHeader: Boolean = true, headerPostfix: String = ".header",
-    writeRowId: Boolean = true,
-    rowId: String = "id")(implicit ev1: Nameable[T, Position2D, slice.S, D],
-      ev2: PosDimDep[Position2D, D], flow: FlowDef,
+    writeHeader: Boolean = true, header: String = "%s.header",
+    writeRowId: Boolean = true, rowId: String = "id")(
+    implicit ev1: Nameable[T, Position2D, slice.S, D],
+    ev2: PosDimDep[Position2D, D], flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position2D]] = {
     // Note: Usage of .toShortString should be safe as data is written
     //       as string anyways. It does assume that all indices have
@@ -1437,7 +1552,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
             else lst.mkString(separator)
         }
         .toPipe('line)
-        .write(new TextLine(file + headerPostfix))
+        .write(new TextLine(header.format(file)))
     }
 
     // TODO: Escape separator in values
@@ -1466,26 +1581,19 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
 
   def writeVW[D <: Dimension](slice: Slice[Position2D, D],
     labels: TypedPipe[Cell[Position1D]], file: String,
-    postfix: String = ".dict", separator: String = ":")(
+    dictionary: String = "%s.dict", separator: String = ":")(
       implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position2D]] = {
     writeVWWithNames(slice, labels, file, names(Along(slice.dimension)),
-      postfix, separator)
+      dictionary, separator)
   }
 
   def writeVWWithNames[D <: Dimension](slice: Slice[Position2D, D],
     labels: TypedPipe[Cell[Position1D]], file: String,
-    names: TypedPipe[(Position1D, Long)], postfix: String = ".dict",
+    names: TypedPipe[(Position1D, Long)], dictionary: String = "%s.dict",
     separator: String = ":")(implicit ev: PosDimDep[Position2D, D],
       flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
-
-    val dict = names
-      .groupBy { case (p, i) => p }
-
-    dict
-      .map { case (_, (p, i)) => p.toShortString(separator) + separator + i }
-      .toPipe('line)
-      .write(new TextLine(file + postfix))
+    val dict = writeDictionary(names, file, dictionary, separator)
 
     data
       .groupBy { case (p, c) => slice.remainder(p).asInstanceOf[Position1D] }
@@ -1510,34 +1618,34 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
   /**
    * Persist a `Matrix2D` as a LDA file.
    *
-   * @param slice     Encapsulates the dimension that makes up the columns.
-   * @param file      File to write to.
-   * @param postfix   Postfix for the dictionary file name.
-   * @param separator Column separator to use in dictionary file.
-   * @param addId     Indicator if each line should start with the row id
-   *                  followed by `separator`.
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   * @param addId      Indicator if each line should start with the row id
+   *                   followed by `separator`.
    *
    * @return A `TypedPipe[(Position2D, Content)]`; that is it returns `data`.
    */
   def writeLDA[D <: Dimension](slice: Slice[Position2D, D], file: String,
-    postfix: String = ".dict", separator: String = "|",
+    dictionary: String = "%s.dict", separator: String = "|",
     addId: Boolean = false)(implicit ev: PosDimDep[Position2D, D],
       flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
-    writeLDAWithNames(slice, file, names(Along(slice.dimension)), postfix,
+    writeLDAWithNames(slice, file, names(Along(slice.dimension)), dictionary,
       separator, addId)
   }
 
   /**
    * Persist a `Matrix2D` as a LDA file.
    *
-   * @param slice     Encapsulates the dimension that makes up the columns.
-   * @param file      File to write to.
-   * @param names     The names to use for the columns (according to their
-   *                  ordering).
-   * @param postfix   Postfix for the dictionary file name.
-   * @param separator Column separator to use in dictionary file.
-   * @param addId     Indicator if each line should start with the row id
-   *                  followed by `separator`.
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param names      The names to use for the columns (according to their
+   *                   ordering).
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   * @param addId      Indicator if each line should start with the row id
+   *                   followed by `separator`.
    *
    * @return A `TypedPipe[(Position2D, Content)]`; that is it returns `data`.
    *
@@ -1546,16 +1654,10 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    */
   def writeLDAWithNames[D <: Dimension](slice: Slice[Position2D, D],
     file: String, names: TypedPipe[(Position1D, Long)],
-    postfix: String = ".dict", separator: String = "|",
+    dictionary: String = "%s.dict", separator: String = "|",
     addId: Boolean = false)(implicit ev: PosDimDep[Position2D, D],
       flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
-    val dict = names
-      .groupBy { case (p, i) => p }
-
-    dict
-      .map { case (_, (p, i)) => p.toShortString(separator) + separator + i }
-      .toPipe('line)
-      .write(new TextLine(file + postfix))
+    val dict = writeDictionary(names, file, dictionary, separator)
 
     data
       .groupBy { case (p, c) => slice.remainder(p).asInstanceOf[Position1D] }
@@ -1582,34 +1684,32 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
   /**
    * Persist a `Matrix2D` as sparse matrix file (index, index, value).
    *
-   * @param file      File to write to.
-   * @param postfixI  Postfix for the row dictionary file name.
-   * @param postfixJ  Postfix for the column dictionary file name.
-   * @param separator Column separator to use in dictionary file.
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
    *
    * @return A `TypedPipe[(Position2D, Content)]`; that is it returns `data`.
    *
    * @note R's slam package has a simple triplet matrx format (which in turn is
    *       used by the tm package). This format should be compatible.
    */
-  def writeIJV(file: String, postfixI: String = ".dict.i",
-    postfixJ: String = ".dict.j", separator: String = "|")(
-      implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
-    writeIJVWithNames(file, names(Over(First)), names(Over(Second)),
-      postfixI, postfixJ, separator)
+  def writeIV(file: String, dictionary: String = "%1$s.dict.%2$d",
+    separator: String = "|")(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position2D]] = {
+    writeIVWithNames(file, names(Over(First)), names(Over(Second)),
+      dictionary, separator)
   }
 
   /**
    * Persist a `Matrix2D` as sparse matrix file (index, index, value).
    *
-   * @param file      File to write to.
-   * @param namesI    The names to use for the rows (according to their
-   *                  ordering).
-   * @param namesJ    The names to use for the columns (according to their
-   *                  ordering).
-   * @param postfixI  Postfix for the row dictionary file name.
-   * @param postfixJ  Postfix for the column dictionary file name.
-   * @param separator Column separator to use in dictionary file.
+   * @param file       File to write to.
+   * @param namesI     The names to use for the first dimension (according to
+   *                   their ordering).
+   * @param namesJ     The names to use for the second dimension (according to
+   *                   their ordering).
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
    *
    * @return A `TypedPipe[(Position2D, Content)]`; that is it returns `data`.
    *
@@ -1618,28 +1718,18 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @note R's slam package has a simple triplet matrx format (which in turn is
    *       used by the tm package). This format should be compatible.
    */
-  def writeIJVWithNames(file: String, namesI: TypedPipe[(Position1D, Long)],
-    namesJ: TypedPipe[(Position1D, Long)], postfixI: String = ".dict.i",
-    postfixJ: String = ".dict.j", separator: String = "|")(
+  def writeIVWithNames(file: String, namesI: TypedPipe[(Position1D, Long)],
+    namesJ: TypedPipe[(Position1D, Long)],
+    dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
       implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
-    val dictI = namesI.groupBy { case (p, i) => p }
-    val dictJ = namesJ.groupBy { case (p, j) => p }
-
-    dictI
-      .map { case (_, (p, i)) => p.toShortString(separator) + separator + i }
-      .toPipe('line)
-      .write(new TextLine(file + postfixI))
-
-    dictJ
-      .map { case (_, (p, j)) => p.toShortString(separator) + separator + j }
-      .toPipe('line)
-      .write(new TextLine(file + postfixJ))
+    val dictI = writeDictionary(namesI, file, dictionary, separator, First)
+    val dictJ = writeDictionary(namesJ, file, dictionary, separator, Second)
 
     data
-      .groupBy { case (p, c) => p.remove(Second) }
+      .groupBy { case (p, c) => Position1D(p.get(First)) }
       .join(dictI)
       .values
-      .groupBy { case ((p, c), pi) => p.remove(First) }
+      .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
       .join(dictJ)
       .map {
         case (_, (((_, c), (_, i)), (_, j))) =>
@@ -1694,6 +1784,68 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
       ne1: D =!= E, ne2: D =!= F, ne3: E =!= F): TypedPipe[Cell[Position3D]] = {
     data.map { case (p, c) => (p.permute(List(first, second, third)), c) }
   }
+
+  /**
+   * Persist a `Matrix3D` as sparse matrix file (index, index, index, value).
+   *
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `TypedPipe[(Position3D, Content)]`; that is it returns `data`.
+   */
+  def writeIV(file: String, dictionary: String = "%1$s.dict.%2$d",
+    separator: String = "|")(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position3D]] = {
+    writeIVWithNames(file, names(Over(First)), names(Over(Second)),
+      names(Over(Third)), dictionary, separator)
+  }
+
+  /**
+   * Persist a `Matrix3D` as sparse matrix file (index, index, index, value).
+   *
+   * @param file       File to write to.
+   * @param namesI     The names to use for the first dimension (according to
+   *                   their ordering).
+   * @param namesJ     The names to use for the second dimension (according to
+   *                   their ordering).
+   * @param namesK     The names to use for the third dimension (according to
+   *                   their ordering).
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `TypedPipe[(Position3D, Content)]`; that is it returns `data`.
+   *
+   * @note If `names` contains a subset of the columns, then only those columns
+   *       get persisted to file.
+   */
+  def writeIVWithNames(file: String, namesI: TypedPipe[(Position1D, Long)],
+    namesJ: TypedPipe[(Position1D, Long)],
+    namesK: TypedPipe[(Position1D, Long)],
+    dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
+      implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
+    val dictI = writeDictionary(namesI, file, dictionary, separator, First)
+    val dictJ = writeDictionary(namesJ, file, dictionary, separator, Second)
+    val dictK = writeDictionary(namesK, file, dictionary, separator, Third)
+
+    data
+      .groupBy { case (p, c) => Position1D(p.get(First)) }
+      .join(dictI)
+      .values
+      .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
+      .join(dictJ)
+      .map { case (_, ((pc, pi) , pj)) => (pc, pi, pj) }
+      .groupBy { case ((p, c), pi, pj) => Position1D(p.get(Third)) }
+      .join(dictK)
+      .map {
+        case (_, (((_, c), (_, i), (_, j)), (_, k))) =>
+          i + separator + j + separator + k + separator + c.value.toShortString
+      }
+      .toPipe('line)
+      .write(new TextLine(file))
+
+    data
+  }
 }
 
 /**
@@ -1730,6 +1882,78 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
     data.map {
       case (p, c) => (p.permute(List(first, second, third, fourth)), c)
     }
+  }
+
+  /**
+   * Persist a `Matrix4D` as sparse matrix file (index, index, index,
+   * index, value).
+   *
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `TypedPipe[(Position4D, Content)]`; that is it returns `data`.
+   */
+  def writeIV(file: String, dictionary: String = "%1$s.dict.%2$d",
+    separator: String = "|")(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position4D]] = {
+    writeIVWithNames(file, names(Over(First)), names(Over(Second)),
+      names(Over(Third)), names(Over(Fourth)), dictionary, separator)
+  }
+
+  /**
+   * Persist a `Matrix4D` as sparse matrix file (index, index, index,
+   * index, value).
+   *
+   * @param file       File to write to.
+   * @param namesI     The names to use for the first dimension (according to
+   *                   their ordering).
+   * @param namesJ     The names to use for the second dimension (according to
+   *                   their ordering).
+   * @param namesK     The names to use for the third dimension (according to
+   *                   their ordering).
+   * @param namesL     The names to use for the fourth dimension (according to
+   *                   their ordering).
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `TypedPipe[(Position4D, Content)]`; that is it returns `data`.
+   *
+   * @note If `names` contains a subset of the columns, then only those columns
+   *       get persisted to file.
+   */
+  def writeIVWithNames(file: String, namesI: TypedPipe[(Position1D, Long)],
+    namesJ: TypedPipe[(Position1D, Long)],
+    namesK: TypedPipe[(Position1D, Long)],
+    namesL: TypedPipe[(Position1D, Long)],
+    dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
+      implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position4D]] = {
+    val dictI = writeDictionary(namesI, file, dictionary, separator, First)
+    val dictJ = writeDictionary(namesJ, file, dictionary, separator, Second)
+    val dictK = writeDictionary(namesK, file, dictionary, separator, Third)
+    val dictL = writeDictionary(namesL, file, dictionary, separator, Fourth)
+
+    data
+      .groupBy { case (p, c) => Position1D(p.get(First)) }
+      .join(dictI)
+      .values
+      .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
+      .join(dictJ)
+      .map { case (_, ((pc, pi) , pj)) => (pc, pi, pj) }
+      .groupBy { case ((p, c), pi, pj) => Position1D(p.get(Third)) }
+      .join(dictK)
+      .map { case (_, ((pc, pi, pj) , pk)) => (pc, pi, pj, pk) }
+      .groupBy { case ((p, c), pi, pj, pk) => Position1D(p.get(Fourth)) }
+      .join(dictL)
+      .map {
+        case (_, (((_, c), (_, i), (_, j), (_, k)), (_, l))) =>
+          i + separator + j + separator + k + separator +
+          l + separator + c.value.toShortString
+      }
+      .toPipe('line)
+      .write(new TextLine(file))
+
+    data
   }
 }
 
@@ -1769,6 +1993,86 @@ class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D]
     data.map {
       case (p, c) => (p.permute(List(first, second, third, fourth, fifth)), c)
     }
+  }
+
+  /**
+   * Persist a `Matrix5D` as sparse matrix file (index, index, index,
+   * index, index, value).
+   *
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `TypedPipe[(Position5D, Content)]`; that is it returns `data`.
+   */
+  def writeIV(file: String, dictionary: String = "%1$s.dict.%2$d",
+    separator: String = "|")(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position5D]] = {
+    writeIVWithNames(file, names(Over(First)), names(Over(Second)),
+      names(Over(Third)), names(Over(Fourth)), names(Over(Fifth)),
+      dictionary, separator)
+  }
+
+  /**
+   * Persist a `Matrix5D` as sparse matrix file (index, index, index,
+   * index, index, value).
+   *
+   * @param file       File to write to.
+   * @param namesI     The names to use for the first dimension (according to
+   *                   their ordering).
+   * @param namesJ     The names to use for the second dimension (according to
+   *                   their ordering).
+   * @param namesK     The names to use for the third dimension (according to
+   *                   their ordering).
+   * @param namesL     The names to use for the fourth dimension (according to
+   *                   their ordering).
+   * @param namesM     The names to use for the fifth dimension (according to
+   *                   their ordering).
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `TypedPipe[(Position5D, Content)]`; that is it returns `data`.
+   *
+   * @note If `names` contains a subset of the columns, then only those columns
+   *       get persisted to file.
+   */
+  def writeIVWithNames(file: String, namesI: TypedPipe[(Position1D, Long)],
+    namesJ: TypedPipe[(Position1D, Long)],
+    namesK: TypedPipe[(Position1D, Long)],
+    namesL: TypedPipe[(Position1D, Long)],
+    namesM: TypedPipe[(Position1D, Long)],
+    dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
+      implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position5D]] = {
+    val dictI = writeDictionary(namesI, file, dictionary, separator, First)
+    val dictJ = writeDictionary(namesJ, file, dictionary, separator, Second)
+    val dictK = writeDictionary(namesK, file, dictionary, separator, Third)
+    val dictL = writeDictionary(namesL, file, dictionary, separator, Fourth)
+    val dictM = writeDictionary(namesM, file, dictionary, separator, Fifth)
+
+    data
+      .groupBy { case (p, c) => Position1D(p.get(First)) }
+      .join(dictI)
+      .values
+      .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
+      .join(dictJ)
+      .map { case (_, ((pc, pi) , pj)) => (pc, pi, pj) }
+      .groupBy { case ((p, c), pi, pj) => Position1D(p.get(Third)) }
+      .join(dictK)
+      .map { case (_, ((pc, pi, pj), pk)) => (pc, pi, pj, pk) }
+      .groupBy { case ((p, c), pi, pj, pk) => Position1D(p.get(Fourth)) }
+      .join(dictL)
+      .map { case (_, ((pc, pi, pj, pk), pl)) => (pc, pi, pj, pk, pl) }
+      .groupBy { case ((p, c), pi, pj, pk, pl) => Position1D(p.get(Fifth)) }
+      .join(dictM)
+      .map {
+        case (_, (((_, c), (_, i), (_, j), (_, k), (_, l)), (_, m))) =>
+          i + separator + j + separator + k + separator +
+          l + separator + m + separator + c.value.toShortString
+      }
+      .toPipe('line)
+      .write(new TextLine(file))
+
+    data
   }
 }
 

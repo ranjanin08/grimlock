@@ -113,20 +113,6 @@ trait ModifyablePosition { self: Position =>
     same(order.map { case d => coordinates(d.index) })
   }
 
-  /**
-   * Convenience function that adds a suffix to a dimensions.
-   *
-   * @param dim    Dimension to add suffix to.
-   * @param suffix The suffix to add.
-   *
-   * @return Position of the same size, but with the coordinate at `dimension`
-   *         updated to include the `suffix`. Note that the updated coordinate
-   *         is always a string value.
-   */
-  def suffix(dim: Dimension, suffix: String): S = {
-    set(dim, get(dim).toShortString + suffix)
-  }
-
   protected def same(cl: List[Value]): S
 }
 

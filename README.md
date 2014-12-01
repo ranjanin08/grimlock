@@ -299,7 +299,7 @@ scala> counts.reduceAndExpand(Along(First), Moments()).dump
 (Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
 ```
 
-For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/Demo.scala)
+For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/Event.scala) and [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/MutualInformation.scala).
 
 Documentation
 -------------

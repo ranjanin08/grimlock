@@ -21,12 +21,40 @@ import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
+/** Convenience trait for operators that apply to `Double` values. */
 trait DoubleOperator { self: Operator with Compute =>
+  /**
+   * Pattern for the new name of the pairwise coordinate. Use `%[12]$``s` for
+   * the string representations of the coordinate.
+   */
   val name: String
+
+  /** Separator to use when writing positions to string. */
   val separator: String
+
+  /**
+   * Indicator if pairwise operator `f()` should be called as `f(l, r)` or as
+   * `f(r, l)`.
+   */
   val inverse: Boolean
+
+  /** Comparer object defining which pairwise operations should be computed. */
   val comparer: Comparer
 
+  /**
+   * Indicate if the cell is selected as part of the sample.
+   *
+   * @param slice Encapsulates the dimension(s) along which to compute.
+   * @param lp    The selected left cell position to compute for.
+   * @param lc    The contents of the left cell position to compute with.
+   * @param rp    The selected right cell position to compute for.
+   * @param rc    The contents of the right cell position to compute with.
+   * @param rem   The remaining coordinates.
+   *
+   * @note The return value is an `Option` to allow, for example, upper
+   *       or lower triangular matrices to be returned (this can be done by
+   *       comparing the selected coordinates)
+   */
   def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
     lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S, rc: Content,
       rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
@@ -45,6 +73,7 @@ trait DoubleOperator { self: Operator with Compute =>
   protected def compute(l: Double, r: Double): Double
 }
 
+/** Add two values. */
 case class Plus(name: String = "(%s+%s)", separator: String = "|",
   comparer: Comparer = Lower) extends Operator with Compute
   with DoubleOperator {
@@ -52,12 +81,14 @@ case class Plus(name: String = "(%s+%s)", separator: String = "|",
   protected def compute(l: Double, r: Double) = l + r
 }
 
+/** Subtract two values. */
 case class Minus(name: String = "(%s-%s)", separator: String = "|",
   inverse: Boolean = false, comparer: Comparer = Lower) extends Operator
   with Compute with DoubleOperator {
   protected def compute(l: Double, r: Double) = l - r
 }
 
+/** Multiply two values. */
 case class Times(name: String = "(%s*%s)", separator: String = "|",
   comparer: Comparer = Lower) extends Operator with Compute
   with DoubleOperator {
@@ -65,12 +96,28 @@ case class Times(name: String = "(%s*%s)", separator: String = "|",
   protected def compute(l: Double, r: Double) = l * r
 }
 
+/** Divide two values. */
 case class Divide(name: String = "(%s/%s)", separator: String = "|",
   inverse: Boolean = false, comparer: Comparer = Lower) extends Operator
   with Compute with DoubleOperator {
   protected def compute(l: Double, r: Double) = l / r
 }
 
+/**
+ * Concatenate two cells.
+ *
+ * @param name      Pattern for the new name of the pairwise coordinate. Use
+ *                  `%[12]$``s` for the string representations of the
+ *                  coordinate.
+ * @param value     Pattern for the new (string) value of the pairwise contents.
+ *                  Use `%[12]$``s` for the string representations of the
+ *                  content.
+ * @param separator Separator to use when writing positions to string.
+ * @param inverse   Indicator if pairwise operator `f()` should be called as
+ *                  `f(l, r)` or as `f(r, l)`.
+ * @param comparer  Comparer object defining which pairwise operations should
+ *                  be computed.
+ */
 case class Concatenate(name: String = "(%s,%s)", value: String = "%s,%s",
   separator: String = "|", inverse: Boolean = false,
   comparer: Comparer = Lower) extends Operator with Compute {

@@ -19,30 +19,59 @@ import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
+/**
+ * Base trait for comparing two positions to determine is pairwise operation
+ * is to be applied.
+ */
 trait Comparer {
+  /**
+   * Check, based on left and right positions, if pairwise operation should
+   * be computed.
+   *
+   * @param l Left position.
+   * @param r Right position.
+   */
   def check(l: Position, r: Position): Boolean
 }
 
+/** Case object for computing all pairwise combinations. */
 case object All extends Comparer {
   def check(l: Position, r: Position): Boolean = true
 }
 
+/** Case object for computing diagonal pairwise combinations (i.e. l == r). */
 case object Diagonal extends Comparer {
   def check(l: Position, r: Position): Boolean = l.compare(r) == 0
 }
 
+/**
+ * Case object for computing upper triangular pairwise combinations (i.e.
+ * r > l).
+ */
 case object Upper extends Comparer {
   def check(l: Position, r: Position): Boolean = r.compare(l) > 0
 }
 
+/**
+ * Case object for computing upper triangular or diagonal pairwise combinations
+ * (i.e. r >= l).
+ */
 case object UpperDiagonal extends Comparer {
   def check(l: Position, r: Position): Boolean = r.compare(l) >= 0
 }
 
+/**
+ * Case object for computing lower triangular pairwise combinations (i.e.
+ * l > r).
+ */
 case object Lower extends Comparer {
   def check(l: Position, r: Position): Boolean = l.compare(r) > 0
 }
 
+/**
+ * Case object for computing lower triangular or diagonal pairwise combinations
+ * (i.e. l >= r).
+ */
 case object LowerDiagonal extends Comparer {
   def check(l: Position, r: Position): Boolean = l.compare(r) >= 0
 }

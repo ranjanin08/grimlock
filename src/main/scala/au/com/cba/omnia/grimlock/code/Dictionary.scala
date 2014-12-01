@@ -15,9 +15,6 @@
 package au.com.cba.omnia.grimlock.content.metadata
 
 object Dictionary {
-  /** Placeholder type of a dictionary (map of schema). */
-  type Dictionary = Map[String, Schema]
-
   /**
    * Placeholder for reading in a dictionary.
    *
@@ -25,7 +22,7 @@ object Dictionary {
    *
    * @return A dictionary object.
    */
-  def read(file: String, separator: String = "\\|"): Dictionary = {
+  def read(file: String, separator: String = "\\|"): Map[String, Schema] = {
     (for (line <- io.Source.fromFile(file).getLines()) yield {
       val parts = line.split(separator)
       (parts(0), Schema.fromString(parts(1), parts(2)).get)

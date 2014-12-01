@@ -242,7 +242,7 @@ class DataQualityAndAnalysis(args : Args) extends Job(args) {
 class LabelWeighting(args: Args) extends Job(args) {
 
   // Read labels and melt the date into the instance id to generate a 1D matrix.
-  val labels = readLabels("exampleLabels.txt",
+  val labels = read2DWithSchema("exampleLabels.txt",
       ContinuousSchema[Codex.DoubleCodex]())
     .melt(Second, First, ":")
 
@@ -284,7 +284,7 @@ class LabelWeighting(args: Args) extends Job(args) {
   }
 
   // Re-read labels and add the computed weight.
-  readLabels("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+  read2DWithSchema("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
     .transformAndExpandWithValue(AddWeight(), weights)
     .persist("./demo/weighted.out")
 }
