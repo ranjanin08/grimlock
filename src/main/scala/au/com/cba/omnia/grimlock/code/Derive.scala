@@ -14,6 +14,7 @@
 
 package au.com.cba.omnia.grimlock.derive
 
+import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
@@ -38,8 +39,10 @@ trait Deriver {
   /**
    * Update state with the current cell and, optionally, output derived data.
    *
-   * @param curr The current cell.
-   * @param t    The state.
+   * @param sel The selected coordinates of the current cell.
+   * @param rem The remaining coordinates of the current cell.
+   * @param con The content of the current cell.
+   * @param t   The state.
    *
    * @return A tuple consisting of updated state together with optional
    *         derived data.
@@ -48,25 +51,32 @@ trait Deriver {
    *       be selective in when derived data is returned. An `Either` is
    *       used to allow a deriver to return more than one derived data.
    */
-  def present[P <: Position with ModifyablePosition](curr: Cell[P],
-    t: T): (T, Option[Either[Cell[P#S], List[Cell[P#S]]]])
+  def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
+    rem: Slice[P, D]#R, con: Content,
+    t: T): (T, Option[Either[Cell[sel.M], List[Cell[sel.M]]]])
 }
 
 /** Base trait for initialising a deriver. */
 trait Initialise extends InitialiseWithValue { self: Deriver =>
   type V = Any
 
-  def initialise[P <: Position](curr: Cell[P], ext: V): T = initialise(curr)
+  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
+    rem: Slice[P, D]#R, con: Content, ext: V): T = {
+    initialise(sel, rem, con)
+  }
 
   /**
    * Initialise the state using the first cell (ordered according to its
    * position).
    *
-   * @param curr The current cell.
+   * @param sel The selected coordinates of the current cell.
+   * @param rem The remaining coordinates of the current cell.
+   * @param con The content of the first cell.
    *
    * @return The state for this object.
    */
-  def initialise[P <: Position](curr: Cell[P]): T
+  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
+    rem: Slice[P, D]#R, con: Content): T
 }
 
 /** Base trait for initialising a deriver with a user supplied value. */
@@ -78,11 +88,14 @@ trait InitialiseWithValue { self: Deriver =>
    * Initialise the state using the first cell (ordered according to its
    * position).
    *
-   * @param curr The current cell.
-   * @param ext  The user define the value.
+   * @param sel The selected coordinates of the current cell.
+   * @param rem The remaining coordinates of the current cell.
+   * @param con The content of the first cell.
+   * @param ext The user define the value.
    *
    * @return The state for this object.
    */
-  def initialise[P <: Position](curr: Cell[P], ext: V): T
+  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
+    rem: Slice[P, D]#R, con: Content, ext: V): T
 }
 

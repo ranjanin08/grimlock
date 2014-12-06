@@ -778,15 +778,17 @@ trait ModifyableMatrix[P <: Position with ModifyablePosition] {
    * @return A Scalding `TypedPipe[(Position.S, Content)]` with the
    *         derived data.
    */
-  def derive[D <: Dimension](slice: Slice[P, D], deriver: Deriver with Initialise)(implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P#S]] = {
+  def derive[D <: Dimension](slice: Slice[P, D],
+    deriver: Deriver with Initialise)(
+    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.S#M]] = {
     data
-      .groupBy { case (p, c) => slice.selected(p) }
-      .sortBy { case (p, c) => slice.remainder(p) }
-      .scanLeft(
-        Option.empty[(deriver.T, Option[Either[Cell[P#S], List[Cell[P#S]]]])]) {
-          case (None, curr) => Some((deriver.initialise(curr), None))
-          case (Some((t, c)), curr) => Some(deriver.present(curr, t))
-        }
+      .map { case (p, c) => (slice.selected(p), slice.remainder(p), c) }
+      .groupBy { case (s, r, c) => s }
+      .sortBy { case (s, r, c) => r }
+      .scanLeft(Option.empty[(deriver.T, Option[Either[Cell[slice.S#M], List[Cell[slice.S#M]]]])]) {
+        case (None, (s, r, c)) => Some((deriver.initialise(s, r, c), None))
+        case (Some((t, _)), (s, r, c)) => Some(deriver.present(s, r, c, t))
+      }
       .flatMap {
         case (p, Some((t, oe @ Some(_)))) => Misc.mapFlatten(oe)
         case _ => List()
@@ -803,19 +805,22 @@ trait ModifyableMatrix[P <: Position with ModifyablePosition] {
    * @return A Scalding `TypedPipe[(Position.S, Content)]` with the
    *         derived data.
    */
-  def deriveWithValue[D <: Dimension, W](slice: Slice[P, D], deriver: Deriver with InitialiseWithValue { type V >: W }, value: ValuePipe[W])(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P#S]] = {
+  def deriveWithValue[D <: Dimension, W](slice: Slice[P, D],
+    deriver: Deriver with InitialiseWithValue { type V >: W },
+    value: ValuePipe[W])(
+    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.S#M]] = {
     data
       .leftCross(value)
-      .groupBy { case ((p, c), vo) => slice.selected(p) }
-      .sortBy { case ((p, c), vo) => slice.remainder(p) }
-      .scanLeft(
-        Option.empty[(deriver.T, Option[Either[Cell[P#S], List[Cell[P#S]]]])]) {
-          case (None, (curr, vo)) =>
-            Some((deriver.initialise(curr, vo.get.asInstanceOf[deriver.V]),
-              None))
-          case (Some((t, c)), (curr, vo)) => Some(deriver.present(curr, t))
-        }
+      .map {
+        case ((p, c), vo) => (slice.selected(p), slice.remainder(p), c, vo)
+      }
+      .groupBy { case (s, r, c, vo) => s }
+      .sortBy { case (s, r, c, vo) => r }
+      .scanLeft(Option.empty[(deriver.T, Option[Either[Cell[slice.S#M], List[Cell[slice.S#M]]]])]) {
+        case (None, (s, r, c, vo)) => Some((deriver.initialise(s, r, c,
+          vo.get.asInstanceOf[deriver.V]), None))
+        case (Some((t, _)), (s, r, c, vo)) => Some(deriver.present(s, r, c, t))
+      }
       .flatMap {
         case (p, Some((t, oe @ Some(_)))) => Misc.mapFlatten(oe)
         case _ => List()
@@ -922,7 +927,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] {
     data
       .groupBy { case (p, c) => p.remove(dim) }
       .reduce[Cell[P]] {
-        case ((xp, xc), (yp, yc)) => squasher.reduce(dim, (xp, xc), (yp, yc))
+        case ((xp, xc), (yp, yc)) => squasher.reduce(dim, xp, xc, yp, yc)
       }
       .map { case (p, (_, c)) => (p, c) }
   }
@@ -944,7 +949,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] {
       .groupBy { case ((p, c), vo) => p.remove(dim) }
       .reduce[(Cell[P], Option[V])] {
         case (((xp, xc), xvo), ((yp, yc), yvo)) => (squasher.reduce(dim,
-          (xp, xc), (yp, yc), xvo.get.asInstanceOf[squasher.V]), xvo)
+          xp, xc, yp, yc, xvo.get.asInstanceOf[squasher.V]), xvo)
       }
       .map { case (p, ((_, c), _)) => (p, c) }
   }

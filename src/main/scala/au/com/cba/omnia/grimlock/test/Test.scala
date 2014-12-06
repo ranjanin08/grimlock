@@ -606,16 +606,18 @@ class Test22(args : Args) extends Job(args) {
 
   val data = read2D("numericInputfile.txt")
 
-  case class Diff(dim: Dimension) extends Deriver with Initialise {
-    type T = (Position, Content)
+  case class Diff() extends Deriver with Initialise {
+    type T = Cell[Position]
 
-    def initialise[P <: Position](curr: (P, Content)): T = curr
-    def present[P <: Position with ModifyablePosition](curr: (P, Content),
-      t: T): (T, Option[Either[(P#S, Content), List[(P#S, Content)]]]) = {
-      (curr, (curr._2.value.asDouble, t._2.value.asDouble) match {
+    def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
+      rem: Slice[P, D]#R, con: Content): T = (rem, con)
+    def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
+      rem: Slice[P, D]#R, con: Content,
+      t: T): (T, Option[Either[Cell[sel.M], List[Cell[sel.M]]]]) = {
+      ((rem, con), (con.value.asDouble, t._2.value.asDouble) match {
         case (Some(c), Some(l)) =>
-          Some(Left((curr._1.set(dim, curr._1.get(dim).toShortString + "-" +
-            t._1.get(dim).toShortString),
+          Some(Left((sel.append(rem.toShortString("") + "-" +
+            t._1.toShortString("")),
             Content(ContinuousSchema[Codex.DoubleCodex](), c - l))))
         case _ => None
       })
@@ -623,11 +625,12 @@ class Test22(args : Args) extends Job(args) {
   }
 
   data
-    .derive(Over(First), Diff(Second))
+    .derive(Over(First), Diff())
     .persist("./tmp/dif1.out")
 
   data
-    .derive(Over(Second), Diff(First))
+    .derive(Over(Second), Diff())
+    .permute(Second, First)
     .persist("./tmp/dif2.out")
 }
 

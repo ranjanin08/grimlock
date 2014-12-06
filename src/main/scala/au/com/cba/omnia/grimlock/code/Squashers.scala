@@ -24,8 +24,12 @@ import au.com.cba.omnia.grimlock.position._
  * of the dimension being squashed.
  */
 case class PreservingMaxPosition() extends Squasher with Reduce {
-  def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
-    if (Value.Ordering.compare(x._1.get(dim), y._1.get(dim)) > 0) x else y
+  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P,
+    ycon: Content): Cell[P] = {
+    (Value.Ordering.compare(xpos.get(dim), ypos.get(dim)) > 0) match {
+      case true => (xpos, xcon)
+      case false => (ypos, ycon)
+    }
   }
 }
 
@@ -34,8 +38,12 @@ case class PreservingMaxPosition() extends Squasher with Reduce {
  * of the dimension being squashed.
  */
 case class PreservingMinPosition() extends Squasher with Reduce {
-  def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
-    if (Value.Ordering.compare(x._1.get(dim), y._1.get(dim)) < 0) x else y
+  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P,
+    ycon: Content): Cell[P] = {
+    (Value.Ordering.compare(xpos.get(dim), ypos.get(dim)) < 0) match {
+      case true => (xpos, xcon)
+      case false => (ypos, ycon)
+    }
   }
 }
 
