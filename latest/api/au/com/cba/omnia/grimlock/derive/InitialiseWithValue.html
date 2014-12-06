@@ -39,12 +39,12 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for initialising a deriver with a user supplied value.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue">InitialiseWithValue</a> with <a href="Deriver.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Deriver">Deriver</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/ece47f4c23f050aaa7dcb09825d9804262a5ef2a//src/main/scala/au/com/cba/omnia/grimlock/code/Derive.scala" target="_blank">Derive.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for initialising a deriver with a user supplied value.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue">InitialiseWithValue</a> with <a href="Deriver.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Deriver">Deriver</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/1066fe836bb471f4db45060a5e1031f2f2048102//src/main/scala/au/com/cba/omnia/grimlock/code/Derive.scala" target="_blank">Derive.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
           <span class="toggle">Known Subclasses</span>
-          <div class="subClasses hiddenContent"><a href="../test/Test22$Diff.html" class="extype" name="au.com.cba.omnia.grimlock.test.Test22.Diff">Diff</a>, <a href="Initialise.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Initialise">Initialise</a></div>
+          <div class="subClasses hiddenContent"><a href="../test/Test22$Diff.html" class="extype" name="au.com.cba.omnia.grimlock.test.Test22.Diff">Diff</a>, <a href="../examples/Gradient.html" class="extype" name="au.com.cba.omnia.grimlock.examples.Gradient">Gradient</a>, <a href="Initialise.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Initialise">Initialise</a></div>
         </div></div>
         
 
@@ -103,21 +103,21 @@
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue#initialise" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="initialise[P&lt;:au.com.cba.omnia.grimlock.position.Position](curr:(P,au.com.cba.omnia.grimlock.content.Content),ext:InitialiseWithValue.this.V):InitialiseWithValue.this.T"></a>
-      <a id="initialise[P&lt;:Position]((P,Content),(InitialiseWithValue.this)#V):(InitialiseWithValue.this)#T"></a>
+      <a id="initialise[P&lt;:au.com.cba.omnia.grimlock.position.Position,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](sel:au.com.cba.omnia.grimlock.Slice[P,D]#S,rem:au.com.cba.omnia.grimlock.Slice[P,D]#R,con:au.com.cba.omnia.grimlock.content.Content,ext:InitialiseWithValue.this.V):InitialiseWithValue.this.T"></a>
+      <a id="initialise[P&lt;:Position,D&lt;:Dimension](S,R,Content,(InitialiseWithValue.this)#V):(InitialiseWithValue.this)#T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">initialise</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="curr">curr: (<span class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue.initialise.P">P</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)</span>, <span name="ext">ext: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue">InitialiseWithValue</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue.V">V</span></span>)</span><span class="result">: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue">InitialiseWithValue</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.derive.Deriver.T">T</span></span>
+        <span class="name">initialise</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="sel">sel: <a href="../Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">S</a></span>, <span name="rem">rem: <a href="../Slice.html#R&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.R">R</a></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue">InitialiseWithValue</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue.V">V</span></span>)</span><span class="result">: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue">InitialiseWithValue</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.derive.Deriver.T">T</span></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Initialise the state using the first cell (ordered according to its
 position).</p><div class="fullcomment"><div class="comment cmt"><p>Initialise the state using the first cell (ordered according to its
 position).
-</p></div><dl class="paramcmts block"><dt class="param">curr</dt><dd class="cmt"><p>The current cell.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user define the value.
+</p></div><dl class="paramcmts block"><dt class="param">sel</dt><dd class="cmt"><p>The selected coordinates of the current cell.</p></dd><dt class="param">rem</dt><dd class="cmt"><p>The remaining coordinates of the current cell.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The content of the first cell.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user define the value.
 </p></dd><dt>returns</dt><dd class="cmt"><p>The state for this object.
 </p></dd></dl></div>
     </li></ol>
