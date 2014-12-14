@@ -276,13 +276,14 @@ object Normalise {
  *                  the coordinate, and the content.
  * @param threshold Minimum standard deviation threshold. Values less than this
  *                  result in standardised value of zero.
+ * @param n         Number of times division by standard deviation.
  *
  * @note Standardisation results in a variable with zero mean and variance
  *       of one. It is only applied to numerical variables.
  */
 case class Standardise private (dim: Dimension, mean: Position1D,
-  sd: Position1D, name: Option[String], threshold: Double) extends Transformer
-  with PresentWithValue with PresentDouble {
+  sd: Position1D, name: Option[String], threshold: Double, n: Int)
+  extends Transformer with PresentWithValue with PresentDouble {
   type V = Map[Position1D, Map[Position1D, Content]]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
@@ -291,7 +292,7 @@ case class Standardise private (dim: Dimension, mean: Position1D,
   }
 
   private def standardise(v: Double, m: Double, s: Double) = {
-    if (math.abs(s) < threshold) 0.0 else (v - m) / s
+    if (math.abs(s) < threshold) 0.0 else (v - m) / (n * s)
   }
 }
 
@@ -310,7 +311,7 @@ object Standardise {
     implicit ev1: Positionable[T, Position1D],
     ev2: Positionable[U, Position1D]): Standardise = {
     Standardise(dim, ev1.convert(mean), ev2.convert(sd), None,
-      DefaultThreshold)
+      DefaultThreshold, DefaultN)
   }
 
   /**
@@ -329,7 +330,7 @@ object Standardise {
     implicit ev1: Positionable[T, Position1D],
     ev2: Positionable[U, Position1D]): Standardise = {
     Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name),
-      DefaultThreshold)
+      DefaultThreshold, DefaultN)
   }
 
   /**
@@ -346,7 +347,25 @@ object Standardise {
   def apply[T, U](dim: Dimension, mean: T, sd: U, threshold: Double)(
     implicit ev1: Positionable[T, Position1D],
     ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(sd), None, threshold)
+    Standardise(dim, ev1.convert(mean), ev2.convert(sd), None, threshold,
+      DefaultN)
+  }
+
+  /**
+   * Standardise numeric variables.
+   *
+   * @param dim       Dimension for for which to create standardised variables.
+   * @param mean      Key into the inner map of `V`, identifying the
+   *                  standardisation constant for the mean.
+   * @param sd        Key into the inner map of `V`, identifying the
+   *                  standardisation constant for the standard deviation.
+   * @param n         Number of times division by standard deviation.
+   */
+  def apply[T, U](dim: Dimension, mean: T, sd: U, n: Int)(
+    implicit ev1: Positionable[T, Position1D],
+    ev2: Positionable[U, Position1D]): Standardise = {
+    Standardise(dim, ev1.convert(mean), ev2.convert(sd), None,
+      DefaultThreshold, n)
   }
 
   /**
@@ -366,10 +385,72 @@ object Standardise {
   def apply[T, U](dim: Dimension, mean: T, sd: U, name: String,
     threshold: Double)(implicit ev1: Positionable[T, Position1D],
       ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name), threshold)
+    Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name),
+      threshold, DefaultN)
+  }
+
+  /**
+   * Standardise numeric variables.
+   *
+   * @param dim       Dimension for for which to create standardised variables.
+   * @param mean      Key into the inner map of `V`, identifying the
+   *                  standardisation constant for the mean.
+   * @param sd        Key into the inner map of `V`, identifying the
+   *                  standardisation constant for the standard deviation.
+   * @param name      Pattern for the new name of the coordinate at `dim`. Use
+   *                  `%[12]$``s` for the string representations of the
+   *                  coordinate, and the content.
+   * @param n         Number of times division by standard deviation.
+   */
+  def apply[T, U](dim: Dimension, mean: T, sd: U, name: String,
+    n: Int)(implicit ev1: Positionable[T, Position1D],
+      ev2: Positionable[U, Position1D]): Standardise = {
+    Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name),
+      DefaultThreshold, n)
+  }
+
+  /**
+   * Standardise numeric variables.
+   *
+   * @param dim       Dimension for for which to create standardised variables.
+   * @param mean      Key into the inner map of `V`, identifying the
+   *                  standardisation constant for the mean.
+   * @param sd        Key into the inner map of `V`, identifying the
+   *                  standardisation constant for the standard deviation.
+   * @param threshold Minimum standard deviation threshold. Values less than
+   *                  this result in standardised value of zero.
+   * @param n         Number of times division by standard deviation.
+   */
+  def apply[T, U](dim: Dimension, mean: T, sd: U, threshold: Double,
+    n: Int)(implicit ev1: Positionable[T, Position1D],
+      ev2: Positionable[U, Position1D]): Standardise = {
+    Standardise(dim, ev1.convert(mean), ev2.convert(sd), None, threshold, n)
+  }
+
+  /**
+   * Standardise numeric variables.
+   *
+   * @param dim       Dimension for for which to create standardised variables.
+   * @param mean      Key into the inner map of `V`, identifying the
+   *                  standardisation constant for the mean.
+   * @param sd        Key into the inner map of `V`, identifying the
+   *                  standardisation constant for the standard deviation.
+   * @param name      Pattern for the new name of the coordinate at `dim`. Use
+   *                  `%[12]$``s` for the string representations of the
+   *                  coordinate, and the content.
+   * @param threshold Minimum standard deviation threshold. Values less than
+   *                  this result in standardised value of zero.
+   * @param n         Number of times division by standard deviation.
+   */
+  def apply[T, U](dim: Dimension, mean: T, sd: U, name: String,
+    threshold: Double, n: Int)(implicit ev1: Positionable[T, Position1D],
+      ev2: Positionable[U, Position1D]): Standardise = {
+    Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name),
+      threshold, n)
   }
 
   private val DefaultThreshold = 1e-4
+  private val DefaultN = 2
 }
 
 /**

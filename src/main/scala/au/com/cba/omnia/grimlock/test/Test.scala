@@ -700,3 +700,37 @@ class Test26(args: Args) extends Job(args) {
     .persist("./tmp/alg.out")
 }
 
+class Test27(args: Args) extends Job(args) {
+
+  // http://www.statisticshowto.com/moving-average/
+  read2D("simMovAvgInputfile.txt", first=LongCodex)
+    .derive(Over(Second), SimpleMovingAverage(5))
+    .persist("./tmp/sma1.out")
+
+  read2D("simMovAvgInputfile.txt", first=LongCodex)
+    .derive(Over(Second), SimpleMovingAverage(5, all=true))
+    .persist("./tmp/sma2.out")
+
+  read2D("simMovAvgInputfile.txt", first=LongCodex)
+    .derive(Over(Second), CenteredMovingAverage(2))
+    .persist("./tmp/tma.out")
+
+  read2D("simMovAvgInputfile.txt", first=LongCodex)
+    .derive(Over(Second), WeightedMovingAverage(5))
+    .persist("./tmp/wma1.out")
+
+  read2D("simMovAvgInputfile.txt", first=LongCodex)
+    .derive(Over(Second), WeightedMovingAverage(5, all=true))
+    .persist("./tmp/wma2.out")
+
+  // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
+  read1D("cumMovAvgInputfile.txt")
+    .derive(Along(First), CumulativeMovingAverage())
+    .persist("./tmp/cma.out")
+
+  // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
+  read1D("expMovAvgInputfile.txt")
+    .derive(Along(First), ExponentialMovingAverage(0.33))
+    .persist("./tmp/ema.out")
+}
+

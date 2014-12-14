@@ -17,7 +17,7 @@
 set -vx
 
 JAR=grimlock.jar
-NUM_TEST=26
+NUM_TEST=27
 DO_BUILD=true
 DO_LOCAL=true
 DO_DEMO=true
@@ -109,8 +109,8 @@ then
       hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.InstanceCentricTfIdf --hdfs
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
       hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.MutualInformation --hdfs
-  export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-    hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DerivedData --hdfs
+    export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DerivedData --hdfs
   fi
 fi
 
@@ -124,9 +124,15 @@ then
   if [ ${DO_INIT} = "true" ]
   then
     hadoop fs -mkdir -p tmp
+    hadoop fs -put algebraInputfile1.txt
+    hadoop fs -put algebraInputfile2.txt
+    hadoop fs -put cumMovAvgInputfile.txt
     hadoop fs -put dict.txt
+    hadoop fs -put expMovAvgInputfile.txt
     hadoop fs -put ivoryInputfile1.txt
+    hadoop fs -put mutualInputfile.txt
     hadoop fs -put numericInputfile1.txt
+    hadoop fs -put simMovAvgInputfile.txt
     hadoop fs -put smallInputfile.txt
     hadoop fs -put someInputfile3.txt
     hadoop fs -put somePairwise.txt

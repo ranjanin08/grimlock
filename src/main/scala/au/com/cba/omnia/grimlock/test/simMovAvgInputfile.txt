@@ -1,0 +1,10 @@
+2003|sales|continuous|long|4
+2004|sales|continuous|long|6
+2005|sales|continuous|long|5
+2006|sales|continuous|long|8
+2007|sales|continuous|long|9
+2008|sales|continuous|long|5
+2009|sales|continuous|long|4
+2010|sales|continuous|long|3
+2011|sales|continuous|long|7
+2012|sales|continuous|long|8
