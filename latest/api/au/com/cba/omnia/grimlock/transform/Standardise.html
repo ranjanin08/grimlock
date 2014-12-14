@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Standardise numeric variables.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/1066fe836bb471f4db45060a5e1031f2f2048102//src/main/scala/au/com/cba/omnia/grimlock/code/Transformers.scala" target="_blank">Transformers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Standardisation results in a variable with zero mean and variance
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/a1b0a489467b9f18cbef0aba7db91447b5d8d271//src/main/scala/au/com/cba/omnia/grimlock/code/Transformers.scala" target="_blank">Transformers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Standardisation results in a variable with zero mean and variance
       of one. It is only applied to numerical variables.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
@@ -325,6 +325,19 @@
       </h4>
       <p class="shortcomment cmt">Key into the inner map of <code>V</code>, identifying the
                  standardisation constant for the mean.</p>
+    </li><li name="au.com.cba.omnia.grimlock.transform.Standardise#n" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="n:Int"></a>
+      <a id="n:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">n</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Number of times division by standard deviation.</p>
     </li><li name="au.com.cba.omnia.grimlock.transform.Standardise#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="name:Option[String]"></a>
       <a id="name:Option[String]"></a>
@@ -510,8 +523,7 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Minimum standard deviation threshold.</p><div class="fullcomment"><div class="comment cmt"><p>Minimum standard deviation threshold. Values less than this
-                 result in standardised value of zero.
-</p></div></div>
+                 result in standardised value of zero.</p></div></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
