@@ -1839,7 +1839,7 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
       .values
       .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
       .join(dictJ)
-      .map { case (_, ((pc, pi) , pj)) => (pc, pi, pj) }
+      .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
       .groupBy { case ((p, c), pi, pj) => Position1D(p.get(Third)) }
       .join(dictK)
       .map {
@@ -1944,10 +1944,10 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
       .values
       .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
       .join(dictJ)
-      .map { case (_, ((pc, pi) , pj)) => (pc, pi, pj) }
+      .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
       .groupBy { case ((p, c), pi, pj) => Position1D(p.get(Third)) }
       .join(dictK)
-      .map { case (_, ((pc, pi, pj) , pk)) => (pc, pi, pj, pk) }
+      .map { case (_, ((pc, pi, pj), pk)) => (pc, pi, pj, pk) }
       .groupBy { case ((p, c), pi, pj, pk) => Position1D(p.get(Fourth)) }
       .join(dictL)
       .map {
@@ -2060,7 +2060,7 @@ class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D]
       .values
       .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
       .join(dictJ)
-      .map { case (_, ((pc, pi) , pj)) => (pc, pi, pj) }
+      .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
       .groupBy { case ((p, c), pi, pj) => Position1D(p.get(Third)) }
       .join(dictK)
       .map { case (_, ((pc, pi, pj), pk)) => (pc, pi, pj, pk) }

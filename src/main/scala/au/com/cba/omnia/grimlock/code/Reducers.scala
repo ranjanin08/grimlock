@@ -333,7 +333,7 @@ case class Moments private (strict: Boolean, nan: Boolean, moments: List[Int],
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
+    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
     content(t).map {
       case cl => Right(moments.map { case m => (pos.append(names(m)), cl(m)) })
     }
@@ -991,14 +991,13 @@ case class Histogram private (strict: Boolean, all: Option[Type],
   separator: String) extends Reducer with Prepare with PresentMultiple
   with StrictReduce with ElementCounts {
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
+    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
     t.map {
       case m =>
         val counts = m.values.toList.sorted
         val stats = statistics.map {
-          case f =>
-            f(pos, counts).asInstanceOf[Option[Cell[P#M]]]
-        }.flatten
+          case f => f(pos, counts)
+        }.flatten.asInstanceOf[List[Cell[pos.M]]]
         val vals = (m.map {
           case (k, v) =>
             (pos.append(name.format(pos.toShortString(separator), k)),
@@ -1257,7 +1256,7 @@ case class ThresholdCount private (strict: Boolean, nan: Boolean,
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
+    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
     content(t).map {
       case cl => Right(names.zip(cl).map { case (n, c) => (pos.append(n), c) })
     }
@@ -1452,7 +1451,7 @@ case class Quantiles(quantiles: Int, name: String = "quantile.%d")
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
+    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
 
     val keys = t.keys.toList
     val values = t.values
@@ -1466,7 +1465,7 @@ case class Quantiles(quantiles: Int, name: String = "quantile.%d")
     Some(Right((boundaries.zipWithIndex.map {
       case (quant, idx) => (pos.append(name.format(idx + 1)),
         Content(ContinuousSchema[Codex.DoubleCodex](), quant))
-      }).toList))
+    }).toList))
   }
 }
 

@@ -126,7 +126,7 @@ trait PresentMultiple { self: Reducer =>
    *       types of variables of their data.
    */
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]]
+    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]]
 }
 
 /**
@@ -141,12 +141,12 @@ trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple {
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
+    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
     name match {
       case Some(n) => content(t).map {
         case con => Left((pos.append(n), con))
       }
-      case None => Option.empty[Either[Cell[P#M], List[Cell[P#M]]]]
+      case None => Option.empty[Either[Cell[pos.M], List[Cell[pos.M]]]]
     }
   }
 
@@ -182,7 +182,7 @@ case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMult
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
+    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
     Some(Right((reducers, t).zipped.flatMap {
       case (reducer, s) => Misc.mapFlatten(reducer.presentMultiple(pos,
         s.asInstanceOf[reducer.T]))
@@ -221,7 +221,7 @@ case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValu
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[P#M], List[Cell[P#M]]]] = {
+    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
     Some(Right((reducers, t).zipped.flatMap {
       case (reducer, s) => Misc.mapFlatten(reducer.presentMultiple(pos,
         s.asInstanceOf[reducer.T]))

@@ -62,12 +62,12 @@ trait DoubleOperator { self: Operator with Compute =>
       rp.toShortString(separator))
 
     (comparer.check(lp, rp), lc.value.asDouble, rc.value.asDouble) match {
-        case (true, Some(l), Some(r)) =>
-          Some((rem.prepend(coordinate),
-            Content(ContinuousSchema[Codex.DoubleCodex](),
-              if (inverse) compute(r, l) else compute(l, r))))
-        case _ => None
-      }
+      case (true, Some(l), Some(r)) =>
+        Some((rem.prepend(coordinate),
+          Content(ContinuousSchema[Codex.DoubleCodex](),
+            if (inverse) compute(r, l) else compute(l, r))))
+      case _ => None
+    }
   }
 
   protected def compute(l: Double, r: Double): Double
