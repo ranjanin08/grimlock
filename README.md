@@ -1,9 +1,8 @@
 Grimlock
 ========
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/CommBank/grimlock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](https://travis-ci.org/CommBank/grimlock.svg?branch=master)](https://travis-ci.org/CommBank/grimlock)
-[![Gitter chat](https://badges.gitter.im/CommBank.png)](https://gitter.im/CommBank)
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/CommBank/grimlock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Overview
 --------
@@ -18,7 +17,7 @@ for such tasks as:
 * Computing statistics in all dimensions;
 * Generating data for a variety of machine learning tools;
 * Partitioning and sampling of data;
-* Derived features;
+* Derived features such as gradients and moving averages;
 * Text analysis (tf-idf/LDA);
 * Computing pairwise distances.
 
@@ -207,21 +206,20 @@ functionality (be sure to press ctrl-D after the last import statement):
 > scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
-import grimlock._
-import grimlock.contents._
-import grimlock.contents.Contents._
-import grimlock.contents.metadata._
-import grimlock.encoding._
-import grimlock.Matrix._
-import grimlock.Names._
-import grimlock.partition._
-import grimlock.partition.Partitions._
-import grimlock.position._
-import grimlock.position.Positions._
-import grimlock.reduce._
-import grimlock.transform._
-import grimlock.Type._
-import grimlock.Types._
+import au.com.cba.omnia.grimlock._
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.content.metadata._
+import au.com.cba.omnia.grimlock.encoding._
+import au.com.cba.omnia.grimlock.Matrix._
+import au.com.cba.omnia.grimlock.Names._
+import au.com.cba.omnia.grimlock.partition._
+import au.com.cba.omnia.grimlock.partition.Partitions._
+import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.position.Positions._
+import au.com.cba.omnia.grimlock.reduce._
+import au.com.cba.omnia.grimlock.transform._
+import au.com.cba.omnia.grimlock.Types._
+import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
 
 ```
 
@@ -256,7 +254,7 @@ of features, perform simple query):
 
 ```
 scala> data.size(First).dump
-(Position2D(StringValue(First),StringValue(size)),Content(DiscreteSchema[LongCodex](),LongValue(9)))
+(Position1D(StringValue(First)),Content(DiscreteSchema[LongCodex](),LongValue(9)))
 
 scala> data.types(Over(Second)).dump
 (Position1D(StringValue(fid:A)),Numerical)
@@ -292,9 +290,9 @@ scala> counts.dump
 (Position1D(StringValue(iid:0444510)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
 (Position1D(StringValue(iid:1004305)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
 
-scala> counts.reduceAndExpand(Along(First), Moments()).dump
+scala> counts.reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis")).dump
 (Position1D(StringValue(mean)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(4.0,DoubleCodex)))
-(Position1D(StringValue(std)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
+(Position1D(StringValue(sd)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
 (Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(0.348873899490999,DoubleCodex)))
 (Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
 ```
