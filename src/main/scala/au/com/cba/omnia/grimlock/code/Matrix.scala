@@ -785,7 +785,7 @@ trait ModifyableMatrix[P <: Position with ModifyablePosition] {
       .map { case (p, c) => (slice.selected(p), slice.remainder(p), c) }
       .groupBy { case (s, r, c) => s }
       .sortBy { case (s, r, c) => r }
-      .scanLeft(Option.empty[(deriver.T, Option[Either[Cell[slice.S#M], List[Cell[slice.S#M]]]])]) {
+      .scanLeft(Option.empty[(deriver.T, CellCollection[slice.S#M])]) {
         case (None, (s, r, c)) => Some((deriver.initialise(s, r, c), None))
         case (Some((t, _)), (s, r, c)) => Some(deriver.present(s, r, c, t))
       }
@@ -816,7 +816,7 @@ trait ModifyableMatrix[P <: Position with ModifyablePosition] {
       }
       .groupBy { case (s, r, c, vo) => s }
       .sortBy { case (s, r, c, vo) => r }
-      .scanLeft(Option.empty[(deriver.T, Option[Either[Cell[slice.S#M], List[Cell[slice.S#M]]]])]) {
+      .scanLeft(Option.empty[(deriver.T, CellCollection[slice.S#M])]) {
         case (None, (s, r, c, vo)) => Some((deriver.initialise(s, r, c,
           vo.get.asInstanceOf[deriver.V]), None))
         case (Some((t, _)), (s, r, c, vo)) => Some(deriver.present(s, r, c, t))
@@ -1091,7 +1091,11 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] {
 }
 
 object Matrix {
+  /** Type of cell in a Matrix. */
   type Cell[P <: Position] = (P, Content)
+
+  /** Type of a collection of cells. */
+  type CellCollection[P <: Position] = Misc.Collection[Cell[P]]
 
   /**
    * Read column oriented, pipe separated matrix data into a

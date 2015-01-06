@@ -23,7 +23,7 @@ trait Sampler
 trait Select extends SelectWithValue { self: Sampler =>
   type V = Any
 
-  def select[P <: Position](pos: P, ext: V) = select(pos)
+  def select[P <: Position](pos: P, ext: V): Boolean = select(pos)
 
   /**
    * Indicate if the cell is selected as part of the sample.

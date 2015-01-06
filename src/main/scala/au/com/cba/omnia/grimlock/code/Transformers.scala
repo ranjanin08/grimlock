@@ -18,7 +18,7 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix.Cell
+import au.com.cba.omnia.grimlock.Matrix.CellCollection
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.Type._
 
@@ -29,7 +29,7 @@ import au.com.cba.omnia.grimlock.Type._
 trait PresentCell[T] {
   protected def present[P <: Position with ModifyablePosition](dim: Dimension,
     pos: P, con: Content, name: Option[String], typ: Option[Type],
-    value: T): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    value: T): CellCollection[pos.S] = {
     checkContent(con, typ) match {
       case true => getCell(dim, pos, con, name, value)
       case false => None
@@ -38,7 +38,7 @@ trait PresentCell[T] {
 
   protected def present[P <: Position with ModifyablePosition](dim: Dimension,
     pos: P, con: Content, name: Option[String], typ: Option[Type],
-    f: (T) => T): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    f: (T) => T): CellCollection[pos.S] = {
     (checkContent(con, typ), getValue(con)) match {
       case (true, Some(v)) => getCell(dim, pos, con, name, f(v))
       case _ => None
@@ -48,8 +48,7 @@ trait PresentCell[T] {
   protected def present[P <: Position with ModifyablePosition](dim: Dimension,
     pos: P, con: Content, ext: Map[Position1D, Content],
     key: Option[Position1D], name: Option[String], typ: Option[Type],
-    f: (T, T) => T,
-    inverse: Boolean): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    f: (T, T) => T, inverse: Boolean): CellCollection[pos.S] = {
     present(dim, pos, con, name, typ, f, inverse,
       getValue(getKey(dim, pos, key), ext))
   }
@@ -57,7 +56,7 @@ trait PresentCell[T] {
   protected def present[P <: Position with ModifyablePosition](dim: Dimension,
     pos: P, con: Content, ext: Map[Position1D, Map[Position1D, Content]],
     key: Position1D, name: Option[String], typ: Option[Type], f: (T, T) => T,
-    inverse: Boolean): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    inverse: Boolean): CellCollection[pos.S] = {
     present(dim, pos, con, name, typ, f, inverse,
       getValue(getKey(dim, pos, None), key, ext))
   }
@@ -65,7 +64,7 @@ trait PresentCell[T] {
   protected def present[P <: Position with ModifyablePosition](dim: Dimension,
     pos: P, con: Content, ext: Map[Position1D, Map[Position1D, Content]],
     key1: Position1D, key2: Position1D, name: Option[String], typ: Option[Type],
-    f: (T, T, T) => T): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    f: (T, T, T) => T): CellCollection[pos.S] = {
     (checkContent(con, typ), getValue(con),
       getValue(getKey(dim, pos, None), key1, ext),
       getValue(getKey(dim, pos, None), key2, ext)) match {
@@ -114,14 +113,14 @@ trait PresentCell[T] {
 
   private def getCell[P <: Position with ModifyablePosition](dim: Dimension,
     pos: P, con: Content, name: Option[String],
-    value: T): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    value: T): CellCollection[pos.S] = {
     Some(Left((getName(dim, pos, con, name), getContent(value))))
   }
 
   private def present[P <: Position with ModifyablePosition](dim: Dimension,
     pos: P, con: Content, name: Option[String], typ: Option[Type],
     f: (T, T) => T, inverse: Boolean,
-    value: Option[T]): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    value: Option[T]): CellCollection[pos.S] = {
     (checkContent(con, typ), getValue(con), value) match {
       case (true, Some(l), Some(r)) => getCell(dim, pos, con, name,
         if (inverse) f(r, l) else f(l, r))
@@ -163,7 +162,7 @@ trait PresentDouble extends PresentCell[Double] {
 case class Indicator private (dim: Dimension, name: Option[String])
   extends Transformer with Present with PresentLong {
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    con: Content): CellCollection[pos.S] = {
     present(dim, pos, con, name, None, 1)
   }
 }
@@ -205,7 +204,7 @@ object Indicator {
 case class Binarise(dim: Dimension, name: String = "%1$s=%2$s")
   extends Transformer with Present with PresentLong {
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    con: Content): CellCollection[pos.S] = {
     present(dim, pos, con, Some(name), Some(Categorical), 1)
   }
 }
@@ -229,7 +228,7 @@ case class Normalise private (dim: Dimension, key: Position1D,
   type V = Map[Position1D, Map[Position1D, Content]]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(dim, pos, con, ext, key, name, Some(Numerical),
       (value: Double, const: Double) => value / const, false)
   }
@@ -289,7 +288,7 @@ case class Standardise private (dim: Dimension, mean: Position1D,
   type V = Map[Position1D, Map[Position1D, Content]]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(dim, pos, con, ext, mean, sd, name, Some(Numerical), standardise _)
   }
 
@@ -476,7 +475,7 @@ case class Clamp private (dim: Dimension, lower: Position1D, upper: Position1D,
   type V = Map[Position1D, Map[Position1D, Content]]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(dim, pos, con, ext, lower, upper, name, Some(Numerical), clamp _)
   }
 
@@ -540,7 +539,7 @@ case class Idf private (dim: Dimension, key: Option[Position1D],
   type V = Map[Position1D, Content]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(dim, pos, con, ext, key, name, Some(Numerical),
       (df: Double, n: Double) => idf(df, n), false)
   }
@@ -673,7 +672,7 @@ object Idf {
 case class BooleanTf private (dim: Dimension, name: Option[String])
   extends Transformer with Present with PresentDouble {
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    con: Content): CellCollection[pos.S] = {
     present(dim, pos, con, name, Some(Numerical), 1)
   }
 }
@@ -716,7 +715,7 @@ object BooleanTf {
 case class LogarithmicTf private (dim: Dimension, name: Option[String],
   log: (Double) => Double) extends Transformer with Present with PresentDouble {
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    con: Content): CellCollection[pos.S] = {
     present(dim, pos, con, name, Some(Numerical), (tf: Double) => log(tf + 1))
   }
 }
@@ -786,7 +785,7 @@ case class AugmentedTf private (dim: Dimension, name: Option[String])
   type V = Map[Position1D, Content]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(dim, pos, con, ext, None, name, Some(Numerical),
       (tf: Double, m: Double) => 0.5 + (0.5 * tf) / m, false)
   }
@@ -834,7 +833,7 @@ case class TfIdf private (dim: Dimension, key: Option[Position1D],
   type V = Map[Position1D, Content]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(dim, pos, con, ext, key, name, Some(Numerical),
       (tf: Double, idf: Double) => tf * idf, false)
   }
@@ -908,7 +907,7 @@ case class Add private (dim: Dimension, key: Option[Position1D],
   type V = Map[Position1D, Content]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(dim, pos, con, ext, key, name, Some(Numerical),
       (l: Double, r: Double) => l + r, inverse)
   }
@@ -1032,7 +1031,7 @@ case class Subtract private (dim: Dimension, key: Option[Position1D],
   type V = Map[Position1D, Content]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(dim, pos, con, ext, key, name, Some(Numerical),
       (l: Double, r: Double) => l - r, inverse)
   }
@@ -1156,7 +1155,7 @@ case class Multiply private (dim: Dimension, key: Option[Position1D],
   type V = Map[Position1D, Content]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(dim, pos, con, ext, key, name, Some(Numerical),
       (l: Double, r: Double) => l * r, inverse)
   }
@@ -1280,7 +1279,7 @@ case class Fraction private (dim: Dimension, key: Option[Position1D],
   type V = Map[Position1D, Content]
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(dim, pos, con, ext, key, name, Some(Numerical),
       (l: Double, r: Double) => l / r, inverse)
   }
@@ -1399,7 +1398,7 @@ object Fraction {
 case class Power private (dim: Dimension, power: Double, name: Option[String])
   extends Transformer with Present with PresentDouble {
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    con: Content): CellCollection[pos.S] = {
     present(dim, pos, con, name, Some(Numerical),
       (d: Double) => math.pow(d, power))
   }
@@ -1444,7 +1443,7 @@ object Power {
 case class SquareRoot private (dim: Dimension, name: Option[String])
   extends Transformer with Present with PresentDouble {
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    con: Content): CellCollection[pos.S] = {
     present(dim, pos, con, name, Some(Numerical), math.sqrt(_))
   }
 }

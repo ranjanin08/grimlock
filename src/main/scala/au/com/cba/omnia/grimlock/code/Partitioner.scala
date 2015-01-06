@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock.partition
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
 
 import cascading.flow.FlowDef
 import com.twitter.scalding._
@@ -24,6 +25,7 @@ import com.twitter.scalding.TDsl._, Dsl._
 
 /** Base trait for partitioning operations. */
 trait Partitioner {
+  /** Type of the partition assignments. */
   type T
 }
 
@@ -31,7 +33,7 @@ trait Partitioner {
 trait Assign extends AssignWithValue { self: Partitioner =>
   type V = Any
 
-  def assign[P <: Position](pos: P, ext: V) = assign(pos)
+  def assign[P <: Position](pos: P, ext: V): Collection[T] = assign(pos)
 
   /**
    * Assign the cell to a partition.
@@ -40,13 +42,8 @@ trait Assign extends AssignWithValue { self: Partitioner =>
    *
    * @return Optional of either a `T` or a `List[T]`, where the instances
    *         of `T` identify the partitions.
-   *
-   * @note An `Option` is returned to allow partitioners to be selective in
-   *       which partition a position is assigned to. An `Either` is returned
-   *       to allow a partitioner to assign a position to more than one
-   *       partitions.
    */
-  def assign[P <: Position](pos: P): Option[Either[T, List[T]]]
+  def assign[P <: Position](pos: P): Collection[T]
 }
 
 /** Base trait for partitioners that use a user supplied value. */
@@ -62,13 +59,8 @@ trait AssignWithValue { self: Partitioner =>
    *
    * @return Optional of either a `T` or a `List[T]`, where the instances
    *         of `T` identify the partitions.
-   *
-   * @note An `Option` is returned to allow partitioners to be selective in
-   *       which partition a position is assigned to. An `Either` is returned
-   *       to allow a partitioner to assign a position to more than one
-   *       partitions.
    */
-  def assign[P <: Position](pos: P, ext: V): Option[Either[T, List[T]]]
+  def assign[P <: Position](pos: P, ext: V): Collection[T]
 }
 
 /**

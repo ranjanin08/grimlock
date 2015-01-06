@@ -56,20 +56,22 @@ object Miscellaneous {
     }
   }
 
-  /** Transforms an `Option[Either[T, List[T]]]` to a `List[T]`. */
-  def mapFlatten[T](toe: Option[Either[T, List[T]]]): List[T] = {
-    flatten(toe.map {
+  type Collection[T] = Option[Either[T, List[T]]]
+
+  /** Transforms a `Collection[T]` to a `List[T]`. */
+  def mapFlatten[T](c: Collection[T]): List[T] = {
+    flatten(c.map {
       case Left(t) => List(t)
       case Right(tl) => tl
     })
   }
 
   /**
-   * Transforms an `Option[Either[T, List[T]]]` together with a single `U`
+   * Transforms a `Collection[T]` together with a single `U`
    * to a `List[(T, U)]`.
    */
-  def mapFlatten[T, U](toe: Option[Either[T, List[T]]], u: U): List[(T, U)] = {
-    flatten(toe.map {
+  def mapFlatten[T, U](c: Collection[T], u: U): List[(T, U)] = {
+    flatten(c.map {
       case Left(t) => List((t, u))
       case Right(tl) => tl.map { case t => (t, u) }
     })

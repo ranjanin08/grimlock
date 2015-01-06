@@ -27,6 +27,7 @@ import au.com.cba.omnia.grimlock.position.Positions._
 import au.com.cba.omnia.grimlock.reduce._
 import au.com.cba.omnia.grimlock.transform._
 import au.com.cba.omnia.grimlock.Types._
+import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
 
 import com.twitter.scalding._
 
@@ -92,7 +93,7 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
     extends Partitioner with Assign {
     type T = S
 
-    def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
+    def assign[P <: Position](pos: P): Collection[T] = {
       if (pos.get(dim).toShortString == "iid:0364354" ||
           pos.get(dim).toShortString == "iid:0216406") {
         Some(Left(right))
@@ -277,7 +278,7 @@ class LabelWeighting(args: Args) extends Job(args) {
     // content. Also return this cell (pos.append("label"), con) so no
     // additional join is needed with the original label data.
     def present[P <: Position with ExpandablePosition](pos: P, con: Content,
-      ext: V): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+      ext: V): CellCollection[pos.M] = {
       Some(Right(List((pos.append("label"), con), (pos.append("weight"),
         ext(Position1D(con.value.toShortString))))))
     }

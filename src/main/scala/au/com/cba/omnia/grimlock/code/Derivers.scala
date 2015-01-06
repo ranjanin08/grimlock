@@ -18,7 +18,7 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix.Cell
+import au.com.cba.omnia.grimlock.Matrix.CellCollection
 import au.com.cba.omnia.grimlock.position._
 
 /** Base trait for computing a moving average. */
@@ -71,8 +71,7 @@ trait BatchMovingAverage extends Deriver with Initialise with MovingAverage {
   }
 
   def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
-    rem: Slice[P, D]#R, con: Content,
-    t: T): (T, Option[Either[Cell[sel.M], List[Cell[sel.M]]]]) = {
+    rem: Slice[P, D]#R, con: Content, t: T): (T, CellCollection[sel.M]) = {
     val lst = updateList(rem, con, t._1)
     val crd = lst(math.min(idx, lst.size - 1))._1
     val out = (all || lst.size == window) match {
@@ -171,8 +170,7 @@ trait OnlineMovingAverage extends Deriver with Initialise with MovingAverage {
   }
 
   def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
-    rem: Slice[P, D]#R, con: Content,
-    t: T): (T, Option[Either[Cell[sel.M], List[Cell[sel.M]]]]) = {
+    rem: Slice[P, D]#R, con: Content, t: T): (T, CellCollection[sel.M]) = {
     val curr = compute(getDouble(con), t)
     val out = present(sel, rem.get(dim), curr, t._3)
 

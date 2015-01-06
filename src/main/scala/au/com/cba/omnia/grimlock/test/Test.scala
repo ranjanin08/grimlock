@@ -33,6 +33,7 @@ import au.com.cba.omnia.grimlock.squash._
 import au.com.cba.omnia.grimlock.transform._
 import au.com.cba.omnia.grimlock.Type._
 import au.com.cba.omnia.grimlock.Types._
+import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
 
 import cascading.flow.FlowDef
 import com.twitter.scalding._
@@ -264,7 +265,7 @@ class Test9(args : Args) extends Job(args) {
   case class StringPartitioner(dim: Dimension) extends Partitioner with Assign {
     type T = String
 
-    def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
+    def assign[P <: Position](pos: P): Collection[T] = {
       Some(Right(List(pos.get(dim) match {
         case StringValue("fid:A") => "training"
         case StringValue("fid:B") => "testing"
@@ -285,7 +286,7 @@ class Test9(args : Args) extends Job(args) {
     with Assign {
     type T = (Int, Int, Int)
 
-    def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
+    def assign[P <: Position](pos: P): Collection[T] = {
       Some(Right(List(pos.get(dim) match {
         case StringValue("fid:A") => (1, 0, 0)
         case StringValue("fid:B") => (0, 1, 0)
@@ -542,7 +543,7 @@ class Test19(args : Args) extends Job(args) {
     type T = S
 
     val bhs = BinaryHashSplit(dim, 7, left, right, base=10)
-    def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
+    def assign[P <: Position](pos: P): Collection[T] = {
       if (pos.get(dim).toShortString == "iid:0364354") {
         Some(Left(right))
       } else {
@@ -612,8 +613,7 @@ class Test22(args : Args) extends Job(args) {
     def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
       rem: Slice[P, D]#R, con: Content): T = (rem, con)
     def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
-      rem: Slice[P, D]#R, con: Content,
-      t: T): (T, Option[Either[Cell[sel.M], List[Cell[sel.M]]]]) = {
+      rem: Slice[P, D]#R, con: Content, t: T): (T, CellCollection[sel.M]) = {
       ((rem, con), (con.value.asDouble, t._2.value.asDouble) match {
         case (Some(c), Some(l)) =>
           Some(Left((sel.append(rem.toShortString("") + "-" +

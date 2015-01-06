@@ -16,6 +16,7 @@ package au.com.cba.omnia.grimlock.partition
 
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
 
 import java.util.Date
 
@@ -36,7 +37,7 @@ case class BinaryHashSplit[S: Ordering](dim: Dimension, ratio: Int, left: S,
   right: S, base: Int = 100) extends Partitioner with Assign {
   type T = S
 
-  def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
+  def assign[P <: Position](pos: P): Collection[T] = {
     Some(Left(
       if (math.abs(pos.get(dim).hashCode % base) <= ratio) left else right))
   }
@@ -64,7 +65,7 @@ case class TernaryHashSplit[S: Ordering](dim: Dimension, lower: Int,
   extends Partitioner with Assign {
   type T = S
 
-  def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
+  def assign[P <: Position](pos: P): Collection[T] = {
     val hash = math.abs(pos.get(dim).hashCode % base)
 
     Some(Left(
@@ -90,7 +91,7 @@ case class HashSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Int, Int)],
   base: Int = 100) extends Partitioner with Assign {
   type T = S
 
-  def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
+  def assign[P <: Position](pos: P): Collection[T] = {
     val hash = math.abs(pos.get(dim).hashCode % base)
 
     Some(Right(ranges.flatMap {
@@ -118,7 +119,7 @@ case class BinaryDateSplit[S: Ordering](dim: Dimension, date: Date, left: S,
   with Assign {
   type T = S
 
-  def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
+  def assign[P <: Position](pos: P): Collection[T] = {
     val coord = pos.get(dim)
 
     codex.compare(coord, codex.toValue(date)).map {
@@ -148,7 +149,7 @@ case class TernaryDateSplit[S: Ordering](dim: Dimension, lower: Date,
   codex: DateAndTimeCodex = DateCodex) extends Partitioner with Assign {
   type T = S
 
-  def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
+  def assign[P <: Position](pos: P): Collection[T] = {
     val coord = pos.get(dim)
 
     (codex.compare(coord, codex.toValue(lower)),
@@ -177,7 +178,7 @@ case class DateSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Date, Date)],
   codex: DateAndTimeCodex = DateCodex) extends Partitioner with Assign {
   type T = S
 
-  def assign[P <: Position](pos: P): Option[Either[T, List[T]]] = {
+  def assign[P <: Position](pos: P): Collection[T] = {
     val coord = pos.get(dim)
     val parts = ranges.flatMap {
       case (k, (lower, upper)) =>

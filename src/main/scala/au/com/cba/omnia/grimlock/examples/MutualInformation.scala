@@ -31,7 +31,7 @@ import com.twitter.scalding._
 // the rounded up value. All other values are passed through.
 case class CeilingBucketing() extends Transformer with Present {
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    con: Content): CellCollection[pos.S] = {
     val c = (con.schema.kind.isSpecialisationOf(Type.Continuous),
       con.value.asDouble) match {
       case (true, Some(d)) =>

@@ -15,7 +15,7 @@
 package au.com.cba.omnia.grimlock.transform
 
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.Matrix.Cell
+import au.com.cba.omnia.grimlock.Matrix.CellCollection
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility.{ Miscellaneous => Misc }
 
@@ -27,7 +27,7 @@ trait Present extends PresentWithValue { self: Transformer =>
   type V = Any
 
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     present(pos, con)
   }
 
@@ -40,18 +40,9 @@ trait Present extends PresentWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position
    *         is creating by modifiying `pos` and the content is derived from
    *         `con`.
-   *
-   * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what content they apply to. For example, normalising is
-   *       undefined for categorical variables. The transformer now has the
-   *       option to return `None`. This in turn permits an external API, for
-   *       simple cases, where the user need not know about the types of
-   *       variables of their data.
-   * @note An `Either` is used to all either one-to-one or one-to-many
-   *       transformations.
    */
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.S], List[Cell[pos.S]]]]
+    con: Content): CellCollection[pos.S]
 
   def andThen(that: Transformer with Present): AndThenTransformer = {
     AndThenTransformer(this, that)
@@ -76,18 +67,9 @@ trait PresentWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position
    *         is creating by modifiying `pos` and the content is derived from
    *         `con`.
-   *
-   * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what content they apply to. For example, normalising is
-   *       undefined for categorical variables. The transformer now has the
-   *       option to return `None`. This in turn permits an external API, for
-   *       simple cases, where the user need not know about the types of
-   *       variables of their data.
-   * @note An `Either` is used to all either one-to-one or one-to-many
-   *       transformations.
    */
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]]
+    ext: V): CellCollection[pos.S]
 
   def andThen[W <: V](that: Transformer with PresentWithValue { type V = W }): AndThenTransformerWithValue[W] = {
     AndThenTransformerWithValue[W](this, that)
@@ -102,7 +84,7 @@ trait PresentExpanded extends PresentExpandedWithValue { self: Transformer =>
   type V = Any
 
   def present[P <: Position with ExpandablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    ext: V): CellCollection[pos.M] = {
     present(pos, con)
   }
 
@@ -115,18 +97,9 @@ trait PresentExpanded extends PresentExpandedWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position
    *         is creating by appending to `pos` and the content is derived from
    *         `con`.
-   *
-   * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what content they apply to. For example, normalising is
-   *       undefined for categorical variables. The transformer now has the
-   *       option to return `None`. This in turn permits an external API, for
-   *       simple cases, where the user need not know about the types of
-   *       variables of their data.
-   * @note An `Either` is used to all either one-to-one or one-to-many
-   *       transformations.
    */
   def present[P <: Position with ExpandablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.M], List[Cell[pos.M]]]]
+    con: Content): CellCollection[pos.M]
 }
 
 /**
@@ -147,18 +120,9 @@ trait PresentExpandedWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position
    *         is creating by appending to `pos` and the content is derived from
    *         `con`.
-   *
-   * @note An `Option` is used in the return type to allow reducers to be
-   *       selective in what content they apply to. For example, normalising is
-   *       undefined for categorical variables. The transformer now has the
-   *       option to return `None`. This in turn permits an external API, for
-   *       simple cases, where the user need not know about the types of
-   *       variables of their data.
-   * @note An `Either` is used to all either one-to-one or one-to-many
-   *       transformations.
    */
   def present[P <: Position with ExpandablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.M], List[Cell[pos.M]]]]
+    ext: V): CellCollection[pos.M]
 }
 
 /**
@@ -173,12 +137,12 @@ trait PresentExpandedWithValue { self: Transformer =>
 case class AndThenTransformer(first: Transformer with Present,
   second: Transformer with Present) extends Transformer with Present {
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    con: Content): CellCollection[pos.S] = {
     Some(Right(
       Misc.mapFlatten(first.present(pos, con))
         .flatMap {
           case (p, c) => Misc.mapFlatten(second.present(p.asInstanceOf[P],
-            c).asInstanceOf[Option[Either[Cell[pos.S], List[Cell[pos.S]]]]])
+            c).asInstanceOf[CellCollection[pos.S]])
         }))
   }
 }
@@ -199,12 +163,12 @@ case class AndThenTransformerWithValue[W](
   extends Transformer with PresentWithValue {
   type V = W
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     Some(Right(
       Misc.mapFlatten(first.present(pos, con, ext.asInstanceOf[first.V]))
         .flatMap {
           case (p, c) => Misc.mapFlatten(second.present(p.asInstanceOf[P], c,
-            ext.asInstanceOf[second.V]).asInstanceOf[Option[Either[Cell[pos.S], List[Cell[pos.S]]]]])
+            ext.asInstanceOf[second.V]).asInstanceOf[CellCollection[pos.S]])
         }))
   }
 }
@@ -222,7 +186,7 @@ case class AndThenTransformerWithValue[W](
 case class CombinationTransformer[T <: Transformer with Present](
   singles: List[T]) extends Transformer with Present {
   def present[P <: Position with ModifyablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    con: Content): CellCollection[pos.S] = {
     Some(Right(singles.flatMap {
       case s => Misc.mapFlatten(s.present(pos, con))
     }))
@@ -242,7 +206,7 @@ case class CombinationTransformer[T <: Transformer with Present](
 case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue, W](singles: List[T]) extends Transformer with PresentWithValue {
   type V = W
   def present[P <: Position with ModifyablePosition](pos: P, con: Content,
-    ext: V): Option[Either[Cell[pos.S], List[Cell[pos.S]]]] = {
+    ext: V): CellCollection[pos.S] = {
     Some(Right(singles.flatMap {
       case s => Misc.mapFlatten(s.present(pos, con, ext.asInstanceOf[s.V]))
     }))
@@ -261,7 +225,7 @@ case class CombinationTransformerWithValue[T <: Transformer with PresentWithValu
  */
 case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded](singles: List[T]) extends Transformer with PresentExpanded {
   def present[P <: Position with ExpandablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    con: Content): CellCollection[pos.M] = {
     Some(Right(singles.flatMap {
       case s => Misc.mapFlatten(s.present(pos, con))
     }))
@@ -281,7 +245,7 @@ case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded]
 case class CombinationTransformerExpandedWithValue[T <: Transformer with PresentExpandedWithValue, W](singles: List[T]) extends Transformer with PresentExpandedWithValue {
   type V = W
   def present[P <: Position with ExpandablePosition](pos: P, con: Content,
-    ext: W): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    ext: W): CellCollection[pos.M] = {
     Some(Right(singles.flatMap {
       case s => Misc.mapFlatten(s.present(pos, con, ext.asInstanceOf[s.V]))
     }))

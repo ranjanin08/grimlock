@@ -19,6 +19,7 @@ import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
+import au.com.cba.omnia.grimlock.Matrix.CellCollection
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.Type._
 import au.com.cba.omnia.grimlock.utility.=!=
@@ -333,7 +334,7 @@ case class Moments private (strict: Boolean, nan: Boolean, moments: List[Int],
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    t: T): CellCollection[pos.M] = {
     content(t).map {
       case cl => Right(moments.map { case m => (pos.append(names(m)), cl(m)) })
     }
@@ -991,7 +992,7 @@ case class Histogram private (strict: Boolean, all: Option[Type],
   separator: String) extends Reducer with Prepare with PresentMultiple
   with StrictReduce with ElementCounts {
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    t: T): CellCollection[pos.M] = {
     t.map {
       case m =>
         val counts = m.values.toList.sorted
@@ -1256,7 +1257,7 @@ case class ThresholdCount private (strict: Boolean, nan: Boolean,
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    t: T): CellCollection[pos.M] = {
     content(t).map {
       case cl => Right(names.zip(cl).map { case (n, c) => (pos.append(n), c) })
     }
@@ -1451,7 +1452,7 @@ case class Quantiles(quantiles: Int, name: String = "quantile.%d")
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    t: T): CellCollection[pos.M] = {
 
     val keys = t.keys.toList
     val values = t.values

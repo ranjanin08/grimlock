@@ -26,7 +26,7 @@ trait Reduce extends ReduceWithValue { self: Squasher =>
   type V = Any
 
   def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P,
-    ycon: Content, ext: V) = {
+    ycon: Content, ext: V): Cell[P] = {
     reduce(dim, xpos, xcon, ypos, ycon)
   }
 

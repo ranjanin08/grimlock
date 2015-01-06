@@ -96,7 +96,7 @@ case object ExampleEventCodex extends EventCodex {
 // position is 1D with event id (as is the output from `read` above).
 case class Denormalise() extends Transformer with PresentExpanded {
   def present[P <: Position with ExpandablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    con: Content): CellCollection[pos.M] = {
     con match {
       case Content(_,
         EventValue(ExampleEvent(_, _, _, _, instances, _), _)) =>
@@ -114,7 +114,7 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1,
   separator: String = "_", stopwords: List[String] = Stopwords.English)
   extends Transformer with PresentExpanded {
   def present[P <: Position with ExpandablePosition](pos: P,
-    con: Content): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    con: Content): CellCollection[pos.M] = {
     con match {
       case Content(_, EventValue(ExampleEvent(_, _, _, _, _, details), _)) =>
         // Get words from details. Optionally filter by length and/or stopwords.

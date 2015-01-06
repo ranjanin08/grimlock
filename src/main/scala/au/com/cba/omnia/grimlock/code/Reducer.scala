@@ -18,6 +18,7 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
+import au.com.cba.omnia.grimlock.Matrix.CellCollection
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility.{ Miscellaneous => Misc }
 
@@ -126,7 +127,7 @@ trait PresentMultiple { self: Reducer =>
    *       types of variables of their data.
    */
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]]
+    t: T): CellCollection[pos.M]
 }
 
 /**
@@ -141,7 +142,7 @@ trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple {
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    t: T): CellCollection[pos.M] = {
     name match {
       case Some(n) => content(t).map {
         case con => Left((pos.append(n), con))
@@ -182,7 +183,7 @@ case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMult
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    t: T): CellCollection[pos.M] = {
     Some(Right((reducers, t).zipped.flatMap {
       case (reducer, s) => Misc.mapFlatten(reducer.presentMultiple(pos,
         s.asInstanceOf[reducer.T]))
@@ -221,7 +222,7 @@ case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValu
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P,
-    t: T): Option[Either[Cell[pos.M], List[Cell[pos.M]]]] = {
+    t: T): CellCollection[pos.M] = {
     Some(Right((reducers, t).zipped.flatMap {
       case (reducer, s) => Misc.mapFlatten(reducer.presentMultiple(pos,
         s.asInstanceOf[reducer.T]))
