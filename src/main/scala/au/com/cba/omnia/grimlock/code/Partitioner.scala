@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,8 +40,7 @@ trait Assign extends AssignWithValue { self: Partitioner =>
    *
    * @param pos The position of the content.
    *
-   * @return Optional of either a `T` or a `List[T]`, where the instances
-   *         of `T` identify the partitions.
+   * @return Optional of either a `T` or a `List[T]`, where the instances of `T` identify the partitions.
    */
   def assign[P <: Position](pos: P): Collection[T]
 }
@@ -57,8 +56,7 @@ trait AssignWithValue { self: Partitioner =>
    * @param pos The position of the content.
    * @param ext The user supplied value.
    *
-   * @return Optional of either a `T` or a `List[T]`, where the instances
-   *         of `T` identify the partitions.
+   * @return Optional of either a `T` or a `List[T]`, where the instances of `T` identify the partitions.
    */
   def assign[P <: Position](pos: P, ext: V): Collection[T]
 }
@@ -79,9 +77,7 @@ class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
    *
    * @return A `TypedPipe[(Position, Content)]`; that is a matrix.
    */
-  def get(key: T): TypedPipe[Cell[P]] = {
-    data.collect { case (t, pc) if (key == t) => pc }
-  }
+  def get(key: T): TypedPipe[Cell[P]] = data.collect { case (t, pc) if (key == t) => pc }
 
   /**
    * Persist partitions to disk.
@@ -90,20 +86,15 @@ class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
    * @param separator   Separator to use between `T`, the position and content.
    * @param descriptive Indicates if the output should be descriptive.
    *
-   * @return A Scalding `TypedPipe[(T, (Position, Content))]` which is this
-   *         object's data.
+   * @return A Scalding `TypedPipe[(T, (Position, Content))]` which is this object's data.
    */
-  def persist(file: String, separator: String = "|",
-    descriptive: Boolean = false)(implicit flow: FlowDef,
-      mode: Mode): TypedPipe[(T, Cell[P])] = {
+  def persist(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[(T, Cell[P])] = {
     data
       .map {
         case (t, (p, c)) => descriptive match {
-          case true =>
-            t.toString + separator + p.toString + separator + c.toString
-          case false =>
-            t.toString + separator + p.toShortString(separator) + separator +
-              c.toShortString(separator)
+          case true => t.toString + separator + p.toString + separator + c.toString
+          case false => t.toString + separator + p.toShortString(separator) + separator + c.toShortString(separator)
         }
       }
       .toPipe('line)
@@ -114,10 +105,9 @@ class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
 }
 
 object Partitions {
-  /**
-   * Conversion from `TypedPipe[(T, (Position, Content))]` to a `Partitions`.
-   */
-  implicit def TPTPC2P[T: Ordering, P <: Position](
-    data: TypedPipe[(T, Cell[P])]): Partitions[T, P] = new Partitions(data)
+  /** Conversion from `TypedPipe[(T, (Position, Content))]` to a `Partitions`. */
+  implicit def TPTPC2P[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]): Partitions[T, P] = {
+    new Partitions(data)
+  }
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,16 +20,14 @@ import au.com.cba.omnia.grimlock.position._
 /** Base trait that encapsulates dimension on which to operate. */
 sealed trait Slice[P <: Position, D <: Dimension] {
   /**
-   * Return type of the `selected` method; a position of dimension less
-   * than `P`.
+   * Return type of the `selected` method; a position of dimension less than `P`.
    *
    * @note `S` and `R` together make `P`.
    */
   type S <: Position with ExpandablePosition
 
   /**
-   * Return type of the `remainder` method; a position of dimension less
-   * than `P`.
+   * Return type of the `remainder` method; a position of dimension less than `P`.
    *
    * @note `S` and `R` together make `P`.
    */
@@ -57,22 +55,19 @@ sealed trait Slice[P <: Position, D <: Dimension] {
   def combineMaps(pos: P, x: Map[S, C], y: Map[S, C]): Map[S, C]
 }
 
-trait Mapable[P <: Position with ReduceablePosition, D <: Dimension] {
-  self: Slice[P, D] =>
-
+trait Mapable[P <: Position with ReduceablePosition, D <: Dimension] { self: Slice[P, D] =>
   protected def remove(pos: P): pos.L = pos.remove(dimension)
   protected def single(pos: P): Position1D = Position1D(pos.get(dimension))
 }
 
 /**
- * Indicates that the selected coordinate is indexed by `dimension`. In
- * other words, when a groupBy is performed, it is performed using a
- * `Position1D` consisting of the coordinate at index `dimension`.
+ * Indicates that the selected coordinate is indexed by `dimension`. In other words, when a groupBy is performed, it is
+ * performed using a `Position1D` consisting of the coordinate at index `dimension`.
  *
  * @param dimension Dimension of the selected coordinate.
  */
-case class Over[P <: Position with ReduceablePosition, D <: Dimension](
-  dimension: D) extends Slice[P, D] with Mapable[P, D] {
+case class Over[P <: Position with ReduceablePosition, D <: Dimension](dimension: D) extends Slice[P, D]
+  with Mapable[P, D] {
   type S = Position1D
   type R = P#L
   type I = Along[P, D]
@@ -82,28 +77,23 @@ case class Over[P <: Position with ReduceablePosition, D <: Dimension](
   def remainder(pos: P): R = remove(pos)
   def inverse(): I = Along(dimension)
 
-  def toMap(pos: P, con: Content): Map[S, C] = {
-    Map(single(pos) -> pos.over.toMapValue(remove(pos), con))
-  }
+  def toMap(pos: P, con: Content): Map[S, C] = Map(single(pos) -> pos.over.toMapValue(remove(pos), con))
   def combineMaps(pos: P, x: Map[S, C], y: Map[S, C]): Map[S, C] = {
     x ++ y.map {
-      case (k, v) =>
-        k -> pos.over.combineMapValues(x.get(k).asInstanceOf[Option[pos.O]],
-          v.asInstanceOf[pos.O])
+      case (k, v) => k -> pos.over.combineMapValues(x.get(k).asInstanceOf[Option[pos.O]], v.asInstanceOf[pos.O])
     }
   }
 }
 
 /**
- * Indicates that the selected coordinates are all except the one indexed
- * by `dimension`. In other words, when a groupBy is performed, it is
- * performed using a `Position` (type `ReduceablePosition.L`) consisting
- * of all coordinates except that at index `dimension`.
+ * Indicates that the selected coordinates are all except the one indexed by `dimension`. In other words, when a
+ * groupBy is performed, it is performed using a `Position` (type `ReduceablePosition.L`) consisting of all coordinates
+ * except that at index `dimension`.
  *
  * @param dimension Dimension of the coordinate to exclude.
  */
-case class Along[P <: Position with ReduceablePosition, D <: Dimension](
-  dimension: D) extends Slice[P, D] with Mapable[P, D] {
+case class Along[P <: Position with ReduceablePosition, D <: Dimension](dimension: D) extends Slice[P, D]
+  with Mapable[P, D] {
   type S = P#L
   type R = Position1D
   type I = Over[P, D]
@@ -113,14 +103,10 @@ case class Along[P <: Position with ReduceablePosition, D <: Dimension](
   def remainder(pos: P): R = single(pos)
   def inverse(): I = Over(dimension)
 
-  def toMap(pos: P, con: Content): Map[S, C] = {
-    Map(remove(pos) -> pos.along.toMapValue(single(pos), con))
-  }
+  def toMap(pos: P, con: Content): Map[S, C] = Map(remove(pos) -> pos.along.toMapValue(single(pos), con))
   def combineMaps(pos: P, x: Map[S, C], y: Map[S, C]): Map[S, C] = {
     x ++ y.map {
-      case (k, v) =>
-        k -> pos.along.combineMapValues(x.get(k).asInstanceOf[Option[pos.A]],
-          v.asInstanceOf[pos.A])
+      case (k, v) => k -> pos.along.combineMapValues(x.get(k).asInstanceOf[Option[pos.A]], v.asInstanceOf[pos.A])
     }
   }
 }

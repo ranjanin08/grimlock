@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,13 +19,9 @@ import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
-/**
- * Reduce two cells preserving the cell with maximal value for the coordinate
- * of the dimension being squashed.
- */
+/** Reduce two cells preserving the cell with maximal value for the coordinate of the dimension being squashed. */
 case class PreservingMaxPosition() extends Squasher with Reduce {
-  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P,
-    ycon: Content): Cell[P] = {
+  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P, ycon: Content): Cell[P] = {
     (Value.Ordering.compare(xpos.get(dim), ypos.get(dim)) > 0) match {
       case true => (xpos, xcon)
       case false => (ypos, ycon)
@@ -33,13 +29,9 @@ case class PreservingMaxPosition() extends Squasher with Reduce {
   }
 }
 
-/**
- * Reduce two cells preserving the cell with minimal value for the coordinate
- * of the dimension being squashed.
- */
+/** Reduce two cells preserving the cell with minimal value for the coordinate of the dimension being squashed. */
 case class PreservingMinPosition() extends Squasher with Reduce {
-  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P,
-    ycon: Content): Cell[P] = {
+  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P, ycon: Content): Cell[P] = {
     (Value.Ordering.compare(xpos.get(dim), ypos.get(dim)) < 0) match {
       case true => (xpos, xcon)
       case false => (ypos, ycon)

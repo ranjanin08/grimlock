@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,9 +48,7 @@ trait Codex {
    *
    * @return `Some[Value]` if the decode was successful, `None` otherwise.
    */
-  def decode(value: String): Option[V] = {
-    scala.util.Try(fromString(value)).toOption.map { case t => toValue(t) }
-  }
+  def decode(value: String): Option[V] = scala.util.Try(fromString(value)).toOption.map { case t => toValue(t) }
 
   /**
    * Converts a value to a consise (terse) string.
@@ -67,9 +65,8 @@ trait Codex {
    * @param x The first value to compare.
    * @param y The second value to compare.
    *
-   * @return `Some[Int]` if `x` and `y` can be compared, `None` otherwise. If
-   *         successful, then the returned value is < 0 iff x < y, 0 iff x = y,
-   *         > 0 iff x > y.
+   * @return `Some[Int]` if `x` and `y` can be compared, `None` otherwise. If successful, then the returned value
+   *         is < 0 iff x < y, 0 iff x = y, > 0 iff x > y.
    */
   def compare(x: Value, y: Value): Option[Int]
 
@@ -141,12 +138,8 @@ trait DateAndTimeCodex extends Codex {
     }
   }
 
-  protected def fromString(value: String): T = {
-    (new SimpleDateFormat(format)).parse(value)
-  }
-  protected def toString(value: T): String = {
-    (new SimpleDateFormat(format)).format(value)
-  }
+  protected def fromString(value: String): T = (new SimpleDateFormat(format)).parse(value)
+  protected def toString(value: T): String = (new SimpleDateFormat(format)).format(value)
 }
 
 /** Codex for dealing with `java.util.Date` formatted as `yyyy-MM-dd`. */
@@ -155,9 +148,7 @@ case object DateCodex extends DateAndTimeCodex {
   val format = "yyyy-MM-dd"
 }
 
-/**
- * Codex for dealing with `java.util.Date` formatted as `yyyy-MM-dd hh:mm:ss`.
- */
+/** Codex for dealing with `java.util.Date` formatted as `yyyy-MM-dd hh:mm:ss`. */
 case object DateTimeCodex extends DateAndTimeCodex {
   val name = "date.time"
   val format = "yyyy-MM-dd hh:mm:ss"

@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,14 +19,10 @@ import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
-/**
- * Base trait for comparing two positions to determine is pairwise operation
- * is to be applied.
- */
+/** Base trait for comparing two positions to determine is pairwise operation is to be applied. */
 trait Comparer {
   /**
-   * Check, based on left and right positions, if pairwise operation should
-   * be computed.
+   * Check, based on left and right positions, if pairwise operation should be computed.
    *
    * @param l Left position.
    * @param r Right position.
@@ -44,34 +40,22 @@ case object Diagonal extends Comparer {
   def check(l: Position, r: Position): Boolean = l.compare(r) == 0
 }
 
-/**
- * Case object for computing upper triangular pairwise combinations (i.e.
- * r > l).
- */
+/** Case object for computing upper triangular pairwise combinations (i.e. r > l). */
 case object Upper extends Comparer {
   def check(l: Position, r: Position): Boolean = r.compare(l) > 0
 }
 
-/**
- * Case object for computing upper triangular or diagonal pairwise combinations
- * (i.e. r >= l).
- */
+/** Case object for computing upper triangular or diagonal pairwise combinations (i.e. r >= l). */
 case object UpperDiagonal extends Comparer {
   def check(l: Position, r: Position): Boolean = r.compare(l) >= 0
 }
 
-/**
- * Case object for computing lower triangular pairwise combinations (i.e.
- * l > r).
- */
+/** Case object for computing lower triangular pairwise combinations (i.e. l > r). */
 case object Lower extends Comparer {
   def check(l: Position, r: Position): Boolean = l.compare(r) > 0
 }
 
-/**
- * Case object for computing lower triangular or diagonal pairwise combinations
- * (i.e. l >= r).
- */
+/** Case object for computing lower triangular or diagonal pairwise combinations (i.e. l >= r). */
 case object LowerDiagonal extends Comparer {
   def check(l: Position, r: Position): Boolean = l.compare(r) >= 0
 }
@@ -83,9 +67,8 @@ trait Operator
 trait Compute extends ComputeWithValue { self: Operator =>
   type V = Any
 
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
-    leftPos: Slice[P, D]#S, leftCon: Content, rightPos: Slice[P, D]#S,
-      rightCon: Content, rem: Slice[P, D]#R, ext: V): Option[Cell[rem.M]] = {
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
+    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Option[Cell[rem.M]] = {
     compute(slice, leftPos, leftCon, rightPos, rightCon, rem)
   }
 
@@ -99,13 +82,11 @@ trait Compute extends ComputeWithValue { self: Operator =>
    * @param rightCon The contents of the right cell position to compute with.
    * @param rem      The remaining coordinates.
    *
-   * @note The return value is an `Option` to allow, for example, upper
-   *       or lower triangular matrices to be returned (this can be done by
-   *       comparing the selected coordinates)
+   * @note The return value is an `Option` to allow, for example, upper or lower triangular matrices to be returned
+   *       (this can be done by comparing the selected coordinates)
    */
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
-    leftPos: Slice[P, D]#S, leftCon: Content, rightPos: Slice[P, D]#S,
-      rightCon: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]]
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
+    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]]
 }
 
 /** Base trait for computing pairwise values with a user provided value. */
@@ -124,13 +105,11 @@ trait ComputeWithValue { self: Operator =>
    * @param rem      The remaining coordinates.
    * @param ext      The user define the value.
    *
-   * @note The return value is an `Option` to allow, for example, upper
-   *       or lower triangular matrices to be returned (this can be done by
-   *       comparing the selected coordinates)
+   * @note The return value is an `Option` to allow, for example, upper or lower triangular matrices to be returned
+   *       (this can be done by comparing the selected coordinates)
    */
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
-    leftPos: Slice[P, D]#S, leftCon: Content, rightPos: Slice[P, D]#S,
-      rightCon: Content, rem: Slice[P, D]#R, ext: V): Option[Cell[rem.M]]
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
+    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Option[Cell[rem.M]]
 }
 
 // TODO: Add listable versions

@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,10 +55,8 @@ object TestReader {
           val schema = e match {
             case StringCodex.name => NominalSchema[Codex.StringCodex]()
             case _ => scala.util.Try(v.toLong).toOption match {
-              case Some(_) => ContinuousSchema[Codex.LongCodex](Long.MinValue,
-                Long.MaxValue)
-              case None => ContinuousSchema[Codex.DoubleCodex](Double.MinValue,
-                Double.MaxValue)
+              case Some(_) => ContinuousSchema[Codex.LongCodex](Long.MinValue, Long.MaxValue)
+              case None => ContinuousSchema[Codex.DoubleCodex](Double.MinValue, Double.MaxValue)
             }
           }
 
@@ -88,8 +86,7 @@ class Test2(args : Args) extends Job(args) {
 
   val data = TestReader.read4TupleDataAddDate(args("input"))
 
-  (data.names(Over(First)) ++ data.names(Over(Second)) ++
-    data.names(Over(Third)))
+  (data.names(Over(First)) ++ data.names(Over(Second)) ++ data.names(Over(Third)))
     .groupAll
     .values
     .renumber
@@ -125,12 +122,10 @@ class Test3(args : Args) extends Job(args) {
 
   val data = TestReader.read4TupleDataAddDate(args("input"))
 
-  (data.types(Over(First)) ++ data.types(Over(Second)) ++
-    data.types(Over(Third)))
+  (data.types(Over(First)) ++ data.types(Over(Second)) ++ data.types(Over(Third)))
     .persist("./tmp/typ1.out", descriptive=true)
 
-  (data.types(Over(First), true) ++ data.types(Over(Second), true) ++
-    data.types(Over(Third), true))
+  (data.types(Over(First), true) ++ data.types(Over(Second), true) ++ data.types(Over(Third), true))
     .persist("./tmp/typ2.out", descriptive=true)
 }
 
@@ -169,20 +164,15 @@ class Test5(args : Args) extends Job(args) {
     .persist("./tmp/sqs2.out", descriptive=true)
 
   data
-    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357",
-                             "iid:0216406", "iid:0221707", "iid:0262443",
-                             "iid:0364354", "iid:0375226", "iid:0444510",
-                             "iid:1004305"), true)
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition())
     .writeCSV(Over(First), "./tmp/sqs3.out")
 
   data
-    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357",
-                             "iid:0216406", "iid:0221707", "iid:0262443",
-                             "iid:0364354", "iid:0375226", "iid:0444510",
-                             "iid:1004305"), true)
-    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E",
-                              "fid:F", "fid:G"), true)
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
+    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
     .writeCSV(Over(First), "./tmp/sqs4.out")
 }
@@ -192,8 +182,7 @@ class Test6(args : Args) extends Job(args) {
   val data = TestReader.read4TupleDataAddDate(args("input"))
 
   data
-    .which(
-      (p: Position, c: Content) => c.schema.kind.isSpecialisationOf(Numerical))
+    .which((p: Position, c: Content) => c.schema.kind.isSpecialisationOf(Numerical))
     .persist("./tmp/whc1.out", descriptive=true)
 
   data
@@ -220,10 +209,8 @@ class Test7(args : Args) extends Job(args) {
     .persist("./tmp/get1.out", descriptive=true)
 
   data
-    .get(List(Position3D("iid:1548763", "fid:Y",
-                DateCodex.decode("2014-04-26").get),
-              Position3D("iid:1303823", "fid:A",
-                DateCodex.decode("2014-05-05").get)))
+    .get(List(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
+              Position3D("iid:1303823", "fid:A", DateCodex.decode("2014-05-05").get)))
     .persist("./tmp/get2.out", descriptive=true)
 }
 
@@ -282,8 +269,7 @@ class Test9(args : Args) extends Job(args) {
   prt1
     .persist("./tmp/prt1.out", descriptive=true)
 
-  case class IntTuplePartitioner(dim: Dimension) extends Partitioner
-    with Assign {
+  case class IntTuplePartitioner(dim: Dimension) extends Partitioner with Assign {
     type T = (Int, Int, Int)
 
     def assign[P <: Position](pos: P): Collection[T] = {
@@ -323,22 +309,18 @@ class Test10(args : Args) extends Job(args) {
     .writeCSV(Over(Second), "./tmp/agg1.csv")
 
   data
-    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357",
-                             "iid:0216406", "iid:0221707", "iid:0262443",
-                             "iid:0364354", "iid:0375226", "iid:0444510",
-                             "iid:1004305"), true)
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition())
     .reduceAndExpand(Along(Second), Count("count"))
     .writeCSV(Over(Second), "./tmp/agg2.csv")
 
   data
-    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357",
-                             "iid:0216406", "iid:0221707", "iid:0262443",
-                             "iid:0364354", "iid:0375226", "iid:0444510",
-                             "iid:1004305"), true)
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition())
-    .reduceAndExpand(Along(First), List(Count("count"), Moments("mean", "sd",
-      "skewness", "kurtosis"), Min("min"), Max("max"), MaxAbs("max.abs")))
+    .reduceAndExpand(Along(First), List(Count("count"), Moments("mean", "sd", "skewness", "kurtosis"), Min("min"),
+      Max("max"), MaxAbs("max.abs")))
     .writeCSV(Over(Second), "./tmp/agg3.csv")
 }
 
@@ -380,12 +362,9 @@ class Test13(args : Args) extends Job(args) {
 
   val all = TestReader.read4TupleDataAddDate(args("input"))
   val data = all
-    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357",
-                             "iid:0216406", "iid:0221707", "iid:0262443",
-                             "iid:0364354", "iid:0375226", "iid:0444510",
-                             "iid:1004305"), true)
-    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E",
-                              "fid:F", "fid:G"), true)
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
+    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
 
   val inds = data
@@ -398,8 +377,7 @@ class Test13(args : Args) extends Job(args) {
     .writeCSV(Over(Second), "./tmp/fll2.out")
 
   data
-    .fill(Over(Second), all.reduceAndExpand(Over(Second),
-      Mean("mean", strict=true, nan=true)).permute(Second, First))
+    .fill(Over(Second), all.reduceAndExpand(Over(Second), Mean("mean", strict=true, nan=true)).permute(Second, First))
     .join(Over(First), inds)
     .writeCSV(Over(Second), "./tmp/fll4.out")
 }
@@ -427,23 +405,17 @@ class Test15(args : Args) extends Job(args) {
     .writeCSV(Over(Second), "./tmp/rsh1.out")
 
   val inds = data
-    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357",
-                             "iid:0216406", "iid:0221707", "iid:0262443",
-                             "iid:0364354", "iid:0375226", "iid:0444510",
-                             "iid:1004305"), true)
-    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E",
-                              "fid:F", "fid:G"), true)
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
+    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
     .transform(Indicator(Second, name="%1$s.ind"))
     .writeCSV(Over(Second), "./tmp/trn1.csv")
 
   data
-    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357",
-                             "iid:0216406", "iid:0221707", "iid:0262443",
-                             "iid:0364354", "iid:0375226", "iid:0444510",
-                             "iid:1004305"), true)
-    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E",
-                              "fid:F", "fid:G"), true)
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
+    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
     .join(Over(First), inds)
     .writeCSV(Over(Second), "./tmp/jn1.csv")
@@ -454,9 +426,7 @@ class Test16(args : Args) extends Job(args) {
   val data: Matrix3D = TestReader.read4TupleDataAddDate(args("input"))
 
   case class HashSample() extends Sampler with Select {
-    def select[P <: Position](pos: P): Boolean = {
-      (pos.get(First).toString.hashCode % 25) == 0
-    }
+    def select[P <: Position](pos: P): Boolean = (pos.get(First).toString.hashCode % 25) == 0
   }
 
   data
@@ -467,17 +437,13 @@ class Test16(args : Args) extends Job(args) {
 class Test17(args : Args) extends Job(args) {
 
   val data = TestReader.read4TupleDataAddDate(args("input"))
-    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357",
-                             "iid:0216406", "iid:0221707", "iid:0262443",
-                             "iid:0364354", "iid:0375226", "iid:0444510",
-                             "iid:1004305"), true)
-    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E",
-                              "fid:F", "fid:G"), true)
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
+    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
 
   val stats = data
-    .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"),
-      Min("min"), Max("max"), MaxAbs("max.abs")))
+    .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
     .toMap(Over(First))
 
   data
@@ -488,8 +454,7 @@ class Test17(args : Args) extends Job(args) {
     .refine((pos: Position2D, con: Content) => con.value gtr 500)
     .writeCSV(Over(Second), "./tmp/flt1.csv")
 
-  def removeGreaterThanMean(pos: Position2D, con: Content,
-    ext: Map[Position1D, Map[Position1D, Content]]): Boolean = {
+  def removeGreaterThanMean(pos: Position2D, con: Content, ext: Map[Position1D, Map[Position1D, Content]]): Boolean = {
     if (con.schema.kind.isSpecialisationOf(Numerical)) {
       con.value leq ext(Position1D(pos.get(Second)))(Position1D("mean")).value
     } else {
@@ -505,21 +470,16 @@ class Test17(args : Args) extends Job(args) {
 class Test18(args : Args) extends Job(args) {
 
   val data = TestReader.read4TupleDataAddDate(args("input"))
-    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357",
-                             "iid:0216406", "iid:0221707", "iid:0262443",
-                             "iid:0364354", "iid:0375226", "iid:0444510",
-                             "iid:1004305"), true)
-    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E",
-                              "fid:F", "fid:G"), true)
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
+    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
 
   val stats = data
-    .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"),
-      Min("min"), Max("max"), MaxAbs("max.abs")))
+    .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
 
   val rem = stats
-    .which(Over(Second), "count",
-      (pos: Position, con: Content) => con.value leq 2)
+    .which(Over(Second), "count", (pos: Position, con: Content) => con.value leq 2)
     .names(Over(First))
 
   data
@@ -530,16 +490,12 @@ class Test18(args : Args) extends Job(args) {
 class Test19(args : Args) extends Job(args) {
 
   val raw = TestReader.read4TupleDataAddDate(args("input"))
-    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357",
-                             "iid:0216406", "iid:0221707", "iid:0262443",
-                             "iid:0364354", "iid:0375226", "iid:0444510",
-                             "iid:1004305"), true)
-    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E",
-                              "fid:F", "fid:G"), true)
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
+    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
 
-  case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S)
-    extends Partitioner with Assign {
+  case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S) extends Partitioner with Assign {
     type T = S
 
     val bhs = BinaryHashSplit(dim, 7, left, right, base=10)
@@ -560,16 +516,14 @@ class Test19(args : Args) extends Job(args) {
     .reduceAndExpand(Along(First), List(Count("count"), MaxAbs("max.abs")))
 
   val rem = stats
-    .which((pos: Position, con: Content) => (pos.get(Second) equ "count") &&
-                                            (con.value leq 2))
+    .which((pos: Position, con: Content) => (pos.get(Second) equ "count") && (con.value leq 2))
     .names(Over(First))
 
   for (p <- List("train", "test")) {
     parts
       .get(p)
       .slice(Over(Second), rem, false)
-      .transformWithValue(List(Indicator(Second, name="%1$s.ind"),
-        Binarise(Second), Normalise(Second, key="max.abs")),
+      .transformWithValue(List(Indicator(Second, name="%1$s.ind"), Binarise(Second), Normalise(Second, key="max.abs")),
         stats.toMap(Over(First)))
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
       .writeCSV(Over(Second), "./tmp/pln_" + p + ".csv")
@@ -610,15 +564,12 @@ class Test22(args : Args) extends Job(args) {
   case class Diff() extends Deriver with Initialise {
     type T = Cell[Position]
 
-    def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
-      rem: Slice[P, D]#R, con: Content): T = (rem, con)
-    def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S,
-      rem: Slice[P, D]#R, con: Content, t: T): (T, CellCollection[sel.M]) = {
+    def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content): T = (rem, con)
+    def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
+      t: T): (T, CellCollection[sel.M]) = {
       ((rem, con), (con.value.asDouble, t._2.value.asDouble) match {
-        case (Some(c), Some(l)) =>
-          Some(Left((sel.append(rem.toShortString("") + "-" +
-            t._1.toShortString("")),
-            Content(ContinuousSchema[Codex.DoubleCodex](), c - l))))
+        case (Some(c), Some(l)) => Some(Left((sel.append(rem.toShortString("") + "-" + t._1.toShortString("")),
+          Content(ContinuousSchema[Codex.DoubleCodex](), c - l))))
         case _ => None
       })
     }
@@ -639,15 +590,13 @@ class Test23(args : Args) extends Job(args) {
   val data = read2D("somePairwise.txt")
 
   case class DiffSquared() extends Operator with Compute {
-    def compute[P <: Position, D <: Dimension](slice: Slice[P, D],
-      leftPos: Slice[P, D]#S, leftCon: Content, rightPos: Slice[P, D]#S,
-        rightCon: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
+    def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
+      rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
       val xc = leftPos.toShortString("")
       val yc = rightPos.toShortString("")
 
       (xc < yc && xc != yc) match {
-        case true => Some((rem.append("(" + xc + "-" + yc + ")^2"),
-          Content(ContinuousSchema[Codex.DoubleCodex](),
+        case true => Some((rem.append("(" + xc + "-" + yc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
           math.pow(leftCon.value.asLong.get - rightCon.value.asLong.get, 2))))
         case false => None
       }

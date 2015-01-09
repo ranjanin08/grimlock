@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -66,10 +66,7 @@ object Miscellaneous {
     })
   }
 
-  /**
-   * Transforms a `Collection[T]` together with a single `U`
-   * to a `List[(T, U)]`.
-   */
+  /** Transforms a `Collection[T]` together with a single `U` to a `List[(T, U)]`. */
   def mapFlatten[T, U](c: Collection[T], u: U): List[(T, U)] = {
     flatten(c.map {
       case Left(t) => List((t, u))

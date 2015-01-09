@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -81,8 +81,7 @@ object Type {
  *
  * @param data `TypedPipe[(Position, Type)]`.
  *
- * @note This class represents the variable type along the dimensions of
- *       a matrix.
+ * @note This class represents the variable type along the dimensions of a matrix.
  */
 class Types[P <: Position](data: TypedPipe[(P, Type)]) {
   /**
@@ -94,9 +93,8 @@ class Types[P <: Position](data: TypedPipe[(P, Type)]) {
    *
    * @return A Scalding `TypedPipe[(P, Type)]` which is this objects's data.
    */
-  def persist(file: String, separator: String = "|",
-    descriptive: Boolean = false)(implicit flow: FlowDef,
-      mode: Mode): TypedPipe[(P, Type)] = {
+  def persist(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[(P, Type)] = {
     data
       .map {
         case (p, t) => descriptive match {
@@ -113,8 +111,6 @@ class Types[P <: Position](data: TypedPipe[(P, Type)]) {
 
 object Types {
   /** Conversion from `TypedPipe[(Position, Type)]` to a `Types`. */
-  implicit def TPPT2T[P <: Position](data: TypedPipe[(P, Type)]): Types[P] = {
-    new Types(data)
-  }
+  implicit def TPPT2T[P <: Position](data: TypedPipe[(P, Type)]): Types[P] = new Types(data)
 }
 

@@ -7,9 +7,7 @@ Grimlock
 Overview
 --------
 
-Grimlock is a library for performing data-science and machine learning related
-data preparation, aggregation, manipulation and querying tasks. It can be used
-for such tasks as:
+Grimlock is a library for performing data-science and machine learning related data preparation, aggregation, manipulation and querying tasks. It can be used for such tasks as:
 
 * Normalisation/Standardisation/Bucketing of numeric variables;
 * Binarisation of categorical variables;
@@ -21,8 +19,7 @@ for such tasks as:
 * Text analysis (tf-idf/LDA);
 * Computing pairwise distances.
 
-Grimlock has default implementations for many of the above tasks. It also has
-a number of useful properties:
+Grimlock has default implementations for many of the above tasks. It also has a number of useful properties:
 
 * Supports wide variety of variable types;
 * Is easily extensible;
@@ -36,8 +33,7 @@ Concepts
 
 ### Data Structures
 
-The basic data structure in Grimlock is a N-dimensional sparse __Matrix__
-(N=1..5). Each cell in matrix consists of a __Position__ and __Content__ tuple.
+The basic data structure in Grimlock is a N-dimensional sparse __Matrix__ (N=1..5). Each cell in matrix consists of a __Position__ and __Content__ tuple.
 
 ```
          Matrix
@@ -47,10 +43,7 @@ The basic data structure in Grimlock is a N-dimensional sparse __Matrix__
   (Position, Content)
 ```
 
-The position is, essentialy, a list of N coordinates (__Value__). The content
-consists of a __Schema__ together with a __Value__. The value contains the
-actual value of the cell, while the schema defines what type of variable is in
-the cell, and what it's legal values are.
+The position is, essentialy, a list of N coordinates (__Value__). The content consists of a __Schema__ together with a __Value__. The value contains the actual value of the cell, while the schema defines what type of variable is in the cell, and what it's legal values are.
 
 ```
    Position              Content
@@ -61,8 +54,7 @@ the cell, and what it's legal values are.
                   Schema         Value
 ```
 
-Lastly, the __Codex__ singleton objects can be used to parse and write the
-basic data types used in both coordinates and values.
+Lastly, the __Codex__ singleton objects can be used to parse and write the basic data types used in both coordinates and values.
 
 ```
   Schema       Value
@@ -74,16 +66,7 @@ basic data types used in both coordinates and values.
 
 ### Working with Dimensions
 
-Grimlock supports performing operations along all directions of the matrix.
-This is realised through a __Slice__. There are two realisations of Slice:
-__Along__ and __Over__. Both are constructed with a single __Dimension__,
-but differ in how the dimension is interpreted. When using Over, all data in
-the matrix is grouped by the dimension and operations, such as aggregation,
-are applied to the resulting groups. When using Along, the data is group by
-all dimensions *except* the dimension used when constructing the Slice. The
-differences between Over and Along are graphically presented below for a 
-dimensional matrix. Note that in 2 dimensions, Along and Over are each
-other's inverse.
+Grimlock supports performing operations along all directions of the matrix.  This is realised through a __Slice__. There are two realisations of Slice: __Along__ and __Over__. Both are constructed with a single __Dimension__, but differ in how the dimension is interpreted. When using Over, all data in the matrix is grouped by the dimension and operations, such as aggregation, are applied to the resulting groups. When using Along, the data is group by all dimensions *except* the dimension used when constructing the Slice. The differences between Over and Along are graphically presented below for a dimensional matrix. Note that in 2 dimensions, Along and Over are each other's inverse.
 
 ```
       Over(Second)       Along(Third)
@@ -101,17 +84,9 @@ other's inverse.
 
 ### Data Format
 
-The basic data format used by Grimlock (though others are supported) is a
-row-oriented pipe separated file (each row is a single cell). The first N
-fields are the coordinates, optionally followed by the variable type and
-codex (again pipe separated). If the variable type and codex are omitted
-from the data then they have to be provided by a __Dictionary__. The last
-field of each row is the value.
+The basic data format used by Grimlock (though others are supported) is a row-oriented pipe separated file (each row is a single cell). The first N fields are the coordinates, optionally followed by the variable type and codex (again pipe separated). If the variable type and codex are omitted from the data then they have to be provided by a __Dictionary__. The last field of each row is the value.
 
-In the example below the first field is a coordinate identifying an instance,
-the second field is a coordinate identifying a feature. The third and fourth
-columns are the variable type and codex respectively. The last column has the
-actual value.
+In the example below the first field is a coordinate identifying an instance, the second field is a coordinate identifying a feature. The third and fourth columns are the variable type and codex respectively. The last column has the actual value.
 
 ```
 > head src/main/scala/au/com/cba/omnia/grimlock/examples/exampleInput.txt
@@ -144,8 +119,7 @@ iid:0066848|fid:H|B
 ...
 ```
 
-An external dictionary will then have to be provided to correctly decode and
-validate the values:
+An external dictionary will then have to be provided to correctly decode and validate the values:
 
 ```
 fid:A|long|continuous
@@ -163,13 +137,11 @@ Usage
 
 ### Setting up REPL
 
-The examples below are executed in the Scalding REPL. To use Grimlock in the
-REPL follow the following steps:
+The examples below are executed in the Scalding REPL. To use Grimlock in the REPL follow the following steps:
 
 1. Install Scalding; follow [these](https://github.com/twitter/scalding/wiki/Getting-Started) instructions.
 2. Check out tag (0.11.2); git checkout 0.11.2.
-3. Update scala version; edit project/Build.scala and set scala version to
-   2.10.4.
+3. Update scala version; edit project/Build.scala and set scala version to 2.10.4.
 4. In scalding-repl/src/main/scala add symlink to Grimlock's code folder.
 5. Start REPL; ./sbt scalding-repl/console.
 
@@ -199,8 +171,7 @@ Note, for readability, the REPL info is supressed from now on.
 
 ### Getting started
 
-When at the Scalding REPL console, the first step is to import Grimlock's
-functionality (be sure to press ctrl-D after the last import statement):
+When at the Scalding REPL console, the first step is to import Grimlock's functionality (be sure to press ctrl-D after the last import statement):
 
 ```
 > scala> :paste
@@ -223,16 +194,13 @@ import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
 
 ```
 
-The next step is to read in data (be sure to change <path to> to the correct
-path to the Grimlock repo):
+The next step is to read in data (be sure to change <path to> to the correct path to the Grimlock repo):
 
 ```
 scala> val data = read2D("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/examples/exampleInput.txt")
 ```
 
-The returned `data` is a 2 dimensional matrix. To investigate it's content
-Scalding's `dump` command can be used in the REPL, use the matrix `persist`
-API for writing to disk:
+The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used in the REPL, use the matrix `persist` API for writing to disk:
 
 ```
 scala> data.dump
@@ -249,8 +217,7 @@ scala> data.dump
 ...
 ```
 
-The following shows a number of basic operations (get number of rows, get type
-of features, perform simple query):
+The following shows a number of basic operations (get number of rows, get type of features, perform simple query):
 
 ```
 scala> data.size(First).dump
@@ -272,9 +239,7 @@ Position2D(StringValue(iid:0216406),StringValue(fid:E))
 Position2D(StringValue(iid:0444510),StringValue(fid:D))
 ```
 
-Now for something a little more intersting. Let's compute the number of
-features for each instance and then compute the moments of the distribution
-of counts:
+Now for something a little more intersting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
 
 ```
 scala> val counts = data.reduce(Over(First), Count())

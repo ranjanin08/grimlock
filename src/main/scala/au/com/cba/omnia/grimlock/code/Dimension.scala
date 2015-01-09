@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ case object Fifth extends Dimension { val index = 4 }
 trait PosDimDep[A, B]
 
 /**
- * Companion object of `Dimension` trait. This defines the (implicit)
- * permitted dependencies between position and dimension.
+ * Companion object of `Dimension` trait. This defines the (implicit) permitted dependencies between position and
+ * dimension.
  */
 object Dimension {
   /** List of all available dimensions ordered by index. */

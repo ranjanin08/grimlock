@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,8 +27,7 @@ import scala.util.Random
  *
  * @note This randomly samples ignoring the position.
  */
-case class RandomSample(ratio: Double, rnd: Random = new Random())
-  extends Sampler with Select {
+case class RandomSample(ratio: Double, rnd: Random = new Random()) extends Sampler with Select {
   def select[P <: Position](pos: P): Boolean = rnd.nextDouble() < ratio
 }
 
@@ -39,11 +38,8 @@ case class RandomSample(ratio: Double, rnd: Random = new Random())
  * @param ratio The sample ratio (relative to `base`).
  * @param base  The base of the sampling ratio.
  */
-case class HashSample(dim: Dimension, ratio: Int, base: Int) extends Sampler
-  with Select {
-  def select[P <: Position](pos: P): Boolean = {
-    math.abs(pos.get(dim).hashCode % base) < ratio
-  }
+case class HashSample(dim: Dimension, ratio: Int, base: Int) extends Sampler with Select {
+  def select[P <: Position](pos: P): Boolean = math.abs(pos.get(dim).hashCode % base) < ratio
 }
 
 /**
@@ -52,14 +48,12 @@ case class HashSample(dim: Dimension, ratio: Int, base: Int) extends Sampler
  * @param dim  The dimension to sample from.
  * @param size The size to sample to.
  */
-case class HashSampleToSize(dim: Dimension, size: Long) extends Sampler
-  with SelectWithValue {
+case class HashSampleToSize(dim: Dimension, size: Long) extends Sampler with SelectWithValue {
   type V = Map[Position1D, Content]
 
   def select[P <: Position](pos: P, ext: V): Boolean = {
     ext(Position1D(dim.toString)).value.asDouble match {
-      case Some(s) =>
-        math.abs(pos.get(dim).hashCode % math.round(s / size)) == 0
+      case Some(s) => math.abs(pos.get(dim).hashCode % math.round(s / size)) == 0
       case _ => false
     }
   }

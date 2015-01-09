@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,22 +47,18 @@ trait Value {
    *
    * @note This always applies `toShortString` method before matching.
    */
-  def like(that: Regex): Boolean = {
-    that.pattern.matcher(this.toShortString).matches
-  }
+  def like(that: Regex): Boolean = that.pattern.matcher(this.toShortString).matches
 
-  // Note: These next 4 methods implement comparison in a non-standard
-  //       way when comparing two objects that can't be compared. In
-  //       such cases the result is always false. This is the desired
-  //       behaviour for the 'which' method (i.e. a filter).
+  // Note: These next 4 methods implement comparison in a non-standard way when comparing two objects that can't be
+  //       compared. In such cases the result is always false. This is the desired behaviour for the 'which' method
+  //       (i.e. a filter).
 
   /**
    * Check if `this` is less than `that`.
    *
    * @param that Value to compare against.
    *
-   * @note If `that` is of a different type than `this`, then the result
-   *       is always `false`.
+   * @note If `that` is of a different type than `this`, then the result is always `false`.
    */
   def lss[T: Valueable](that: T): Boolean = evaluate(that, Less)
 
@@ -71,8 +67,7 @@ trait Value {
    *
    * @param that Value to compare against.
    *
-   * @note If `that` is of a different type than `this`, then the result
-   *       is always `false`.
+   * @note If `that` is of a different type than `this`, then the result is always `false`.
    */
   def leq[T: Valueable](that: T): Boolean = evaluate(that, LessEqual)
 
@@ -81,8 +76,7 @@ trait Value {
    *
    * @param that Value to compare against.
    *
-   * @note If `that` is of a different type than `this`, then the result
-   *       is always `false`.
+   * @note If `that` is of a different type than `this`, then the result is always `false`.
    */
   def gtr[T: Valueable](that: T): Boolean = evaluate(that, Greater)
 
@@ -91,8 +85,7 @@ trait Value {
    *
    * @param that Value to compare against.
    *
-   * @note If `that` is of a different type than `this`, then the result
-   *       is always `false`.
+   * @note If `that` is of a different type than `this`, then the result is always `false`.
    */
   def geq[T: Valueable](that: T): Boolean = evaluate(that, GreaterEqual)
 
@@ -131,10 +124,7 @@ trait Value {
 }
 
 object Value {
-  /**
-   * Define an ordering between 2 values. Only use with values of the
-   * same type.
-   */
+  /** Define an ordering between 2 values. Only use with values of the same type. */
   val Ordering: Ordering[Value] = new Ordering[Value] {
     def compare(x: Value, y: Value): Int = {
       x.codex.compare(x, y) match {
@@ -221,28 +211,16 @@ trait Valueable[T] {
 /** Companion object for the `Valueable` type class. */
 object Valueable {
   /** Converts a `Value` to a `Value`; that is, it's a pass through. */
-  implicit def VV[T <: Value]: Valueable[T] = new Valueable[T] {
-    def convert(t: T): Value = t
-  }
+  implicit def VV[T <: Value]: Valueable[T] = new Valueable[T] { def convert(t: T): Value = t }
   /** Converts a `String` to a `Value`. */
-  implicit def SV: Valueable[String] = new Valueable[String] {
-    def convert(t: String): Value = StringValue(t)
-  }
+  implicit def SV: Valueable[String] = new Valueable[String] { def convert(t: String): Value = StringValue(t) }
   /** Converts a `Double` to a `Value`. */
-  implicit def DV: Valueable[Double] = new Valueable[Double] {
-    def convert(t: Double): Value = DoubleValue(t)
-  }
+  implicit def DV: Valueable[Double] = new Valueable[Double] { def convert(t: Double): Value = DoubleValue(t) }
   /** Converts a `Long` to a `Value`. */
-  implicit def LV: Valueable[Long] = new Valueable[Long] {
-    def convert(t: Long): Value = LongValue(t)
-  }
+  implicit def LV: Valueable[Long] = new Valueable[Long] { def convert(t: Long): Value = LongValue(t) }
   /** Converts a `Int` to a `Value`. */
-  implicit def IV: Valueable[Int] = new Valueable[Int] {
-    def convert(t: Int): Value = LongValue(t)
-  }
+  implicit def IV: Valueable[Int] = new Valueable[Int] { def convert(t: Int): Value = LongValue(t) }
   /** Converts a `Boolean` to a `Value`. */
-  implicit def BV: Valueable[Boolean] = new Valueable[Boolean] {
-    def convert(t: Boolean): Value = BooleanValue(t)
-  }
+  implicit def BV: Valueable[Boolean] = new Valueable[Boolean] { def convert(t: Boolean): Value = BooleanValue(t) }
 }
 

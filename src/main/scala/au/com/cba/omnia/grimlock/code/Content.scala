@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,9 +28,7 @@ trait Content {
   /** The value of the variable. */
   val value: Value
 
-  override def toString(): String = {
-    "Content(" + schema.toString + "," + value.toString + ")"
-  }
+  override def toString(): String = "Content(" + schema.toString + "," + value.toString + ")"
 
   /**
    * Converts the content to a consise (terse) string.
@@ -39,16 +37,12 @@ trait Content {
    *
    * @return Short string representation.
    */
-  def toShortString(separator: String): String = {
-    schema.toShortString(separator) + separator + value.toShortString
-  }
+  def toShortString(separator: String): String = schema.toShortString(separator) + separator + value.toShortString
 }
 
 object Content {
   /** Standard `unapply` method for pattern matching. */
-  def unapply(con: Content): Option[(Schema, Value)] = {
-    Some((con.schema, con.value))
-  }
+  def unapply(con: Content): Option[(Schema, Value)] = Some((con.schema, con.value))
 
   /**
    * Construct a content using a continuous schema and numeric value.
@@ -56,8 +50,7 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Numeric value of the variable.
    */
-  def apply[T](schema: ContinuousSchema[Codex.DoubleCodex], value: T)(
-    implicit num: Numeric[T]): Content = {
+  def apply[T](schema: ContinuousSchema[Codex.DoubleCodex], value: T)(implicit num: Numeric[T]): Content = {
     import num._
     ContentImpl(schema, DoubleValue(value.toDouble))
   }
@@ -68,8 +61,7 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Integral value of the variable.
    */
-  def apply[T](schema: ContinuousSchema[Codex.LongCodex], value: T)(
-    implicit num: Integral[T]): Content = {
+  def apply[T](schema: ContinuousSchema[Codex.LongCodex], value: T)(implicit num: Integral[T]): Content = {
     import num._
     ContentImpl(schema, LongValue(value.toLong))
   }
@@ -80,8 +72,7 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Numeric value of the variable.
    */
-  def apply[T](schema: DiscreteSchema[Codex.DoubleCodex], value: T)(
-    implicit num: Numeric[T]): Content = {
+  def apply[T](schema: DiscreteSchema[Codex.DoubleCodex], value: T)(implicit num: Numeric[T]): Content = {
     import num._
     ContentImpl(schema, DoubleValue(value.toDouble))
   }
@@ -92,8 +83,7 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Integral value of the variable.
    */
-  def apply[T](schema: DiscreteSchema[Codex.LongCodex], value: T)(
-    implicit num: Integral[T]): Content = {
+  def apply[T](schema: DiscreteSchema[Codex.LongCodex], value: T)(implicit num: Integral[T]): Content = {
     import num._
     ContentImpl(schema, LongValue(value.toLong))
   }
@@ -116,8 +106,7 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Numeric value of the variable.
    */
-  def apply[T](schema: NominalSchema[Codex.DoubleCodex], value: T)(
-    implicit num: Numeric[T]): Content = {
+  def apply[T](schema: NominalSchema[Codex.DoubleCodex], value: T)(implicit num: Numeric[T]): Content = {
     import num._
     ContentImpl(schema, DoubleValue(value.toDouble))
   }
@@ -128,8 +117,7 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Integral value of the variable.
    */
-  def apply[T](schema: NominalSchema[Codex.LongCodex], value: T)(
-    implicit num: Integral[T]): Content = {
+  def apply[T](schema: NominalSchema[Codex.LongCodex], value: T)(implicit num: Integral[T]): Content = {
     import num._
     ContentImpl(schema, LongValue(value.toLong))
   }
@@ -152,8 +140,7 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Numeric value of the variable.
    */
-  def apply[T](schema: OrdinalSchema[Codex.DoubleCodex], value: T)(
-    implicit num: Numeric[T]): Content = {
+  def apply[T](schema: OrdinalSchema[Codex.DoubleCodex], value: T)(implicit num: Numeric[T]): Content = {
     import num._
     ContentImpl(schema, DoubleValue(value.toDouble))
   }
@@ -164,8 +151,7 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Integral value of the variable.
    */
-  def apply[T](schema: OrdinalSchema[Codex.LongCodex], value: T)(
-    implicit num: Integral[T]): Content = {
+  def apply[T](schema: OrdinalSchema[Codex.LongCodex], value: T)(implicit num: Integral[T]): Content = {
     import num._
     ContentImpl(schema, LongValue(value.toLong))
   }
@@ -176,8 +162,7 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Date value of the variable.
    */
-  def apply[T <: DateAndTimeCodex](schema: DateSchema[T],
-    value: java.util.Date): Content = {
+  def apply[T <: DateAndTimeCodex](schema: DateSchema[T], value: java.util.Date): Content = {
     ContentImpl(schema, DateValue(value, schema.codex))
   }
 
@@ -199,9 +184,8 @@ class Contents(data: TypedPipe[Content]) {
    *
    * @return A Scalding `TypedPipe[Content]` which is this object's data.
    */
-  def persist(file: String, separator: String = "|",
-    descriptive: Boolean = false)(implicit flow: FlowDef,
-      mode: Mode): TypedPipe[Content] = {
+  def persist(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[Content] = {
     data
       .map {
         case c => descriptive match {

@@ -1,4 +1,4 @@
-// Copyright 2014 Commonwealth Bank of Australia
+// Copyright 2014-2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,8 +25,7 @@ trait Squasher
 trait Reduce extends ReduceWithValue { self: Squasher =>
   type V = Any
 
-  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P,
-    ycon: Content, ext: V): Cell[P] = {
+  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P, ycon: Content, ext: V): Cell[P] = {
     reduce(dim, xpos, xcon, ypos, ycon)
   }
 
@@ -39,8 +38,7 @@ trait Reduce extends ReduceWithValue { self: Squasher =>
    * @param ypos The position of the second cell to reduce.
    * @param ycon The content of the second cell to reduce.
    */
-  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P,
-    ycon: Content): Cell[P]
+  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P, ycon: Content): Cell[P]
 }
 
 /** Base trait for reducing two cells with a user provided value. */
@@ -58,7 +56,6 @@ trait ReduceWithValue { self: Squasher =>
    * @param ycon The content of the second cell to reduce.
    * @param ext  The user define the value.
    */
-  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P,
-    ycon: Content, ext: V): Cell[P]
+  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P, ycon: Content, ext: V): Cell[P]
 }
 
