@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[(Position, Long)]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/33e5e285ac9a1940acc7f648b4c776c2fd55a166//src/main/scala/au/com/cba/omnia/grimlock/code/Names.scala" target="_blank">Names.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This class represents the names along the dimensions of a matrix.
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4ddfeb4f1224a4f77e78d27a81138e318176a88c//src/main/scala/au/com/cba/omnia/grimlock/code/Names.scala" target="_blank">Names.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This class represents the names along the dimensions of a matrix.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -299,8 +299,8 @@
       </h4>
       <p class="shortcomment cmt">Renumber the indices such that <code>position</code> is last.</p><div class="fullcomment"><div class="comment cmt"><p>Renumber the indices such that <code>position</code> is last.
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position to move to the back.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with <code>position</code> at the greatest index and
-        all others renumbered but preserving their relative ordering.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with <code>position</code> at the greatest index and all others renumbered but preserving
+        their relative ordering.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Names#moveToFront" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="moveToFront[T](position:T)(implicitev:au.com.cba.omnia.grimlock.position.Positionable[T,P]):com.twitter.scalding.TypedPipe[(P,Long)]"></a>
@@ -316,8 +316,8 @@
       </h4>
       <p class="shortcomment cmt">Renumber the indices such that <code>position</code> is first.</p><div class="fullcomment"><div class="comment cmt"><p>Renumber the indices such that <code>position</code> is first.
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position to move to the front.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with <code>position</code> at index 0 and all
-        others renumbered but preserving their relative ordering.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with <code>position</code> at index 0 and all others renumbered but preserving their
+        relative ordering.
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
@@ -400,10 +400,8 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Set the index of multiple positions.</p><div class="fullcomment"><div class="comment cmt"><p>Set the index of multiple positions.
-</p></div><dl class="paramcmts block"><dt class="param">positions</dt><dd class="cmt"><p>A <code>Map</code> of positions (together with their new inxed)
-                 whose index is to be set.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only the indices at the specified
-        positions updated.
+</p></div><dl class="paramcmts block"><dt class="param">positions</dt><dd class="cmt"><p>A <code>Map</code> of positions (together with their new inxed) whose index is to be set.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only the indices at the specified positions updated.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Names#set" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="set[T](position:T,index:Long)(implicitev:au.com.cba.omnia.grimlock.position.Positionable[T,P]):com.twitter.scalding.TypedPipe[(P,Long)]"></a>
@@ -419,8 +417,7 @@
       </h4>
       <p class="shortcomment cmt">Set the index of a single position.</p><div class="fullcomment"><div class="comment cmt"><p>Set the index of a single position.
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position whose index is to be set.</p></dd><dt class="param">index</dt><dd class="cmt"><p>The new index.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only the index at the specified
-        position updated.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only the index at the specified position updated.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Names#slice" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="slice[T](positions:T,keep:Boolean)(implicitev:au.com.cba.omnia.grimlock.position.PositionListable[T,P]):com.twitter.scalding.TypedPipe[(P,Long)]"></a>
@@ -452,8 +449,8 @@
       </h4>
       <p class="shortcomment cmt">Slice the names using a regular expression.</p><div class="fullcomment"><div class="comment cmt"><p>Slice the names using a regular expression.
 </p></div><dl class="paramcmts block"><dt class="param">regex</dt><dd class="cmt"><p>The regular expression to match on.</p></dd><dt class="param">keep</dt><dd class="cmt"><p>Indicator if the matched names should be kept or removed.</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TypedPipe[(P, Long)]</code> with only the names of interest.
-</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The matching is done by converting each position to its short string
-      reprensentation and then applying the regular expression.
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The matching is done by converting each position to its short string reprensentation and then applying the
+      regular expression.
 </p></span></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>

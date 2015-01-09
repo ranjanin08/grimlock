@@ -41,9 +41,9 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Binary partition based on the hash code of a coordinate.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ratio</dt><dd class="cmt"><p>The binary split ratio (relative to <code>base</code>).</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.</p></dd><dt class="param">base</dt><dd class="cmt"><p>The base for the ratio.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/33e5e285ac9a1940acc7f648b4c776c2fd55a166//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The position is assigned to the left partition if it is less or
-      equal to the <code>ratio</code> value.
-</p></span>, <span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the ratio.</p></span></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4ddfeb4f1224a4f77e78d27a81138e318176a88c//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the ratio. While the position is assigned to the left
+      partition if it is less or equal to the <code>ratio</code> value.
+</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a>, <a href="AssignWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignWithValue">AssignWithValue</a>, <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">Partitioner</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -114,7 +114,7 @@
         <span class="name">T</span><span class="result"> = <span class="extype" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.S">S</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit">BinaryHashSplit</a> → <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">Partitioner</a></dd></dl></div>
+      <p class="shortcomment cmt">Type of the partition assignments.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the partition assignments.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit">BinaryHashSplit</a> → <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Partitioner">Partitioner</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.partition.Assign.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="V=Any"></a>
       <a id="V:V"></a>
@@ -214,47 +214,37 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit#assign" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="assign[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P):Option[Either[BinaryHashSplit.this.T,List[BinaryHashSplit.this.T]]]"></a>
-      <a id="assign[P&lt;:Position](P):Option[Either[T,List[T]]]"></a>
+      <a id="assign[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P):au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection[BinaryHashSplit.this.T]"></a>
+      <a id="assign[P&lt;:Position](P):Collection[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">assign</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.assign.P">P</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Either">Either</span>[<a href="#T=S" class="extmbr" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.T">T</a>, <span class="extype" name="scala.List">List</span>[<a href="#T=S" class="extmbr" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.T">T</a>]]]</span>
+        <span class="name">assign</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.assign.P">P</span></span>)</span><span class="result">: <a href="../utility/Miscellaneous$.html#Collection[T]=Option[Either[T,List[T]]]" class="extmbr" name="au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection">Collection</a>[<a href="#T=S" class="extmbr" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.T">T</a>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Assign the cell to a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition.
 </p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the content.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances
-        of <code>T</code> identify the partitions.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit">BinaryHashSplit</a> → <a href="Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is returned to allow partitioners to be selective in
-      which partition a position is assigned to. An <code>Either</code> is returned
-      to allow a partitioner to assign a position to more than one
-      partitions.
-</p></span></dd></dl></div>
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances of <code>T</code> identify the partitions.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit">BinaryHashSplit</a> → <a href="Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.partition.Assign#assign" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="assign[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P,ext:Assign.this.V):Option[Either[Assign.this.T,List[Assign.this.T]]]"></a>
-      <a id="assign[P&lt;:Position](P,V):Option[Either[T,List[T]]]"></a>
+      <a id="assign[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P,ext:Assign.this.V):au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection[Assign.this.T]"></a>
+      <a id="assign[P&lt;:Position](P,V):Collection[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">assign</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.partition.Assign.assign.P">P</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Either">Either</span>[<a href="#T=S" class="extmbr" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.T">T</a>, <span class="extype" name="scala.List">List</span>[<a href="#T=S" class="extmbr" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.T">T</a>]]]</span>
+        <span class="name">assign</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.partition.Assign.assign.P">P</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.V">V</a></span>)</span><span class="result">: <a href="../utility/Miscellaneous$.html#Collection[T]=Option[Either[T,List[T]]]" class="extmbr" name="au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection">Collection</a>[<a href="#T=S" class="extmbr" name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit.T">T</a>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Assign the cell to a partition using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition using a user supplied value.
 </p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the content.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances
-        of <code>T</code> identify the partitions.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a> → <a href="AssignWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignWithValue">AssignWithValue</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is returned to allow partitioners to be selective in
-      which partition a position is assigned to. An <code>Either</code> is returned
-      to allow a partitioner to assign a position to more than one
-      partitions.
-</p></span></dd></dl></div>
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances of <code>T</code> identify the partitions.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a> → <a href="AssignWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.partition.AssignWithValue">AssignWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.partition.BinaryHashSplit#base" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="base:Int"></a>
       <a id="base:Int"></a>

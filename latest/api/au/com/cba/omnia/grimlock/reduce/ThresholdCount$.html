@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>ThresholdCount</code> reducer class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/33e5e285ac9a1940acc7f648b4c776c2fd55a166//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>ThresholdCount</code> reducer class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4ddfeb4f1224a4f77e78d27a81138e318176a88c//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -202,10 +202,9 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Compute counts of values less-or-equal or greater-than some <code>threshold</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Compute counts of values less-or-equal or greater-than some <code>threshold</code>.
-</p></div><dl class="paramcmts block"><dt class="param">leq</dt><dd class="cmt"><p>Name for the coordinate of the less-or-equal value.</p></dd><dt class="param">gtr</dt><dd class="cmt"><p>Name for the coordinate of the greater-than value.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
-                 any non-numeric value fails the reduction. If not then
-                 non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the
-                 reduction failed (for example due to non-numeric data).</p></dd><dt class="param">threshold</dt><dd class="cmt"><p>The threshold value.
+</p></div><dl class="paramcmts block"><dt class="param">leq</dt><dd class="cmt"><p>Name for the coordinate of the less-or-equal value.</p></dd><dt class="param">gtr</dt><dd class="cmt"><p>Name for the coordinate of the greater-than value.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the
+                 reduction. If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to
+                 non-numeric data).</p></dd><dt class="param">threshold</dt><dd class="cmt"><p>The threshold value.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.ThresholdCount#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply[T,U](leq:T,gtr:U,threshold:Double)(implicitev1:au.com.cba.omnia.grimlock.encoding.Valueable[T],implicitev2:au.com.cba.omnia.grimlock.encoding.Valueable[U]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -235,10 +234,9 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Compute counts of values less-or-equal or greater-than some <code>threshold</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Compute counts of values less-or-equal or greater-than some <code>threshold</code>.
-</p></div><dl class="paramcmts block"><dt class="param">leq</dt><dd class="cmt"><p>Name for the coordinate of the less-or-equal value.</p></dd><dt class="param">gtr</dt><dd class="cmt"><p>Name for the coordinate of the greater-than value.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
-              any non-numeric value fails the reduction. If not then
-              non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the
-              reduction failed (for example due to non-numeric data).
+</p></div><dl class="paramcmts block"><dt class="param">leq</dt><dd class="cmt"><p>Name for the coordinate of the less-or-equal value.</p></dd><dt class="param">gtr</dt><dd class="cmt"><p>Name for the coordinate of the greater-than value.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+              If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+              data).
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.ThresholdCount#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply[T,U](leq:T,gtr:U)(implicitev1:au.com.cba.omnia.grimlock.encoding.Valueable[T],implicitev2:au.com.cba.omnia.grimlock.encoding.Valueable[U]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>

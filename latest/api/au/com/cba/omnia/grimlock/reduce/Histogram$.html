@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>Histogram</code> reducer class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/33e5e285ac9a1940acc7f648b4c776c2fd55a166//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>Histogram</code> reducer class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4ddfeb4f1224a4f77e78d27a81138e318176a88c//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -93,9 +93,8 @@
         <span class="name">Statistic</span><span class="result"> = (<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Signature for functions that compute a statistic on a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Signature for functions that compute a statistic on a histogram. The
-<code>ExpandablePosition</code> is the position of the cell, while the <code>List[Long]</code>
-are the (ordered) counts in each bin.
+      <p class="shortcomment cmt">Signature for functions that compute a statistic on a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Signature for functions that compute a statistic on a histogram. The <code>ExpandablePosition</code> is the position of the
+cell, while the <code>List[Long]</code> are the (ordered) counts in each bin.
 </p></div></div>
     </li></ol>
             </div>
@@ -247,13 +246,9 @@ are the (ordered) counts in each bin.
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code>
-                  for the string representations of the position, and the
-                  content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
-                  any non-numeric value fails the reduction. If not then
-                  non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only
-                  to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency
-                  or as distribution.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code> for the string representations of the
+                  position, and the content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the
+                  reduction. If not then non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency or as distribution.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(name:String,statistics:List[(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]],strict:Boolean,all:Boolean,frequency:Boolean):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -268,13 +263,9 @@ are the (ordered) counts in each bin.
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code>
-                  for the string representations of the position, and the
-                  content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
-                  any non-numeric value fails the reduction. If not then
-                  non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only
-                  to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency
-                  or as distribution.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code> for the string representations of the
+                  position, and the content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the
+                  reduction. If not then non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency or as distribution.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(name:String,statistics:List[(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]],separator:String):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -289,9 +280,8 @@ are the (ordered) counts in each bin.
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code>
-                  for the string representations of the position, and the
-                  content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code> for the string representations of the
+                  position, and the content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(name:String,statistics:List[(au.com.cba.omnia.grimlock.position.ExpandablePosition,List[Long])=&gt;Option[(au.com.cba.omnia.grimlock.position.ExpandablePosition#M,au.com.cba.omnia.grimlock.content.Content)]]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -306,9 +296,8 @@ are the (ordered) counts in each bin.
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code>
-                  for the string representations of the position, and the
-                  content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code> for the string representations of the
+                  position, and the content.</p></dd><dt class="param">statistics</dt><dd class="cmt"><p>List of statistics to compute on the histogram.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(name:String,strict:Boolean,all:Boolean,frequency:Boolean,separator:String):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -323,13 +312,9 @@ are the (ordered) counts in each bin.
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code>
-                 for the string representations of the position, and the
-                 content.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
-                 any non-numeric value fails the reduction. If not then
-                 non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only
-                 to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency
-                 or as distribution.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code> for the string representations of the
+                 position, and the content.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the
+                 reduction. If not then non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency or as distribution.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(name:String,strict:Boolean,all:Boolean,frequency:Boolean):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -344,13 +329,9 @@ are the (ordered) counts in each bin.
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code>
-                 for the string representations of the position, and the
-                 content.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then
-                 any non-numeric value fails the reduction. If not then
-                 non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only
-                 to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency
-                 or as distribution.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code> for the string representations of the
+                 position, and the content.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the
+                 reduction. If not then non-numeric values are silently ignored.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only to categorical variables.</p></dd><dt class="param">frequency</dt><dd class="cmt"><p>Indicator if categories should be returned as frequency or as distribution.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(name:String,separator:String):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -365,9 +346,8 @@ are the (ordered) counts in each bin.
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code>
-                 for the string representations of the position, and the
-                 content.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code> for the string representations of the
+                 position, and the content.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator used in <code>pos.toShortString</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Histogram#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(name:String):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -382,8 +362,8 @@ are the (ordered) counts in each bin.
       </span>
       </h4>
       <p class="shortcomment cmt">Compute histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Compute histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code> for
-            the string representations of the position, and the content.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name pattern for the histogram bin names. Use <code>%[12]$</code><code>s</code> for the string representations of the
+            position, and the content.
 </p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
@@ -429,11 +409,9 @@ are the (ordered) counts in each bin.
         <span class="name">entropy</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.entropy.V">V</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.entropy.V">V</span>]</span>)</span><span class="result">: (<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Returns the statistic for computing the entropy of categories (bins) of
-a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the entropy of categories (bins) of
-a histogram.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction
-            failed (for example if only 1 bins is present).
+      <p class="shortcomment cmt">Returns the statistic for computing the entropy of categories (bins) of a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the entropy of categories (bins) of a histogram.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example if only 1 bins is
+            present).
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
@@ -492,12 +470,11 @@ a histogram.
         <span class="name">frequencyRatio</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.frequencyRatio.V">V</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.frequencyRatio.V">V</span>]</span>)</span><span class="result">: (<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Returns the statistic for computing the frequency ratio (ratio of highest
-bin count over second highest) of categories (bins) of a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the frequency ratio (ratio of highest
-bin count over second highest) of categories (bins) of a histogram. This
-gives an indication on the skewness of the underlying distribution.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction
-            failed (for example if only 1 bins is present).
+      <p class="shortcomment cmt">Returns the statistic for computing the frequency ratio (ratio of highest bin count over second highest) of
+categories (bins) of a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the frequency ratio (ratio of highest bin count over second highest) of
+categories (bins) of a histogram. This gives an indication on the skewness of the underlying distribution.
+</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example if only 1 bins is
+            present).
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
@@ -589,9 +566,7 @@ gives an indication on the skewness of the underlying distribution.
         <span class="name">numberOfCategories</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.numberOfCategories.V">V</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Histogram.numberOfCategories.V">V</span>]</span>)</span><span class="result">: (<a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Long">Long</span>]) ⇒ <span class="extype" name="scala.Option">Option</span>[(<a href="../position/ExpandablePosition.html#M&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ReduceablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">M</a>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Returns the statistic for computing the number of categories (bins) of
-a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the number of categories (bins) of
-a histogram.
+      <p class="shortcomment cmt">Returns the statistic for computing the number of categories (bins) of a histogram.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the statistic for computing the number of categories (bins) of a histogram.
 </p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Name to use for the coordinate of the statistic.
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">

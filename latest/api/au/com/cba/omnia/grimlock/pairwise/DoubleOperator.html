@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Convenience trait for operators that apply to <code>Double</code> values.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.pairwise.DoubleOperator">DoubleOperator</a> with <a href="Operator.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Operator">Operator</a> with <a href="Compute.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Compute">Compute</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/33e5e285ac9a1940acc7f648b4c776c2fd55a166//src/main/scala/au/com/cba/omnia/grimlock/code/Operators.scala" target="_blank">Operators.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Convenience trait for operators that apply to <code>Double</code> values.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.pairwise.DoubleOperator">DoubleOperator</a> with <a href="Operator.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Operator">Operator</a> with <a href="Compute.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Compute">Compute</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4ddfeb4f1224a4f77e78d27a81138e318176a88c//src/main/scala/au/com/cba/omnia/grimlock/code/Operators.scala" target="_blank">Operators.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -124,8 +124,7 @@
         <span class="name">inverse</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Indicator if pairwise operator <code>f()</code> should be called as <code>f(l, r)</code> or as
-<code>f(r, l)</code>.</p>
+      <p class="shortcomment cmt">Indicator if pairwise operator <code>f()</code> should be called as <code>f(l, r)</code> or as <code>f(r, l)</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.pairwise.DoubleOperator#name" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="name:String"></a>
       <a id="name:String"></a>
@@ -138,8 +137,8 @@
         <span class="name">name</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Pattern for the new name of the pairwise coordinate.</p><div class="fullcomment"><div class="comment cmt"><p>Pattern for the new name of the pairwise coordinate. Use <code>%[12]$</code><code>s</code> for
-the string representations of the coordinate.
+      <p class="shortcomment cmt">Pattern for the new name of the pairwise coordinate.</p><div class="fullcomment"><div class="comment cmt"><p>Pattern for the new name of the pairwise coordinate. Use <code>%[12]$</code><code>s</code> for the string representations of the
+coordinate.
 </p></div></div>
     </li><li name="au.com.cba.omnia.grimlock.pairwise.DoubleOperator#separator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="separator:String"></a>
@@ -270,9 +269,8 @@ the string representations of the coordinate.
       </h4>
       <p class="shortcomment cmt">Indicate if the cell is selected as part of the sample.</p><div class="fullcomment"><div class="comment cmt"><p>Indicate if the cell is selected as part of the sample.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to compute.</p></dd><dt class="param">lp</dt><dd class="cmt"><p>The selected left cell position to compute for.</p></dd><dt class="param">lc</dt><dd class="cmt"><p>The contents of the left cell position to compute with.</p></dd><dt class="param">rp</dt><dd class="cmt"><p>The selected right cell position to compute for.</p></dd><dt class="param">rc</dt><dd class="cmt"><p>The contents of the right cell position to compute with.</p></dd><dt class="param">rem</dt><dd class="cmt"><p>The remaining coordinates.
-</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The return value is an <code>Option</code> to allow, for example, upper
-      or lower triangular matrices to be returned (this can be done by
-      comparing the selected coordinates)
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The return value is an <code>Option</code> to allow, for example, upper or lower triangular matrices to be returned
+      (this can be done by comparing the selected coordinates)
 </p></span></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>

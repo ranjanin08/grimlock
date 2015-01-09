@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that expand a matrix's dimensions.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix">ExpandableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/33e5e285ac9a1940acc7f648b4c776c2fd55a166//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that expand a matrix's dimensions.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix">ExpandableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4ddfeb4f1224a4f77e78d27a81138e318176a88c//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -378,9 +378,7 @@
         <span class="name">transformAndExpand</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="transformers">transformers: <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpand.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="transform/TransformableExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.TransformableExpanded">TransformableExpanded</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpand.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Transform the content of a matrix and return the transformations with
-an expanded position.</p><div class="fullcomment"><div class="comment cmt"><p>Transform the content of a matrix and return the transformations with
-an expanded position.
+      <p class="shortcomment cmt">Transform the content of a matrix and return the transformations with an expanded position.</p><div class="fullcomment"><div class="comment cmt"><p>Transform the content of a matrix and return the transformations with an expanded position.
 </p></div><dl class="paramcmts block"><dt class="param">transformers</dt><dd class="cmt"><p>The transformer(s) to apply to the content.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ExpandablePosition.M, Content)]</code>
 </p></dd></dl></div>
@@ -396,9 +394,9 @@ an expanded position.
         <span class="name">transformAndExpandWithValue</span><span class="tparams">[<span name="T">T</span>, <span name="V">V</span>]</span><span class="params">(<span name="transformers">transformers: <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.T">T</span></span>, <span name="value">value: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.V">V</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="transform/TransformableExpandedWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.TransformableExpandedWithValue">TransformableExpandedWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Transform the content of a matrix using a user supplied value, and return
-the transformations with an expanded position.</p><div class="fullcomment"><div class="comment cmt"><p>Transform the content of a matrix using a user supplied value, and return
-the transformations with an expanded position.
+      <p class="shortcomment cmt">Transform the content of a matrix using a user supplied value, and return the transformations with an expanded
+position.</p><div class="fullcomment"><div class="comment cmt"><p>Transform the content of a matrix using a user supplied value, and return the transformations with an expanded
+position.
 </p></div><dl class="paramcmts block"><dt class="param">transformers</dt><dd class="cmt"><p>The transformer(s) to apply to the content.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ExpandablePosition.M, Content)]</code>
 </p></dd></dl></div>

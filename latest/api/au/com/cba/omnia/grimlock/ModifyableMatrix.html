@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that modify a matrix.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix">ModifyableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/33e5e285ac9a1940acc7f648b4c776c2fd55a166//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that modify a matrix.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix">ModifyableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifyableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4ddfeb4f1224a4f77e78d27a81138e318176a88c//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -215,8 +215,7 @@
       </h4>
       <p class="shortcomment cmt">Create window based derived data.</p><div class="fullcomment"><div class="comment cmt"><p>Create window based derived data.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) to derive over.</p></dd><dt class="param">deriver</dt><dd class="cmt"><p>The deriver to apply to the content.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> with the
-        derived data.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> with the derived data.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ModifyableMatrix#deriveWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="deriveWithValue[D&lt;:au.com.cba.omnia.grimlock.position.Dimension,W](slice:au.com.cba.omnia.grimlock.Slice[P,D],deriver:au.com.cba.omnia.grimlock.derive.Deriverwithau.com.cba.omnia.grimlock.derive.InitialiseWithValue{typeV&gt;:W},value:com.twitter.scalding.ValuePipe[W])(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.S#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -232,8 +231,7 @@
       </h4>
       <p class="shortcomment cmt">Create window based derived data with a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Create window based derived data with a user supplied value.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) to derive over.</p></dd><dt class="param">deriver</dt><dd class="cmt"><p>The deriver to apply to the content.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> with the
-        derived data.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> with the derived data.
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
@@ -275,10 +273,8 @@
       </h4>
       <p class="shortcomment cmt">Fill a matrix with <code>values</code> for a given <code>slice</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Fill a matrix with <code>values</code> for a given <code>slice</code>.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) on which to fill.</p></dd><dt class="param">values</dt><dd class="cmt"><p>The content to fill a matrix with.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code> where all missing values
-        have been filled in.
-</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>This joins <code>values</code> onto this matrix, as such it can be used for
-      imputing missing values.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code> where all missing values have been filled in.
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>This joins <code>values</code> onto this matrix, as such it can be used for imputing missing values.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ModifyableMatrix#fill" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="fill(value:au.com.cba.omnia.grimlock.content.Content):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -294,8 +290,7 @@
       </h4>
       <p class="shortcomment cmt">Fill a matrix with <code>value</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Fill a matrix with <code>value</code>.
 </p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>The content to fill a matrix with.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code> where all missing values
-        have been filled in.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code> where all missing values have been filled in.
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -408,8 +403,7 @@
       </h4>
       <p class="shortcomment cmt">Rename the coordinates of a dimension.</p><div class="fullcomment"><div class="comment cmt"><p>Rename the coordinates of a dimension.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to rename.</p></dd><dt class="param">renamer</dt><dd class="cmt"><p>Function that renames coordinates.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> where the
-        dimension <code>dim</code> has been renamed.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> where the dimension <code>dim</code> has been renamed.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ModifyableMatrix#renameWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="renameWithValue[D&lt;:au.com.cba.omnia.grimlock.position.Dimension,V](dim:D,renamer:(au.com.cba.omnia.grimlock.position.Dimension,P,au.com.cba.omnia.grimlock.content.Content,V)=&gt;P#S,value:com.twitter.scalding.ValuePipe[V])(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(P#S,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -425,8 +419,7 @@
       </h4>
       <p class="shortcomment cmt">Rename the coordinates of a dimension using user a suplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Rename the coordinates of a dimension using user a suplied value.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to rename.</p></dd><dt class="param">renamer</dt><dd class="cmt"><p>Function that renames coordinates.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> where the dimension
-        <code>dim</code> has been renamed.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> where the dimension <code>dim</code> has been renamed.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ModifyableMatrix#set" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="set[T](values:T)(implicitev:au.com.cba.omnia.grimlock.Matrixable[T,P],implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -458,8 +451,7 @@
       </h4>
       <p class="shortcomment cmt">Set <code>value</code> as the content for all <code>positions</code> in a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Set <code>value</code> as the content for all <code>positions</code> in a matrix.
 </p></div><dl class="paramcmts block"><dt class="param">positions</dt><dd class="cmt"><p>The positions for which to set the contents.</p></dd><dt class="param">value</dt><dd class="cmt"><p>The value to set.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]' where the </code>positions<code> have
-        </code>value<code> as their content.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]' where the </code>positions<code> have </code>value<code> as their content.
 </code></p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>

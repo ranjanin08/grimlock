@@ -39,9 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for transformers that use a user supplied value and expand the
-position by appending a dimension.
-</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue">PresentExpandedWithValue</a> with <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/33e5e285ac9a1940acc7f648b4c776c2fd55a166//src/main/scala/au/com/cba/omnia/grimlock/code/Transformer.scala" target="_blank">Transformer.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for transformers that use a user supplied value and expand the position by appending a dimension.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue">PresentExpandedWithValue</a> with <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4ddfeb4f1224a4f77e78d27a81138e318176a88c//src/main/scala/au/com/cba/omnia/grimlock/code/Transformer.scala" target="_blank">Transformer.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -105,30 +103,22 @@ position by appending a dimension.
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue#present" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:PresentExpandedWithValue.this.V):Option[Either[(pos.M,au.com.cba.omnia.grimlock.content.Content),List[(pos.M,au.com.cba.omnia.grimlock.content.Content)]]]"></a>
-      <a id="present[P&lt;:PositionwithExpandablePosition](P,Content,(PresentExpandedWithValue.this)#V):Option[Either[(present.P.M,Content),List[(present.P.M,Content)]]]"></a>
+      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:PresentExpandedWithValue.this.V):au.com.cba.omnia.grimlock.Matrix.CellCollection[pos.M]"></a>
+      <a id="present[P&lt;:PositionwithExpandablePosition](P,Content,(PresentExpandedWithValue.this)#V):CellCollection[present.P.M]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue">PresentExpandedWithValue</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue.V">V</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Either">Either</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">present.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>), <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">present.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]]]</span>
+        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue">PresentExpandedWithValue</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue.V">V</span></span>)</span><span class="result">: <a href="../Matrix$.html#CellCollection[P&lt;:au.com.cba.omnia.grimlock.position.Position]=au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection[(P,au.com.cba.omnia.grimlock.content.Content)]" class="extmbr" name="au.com.cba.omnia.grimlock.Matrix.CellCollection">CellCollection</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">present.P.M</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).
 </p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the cell.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The content to transform.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The external value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a cell or a <code>List</code> of cells where the position
-        is creating by appending to <code>pos</code> and the content is derived from
-        <code>con</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>An <code>Either</code> is used to all either one-to-one or one-to-many
-      transformations.
-</p></span>, <span class="cmt"><p>An <code>Option</code> is used in the return type to allow reducers to be
-      selective in what content they apply to. For example, normalising is
-      undefined for categorical variables. The transformer now has the
-      option to return <code>None</code>. This in turn permits an external API, for
-      simple cases, where the user need not know about the types of
-      variables of their data.</p></span></dd></dl></div>
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a cell or a <code>List</code> of cells where the position is creating by appending to <code>pos</code> and
+        the content is derived from <code>con</code>.
+</p></dd></dl></div>
     </li></ol>
             </div>
 
