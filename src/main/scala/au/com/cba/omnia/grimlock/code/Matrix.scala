@@ -553,7 +553,7 @@ trait Matrix[P <: Position] {
 }
 
 /** Define operations that modify a matrix. */
-trait ModifyableMatrix[P <: Position with ModifyablePosition] { self: Matrix[P] =>
+trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] =>
   /**
    * Change the variable type of `positions` in a matrix.
    *
@@ -1160,7 +1160,7 @@ object Matrix {
  *
  * @param data `TypedPipe[(Position1D, Content)]`.
  */
-class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D] with ModifyableMatrix[Position1D]
+class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D] with ModifiableMatrix[Position1D]
   with ExpandableMatrix[Position1D] {
   def domain(): TypedPipe[Position1D] = names(Over(First)).map { case (p, i) => p }
 
@@ -1208,7 +1208,7 @@ class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D]
  *
  * @param data `TypedPipe[(Position2D, Content)]`.
  */
-class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D] with ModifyableMatrix[Position2D]
+class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D] with ModifiableMatrix[Position2D]
   with ReduceableMatrix[Position2D] with ExpandableMatrix[Position2D] {
   def domain(): TypedPipe[Position2D] = {
     names(Over(First))
@@ -1482,7 +1482,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
  *
  * @param data `TypedPipe[(Position3D, Content)]`.
  */
-class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D] with ModifyableMatrix[Position3D]
+class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D] with ModifiableMatrix[Position3D]
   with ReduceableMatrix[Position3D] with ExpandableMatrix[Position3D] {
   def domain(): TypedPipe[Position3D] = {
     names(Over(First))
@@ -1565,7 +1565,7 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
  *
  * @param data `TypedPipe[(Position4D, Content)]`.
  */
-class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D] with ModifyableMatrix[Position4D]
+class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D] with ModifiableMatrix[Position4D]
   with ReduceableMatrix[Position4D] with ExpandableMatrix[Position4D] {
   def domain(): TypedPipe[Position4D] = {
     names(Over(First))
@@ -1658,7 +1658,7 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
  *
  * @param data `TypedPipe[(Position5D, Content)]`.
  */
-class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D] with ModifyableMatrix[Position5D]
+class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D] with ModifiableMatrix[Position5D]
   with ReduceableMatrix[Position5D] {
   def domain(): TypedPipe[Position5D] = {
     names(Over(First))

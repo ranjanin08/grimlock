@@ -72,7 +72,7 @@ trait Position {
 }
 
 /** Trait for operations that modify a position (but keep the number of dimensions the same). */
-trait ModifyablePosition { self: Position =>
+trait ModifiablePosition { self: Position =>
   /** Type for positions of same number of dimensions. */
   type S <: Position
 
@@ -243,7 +243,7 @@ case class Position0D() extends Position with ExpandablePosition {
  *
  * @param first Coordinate for the first dimension.
  */
-case class Position1D(first: Value) extends Position with ModifyablePosition with ReduceablePosition
+case class Position1D(first: Value) extends Position with ModifiablePosition with ReduceablePosition
   with ExpandablePosition {
   type L = Position0D
   type S = Position1D
@@ -282,7 +282,7 @@ object Position1D {
  * @param first  Coordinate for the first dimension.
  * @param second Coordinate for the second dimension.
  */
-case class Position2D(first: Value, second: Value) extends Position with ModifyablePosition with ReduceablePosition
+case class Position2D(first: Value, second: Value) extends Position with ModifiablePosition with ReduceablePosition
   with ExpandablePosition {
   type L = Position1D
   type S = Position2D
@@ -322,7 +322,7 @@ object Position2D {
  * @param second Coordinate for the second dimension.
  * @param third  Coordinate for the third dimension.
  */
-case class Position3D(first: Value, second: Value, third: Value) extends Position with ModifyablePosition
+case class Position3D(first: Value, second: Value, third: Value) extends Position with ModifiablePosition
   with ReduceablePosition with ExpandablePosition {
   type L = Position2D
   type S = Position3D
@@ -366,7 +366,7 @@ object Position3D {
  * @param fourth Coordinate for the fourth dimension.
  */
 case class Position4D(first: Value, second: Value, third: Value, fourth: Value) extends Position
-  with ModifyablePosition with ReduceablePosition with ExpandablePosition {
+  with ModifiablePosition with ReduceablePosition with ExpandablePosition {
   type L = Position3D
   type S = Position4D
   type M = Position5D
@@ -411,7 +411,7 @@ object Position4D {
  * @param fifth  Coordinate for the fifth dimension.
  */
 case class Position5D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value) extends Position
-  with ModifyablePosition with ReduceablePosition {
+  with ModifiablePosition with ReduceablePosition {
   type L = Position4D
   type S = Position5D
   type O = Map[Position4D, Content]
