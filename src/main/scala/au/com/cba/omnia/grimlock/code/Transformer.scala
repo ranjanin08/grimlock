@@ -26,7 +26,7 @@ trait Transformer
 trait Present extends PresentWithValue { self: Transformer =>
   type V = Any
 
-  def present[P <: Position with ModifyablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S] = {
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S] = {
     present(pos, con)
   }
 
@@ -39,7 +39,7 @@ trait Present extends PresentWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by modifiying `pos` and the
    *         content is derived from `con`.
    */
-  def present[P <: Position with ModifyablePosition](pos: P, con: Content): CellCollection[pos.S]
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content): CellCollection[pos.S]
 
   def andThen(that: Transformer with Present): AndThenTransformer = AndThenTransformer(this, that)
 }
@@ -59,7 +59,7 @@ trait PresentWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by modifiying `pos` and the
    *         content is derived from `con`.
    */
-  def present[P <: Position with ModifyablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S]
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S]
 
   def andThen[W <: V](that: Transformer with PresentWithValue { type V = W }): AndThenTransformerWithValue[W] = {
     AndThenTransformerWithValue[W](this, that)
@@ -114,7 +114,7 @@ trait PresentExpandedWithValue { self: Transformer =>
  */
 case class AndThenTransformer(first: Transformer with Present, second: Transformer with Present) extends Transformer
   with Present {
-  def present[P <: Position with ModifyablePosition](pos: P, con: Content): CellCollection[pos.S] = {
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content): CellCollection[pos.S] = {
     Some(Right(
       Misc.mapFlatten(first.present(pos, con))
         .flatMap {
@@ -134,7 +134,7 @@ case class AndThenTransformer(first: Transformer with Present, second: Transform
 case class AndThenTransformerWithValue[W](first: Transformer with PresentWithValue { type V >: W },
   second: Transformer with PresentWithValue { type V >: W }) extends Transformer with PresentWithValue {
   type V = W
-  def present[P <: Position with ModifyablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S] = {
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S] = {
     Some(Right(
       Misc.mapFlatten(first.present(pos, con, ext.asInstanceOf[first.V]))
         .flatMap {
@@ -153,7 +153,7 @@ case class AndThenTransformerWithValue[W](first: Transformer with PresentWithVal
  *       automatically to one of these.
  */
 case class CombinationTransformer[T <: Transformer with Present](singles: List[T]) extends Transformer with Present {
-  def present[P <: Position with ModifyablePosition](pos: P, con: Content): CellCollection[pos.S] = {
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content): CellCollection[pos.S] = {
     Some(Right(singles.flatMap { case s => Misc.mapFlatten(s.present(pos, con)) }))
   }
 }
@@ -169,7 +169,7 @@ case class CombinationTransformer[T <: Transformer with Present](singles: List[T
 case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue, W](singles: List[T])
   extends Transformer with PresentWithValue {
   type V = W
-  def present[P <: Position with ModifyablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S] = {
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S] = {
     Some(Right(singles.flatMap { case s => Misc.mapFlatten(s.present(pos, con, ext.asInstanceOf[s.V])) }))
   }
 }
