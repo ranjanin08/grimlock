@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/ede4c5d64bf149a7dd8915a13494238850bba238//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/596eae74c3f2268f1349c4589330430b0b1e8fb7//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -512,6 +512,71 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.Matrix#tuple2List" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="tuple2List[V](list:List[(V,au.com.cba.omnia.grimlock.content.Content)])(implicitevidence$3:au.com.cba.omnia.grimlock.encoding.Valueable[V],implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):au.com.cba.omnia.grimlock.Matrix1D"></a>
+      <a id="tuple2List[V](List[(V,Content)])(Valueable[V],FlowDef,Mode):Matrix1D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tuple2List</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="list">list: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple2List.V">V</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple2List.V">V</span>]</span>, <span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <a href="Matrix1D.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix1D">Matrix1D</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Conversion from <code>List[(Valueable, Content)]</code> to a <code>Matrix1D</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.Matrix#tuple3List" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="tuple3List[V,W](list:List[(V,W,au.com.cba.omnia.grimlock.content.Content)])(implicitevidence$4:au.com.cba.omnia.grimlock.encoding.Valueable[V],implicitevidence$5:au.com.cba.omnia.grimlock.encoding.Valueable[W],implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):au.com.cba.omnia.grimlock.Matrix2D"></a>
+      <a id="tuple3List[V,W](List[(V,W,Content)])(Valueable[V],Valueable[W],FlowDef,Mode):Matrix2D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tuple3List</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>]</span><span class="params">(<span name="list">list: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple3List.V">V</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple3List.W">W</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple3List.V">V</span>]</span>, <span name="arg1">arg1: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple3List.W">W</span>]</span>, <span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <a href="Matrix2D.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix2D">Matrix2D</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Conversion from <code>List[(Valueable, Valueable, Content)]</code> to a <code>Matrix2D</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.Matrix#tuple4List" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="tuple4List[V,W,X](list:List[(V,W,X,au.com.cba.omnia.grimlock.content.Content)])(implicitevidence$6:au.com.cba.omnia.grimlock.encoding.Valueable[V],implicitevidence$7:au.com.cba.omnia.grimlock.encoding.Valueable[W],implicitevidence$8:au.com.cba.omnia.grimlock.encoding.Valueable[X],implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):au.com.cba.omnia.grimlock.Matrix3D"></a>
+      <a id="tuple4List[V,W,X](List[(V,W,X,Content)])(Valueable[V],Valueable[W],Valueable[X],FlowDef,Mode):Matrix3D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tuple4List</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="list">list: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple4List.V">V</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple4List.W">W</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple4List.X">X</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple4List.V">V</span>]</span>, <span name="arg1">arg1: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple4List.W">W</span>]</span>, <span name="arg2">arg2: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple4List.X">X</span>]</span>, <span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <a href="Matrix3D.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix3D">Matrix3D</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Conversion from <code>List[(Valueable, Valueable, Valueable, Content)]</code> to a <code>Matrix3D</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.Matrix#tuple5List" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="tuple5List[V,W,X,Y](list:List[(V,W,X,Y,au.com.cba.omnia.grimlock.content.Content)])(implicitevidence$9:au.com.cba.omnia.grimlock.encoding.Valueable[V],implicitevidence$10:au.com.cba.omnia.grimlock.encoding.Valueable[W],implicitevidence$11:au.com.cba.omnia.grimlock.encoding.Valueable[X],implicitevidence$12:au.com.cba.omnia.grimlock.encoding.Valueable[Y],implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):au.com.cba.omnia.grimlock.Matrix4D"></a>
+      <a id="tuple5List[V,W,X,Y](List[(V,W,X,Y,Content)])(Valueable[V],Valueable[W],Valueable[X],Valueable[Y],FlowDef,Mode):Matrix4D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tuple5List</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>, <span name="Y">Y</span>]</span><span class="params">(<span name="list">list: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple5List.V">V</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple5List.W">W</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple5List.X">X</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple5List.Y">Y</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple5List.V">V</span>]</span>, <span name="arg1">arg1: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple5List.W">W</span>]</span>, <span name="arg2">arg2: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple5List.X">X</span>]</span>, <span name="arg3">arg3: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple5List.Y">Y</span>]</span>, <span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <a href="Matrix4D.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix4D">Matrix4D</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Conversion from <code>List[(Valueable, Valueable, Valueable, Valueable, Content)]</code> to a <code>Matrix4D</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.Matrix#tuple6List" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="tuple6List[V,W,X,Y,Z](list:List[(V,W,X,Y,Z,au.com.cba.omnia.grimlock.content.Content)])(implicitevidence$13:au.com.cba.omnia.grimlock.encoding.Valueable[V],implicitevidence$14:au.com.cba.omnia.grimlock.encoding.Valueable[W],implicitevidence$15:au.com.cba.omnia.grimlock.encoding.Valueable[X],implicitevidence$16:au.com.cba.omnia.grimlock.encoding.Valueable[Y],implicitevidence$17:au.com.cba.omnia.grimlock.encoding.Valueable[Z],implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):au.com.cba.omnia.grimlock.Matrix5D"></a>
+      <a id="tuple6List[V,W,X,Y,Z](List[(V,W,X,Y,Z,Content)])(Valueable[V],Valueable[W],Valueable[X],Valueable[Y],Valueable[Z],FlowDef,Mode):Matrix5D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tuple6List</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>, <span name="Y">Y</span>, <span name="Z">Z</span>]</span><span class="params">(<span name="list">list: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple6List.V">V</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple6List.W">W</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple6List.X">X</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple6List.Y">Y</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple6List.Z">Z</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple6List.V">V</span>]</span>, <span name="arg1">arg1: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple6List.W">W</span>]</span>, <span name="arg2">arg2: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple6List.X">X</span>]</span>, <span name="arg3">arg3: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple6List.Y">Y</span>]</span>, <span name="arg4">arg4: <a href="encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.tuple6List.Z">Z</span>]</span>, <span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <a href="Matrix5D.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix5D">Matrix5D</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Conversion from <code>List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]</code> to a <code>Matrix5D</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#typedPipePosition1DContent" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="typedPipePosition1DContent(data:com.twitter.scalding.TypedPipe[(au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content)]):au.com.cba.omnia.grimlock.Matrix1D"></a>
       <a id="typedPipePosition1DContent(TypedPipe[(Position1D,Content)]):Matrix1D"></a>
