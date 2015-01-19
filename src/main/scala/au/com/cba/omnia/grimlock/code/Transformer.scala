@@ -41,6 +41,13 @@ trait Present extends PresentWithValue { self: Transformer =>
    */
   def present[P <: Position with ModifiablePosition](pos: P, con: Content): CellCollection[pos.S]
 
+  /**
+   * Operator for chaining transformations
+   *
+   * @param that The transformation to perform after `this`.
+   *
+   * @return A transformer that runs `this` and then `that`.
+   */
   def andThen(that: Transformer with Present): AndThenTransformer = AndThenTransformer(this, that)
 }
 
@@ -61,6 +68,13 @@ trait PresentWithValue { self: Transformer =>
    */
   def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S]
 
+  /**
+   * Operator for chaining transformations
+   *
+   * @param that The transformation to perform after `this`.
+   *
+   * @return A transformer that runs `this` and then `that`.
+   */
   def andThen[W <: V](that: Transformer with PresentWithValue { type V = W }): AndThenTransformerWithValue[W] = {
     AndThenTransformerWithValue[W](this, that)
   }

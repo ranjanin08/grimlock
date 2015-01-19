@@ -22,6 +22,10 @@ import au.com.cba.omnia.grimlock.Matrix.CellCollection
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.Type._
 
+import cascading.flow.FlowDef
+import com.twitter.scalding._
+import com.twitter.scalding.typed.LiteralValue
+
 /** Convenience trait defining common functionality patterns for implementing transformers. */
 trait PresentCell[T] {
   protected def present[P <: Position with ModifiablePosition](dim: Dimension, pos: P, con: Content,
@@ -1184,5 +1188,184 @@ object SquareRoot {
    *             the coordinate, and the content.
    */
   def apply(dim: Dimension, name: String): SquareRoot = SquareRoot(dim, Some(name))
+}
+
+/**
+ * Convert a numeric value to categorical.
+ *
+ * @param dim  Dimension for which to convert.
+ * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%1$``s` for the string
+ *             representations of the coordinate.
+ *
+ * @note Cut is only applied to numerical variables.
+ */
+case class Cut private (dim: Dimension, name: Option[String]) extends Transformer with PresentWithValue {
+  type V = Map[Position1D, List[Double]]
+
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S] = {
+    val p = name match {
+      case Some(n) => pos.set(dim, n.format(pos.get(dim).toShortString))
+      case None => pos.asInstanceOf[pos.S]
+    }
+
+    (con.schema.kind.isSpecialisationOf(Numerical), con.value.asDouble, ext.get(Position1D(pos.get(dim)))) match {
+      case (true, Some(v), Some(r)) =>
+        val bins = r.sliding(2).map("(" + _.mkString(",") + "]").toList
+
+        Some(Left((p, Content(OrdinalSchema[Codex.StringCodex](bins), bins(r.lastIndexWhere(_ < v))))))
+      case _ => None
+    }
+  }
+}
+
+/** Companion object to the `Cut` class defining constructors. */
+object Cut {
+  /** Type of statistics data from which the number of bins is comuted. */
+  type Stats = Map[Position1D, Map[Position1D, Content]]
+
+  /**
+   * Convert numerical value to categorical.
+   *
+   * @param dim  Dimension for which to convert.
+   */
+  def apply(dim: Dimension): Cut = Cut(dim, None)
+
+  /**
+   * Convert numerical value to categorical.
+   *
+   * @param dim  Dimension for which to convert.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use `%1$``s` for the string representations of
+   *             the coordinate.
+   */
+  def apply(dim: Dimension, name: String): Cut = Cut(dim, Some(name))
+
+  /**
+   * Define range of `k` approximately equal size bins.
+   *
+   * @param ext A Scaling `ValuePipe` containing the feature statistics.
+   * @param min Key (into `ext`) that identifies the minimum value.
+   * @param max Key (into `ext`) that identifies the maximum value.
+   * @param k   The number of bins.
+   *
+   * @return A Scalding `ValuePipe` holding the break values.
+   */
+  def fixed[V: Valueable, W: Valueable](ext: ValuePipe[Stats], min: V, max: W, k: Long): ValuePipe[Cut#V] = {
+    cut(ext, min, max, _ => Some(k))
+  }
+
+  /**
+   * Define range of bins based on the square-root choice.
+   *
+   * @param ext   A Scaling `ValuePipe` containing the feature statistics.
+   * @param count Key (into `ext`) that identifies the number of features.
+   * @param min   Key (into `ext`) that identifies the minimum value.
+   * @param max   Key (into `ext`) that identifies the maximum value.
+   *
+   * @return A Scalding `ValuePipe` holding the break values.
+   */
+  def squareRootChoice[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
+    max: X): ValuePipe[Cut#V] = {
+    cut(ext, min, max, extract(_, count).map { case n => math.round(math.sqrt(n)) })
+  }
+
+  /**
+   * Define range of bins based on Sturges' formula.
+   *
+   * @param ext   A Scaling `ValuePipe` containing the feature statistics.
+   * @param count Key (into `ext`) that identifies the number of features.
+   * @param min   Key (into `ext`) that identifies the minimum value.
+   * @param max   Key (into `ext`) that identifies the maximum value.
+   *
+   * @return A Scalding `ValuePipe` holding the break values.
+   */
+  def sturgesFormula[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
+    max: X): ValuePipe[Cut#V] = {
+    cut(ext, min, max, extract(_, count).map { case n => math.ceil(log2(n) + 1).toLong })
+  }
+
+  /**
+   * Define range of bins based on the Rice rule.
+   *
+   * @param ext   A Scaling `ValuePipe` containing the feature statistics.
+   * @param count Key (into `ext`) that identifies the number of features.
+   * @param min   Key (into `ext`) that identifies the minimum value.
+   * @param max   Key (into `ext`) that identifies the maximum value.
+   *
+   * @return A Scalding `ValuePipe` holding the break values.
+   */
+  def riceRule[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
+    max: X): ValuePipe[Cut#V] = {
+    cut(ext, min, max, extract(_, count).map { case n => math.ceil(2 * math.pow(n, 1.0 / 3.0)).toLong })
+  }
+
+  /**
+   * Define range of bins based on Doane's formula.
+   *
+   * @param ext      A Scaling `ValuePipe` containing the feature statistics.
+   * @param count    Key (into `ext`) that identifies the number of features.
+   * @param min      Key (into `ext`) that identifies the minimum value.
+   * @param max      Key (into `ext`) that identifies the maximum value.
+   * @param skewness Key (into `ext`) that identifies the skewwness.
+   *
+   * @return A Scalding `ValuePipe` holding the break values.
+   */
+  def doanesFormula[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: ValuePipe[Stats], count: V, min: W,
+    max: X, skewness: Y): ValuePipe[Cut#V] = {
+    cut(ext, min, max, m => (extract(m, count), extract(m, skewness)) match {
+      case (Some(n), Some(s)) =>
+        Some(math.round(1 + log2(n) + log2(1 + math.abs(s) / math.sqrt((6 * n - 12) / (n * n + 4 * n + 3)))))
+      case _ => None
+    })
+  }
+
+  /**
+   * Define range of bins based on Scott's normal reference rule.
+   *
+   * @param ext   A Scaling `ValuePipe` containing the feature statistics.
+   * @param count Key (into `ext`) that identifies the number of features.
+   * @param min   Key (into `ext`) that identifies the minimum value.
+   * @param max   Key (into `ext`) that identifies the maximum value.
+   * @param sd    Key (into `ext`) that identifies the standard deviation.
+   *
+   * @return A Scalding `ValuePipe` holding the break values.
+   */
+  def scottsNormalReferenceRule[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: ValuePipe[Stats],
+    count: V, min: W, max: X, sd: Y): ValuePipe[Cut#V] = {
+    cut(ext, min, max, m => (extract(m, count), extract(m, min), extract(m, max), extract(m, sd)) match {
+      case (Some(n), Some(l), Some(u), Some(s)) => Some(math.ceil((u - l) / (3.5 * s / math.pow(n, 1.0 / 3.0))).toLong)
+      case _ => None
+    })
+  }
+
+  /**
+   * Return a Scalding `ValuePipe` holding the user defined break values.
+   *
+   * @param range A map (holding for each key) the bins range of that feature.
+   */
+  def breaks[V: Valueable](range: Map[V, List[Double]])(implicit flow: FlowDef, mode: Mode): ValuePipe[Cut#V] = {
+    new LiteralValue(range.map { case (v, l) => (Position1D(v), l) })
+  }
+
+  // TODO: Add 'right' and 'labels' options (analogous to R's)
+  // TODO: Double check range
+  private def cut[V: Valueable, W: Valueable](ext: ValuePipe[Stats], min: V, max: W,
+    bins: (Map[Position1D, Content]) => Option[Long]): ValuePipe[Cut#V] = {
+    ext.map(_.flatMap {
+      case (pos, map) => (extract(map, min), extract(map, max), bins(map)) match {
+        case (Some(l), Some(u), Some(k)) =>
+          val delta = math.abs(u - l)
+          val range = (l until u by (delta / k)) :+ u
+
+          Some((pos, (l - 0.001 * delta) :: range.tail.toList))
+        case _ => None
+      }
+    })
+  }
+
+  private def extract[V: Valueable](ext: Map[Position1D, Content], key: V): Option[Double] = {
+    ext.get(Position1D(key)).flatMap(_.value.asDouble)
+  }
+
+  private def log2(x: Double): Double = math.log(x) / math.log(2)
 }
 

@@ -683,3 +683,43 @@ class Test27(args: Args) extends Job(args) {
     .persist("./tmp/ema.out")
 }
 
+class Test28(args: Args) extends Job(args) {
+
+  val data = List
+    .range(0, 16)
+    .flatMap { case i => List(("iid:" + i, "fid:A", Content(ContinuousSchema[Codex.LongCodex](), i)),
+                              ("iid:" + i, "fid:B", Content(NominalSchema[Codex.StringCodex](), i.toString))) }
+
+  val stats = data
+    .reduceAndExpand(Along(First), List(Count("count"), Min("min"), Max("max"), Moments("mean", "sd", "skewness")))
+    .toMap(Over(First))
+
+  data
+    .transformWithValue(Cut(Second), Cut.fixed(stats, "min", "max", 4))
+    .persist("./tmp/cut1.out")
+
+  data
+    .transformWithValue(Cut(Second, "%s.square"), Cut.squareRootChoice(stats, "count", "min", "max"))
+    .persist("./tmp/cut2.out")
+
+  data
+    .transformWithValue(Cut(Second, "%s.sturges"), Cut.sturgesFormula(stats, "count", "min", "max"))
+    .persist("./tmp/cut3.out")
+
+  data
+    .transformWithValue(Cut(Second, "%s.rice"), Cut.riceRule(stats, "count", "min", "max"))
+    .persist("./tmp/cut4.out")
+
+  data
+    .transformWithValue(Cut(Second, "%s.doane"), Cut.doanesFormula(stats, "count", "min", "max", "skewness"))
+    .persist("./tmp/cut5.out")
+
+  data
+    .transformWithValue(Cut(Second, "%s.scott"), Cut.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
+    .persist("./tmp/cut6.out")
+
+  data
+    .transformWithValue(Cut(Second, "%s.break"), Cut.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
+    .persist("./tmp/cut7.out")
+}
+

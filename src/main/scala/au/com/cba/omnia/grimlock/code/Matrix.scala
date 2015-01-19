@@ -852,10 +852,9 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
       .values
       .flatMap { case (p, t) => reducer.presentSingle(p, t) }
   }
-  // TODO: Add support for aggregating over multiple dimensions? This can be
-  //       done analogous to 'shape()'. That is, given a list of (Slice,
-  //       Reducer) first flatMap over the data creating a prepared version
-  //       for each slice. The rest should be as is.
+  // TODO: Add support for aggregating over multiple dimensions? This can be done analogous to 'shape()'. That is,
+  //       given a list of (Slice, Reducer) first flatMap over the data creating a prepared version for each slice.
+  //       The rest should be as is.
 }
 
 /** Define operations that expand a matrix's dimensions. */
@@ -1153,6 +1152,31 @@ object Matrix {
   implicit def typedPipePosition4DContent(data: TypedPipe[Cell[Position4D]]): Matrix4D = new Matrix4D(data)
   /** Conversion from `TypedPipe[(Position5D, Content)]` to a `Matrix5D`. */
   implicit def typedPipePosition5DContent(data: TypedPipe[Cell[Position5D]]): Matrix5D = new Matrix5D(data)
+
+  /** Conversion from `List[(Valueable, Content)]` to a `Matrix1D`. */
+  implicit def tuple2List[V: Valueable](list: List[(V, Content)])(implicit flow: FlowDef, mode: Mode): Matrix1D = {
+    new Matrix1D(new IterablePipe(list.map { case (v, c) => (Position1D(v), c) }, flow, mode))
+  }
+  /** Conversion from `List[(Valueable, Valueable, Content)]` to a `Matrix2D`. */
+  implicit def tuple3List[V: Valueable, W: Valueable](list: List[(V, W, Content)])(implicit flow: FlowDef,
+    mode: Mode): Matrix2D = {
+    new Matrix2D(new IterablePipe(list.map { case (v, w, c) => (Position2D(v, w), c) }, flow, mode))
+  }
+  /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a `Matrix3D`. */
+  implicit def tuple4List[V: Valueable, W: Valueable, X: Valueable](list: List[(V, W, X, Content)])(
+    implicit flow: FlowDef, mode: Mode): Matrix3D = {
+    new Matrix3D(new IterablePipe(list.map { case (v, w, x, c) => (Position3D(v, w, x), c) }, flow, mode))
+  }
+  /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a `Matrix4D`. */
+  implicit def tuple5List[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
+    list: List[(V, W, X, Y, Content)])(implicit flow: FlowDef, mode: Mode): Matrix4D = {
+    new Matrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => (Position4D(v, w, x, y), c) }, flow, mode))
+  }
+  /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a `Matrix5D`. */
+  implicit def tuple6List[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+    list: List[(V, W, X, Y, Z, Content)])(implicit flow: FlowDef, mode: Mode): Matrix5D = {
+    new Matrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => (Position5D(v, w, x, y, z), c) }, flow, mode))
+  }
 }
 
 /**
