@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that reduce a matrix's dimensions.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ReduceableMatrix">ReduceableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ReduceableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ReduceableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/596eae74c3f2268f1349c4589330430b0b1e8fb7//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that reduce a matrix's dimensions.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ReduceableMatrix">ReduceableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ReduceableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ReduceableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7b4f8db9af061a7f558278ea564272b65e5e5c6c//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -283,7 +283,7 @@
       </h4>
       <p class="shortcomment cmt">Melt one dimension of a matrix into another.</p><div class="fullcomment"><div class="comment cmt"><p>Melt one dimension of a matrix into another.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to melt</p></dd><dt class="param">into</dt><dd class="cmt"><p>The dimension to melt into</p></dd><dt class="param">separator</dt><dd class="cmt"><p>The separator to use in the melt dimension
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ReduceablePosition.L, Content)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P#L]]</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>A melt coordinate is always a string value constructed from the string representation of the <code>dim</code> and
       <code>into</code> coordinates.
 </p></span></dd></dl></div>
@@ -340,7 +340,7 @@
       </h4>
       <p class="shortcomment cmt">Reduce a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce a matrix.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to reduce.</p></dd><dt class="param">reducer</dt><dd class="cmt"><p>The reducer to apply to the data.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Slice.S, Content)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[slice.S]]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ReduceableMatrix#reduceWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="reduceWithValue[D&lt;:au.com.cba.omnia.grimlock.position.Dimension,W](slice:au.com.cba.omnia.grimlock.Slice[P,D],reducer:au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.PrepareWithValuewithau.com.cba.omnia.grimlock.reduce.PresentSingle{typeV&gt;:W},value:com.twitter.scalding.ValuePipe[W])(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.S,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -356,7 +356,7 @@
       </h4>
       <p class="shortcomment cmt">Reduce a matrix, using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce a matrix, using a user supplied value.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to reduce.</p></dd><dt class="param">reducer</dt><dd class="cmt"><p>The reducer to apply to the data.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Slice.S, Content)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[slice.S]]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ReduceableMatrix#squash" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="squash[D&lt;:au.com.cba.omnia.grimlock.position.Dimension](dim:D,squasher:au.com.cba.omnia.grimlock.squash.Squasherwithau.com.cba.omnia.grimlock.squash.Reduce)(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(P#L,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -372,7 +372,7 @@
       </h4>
       <p class="shortcomment cmt">Squash a dimension of a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Squash a dimension of a matrix.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to squash.</p></dd><dt class="param">squasher</dt><dd class="cmt"><p>The squasher that reduces two cells.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ReduceablePosition.L, Content)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P#L]]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ReduceableMatrix#squashWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="squashWithValue[D&lt;:au.com.cba.omnia.grimlock.position.Dimension,V](dim:D,squasher:au.com.cba.omnia.grimlock.squash.Squasherwithau.com.cba.omnia.grimlock.squash.ReduceWithValue,value:com.twitter.scalding.ValuePipe[V])(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(P#L,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -388,7 +388,7 @@
       </h4>
       <p class="shortcomment cmt">Squash a dimension of a matrix with a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Squash a dimension of a matrix with a user supplied value.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to squash.</p></dd><dt class="param">squasher</dt><dd class="cmt"><p>The squasher that reduces two cells.</p></dd><dt class="param">value</dt><dd class="cmt"><p>The user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ReduceablePosition.L, Content)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P#L]]</code>.
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>

@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that expand a matrix's dimensions.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix">ExpandableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/596eae74c3f2268f1349c4589330430b0b1e8fb7//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that expand a matrix's dimensions.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix">ExpandableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7b4f8db9af061a7f558278ea564272b65e5e5c6c//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -225,7 +225,7 @@
       </h4>
       <p class="shortcomment cmt">Expand a matrix with an extra dimension.</p><div class="fullcomment"><div class="comment cmt"><p>Expand a matrix with an extra dimension.
 </p></div><dl class="paramcmts block"><dt class="param">expander</dt><dd class="cmt"><p>A function that expands each position with 1 dimension.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ExpandablePosition.M, Content)]</code>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P#M]]</code>
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ExpandableMatrix#expandWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="expandWithValue[V](expander:(P,au.com.cba.omnia.grimlock.content.Content,V)=&gt;P#M,value:com.twitter.scalding.ValuePipe[V]):com.twitter.scalding.TypedPipe[(P#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -241,7 +241,7 @@
       </h4>
       <p class="shortcomment cmt">Expand a matrix with an extra dimension using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Expand a matrix with an extra dimension using a user supplied value.
 </p></div><dl class="paramcmts block"><dt class="param">expander</dt><dd class="cmt"><p>A function that expands each position with 1 dimension.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ExpandablePosition.M, Content)]</code>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P#M]]</code>
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -380,7 +380,7 @@
       </h4>
       <p class="shortcomment cmt">Transform the content of a matrix and return the transformations with an expanded position.</p><div class="fullcomment"><div class="comment cmt"><p>Transform the content of a matrix and return the transformations with an expanded position.
 </p></div><dl class="paramcmts block"><dt class="param">transformers</dt><dd class="cmt"><p>The transformer(s) to apply to the content.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ExpandablePosition.M, Content)]</code>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P#M]]</code>
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ExpandableMatrix#transformAndExpandWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="transformAndExpandWithValue[T,V](transformers:T,value:com.twitter.scalding.ValuePipe[V])(implicitev:au.com.cba.omnia.grimlock.transform.TransformableExpandedWithValue[T,V]):com.twitter.scalding.TypedPipe[(P#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -398,7 +398,7 @@
 position.</p><div class="fullcomment"><div class="comment cmt"><p>Transform the content of a matrix using a user supplied value, and return the transformations with an expanded
 position.
 </p></div><dl class="paramcmts block"><dt class="param">transformers</dt><dd class="cmt"><p>The transformer(s) to apply to the content.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ExpandablePosition.M, Content)]</code>
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P#M]]</code>
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>

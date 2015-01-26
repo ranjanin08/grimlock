@@ -39,8 +39,8 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[(Position, Content)]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/596eae74c3f2268f1349c4589330430b0b1e8fb7//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[Cell[P]]</code>.
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7b4f8db9af061a7f558278ea564272b65e5e5c6c//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -305,7 +305,7 @@
       </h4>
       <p class="shortcomment cmt">Return contents of a matrix at <code>positions</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return contents of a matrix at <code>positions</code>.
 </p></div><dl class="paramcmts block"><dt class="param">positions</dt><dd class="cmt"><p>The positions for which to get the contents.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]' of the </code>positions<code> together with their content.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P]]' of the </code>positions<code> together with their content.
 </code></p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
@@ -360,7 +360,7 @@
       </h4>
       <p class="shortcomment cmt">Join two matrices.</p><div class="fullcomment"><div class="comment cmt"><p>Join two matrices.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to join.</p></dd><dt class="param">that</dt><dd class="cmt"><p>The matrix to join with.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code> consisting of the inner-join of the two matrices.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P]]</code> consisting of the inner-join of the two matrices.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#names" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="names[D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D])(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.S,Long)]"></a>
@@ -433,9 +433,8 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Compute pairwise values between all pairs of values given a slice.</p><div class="fullcomment"><div class="comment cmt"><p>Compute pairwise values between all pairs of values given a slice.
-</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to compute
-                values.</p></dd><dt class="param">operator</dt><dd class="cmt"><p>The pairwise operator to apply.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> where the content contains the pairwise value.
+</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to compute values.</p></dd><dt class="param">operator</dt><dd class="cmt"><p>The pairwise operator to apply.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[slice.R#M]]</code> where the content contains the pairwise value.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#pairwiseBetween" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="pairwiseBetween[D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D],that:au.com.cba.omnia.grimlock.Matrix[P],operator:au.com.cba.omnia.grimlock.pairwise.Operatorwithau.com.cba.omnia.grimlock.pairwise.Compute)(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.R#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -451,7 +450,7 @@
       </h4>
       <p class="shortcomment cmt">Compute pairwise values between all values of this and that given a slice.</p><div class="fullcomment"><div class="comment cmt"><p>Compute pairwise values between all values of this and that given a slice.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to compute values.</p></dd><dt class="param">that</dt><dd class="cmt"><p>Other matrix to compute pairwise values with.</p></dd><dt class="param">operator</dt><dd class="cmt"><p>The pairwise operator to apply.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> where the content contains the pairwise value.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[slice.R#M]]</code> where the content contains the pairwise value.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#pairwiseBetweenWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="pairwiseBetweenWithValue[D&lt;:au.com.cba.omnia.grimlock.position.Dimension,W](slice:au.com.cba.omnia.grimlock.Slice[P,D],that:au.com.cba.omnia.grimlock.Matrix[P],operator:au.com.cba.omnia.grimlock.pairwise.Operatorwithau.com.cba.omnia.grimlock.pairwise.ComputeWithValue{typeV&gt;:W},value:com.twitter.scalding.ValuePipe[W])(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.R#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -467,7 +466,7 @@
       </h4>
       <p class="shortcomment cmt">Compute pairwise values between all values of this and that given a slice with a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Compute pairwise values between all values of this and that given a slice with a user supplied value.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to compute values.</p></dd><dt class="param">that</dt><dd class="cmt"><p>Other matrix to compute pairwise values with.</p></dd><dt class="param">operator</dt><dd class="cmt"><p>The pairwise operator to apply.</p></dd><dt class="param">value</dt><dd class="cmt"><p>The user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> where the content contains the pairwise value.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[slice.R#M]]</code> where the content contains the pairwise value.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#pairwiseWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="pairwiseWithValue[D&lt;:au.com.cba.omnia.grimlock.position.Dimension,W](slice:au.com.cba.omnia.grimlock.Slice[P,D],operator:au.com.cba.omnia.grimlock.pairwise.Operatorwithau.com.cba.omnia.grimlock.pairwise.ComputeWithValue{typeV&gt;:W},value:com.twitter.scalding.ValuePipe[W])(implicitev:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.R#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -483,7 +482,7 @@
       </h4>
       <p class="shortcomment cmt">Compute pairwise values between all pairs of values given a slice with a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Compute pairwise values between all pairs of values given a slice with a user supplied value.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to compute values.</p></dd><dt class="param">operator</dt><dd class="cmt"><p>The pairwise operator to apply.</p></dd><dt class="param">value</dt><dd class="cmt"><p>The user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position.S, Content)]</code> where the content contains the pairwise value.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[slice.R#M]]</code> where the content contains the pairwise value.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#partition" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="partition[S](partitioner:au.com.cba.omnia.grimlock.partition.Partitionerwithau.com.cba.omnia.grimlock.partition.Assign{typeT=S})(implicitevidence$1:Ordering[S]):com.twitter.scalding.TypedPipe[(S,(P,au.com.cba.omnia.grimlock.content.Content))]"></a>
@@ -499,7 +498,7 @@
       </h4>
       <p class="shortcomment cmt">Partition a matrix according to <code>partitioner</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Partition a matrix according to <code>partitioner</code>.
 </p></div><dl class="paramcmts block"><dt class="param">partitioner</dt><dd class="cmt"><p>Assigns each position to zero, one or more partitions.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(T, (P, Content))]</code> where <code>T</code> is the partition for the corresponding tuple.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(S, Cell[P])]</code> where <code>T</code> is the partition for the corresponding tuple.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#partitionWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="partitionWithValue[S,W](partitioner:au.com.cba.omnia.grimlock.partition.Partitionerwithau.com.cba.omnia.grimlock.partition.AssignWithValue{typeV&gt;:W;typeT=S},value:com.twitter.scalding.ValuePipe[W])(implicitevidence$2:Ordering[S]):com.twitter.scalding.TypedPipe[(S,(P,au.com.cba.omnia.grimlock.content.Content))]"></a>
@@ -515,7 +514,7 @@
       </h4>
       <p class="shortcomment cmt">Partition a matrix according to <code>partitioner</code> using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Partition a matrix according to <code>partitioner</code> using a user supplied value.
 </p></div><dl class="paramcmts block"><dt class="param">partitioner</dt><dd class="cmt"><p>Assigns each position to zero, one or more partitions.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(T, (P, Content))]</code> where <code>T</code> is the partition for the corresponding tuple.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(S, Cell[P])]</code> where <code>T</code> is the partition for the corresponding tuple.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#persist" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="persist(file:String,separator:String,descriptive:Boolean)(implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -531,7 +530,7 @@
       </h4>
       <p class="shortcomment cmt">Persist a matrix to disk.</p><div class="fullcomment"><div class="comment cmt"><p>Persist a matrix to disk.
 </p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between position and content.</p></dd><dt class="param">descriptive</dt><dd class="cmt"><p>Indicates if the output should be descriptive.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code> which is this object's data.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P]]</code> which is this object's data.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#reduceAndExpand" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="reduceAndExpand[T,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D],reducers:T)(implicitev1:au.com.cba.omnia.grimlock.reduce.ReducerableMultiple[T],implicitev2:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(slice.S#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -547,8 +546,7 @@
       </h4>
       <p class="shortcomment cmt">Reduce a matrix and return the reductions with an expanded position.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce a matrix and return the reductions with an expanded position.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to reduce.</p></dd><dt class="param">reducers</dt><dd class="cmt"><p>The reducer(s) to apply to the data.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ExpandablePosition.M, Content)]</code>. Where the <code>ExpandablePosition.M</code> is relative to
-        <code>Slice.S</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[slice.S#M]]</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>If the <code>slice</code> is an <code>Over</code> then the returned position will be a <code>Position2D</code> since <code>Slice.S</code> for <code>Over</code> is
       a <code>Position1D</code> and that expands to <code>Position2D</code>. Analogously, if the <code>slice</code> is an <code>Along</code> then the returned
       position will be equal to <code>P</code>.
@@ -567,8 +565,7 @@
       </h4>
       <p class="shortcomment cmt">Reduce a matrix, using a user supplied value, and return the reductions with an expanded position.</p><div class="fullcomment"><div class="comment cmt"><p>Reduce a matrix, using a user supplied value, and return the reductions with an expanded position.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to reduce.</p></dd><dt class="param">reducers</dt><dd class="cmt"><p>The reducer(s) to apply to the data.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(ExpandablePosition.M, Content)]</code>. Where the <code>ExpandablePosition.M</code> is relative to
-        <code>Slice.S</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[slice.S#M]]</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>If the <code>slice</code> is an <code>Over</code> then the returned position will be a <code>Position2D</code> since <code>Slice.S</code> for <code>Over</code> is
       a <code>Position1D</code> and that expands to <code>Position2D</code>. Analogously, if the <code>slice</code> is an <code>Along</code> then the returned
       position will be equal to <code>P</code>.
@@ -587,7 +584,7 @@
       </h4>
       <p class="shortcomment cmt">Refine (filter) a matrix according to some function <code>f</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Refine (filter) a matrix according to some function <code>f</code>. It keeps only those cells for which <code>f</code> returns true.
 </p></div><dl class="paramcmts block"><dt class="param">f</dt><dd class="cmt"><p>Filtering function.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P]]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#refineWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="refineWithValue[V](f:(P,au.com.cba.omnia.grimlock.content.Content,V)=&gt;Boolean,value:com.twitter.scalding.ValuePipe[V]):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -604,7 +601,7 @@
       <p class="shortcomment cmt">Refine (filter) a matrix according to some function <code>f</code> using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Refine (filter) a matrix according to some function <code>f</code> using a user supplied value. It keeps only those cells for
 which <code>f</code> returns true.
 </p></div><dl class="paramcmts block"><dt class="param">f</dt><dd class="cmt"><p>Filtering function.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P]]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#sample" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sample(sampler:au.com.cba.omnia.grimlock.sample.Samplerwithau.com.cba.omnia.grimlock.sample.Select):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -620,7 +617,7 @@ which <code>f</code> returns true.
       </h4>
       <p class="shortcomment cmt">Sample a matrix according to some function <code>f</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Sample a matrix according to some function <code>f</code>. It keeps only those cells for which <code>f</code> returns true.
 </p></div><dl class="paramcmts block"><dt class="param">sampler</dt><dd class="cmt"><p>Sampling function.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P]]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#sampleWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sampleWithValue[W](sampler:au.com.cba.omnia.grimlock.sample.Samplerwithau.com.cba.omnia.grimlock.sample.SelectWithValue{typeV&gt;:W},value:com.twitter.scalding.ValuePipe[W]):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -637,7 +634,7 @@ which <code>f</code> returns true.
       <p class="shortcomment cmt">Sample a matrix according to some function <code>f</code> using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Sample a matrix according to some function <code>f</code> using a user supplied value. It keeps only those cells for which
 <code>f</code> returns true.
 </p></div><dl class="paramcmts block"><dt class="param">sampler</dt><dd class="cmt"><p>Sampling function.</p></dd><dt class="param">value</dt><dd class="cmt"><p>A <code>ValuePipe</code> holding a user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P]]</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#shape" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="shape():com.twitter.scalding.TypedPipe[(au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -652,7 +649,7 @@ which <code>f</code> returns true.
       </span>
       </h4>
       <p class="shortcomment cmt">Returns the shape of the matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the shape of the matrix.
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position1D, Content)]</code>. The position consists of a string value with the name of
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[Position1D]]</code>. The position consists of a string value with the name of
         the dimension (<code>dim.toString</code>). The content has the actual size in it as a discrete variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#size" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -670,8 +667,8 @@ which <code>f</code> returns true.
       <p class="shortcomment cmt">Returns the size of the matrix in dimension <code>dim</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the size of the matrix in dimension <code>dim</code>.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension for which to get the size.</p></dd><dt class="param">distinct</dt><dd class="cmt"><p>Indicates if the coordinates in dimension <code>dim</code> are unique. If this is the case, then enabling
                 this flag has better run-time performance.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Position1D, Content)]</code>. The position consists of a string value with the name of
-        the dimension (<code>dim.toString</code>). The content has the actual size in it as a discrete variable.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[Position1D]]</code>. The position consists of a string value with the name of the
+        dimension (<code>dim.toString</code>). The content has the actual size in it as a discrete variable.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#slice" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="slice[T,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D],positions:T,keep:Boolean)(implicitev1:au.com.cba.omnia.grimlock.Nameable[T,P,slice.S,D],implicitev2:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
@@ -687,7 +684,7 @@ which <code>f</code> returns true.
       </h4>
       <p class="shortcomment cmt">Slice a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Slice a matrix.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) to slice.</p></dd><dt class="param">positions</dt><dd class="cmt"><p>The position(s) within the dimension(s) to slice.</p></dd><dt class="param">keep</dt><dd class="cmt"><p>Indicates if the <code>positions</code> should be kept or removed.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P, Content)]' of the remaining content.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P]]' of the remaining content.
 </code></p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
@@ -749,6 +746,23 @@ which <code>f</code> returns true.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(Slice.S, Type)]</code> of the distinct position(s) together with their type.
 </p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="Types.html" class="extype" name="au.com.cba.omnia.grimlock.Types">Types</a>
 </p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.Matrix#unique" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="unique[D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D]):com.twitter.scalding.TypedPipe[(slice.S,au.com.cba.omnia.grimlock.content.Content)]"></a>
+      <a id="unique[D&lt;:Dimension](Slice[P,D]):TypedPipe[(S,Content)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">unique</span><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.unique.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">S</a>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Return the unique (distinct) contents along a dimension
+</p><div class="fullcomment"><div class="comment cmt"><p>Return the unique (distinct) contents along a dimension
+</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) along which to join.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[slice.S]]</code> consisting of the unique values.
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#unique" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="unique():com.twitter.scalding.TypedPipe[au.com.cba.omnia.grimlock.content.Content]"></a>
       <a id="unique():TypedPipe[Content]"></a>
@@ -761,7 +775,7 @@ which <code>f</code> returns true.
         <span class="name">unique</span><span class="params">()</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Return the unique (distinct) contents of a matrix.</p>
+      <p class="shortcomment cmt">Return the unique (distinct) contents of an entire matrix.</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -820,6 +834,25 @@ which <code>f</code> returns true.
               
         </dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#which" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="which[T,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D],pospred:List[(T,(P,au.com.cba.omnia.grimlock.content.Content)=&gt;Boolean)])(implicitev1:au.com.cba.omnia.grimlock.Nameable[T,P,slice.S,D],implicitev2:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[P]"></a>
+      <a id="which[T,D&lt;:Dimension](Slice[P,D],List[(T,(P,Content)⇒Boolean)])(Nameable[T,P,S,D],PosDimDep[P,D]):TypedPipe[P]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">which</span><span class="tparams">[<span name="T">T</span>, <span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.which.D">D</span>]</span>, <span name="pospred">pospred: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.which.T">T</span>, (<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span>)]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="Nameable.html" class="extype" name="au.com.cba.omnia.grimlock.Nameable">Nameable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.which.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.Slice.S">S</a>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.which.D">D</span>]</span>, <span name="ev2">ev2: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrix.which.D">D</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Query the contents of one of more positions of a matrix and return the positions of those that match the
+corresponding predicates.</p><div class="fullcomment"><div class="comment cmt"><p>Query the contents of one of more positions of a matrix and return the positions of those that match the
+corresponding predicates.
+</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) to query.</p></dd><dt class="param">pospred</dt><dd class="cmt"><p>The list of position(s) within the dimension(s) to query together with the predicates used to
+               filter the contents.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[P]' of the positions for which the content matches predicates.
+</code></p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.Matrix#which" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="which[T,D&lt;:au.com.cba.omnia.grimlock.position.Dimension](slice:au.com.cba.omnia.grimlock.Slice[P,D],positions:T,predicate:(P,au.com.cba.omnia.grimlock.content.Content)=&gt;Boolean)(implicitev1:au.com.cba.omnia.grimlock.Nameable[T,P,slice.S,D],implicitev2:au.com.cba.omnia.grimlock.position.PosDimDep[P,D]):com.twitter.scalding.TypedPipe[P]"></a>
       <a id="which[T,D&lt;:Dimension](Slice[P,D],T,(P,Content)⇒Boolean)(Nameable[T,P,S,D],PosDimDep[P,D]):TypedPipe[P]"></a>
       <h4 class="signature">
@@ -833,7 +866,7 @@ which <code>f</code> returns true.
       </h4>
       <p class="shortcomment cmt">Query the contents of the <code>positions</code> of a matrix and return the positions of those that match the predicate.</p><div class="fullcomment"><div class="comment cmt"><p>Query the contents of the <code>positions</code> of a matrix and return the positions of those that match the predicate.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) to query.</p></dd><dt class="param">positions</dt><dd class="cmt"><p>The position(s) within the dimension(s) to query.</p></dd><dt class="param">predicate</dt><dd class="cmt"><p>The predicate used to filter the contents.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P)]' of the positions for which the content matches </code>predicate<code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[P]' of the positions for which the content matches </code>predicate<code>.
 </code></p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#which" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="which(predicate:(P,au.com.cba.omnia.grimlock.content.Content)=&gt;Boolean):com.twitter.scalding.TypedPipe[P]"></a>
@@ -849,7 +882,7 @@ which <code>f</code> returns true.
       </h4>
       <p class="shortcomment cmt">Query the contents of a matrix and return the positions of those that match the predicate.</p><div class="fullcomment"><div class="comment cmt"><p>Query the contents of a matrix and return the positions of those that match the predicate.
 </p></div><dl class="paramcmts block"><dt class="param">predicate</dt><dd class="cmt"><p>The predicate used to filter the contents.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[(P)]' of the positions for which the content matches </code>predicate<code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[P]' of the positions for which the content matches </code>predicate<code>.
 </code></p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Matrix#writeDictionary" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="writeDictionary(names:com.twitter.scalding.TypedPipe[(au.com.cba.omnia.grimlock.position.Position1D,Long)],file:String,dictionary:String,separator:String,dim:au.com.cba.omnia.grimlock.position.Dimension)(implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.typed.Grouped[au.com.cba.omnia.grimlock.position.Position1D,(au.com.cba.omnia.grimlock.position.Position1D,Long)]"></a>
