@@ -190,14 +190,22 @@ class Test6(args : Args) extends Job(args) {
     .persist("./tmp/whc2.out", descriptive=true)
 
   data
-    .get(data.which((p: Position, c: Content) => c.value equ 666)  ++
-         data.which((p: Position, c: Content) => c.value leq 11.0) ++
-         data.which((p: Position, c: Content) => c.value equ "KQUPKFEH"))
+    .get(data.which((p: Position, c: Content) => (c.value equ 666) || (c.value leq 11.0) || (c.value equ "KQUPKFEH")))
     .persist("./tmp/whc3.out", descriptive=true)
 
   data
     .which((p: Position, c: Content) => c.value.isInstanceOf[LongValue])
     .persist("./tmp/whc4.out", descriptive=true)
+
+  TestReader.read4TupleDataAddDate(args("input"))
+    .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
+                             "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
+    .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
+    .squash(Third, PreservingMaxPosition())
+    .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
+    .which(Over(Second), List(("count", (pos: Position, con: Content) => con.value leq 2),
+                              ("min", (pos: Position, con: Content) => con.value equ 107)))
+    .persist("./tmp/whc5.out", descriptive=true)
 }
 
 class Test7(args : Args) extends Job(args) {
@@ -223,6 +231,10 @@ class Test8(args : Args) extends Job(args) {
     .squash(Third, PreservingMaxPosition())
     .unique
     .persist("./tmp/uniq.out", descriptive=true)
+
+  read2D("mutualInputfile.txt")
+    .unique(Over(Second))
+    .persist("./tmp/uni2.out")
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
