@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[Position]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7b4f8db9af061a7f558278ea564272b65e5e5c6c//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4161af31cea5ae2d2b1b725902540ad8e55a0132//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -343,15 +343,31 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.position.Positions#persist" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="persist(file:String,separator:String,descriptive:Boolean)(implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.TypedPipe[P]"></a>
-      <a id="persist(String,String,Boolean)(FlowDef,Mode):TypedPipe[P]"></a>
+      <a id="persist(sink:com.twitter.scalding.typed.TypedSink[String],separator:String,descriptive:Boolean)(implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.TypedPipe[P]"></a>
+      <a id="persist(TypedSink[String],String,Boolean)(FlowDef,Mode):TypedPipe[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">persist</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;|&quot;</span></span>, <span name="descriptive">descriptive: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.position.Positions.P">P</span>]</span>
+        <span class="name">persist</span><span class="params">(<span name="sink">sink: <span class="extype" name="com.twitter.scalding.typed.TypedSink">TypedSink</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;|&quot;</span></span>, <span name="descriptive">descriptive: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.position.Positions.P">P</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Persist a <code>TypedPipe[Position]</code> to a sink.</p><div class="fullcomment"><div class="comment cmt"><p>Persist a <code>TypedPipe[Position]</code> to a sink.
+</p></div><dl class="paramcmts block"><dt class="param">sink</dt><dd class="cmt"><p>Sink to write to.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between position and content.</p></dd><dt class="param">descriptive</dt><dd class="cmt"><p>Indicates if the output should be descriptive.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Position]</code> which is this object's data.
+</p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.position.Positions#persistFile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="persistFile(file:String,separator:String,descriptive:Boolean)(implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.TypedPipe[P]"></a>
+      <a id="persistFile(String,String,Boolean)(FlowDef,Mode):TypedPipe[P]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">persistFile</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;|&quot;</span></span>, <span name="descriptive">descriptive: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.position.Positions.P">P</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Persist a <code>TypedPipe[Position]</code> to disk.</p><div class="fullcomment"><div class="comment cmt"><p>Persist a <code>TypedPipe[Position]</code> to disk.

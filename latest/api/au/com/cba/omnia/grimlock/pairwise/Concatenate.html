@@ -35,15 +35,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Concatenate</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;(%s,%s)&quot;</span></span>, <span name="value">value: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;%s,%s&quot;</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;|&quot;</span></span>, <span name="inverse">inverse: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="comparer">comparer: <a href="Comparer.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Comparer">Comparer</a> = <span class="symbol">Lower</span></span>)</span><span class="result"> extends <a href="Operator.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Operator">Operator</a> with <a href="Compute.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Compute">Compute</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">Concatenate</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;(%s,%s)&quot;</span></span>, <span name="value">value: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;%s,%s&quot;</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;|&quot;</span></span>, <span name="comparer">comparer: <a href="Comparer.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Comparer">Comparer</a> = <span class="symbol">Lower</span></span>)</span><span class="result"> extends <a href="Operator.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Operator">Operator</a> with <a href="Compute.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Compute">Compute</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Concatenate two cells.
 </p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Pattern for the new name of the pairwise coordinate. Use <code>%[12]$</code><code>s</code> for the string representations
                  of the coordinate.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Pattern for the new (string) value of the pairwise contents. Use <code>%[12]$</code><code>s</code> for the string
-                 representations of the content.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use when writing positions to string.</p></dd><dt class="param">inverse</dt><dd class="cmt"><p>Indicator if pairwise operator <code>f()</code> should be called as <code>f(l, r)</code> or as <code>f(r, l)</code>.</p></dd><dt class="param">comparer</dt><dd class="cmt"><p>Comparer object defining which pairwise operations should be computed.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7b4f8db9af061a7f558278ea564272b65e5e5c6c//src/main/scala/au/com/cba/omnia/grimlock/code/Operators.scala" target="_blank">Operators.scala</a></dd></dl><div class="toggleContainer block">
+                 representations of the content.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use when writing positions to string.</p></dd><dt class="param">comparer</dt><dd class="cmt"><p>Comparer object defining which pairwise operations should be computed.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4161af31cea5ae2d2b1b725902540ad8e55a0132//src/main/scala/au/com/cba/omnia/grimlock/code/Operators.scala" target="_blank">Operators.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Compute.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Compute">Compute</a>, <a href="ComputeWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.ComputeWithValue">ComputeWithValue</a>, <a href="Operator.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Operator">Operator</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -84,7 +84,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.pairwise.Concatenate#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(name:String,value:String,separator:String,inverse:Boolean,comparer:au.com.cba.omnia.grimlock.pairwise.Comparer):au.com.cba.omnia.grimlock.pairwise.Concatenate"></a>
+      <a id="&lt;init&gt;(name:String,value:String,separator:String,comparer:au.com.cba.omnia.grimlock.pairwise.Comparer):au.com.cba.omnia.grimlock.pairwise.Concatenate"></a>
       <a id="&lt;init&gt;:Concatenate"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -92,12 +92,12 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Concatenate</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;(%s,%s)&quot;</span></span>, <span name="value">value: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;%s,%s&quot;</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;|&quot;</span></span>, <span name="inverse">inverse: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="comparer">comparer: <a href="Comparer.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Comparer">Comparer</a> = <span class="symbol">Lower</span></span>)</span>
+        <span class="name">Concatenate</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;(%s,%s)&quot;</span></span>, <span name="value">value: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;%s,%s&quot;</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;|&quot;</span></span>, <span name="comparer">comparer: <a href="Comparer.html" class="extype" name="au.com.cba.omnia.grimlock.pairwise.Comparer">Comparer</a> = <span class="symbol">Lower</span></span>)</span>
       </span>
       </h4>
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Pattern for the new name of the pairwise coordinate. Use <code>%[12]$</code><code>s</code> for the string representations
                  of the coordinate.</p></dd><dt class="param">value</dt><dd class="cmt"><p>Pattern for the new (string) value of the pairwise contents. Use <code>%[12]$</code><code>s</code> for the string
-                 representations of the content.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use when writing positions to string.</p></dd><dt class="param">inverse</dt><dd class="cmt"><p>Indicator if pairwise operator <code>f()</code> should be called as <code>f(l, r)</code> or as <code>f(r, l)</code>.</p></dd><dt class="param">comparer</dt><dd class="cmt"><p>Comparer object defining which pairwise operations should be computed.
+                 representations of the content.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use when writing positions to string.</p></dd><dt class="param">comparer</dt><dd class="cmt"><p>Comparer object defining which pairwise operations should be computed.
 </p></dd></dl></div>
     </li></ol>
             </div>
@@ -313,19 +313,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.pairwise.Concatenate#inverse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="inverse:Boolean"></a>
-      <a id="inverse:Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">inverse</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Indicator if pairwise operator <code>f()</code> should be called as <code>f(l, r)</code> or as <code>f(r, l)</code>.</p>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>

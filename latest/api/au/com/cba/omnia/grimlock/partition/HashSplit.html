@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Partition based on the hash code of a coordinate.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ranges</dt><dd class="cmt"><p>A <code>Map</code> holding the partitions and hash code ranges (relative to <code>base</code>) for each partition.</p></dd><dt class="param">base</dt><dd class="cmt"><p>The base for hash code.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/7b4f8db9af061a7f558278ea564272b65e5e5c6c//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the range. While a position falls in a range if it is
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4161af31cea5ae2d2b1b725902540ad8e55a0132//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the range. While a position falls in a range if it is
       (strictly) greater than the lower value (first value in tuple) and less or equal to the upper value (second
       value in tuple).
 </p></span></dd></dl><div class="toggleContainer block">
