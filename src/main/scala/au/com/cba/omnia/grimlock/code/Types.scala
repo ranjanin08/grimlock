@@ -19,6 +19,7 @@ import au.com.cba.omnia.grimlock.position._
 import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.TDsl._, Dsl._
+import com.twitter.scalding.typed.TypedSink
 
 /**
  * Base class for variable types.
@@ -93,7 +94,19 @@ class Types[P <: Position](data: TypedPipe[(P, Type)]) {
    *
    * @return A Scalding `TypedPipe[(P, Type)]` which is this objects's data.
    */
-  def persist(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[(P, Type)] = persist(TypedSink(TextLine(file)), separator, descriptive)
+
+  /**
+   * Persist `Types` to a sink.
+   *
+   * @param sink        Sink to write to.
+   * @param separator   Separator to use between position and type.
+   * @param descriptive Indicates if the output should be descriptive.
+   *
+   * @return A Scalding `TypedPipe[(P, Type)]` which is this objects's data.
+   */
+  def persist(sink: TypedSink[String], separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
     mode: Mode): TypedPipe[(P, Type)] = {
     data
       .map {
@@ -102,8 +115,7 @@ class Types[P <: Position](data: TypedPipe[(P, Type)]) {
           case false => p.toShortString(separator) + separator + t.name
         }
       }
-      .toPipe('line)
-      .write(TextLine(file))
+      .write(sink)
 
     data
   }

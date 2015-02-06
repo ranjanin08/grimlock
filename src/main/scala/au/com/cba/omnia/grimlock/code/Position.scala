@@ -21,7 +21,7 @@ import au.com.cba.omnia.grimlock.encoding._
 import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.TDsl._, Dsl._
-import com.twitter.scalding.typed.IterablePipe
+import com.twitter.scalding.typed.{ IterablePipe, TypedSink }
 
 /** Base trait for dealing with positions. */
 trait Position {
@@ -479,7 +479,19 @@ class Positions[P <: Position](data: TypedPipe[P]) {
    *
    * @return A Scalding `TypedPipe[Position]` which is this object's data.
    */
-  def persist(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[P] = persist(TypedSink(TextLine(file)), separator, descriptive)
+
+  /**
+   * Persist a `TypedPipe[Position]` to a sink.
+   *
+   * @param sink        Sink to write to.
+   * @param separator   Separator to use between position and content.
+   * @param descriptive Indicates if the output should be descriptive.
+   *
+   * @return A Scalding `TypedPipe[Position]` which is this object's data.
+   */
+  def persist(sink: TypedSink[String], separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
     mode: Mode): TypedPipe[P] = {
     data
       .map {
@@ -488,8 +500,7 @@ class Positions[P <: Position](data: TypedPipe[P]) {
           case false => p.toShortString(separator)
         }
       }
-      .toPipe('line)
-      .write(TextLine(file))
+      .write(sink)
 
     data
   }

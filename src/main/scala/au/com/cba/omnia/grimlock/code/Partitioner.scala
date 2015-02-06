@@ -22,6 +22,7 @@ import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
 import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.TDsl._, Dsl._
+import com.twitter.scalding.typed.TypedSink
 
 /** Base trait for partitioning operations. */
 trait Partitioner {
@@ -88,8 +89,20 @@ class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
    *
    * @return A Scalding `TypedPipe[(T, (Position, Content))]` which is this object's data.
    */
-  def persist(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[(T, Cell[P])] = {
+  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[(T, Cell[P])] = persist(TypedSink(TextLine(file)), separator, descriptive)
+
+  /**
+   * Persist partitions to a sink.
+   *
+   * @param sink        Sink to write to.
+   * @param separator   Separator to use between `T`, the position and content.
+   * @param descriptive Indicates if the output should be descriptive.
+   *
+   * @return A Scalding `TypedPipe[(T, (Position, Content))]` which is this object's data.
+   */
+  def persist(sink: TypedSink[String], separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[( T, Cell[P])] = {
     data
       .map {
         case (t, (p, c)) => descriptive match {
@@ -97,8 +110,7 @@ class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
           case false => t.toString + separator + p.toShortString(separator) + separator + c.toShortString(separator)
         }
       }
-      .toPipe('line)
-      .write(TextLine(file))
+      .write(sink)
 
     data
   }

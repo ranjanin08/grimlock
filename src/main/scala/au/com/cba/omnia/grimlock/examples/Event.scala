@@ -164,6 +164,6 @@ class InstanceCentricTfIdf(args : Args) extends Job(args) {
     //.transform(LogarithmicTf(Second))
     //.transformWithValue(AugmentedTf(First), tf.reduce(Along(Second), Max()).toMap(Over(First)))
     .transformWithValue(TfIdf(Second), idf)
-    .persist("./demo/tfidf_entity.out")
+    .persistFile("./demo/tfidf_entity.out")
 }
 

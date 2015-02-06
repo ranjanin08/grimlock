@@ -99,18 +99,18 @@ case class Divide(name: String = "(%s/%s)", separator: String = "|", inverse: Bo
  * @param value     Pattern for the new (string) value of the pairwise contents. Use `%[12]$``s` for the string
  *                  representations of the content.
  * @param separator Separator to use when writing positions to string.
- * @param inverse   Indicator if pairwise operator `f()` should be called as `f(l, r)` or as `f(r, l)`.
  * @param comparer  Comparer object defining which pairwise operations should be computed.
  */
 case class Concatenate(name: String = "(%s,%s)", value: String = "%s,%s", separator: String = "|",
-  inverse: Boolean = false, comparer: Comparer = Lower) extends Operator with Compute {
+  comparer: Comparer = Lower) extends Operator with Compute {
   def compute[P <: Position, D <: Dimension](slice: Slice[P, D], lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S,
     rc: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
-    val coordinate = name.format(lp.toShortString(separator), rp.toShortString(separator))
-    val content = value.format(lc.value.toShortString, rc.value.toShortString)
-
     comparer.check(lp, rp) match {
-      case true => Some((rem.prepend(coordinate), Content(NominalSchema[Codex.StringCodex](), content)))
+      case true =>
+        val coordinate = name.format(lp.toShortString(separator), rp.toShortString(separator))
+        val content = value.format(lc.value.toShortString, rc.value.toShortString)
+
+        Some((rem.prepend(coordinate), Content(NominalSchema[Codex.StringCodex](), content)))
       case false => None
     }
   }

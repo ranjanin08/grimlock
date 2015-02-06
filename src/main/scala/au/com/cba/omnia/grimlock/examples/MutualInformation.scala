@@ -46,7 +46,7 @@ class MutualInformation(args : Args) extends Job(args) {
   // 2/ Squash the 3rd dimension, keeping values with minimum (earlier) coordinates. The result is a 2D matrix
   //    (instance x feature).
   // 3/ Bucket all continuous variables by rounding them.
-  val data = read3DWithDictionary("exampleMIData.txt", Dictionary.read("exampleDictionary.txt"))
+  val data = read3DFileWithDictionary("exampleMIData.txt", Dictionary.read("exampleDictionary.txt"))
     .squash(Third, PreservingMinPosition())
     .transform(CeilingBucketing())
 
@@ -69,6 +69,6 @@ class MutualInformation(args : Args) extends Job(args) {
   // 2/ Persist mutual information.
   (marginal ++ joint)
     .reduce(Over(First), Sum())
-    .persist("./demo/mi.out")
+    .persistFile("./demo/mi.out")
 }
 

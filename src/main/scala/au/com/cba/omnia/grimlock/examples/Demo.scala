@@ -33,32 +33,32 @@ import com.twitter.scalding._
 
 class BasicOperations(args : Args) extends Job(args) {
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = read2D("exampleInput.txt")
+  val data = read2DFile("exampleInput.txt")
 
   // Get the number of rows.
   data
     .size(First)
-    .persist("./demo/row_size.out")
+    .persistFile("./demo/row_size.out")
 
   // Get all dimensions of the matrix.
   data
     .shape()
-    .persist("./demo/matrix_shape.out")
+    .persistFile("./demo/matrix_shape.out")
 
   // Get the column names.
   data
     .names(Over(Second))
-    .persist("./demo/column_names.out")
+    .persistFile("./demo/column_names.out")
 
   // Get the type of variables of each column.
   data
     .types(Over(Second), true)
-    .persist("./demo/column_types.txt")
+    .persistFile("./demo/column_types.txt")
 
   // Transpose the matrix.
   data
     .permute(Second, First)
-    .persist("./demo/transposed.out")
+    .persistFile("./demo/transposed.out")
 
   // Construct a simple query
   def simpleQuery(pos: Position, con: Content) = (con.value gtr 995) || (con.value equ "F")
@@ -66,23 +66,23 @@ class BasicOperations(args : Args) extends Job(args) {
   // Find all co-ordinates that match the above simple query.
   val coords = data
     .which(simpleQuery)
-    .persist("./demo/query.txt")
+    .persistFile("./demo/query.txt")
 
   // Get the data for the above coordinates.
   data
     .get(coords)
-    .persist("./demo/values.txt")
+    .persistFile("./demo/values.txt")
 
   // Keep columns A and B, and remove row 0221707
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", false)
-    .persist("./demo/sliced.txt")
+    .persistFile("./demo/sliced.txt")
 }
 
 class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = read2D("exampleInput.txt")
+  val data = read2DFile("exampleInput.txt")
 
   // Define a custom partition. If the instance is 'iid:0364354' or 'iid:0216406' then assign it to the right (test)
   // partition. In all other cases assing it to the left (train) partition.
@@ -117,7 +117,7 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   val stats = parts
     .get("train")
     .reduceAndExpand(Along(First), statistics)
-    .persist("./demo/stats.out")
+    .persistFile("./demo/stats.out")
 
   // Determine which features to filter based on statistics. In this case remove all features that occur for 2 or
   // fewer instances. These are removed first to prevent indicator features from being created.
@@ -173,11 +173,11 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
 
 class Scoring(args : Args) extends Job(args) {
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = read2D("exampleInput.txt")
+  val data = read2DFile("exampleInput.txt")
   // Read the statistics from the above example.
-  val stats = read2D("./demo/stats.out").toMap(Over(First))
+  val stats = read2DFile("./demo/stats.out").toMap(Over(First))
   // Read externally learned weights.
-  val weights = read1D("exampleWeights.txt").toMap(Over(First))
+  val weights = read1DFile("exampleWeights.txt").toMap(Over(First))
 
   // For the data do:
   //  1/ Create indicators, binarise categorical, and clamp & standardise numerical features;
@@ -191,12 +191,12 @@ class Scoring(args : Args) extends Job(args) {
   data
     .transformWithValue(transforms, stats)
     .reduceWithValue(Over(First), WeightedSum(Second), weights)
-    .persist("./demo/scores.out")
+    .persistFile("./demo/scores.out")
 }
 
 class DataQualityAndAnalysis(args : Args) extends Job(args) {
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = read2D("exampleInput.txt")
+  val data = read2DFile("exampleInput.txt")
 
   // For the instances:
   //  1/ Compute the number of features for each instance;
@@ -205,9 +205,9 @@ class DataQualityAndAnalysis(args : Args) extends Job(args) {
   //  4/ Save the moments.
   data
     .reduce(Over(First), Count())
-    .persist("./demo/feature_count.out")
+    .persistFile("./demo/feature_count.out")
     .reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
-    .persist("./demo/feature_density.out")
+    .persistFile("./demo/feature_density.out")
 
   // For the features:
   //  1/ Compute the number of instance that have a value for each features;
@@ -216,14 +216,14 @@ class DataQualityAndAnalysis(args : Args) extends Job(args) {
   //  4/ Save the moments.
   data
     .reduce(Over(Second), Count())
-    .persist("./demo/instance_count.out")
+    .persistFile("./demo/instance_count.out")
     .reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
-    .persist("./demo/instance_density.out")
+    .persistFile("./demo/instance_density.out")
 }
 
 class LabelWeighting(args: Args) extends Job(args) {
   // Read labels and melt the date into the instance id to generate a 1D matrix.
-  val labels = read2DWithSchema("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+  val labels = read2DFileWithSchema("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
     .melt(Second, First, ":")
 
   // Compute histogram over the label values.
@@ -260,8 +260,8 @@ class LabelWeighting(args: Args) extends Job(args) {
   }
 
   // Re-read labels and add the computed weight.
-  read2DWithSchema("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+  read2DFileWithSchema("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
     .transformAndExpandWithValue(AddWeight(), weights)
-    .persist("./demo/weighted.out")
+    .persistFile("./demo/weighted.out")
 }
 

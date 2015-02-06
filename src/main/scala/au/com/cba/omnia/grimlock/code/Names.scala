@@ -19,6 +19,7 @@ import au.com.cba.omnia.grimlock.position._
 import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.TDsl._, Dsl._
+import com.twitter.scalding.typed.TypedSink
 
 import scala.util.matching.Regex
 
@@ -80,7 +81,7 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
   /**
    * Set the index of multiple positions.
    *
-   * @param positions A `Map` of positions (together with their new inxed) whose index is to be set.
+   * @param positions A `Map` of positions (together with their new index) whose index is to be set.
    *
    * @return A `TypedPipe[(P, Long)]` with only the indices at the specified positions updated.
    */
@@ -133,7 +134,19 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
    *
    * @return A Scalding `TypedPipe[(P, Long)]` which is this object's data.
    */
-  def persist(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[(P, Long)] = persist(TypedSink(TextLine(file)), separator, descriptive)
+
+  /**
+   * Persist names to a sink.
+   *
+   * @param sink        Sink to write to.
+   * @param separator   Separator to use between position and index.
+   * @param descriptive Indicates if the output should be descriptive.
+   *
+   * @return A Scalding `TypedPipe[(P, Long)]` which is this object's data.
+   */
+  def persist(sink: TypedSink[String], separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
     mode: Mode): TypedPipe[(P, Long)] = {
     data
       .map {
@@ -142,8 +155,7 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
           case false => p.toShortString(separator) + separator + i.toString
         }
       }
-      .toPipe('line)
-      .write(TextLine(file))
+      .write(sink)
 
     data
   }

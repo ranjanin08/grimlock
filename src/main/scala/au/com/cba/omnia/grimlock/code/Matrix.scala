@@ -31,7 +31,7 @@ import au.com.cba.omnia.grimlock.utility.{ =!=, Miscellaneous => Misc }
 import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.TDsl._, Dsl._
-import com.twitter.scalding.typed.IterablePipe
+import com.twitter.scalding.typed.{ IterablePipe, TypedSink }
 
 /**
  * Rich wrapper around a `TypedPipe[Cell[P]]`.
@@ -202,7 +202,7 @@ trait Matrix[P <: Position] {
     implicit ev1: Nameable[T, P, slice.S, D], ev2: PosDimDep[P, D]): TypedPipe[P] = {
 
     val nampred = pospred.map { case (pos, pred) => ev1.convert(this, slice, pos).map { case (p, i) => (p, pred) } }
-    val pipe = nampred.tail.foldLeft(nampred.head)((b,a) => b ++ a)
+    val pipe = nampred.tail.foldLeft(nampred.head)((b, a) => b ++ a)
 
     data
       .groupBy { case (p, c) => slice.selected(p) }
@@ -438,7 +438,19 @@ trait Matrix[P <: Position] {
    *
    * @return A Scalding `TypedPipe[Cell[P]]` which is this object's data.
    */
-  def persist(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[Cell[P]] = persist(TypedSink(TextLine(file)), separator, descriptive)
+
+  /**
+   * Persist a matrix to a sink.
+   *
+   * @param sink        Sink to write to.
+   * @param separator   Separator to use between position and content.
+   * @param descriptive Indicates if the output should be descriptive.
+   *
+   * @return A Scalding `TypedPipe[Cell[P]]` which is this object's data.
+   */
+  def persist(sink: TypedSink[String], separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
     mode: Mode): TypedPipe[Cell[P]] = {
     data
       .map {
@@ -447,8 +459,7 @@ trait Matrix[P <: Position] {
           case false => p.toShortString(separator) + separator + c.toShortString(separator)
         }
       }
-      .toPipe('line)
-      .write(TextLine(file))
+      .write(sink)
 
     data
   }
@@ -949,9 +960,18 @@ object Matrix {
    * @param file  The file to read from.
    * @param first The codex for decoding the first dimension.
    */
-  def read1D(file: String, first: Codex = StringCodex)(implicit flow: FlowDef,
+  def read1DFile(file: String, first: Codex = StringCodex)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[Cell[Position1D]] = read1D(TypedPsv[(String, String, String, String)](file), first)
+
+  /**
+   * Read source of `(String, String, String, String)` data into a `TypedPipe[Cell[Position1D]]`.
+   *
+   * @param source The source to read from.
+   * @param first  The codex for decoding the first dimension.
+   */
+  def read1D(source: TypedSource[(String, String, String, String)], first: Codex = StringCodex)(implicit flow: FlowDef,
     mode: Mode): TypedPipe[Cell[Position1D]] = {
-    (TypedPsv[(String, String, String, String)](file))
+    source
       .flatMap {
         case (r, t, e, v) =>
           Schema.fromString(e, t).flatMap {
@@ -970,9 +990,19 @@ object Matrix {
    * @param schema The schema for decoding the data.
    * @param first  The codex for decoding the first dimension.
    */
-  def read1DWithSchema(file: String, schema: Schema, first: Codex = StringCodex)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[Cell[Position1D]] = {
-    (TypedPsv[(String, String)](file))
+  def read1DFileWithSchema(file: String, schema: Schema, first: Codex = StringCodex)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[Cell[Position1D]] = read1DWithSchema(TypedPsv[(String, String)](file), schema, first)
+
+  /**
+   * Read source of `(String, String)` data into a `TypedPipe[Cell[Position1D]]`.
+   *
+   * @param source The source to read from.
+   * @param schema The schema for decoding the data.
+   * @param first  The codex for decoding the first dimension.
+   */
+  def read1DWithSchema(source: TypedSource[(String, String)], schema: Schema,
+    first: Codex = StringCodex)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
+    source
       .flatMap {
         case (e, v) =>
           (schema.decode(v), first.decode(e)) match {
@@ -989,9 +1019,21 @@ object Matrix {
    * @param dict   The dictionary describing the features in the data.
    * @param first  The codex for decoding the first dimension.
    */
-  def read1DWithDictionary(file: String, dict: Map[String, Schema], first: Codex = StringCodex)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[Cell[Position1D]] = {
-    (TypedPsv[(String, String)](file))
+  def read1DFileWithDictionary(file: String, dict: Map[String, Schema],
+    first: Codex = StringCodex)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
+    read1DWithDictionary(TypedPsv[(String, String)](file), dict, first)
+  }
+
+  /**
+   * Read source of `(String, String)` data into a `TypedPipe[Cell[Position1D]]`.
+   *
+   * @param source The source to read from.
+   * @param dict   The dictionary describing the features in the data.
+   * @param first  The codex for decoding the first dimension.
+   */
+  def read1DWithDictionary(source: TypedSource[(String, String)], dict: Map[String, Schema],
+    first: Codex = StringCodex)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
+    source
       .flatMap {
         case (e, v) =>
           (dict(e).decode(v), first.decode(e)) match {
@@ -1008,9 +1050,21 @@ object Matrix {
    * @param first  The codex for decoding the first dimension.
    * @param second The codex for decoding the second dimension.
    */
-  def read2D(file: String, first: Codex = StringCodex, second: Codex = StringCodex)(implicit flow: FlowDef,
+  def read2DFile(file: String, first: Codex = StringCodex, second: Codex = StringCodex)(implicit flow: FlowDef,
     mode: Mode): TypedPipe[Cell[Position2D]] = {
-    (TypedPsv[(String, String, String, String, String)](file))
+    read2D(TypedPsv[(String, String, String, String, String)](file), first, second)
+  }
+
+  /**
+   * Read source of `(String, String, String, String, String)` data into a `TypedPipe[Cell[Position2D]]`.
+   *
+   * @param source The source to read from.
+   * @param first  The codex for decoding the first dimension.
+   * @param second The codex for decoding the second dimension.
+   */
+  def read2D(source: TypedSource[(String, String, String, String, String)], first: Codex = StringCodex,
+    second: Codex = StringCodex)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
+    source
       .flatMap {
         case (r, c, t, e, v) =>
           Schema.fromString(e, t).flatMap {
@@ -1030,9 +1084,22 @@ object Matrix {
    * @param first  The codex for decoding the first dimension.
    * @param second The codex for decoding the second dimension.
    */
-  def read2DWithSchema(file: String, schema: Schema, first: Codex = StringCodex, second: Codex = StringCodex)(
+  def read2DFileWithSchema(file: String, schema: Schema, first: Codex = StringCodex, second: Codex = StringCodex)(
     implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
-    (TypedPsv[(String, String, String)](file))
+    read2DWithSchema(TypedPsv[(String, String, String)](file), schema, first, second)
+  }
+
+  /**
+   * Read source of `(String, String, String)` data into a `TypedPipe[Cell[Position2D]]`.
+   *
+   * @param source The source to read from.
+   * @param schema The schema for decoding the data.
+   * @param first  The codex for decoding the first dimension.
+   * @param second The codex for decoding the second dimension.
+   */
+  def read2DWithSchema(source: TypedSource[(String, String, String)], schema: Schema, first: Codex = StringCodex,
+    second: Codex = StringCodex)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
+    source
       .flatMap {
         case (e, a, v) =>
           (schema.decode(v), first.decode(e), second.decode(a)) match {
@@ -1051,10 +1118,25 @@ object Matrix {
    * @param first  The codex for decoding the first dimension.
    * @param second The codex for decoding the second dimension.
    */
-  def read2DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
+  def read2DFileWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
     first: Codex = StringCodex, second: Codex = StringCodex)(implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position2D]] = {
-    (TypedPsv[(String, String, String)](file))
+    read2DWithDictionary(TypedPsv[(String, String, String)](file), dict, dim, first, second)
+  }
+
+  /**
+   * Read source of `(String, String, String)` data into a `TypedPipe[Cell[Position2D]]`.
+   *
+   * @param source The source to read from.
+   * @param dict   The dictionary describing the features in the data.
+   * @param dim    The dimension on which to apply the dictionary.
+   * @param first  The codex for decoding the first dimension.
+   * @param second The codex for decoding the second dimension.
+   */
+  def read2DWithDictionary[D <: Dimension](source: TypedSource[(String, String, String)], dict: Map[String, Schema],
+    dim: D = Second, first: Codex = StringCodex, second: Codex = StringCodex)(implicit ev: PosDimDep[Position2D, D],
+      flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
+    source
       .flatMap {
         case (e, a, v) =>
           val s = dim match {
@@ -1077,9 +1159,23 @@ object Matrix {
    * @param second The codex for decoding the second dimension.
    * @param third  The codex for decoding the third dimension.
    */
-  def read3D(file: String, first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex)(
+  def read3DFile(file: String, first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex)(
     implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
-    (TypedPsv[(String, String, String, String, String, String)](file))
+    read3D(TypedPsv[(String, String, String, String, String, String)](file), first, second, third)
+  }
+
+  /**
+   * Read source of `(String, String, String, String, String, String)` data into a `TypedPipe[Cell[Position3D]]`.
+   *
+   * @param source The source to read from.
+   * @param first  The codex for decoding the first dimension.
+   * @param second The codex for decoding the second dimension.
+   * @param third  The codex for decoding the third dimension.
+   */
+  def read3D(source: TypedSource[(String, String, String, String, String, String)], first: Codex = StringCodex,
+    second: Codex = StringCodex, third: Codex = StringCodex)(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position3D]] = {
+    source
       .flatMap {
         case (r, c, d, t, e, v) =>
           Schema.fromString(e, t).flatMap {
@@ -1100,9 +1196,24 @@ object Matrix {
    * @param second The codex for decoding the second dimension.
    * @param third  The codex for decoding the third dimension.
    */
-  def read3DWithSchema(file: String, schema: Schema, first: Codex = StringCodex, second: Codex = StringCodex,
+  def read3DFileWithSchema(file: String, schema: Schema, first: Codex = StringCodex, second: Codex = StringCodex,
     third: Codex = DateCodex)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
-    (TypedPsv[(String, String, String, String)](file))
+    read3DWithSchema(TypedPsv[(String, String, String, String)](file), schema, first, second, third)
+  }
+
+  /**
+   * Read source of `(String, String, String, String)` data into a `TypedPipe[Cell[Position3D]]`.
+   *
+   * @param source The source to read from.
+   * @param schema The schema for decoding the data.
+   * @param first  The codex for decoding the first dimension.
+   * @param second The codex for decoding the second dimension.
+   * @param third  The codex for decoding the third dimension.
+   */
+  def read3DWithSchema(source: TypedSource[(String, String, String, String)], schema: Schema,
+    first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = DateCodex)(implicit flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position3D]] = {
+    source
       .flatMap {
         case (e, a, t, v) =>
           (schema.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
@@ -1122,10 +1233,27 @@ object Matrix {
    * @param second The codex for decoding the second dimension.
    * @param third  The codex for decoding the third dimension.
    */
-  def read3DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
+  def read3DFileWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
     first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = DateCodex)(
       implicit ev: PosDimDep[Position3D, D], flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
-    (TypedPsv[(String, String, String, String)](file))
+    read3DWithDictionary(TypedPsv[(String, String, String, String)](file), dict, dim, first, second, third)
+  }
+
+  /**
+   * Read source of `(String, String, String, String)` data into a `TypedPipe[Cell[Position3D]]`.
+   *
+   * @param source The source to read from.
+   * @param dict   The dictionary describing the features in the data.
+   * @param dim    The dimension on which to apply the dictionary.
+   * @param first  The codex for decoding the first dimension.
+   * @param second The codex for decoding the second dimension.
+   * @param third  The codex for decoding the third dimension.
+   */
+  def read3DWithDictionary[D <: Dimension](source: TypedSource[(String, String, String, String)],
+    dict: Map[String, Schema], dim: D = Second, first: Codex = StringCodex, second: Codex = StringCodex,
+    third: Codex = DateCodex)(implicit ev: PosDimDep[Position3D, D], flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position3D]] = {
+    source
       .flatMap {
         case (e, a, t, v) =>
           val s = dim match {

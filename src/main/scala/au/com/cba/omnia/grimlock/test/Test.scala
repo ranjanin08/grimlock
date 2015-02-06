@@ -70,16 +70,16 @@ class Test1(args : Args) extends Job(args) {
   val data = TestReader.read4TupleDataAddDate(args("input"))
 
   data
-    .persist("./tmp/dat1.out", descriptive=true)
+    .persistFile("./tmp/dat1.out", descriptive=true)
 
   data
     .set(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
       Content(ContinuousSchema[Codex.LongCodex](), 1234))
     .slice(Over(First), "iid:1548763", true)
-    .persist("./tmp/dat2.out", descriptive=true)
+    .persistFile("./tmp/dat2.out", descriptive=true)
 
-  read3D("smallInputfile.txt")
-    .persist("./tmp/dat3.out", descriptive=true)
+  read3DFile("smallInputfile.txt")
+    .persistFile("./tmp/dat3.out", descriptive=true)
 }
 
 class Test2(args : Args) extends Job(args) {
@@ -90,32 +90,32 @@ class Test2(args : Args) extends Job(args) {
     .groupAll
     .values
     .renumber
-    .persist("./tmp/nm0.out", descriptive=true)
+    .persistFile("./tmp/nm0.out", descriptive=true)
 
   data
     .names(Over(Second))
     .moveToFront("fid:Z")
-    .persist("./tmp/nm1.out", descriptive=true)
+    .persistFile("./tmp/nm1.out", descriptive=true)
 
   data
     .names(Over(Second))
     .slice("fid:M", false)
-    .persist("./tmp/nm2.out", descriptive=true)
+    .persistFile("./tmp/nm2.out", descriptive=true)
 
   data
     .names(Over(Second))
     .set(Map("fid:A" -> 100L, "fid:C" -> 200L))
-    .persist("./tmp/nm3.out", descriptive=true)
+    .persistFile("./tmp/nm3.out", descriptive=true)
 
   data
     .names(Over(Second))
     .moveToBack("fid:B")
-    .persist("./tmp/nm4.out", descriptive=true)
+    .persistFile("./tmp/nm4.out", descriptive=true)
 
   data
     .names(Over(Second))
     .slice(""".*[BCD]$""".r, true, "")
-    .persist("./tmp/nm5.out", descriptive=true)
+    .persistFile("./tmp/nm5.out", descriptive=true)
 }
 
 class Test3(args : Args) extends Job(args) {
@@ -123,10 +123,10 @@ class Test3(args : Args) extends Job(args) {
   val data = TestReader.read4TupleDataAddDate(args("input"))
 
   (data.types(Over(First)) ++ data.types(Over(Second)) ++ data.types(Over(Third)))
-    .persist("./tmp/typ1.out", descriptive=true)
+    .persistFile("./tmp/typ1.out", descriptive=true)
 
   (data.types(Over(First), true) ++ data.types(Over(Second), true) ++ data.types(Over(Third), true))
-    .persist("./tmp/typ2.out", descriptive=true)
+    .persistFile("./tmp/typ2.out", descriptive=true)
 }
 
 class Test4(args : Args) extends Job(args) {
@@ -135,18 +135,18 @@ class Test4(args : Args) extends Job(args) {
 
   data
     .slice(Over(Second), "fid:B", true)
-    .persist("./tmp/scl0.out", descriptive=true)
+    .persistFile("./tmp/scl0.out", descriptive=true)
 
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", true)
-    .persist("./tmp/scl1.out", descriptive=true)
+    .persistFile("./tmp/scl1.out", descriptive=true)
 
   val rem = List("fid:B", "fid:D", "fid:F", "fid:H", "fid:J", "fid:L", "fid:N",
                  "fid:P", "fid:R", "fid:T", "fid:V", "fid:X", "fid:Z")
   data
     .slice(Over(Second), data.names(Over(Second)).slice(rem, false), false)
-    .persist("./tmp/scl2.out", descriptive=true)
+    .persistFile("./tmp/scl2.out", descriptive=true)
 }
 
 class Test5(args : Args) extends Job(args) {
@@ -157,11 +157,11 @@ class Test5(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", true)
     .squash(Third, PreservingMaxPosition())
-    .persist("./tmp/sqs1.out", descriptive=true)
+    .persistFile("./tmp/sqs1.out", descriptive=true)
 
   data
     .squash(Third, PreservingMaxPosition())
-    .persist("./tmp/sqs2.out", descriptive=true)
+    .persistFile("./tmp/sqs2.out", descriptive=true)
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -183,19 +183,19 @@ class Test6(args : Args) extends Job(args) {
 
   data
     .which((p: Position, c: Content) => c.schema.kind.isSpecialisationOf(Numerical))
-    .persist("./tmp/whc1.out", descriptive=true)
+    .persistFile("./tmp/whc1.out", descriptive=true)
 
   data
     .which((p: Position, c: Content) => ! c.value.isInstanceOf[StringValue])
-    .persist("./tmp/whc2.out", descriptive=true)
+    .persistFile("./tmp/whc2.out", descriptive=true)
 
   data
     .get(data.which((p: Position, c: Content) => (c.value equ 666) || (c.value leq 11.0) || (c.value equ "KQUPKFEH")))
-    .persist("./tmp/whc3.out", descriptive=true)
+    .persistFile("./tmp/whc3.out", descriptive=true)
 
   data
     .which((p: Position, c: Content) => c.value.isInstanceOf[LongValue])
-    .persist("./tmp/whc4.out", descriptive=true)
+    .persistFile("./tmp/whc4.out", descriptive=true)
 
   TestReader.read4TupleDataAddDate(args("input"))
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -205,7 +205,7 @@ class Test6(args : Args) extends Job(args) {
     .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
     .which(Over(Second), List(("count", (pos: Position, con: Content) => con.value leq 2),
                               ("min", (pos: Position, con: Content) => con.value equ 107)))
-    .persist("./tmp/whc5.out", descriptive=true)
+    .persistFile("./tmp/whc5.out", descriptive=true)
 }
 
 class Test7(args : Args) extends Job(args) {
@@ -214,12 +214,12 @@ class Test7(args : Args) extends Job(args) {
 
   data
     .get(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get))
-    .persist("./tmp/get1.out", descriptive=true)
+    .persistFile("./tmp/get1.out", descriptive=true)
 
   data
     .get(List(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
               Position3D("iid:1303823", "fid:A", DateCodex.decode("2014-05-05").get)))
-    .persist("./tmp/get2.out", descriptive=true)
+    .persistFile("./tmp/get2.out", descriptive=true)
 }
 
 class Test8(args : Args) extends Job(args) {
@@ -230,11 +230,11 @@ class Test8(args : Args) extends Job(args) {
     .slice(Over(Second), "fid:B", true)
     .squash(Third, PreservingMaxPosition())
     .unique
-    .persist("./tmp/uniq.out", descriptive=true)
+    .persistFile("./tmp/uniq.out", descriptive=true)
 
-  read2D("mutualInputfile.txt")
+  read2DFile("mutualInputfile.txt")
     .unique(Over(Second))
-    .persist("./tmp/uni2.out")
+    .persistFile("./tmp/uni2.out")
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
@@ -248,13 +248,13 @@ class Test8(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition())
     .permute(Second, First)
-    .persist("./tmp/trs1.out", descriptive=true)
+    .persistFile("./tmp/trs1.out", descriptive=true)
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition())
-    .persist("./tmp/data.txt")
+    .persistFile("./tmp/data.txt")
 }
 
 class Test9(args : Args) extends Job(args) {
@@ -279,7 +279,7 @@ class Test9(args : Args) extends Job(args) {
     .partition(StringPartitioner(Second))
 
   prt1
-    .persist("./tmp/prt1.out", descriptive=true)
+    .persistFile("./tmp/prt1.out", descriptive=true)
 
   case class IntTuplePartitioner(dim: Dimension) extends Partitioner with Assign {
     type T = (Int, Int, Int)
@@ -297,19 +297,19 @@ class Test9(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition())
     .partition(IntTuplePartitioner(Second))
-    .persist("./tmp/prt2.out", descriptive=true)
+    .persistFile("./tmp/prt2.out", descriptive=true)
 
   prt1
     .get("training")
-    .persist("./tmp/train.out", descriptive=true)
+    .persistFile("./tmp/train.out", descriptive=true)
 
   prt1
     .get("testing")
-    .persist("./tmp/test.out", descriptive=true)
+    .persistFile("./tmp/test.out", descriptive=true)
 
   prt1
     .get("scoring")
-    .persist("./tmp/score.out", descriptive=true)
+    .persistFile("./tmp/score.out", descriptive=true)
 }
 
 class Test10(args : Args) extends Job(args) {
@@ -344,7 +344,7 @@ class Test11(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .transform(Indicator(Second, name="%1$s.ind"))
-    .persist("./tmp/trn2.out", descriptive=true)
+    .persistFile("./tmp/trn2.out", descriptive=true)
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
@@ -367,7 +367,7 @@ class Test12(args : Args) extends Job(args) {
 
   data
     .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
-    .persist("./tmp/fll3.out", descriptive=true)
+    .persistFile("./tmp/fll3.out", descriptive=true)
 }
 
 class Test13(args : Args) extends Job(args) {
@@ -402,7 +402,7 @@ class Test14(args : Args) extends Job(args) {
 
   data
     .change(Over(Second), "fid:A", NominalSchema[Codex.LongCodex]())
-    .persist("./tmp/chg1.out", descriptive=true)
+    .persistFile("./tmp/chg1.out", descriptive=true)
 }
 
 class Test15(args : Args) extends Job(args) {
@@ -443,7 +443,7 @@ class Test16(args : Args) extends Job(args) {
 
   data
     .sample(HashSample())
-    .persist("./tmp/smp1.out")
+    .persistFile("./tmp/smp1.out")
 }
 
 class Test17(args : Args) extends Job(args) {
@@ -544,8 +544,8 @@ class Test19(args : Args) extends Job(args) {
 
 class Test20(args : Args) extends Job(args) {
 
-  read3DWithDictionary("./ivoryInputfile1.txt", Dictionary.read("./dict.txt"))
-    .persist("./tmp/ivr1.out")
+  read3DFileWithDictionary("./ivoryInputfile1.txt", Dictionary.read("./dict.txt"))
+    .persistFile("./tmp/ivr1.out")
 }
 
 class Test21(args : Args) extends Job(args) {
@@ -554,24 +554,24 @@ class Test21(args : Args) extends Job(args) {
 
   data
     .shape()
-    .persist("./tmp/siz0.out")
+    .persistFile("./tmp/siz0.out")
 
   data
     .size(First)
-    .persist("./tmp/siz1.out")
+    .persistFile("./tmp/siz1.out")
 
   data
     .size(Second)
-    .persist("./tmp/siz2.out")
+    .persistFile("./tmp/siz2.out")
 
   data
     .size(Third)
-    .persist("./tmp/siz3.out")
+    .persistFile("./tmp/siz3.out")
 }
 
 class Test22(args : Args) extends Job(args) {
 
-  val data = read2D("numericInputfile.txt")
+  val data = read2DFile("numericInputfile.txt")
 
   case class Diff() extends Deriver with Initialise {
     type T = Cell[Position]
@@ -589,17 +589,17 @@ class Test22(args : Args) extends Job(args) {
 
   data
     .derive(Over(First), Diff())
-    .persist("./tmp/dif1.out")
+    .persistFile("./tmp/dif1.out")
 
   data
     .derive(Over(Second), Diff())
     .permute(Second, First)
-    .persist("./tmp/dif2.out")
+    .persistFile("./tmp/dif2.out")
 }
 
 class Test23(args : Args) extends Job(args) {
 
-  val data = read2D("somePairwise.txt")
+  val data = read2DFile("somePairwise.txt")
 
   case class DiffSquared() extends Operator with Compute {
     def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
@@ -617,7 +617,7 @@ class Test23(args : Args) extends Job(args) {
 
   data
     .pairwise(Over(Second), DiffSquared())
-    .persist("./tmp/pws1.out")
+    .persistFile("./tmp/pws1.out")
 }
 
 class Test24(args: Args) extends Job(args) {
@@ -631,7 +631,7 @@ class Test24(args: Args) extends Job(args) {
 
   data
     .correlation(Over(Second))
-    .persist("./tmp/pws2.out")
+    .persistFile("./tmp/pws2.out")
 
   val schema2 = List(("day", NominalSchema[Codex.StringCodex]()),
                      ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
@@ -641,58 +641,58 @@ class Test24(args: Args) extends Job(args) {
 
   data2
     .correlation(Over(Second))
-    .persist("./tmp/pws3.out")
+    .persistFile("./tmp/pws3.out")
 }
 
 class Test25(args: Args) extends Job(args) {
 
-  read2D("mutualInputfile.txt")
+  read2DFile("mutualInputfile.txt")
     .mutualInformation(Over(Second))
-    .persist("./tmp/mi.out")
+    .persistFile("./tmp/mi.out")
 }
 
 class Test26(args: Args) extends Job(args) {
 
-  val left = read2D("algebraInputfile1.txt")
-  val right = read2D("algebraInputfile2.txt")
+  val left = read2DFile("algebraInputfile1.txt")
+  val right = read2DFile("algebraInputfile2.txt")
 
   left
     .pairwiseBetween(Over(First), right, Times(comparer=All))
-    .persist("./tmp/alg.out")
+    .persistFile("./tmp/alg.out")
 }
 
 class Test27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
-  read2D("simMovAvgInputfile.txt", first=LongCodex)
+  read2DFile("simMovAvgInputfile.txt", first=LongCodex)
     .derive(Over(Second), SimpleMovingAverage(5))
-    .persist("./tmp/sma1.out")
+    .persistFile("./tmp/sma1.out")
 
-  read2D("simMovAvgInputfile.txt", first=LongCodex)
+  read2DFile("simMovAvgInputfile.txt", first=LongCodex)
     .derive(Over(Second), SimpleMovingAverage(5, all=true))
-    .persist("./tmp/sma2.out")
+    .persistFile("./tmp/sma2.out")
 
-  read2D("simMovAvgInputfile.txt", first=LongCodex)
+  read2DFile("simMovAvgInputfile.txt", first=LongCodex)
     .derive(Over(Second), CenteredMovingAverage(2))
-    .persist("./tmp/tma.out")
+    .persistFile("./tmp/tma.out")
 
-  read2D("simMovAvgInputfile.txt", first=LongCodex)
+  read2DFile("simMovAvgInputfile.txt", first=LongCodex)
     .derive(Over(Second), WeightedMovingAverage(5))
-    .persist("./tmp/wma1.out")
+    .persistFile("./tmp/wma1.out")
 
-  read2D("simMovAvgInputfile.txt", first=LongCodex)
+  read2DFile("simMovAvgInputfile.txt", first=LongCodex)
     .derive(Over(Second), WeightedMovingAverage(5, all=true))
-    .persist("./tmp/wma2.out")
+    .persistFile("./tmp/wma2.out")
 
   // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
-  read1D("cumMovAvgInputfile.txt")
+  read1DFile("cumMovAvgInputfile.txt")
     .derive(Along(First), CumulativeMovingAverage())
-    .persist("./tmp/cma.out")
+    .persistFile("./tmp/cma.out")
 
   // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
-  read1D("expMovAvgInputfile.txt")
+  read1DFile("expMovAvgInputfile.txt")
     .derive(Along(First), ExponentialMovingAverage(0.33))
-    .persist("./tmp/ema.out")
+    .persistFile("./tmp/ema.out")
 }
 
 class Test28(args: Args) extends Job(args) {
@@ -708,30 +708,30 @@ class Test28(args: Args) extends Job(args) {
 
   data
     .transformWithValue(Cut(Second), Cut.fixed(stats, "min", "max", 4))
-    .persist("./tmp/cut1.out")
+    .persistFile("./tmp/cut1.out")
 
   data
     .transformWithValue(Cut(Second, "%s.square"), Cut.squareRootChoice(stats, "count", "min", "max"))
-    .persist("./tmp/cut2.out")
+    .persistFile("./tmp/cut2.out")
 
   data
     .transformWithValue(Cut(Second, "%s.sturges"), Cut.sturgesFormula(stats, "count", "min", "max"))
-    .persist("./tmp/cut3.out")
+    .persistFile("./tmp/cut3.out")
 
   data
     .transformWithValue(Cut(Second, "%s.rice"), Cut.riceRule(stats, "count", "min", "max"))
-    .persist("./tmp/cut4.out")
+    .persistFile("./tmp/cut4.out")
 
   data
     .transformWithValue(Cut(Second, "%s.doane"), Cut.doanesFormula(stats, "count", "min", "max", "skewness"))
-    .persist("./tmp/cut5.out")
+    .persistFile("./tmp/cut5.out")
 
   data
     .transformWithValue(Cut(Second, "%s.scott"), Cut.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
-    .persist("./tmp/cut6.out")
+    .persistFile("./tmp/cut6.out")
 
   data
     .transformWithValue(Cut(Second, "%s.break"), Cut.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
-    .persist("./tmp/cut7.out")
+    .persistFile("./tmp/cut7.out")
 }
 
