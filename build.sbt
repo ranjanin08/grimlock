@@ -17,7 +17,7 @@ uniform.project("grimlock", "au.com.cba.omnia.grimlock")
 uniformDependencySettings
 
 libraryDependencies :=
-  depend.scaldingproject()
+  depend.scaldingproject(scalding="0.12.0")
 
 uniformAssemblySettings
 

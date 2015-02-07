@@ -1308,28 +1308,26 @@ object Matrix {
   implicit def typedPipePosition5DContent(data: TypedPipe[Cell[Position5D]]): Matrix5D = new Matrix5D(data)
 
   /** Conversion from `List[(Valueable, Content)]` to a `Matrix1D`. */
-  implicit def tuple2List[V: Valueable](list: List[(V, Content)])(implicit flow: FlowDef, mode: Mode): Matrix1D = {
-    new Matrix1D(new IterablePipe(list.map { case (v, c) => (Position1D(v), c) }, flow, mode))
+  implicit def tuple2List[V: Valueable](list: List[(V, Content)]): Matrix1D = {
+    new Matrix1D(new IterablePipe(list.map { case (v, c) => (Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a `Matrix2D`. */
-  implicit def tuple3List[V: Valueable, W: Valueable](list: List[(V, W, Content)])(implicit flow: FlowDef,
-    mode: Mode): Matrix2D = {
-    new Matrix2D(new IterablePipe(list.map { case (v, w, c) => (Position2D(v, w), c) }, flow, mode))
+  implicit def tuple3List[V: Valueable, W: Valueable](list: List[(V, W, Content)]): Matrix2D = {
+    new Matrix2D(new IterablePipe(list.map { case (v, w, c) => (Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a `Matrix3D`. */
-  implicit def tuple4List[V: Valueable, W: Valueable, X: Valueable](list: List[(V, W, X, Content)])(
-    implicit flow: FlowDef, mode: Mode): Matrix3D = {
-    new Matrix3D(new IterablePipe(list.map { case (v, w, x, c) => (Position3D(v, w, x), c) }, flow, mode))
+  implicit def tuple4List[V: Valueable, W: Valueable, X: Valueable](list: List[(V, W, X, Content)]): Matrix3D = {
+    new Matrix3D(new IterablePipe(list.map { case (v, w, x, c) => (Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a `Matrix4D`. */
   implicit def tuple5List[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
-    list: List[(V, W, X, Y, Content)])(implicit flow: FlowDef, mode: Mode): Matrix4D = {
-    new Matrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => (Position4D(v, w, x, y), c) }, flow, mode))
+    list: List[(V, W, X, Y, Content)]): Matrix4D = {
+    new Matrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => (Position4D(v, w, x, y), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a `Matrix5D`. */
   implicit def tuple6List[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
-    list: List[(V, W, X, Y, Z, Content)])(implicit flow: FlowDef, mode: Mode): Matrix5D = {
-    new Matrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => (Position5D(v, w, x, y, z), c) }, flow, mode))
+    list: List[(V, W, X, Y, Z, Content)]): Matrix5D = {
+    new Matrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => (Position5D(v, w, x, y, z), c) }))
   }
 }
 
@@ -1946,9 +1944,7 @@ trait Matrixable[T, P <: Position] {
 object Matrixable {
   /** Converts a `TypedPipe[Cell[P]]` into a `TypedPipe[Cell[P]]`; that is, it is a  pass through. */
   implicit def MatrixMatrixable[P <: Position]: Matrixable[TypedPipe[Cell[P]], P] = {
-    new Matrixable[TypedPipe[Cell[P]], P] {
-      def convert(t: TypedPipe[Cell[P]]): TypedPipe[Cell[P]] = t
-    }
+    new Matrixable[TypedPipe[Cell[P]], P] { def convert(t: TypedPipe[Cell[P]]): TypedPipe[Cell[P]] = t }
   }
   /** Converts a `(PositionPipeable, Content)` tuple into a `TypedPipe[Cell[P]]`. */
   implicit def PositionPipeableContentTupleMatrixable[T, P <: Position](implicit ev: PositionPipeable[T, P],
@@ -1958,16 +1954,12 @@ object Matrixable {
     }
   }
   /** Converts a `List[Cell[P]]` into a `TypedPipe[Cell[P]]`. */
-  implicit def ListCellMatrixable[P <: Position](implicit flow: FlowDef, mode: Mode): Matrixable[List[Cell[P]], P] = {
-    new Matrixable[List[Cell[P]], P] {
-      def convert(t: List[Cell[P]]): TypedPipe[Cell[P]] = new IterablePipe(t, flow, mode)
-    }
+  implicit def ListCellMatrixable[P <: Position]: Matrixable[List[Cell[P]], P] = {
+    new Matrixable[List[Cell[P]], P] { def convert(t: List[Cell[P]]): TypedPipe[Cell[P]] = new IterablePipe(t) }
   }
   /** Converts a `Cell[P]` tuple into a `TypedPipe[Cell[P]]`. */
-  implicit def CellMatrixable[P <: Position](implicit flow: FlowDef, mode: Mode): Matrixable[Cell[P], P] = {
-    new Matrixable[Cell[P], P] {
-      def convert(t: Cell[P]): TypedPipe[Cell[P]] = new IterablePipe(List(t), flow, mode)
-    }
+  implicit def CellMatrixable[P <: Position]: Matrixable[Cell[P], P] = {
+    new Matrixable[Cell[P], P] { def convert(t: Cell[P]): TypedPipe[Cell[P]] = new IterablePipe(List(t)) }
   }
 }
 

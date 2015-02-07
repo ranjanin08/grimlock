@@ -570,16 +570,12 @@ object PositionPipeable {
     new PositionPipeable[TypedPipe[P], P] { def convert(t: TypedPipe[P]): TypedPipe[P] = t }
   }
   /** Converts a `List[Positionable]` to a `TypedPipe[Position]`. */
-  implicit def LP2PP[T, P <: Position](implicit ev: Positionable[T, P], flow: FlowDef,
-    mode: Mode): PositionPipeable[List[T], P] = {
-    new PositionPipeable[List[T], P] {
-      def convert(t: List[T]): TypedPipe[P] = new IterablePipe(t.map(ev.convert(_)), flow, mode)
-    }
+  implicit def LP2PP[T, P <: Position](implicit ev: Positionable[T, P]): PositionPipeable[List[T], P] = {
+    new PositionPipeable[List[T], P] { def convert(t: List[T]): TypedPipe[P] = new IterablePipe(t.map(ev.convert(_))) }
   }
   /** Converts a `Positionable` to a `TypedPipe[Position]`. */
-  implicit def P2PP[T, P <: Position](implicit ev: Positionable[T, P], flow: FlowDef,
-    mode: Mode): PositionPipeable[T, P] = {
-    new PositionPipeable[T, P] { def convert(t: T): TypedPipe[P] = new IterablePipe(List(ev.convert(t)), flow, mode) }
+  implicit def P2PP[T, P <: Position](implicit ev: Positionable[T, P]): PositionPipeable[T, P] = {
+    new PositionPipeable[T, P] { def convert(t: T): TypedPipe[P] = new IterablePipe(List(ev.convert(t))) }
   }
 }
 

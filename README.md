@@ -140,10 +140,9 @@ Usage
 The examples below are executed in the Scalding REPL. To use Grimlock in the REPL follow the following steps:
 
 1. Install Scalding; follow [these](https://github.com/twitter/scalding/wiki/Getting-Started) instructions.
-2. Check out tag (0.11.2); git checkout 0.11.2.
-3. Update scala version; edit project/Build.scala and set scala version to 2.10.4.
-4. In scalding-repl/src/main/scala add symlink to Grimlock's code folder.
-5. Start REPL; ./sbt scalding-repl/console.
+2. Check out tag (0.12.0); git checkout 0.12.0.
+3. In scalding-repl/src/main/scala add symlink to Grimlock's code folder.
+4. Start REPL; ./sbt scalding-repl/console.
 
 After the last command, the console should appear as follows:
 

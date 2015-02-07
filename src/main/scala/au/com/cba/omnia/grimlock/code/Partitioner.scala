@@ -102,7 +102,7 @@ class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
    * @return A Scalding `TypedPipe[(T, (Position, Content))]` which is this object's data.
    */
   def persist(sink: TypedSink[String], separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[( T, Cell[P])] = {
+    mode: Mode): TypedPipe[(T, Cell[P])] = {
     data
       .map {
         case (t, (p, c)) => descriptive match {
