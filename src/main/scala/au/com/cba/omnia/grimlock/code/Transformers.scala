@@ -22,7 +22,6 @@ import au.com.cba.omnia.grimlock.Matrix.CellCollection
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.Type._
 
-import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.typed.LiteralValue
 
@@ -1342,7 +1341,7 @@ object Cut {
    *
    * @param range A map (holding for each key) the bins range of that feature.
    */
-  def breaks[V: Valueable](range: Map[V, List[Double]])(implicit flow: FlowDef, mode: Mode): ValuePipe[Cut#V] = {
+  def breaks[V: Valueable](range: Map[V, List[Double]]): ValuePipe[Cut#V] = {
     new LiteralValue(range.map { case (v, l) => (Position1D(v), l) })
   }
 

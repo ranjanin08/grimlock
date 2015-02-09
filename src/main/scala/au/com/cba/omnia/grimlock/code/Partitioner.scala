@@ -14,15 +14,13 @@
 
 package au.com.cba.omnia.grimlock.partition
 
+import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
 
-import cascading.flow.FlowDef
 import com.twitter.scalding._
-import com.twitter.scalding.TDsl._, Dsl._
-import com.twitter.scalding.typed.TypedSink
 
 /** Base trait for partitioning operations. */
 trait Partitioner {
@@ -67,7 +65,8 @@ trait AssignWithValue { self: Partitioner =>
  *
  * @param data The `TypedPipe[(T, (Position, Content))]`.
  */
-class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
+class Partitions[T: Ordering, P <: Position](
+  protected val data: TypedPipe[(T, Cell[P])]) extends Persist[(T, Cell[P])] {
   // TODO: Add 'keys'/'hasKey'/'set'/'modify' methods?
   // TODO: Add 'foreach' method - to apply function to all data for each key
 
@@ -80,39 +79,12 @@ class Partitions[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]) {
    */
   def get(key: T): TypedPipe[Cell[P]] = data.collect { case (t, pc) if (key == t) => pc }
 
-  /**
-   * Persist partitions to disk.
-   *
-   * @param file        Name of the output file.
-   * @param separator   Separator to use between `T`, the position and content.
-   * @param descriptive Indicates if the output should be descriptive.
-   *
-   * @return A Scalding `TypedPipe[(T, (Position, Content))]` which is this object's data.
-   */
-  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[(T, Cell[P])] = persist(TypedSink(TextLine(file)), separator, descriptive)
-
-  /**
-   * Persist partitions to a sink.
-   *
-   * @param sink        Sink to write to.
-   * @param separator   Separator to use between `T`, the position and content.
-   * @param descriptive Indicates if the output should be descriptive.
-   *
-   * @return A Scalding `TypedPipe[(T, (Position, Content))]` which is this object's data.
-   */
-  def persist(sink: TypedSink[String], separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[(T, Cell[P])] = {
-    data
-      .map {
-        case (t, (p, c)) => descriptive match {
-          case true => t.toString + separator + p.toString + separator + c.toString
-          case false => t.toString + separator + p.toShortString(separator) + separator + c.toShortString(separator)
-        }
-      }
-      .write(sink)
-
-    data
+  protected def toString(t: (T, Cell[P]), separator: String, descriptive: Boolean): String = {
+    descriptive match {
+      case true => t._1.toString + separator + t._2._1.toString + separator + t._2._2.toString
+      case false => t._1.toString + separator + t._2._1.toShortString(separator) + separator +
+        t._2._2.toShortString(separator)
+    }
   }
 }
 

@@ -167,7 +167,7 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
 
     (ind ++ csb)
       //.fill(Content(ContinuousSchema[Codex.DoubleCodex], 0))
-      .writeCSV(Over(Second), "./demo/" + p + ".csv")
+      .persistCSVFile(Over(Second), "./demo/" + p + ".csv")
   }
 }
 

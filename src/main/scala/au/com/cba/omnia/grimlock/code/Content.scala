@@ -14,13 +14,11 @@
 
 package au.com.cba.omnia.grimlock.content
 
+import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.content.metadata._
 
-import cascading.flow.FlowDef
 import com.twitter.scalding._
-import com.twitter.scalding.TDsl._, Dsl._
-import com.twitter.scalding.typed.TypedSink
 
 /** Contents of a cell in a matrix. */
 trait Content {
@@ -175,40 +173,12 @@ object Content {
  *
  * @param data The `TypedPipe[Content]`.
  */
-class Contents(data: TypedPipe[Content]) {
-  /**
-   * Persist a contents to disk.
-   *
-   * @param file        Name of the output file.
-   * @param separator   Separator to use between the fields of a content.
-   * @param descriptive Indicates if the output should be descriptive.
-   *
-   * @return A Scalding `TypedPipe[Content]` which is this object's data.
-   */
-  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[Content] = persist(TypedSink(TextLine(file)), separator, descriptive)
-
-  /**
-   * Persist a contents to a sink.
-   *
-   * @param sink        Sink to write to.
-   * @param separator   Separator to use between the fields of a content.
-   * @param descriptive Indicates if the output should be descriptive.
-   *
-   * @return A Scalding `TypedPipe[Content]` which is this object's data.
-   */
-  def persist(sink: TypedSink[String], separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[Content] = {
-    data
-      .map {
-        case c => descriptive match {
-          case true => c.toString
-          case false => c.toShortString(separator)
-        }
-      }
-      .write(sink)
-
-    data
+class Contents(protected val data: TypedPipe[Content]) extends Persist[Content] {
+  protected def toString(t: Content, separator: String, descriptive: Boolean): String = {
+    descriptive match {
+      case true => t.toString
+      case false => t.toShortString(separator)
+    }
   }
 }
 

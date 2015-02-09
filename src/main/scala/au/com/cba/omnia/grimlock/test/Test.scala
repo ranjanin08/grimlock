@@ -167,14 +167,14 @@ class Test5(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition())
-    .writeCSV(Over(First), "./tmp/sqs3.out")
+    .persistCSVFile(Over(First), "./tmp/sqs3.out")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
-    .writeCSV(Over(First), "./tmp/sqs4.out")
+    .persistCSVFile(Over(First), "./tmp/sqs4.out")
 }
 
 class Test6(args : Args) extends Job(args) {
@@ -240,8 +240,8 @@ class Test8(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition())
-    .writeCSV(Over(Second), "./tmp/test.csv")
-    .writeCSV(Over(First), "./tmp/tset.csv", writeHeader=false, separator=",")
+    .persistCSVFile(Over(Second), "./tmp/test.csv")
+    .persistCSVFile(Over(First), "./tmp/tset.csv", writeHeader=false, separator=",")
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
@@ -318,14 +318,14 @@ class Test10(args : Args) extends Job(args) {
 
   data
     .reduceAndExpand(Over(Second), Mean("mean", strict=true, nan=true))
-    .writeCSV(Over(Second), "./tmp/agg1.csv")
+    .persistCSVFile(Over(Second), "./tmp/agg1.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition())
     .reduceAndExpand(Along(Second), Count("count"))
-    .writeCSV(Over(Second), "./tmp/agg2.csv")
+    .persistCSVFile(Over(Second), "./tmp/agg2.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -333,7 +333,7 @@ class Test10(args : Args) extends Job(args) {
     .squash(Third, PreservingMaxPosition())
     .reduceAndExpand(Along(First), List(Count("count"), Moments("mean", "sd", "skewness", "kurtosis"), Min("min"),
       Max("max"), MaxAbs("max.abs")))
-    .writeCSV(Over(Second), "./tmp/agg3.csv")
+    .persistCSVFile(Over(Second), "./tmp/agg3.csv")
 }
 
 class Test11(args : Args) extends Job(args) {
@@ -351,7 +351,7 @@ class Test11(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition())
     .transform(Binarise(Second))
-    .writeCSV(Over(Second), "./tmp/trn3.out")
+    .persistCSVFile(Over(Second), "./tmp/trn3.out")
 }
 
 class Test12(args : Args) extends Job(args) {
@@ -363,7 +363,7 @@ class Test12(args : Args) extends Job(args) {
   data
     .squash(Third, PreservingMaxPosition())
     .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
-    .writeCSV(Over(Second), "./tmp/fll1.out")
+    .persistCSVFile(Over(Second), "./tmp/fll1.out")
 
   data
     .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
@@ -386,12 +386,12 @@ class Test13(args : Args) extends Job(args) {
   data
     .join(Over(First), inds)
     .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
-    .writeCSV(Over(Second), "./tmp/fll2.out")
+    .persistCSVFile(Over(Second), "./tmp/fll2.out")
 
   data
     .fill(Over(Second), all.reduceAndExpand(Over(Second), Mean("mean", strict=true, nan=true)).permute(Second, First))
     .join(Over(First), inds)
-    .writeCSV(Over(Second), "./tmp/fll4.out")
+    .persistCSVFile(Over(Second), "./tmp/fll4.out")
 }
 
 class Test14(args : Args) extends Job(args) {
@@ -414,7 +414,7 @@ class Test15(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .reduceAndExpand(Along(Third), Sum("sum"))
     .melt(Third, Second)
-    .writeCSV(Over(Second), "./tmp/rsh1.out")
+    .persistCSVFile(Over(Second), "./tmp/rsh1.out")
 
   val inds = data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -422,7 +422,7 @@ class Test15(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
     .transform(Indicator(Second, name="%1$s.ind"))
-    .writeCSV(Over(Second), "./tmp/trn1.csv")
+    .persistCSVFile(Over(Second), "./tmp/trn1.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -430,7 +430,7 @@ class Test15(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
     .join(Over(First), inds)
-    .writeCSV(Over(Second), "./tmp/jn1.csv")
+    .persistCSVFile(Over(Second), "./tmp/jn1.csv")
 }
 
 class Test16(args : Args) extends Job(args) {
@@ -460,11 +460,11 @@ class Test17(args : Args) extends Job(args) {
 
   data
     .transformWithValue(Normalise(Second, key="max.abs"), stats)
-    .writeCSV(Over(Second), "./tmp/trn6.csv")
+    .persistCSVFile(Over(Second), "./tmp/trn6.csv")
 
   data
     .refine((pos: Position2D, con: Content) => con.value gtr 500)
-    .writeCSV(Over(Second), "./tmp/flt1.csv")
+    .persistCSVFile(Over(Second), "./tmp/flt1.csv")
 
   def removeGreaterThanMean(pos: Position2D, con: Content, ext: Map[Position1D, Map[Position1D, Content]]): Boolean = {
     if (con.schema.kind.isSpecialisationOf(Numerical)) {
@@ -476,7 +476,7 @@ class Test17(args : Args) extends Job(args) {
 
   data
     .refineWithValue(removeGreaterThanMean, stats)
-    .writeCSV(Over(Second), "./tmp/flt2.csv")
+    .persistCSVFile(Over(Second), "./tmp/flt2.csv")
 }
 
 class Test18(args : Args) extends Job(args) {
@@ -496,7 +496,7 @@ class Test18(args : Args) extends Job(args) {
 
   data
     .slice(Over(Second), rem, false)
-    .writeCSV(Over(Second), "./tmp/flt3.csv")
+    .persistCSVFile(Over(Second), "./tmp/flt3.csv")
 }
 
 class Test19(args : Args) extends Job(args) {
@@ -538,7 +538,7 @@ class Test19(args : Args) extends Job(args) {
       .transformWithValue(List(Indicator(Second, name="%1$s.ind"), Binarise(Second), Normalise(Second, key="max.abs")),
         stats.toMap(Over(First)))
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
-      .writeCSV(Over(Second), "./tmp/pln_" + p + ".csv")
+      .persistCSVFile(Over(Second), "./tmp/pln_" + p + ".csv")
   }
 }
 

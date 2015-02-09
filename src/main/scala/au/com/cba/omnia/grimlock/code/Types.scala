@@ -16,10 +16,7 @@ package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.position._
 
-import cascading.flow.FlowDef
 import com.twitter.scalding._
-import com.twitter.scalding.TDsl._, Dsl._
-import com.twitter.scalding.typed.TypedSink
 
 /**
  * Base class for variable types.
@@ -84,40 +81,12 @@ object Type {
  *
  * @note This class represents the variable type along the dimensions of a matrix.
  */
-class Types[P <: Position](data: TypedPipe[(P, Type)]) {
-  /**
-   * Persist `Types` to disk.
-   *
-   * @param file        Name of the output file.
-   * @param separator   Separator to use between position and type.
-   * @param descriptive Indicates if the output should be descriptive.
-   *
-   * @return A Scalding `TypedPipe[(P, Type)]` which is this objects's data.
-   */
-  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[(P, Type)] = persist(TypedSink(TextLine(file)), separator, descriptive)
-
-  /**
-   * Persist `Types` to a sink.
-   *
-   * @param sink        Sink to write to.
-   * @param separator   Separator to use between position and type.
-   * @param descriptive Indicates if the output should be descriptive.
-   *
-   * @return A Scalding `TypedPipe[(P, Type)]` which is this objects's data.
-   */
-  def persist(sink: TypedSink[String], separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[(P, Type)] = {
-    data
-      .map {
-        case (p, t) => descriptive match {
-          case true => p.toString + separator + t.toString
-          case false => p.toShortString(separator) + separator + t.name
-        }
-      }
-      .write(sink)
-
-    data
+class Types[P <: Position](protected val data: TypedPipe[(P, Type)]) extends Persist[(P, Type)] {
+  protected def toString(t: (P, Type), separator: String, descriptive: Boolean): String = {
+    descriptive match {
+      case true => t._1.toString + separator + t._2.toString
+      case false => t._1.toShortString(separator) + separator + t._2.name
+    }
   }
 }
 

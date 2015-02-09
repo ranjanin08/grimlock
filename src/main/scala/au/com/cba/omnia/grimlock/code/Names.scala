@@ -16,10 +16,7 @@ package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.position._
 
-import cascading.flow.FlowDef
 import com.twitter.scalding._
-import com.twitter.scalding.TDsl._, Dsl._
-import com.twitter.scalding.typed.TypedSink
 
 import scala.util.matching.Regex
 
@@ -30,7 +27,7 @@ import scala.util.matching.Regex
  *
  * @note This class represents the names along the dimensions of a matrix.
  */
-class Names[P <: Position](data: TypedPipe[(P, Long)]) {
+class Names[P <: Position](protected val data: TypedPipe[(P, Long)]) extends Persist[(P, Long)] {
   /** Renumber the names. */
   def renumber(): TypedPipe[(P, Long)] = Names.number(data.map { case (p, i) => p })
 
@@ -125,39 +122,11 @@ class Names[P <: Position](data: TypedPipe[(P, Long)]) {
       }
   }
 
-  /**
-   * Persist names to disk.
-   *
-   * @param file        Name of the output file.
-   * @param separator   Separator to use between position and index.
-   * @param descriptive Indicates if the output should be descriptive.
-   *
-   * @return A Scalding `TypedPipe[(P, Long)]` which is this object's data.
-   */
-  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[(P, Long)] = persist(TypedSink(TextLine(file)), separator, descriptive)
-
-  /**
-   * Persist names to a sink.
-   *
-   * @param sink        Sink to write to.
-   * @param separator   Separator to use between position and index.
-   * @param descriptive Indicates if the output should be descriptive.
-   *
-   * @return A Scalding `TypedPipe[(P, Long)]` which is this object's data.
-   */
-  def persist(sink: TypedSink[String], separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[(P, Long)] = {
-    data
-      .map {
-        case (p, i) => descriptive match {
-          case true => p.toString + separator + i.toString
-          case false => p.toShortString(separator) + separator + i.toString
-        }
-      }
-      .write(sink)
-
-    data
+  protected def toString(t: (P, Long), separator: String, descriptive: Boolean): String = {
+    descriptive match {
+      case true => t._1.toString + separator + t._2.toString
+      case false => t._1.toShortString(separator) + separator + t._2.toString
+    }
   }
 }
 
