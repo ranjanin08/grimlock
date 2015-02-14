@@ -18,6 +18,7 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.utility._
 
 /** Base trait for comparing two positions to determine is pairwise operation is to be applied. */
 trait Comparer {
@@ -31,34 +32,22 @@ trait Comparer {
 }
 
 /** Case object for computing all pairwise combinations. */
-case object All extends Comparer {
-  def check(l: Position, r: Position): Boolean = true
-}
+case object All extends Comparer { def check(l: Position, r: Position): Boolean = true }
 
 /** Case object for computing diagonal pairwise combinations (i.e. l == r). */
-case object Diagonal extends Comparer {
-  def check(l: Position, r: Position): Boolean = l.compare(r) == 0
-}
+case object Diagonal extends Comparer { def check(l: Position, r: Position): Boolean = l.compare(r) == 0 }
 
 /** Case object for computing upper triangular pairwise combinations (i.e. r > l). */
-case object Upper extends Comparer {
-  def check(l: Position, r: Position): Boolean = r.compare(l) > 0
-}
+case object Upper extends Comparer { def check(l: Position, r: Position): Boolean = r.compare(l) > 0 }
 
 /** Case object for computing upper triangular or diagonal pairwise combinations (i.e. r >= l). */
-case object UpperDiagonal extends Comparer {
-  def check(l: Position, r: Position): Boolean = r.compare(l) >= 0
-}
+case object UpperDiagonal extends Comparer { def check(l: Position, r: Position): Boolean = r.compare(l) >= 0 }
 
 /** Case object for computing lower triangular pairwise combinations (i.e. l > r). */
-case object Lower extends Comparer {
-  def check(l: Position, r: Position): Boolean = l.compare(r) > 0
-}
+case object Lower extends Comparer { def check(l: Position, r: Position): Boolean = l.compare(r) > 0 }
 
 /** Case object for computing lower triangular or diagonal pairwise combinations (i.e. l >= r). */
-case object LowerDiagonal extends Comparer {
-  def check(l: Position, r: Position): Boolean = l.compare(r) >= 0
-}
+case object LowerDiagonal extends Comparer { def check(l: Position, r: Position): Boolean = l.compare(r) >= 0 }
 
 /** Base trait for pairwise operations. */
 trait Operator
@@ -68,7 +57,7 @@ trait Compute extends ComputeWithValue { self: Operator =>
   type V = Any
 
   def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Option[Cell[rem.M]] = {
+    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Collection[Cell[rem.M]] = {
     compute(slice, leftPos, leftCon, rightPos, rightCon, rem)
   }
 
@@ -86,7 +75,7 @@ trait Compute extends ComputeWithValue { self: Operator =>
    *       (this can be done by comparing the selected coordinates)
    */
   def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]]
+    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R): Collection[Cell[rem.M]]
 }
 
 /** Base trait for computing pairwise values with a user provided value. */
@@ -109,7 +98,7 @@ trait ComputeWithValue { self: Operator =>
    *       (this can be done by comparing the selected coordinates)
    */
   def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Option[Cell[rem.M]]
+    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Collection[Cell[rem.M]]
 }
 
 // TODO: Add listable versions

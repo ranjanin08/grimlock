@@ -26,7 +26,7 @@ import au.com.cba.omnia.grimlock.reduce._
 import au.com.cba.omnia.grimlock.sample._
 import au.com.cba.omnia.grimlock.squash._
 import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.utility.{ =!=, Miscellaneous => Misc }
+import au.com.cba.omnia.grimlock.utility._
 
 import cascading.flow.FlowDef
 import com.twitter.scalding._
@@ -270,7 +270,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
       .groupBy { case (p, t) => p }
       .reduce[(slice.S, reducer.T)] { case ((lp, lt), (rp, rt)) => (lp, reducer.reduce(lt, rt)) }
       .values
-      .flatMap { case (p, t) => Misc.mapFlatten(reducer.presentMultiple(p, t)) }
+      .flatMap { case (p, t) => reducer.presentMultiple(p, t).toList }
   }
 
   /**
@@ -296,7 +296,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
       .groupBy { case (p, t) => p }
       .reduce[(slice.S, reducer.T)] { case ((lp, lt), (rp, rt)) => (lp, reducer.reduce(lt, rt)) }
       .values
-      .flatMap { case (p, t) => Misc.mapFlatten(reducer.presentMultiple(p, t)) }
+      .flatMap { case (p, t) => reducer.presentMultiple(p, t).toList }
   }
 
   /**
@@ -307,7 +307,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A Scalding `TypedPipe[(S, Cell[P])]` where `T` is the partition for the corresponding tuple.
    */
   def partition[S: Ordering](partitioner: Partitioner with Assign { type T = S }): TypedPipe[(S, Cell[P])] = {
-    data.flatMap { case (p, c) => Misc.mapFlatten(partitioner.assign(p), (p, c)) }
+    data.flatMap { case (p, c) => partitioner.assign(p).toList((p, c)) }
   }
 
   /**
@@ -320,7 +320,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def partitionWithValue[S: Ordering, W](partitioner: Partitioner with AssignWithValue { type V >: W; type T = S },
     value: ValuePipe[W]): TypedPipe[(S, Cell[P])] = {
-    data.flatMapWithValue(value) { case ((p, c), vo) => Misc.mapFlatten(partitioner.assign(p, vo.get), (p, c)) }
+    data.flatMapWithValue(value) { case ((p, c), vo) => partitioner.assign(p, vo.get).toList((p, c)) }
   }
 
   /**
@@ -401,7 +401,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
       .map { case ((p, c), pi) => (p, c) }
   }
 
-  /** Return the unique (distinct) contents of an entire matrix. */
+  /**
+   * Return the unique (distinct) contents of an entire matrix.
+   *
+   * @note Comparison is performed based on the string representation of the `Content`.
+   */
   def unique(): TypedPipe[Content] = {
     implicit def ContentOrdering: Ordering[Content] = new Ordering[Content] {
       def compare(l: Content, r: Content) = l.toString.compare(r.toString)
@@ -418,6 +422,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice Encapsulates the dimension(s) along which to join.
    *
    * @return A Scalding `TypedPipe[Cell[slice.S]]` consisting of the unique values.
+   *
+   * @note Comparison is performed based on the string representation of the `Cell[slice.S]`.
    */
   def unique[D <: Dimension](slice: Slice[P, D]): TypedPipe[Cell[slice.S]] = {
     implicit def CellOrdering: Ordering[Cell[slice.S]] = new Ordering[Cell[slice.S]] {
@@ -461,7 +467,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def pairwise[D <: Dimension](slice: Slice[P, D], operator: Operator with Compute)(
     implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
-    pairwise(slice).flatMap { case ((lp, lc), (rp, rc), r) => operator.compute(slice, lp, lc, rp, rc, r) }
+    pairwise(slice).flatMap { case ((lp, lc), (rp, rc), r) => operator.compute(slice, lp, lc, rp, rc, r).toList }
   }
 
   /**
@@ -477,7 +483,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     value: ValuePipe[W])(implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
     pairwise(slice)
       .flatMapWithValue(value) {
-        case (((lp, lc), (rp, rc), r), vo) => operator.compute(slice, lp, lc, rp, rc, r, vo.get)
+        case (((lp, lc), (rp, rc), r), vo) => operator.compute(slice, lp, lc, rp, rc, r, vo.get).toList
       }
   }
 
@@ -510,7 +516,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def pairwiseBetween[D <: Dimension](slice: Slice[P, D], that: Matrix[P], operator: Operator with Compute)(
     implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
-    pairwiseBetween(slice, that).flatMap { case ((lp, lc), (rp, rc), r) => operator.compute(slice, lp, lc, rp, rc, r) }
+    pairwiseBetween(slice, that).flatMap {
+      case ((lp, lc), (rp, rc), r) => operator.compute(slice, lp, lc, rp, rc, r).toList
+    }
   }
 
   /**
@@ -528,7 +536,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
       implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
     pairwiseBetween(slice, that)
       .flatMapWithValue(value) {
-        case (((lp, lc), (rp, rc), r), vo) => operator.compute(slice, lp, lc, rp, rc, r, vo.get)
+        case (((lp, lc), (rp, rc), r), vo) => operator.compute(slice, lp, lc, rp, rc, r, vo.get).toList
       }
   }
 
@@ -628,7 +636,7 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
   def transform[T](transformers: T)(implicit ev: Transformable[T]): TypedPipe[Cell[P#S]] = {
     val t = ev.convert(transformers)
 
-    data.flatMap { case (p, c) => Misc.mapFlatten(t.present(p, c)) }
+    data.flatMap { case (p, c) => t.present(p, c).toList }
   }
 
   /**
@@ -643,7 +651,7 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
     implicit ev: TransformableWithValue[T, V]): TypedPipe[Cell[P#S]] = {
     val t = ev.convert(transformers)
 
-    data.flatMapWithValue(value) { case ((p, c), vo) => Misc.mapFlatten(t.present(p, c, vo.get.asInstanceOf[t.V])) }
+    data.flatMapWithValue(value) { case ((p, c), vo) => t.present(p, c, vo.get.asInstanceOf[t.V]).toList }
   }
 
   /**
@@ -660,12 +668,13 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
       .map { case (p, c) => (slice.selected(p), slice.remainder(p), c) }
       .groupBy { case (s, r, c) => s }
       .sortBy { case (s, r, c) => r }
-      .scanLeft(Option.empty[(deriver.T, CellCollection[slice.S#M])]) {
-        case (None, (s, r, c)) => Some((deriver.initialise(s, r, c), None))
-        case (Some((t, _)), (s, r, c)) => Some(deriver.present(s, r, c, t))
+      .scanLeft(Option.empty[(deriver.T, Collection[Cell[slice.S#M]])]) {
+        case (None, (s, r, c)) => Some((deriver.initialise(s, r, c), Collection[Cell[slice.S#M]]()))
+        case (Some((t, _)), (s, r, c)) =>
+          Some(deriver.present(s, r, c, t).asInstanceOf[(deriver.T, Collection[Cell[slice.S#M]])])
       }
       .flatMap {
-        case (p, Some((t, oe @ Some(_)))) => Misc.mapFlatten(oe)
+        case (p, Some((t, c))) => c.toList
         case _ => List()
       }
   }
@@ -686,12 +695,14 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
       .map { case ((p, c), vo) => (slice.selected(p), slice.remainder(p), c, vo) }
       .groupBy { case (s, r, c, vo) => s }
       .sortBy { case (s, r, c, vo) => r }
-      .scanLeft(Option.empty[(deriver.T, CellCollection[slice.S#M])]) {
-        case (None, (s, r, c, vo)) => Some((deriver.initialise(s, r, c, vo.get.asInstanceOf[deriver.V]), None))
-        case (Some((t, _)), (s, r, c, vo)) => Some(deriver.present(s, r, c, t))
+      .scanLeft(Option.empty[(deriver.T, Collection[Cell[slice.S#M]])]) {
+        case (None, (s, r, c, vo)) =>
+          Some((deriver.initialise(s, r, c, vo.get.asInstanceOf[deriver.V]), Collection[Cell[slice.S#M]]()))
+        case (Some((t, _)), (s, r, c, vo)) =>
+          Some(deriver.present(s, r, c, t).asInstanceOf[(deriver.T, Collection[Cell[slice.S#M]])])
       }
       .flatMap {
-        case (p, Some((t, oe @ Some(_)))) => Misc.mapFlatten(oe)
+        case (p, Some((t, c))) => c.toList
         case _ => List()
       }
   }
@@ -877,7 +888,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
   def transformAndExpand[T](transformers: T)(implicit ev: TransformableExpanded[T]): TypedPipe[Cell[P#M]] = {
     val t = ev.convert(transformers)
 
-    data.flatMap { case (p, c) => Misc.mapFlatten(t.present(p, c)) }
+    data.flatMap { case (p, c) => t.present(p, c).toList }
   }
 
   /**
@@ -893,7 +904,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
     implicit ev: TransformableExpandedWithValue[T, V]): TypedPipe[Cell[P#M]] = {
     val t = ev.convert(transformers)
 
-    data.flatMapWithValue(value) { case ((p, c), vo) => Misc.mapFlatten(t.present(p, c, vo.get.asInstanceOf[t.V])) }
+    data.flatMapWithValue(value) { case ((p, c), vo) => t.present(p, c, vo.get.asInstanceOf[t.V]).toList }
   }
 
   /**
@@ -921,9 +932,6 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
 object Matrix {
   /** Type of cell in a Matrix. */
   type Cell[P <: Position] = (P, Content)
-
-  /** Type of a collection of cells. */
-  type CellCollection[P <: Position] = Misc.Collection[Cell[P]]
 
   /**
    * Read column oriented, pipe separated matrix data into a `TypedPipe[Cell[Position1D]]`.
@@ -1280,35 +1288,35 @@ object Matrix {
   }
 
   /** Conversion from `TypedPipe[Cell[Position1D]]` to a `Matrix1D`. */
-  implicit def typedPipePosition1DContent(data: TypedPipe[Cell[Position1D]]): Matrix1D = new Matrix1D(data)
+  implicit def TPP1DC2M1D(data: TypedPipe[Cell[Position1D]]): Matrix1D = new Matrix1D(data)
   /** Conversion from `TypedPipe[Cell[Position2D]]` to a `Matrix2D`. */
-  implicit def typedPipePosition2DContent(data: TypedPipe[Cell[Position2D]]): Matrix2D = new Matrix2D(data)
+  implicit def TPP2DC2M2D(data: TypedPipe[Cell[Position2D]]): Matrix2D = new Matrix2D(data)
   /** Conversion from `TypedPipe[Cell[Position3D]]` to a `Matrix3D`. */
-  implicit def typedPipePosition3DContent(data: TypedPipe[Cell[Position3D]]): Matrix3D = new Matrix3D(data)
+  implicit def TPP3DC2M3D(data: TypedPipe[Cell[Position3D]]): Matrix3D = new Matrix3D(data)
   /** Conversion from `TypedPipe[Cell[Position4D]]` to a `Matrix4D`. */
-  implicit def typedPipePosition4DContent(data: TypedPipe[Cell[Position4D]]): Matrix4D = new Matrix4D(data)
+  implicit def TPP4DC2M4D(data: TypedPipe[Cell[Position4D]]): Matrix4D = new Matrix4D(data)
   /** Conversion from `TypedPipe[Cell[Position5D]]` to a `Matrix5D`. */
-  implicit def typedPipePosition5DContent(data: TypedPipe[Cell[Position5D]]): Matrix5D = new Matrix5D(data)
+  implicit def TPP5DC2M5D(data: TypedPipe[Cell[Position5D]]): Matrix5D = new Matrix5D(data)
 
   /** Conversion from `List[(Valueable, Content)]` to a `Matrix1D`. */
-  implicit def tuple2List[V: Valueable](list: List[(V, Content)]): Matrix1D = {
+  implicit def LVCT2M1D[V: Valueable](list: List[(V, Content)]): Matrix1D = {
     new Matrix1D(new IterablePipe(list.map { case (v, c) => (Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a `Matrix2D`. */
-  implicit def tuple3List[V: Valueable, W: Valueable](list: List[(V, W, Content)]): Matrix2D = {
+  implicit def LVVCT2M2D[V: Valueable, W: Valueable](list: List[(V, W, Content)]): Matrix2D = {
     new Matrix2D(new IterablePipe(list.map { case (v, w, c) => (Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a `Matrix3D`. */
-  implicit def tuple4List[V: Valueable, W: Valueable, X: Valueable](list: List[(V, W, X, Content)]): Matrix3D = {
+  implicit def LVVVCT2M3D[V: Valueable, W: Valueable, X: Valueable](list: List[(V, W, X, Content)]): Matrix3D = {
     new Matrix3D(new IterablePipe(list.map { case (v, w, x, c) => (Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a `Matrix4D`. */
-  implicit def tuple5List[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
+  implicit def LVVVVCT2M4D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
     list: List[(V, W, X, Y, Content)]): Matrix4D = {
     new Matrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => (Position4D(v, w, x, y), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a `Matrix5D`. */
-  implicit def tuple6List[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LVVVVVCT2M5D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
     list: List[(V, W, X, Y, Z, Content)]): Matrix5D = {
     new Matrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => (Position5D(v, w, x, y, z), c) }))
   }
@@ -1430,6 +1438,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @param slice       Encapsulates the dimension that makes up the columns.
    * @param file        File to write to.
    * @param separator   Column separator to use.
+   * @param escapee     The method for escaping the separator character.
    * @param writeHeader Indicator of the header should be written to a separate file.
    * @param header      Postfix for the header file name.
    * @param writeRowId  Indicator if row names should be written.
@@ -1438,9 +1447,10 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    */
   def persistCSVFile[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
-    writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true, rowId: String = "id")(
-      implicit ev: PosDimDep[Position2D, D], flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
-    persistCSVFileWithNames(slice, file, names(slice), separator, writeHeader, header, writeRowId, rowId)
+    escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
+    rowId: String = "id")(implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
+      mode: Mode): TypedPipe[Cell[Position2D]] = {
+    persistCSVFileWithNames(slice, file, names(slice), separator, escapee, writeHeader, header, writeRowId, rowId)
   }
 
   /**
@@ -1450,6 +1460,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @param file        File to write to.
    * @param names       The names to use for the columns (according to their ordering).
    * @param separator   Column separator to use.
+   * @param escapee     The method for escaping the separator character.
    * @param writeHeader Indicator of the header should be written to a separate file.
    * @param header      Postfix for the header file name.
    * @param writeRowId  Indicator if row names should be written.
@@ -1460,34 +1471,39 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
    */
   def persistCSVFileWithNames[T, D <: Dimension](slice: Slice[Position2D, D], file: String, names: T,
-    separator: String = "|", writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
-    rowId: String = "id")(implicit ev1: Nameable[T, Position2D, slice.S, D], ev2: PosDimDep[Position2D, D],
-      flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
-    // Note: Usage of .toShortString should be safe as data is written
-    //       as string anyways. It does assume that all indices have
-    //       unique short string representations.
+    separator: String = "|", escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header",
+    writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: Nameable[T, Position2D, slice.S, D],
+      ev2: PosDimDep[Position2D, D], flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
+    // Note: Usage of .toShortString should be safe as data is written as string anyways. It does assume that all
+    //       indices have unique short string representations.
     val columns = ev1.convert(this, slice, names)
       .map { List(_) }
       .sum
-      .map { _.sortBy(_._2).map(_._1.toShortString("")) }
+      .map { _.sortBy(_._2).map { case (p, i) => escapee.escape(p.toShortString(""), separator) } }
 
     if (writeHeader) {
       columns
-        .map { case lst => if (writeRowId) rowId + separator + lst.mkString(separator) else lst.mkString(separator) }
+        .map {
+          case lst => (if (writeRowId) escapee.escape(rowId, separator) + separator else "") + lst.mkString(separator)
+        }
         .write(TypedSink(TextLine(header.format(file))))
     }
 
-    // TODO: Escape separator in values
     data
       .groupBy { case (p, c) => slice.remainder(p).toShortString("") }
-      .mapValues { case (p, c) => Map(slice.selected(p).toShortString("") -> c.value.toShortString) }
+      .mapValues {
+        case (p, c) => Map(escapee.escape(slice.selected(p).toShortString(""), separator) ->
+          escapee.escape(c.value.toShortString, separator))
+      }
       .sum
       .flatMapWithValue(columns) {
         case ((key, values), optCols) => optCols.map {
           case cols => (key, cols.map { case c => values.getOrElse(c, "") })
         }
       }
-      .map { case (i, lst) => if (writeRowId) i + separator + lst.mkString(separator) else lst.mkString(separator) }
+      .map {
+        case (i, lst) => (if (writeRowId) escapee.escape(i, separator) + separator else "") + lst.mkString(separator)
+      }
       .write(TypedSink(TextLine(file)))
 
     data
@@ -1609,16 +1625,13 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     data
   }
 
-  protected implicit def typedPipeSlicePosition2DSContent[D <: Dimension](
-    data: TypedPipe[Cell[Slice[Position2D, D]#S]]): Matrix1D = {
+  protected implicit def TPP2DSC2M1D[D <: Dimension](data: TypedPipe[Cell[Slice[Position2D, D]#S]]): Matrix1D = {
     new Matrix1D(data.asInstanceOf[TypedPipe[Cell[Position1D]]])
   }
-  protected implicit def typedPipeSlicePosition2DSMContent[D <: Dimension](
-    data: TypedPipe[Cell[Slice[Position2D, D]#S#M]]): Matrix2D = {
+  protected implicit def TPP2DSMC2M2D[D <: Dimension](data: TypedPipe[Cell[Slice[Position2D, D]#S#M]]): Matrix2D = {
     new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
   }
-  protected implicit def typedPipeSlicePosition2DRMContent[D <: Dimension](
-    data: TypedPipe[Cell[Slice[Position2D, D]#R#M]]): Matrix2D = {
+  protected implicit def TPP2DRMC2M2D[D <: Dimension](data: TypedPipe[Cell[Slice[Position2D, D]#R#M]]): Matrix2D = {
     new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
   }
 }
@@ -1895,22 +1908,21 @@ trait Matrixable[T, P <: Position] {
 /** Companion object for the `Matrixable` type class. */
 object Matrixable {
   /** Converts a `TypedPipe[Cell[P]]` into a `TypedPipe[Cell[P]]`; that is, it is a  pass through. */
-  implicit def MatrixMatrixable[P <: Position]: Matrixable[TypedPipe[Cell[P]], P] = {
+  implicit def M2M[P <: Position]: Matrixable[TypedPipe[Cell[P]], P] = {
     new Matrixable[TypedPipe[Cell[P]], P] { def convert(t: TypedPipe[Cell[P]]): TypedPipe[Cell[P]] = t }
   }
   /** Converts a `(PositionPipeable, Content)` tuple into a `TypedPipe[Cell[P]]`. */
-  implicit def PositionPipeableContentTupleMatrixable[T, P <: Position](
-    implicit ev: PositionPipeable[T, P]): Matrixable[(T, Content), P] = {
+  implicit def PPCT2M[T, P <: Position](implicit ev: PositionPipeable[T, P]): Matrixable[(T, Content), P] = {
     new Matrixable[(T, Content), P] {
       def convert(t: (T, Content)): TypedPipe[Cell[P]] = ev.convert(t._1).map { case p => (p, t._2) }
     }
   }
   /** Converts a `List[Cell[P]]` into a `TypedPipe[Cell[P]]`. */
-  implicit def ListCellMatrixable[P <: Position]: Matrixable[List[Cell[P]], P] = {
+  implicit def LC2M[P <: Position]: Matrixable[List[Cell[P]], P] = {
     new Matrixable[List[Cell[P]], P] { def convert(t: List[Cell[P]]): TypedPipe[Cell[P]] = new IterablePipe(t) }
   }
   /** Converts a `Cell[P]` tuple into a `TypedPipe[Cell[P]]`. */
-  implicit def CellMatrixable[P <: Position]: Matrixable[Cell[P], P] = {
+  implicit def C2M[P <: Position]: Matrixable[Cell[P], P] = {
     new Matrixable[Cell[P], P] { def convert(t: Cell[P]): TypedPipe[Cell[P]] = new IterablePipe(List(t)) }
   }
 }

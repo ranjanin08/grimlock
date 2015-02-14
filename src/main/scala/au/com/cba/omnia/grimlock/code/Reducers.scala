@@ -19,10 +19,9 @@ import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
-import au.com.cba.omnia.grimlock.Matrix.CellCollection
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.Type._
-import au.com.cba.omnia.grimlock.utility.=!=
+import au.com.cba.omnia.grimlock.utility._
 
 /** Trait for reducers that can be lenient or strict when it comes to invalid (or unexpected) values. */
 trait StrictReduce { self: Reducer =>
@@ -273,8 +272,8 @@ case class Moments private (strict: Boolean, nan: Boolean, moments: List[Int], n
 
   def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = content(t).map { case cl => (pos, cl(moments(0))) }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): CellCollection[pos.M] = {
-    content(t).map { case cl => Right(moments.map { case m => (pos.append(names(m)), cl(m)) }) }
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
+    Collection(content(t).map { case cl => Right(moments.map { case m => (pos.append(names(m)), cl(m)) }) })
   }
 
   protected def invalid(t: T): Boolean = t.mean.isNaN
@@ -793,8 +792,8 @@ trait ElementCounts { self: Reducer with Prepare with StrictReduce =>
 case class Histogram private (strict: Boolean, all: Option[Type], frequency: Boolean,
   statistics: List[Histogram.Statistic], name: String, separator: String) extends Reducer with Prepare
   with PresentMultiple with StrictReduce with ElementCounts {
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): CellCollection[pos.M] = {
-    t.map {
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
+    Collection(t.map {
       case m =>
         val counts = m.values.toList.sorted
         val stats = statistics.map { case f => f(pos, counts) }.flatten.asInstanceOf[List[Cell[pos.M]]]
@@ -807,7 +806,7 @@ case class Histogram private (strict: Boolean, all: Option[Type], frequency: Boo
         }).toList
 
         Right(stats ++ vals)
-    }
+    })
   }
 }
 
@@ -1006,8 +1005,8 @@ case class ThresholdCount private (strict: Boolean, nan: Boolean, threshold: Dou
     }
   }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): CellCollection[pos.M] = {
-    content(t).map { case cl => Right(names.zip(cl).map { case (n, c) => (pos.append(n), c) }) }
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
+    Collection(content(t).map { case cl => Right(names.zip(cl).map { case (n, c) => (pos.append(n), c) }) })
   }
 
   protected def invalid(t: T): Boolean = t._1 < 0
@@ -1161,7 +1160,7 @@ case class Quantiles(quantiles: Int, name: String = "quantile.%d") extends Reduc
 
   def reduce(lt: T, rt: T): T = lt ++ rt.map { case (k, v) => k -> (v + lt.getOrElse(k, 0L)) }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): CellCollection[pos.M] = {
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
     val keys = t.keys.toList
     val values = t.values
 
@@ -1170,9 +1169,9 @@ case class Quantiles(quantiles: Int, name: String = "quantile.%d") extends Reduc
 
     val boundaries = for (cnt <- (0.0 until N by (N / quantiles)).tail) yield keys(cumsum.indexWhere(_ >= cnt))
 
-    Some(Right((boundaries.zipWithIndex.map {
+    Collection((boundaries.zipWithIndex.map {
       case (quant, idx) => (pos.append(name.format(idx + 1)), Content(ContinuousSchema[Codex.DoubleCodex](), quant))
-    }).toList))
+    }).toList)
   }
 }
 

@@ -15,9 +15,9 @@
 package au.com.cba.omnia.grimlock.transform
 
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.Matrix.CellCollection
+import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utility.{ Miscellaneous => Misc }
+import au.com.cba.omnia.grimlock.utility._
 
 /** Base trait for transformations. */
 trait Transformer
@@ -26,7 +26,7 @@ trait Transformer
 trait Present extends PresentWithValue { self: Transformer =>
   type V = Any
 
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S] = {
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.S]] = {
     present(pos, con)
   }
 
@@ -39,7 +39,7 @@ trait Present extends PresentWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by modifiying `pos` and the
    *         content is derived from `con`.
    */
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content): CellCollection[pos.S]
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content): Collection[Cell[pos.S]]
 
   /**
    * Operator for chaining transformations
@@ -66,7 +66,7 @@ trait PresentWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by modifiying `pos` and the
    *         content is derived from `con`.
    */
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S]
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.S]]
 
   /**
    * Operator for chaining transformations
@@ -84,7 +84,7 @@ trait PresentWithValue { self: Transformer =>
 trait PresentExpanded extends PresentExpandedWithValue { self: Transformer =>
   type V = Any
 
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: V): CellCollection[pos.M] = {
+  def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.M]] = {
     present(pos, con)
   }
 
@@ -97,7 +97,7 @@ trait PresentExpanded extends PresentExpandedWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by appending to `pos` and
    *         the content is derived from `con`.
    */
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content): CellCollection[pos.M]
+  def present[P <: Position with ExpandablePosition](pos: P, con: Content): Collection[Cell[pos.M]]
 }
 
 /** Base trait for transformers that use a user supplied value and expand the position by appending a dimension. */
@@ -115,7 +115,7 @@ trait PresentExpandedWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by appending to `pos` and
    *         the content is derived from `con`.
    */
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: V): CellCollection[pos.M]
+  def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.M]]
 }
 
 /**
@@ -128,12 +128,14 @@ trait PresentExpandedWithValue { self: Transformer =>
  */
 case class AndThenTransformer(first: Transformer with Present, second: Transformer with Present) extends Transformer
   with Present {
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content): CellCollection[pos.S] = {
-    Some(Right(
-      Misc.mapFlatten(first.present(pos, con))
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content): Collection[Cell[pos.S]] = {
+    Collection(
+      first
+        .present(pos, con)
+        .toList
         .flatMap {
-          case (p, c) => Misc.mapFlatten(second.present(p.asInstanceOf[P], c).asInstanceOf[CellCollection[pos.S]])
-        }))
+          case (p, c) => second.present(p.asInstanceOf[P], c).asInstanceOf[Collection[Cell[pos.S]]].toList
+        })
   }
 }
 
@@ -148,13 +150,15 @@ case class AndThenTransformer(first: Transformer with Present, second: Transform
 case class AndThenTransformerWithValue[W](first: Transformer with PresentWithValue { type V >: W },
   second: Transformer with PresentWithValue { type V >: W }) extends Transformer with PresentWithValue {
   type V = W
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S] = {
-    Some(Right(
-      Misc.mapFlatten(first.present(pos, con, ext.asInstanceOf[first.V]))
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.S]] = {
+    Collection(
+      first
+        .present(pos, con, ext.asInstanceOf[first.V])
+        .toList
         .flatMap {
-          case (p, c) => Misc.mapFlatten(second.present(p.asInstanceOf[P], c,
-            ext.asInstanceOf[second.V]).asInstanceOf[CellCollection[pos.S]])
-        }))
+          case (p, c) => second.present(p.asInstanceOf[P], c,
+            ext.asInstanceOf[second.V]).asInstanceOf[Collection[Cell[pos.S]]].toList
+        })
   }
 }
 
@@ -167,8 +171,8 @@ case class AndThenTransformerWithValue[W](first: Transformer with PresentWithVal
  *       automatically to one of these.
  */
 case class CombinationTransformer[T <: Transformer with Present](singles: List[T]) extends Transformer with Present {
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content): CellCollection[pos.S] = {
-    Some(Right(singles.flatMap { case s => Misc.mapFlatten(s.present(pos, con)) }))
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content): Collection[Cell[pos.S]] = {
+    Collection(singles.flatMap { case s => s.present(pos, con).toList })
   }
 }
 
@@ -183,8 +187,8 @@ case class CombinationTransformer[T <: Transformer with Present](singles: List[T
 case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue, W](singles: List[T])
   extends Transformer with PresentWithValue {
   type V = W
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): CellCollection[pos.S] = {
-    Some(Right(singles.flatMap { case s => Misc.mapFlatten(s.present(pos, con, ext.asInstanceOf[s.V])) }))
+  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.S]] = {
+    Collection(singles.flatMap { case s => s.present(pos, con, ext.asInstanceOf[s.V]).toList })
   }
 }
 
@@ -198,8 +202,8 @@ case class CombinationTransformerWithValue[T <: Transformer with PresentWithValu
  */
 case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded](singles: List[T]) extends Transformer
   with PresentExpanded {
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content): CellCollection[pos.M] = {
-    Some(Right(singles.flatMap { case s => Misc.mapFlatten(s.present(pos, con)) }))
+  def present[P <: Position with ExpandablePosition](pos: P, con: Content): Collection[Cell[pos.M]] = {
+    Collection(singles.flatMap { case s => s.present(pos, con).toList })
   }
 }
 
@@ -214,8 +218,8 @@ case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded]
 case class CombinationTransformerExpandedWithValue[T <: Transformer with PresentExpandedWithValue, W](singles: List[T])
   extends Transformer with PresentExpandedWithValue {
   type V = W
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: W): CellCollection[pos.M] = {
-    Some(Right(singles.flatMap { case s => Misc.mapFlatten(s.present(pos, con, ext.asInstanceOf[s.V])) }))
+  def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: W): Collection[Cell[pos.M]] = {
+    Collection(singles.flatMap { case s => s.present(pos, con, ext.asInstanceOf[s.V]).toList })
   }
 }
 

@@ -21,6 +21,7 @@ import au.com.cba.omnia.grimlock.derive._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix._
 import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.utility._
 
 import com.twitter.scalding._
 
@@ -36,7 +37,7 @@ case class Gradient(dim: Dimension) extends Deriver with Initialise {
 
   // For each new cell, output the difference with the previous cell (contained in `t`).
   def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-    t: T): (T, CellCollection[sel.M]) = {
+    t: T): (T, Collection[Cell[sel.M]]) = {
     // Get current date from `rem` and previous date from `t` and compute number of days between the dates.
     val days = rem.get(dim).asDate.flatMap {
       case dc => t._1.get(dim).asDate.map { case dt => (dc.getTime - dt.getTime) / DayInMillis }
@@ -54,7 +55,7 @@ case class Gradient(dim: Dimension) extends Deriver with Initialise {
     }
 
     // Update state to be current `rem` and `con`, and output the gradient.
-    ((rem, con), grad)
+    ((rem, con), Collection(grad))
   }
 }
 

@@ -126,6 +126,7 @@ case class ContinuousSchema[C <: Codex] private (minimum: Option[C#T], maximum: 
 object ContinuousSchema {
   /** Construct a continuous schema with unbounded range. */
   def apply[C <: Codex]()(implicit codex: C, num: Numeric[C#T]): ContinuousSchema[C] = ContinuousSchema(None, None)
+
   /**
    * Construct a continuous schema with bounded range.
    *
@@ -175,6 +176,7 @@ case class DiscreteSchema[C <: Codex] private (minimum: Option[C#T], maximum: Op
 object DiscreteSchema {
   /** Construct a discrete schema with unbounded range and step size 1. */
   def apply[C <: Codex]()(implicit codex: C, int: Integral[C#T]): DiscreteSchema[C] = DiscreteSchema(None, None, None)
+
   /**
    * Construct a discrete schema with bounded range and step size.
    *
@@ -226,6 +228,7 @@ case class NominalSchema[C <: Codex] private (domain: Option[List[C#T]])(implici
 object NominalSchema {
   /** Construct a nominal schema that can take on any value. */
   def apply[C <: Codex]()(implicit codex: C): NominalSchema[C] = NominalSchema(None)
+
   /**
    * Construct a nominal schema.
    *
@@ -260,6 +263,7 @@ case class OrdinalSchema[C <: Codex] private (domain: Option[List[C#T]])(implici
 object OrdinalSchema {
   /** Construct a ordinal schema that can take on any value. */
   def apply[C <: Codex]()(implicit codex: C): OrdinalSchema[C] = OrdinalSchema(None)
+
   /**
    * Construct a ordinal schema.
    *

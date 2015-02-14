@@ -27,7 +27,7 @@ import au.com.cba.omnia.grimlock.position.Positions._
 import au.com.cba.omnia.grimlock.reduce._
 import au.com.cba.omnia.grimlock.transform._
 import au.com.cba.omnia.grimlock.Types._
-import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
+import au.com.cba.omnia.grimlock.utility._
 
 import com.twitter.scalding._
 
@@ -91,9 +91,9 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
 
     def assign[P <: Position](pos: P): Collection[T] = {
       if (pos.get(dim).toShortString == "iid:0364354" || pos.get(dim).toShortString == "iid:0216406") {
-        Some(Left(right))
+        Collection(right)
       } else {
-        Some(Left(left))
+        Collection(left)
       }
     }
   }
@@ -138,9 +138,13 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
     .which((pos: Position, con: Content) => (pos.get(Second) like ".*=.*".r) && (con.value equ 1))
     .names(Over(Second))
 
+  // List of transformations to apply to each partition.
+  val transforms = List(
+    Clamp(Second, lower="min", upper="max") andThen Standardise(Second, mean="mean", sd="sd"),
+    Binarise(Second))
+
   // For each partition:
-  //  1a/ Get the data;
-  //  1b/ Remove sparse features;
+  //  1/  Remove sparse features;
   //  2/  Create indicator features;
   //  3a/ Remove constant features;
   //  3b/ Clamp features to min/max value of the training data and standardise, binarise categorical features;
@@ -148,13 +152,8 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   //  4a/ Combine preprocessed data sets;
   //  4b/ Optionally fill the matrix (note: this is expensive);
   //  4c/ Save the result as pipe separated CSV for use in modelling.
-  val transforms = List(
-    Clamp(Second, lower="min", upper="max") andThen Standardise(Second, mean="mean", sd="sd"),
-    Binarise(Second))
-
-  for (p <- List("train", "test")) {
-    val d = parts
-      .get(p)
+  def prepare(key: String, partition: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {
+    val d = partition
       .slice(Over(Second), rem1, false)
 
     val ind = d
@@ -167,8 +166,12 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
 
     (ind ++ csb)
       //.fill(Content(ContinuousSchema[Codex.DoubleCodex], 0))
-      .persistCSVFile(Over(Second), "./demo/" + p + ".csv")
+      .persistCSVFile(Over(Second), "./demo/" + key + ".csv")
   }
+
+  // Prepare each partition.
+  parts
+    .foreach(List("train", "test"), prepare)
 }
 
 class Scoring(args : Args) extends Job(args) {
@@ -254,8 +257,8 @@ class LabelWeighting(args: Args) extends Job(args) {
 
     // Adding the weight is a straight forward lookup by the value of the content. Also return this cell
     // (pos.append("label"), con) so no additional join is needed with the original label data.
-    def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: V): CellCollection[pos.M] = {
-      Some(Right(List((pos.append("label"), con), (pos.append("weight"), ext(Position1D(con.value.toShortString))))))
+    def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.M]] = {
+      Collection(List((pos.append("label"), con), (pos.append("weight"), ext(Position1D(con.value.toShortString)))))
     }
   }
 

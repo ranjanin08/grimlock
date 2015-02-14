@@ -23,6 +23,7 @@ import au.com.cba.omnia.grimlock.NLP._
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.reduce._
 import au.com.cba.omnia.grimlock.transform._
+import au.com.cba.omnia.grimlock.utility._
 
 import cascading.flow.FlowDef
 import com.twitter.scalding._
@@ -85,11 +86,11 @@ case object ExampleEventCodex extends EventCodex {
 // Transformer for denormalising events; that is, create a separate cell in the matrix for each (event, instance) pair.
 // Assumes that the initial position is 1D with event id (as is the output from `read` above).
 case class Denormalise() extends Transformer with PresentExpanded {
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content): CellCollection[pos.M] = {
+  def present[P <: Position with ExpandablePosition](pos: P, con: Content): Collection[Cell[pos.M]] = {
     con match {
       case Content(_, EventValue(ExampleEvent(_, _, _, _, instances, _), _)) =>
-        Some(Right(for { iid <- instances } yield { (pos.append(iid), con) }))
-      case _ => None
+        Collection(for { iid <- instances } yield { (pos.append(iid), con) })
+      case _ => Collection[Cell[pos.M]]()
     }
   }
 }
@@ -98,7 +99,7 @@ case class Denormalise() extends Transformer with PresentExpanded {
 // simply return the count for each term (word or ngram) in the document (i.e. event).
 case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separator: String = "_",
   stopwords: List[String] = Stopwords.English) extends Transformer with PresentExpanded {
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content): CellCollection[pos.M] = {
+  def present[P <: Position with ExpandablePosition](pos: P, con: Content): Collection[Cell[pos.M]] = {
     con match {
       case Content(_, EventValue(ExampleEvent(_, _, _, _, _, details), _)) =>
         // Get words from details. Optionally filter by length and/or stopwords.
@@ -120,11 +121,11 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
         }
 
         // Return the term and it's count in the document.
-        Some(Right(terms
+        Collection(terms
           .groupBy(identity)
           .map { case (k, v) => (pos.append(k), Content(DiscreteSchema[Codex.LongCodex](), v.size)) }
-          .toList))
-      case _ => None
+          .toList)
+      case _ => Collection[Cell[pos.M]]()
     }
   }
 }

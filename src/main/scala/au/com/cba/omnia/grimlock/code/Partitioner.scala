@@ -18,9 +18,10 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
+import au.com.cba.omnia.grimlock.utility._
 
 import com.twitter.scalding._
+import com.twitter.scalding.typed.Grouped
 
 /** Base trait for partitioning operations. */
 trait Partitioner {
@@ -67,17 +68,57 @@ trait AssignWithValue { self: Partitioner =>
  */
 class Partitions[T: Ordering, P <: Position](
   protected val data: TypedPipe[(T, Cell[P])]) extends Persist[(T, Cell[P])] {
-  // TODO: Add 'keys'/'hasKey'/'set'/'modify' methods?
-  // TODO: Add 'foreach' method - to apply function to all data for each key
+  /** Return the partition identifiers. */
+  def keys(): TypedPipe[T] = Grouped(data).keys
 
   /**
    * Return the data for the partition `key`.
    *
    * @param key The partition for which to get the data.
    *
-   * @return A `TypedPipe[(Position, Content)]`; that is a matrix.
+   * @return A `TypedPipe[Cell[P]]`; that is a matrix.
    */
   def get(key: T): TypedPipe[Cell[P]] = data.collect { case (t, pc) if (key == t) => pc }
+
+  /**
+   * Add a partition.
+   *
+   * @param key       The partition identifier.
+   * @param partition The partition to add.
+   *
+   * @return A `TypedPipe[(T, Cell[P])]` containing existing and new paritions.
+   */
+  def add(key: T, partition: TypedPipe[Cell[P]]): TypedPipe[(T, Cell[P])] = {
+    data ++ (partition.map { case c => (key, c) })
+  }
+
+  /**
+   * Remove a partition.
+   *
+   * @param key The identifier for the partition to remove.
+   *
+   * @return A `TypedPipe[(T, Cell[P])]` with the selected parition removed.
+   */
+  def remove(key: T): TypedPipe[(T, Cell[P])] = data.filter { case (t, c) => t != key }
+
+  /**
+   * Apply function `fn` to each partition in `keys`.
+   *
+   * @param keys The list of partitions to apply `fn` to.
+   * @param fn   The function to apply to each partition.
+   *
+   * @return A `TypedPipe[(T, Cell[Q])]` containing the paritions in `keys` with `fn` applied to them.
+   */
+  def foreach[Q <: Position](keys: List[T],
+    fn: (T, TypedPipe[Cell[P]]) => TypedPipe[Cell[Q]]): TypedPipe[(T, Cell[Q])] = {
+    import Partitions._
+
+    // TODO: This read the data keys.length times. Is there a way to read it only once?
+    //       Perhaps with Grouped.mapGroup and Execution[T]?
+    keys
+      .map { case k => fn(k, data.get(k)).map { case c => (k, c) } }
+      .reduce[TypedPipe[(T, Cell[Q])]]((x, y) => x ++ y)
+  }
 
   protected def toString(t: (T, Cell[P]), separator: String, descriptive: Boolean): String = {
     descriptive match {

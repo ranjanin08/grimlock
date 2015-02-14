@@ -16,7 +16,7 @@ package au.com.cba.omnia.grimlock.partition
 
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
+import au.com.cba.omnia.grimlock.utility._
 
 import java.util.Date
 
@@ -37,7 +37,7 @@ case class BinaryHashSplit[S: Ordering](dim: Dimension, ratio: Int, left: S, rig
   type T = S
 
   def assign[P <: Position](pos: P): Collection[T] = {
-    Some(Left(if (math.abs(pos.get(dim).hashCode % base) <= ratio) left else right))
+    Collection(if (math.abs(pos.get(dim).hashCode % base) <= ratio) left else right)
   }
 }
 
@@ -64,7 +64,7 @@ case class TernaryHashSplit[S: Ordering](dim: Dimension, lower: Int, upper: Int,
   def assign[P <: Position](pos: P): Collection[T] = {
     val hash = math.abs(pos.get(dim).hashCode % base)
 
-    Some(Left(if (hash <= lower) left else if (hash <= upper) middle else right))
+    Collection(if (hash <= lower) left else if (hash <= upper) middle else right)
   }
 }
 
@@ -87,10 +87,10 @@ case class HashSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Int, Int)], ba
   def assign[P <: Position](pos: P): Collection[T] = {
     val hash = math.abs(pos.get(dim).hashCode % base)
 
-    Some(Right(ranges.flatMap {
+    Collection(ranges.flatMap {
       case (k, (l, u)) if (hash > l && hash <= u) => Some(k)
       case _ => None
-    }.toList))
+    }.toList)
   }
 }
 
@@ -112,7 +112,7 @@ case class BinaryDateSplit[S: Ordering](dim: Dimension, date: Date, left: S, rig
   type T = S
 
   def assign[P <: Position](pos: P): Collection[T] = {
-    codex.compare(pos.get(dim), codex.toValue(date)).map { case cmp => Left(if (cmp <= 0) left else right) }
+    Collection(codex.compare(pos.get(dim), codex.toValue(date)).map { case cmp => Left(if (cmp <= 0) left else right) })
   }
 }
 
@@ -139,8 +139,8 @@ case class TernaryDateSplit[S: Ordering](dim: Dimension, lower: Date, upper: Dat
     val coord = pos.get(dim)
 
     (codex.compare(coord, codex.toValue(lower)), codex.compare(coord, codex.toValue(upper))) match {
-      case (Some(l), Some(u)) => Some(Left(if (l <= 0) left else if (u <= 0) middle else right))
-      case _ => None
+      case (Some(l), Some(u)) => Collection(if (l <= 0) left else if (u <= 0) middle else right)
+      case _ => Collection[T]()
     }
   }
 }
@@ -170,7 +170,7 @@ case class DateSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Date, Date)], 
         }
     }.toList
 
-    Some(Right(parts))
+    Collection(parts)
   }
 }
 

@@ -18,18 +18,19 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix.CellCollection
+import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.utility._
 
 /** Base trait for computing a moving average. */
 trait MovingAverage { self: Deriver =>
   protected def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, coord: Value, curr: Double,
-    prev: Option[(Value, Double)]) = {
+    prev: Option[(Value, Double)]): Collection[Cell[sel.M]] = {
     val cell = (sel.append(coord), Content(ContinuousSchema[Codex.DoubleCodex](), curr))
 
     prev match {
-      case None => Some(Left(cell))
-      case Some((c, v)) => Some(Right(List((sel.append(c), Content(ContinuousSchema[Codex.DoubleCodex](), v)), cell)))
+      case None => Collection(cell)
+      case Some((c, v)) => Collection(List((sel.append(c), Content(ContinuousSchema[Codex.DoubleCodex](), v)), cell))
     }
   }
 
@@ -61,11 +62,11 @@ trait BatchMovingAverage extends Deriver with Initialise with MovingAverage {
   }
 
   def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-    t: T): (T, CellCollection[sel.M]) = {
+    t: T): (T, Collection[Cell[sel.M]]) = {
     val lst = updateList(rem, con, t._1)
     val out = (all || lst.size == window) match {
       case true => present(sel, lst(math.min(idx, lst.size - 1))._1, compute(lst), t._2)
-      case false => None
+      case false => Collection[Cell[sel.M]]()
     }
 
     ((lst, None), out)
@@ -139,7 +140,7 @@ trait OnlineMovingAverage extends Deriver with Initialise with MovingAverage {
   }
 
   def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-    t: T): (T, CellCollection[sel.M]) = {
+    t: T): (T, Collection[Cell[sel.M]]) = {
     val curr = compute(getDouble(con), t)
 
     ((curr, t._2 + 1, None), present(sel, rem.get(dim), curr, t._3))

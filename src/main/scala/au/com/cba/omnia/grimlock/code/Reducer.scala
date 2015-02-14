@@ -18,9 +18,8 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
-import au.com.cba.omnia.grimlock.Matrix.CellCollection
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utility.{ Miscellaneous => Misc }
+import au.com.cba.omnia.grimlock.utility._
 
 /**
  * Base trait for reductions.
@@ -115,7 +114,7 @@ trait PresentMultiple { self: Reducer =>
    *       `None`. This in turn permits an external API, for simple cases, where the user need not know about the types
    *       of variables of their data.
    */
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): CellCollection[pos.M]
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]]
 }
 
 /** Convenience trait for reducers that present a value both as `PresentSingle` and `PresentMultiple`. */
@@ -123,10 +122,10 @@ trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple { self
 
   def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = content(t).map { case c => (pos, c) }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): CellCollection[pos.M] = {
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
     name match {
-      case Some(n) => content(t).map { case con => Left((pos.append(n), con)) }
-      case None => Option.empty[Either[Cell[pos.M], List[Cell[pos.M]]]]
+      case Some(n) => Collection(content(t).map { case con => Left((pos.append(n), con)) })
+      case None => Collection[Cell[pos.M]]()
     }
   }
 
@@ -158,10 +157,10 @@ case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMult
     }
   }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): CellCollection[pos.M] = {
-    Some(Right((reducers, t).zipped.flatMap {
-      case (reducer, s) => Misc.mapFlatten(reducer.presentMultiple(pos, s.asInstanceOf[reducer.T]))
-    }))
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
+    Collection((reducers, t).zipped.flatMap {
+      case (reducer, s) => reducer.presentMultiple(pos, s.asInstanceOf[reducer.T]).toList
+    })
   }
 }
 
@@ -188,10 +187,10 @@ case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValu
     }
   }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): CellCollection[pos.M] = {
-    Some(Right((reducers, t).zipped.flatMap {
-      case (reducer, s) => Misc.mapFlatten(reducer.presentMultiple(pos, s.asInstanceOf[reducer.T]))
-    }))
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
+    Collection((reducers, t).zipped.flatMap {
+      case (reducer, s) => reducer.presentMultiple(pos, s.asInstanceOf[reducer.T]).toList
+    })
   }
 }
 

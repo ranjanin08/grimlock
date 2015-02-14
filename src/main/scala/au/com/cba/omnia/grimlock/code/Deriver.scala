@@ -16,8 +16,9 @@ package au.com.cba.omnia.grimlock.derive
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.Matrix.CellCollection
+import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.utility._
 
 /**
  * Base trait for generating derived data.
@@ -44,7 +45,7 @@ trait Deriver {
    * @return A tuple consisting of updated state together with optional derived data.
    */
   def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-    t: T): (T, CellCollection[sel.M])
+    t: T): (T, Collection[Cell[sel.M]])
 }
 
 /** Base trait for initialising a deriver. */

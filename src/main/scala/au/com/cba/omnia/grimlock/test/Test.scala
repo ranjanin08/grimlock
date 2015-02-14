@@ -33,7 +33,7 @@ import au.com.cba.omnia.grimlock.squash._
 import au.com.cba.omnia.grimlock.transform._
 import au.com.cba.omnia.grimlock.Type._
 import au.com.cba.omnia.grimlock.Types._
-import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
+import au.com.cba.omnia.grimlock.utility._
 
 import cascading.flow.FlowDef
 import com.twitter.scalding._
@@ -265,10 +265,10 @@ class Test9(args : Args) extends Job(args) {
     type T = String
 
     def assign[P <: Position](pos: P): Collection[T] = {
-      Some(Right(List(pos.get(dim) match {
+      Collection(List(pos.get(dim) match {
         case StringValue("fid:A") => "training"
         case StringValue("fid:B") => "testing"
-      }, "scoring")))
+      }, "scoring"))
     }
   }
 
@@ -285,10 +285,10 @@ class Test9(args : Args) extends Job(args) {
     type T = (Int, Int, Int)
 
     def assign[P <: Position](pos: P): Collection[T] = {
-      Some(Right(List(pos.get(dim) match {
+      Collection(List(pos.get(dim) match {
         case StringValue("fid:A") => (1, 0, 0)
         case StringValue("fid:B") => (0, 1, 0)
-      }, (0, 0, 1))))
+      }, (0, 0, 1)))
     }
   }
 
@@ -513,7 +513,7 @@ class Test19(args : Args) extends Job(args) {
     val bhs = BinaryHashSplit(dim, 7, left, right, base=10)
     def assign[P <: Position](pos: P): Collection[T] = {
       if (pos.get(dim).toShortString == "iid:0364354") {
-        Some(Left(right))
+        Collection(right)
       } else {
         bhs.assign(pos)
       }
@@ -531,15 +531,17 @@ class Test19(args : Args) extends Job(args) {
     .which((pos: Position, con: Content) => (pos.get(Second) equ "count") && (con.value leq 2))
     .names(Over(First))
 
-  for (p <- List("train", "test")) {
-    parts
-      .get(p)
+  def cb(key: String, pipe: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {
+    pipe
       .slice(Over(Second), rem, false)
       .transformWithValue(List(Indicator(Second, name="%1$s.ind"), Binarise(Second), Normalise(Second, key="max.abs")),
         stats.toMap(Over(First)))
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
-      .persistCSVFile(Over(Second), "./tmp/pln_" + p + ".csv")
+      .persistCSVFile(Over(Second), "./tmp/pln_" + key + ".csv")
   }
+
+  parts
+    .foreach(List("train", "test"), cb)
 }
 
 class Test20(args : Args) extends Job(args) {
@@ -578,11 +580,11 @@ class Test22(args : Args) extends Job(args) {
 
     def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content): T = (rem, con)
     def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-      t: T): (T, CellCollection[sel.M]) = {
+      t: T): (T, Collection[Cell[sel.M]]) = {
       ((rem, con), (con.value.asDouble, t._2.value.asDouble) match {
-        case (Some(c), Some(l)) => Some(Left((sel.append(rem.toShortString("") + "-" + t._1.toShortString("")),
-          Content(ContinuousSchema[Codex.DoubleCodex](), c - l))))
-        case _ => None
+        case (Some(c), Some(l)) => Collection(sel.append(rem.toShortString("") + "-" + t._1.toShortString("")),
+          Content(ContinuousSchema[Codex.DoubleCodex](), c - l))
+        case _ => Collection[Cell[sel.M]]()
       })
     }
   }
@@ -603,14 +605,14 @@ class Test23(args : Args) extends Job(args) {
 
   case class DiffSquared() extends Operator with Compute {
     def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-      rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
+      rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R): Collection[Cell[rem.M]] = {
       val xc = leftPos.toShortString("")
       val yc = rightPos.toShortString("")
 
       (xc < yc && xc != yc) match {
-        case true => Some((rem.append("(" + xc + "-" + yc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
-          math.pow(leftCon.value.asLong.get - rightCon.value.asLong.get, 2))))
-        case false => None
+        case true => Collection(rem.append("(" + xc + "-" + yc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          math.pow(leftCon.value.asLong.get - rightCon.value.asLong.get, 2)))
+        case false => Collection[Cell[rem.M]]
       }
     }
   }

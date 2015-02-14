@@ -20,6 +20,7 @@ import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.utility._
 
 /** Convenience trait for operators that apply to `Double` values. */
 trait DoubleOperator { self: Operator with Compute =>
@@ -52,13 +53,13 @@ trait DoubleOperator { self: Operator with Compute =>
    *       (this can be done by comparing the selected coordinates)
    */
   def compute[P <: Position, D <: Dimension](slice: Slice[P, D], lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S,
-    rc: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
+    rc: Content, rem: Slice[P, D]#R): Collection[Cell[rem.M]] = {
     val coordinate = name.format(lp.toShortString(separator), rp.toShortString(separator))
 
     (comparer.check(lp, rp), lc.value.asDouble, rc.value.asDouble) match {
-      case (true, Some(l), Some(r)) => Some((rem.prepend(coordinate),
-        Content(ContinuousSchema[Codex.DoubleCodex](), if (inverse) compute(r, l) else compute(l, r))))
-      case _ => None
+      case (true, Some(l), Some(r)) => Collection(rem.prepend(coordinate),
+        Content(ContinuousSchema[Codex.DoubleCodex](), if (inverse) compute(r, l) else compute(l, r)))
+      case _ => Collection[Cell[rem.M]]()
     }
   }
 
@@ -104,14 +105,14 @@ case class Divide(name: String = "(%s/%s)", separator: String = "|", inverse: Bo
 case class Concatenate(name: String = "(%s,%s)", value: String = "%s,%s", separator: String = "|",
   comparer: Comparer = Lower) extends Operator with Compute {
   def compute[P <: Position, D <: Dimension](slice: Slice[P, D], lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S,
-    rc: Content, rem: Slice[P, D]#R): Option[Cell[rem.M]] = {
+    rc: Content, rem: Slice[P, D]#R): Collection[Cell[rem.M]] = {
     comparer.check(lp, rp) match {
       case true =>
         val coordinate = name.format(lp.toShortString(separator), rp.toShortString(separator))
         val content = value.format(lc.value.toShortString, rc.value.toShortString)
 
-        Some((rem.prepend(coordinate), Content(NominalSchema[Codex.StringCodex](), content)))
-      case false => None
+        Collection(rem.prepend(coordinate), Content(NominalSchema[Codex.StringCodex](), content))
+      case false => Collection[Cell[rem.M]]()
     }
   }
 }
