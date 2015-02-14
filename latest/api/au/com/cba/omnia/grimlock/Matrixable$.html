@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the <code>Matrixable</code> type class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4161af31cea5ae2d2b1b725902540ad8e55a0132//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the <code>Matrixable</code> type class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/82e0d397693a0f773038b7b8a253a74835120bfb//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -150,55 +150,55 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.Matrixable#CellMatrixable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CellMatrixable[P&lt;:au.com.cba.omnia.grimlock.position.Position](implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):au.com.cba.omnia.grimlock.Matrixable[(P,au.com.cba.omnia.grimlock.content.Content),P]"></a>
-      <a id="CellMatrixable[P&lt;:Position](FlowDef,Mode):Matrixable[(P,Content),P]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.Matrixable#C2M" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="C2M[P&lt;:au.com.cba.omnia.grimlock.position.Position]:au.com.cba.omnia.grimlock.Matrixable[(P,au.com.cba.omnia.grimlock.content.Content),P]"></a>
+      <a id="C2M[P&lt;:Position]:Matrixable[(P,Content),P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">CellMatrixable</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span class="implicit">implicit </span><span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <a href="Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.Matrixable">Matrixable</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.CellMatrixable.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>), <span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.CellMatrixable.P">P</span>]</span>
+        <span class="name">C2M</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="result">: <a href="Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.Matrixable">Matrixable</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.C2M.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>), <span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.C2M.P">P</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Converts a <code>Cell[P]</code> tuple into a <code>TypedPipe[Cell[P]]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.Matrixable#ListCellMatrixable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ListCellMatrixable[P&lt;:au.com.cba.omnia.grimlock.position.Position](implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):au.com.cba.omnia.grimlock.Matrixable[List[(P,au.com.cba.omnia.grimlock.content.Content)],P]"></a>
-      <a id="ListCellMatrixable[P&lt;:Position](FlowDef,Mode):Matrixable[List[(P,Content)],P]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.Matrixable#LC2M" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LC2M[P&lt;:au.com.cba.omnia.grimlock.position.Position]:au.com.cba.omnia.grimlock.Matrixable[List[(P,au.com.cba.omnia.grimlock.content.Content)],P]"></a>
+      <a id="LC2M[P&lt;:Position]:Matrixable[List[(P,Content)],P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ListCellMatrixable</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span class="implicit">implicit </span><span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <a href="Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.Matrixable">Matrixable</a>[<span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.ListCellMatrixable.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)], <span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.ListCellMatrixable.P">P</span>]</span>
+        <span class="name">LC2M</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="result">: <a href="Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.Matrixable">Matrixable</a>[<span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.LC2M.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)], <span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.LC2M.P">P</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Converts a <code>List[Cell[P]]</code> into a <code>TypedPipe[Cell[P]]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.Matrixable#MatrixMatrixable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="MatrixMatrixable[P&lt;:au.com.cba.omnia.grimlock.position.Position]:au.com.cba.omnia.grimlock.Matrixable[com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)],P]"></a>
-      <a id="MatrixMatrixable[P&lt;:Position]:Matrixable[TypedPipe[(P,Content)],P]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.Matrixable#M2M" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="M2M[P&lt;:au.com.cba.omnia.grimlock.position.Position]:au.com.cba.omnia.grimlock.Matrixable[com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)],P]"></a>
+      <a id="M2M[P&lt;:Position]:Matrixable[TypedPipe[(P,Content)],P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">MatrixMatrixable</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="result">: <a href="Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.Matrixable">Matrixable</a>[<span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.MatrixMatrixable.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)], <span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.MatrixMatrixable.P">P</span>]</span>
+        <span class="name">M2M</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="result">: <a href="Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.Matrixable">Matrixable</a>[<span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.M2M.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)], <span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.M2M.P">P</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Converts a <code>TypedPipe[Cell[P]]</code> into a <code>TypedPipe[Cell[P]]</code>; that is, it is a  pass through.</p>
-    </li><li name="au.com.cba.omnia.grimlock.Matrixable#PositionPipeableContentTupleMatrixable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="PositionPipeableContentTupleMatrixable[T,P&lt;:au.com.cba.omnia.grimlock.position.Position](implicitev:au.com.cba.omnia.grimlock.position.PositionPipeable[T,P],implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):au.com.cba.omnia.grimlock.Matrixable[(T,au.com.cba.omnia.grimlock.content.Content),P]"></a>
-      <a id="PositionPipeableContentTupleMatrixable[T,P&lt;:Position](PositionPipeable[T,P],FlowDef,Mode):Matrixable[(T,Content),P]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.Matrixable#PPCT2M" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PPCT2M[T,P&lt;:au.com.cba.omnia.grimlock.position.Position](implicitev:au.com.cba.omnia.grimlock.position.PositionPipeable[T,P]):au.com.cba.omnia.grimlock.Matrixable[(T,au.com.cba.omnia.grimlock.content.Content),P]"></a>
+      <a id="PPCT2M[T,P&lt;:Position](PositionPipeable[T,P]):Matrixable[(T,Content),P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">PositionPipeableContentTupleMatrixable</span><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PositionPipeable.html" class="extype" name="au.com.cba.omnia.grimlock.position.PositionPipeable">PositionPipeable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.PositionPipeableContentTupleMatrixable.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.PositionPipeableContentTupleMatrixable.P">P</span>]</span>, <span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <a href="Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.Matrixable">Matrixable</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.PositionPipeableContentTupleMatrixable.T">T</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>), <span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.PositionPipeableContentTupleMatrixable.P">P</span>]</span>
+        <span class="name">PPCT2M</span><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PositionPipeable.html" class="extype" name="au.com.cba.omnia.grimlock.position.PositionPipeable">PositionPipeable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.PPCT2M.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.PPCT2M.P">P</span>]</span>)</span><span class="result">: <a href="Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.Matrixable">Matrixable</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.PPCT2M.T">T</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>), <span class="extype" name="au.com.cba.omnia.grimlock.Matrixable.PPCT2M.P">P</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Converts a <code>(PositionPipeable, Content)</code> tuple into a <code>TypedPipe[Cell[P]]</code>.</p>

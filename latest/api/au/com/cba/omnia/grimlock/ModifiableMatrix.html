@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that modify a matrix.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix">ModifiableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4161af31cea5ae2d2b1b725902540ad8e55a0132//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that modify a matrix.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix">ModifiableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/82e0d397693a0f773038b7b8a253a74835120bfb//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -422,15 +422,15 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P#S]]</code> where the dimension <code>dim</code> has been renamed.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ModifiableMatrix#set" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="set[T](values:T)(implicitev:au.com.cba.omnia.grimlock.Matrixable[T,P],implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="set[T](T)(Matrixable[T,P],FlowDef,Mode):TypedPipe[(P,Content)]"></a>
+      <a id="set[T](values:T)(implicitev:au.com.cba.omnia.grimlock.Matrixable[T,P]):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
+      <a id="set[T](T)(Matrixable[T,P]):TypedPipe[(P,Content)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="values">values: <span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.set.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.Matrixable">Matrixable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>]</span>, <span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+        <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="values">values: <span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.set.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.Matrixable">Matrixable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Set the <code>values</code> in a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Set the <code>values</code> in a matrix.
@@ -438,15 +438,15 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P]]' with the </code>values<code> set.
 </code></p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ModifiableMatrix#set" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="set[T](positions:T,value:au.com.cba.omnia.grimlock.content.Content)(implicitev:au.com.cba.omnia.grimlock.position.PositionPipeable[T,P],implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="set[T](T,Content)(PositionPipeable[T,P],FlowDef,Mode):TypedPipe[(P,Content)]"></a>
+      <a id="set[T](positions:T,value:au.com.cba.omnia.grimlock.content.Content)(implicitev:au.com.cba.omnia.grimlock.position.PositionPipeable[T,P]):com.twitter.scalding.TypedPipe[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
+      <a id="set[T](T,Content)(PositionPipeable[T,P]):TypedPipe[(P,Content)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.set.T">T</span></span>, <span name="value">value: <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PositionPipeable.html" class="extype" name="au.com.cba.omnia.grimlock.position.PositionPipeable">PositionPipeable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>]</span>, <span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+        <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.set.T">T</span></span>, <span name="value">value: <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PositionPipeable.html" class="extype" name="au.com.cba.omnia.grimlock.position.PositionPipeable">PositionPipeable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.ModifiableMatrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Set <code>value</code> as the content for all <code>positions</code> in a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Set <code>value</code> as the content for all <code>positions</code> in a matrix.

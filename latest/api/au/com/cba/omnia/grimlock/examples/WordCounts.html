@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4161af31cea5ae2d2b1b725902540ad8e55a0132//src/main/scala/au/com/cba/omnia/grimlock/examples/Event.scala" target="_blank">Event.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/82e0d397693a0f773038b7b8a253a74835120bfb//src/main/scala/au/com/cba/omnia/grimlock/examples/Event.scala" target="_blank">Event.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../transform/PresentExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpanded">PresentExpanded</a>, <a href="../transform/PresentExpandedWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue">PresentExpandedWithValue</a>, <a href="../transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -338,15 +338,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.examples.WordCounts#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,con:au.com.cba.omnia.grimlock.content.Content):au.com.cba.omnia.grimlock.Matrix.CellCollection[pos.M]"></a>
-      <a id="present[P&lt;:PositionwithExpandablePosition](P,Content):CellCollection[present.P.M]"></a>
+      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,con:au.com.cba.omnia.grimlock.content.Content):au.com.cba.omnia.grimlock.utility.Collection[(pos.M,au.com.cba.omnia.grimlock.content.Content)]"></a>
+      <a id="present[P&lt;:PositionwithExpandablePosition](P,Content):Collection[(present.P.M,Content)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.examples.WordCounts.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <a href="../Matrix$.html#CellCollection[P&lt;:au.com.cba.omnia.grimlock.position.Position]=au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection[(P,au.com.cba.omnia.grimlock.content.Content)]" class="extmbr" name="au.com.cba.omnia.grimlock.Matrix.CellCollection">CellCollection</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">present.P.M</span>]</span>
+        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.examples.WordCounts.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">present.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).
@@ -355,15 +355,15 @@
         the content is derived from <code>con</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.examples.WordCounts">WordCounts</a> → <a href="../transform/PresentExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpanded">PresentExpanded</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.transform.PresentExpanded#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:PresentExpanded.this.V):au.com.cba.omnia.grimlock.Matrix.CellCollection[pos.M]"></a>
-      <a id="present[P&lt;:PositionwithExpandablePosition](P,Content,V):CellCollection[transform.PresentExpanded.present.P.M]"></a>
+      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:PresentExpanded.this.V):au.com.cba.omnia.grimlock.utility.Collection[(pos.M,au.com.cba.omnia.grimlock.content.Content)]"></a>
+      <a id="present[P&lt;:PositionwithExpandablePosition](P,Content,V):Collection[(transform.PresentExpanded.present.P.M,Content)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpanded.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.examples.WordCounts.V">V</a></span>)</span><span class="result">: <a href="../Matrix$.html#CellCollection[P&lt;:au.com.cba.omnia.grimlock.position.Position]=au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection[(P,au.com.cba.omnia.grimlock.content.Content)]" class="extmbr" name="au.com.cba.omnia.grimlock.Matrix.CellCollection">CellCollection</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">transform.PresentExpanded.present.P.M</span>]</span>
+        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpanded.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.examples.WordCounts.V">V</a></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">transform.PresentExpanded.present.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).

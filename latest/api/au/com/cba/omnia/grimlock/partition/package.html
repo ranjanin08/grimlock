@@ -150,7 +150,7 @@
       </h4>
       <p class="comment cmt">Base trait for partitioning operations.</p>
     </li><li name="au.com.cba.omnia.grimlock.partition.Partitions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Partitions[T,P&lt;:au.com.cba.omnia.grimlock.position.Position]extendsAnyRef"></a>
+      <a id="Partitions[T,P&lt;:au.com.cba.omnia.grimlock.position.Position]extendsPersist[(T,(P,au.com.cba.omnia.grimlock.content.Content))]"></a>
       <a id="Partitions[T,P&lt;:Position]:Partitions[T,P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -158,7 +158,7 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="Partitions.html"><span class="name">Partitions</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Partitions.html"><span class="name">Partitions</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="result"> extends <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.T">T</span>, (<span class="extype" name="au.com.cba.omnia.grimlock.partition.Partitions.P">P</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>))]</span>
       </span>
       </h4>
       <p class="comment cmt">Rich wrapper around a <code>TypedPipe[(T, (Position, Content))]</code>.</p>

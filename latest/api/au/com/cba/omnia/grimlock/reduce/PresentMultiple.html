@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for reductions that return multiple values.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4161af31cea5ae2d2b1b725902540ad8e55a0132//src/main/scala/au/com/cba/omnia/grimlock/code/Reducer.scala" target="_blank">Reducer.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for reductions that return multiple values.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/82e0d397693a0f773038b7b8a253a74835120bfb//src/main/scala/au/com/cba/omnia/grimlock/code/Reducer.scala" target="_blank">Reducer.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -87,15 +87,15 @@
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.reduce.PresentMultiple#presentMultiple" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="presentMultiple[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,t:PresentMultiple.this.T):au.com.cba.omnia.grimlock.Matrix.CellCollection[pos.M]"></a>
-      <a id="presentMultiple[P&lt;:PositionwithExpandablePosition](P,(PresentMultiple.this)#T):CellCollection[presentMultiple.P.M]"></a>
+      <a id="presentMultiple[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,t:PresentMultiple.this.T):au.com.cba.omnia.grimlock.utility.Collection[(pos.M,au.com.cba.omnia.grimlock.content.Content)]"></a>
+      <a id="presentMultiple[P&lt;:PositionwithExpandablePosition](P,(PresentMultiple.this)#T):Collection[(presentMultiple.P.M,Content)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">presentMultiple</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple.presentMultiple.P">P</span></span>, <span name="t">t: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer.T">T</span></span>)</span><span class="result">: <a href="../Matrix$.html#CellCollection[P&lt;:au.com.cba.omnia.grimlock.position.Position]=au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection[(P,au.com.cba.omnia.grimlock.content.Content)]" class="extmbr" name="au.com.cba.omnia.grimlock.Matrix.CellCollection">CellCollection</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">presentMultiple.P.M</span>]</span>
+        <span class="name">presentMultiple</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple.presentMultiple.P">P</span></span>, <span name="t">t: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer.T">T</span></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">presentMultiple.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the reduced content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content(s).

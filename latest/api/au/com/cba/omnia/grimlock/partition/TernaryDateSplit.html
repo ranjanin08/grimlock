@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Ternary partition based on the date of a coordinate.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">lower</dt><dd class="cmt"><p>The lower date around which to split.</p></dd><dt class="param">upper</dt><dd class="cmt"><p>The upper date around which to split.</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">middle</dt><dd class="cmt"><p>The identifier for the middle partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The date codex used for comparison.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4161af31cea5ae2d2b1b725902540ad8e55a0132//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The position is assigned to the partition <code>left</code> if it is less or equal to <code>lower</code>, <code>middle</code> if it is less or
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/82e0d397693a0f773038b7b8a253a74835120bfb//src/main/scala/au/com/cba/omnia/grimlock/code/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The position is assigned to the partition <code>left</code> if it is less or equal to <code>lower</code>, <code>middle</code> if it is less or
       equal to <code>upper</code> or else to <code>right</code>.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
@@ -214,7 +214,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit#assign" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="assign[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P):au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection[TernaryDateSplit.this.T]"></a>
+      <a id="assign[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P):au.com.cba.omnia.grimlock.utility.Collection[TernaryDateSplit.this.T]"></a>
       <a id="assign[P&lt;:Position](P):Collection[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -222,7 +222,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">assign</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.assign.P">P</span></span>)</span><span class="result">: <a href="../utility/Miscellaneous$.html#Collection[T]=Option[Either[T,List[T]]]" class="extmbr" name="au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection">Collection</a>[<a href="#T=S" class="extmbr" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.T">T</a>]</span>
+        <span class="name">assign</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.assign.P">P</span></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[<a href="#T=S" class="extmbr" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.T">T</a>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Assign the cell to a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition.
@@ -230,7 +230,7 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances of <code>T</code> identify the partitions.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit">TernaryDateSplit</a> → <a href="Assign.html" class="extype" name="au.com.cba.omnia.grimlock.partition.Assign">Assign</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.partition.Assign#assign" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="assign[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P,ext:Assign.this.V):au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection[Assign.this.T]"></a>
+      <a id="assign[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P,ext:Assign.this.V):au.com.cba.omnia.grimlock.utility.Collection[Assign.this.T]"></a>
       <a id="assign[P&lt;:Position](P,V):Collection[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -238,7 +238,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">assign</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.partition.Assign.assign.P">P</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.V">V</a></span>)</span><span class="result">: <a href="../utility/Miscellaneous$.html#Collection[T]=Option[Either[T,List[T]]]" class="extmbr" name="au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection">Collection</a>[<a href="#T=S" class="extmbr" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.T">T</a>]</span>
+        <span class="name">assign</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.partition.Assign.assign.P">P</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.V">V</a></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[<a href="#T=S" class="extmbr" name="au.com.cba.omnia.grimlock.partition.TernaryDateSplit.T">T</a>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Assign the cell to a partition using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition using a user supplied value.
