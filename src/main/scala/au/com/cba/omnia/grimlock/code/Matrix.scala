@@ -261,7 +261,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *       a `Position1D` and that expands to `Position2D`. Analogously, if the `slice` is an `Along` then the returned
    *       position will be equal to `P`.
    */
-  def reduceAndExpand[T, D <: Dimension](slice: Slice[P, D], reducers: T)(implicit ev1: ReducerableMultiple[T],
+  def reduceAndExpand[T, D <: Dimension](slice: Slice[P, D], reducers: T)(implicit ev1: ReducibleMultiple[T],
     ev2: PosDimDep[P, D]): TypedPipe[Cell[slice.S#M]] = {
     val reducer = ev1.convert(reducers)
 
@@ -287,7 +287,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *       position will be equal to `P`.
    */
   def reduceAndExpandWithValue[T, D <: Dimension, V](slice: Slice[P, D], reducers: T, value: ValuePipe[V])(
-    implicit ev1: ReducerableMultipleWithValue[T, V], ev2: PosDimDep[P, D]): TypedPipe[Cell[slice.S#M]] = {
+    implicit ev1: ReducibleMultipleWithValue[T, V], ev2: PosDimDep[P, D]): TypedPipe[Cell[slice.S#M]] = {
     val reducer = ev1.convert(reducers)
 
     data
@@ -346,7 +346,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   }
 
   /**
-   * Sample a matrix according to some function `f`. It keeps only those cells for which `f` returns true.
+   * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
    *
    * @param sampler Sampling function.
    *
@@ -355,11 +355,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   def sample(sampler: Sampler with Select): TypedPipe[Cell[P]] = data.filter { case (p, c) => sampler.select(p) }
 
   /**
-   * Sample a matrix according to some function `f` using a user supplied value. It keeps only those cells for which
-   * `f` returns true.
+   * Sample a matrix according to some `sampler` using a user supplied value. It keeps only those cells for which
+   * `sampler` returns true.
    *
    * @param sampler Sampling function.
-   * @param value A `ValuePipe` holding a user supplied value.
+   * @param value   A `ValuePipe` holding a user supplied value.
    *
    * @return A Scalding `TypedPipe[Cell[P]]`.
    */
@@ -460,30 +460,34 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Compute pairwise values between all pairs of values given a slice.
    *
-   * @param slice    Encapsulates the dimension(s) along which to compute values.
-   * @param operator The pairwise operator to apply.
+   * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param operators The pairwise operators to apply.
    *
    * @return A Scalding `TypedPipe[Cell[slice.R#M]]` where the content contains the pairwise value.
    */
-  def pairwise[D <: Dimension](slice: Slice[P, D], operator: Operator with Compute)(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
-    pairwise(slice).flatMap { case ((lp, lc), (rp, rc), r) => operator.compute(slice, lp, lc, rp, rc, r).toList }
+  def pairwise[D <: Dimension, T](slice: Slice[P, D], operators: T)(implicit ev1: PosDimDep[P, D],
+    ev2: Operable[T]): TypedPipe[Cell[slice.R#M]] = {
+    val o = ev2.convert(operators)
+
+    pairwise(slice).flatMap { case ((lp, lc), (rp, rc), r) => o.compute(slice, lp, lc, rp, rc, r).toList }
   }
 
   /**
    * Compute pairwise values between all pairs of values given a slice with a user supplied value.
    *
-   * @param slice    Encapsulates the dimension(s) along which to compute values.
-   * @param operator The pairwise operator to apply.
-   * @param value    The user supplied value.
+   * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param operators The pairwise operators to apply.
+   * @param value     The user supplied value.
    *
    * @return A Scalding `TypedPipe[Cell[slice.R#M]]` where the content contains the pairwise value.
    */
-  def pairwiseWithValue[D <: Dimension, W](slice: Slice[P, D], operator: Operator with ComputeWithValue { type V >: W },
-    value: ValuePipe[W])(implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
+  def pairwiseWithValue[D <: Dimension, T, W](slice: Slice[P, D], operators: T, value: ValuePipe[W])(
+    implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, W]): TypedPipe[Cell[slice.R#M]] = {
+    val o = ev2.convert(operators)
+
     pairwise(slice)
       .flatMapWithValue(value) {
-        case (((lp, lc), (rp, rc), r), vo) => operator.compute(slice, lp, lc, rp, rc, r, vo.get).toList
+        case (((lp, lc), (rp, rc), r), vo) => o.compute(slice, lp, lc, rp, rc, r, vo.get.asInstanceOf[o.V]).toList
       }
   }
 
@@ -508,35 +512,36 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Compute pairwise values between all values of this and that given a slice.
    *
-   * @param slice    Encapsulates the dimension(s) along which to compute values.
-   * @param that     Other matrix to compute pairwise values with.
-   * @param operator The pairwise operator to apply.
+   * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param that      Other matrix to compute pairwise values with.
+   * @param operators The pairwise operators to apply.
    *
    * @return A Scalding `TypedPipe[Cell[slice.R#M]]` where the content contains the pairwise value.
    */
-  def pairwiseBetween[D <: Dimension](slice: Slice[P, D], that: Matrix[P], operator: Operator with Compute)(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
-    pairwiseBetween(slice, that).flatMap {
-      case ((lp, lc), (rp, rc), r) => operator.compute(slice, lp, lc, rp, rc, r).toList
-    }
+  def pairwiseBetween[D <: Dimension, T](slice: Slice[P, D], that: Matrix[P], operators: T)(
+    implicit ev1: PosDimDep[P, D], ev2: Operable[T]): TypedPipe[Cell[slice.R#M]] = {
+    val o = ev2.convert(operators)
+
+    pairwiseBetween(slice, that).flatMap { case ((lp, lc), (rp, rc), r) => o.compute(slice, lp, lc, rp, rc, r).toList }
   }
 
   /**
    * Compute pairwise values between all values of this and that given a slice with a user supplied value.
    *
-   * @param slice    Encapsulates the dimension(s) along which to compute values.
-   * @param that     Other matrix to compute pairwise values with.
-   * @param operator The pairwise operator to apply.
-   * @param value    The user supplied value.
+   * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param that      Other matrix to compute pairwise values with.
+   * @param operators The pairwise operators to apply.
+   * @param value     The user supplied value.
    *
    * @return A Scalding `TypedPipe[Cell[slice.R#M]]` where the content contains the pairwise value.
    */
-  def pairwiseBetweenWithValue[D <: Dimension, W](slice: Slice[P, D], that: Matrix[P],
-    operator: Operator with ComputeWithValue { type V >: W }, value: ValuePipe[W])(
-      implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.R#M]] = {
+  def pairwiseBetweenWithValue[D <: Dimension, T, W](slice: Slice[P, D], that: Matrix[P], operators: T,
+    value: ValuePipe[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, W]): TypedPipe[Cell[slice.R#M]] = {
+    val o = ev2.convert(operators)
+
     pairwiseBetween(slice, that)
       .flatMapWithValue(value) {
-        case (((lp, lc), (rp, rc), r), vo) => operator.compute(slice, lp, lc, rp, rc, r, vo.get).toList
+        case (((lp, lc), (rp, rc), r), vo) => o.compute(slice, lp, lc, rp, rc, r, vo.get.asInstanceOf[o.V]).toList
       }
   }
 
@@ -657,21 +662,22 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
   /**
    * Create window based derived data.
    *
-   * @param slice   Encapsulates the dimension(s) to derive over.
-   * @param deriver The deriver to apply to the content.
+   * @param slice    Encapsulates the dimension(s) to derive over.
+   * @param derivers The derivers to apply to the content.
    *
    * @return A Scalding `TypedPipe[Cell[slice.S#M]]` with the derived data.
    */
-  def derive[D <: Dimension](slice: Slice[P, D], deriver: Deriver with Initialise)(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.S#M]] = {
+  def derive[D <: Dimension, T](slice: Slice[P, D], derivers: T)(implicit ev1: PosDimDep[P, D],
+    ev2: Derivable[T]): TypedPipe[Cell[slice.S#M]] = {
+    val d = ev2.convert(derivers)
+
     data
       .map { case (p, c) => (slice.selected(p), slice.remainder(p), c) }
       .groupBy { case (s, r, c) => s }
       .sortBy { case (s, r, c) => r }
-      .scanLeft(Option.empty[(deriver.T, Collection[Cell[slice.S#M]])]) {
-        case (None, (s, r, c)) => Some((deriver.initialise(s, r, c), Collection[Cell[slice.S#M]]()))
-        case (Some((t, _)), (s, r, c)) =>
-          Some(deriver.present(s, r, c, t).asInstanceOf[(deriver.T, Collection[Cell[slice.S#M]])])
+      .scanLeft(Option.empty[(d.T, Collection[Cell[slice.S#M]])]) {
+        case (None, (s, r, c)) => Some((d.initialise(s, r, c), Collection[Cell[slice.S#M]]()))
+        case (Some((t, _)), (s, r, c)) => Some(d.present(s, r, c, t).asInstanceOf[(d.T, Collection[Cell[slice.S#M]])])
       }
       .flatMap {
         case (p, Some((t, c))) => c.toList
@@ -682,24 +688,26 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
   /**
    * Create window based derived data with a user supplied value.
    *
-   * @param slice   Encapsulates the dimension(s) to derive over.
-   * @param deriver The deriver to apply to the content.
-   * @param value   A `ValuePipe` holding a user supplied value.
+   * @param slice    Encapsulates the dimension(s) to derive over.
+   * @param derivers The derivers to apply to the content.
+   * @param value    A `ValuePipe` holding a user supplied value.
    *
    * @return A Scalding `TypedPipe[Cell[slice.S#M]]` with the derived data.
    */
-  def deriveWithValue[D <: Dimension, W](slice: Slice[P, D], deriver: Deriver with InitialiseWithValue { type V >: W },
-    value: ValuePipe[W])(implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.S#M]] = {
+  def deriveWithValue[D <: Dimension, T, W](slice: Slice[P, D], derivers: T, value: ValuePipe[W])(
+    implicit ev1: PosDimDep[P, D], ev2: DerivableWithValue[T, W]): TypedPipe[Cell[slice.S#M]] = {
+    val d = ev2.convert(derivers)
+
     data
       .leftCross(value)
       .map { case ((p, c), vo) => (slice.selected(p), slice.remainder(p), c, vo) }
       .groupBy { case (s, r, c, vo) => s }
       .sortBy { case (s, r, c, vo) => r }
-      .scanLeft(Option.empty[(deriver.T, Collection[Cell[slice.S#M]])]) {
+      .scanLeft(Option.empty[(d.T, Collection[Cell[slice.S#M]])]) {
         case (None, (s, r, c, vo)) =>
-          Some((deriver.initialise(s, r, c, vo.get.asInstanceOf[deriver.V]), Collection[Cell[slice.S#M]]()))
+          Some((d.initialise(s, r, c, vo.get.asInstanceOf[d.V]), Collection[Cell[slice.S#M]]()))
         case (Some((t, _)), (s, r, c, vo)) =>
-          Some(deriver.present(s, r, c, t).asInstanceOf[(deriver.T, Collection[Cell[slice.S#M]])])
+          Some(d.present(s, r, c, t).asInstanceOf[(d.T, Collection[Cell[slice.S#M]])])
       }
       .flatMap {
         case (p, Some((t, c))) => c.toList
@@ -1243,7 +1251,7 @@ object Matrix {
    */
   def read3DWithDictionary[D <: Dimension](source: TypedSource[(String, String, String, String)],
     dict: Map[String, Schema], dim: D = Second, first: Codex = StringCodex, second: Codex = StringCodex,
-      third: Codex = DateCodex)(implicit ev: PosDimDep[Position3D, D]): TypedPipe[Cell[Position3D]] = {
+    third: Codex = DateCodex)(implicit ev: PosDimDep[Position3D, D]): TypedPipe[Cell[Position3D]] = {
     source
       .flatMap {
         case (e, a, t, v) =>

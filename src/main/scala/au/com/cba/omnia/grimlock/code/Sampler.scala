@@ -31,6 +31,15 @@ trait Select extends SelectWithValue { self: Sampler =>
    * @param pos The position of the cell.
    */
   def select[P <: Position](pos: P): Boolean
+
+  /**
+   * Operator for chaining sampling.
+   *
+   * @param that The sampling to perform after `this`.
+   *
+   * @return A sampler that runs `this` and then `that`.
+   */
+  def andThen(that: Sampler with Select): AndThenSampler = AndThenSampler(this, that)
 }
 
 /** Base trait for selecting samples with a user provided value. */
@@ -45,5 +54,42 @@ trait SelectWithValue { self: Sampler =>
    * @param ext The user define the value.
    */
   def select[P <: Position](pos: P, ext: V): Boolean
+
+  /**
+   * Operator for chaining sampling.
+   *
+   * @param that The sampling to perform after `this`.
+   *
+   * @return A sampler that runs `this` and then `that`.
+   */
+  def andThen[W <: V](that: Sampler with SelectWithValue { type V = W }): AndThenSamplerWithValue[W] = {
+    AndThenSamplerWithValue[W](this, that)
+  }
+}
+
+/**
+ * Sampler that is a composition of two samplers with `Select`.
+ *
+ * @param first  The first sampling to appy.
+ * @param second The second sampling to appy.
+ *
+ * @note This need not be called in an application. The `andThen` method will create it.
+ */
+case class AndThenSampler(first: Sampler with Select, second: Sampler with Select) extends Sampler with Select {
+  def select[P <: Position](pos: P): Boolean = first.select(pos) && second.select(pos)
+}
+
+/**
+ * Sampler that is a composition of two samplers with `SelectWithValue`.
+ *
+ * @param first  The first sampling to appy.
+ * @param second The second sampling to appy.
+ *
+ * @note This need not be called in an application. The `andThen` method will create it.
+ */
+case class AndThenSamplerWithValue[W](first: Sampler with SelectWithValue { type V >: W },
+  second: Sampler with SelectWithValue { type V >: W }) extends Sampler with SelectWithValue {
+  type V = W
+  def select[P <: Position](pos: P, ext: V): Boolean = first.select(pos, ext) && second.select(pos, ext)
 }
 

@@ -140,7 +140,7 @@ trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple { self
  *
  * @param reducers `List` of reducers that are combined together.
  *
- * @note This need not be called in an application. The `ReducerableMultiple` type class will convert any
+ * @note This need not be called in an application. The `ReducibleMultiple` type class will convert any
  *       `List[Reducer]` automatically to one of these.
  */
 case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMultiple](reducers: List[T])
@@ -169,7 +169,7 @@ case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMult
  *
  * @param reducers `List` of reducers that are combined together.
  *
- * @note This need not be called in an application. The `ReducerableMultipleWithValue` type class will convert any
+ * @note This need not be called in an application. The `ReducibleMultipleWithValue` type class will convert any
  *       `List[Reducer]` automatically to one of these.
  */
 case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValue with PresentMultiple, W](
@@ -195,7 +195,7 @@ case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValu
 }
 
 /** Type class for transforming a type `T` to a reducer` with `PresentMultiple`. */
-trait ReducerableMultiple[T] {
+trait ReducibleMultiple[T] {
   /**
    * Returns a reducer with `PresentMultiple` for type `T`.
    *
@@ -204,25 +204,25 @@ trait ReducerableMultiple[T] {
   def convert(t: T): Reducer with Prepare with PresentMultiple
 }
 
-/** Companion object for the `ReducerableMultiple` type class. */
-object ReducerableMultiple {
+/** Companion object for the `ReducibleMultiple` type class. */
+object ReducibleMultiple {
   /**
    * Converts a `List[Reducer with PresentMultiple]` to a single reducer with `PresentMultiple` using
    * `CombinationReducerMultiple`.
    */
-  implicit def LR2RM[T <: Reducer with Prepare with PresentMultiple]: ReducerableMultiple[List[T]] = {
-    new ReducerableMultiple[List[T]] {
+  implicit def LR2RM[T <: Reducer with Prepare with PresentMultiple]: ReducibleMultiple[List[T]] = {
+    new ReducibleMultiple[List[T]] {
       def convert(t: List[T]): Reducer with Prepare with PresentMultiple = CombinationReducerMultiple(t)
     }
   }
   /** Converts a reducer with `PresentMultiple` to a reducer with `PresentMultiple`; that is, it is a pass through. */
-  implicit def R2RM[T <: Reducer with Prepare with PresentMultiple]: ReducerableMultiple[T] = {
-    new ReducerableMultiple[T] { def convert(t: T): Reducer with Prepare with PresentMultiple = t }
+  implicit def R2RM[T <: Reducer with Prepare with PresentMultiple]: ReducibleMultiple[T] = {
+    new ReducibleMultiple[T] { def convert(t: T): Reducer with Prepare with PresentMultiple = t }
   }
 }
 
 /** Type class for transforming a type `T` to a reducer with `PrepareWithValue` with `PresentMultiple`. */
-trait ReducerableMultipleWithValue[T, W] {
+trait ReducibleMultipleWithValue[T, W] {
   /**
    * Returns a reducer with `PrepareWithValue` with `PresentMultiple` for type `T`.
    *
@@ -231,16 +231,16 @@ trait ReducerableMultipleWithValue[T, W] {
   def convert(t: T): Reducer with PrepareWithValue with PresentMultiple
 }
 
-/** Companion object for the `ReducerableMultipleWithValue` type class. */
-object ReducerableMultipleWithValue {
+/** Companion object for the `ReducibleMultipleWithValue` type class. */
+object ReducibleMultipleWithValue {
   /**
    * Converts a `List[Reducer with PrepareWithValue with PresentMultiple]` to a single `Reducer with PrepareWithValue
    * with PresentMultiple` using 'CombinationReducerMultipleWithValue`.
    */
-  implicit def LR2RMWV[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W]: ReducerableMultipleWithValue[List[T], W] = {
-    new ReducerableMultipleWithValue[List[T], W] {
+  implicit def LR2RMWV[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W]: ReducibleMultipleWithValue[List[T], W] = {
+    new ReducibleMultipleWithValue[List[T], W] {
       def convert(t: List[T]): Reducer with PrepareWithValue with PresentMultiple = {
-        CombinationReducerMultipleWithValue[Reducer with PrepareWithValue with PresentMultiple, W](t)
+        CombinationReducerMultipleWithValue[T, W](t)
       }
     }
   }
@@ -248,8 +248,8 @@ object ReducerableMultipleWithValue {
    * Converts a `Reducer with PrepareWithValue with PresentMultiple` to a `Reducer with PrepareWithValue with
    * PresentMultiple`; that is, it is a pass through.
    */
-  implicit def R2RMWV[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W]: ReducerableMultipleWithValue[T, W] = {
-    new ReducerableMultipleWithValue[T, W] { def convert(t: T): Reducer with PrepareWithValue with PresentMultiple = t }
+  implicit def R2RMWV[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W]: ReducibleMultipleWithValue[T, W] = {
+    new ReducibleMultipleWithValue[T, W] { def convert(t: T): Reducer with PrepareWithValue with PresentMultiple = t }
   }
 }
 

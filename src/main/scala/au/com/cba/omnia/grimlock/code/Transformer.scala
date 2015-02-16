@@ -42,7 +42,7 @@ trait Present extends PresentWithValue { self: Transformer =>
   def present[P <: Position with ModifiablePosition](pos: P, con: Content): Collection[Cell[pos.S]]
 
   /**
-   * Operator for chaining transformations
+   * Operator for chaining transformations.
    *
    * @param that The transformation to perform after `this`.
    *
@@ -69,7 +69,7 @@ trait PresentWithValue { self: Transformer =>
   def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.S]]
 
   /**
-   * Operator for chaining transformations
+   * Operator for chaining transformations.
    *
    * @param that The transformation to perform after `this`.
    *
@@ -153,11 +153,10 @@ case class AndThenTransformerWithValue[W](first: Transformer with PresentWithVal
   def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.S]] = {
     Collection(
       first
-        .present(pos, con, ext.asInstanceOf[first.V])
+        .present(pos, con, ext)
         .toList
         .flatMap {
-          case (p, c) => second.present(p.asInstanceOf[P], c,
-            ext.asInstanceOf[second.V]).asInstanceOf[Collection[Cell[pos.S]]].toList
+          case (p, c) => second.present(p.asInstanceOf[P], c, ext).asInstanceOf[Collection[Cell[pos.S]]].toList
         })
   }
 }
@@ -241,7 +240,7 @@ object Transformable {
   implicit def LT2T[T <: Transformer with Present]: Transformable[List[T]] = {
     new Transformable[List[T]] { def convert(t: List[T]): Transformer with Present = CombinationTransformer(t) }
   }
-  /** Converts a `Transformer with Present` to a `Transformer with Present`; that is, * it is a pass through. */
+  /** Converts a `Transformer with Present` to a `Transformer with Present`; that is, it is a pass through. */
   implicit def T2T[T <: Transformer with Present]: Transformable[T] = {
     new Transformable[T] { def convert(t: T): Transformer with Present = t }
   }
@@ -265,13 +264,11 @@ object TransformableWithValue {
    */
   implicit def LT2TWV[T <: Transformer with PresentWithValue { type V >: W }, W]: TransformableWithValue[List[T], W] = {
     new TransformableWithValue[List[T], W] {
-      def convert(t: List[T]): Transformer with PresentWithValue = {
-        CombinationTransformerWithValue[Transformer with PresentWithValue, W](t)
-      }
+      def convert(t: List[T]): Transformer with PresentWithValue = CombinationTransformerWithValue[T, W](t)
     }
   }
   /**
-   * Converts a `Transformer with PresentWithValue` to a `Transformer with PresentWithValue`; that is, * it is a pass
+   * Converts a `Transformer with PresentWithValue` to a `Transformer with PresentWithValue`; that is, it is a pass
    * through.
    */
   implicit def T2TWV[T <: Transformer with PresentWithValue { type V >: W }, W]: TransformableWithValue[T, W] = {
@@ -328,7 +325,7 @@ object TransformableExpandedWithValue {
   implicit def LT2TEWV[T <: Transformer with PresentExpandedWithValue { type V >: W }, W]: TransformableExpandedWithValue[List[T], W] = {
     new TransformableExpandedWithValue[List[T], W] {
       def convert(t: List[T]): Transformer with PresentExpandedWithValue = {
-        CombinationTransformerExpandedWithValue[Transformer with PresentExpandedWithValue, W](t)
+        CombinationTransformerExpandedWithValue[T, W](t)
       }
     }
   }

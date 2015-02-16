@@ -113,7 +113,7 @@ class Partitions[T: Ordering, P <: Position](
     fn: (T, TypedPipe[Cell[P]]) => TypedPipe[Cell[Q]]): TypedPipe[(T, Cell[Q])] = {
     import Partitions._
 
-    // TODO: This read the data keys.length times. Is there a way to read it only once?
+    // TODO: This reads the data keys.length times. Is there a way to read it only once?
     //       Perhaps with Grouped.mapGroup and Execution[T]?
     keys
       .map { case k => fn(k, data.get(k)).map { case c => (k, c) } }

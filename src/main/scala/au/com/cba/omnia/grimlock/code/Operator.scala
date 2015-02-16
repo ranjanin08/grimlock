@@ -101,5 +101,92 @@ trait ComputeWithValue { self: Operator =>
     rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Collection[Cell[rem.M]]
 }
 
-// TODO: Add listable versions
+/**
+ * Operator that is a combination of one or more operators with `Compute`.
+ *
+ * @param singles `List` of operators that are combined together.
+ *
+ * @note This need not be called in an application. The `Operable` type class will convert any `List[Operator]`
+ *       automatically to one of these.
+ */
+case class CombinationOperator[T <: Operator with Compute](singles: List[T]) extends Operator with Compute {
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
+    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R): Collection[Cell[rem.M]] = {
+    Collection(singles.flatMap {
+      case operator => operator.compute(slice, leftPos, leftCon, rightPos, rightCon, rem).toList
+    })
+  }
+}
+
+/**
+ * Operator that is a combination of one or more operators with `ComputeWithValue`.
+ *
+ * @param singles `List` of operators that are combined together.
+ *
+ * @note This need not be called in an application. The `OperableWithValue` type class will convert any
+ *       `List[Operator]` automatically to one of these.
+ */
+case class CombinationOperatorWithValue[T <: Operator with ComputeWithValue, W](singles: List[T]) extends Operator
+  with ComputeWithValue {
+  type V = W
+
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
+    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Collection[Cell[rem.M]] = {
+    Collection(singles.flatMap {
+      case operator => operator.compute(slice, leftPos, leftCon, rightPos, rightCon, rem,
+        ext.asInstanceOf[operator.V]).toList
+    })
+  }
+}
+
+/** Type class for transforming a type `T` to a `Operator with Compute`. */
+trait Operable[T] {
+  /**
+   * Returns a `Operator with Compute` for type `T`.
+   *
+   * @param t Object that can be converted to a `Operator with Compute`.
+   */
+  def convert(t: T): Operator with Compute
+}
+
+/** Companion object for the `Operable` type class. */
+object Operable {
+  /** Converts a `List[Operator with Compute]` to a single `Operator with Compute` using `CombinationOperator`. */
+  implicit def LO2O[T <: Operator with Compute]: Operable[List[T]] = {
+    new Operable[List[T]] { def convert(t: List[T]): Operator with Compute = CombinationOperator(t) }
+  }
+  /** Converts a `Operator with Compute` to a `Operator with Compute`; that is, it is a pass through. */
+  implicit def O2O[T <: Operator with Compute]: Operable[T] = {
+    new Operable[T] { def convert(t: T): Operator with Compute = t }
+  }
+}
+
+/** Type class for transforming a type `T` to a `Operator with ComputeWithValue`. */
+trait OperableWithValue[T, W] {
+  /**
+   * Returns a `Operator with ComputeWithValue` for type `T`.
+   *
+   * @param t Object that can be converted to a `Operator with ComputeWithValue`.
+   */
+  def convert(t: T): Operator with ComputeWithValue
+}
+
+/** Companion object for the `OperableWithValue` type class. */
+object OperableWithValue {
+  /**
+   * Converts a `List[Operator with ComputeWithValue]` to a single `Operator with ComputeWithValue` using
+   * `CombinationOperatorWithValue`.
+   */
+  implicit def OT2OWV[T <: Operator with ComputeWithValue { type V >: W }, W]: OperableWithValue[List[T], W] = {
+    new OperableWithValue[List[T], W] {
+      def convert(t: List[T]): Operator with ComputeWithValue = CombinationOperatorWithValue[T, W](t)
+    }
+  }
+  /**
+   * Converts a `Operator with ComputeWithValue` to a `Operator with ComputeWithValue`; that is, it is a pass through.
+   */
+  implicit def O2OWV[T <: Operator with ComputeWithValue { type V >: W }, W]: OperableWithValue[T, W] = {
+    new OperableWithValue[T, W] { def convert(t: T): Operator with ComputeWithValue = t }
+  }
+}
 
