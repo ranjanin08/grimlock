@@ -39,12 +39,12 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for selecting samples with a user provided value.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.sample.SelectWithValue">SelectWithValue</a> with <a href="Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.sample.Sampler">Sampler</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/82e0d397693a0f773038b7b8a253a74835120bfb//src/main/scala/au/com/cba/omnia/grimlock/code/Sampler.scala" target="_blank">Sampler.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for selecting samples with a user provided value.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.sample.SelectWithValue">SelectWithValue</a> with <a href="Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.sample.Sampler">Sampler</a></dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/181b5b2b1c98390a48492117437379d667ccea71//src/main/scala/au/com/cba/omnia/grimlock/code/Sampler.scala" target="_blank">Sampler.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
           <span class="toggle">Known Subclasses</span>
-          <div class="subClasses hiddenContent"><a href="../test/Test16$HashSample.html" class="extype" name="au.com.cba.omnia.grimlock.test.Test16.HashSample">HashSample</a>, <a href="HashSample.html" class="extype" name="au.com.cba.omnia.grimlock.sample.HashSample">HashSample</a>, <a href="HashSampleToSize.html" class="extype" name="au.com.cba.omnia.grimlock.sample.HashSampleToSize">HashSampleToSize</a>, <a href="RandomSample.html" class="extype" name="au.com.cba.omnia.grimlock.sample.RandomSample">RandomSample</a>, <a href="Select.html" class="extype" name="au.com.cba.omnia.grimlock.sample.Select">Select</a></div>
+          <div class="subClasses hiddenContent"><a href="AndThenSampler.html" class="extype" name="au.com.cba.omnia.grimlock.sample.AndThenSampler">AndThenSampler</a>, <a href="AndThenSamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.sample.AndThenSamplerWithValue">AndThenSamplerWithValue</a>, <a href="../test/Test16$HashSample.html" class="extype" name="au.com.cba.omnia.grimlock.test.Test16.HashSample">HashSample</a>, <a href="HashSample.html" class="extype" name="au.com.cba.omnia.grimlock.sample.HashSample">HashSample</a>, <a href="HashSampleToSize.html" class="extype" name="au.com.cba.omnia.grimlock.sample.HashSampleToSize">HashSampleToSize</a>, <a href="RandomSample.html" class="extype" name="au.com.cba.omnia.grimlock.sample.RandomSample">RandomSample</a>, <a href="Select.html" class="extype" name="au.com.cba.omnia.grimlock.sample.Select">Select</a></div>
         </div></div>
         
 
@@ -187,6 +187,22 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.sample.SelectWithValue#andThen" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThen[W&lt;:SelectWithValue.this.V](that:au.com.cba.omnia.grimlock.sample.Samplerwithau.com.cba.omnia.grimlock.sample.SelectWithValue{typeV=W}):au.com.cba.omnia.grimlock.sample.AndThenSamplerWithValue[W]"></a>
+      <a id="andThen[W&lt;:(SelectWithValue.this)#V](SamplerwithSelectWithValue{typeV=W}):AndThenSamplerWithValue[W]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">andThen</span><span class="tparams">[<span name="W">W &lt;: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.sample.SelectWithValue">SelectWithValue</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.sample.SelectWithValue.V">V</span></span>]</span><span class="params">(<span name="that">that: <a href="Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.sample.Sampler">Sampler</a> with <a href="" class="extype" name="au.com.cba.omnia.grimlock.sample.SelectWithValue">SelectWithValue</a> { type V = W }</span>)</span><span class="result">: <a href="AndThenSamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.sample.AndThenSamplerWithValue">AndThenSamplerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.sample.SelectWithValue.andThen.W">W</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Operator for chaining sampling.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for chaining sampling.
+</p></div><dl class="paramcmts block"><dt class="param">that</dt><dd class="cmt"><p>The sampling to perform after <code>this</code>.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A sampler that runs <code>this</code> and then <code>that</code>.
+</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>

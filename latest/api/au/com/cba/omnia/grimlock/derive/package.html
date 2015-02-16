@@ -85,6 +85,45 @@ from it.</p>
       </span>
       </h4>
       <p class="comment cmt">Compute centered moving average over last <code>2 * width + 1</code> values.</p>
+    </li><li name="au.com.cba.omnia.grimlock.derive.CombinationDerivable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CombinationDerivable[U&lt;:au.com.cba.omnia.grimlock.derive.Deriver]extendsAnyRef"></a>
+      <a id="CombinationDerivable[U&lt;:Deriver]:CombinationDerivable[U]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CombinationDerivable.html"><span class="name">CombinationDerivable</span></a><span class="tparams">[<span name="U">U &lt;: <a href="Deriver.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Deriver">Deriver</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Base trait for combination derivers.</p>
+    </li><li name="au.com.cba.omnia.grimlock.derive.CombinationDeriver" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CombinationDeriver[T&lt;:au.com.cba.omnia.grimlock.derive.Deriverwithau.com.cba.omnia.grimlock.derive.Initialise]extendsDeriverwithInitialisewithCombinationDerivable[T]withProductwithSerializable"></a>
+      <a id="CombinationDeriver[T&lt;:DeriverwithInitialise]:CombinationDeriver[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CombinationDeriver.html"><span class="name">CombinationDeriver</span></a><span class="tparams">[<span name="T">T &lt;: <a href="Deriver.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Deriver">Deriver</a> with <a href="Initialise.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Initialise">Initialise</a></span>]</span><span class="params">(<span name="singles">singles: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.derive.CombinationDeriver.T">T</span>]</span>)</span><span class="result"> extends <a href="Deriver.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Deriver">Deriver</a> with <a href="Initialise.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Initialise">Initialise</a> with <a href="CombinationDerivable.html" class="extype" name="au.com.cba.omnia.grimlock.derive.CombinationDerivable">CombinationDerivable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.derive.CombinationDeriver.T">T</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Deriver that is a combination of one or more derivers with <code>Initialise</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.derive.CombinationDeriverWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CombinationDeriverWithValue[T&lt;:au.com.cba.omnia.grimlock.derive.Deriverwithau.com.cba.omnia.grimlock.derive.InitialiseWithValue,W]extendsDeriverwithInitialiseWithValuewithCombinationDerivable[T]withProductwithSerializable"></a>
+      <a id="CombinationDeriverWithValue[T&lt;:DeriverwithInitialiseWithValue,W]:CombinationDeriverWithValue[T,W]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CombinationDeriverWithValue.html"><span class="name">CombinationDeriverWithValue</span></a><span class="tparams">[<span name="T">T &lt;: <a href="Deriver.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Deriver">Deriver</a> with <a href="InitialiseWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue">InitialiseWithValue</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="singles">singles: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.derive.CombinationDeriverWithValue.T">T</span>]</span>)</span><span class="result"> extends <a href="Deriver.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Deriver">Deriver</a> with <a href="InitialiseWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue">InitialiseWithValue</a> with <a href="CombinationDerivable.html" class="extype" name="au.com.cba.omnia.grimlock.derive.CombinationDerivable">CombinationDerivable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.derive.CombinationDeriverWithValue.T">T</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Deriver that is a combination of one or more derivers with <code>InitialiseWithValue</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.derive.CumulativeMovingAverage" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="CumulativeMovingAverageextendsOnlineMovingAveragewithProductwithSerializable"></a>
       <a id="CumulativeMovingAverage:CumulativeMovingAverage"></a>
@@ -98,6 +137,32 @@ from it.</p>
       </span>
       </h4>
       <p class="comment cmt">Compute cumulatve moving average.</p>
+    </li><li name="au.com.cba.omnia.grimlock.derive.Derivable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Derivable[T]extendsAnyRef"></a>
+      <a id="Derivable[T]:Derivable[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Derivable.html"><span class="name">Derivable</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Deriver with Initialise</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.derive.DerivableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="DerivableWithValue[T,W]extendsAnyRef"></a>
+      <a id="DerivableWithValue[T,W]:DerivableWithValue[T,W]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="DerivableWithValue.html"><span class="name">DerivableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Deriver with InitialiseWithValue</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.derive.Deriver" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="DeriverextendsAnyRef"></a>
       <a id="Deriver:Deriver"></a>
@@ -207,7 +272,36 @@ from it.</p>
 
         
 
-        
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.derive.Derivable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Derivable"></a>
+      <a id="Derivable:Derivable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Derivable$.html"><span class="name">Derivable</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Companion object for the <code>Derivable</code> type class.</p>
+    </li><li name="au.com.cba.omnia.grimlock.derive.DerivableWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DerivableWithValue"></a>
+      <a id="DerivableWithValue:DerivableWithValue"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DerivableWithValue$.html"><span class="name">DerivableWithValue</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Companion object for the <code>DerivableWithValue</code> type class.</p>
+    </li></ol>
+            </div>
 
         
 

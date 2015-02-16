@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transformer that is a combination of one or more transformers with <code>Present</code>.
 </p></div><dl class="paramcmts block"><dt class="param">singles</dt><dd class="cmt"><p><code>List</code> of transformers that are combined together.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/82e0d397693a0f773038b7b8a253a74835120bfb//src/main/scala/au/com/cba/omnia/grimlock/code/Transformer.scala" target="_blank">Transformer.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This need not be called in an application. The <code>Transformable</code> type class will convert any <code>List[Transformer]</code>
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/181b5b2b1c98390a48492117437379d667ccea71//src/main/scala/au/com/cba/omnia/grimlock/code/Transformer.scala" target="_blank">Transformer.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This need not be called in an application. The <code>Transformable</code> type class will convert any <code>List[Transformer]</code>
       automatically to one of these.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
@@ -199,8 +199,7 @@
         <span class="name">andThen</span><span class="params">(<span name="that">that: <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with <a href="Present.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Present">Present</a></span>)</span><span class="result">: <a href="AndThenTransformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.AndThenTransformer">AndThenTransformer</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Operator for chaining transformations
-</p><div class="fullcomment"><div class="comment cmt"><p>Operator for chaining transformations
+      <p class="shortcomment cmt">Operator for chaining transformations.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for chaining transformations.
 </p></div><dl class="paramcmts block"><dt class="param">that</dt><dd class="cmt"><p>The transformation to perform after <code>this</code>.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then <code>that</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Present.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Present">Present</a></dd></dl></div>
@@ -216,8 +215,7 @@
         <span class="name">andThen</span><span class="tparams">[<span name="W">W &lt;: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.transform.CombinationTransformer.V">V</a></span>]</span><span class="params">(<span name="that">that: <a href="Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a> with <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a> { type V = W }</span>)</span><span class="result">: <a href="AndThenTransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.AndThenTransformerWithValue">AndThenTransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue.andThen.W">W</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Operator for chaining transformations
-</p><div class="fullcomment"><div class="comment cmt"><p>Operator for chaining transformations
+      <p class="shortcomment cmt">Operator for chaining transformations.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for chaining transformations.
 </p></div><dl class="paramcmts block"><dt class="param">that</dt><dd class="cmt"><p>The transformation to perform after <code>this</code>.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then <code>that</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a></dd></dl></div>
