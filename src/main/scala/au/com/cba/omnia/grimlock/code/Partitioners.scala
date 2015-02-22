@@ -56,7 +56,6 @@ case class BinaryHashSplit[S: Ordering](dim: Dimension, ratio: Int, left: S, rig
  *       partition `left` if it is less or equal to `lower`, `middle` if it is less of equal to `upper` or else to
  *       `right`.
  */
-// TODO: Test this
 case class TernaryHashSplit[S: Ordering](dim: Dimension, lower: Int, upper: Int, left: S, middle: S, right: S,
   base: Int = 100) extends Partitioner with Assign {
   type T = S
@@ -79,18 +78,22 @@ case class TernaryHashSplit[S: Ordering](dim: Dimension, lower: Int, upper: Int,
  *       (strictly) greater than the lower value (first value in tuple) and less or equal to the upper value (second
  *       value in tuple).
  */
-// TODO: Test this
 case class HashSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Int, Int)], base: Int = 100) extends Partitioner
   with Assign {
   type T = S
 
   def assign[P <: Position](pos: P): Collection[T] = {
     val hash = math.abs(pos.get(dim).hashCode % base)
-
-    Collection(ranges.flatMap {
+    val parts = ranges.flatMap {
       case (k, (l, u)) if (hash > l && hash <= u) => Some(k)
       case _ => None
-    }.toList)
+    }.toList
+
+    parts.size match {
+      case 0 => Collection[T]()
+      case 1 => Collection(parts.head)
+      case _ => Collection(parts)
+    }
   }
 }
 
@@ -106,7 +109,6 @@ case class HashSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Int, Int)], ba
  * @note The position is assigned to the `left` partition if it is less or equal to the `date` value, to `right`
  *       otherwise.
  */
-// TODO: Test this
 case class BinaryDateSplit[S: Ordering](dim: Dimension, date: Date, left: S, right: S,
   codex: DateAndTimeCodex = DateCodex) extends Partitioner with Assign {
   type T = S
@@ -130,7 +132,6 @@ case class BinaryDateSplit[S: Ordering](dim: Dimension, date: Date, left: S, rig
  * @note The position is assigned to the partition `left` if it is less or equal to `lower`, `middle` if it is less or
  *       equal to `upper` or else to `right`.
  */
-// TODO: Test this
 case class TernaryDateSplit[S: Ordering](dim: Dimension, lower: Date, upper: Date, left: S, middle: S, right: S,
   codex: DateAndTimeCodex = DateCodex) extends Partitioner with Assign {
   type T = S
@@ -155,7 +156,6 @@ case class TernaryDateSplit[S: Ordering](dim: Dimension, lower: Date, upper: Dat
  * @note A position falls in a range if it is (strictly) greater than the lower value (first value in tuple) and less
  *       or equal to the upper value (second value in tuple).
  */
-// TODO: Test this
 case class DateSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Date, Date)], codex: DateAndTimeCodex = DateCodex)
   extends Partitioner with Assign {
   type T = S
@@ -170,7 +170,11 @@ case class DateSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Date, Date)], 
         }
     }.toList
 
-    Collection(parts)
+    parts.size match {
+      case 0 => Collection[T]()
+      case 1 => Collection(parts.head)
+      case _ => Collection(parts)
+    }
   }
 }
 

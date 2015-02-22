@@ -17,7 +17,8 @@ uniform.project("grimlock", "au.com.cba.omnia.grimlock")
 uniformDependencySettings
 
 libraryDependencies :=
-  depend.scaldingproject(scalding="0.12.0")
+  depend.scaldingproject(scalding="0.12.0") ++
+  Seq("org.scalatest" % "scalatest_2.10" % "2.2.4" % "test")
 
 uniformAssemblySettings
 
