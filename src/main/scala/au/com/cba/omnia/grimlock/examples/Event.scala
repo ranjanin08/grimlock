@@ -41,10 +41,10 @@ case class ExampleEvent(
 
 object ExampleEvent {
   // Function to read a file with event data.
-  def read(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[(Position1D, Content)] = {
+  def read(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
     val es = EventSchema[ExampleEventCodex]()
     TextLine(file)
-      .flatMap { case s => es.decode(s).map { case e => (Position1D(es.codex.fromValue(e.value).eventId), e) } }
+      .flatMap { case s => es.decode(s).map { case e => Cell(Position1D(es.codex.fromValue(e.value).eventId), e) } }
   }
 
   // Define a type and implicit so schema construction looks simple.
@@ -86,11 +86,11 @@ case object ExampleEventCodex extends EventCodex {
 // Transformer for denormalising events; that is, create a separate cell in the matrix for each (event, instance) pair.
 // Assumes that the initial position is 1D with event id (as is the output from `read` above).
 case class Denormalise() extends Transformer with PresentExpanded {
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content): Collection[Cell[pos.M]] = {
-    con match {
+  def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]] = {
+    cell.content match {
       case Content(_, EventValue(ExampleEvent(_, _, _, _, instances, _), _)) =>
-        Collection(for { iid <- instances } yield { (pos.append(iid), con) })
-      case _ => Collection[Cell[pos.M]]()
+        Collection(for { iid <- instances } yield { Cell[P#M](cell.position.append(iid), cell.content) })
+      case _ => Collection[Cell[P#M]]()
     }
   }
 }
@@ -99,8 +99,8 @@ case class Denormalise() extends Transformer with PresentExpanded {
 // simply return the count for each term (word or ngram) in the document (i.e. event).
 case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separator: String = "_",
   stopwords: List[String] = Stopwords.English) extends Transformer with PresentExpanded {
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content): Collection[Cell[pos.M]] = {
-    con match {
+  def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]] = {
+    cell.content match {
       case Content(_, EventValue(ExampleEvent(_, _, _, _, _, details), _)) =>
         // Get words from details. Optionally filter by length and/or stopwords.
         val words = details
@@ -123,9 +123,11 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
         // Return the term and it's count in the document.
         Collection(terms
           .groupBy(identity)
-          .map { case (k, v) => (pos.append(k), Content(DiscreteSchema[Codex.LongCodex](), v.size)) }
+          .map {
+            case (k, v) => Cell[P#M](cell.position.append(k), Content(DiscreteSchema[Codex.LongCodex](), v.size))
+          }
           .toList)
-      case _ => Collection[Cell[pos.M]]()
+      case _ => Collection[Cell[P#M]]()
     }
   }
 }

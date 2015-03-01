@@ -14,8 +14,8 @@
 
 package au.com.cba.omnia.grimlock.transform
 
+import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
@@ -26,9 +26,7 @@ trait Transformer
 trait Present extends PresentWithValue { self: Transformer =>
   type V = Any
 
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.S]] = {
-    present(pos, con)
-  }
+  def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]] = present(cell)
 
   /**
    * Present the transformed content(s).
@@ -39,7 +37,7 @@ trait Present extends PresentWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by modifiying `pos` and the
    *         content is derived from `con`.
    */
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content): Collection[Cell[pos.S]]
+  def present[P <: Position with ModifiablePosition](cell: Cell[P]): Collection[Cell[P]]
 
   /**
    * Operator for chaining transformations.
@@ -66,7 +64,7 @@ trait PresentWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by modifiying `pos` and the
    *         content is derived from `con`.
    */
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.S]]
+  def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]]
 
   /**
    * Operator for chaining transformations.
@@ -84,9 +82,7 @@ trait PresentWithValue { self: Transformer =>
 trait PresentExpanded extends PresentExpandedWithValue { self: Transformer =>
   type V = Any
 
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.M]] = {
-    present(pos, con)
-  }
+  def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: V): Collection[Cell[P#M]] = present(cell)
 
   /**
    * Present the transformed content(s).
@@ -97,7 +93,7 @@ trait PresentExpanded extends PresentExpandedWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by appending to `pos` and
    *         the content is derived from `con`.
    */
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content): Collection[Cell[pos.M]]
+  def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]]
 }
 
 /** Base trait for transformers that use a user supplied value and expand the position by appending a dimension. */
@@ -115,7 +111,7 @@ trait PresentExpandedWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by appending to `pos` and
    *         the content is derived from `con`.
    */
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.M]]
+  def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: V): Collection[Cell[P#M]]
 }
 
 /**
@@ -128,14 +124,12 @@ trait PresentExpandedWithValue { self: Transformer =>
  */
 case class AndThenTransformer(first: Transformer with Present, second: Transformer with Present) extends Transformer
   with Present {
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content): Collection[Cell[pos.S]] = {
+  def present[P <: Position with ModifiablePosition](cell: Cell[P]): Collection[Cell[P]] = {
     Collection(
       first
-        .present(pos, con)
+        .present(cell)
         .toList
-        .flatMap {
-          case (p, c) => second.present(p.asInstanceOf[P], c).asInstanceOf[Collection[Cell[pos.S]]].toList
-        })
+        .flatMap { case c => second.present(c).toList })
   }
 }
 
@@ -150,14 +144,12 @@ case class AndThenTransformer(first: Transformer with Present, second: Transform
 case class AndThenTransformerWithValue[W](first: Transformer with PresentWithValue { type V >: W },
   second: Transformer with PresentWithValue { type V >: W }) extends Transformer with PresentWithValue {
   type V = W
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.S]] = {
+  def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]] = {
     Collection(
       first
-        .present(pos, con, ext)
+        .present(cell, ext)
         .toList
-        .flatMap {
-          case (p, c) => second.present(p.asInstanceOf[P], c, ext).asInstanceOf[Collection[Cell[pos.S]]].toList
-        })
+        .flatMap { case c => second.present(c, ext).toList })
   }
 }
 
@@ -170,8 +162,8 @@ case class AndThenTransformerWithValue[W](first: Transformer with PresentWithVal
  *       automatically to one of these.
  */
 case class CombinationTransformer[T <: Transformer with Present](singles: List[T]) extends Transformer with Present {
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content): Collection[Cell[pos.S]] = {
-    Collection(singles.flatMap { case s => s.present(pos, con).toList })
+  def present[P <: Position with ModifiablePosition](cell: Cell[P]): Collection[Cell[P]] = {
+    Collection(singles.flatMap { case s => s.present(cell).toList })
   }
 }
 
@@ -183,11 +175,11 @@ case class CombinationTransformer[T <: Transformer with Present](singles: List[T
  * @note This need not be called in an application. The `TransformableWithValue` type class will convert any
  *       `List[Transformer]` automatically to one of these.
  */
-case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue, W](singles: List[T])
+case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue { type V >: W }, W](singles: List[T])
   extends Transformer with PresentWithValue {
   type V = W
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.S]] = {
-    Collection(singles.flatMap { case s => s.present(pos, con, ext.asInstanceOf[s.V]).toList })
+  def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Collection(singles.flatMap { case s => s.present(cell, ext).toList })
   }
 }
 
@@ -201,8 +193,8 @@ case class CombinationTransformerWithValue[T <: Transformer with PresentWithValu
  */
 case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded](singles: List[T]) extends Transformer
   with PresentExpanded {
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content): Collection[Cell[pos.M]] = {
-    Collection(singles.flatMap { case s => s.present(pos, con).toList })
+  def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]] = {
+    Collection(singles.flatMap { case s => s.present(cell).toList })
   }
 }
 
@@ -214,11 +206,11 @@ case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded]
  * @note This need not be called in an application. The `TransformableExpandedWithValue` type class will convert any
  *       `List[Transformer]` automatically to one of these.
  */
-case class CombinationTransformerExpandedWithValue[T <: Transformer with PresentExpandedWithValue, W](singles: List[T])
-  extends Transformer with PresentExpandedWithValue {
+case class CombinationTransformerExpandedWithValue[T <: Transformer with PresentExpandedWithValue { type V >: W }, W](
+  singles: List[T]) extends Transformer with PresentExpandedWithValue {
   type V = W
-  def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: W): Collection[Cell[pos.M]] = {
-    Collection(singles.flatMap { case s => s.present(pos, con, ext.asInstanceOf[s.V]).toList })
+  def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: W): Collection[Cell[P#M]] = {
+    Collection(singles.flatMap { case s => s.present(cell, ext).toList })
   }
 }
 
@@ -253,7 +245,7 @@ trait TransformableWithValue[T, W] {
    *
    * @param t Object that can be converted to a `Transformer with PresentWithValue`.
    */
-  def convert(t: T): Transformer with PresentWithValue
+  def convert(t: T): Transformer with PresentWithValue { type V >: W }
 }
 
 /** Companion object for the `TransformableWithValue` type class. */
@@ -264,7 +256,9 @@ object TransformableWithValue {
    */
   implicit def LT2TWV[T <: Transformer with PresentWithValue { type V >: W }, W]: TransformableWithValue[List[T], W] = {
     new TransformableWithValue[List[T], W] {
-      def convert(t: List[T]): Transformer with PresentWithValue = CombinationTransformerWithValue[T, W](t)
+      def convert(t: List[T]): Transformer with PresentWithValue { type V >: W } = {
+        CombinationTransformerWithValue[T, W](t)
+      }
     }
   }
   /**
@@ -272,7 +266,7 @@ object TransformableWithValue {
    * through.
    */
   implicit def T2TWV[T <: Transformer with PresentWithValue { type V >: W }, W]: TransformableWithValue[T, W] = {
-    new TransformableWithValue[T, W] { def convert(t: T): Transformer with PresentWithValue = t }
+    new TransformableWithValue[T, W] { def convert(t: T): Transformer with PresentWithValue { type V >: W } = t }
   }
 }
 
@@ -313,7 +307,7 @@ trait TransformableExpandedWithValue[T, W] {
    *
    * @param t Object that can be converted to a `Transformer with PresentExpandedWithValue`.
    */
-  def convert(t: T): Transformer with PresentExpandedWithValue
+  def convert(t: T): Transformer with PresentExpandedWithValue { type V >: W }
 }
 
 /** Companion object for the `TransformableExpandedWithValue` type class. */
@@ -324,7 +318,7 @@ object TransformableExpandedWithValue {
    */
   implicit def LT2TEWV[T <: Transformer with PresentExpandedWithValue { type V >: W }, W]: TransformableExpandedWithValue[List[T], W] = {
     new TransformableExpandedWithValue[List[T], W] {
-      def convert(t: List[T]): Transformer with PresentExpandedWithValue = {
+      def convert(t: List[T]): Transformer with PresentExpandedWithValue { type V >: W } = {
         CombinationTransformerExpandedWithValue[T, W](t)
       }
     }
@@ -334,7 +328,9 @@ object TransformableExpandedWithValue {
    * it is a pass through.
    */
   implicit def T2TEWV[T <: Transformer with PresentExpandedWithValue { type V >: W }, W]: TransformableExpandedWithValue[T, W] = {
-    new TransformableExpandedWithValue[T, W] { def convert(t: T): Transformer with PresentExpandedWithValue = t }
+    new TransformableExpandedWithValue[T, W] {
+      def convert(t: T): Transformer with PresentExpandedWithValue { type V >: W } = t
+    }
   }
 }
 

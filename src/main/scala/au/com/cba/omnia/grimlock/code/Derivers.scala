@@ -18,19 +18,19 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
 /** Base trait for computing a moving average. */
 trait MovingAverage { self: Deriver =>
-  protected def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, coord: Value, curr: Double,
-    prev: Option[(Value, Double)]): Collection[Cell[sel.M]] = {
-    val cell = (sel.append(coord), Content(ContinuousSchema[Codex.DoubleCodex](), curr))
+  protected def getCollection[P <: Position, D <: Dimension](slice: Slice[P, D])(sel: slice.S, coord: Value,
+    curr: Double, prev: Option[(Value, Double)]): Collection[Cell[slice.S#M]] = {
+    val cell = Cell[slice.S#M](sel.append(coord), Content(ContinuousSchema[Codex.DoubleCodex](), curr))
 
     prev match {
       case None => Collection(cell)
-      case Some((c, v)) => Collection(List((sel.append(c), Content(ContinuousSchema[Codex.DoubleCodex](), v)), cell))
+      case Some((c, v)) => Collection(List(Cell[slice.S#M](sel.append(c),
+        Content(ContinuousSchema[Codex.DoubleCodex](), v)), cell))
     }
   }
 
@@ -55,18 +55,18 @@ trait BatchMovingAverage extends Deriver with Initialise with MovingAverage {
 
   protected val idx: Int
 
-  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content): T = {
-    val curr = getCurrent(rem, con)
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
+    val curr = getCurrent(rem, cell.content)
 
     (List(curr), if (all) { Some(curr) } else { None })
   }
 
-  def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-    t: T): (T, Collection[Cell[sel.M]]) = {
-    val lst = updateList(rem, con, t._1)
+  def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
+    t: T): (T, Collection[Cell[slice.S#M]]) = {
+    val lst = updateList(rem, cell.content, t._1)
     val out = (all || lst.size == window) match {
-      case true => present(sel, lst(math.min(idx, lst.size - 1))._1, compute(lst), t._2)
-      case false => Collection[Cell[sel.M]]()
+      case true => getCollection(slice)(cell.position, lst(math.min(idx, lst.size - 1))._1, compute(lst), t._2)
+      case false => Collection[Cell[slice.S#M]]()
     }
 
     ((lst, None), out)
@@ -135,15 +135,15 @@ trait OnlineMovingAverage extends Deriver with Initialise with MovingAverage {
   /** The dimension in `rem` from which to get the coordinate to append to `sel`. */
   val dim: Dimension
 
-  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content): T = {
-    (getDouble(con), 1, Some((rem.get(dim), getDouble(con))))
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
+    (getDouble(cell.content), 1, Some((rem.get(dim), getDouble(cell.content))))
   }
 
-  def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-    t: T): (T, Collection[Cell[sel.M]]) = {
-    val curr = compute(getDouble(con), t)
+  def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
+    t: T): (T, Collection[Cell[slice.S#M]]) = {
+    val curr = compute(getDouble(cell.content), t)
 
-    ((curr, t._2 + 1, None), present(sel, rem.get(dim), curr, t._3))
+    ((curr, t._2 + 1, None), getCollection(slice)(cell.position, rem.get(dim), curr, t._3))
   }
 
   protected def compute(curr: Double, t: T): Double

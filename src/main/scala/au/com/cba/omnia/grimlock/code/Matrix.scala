@@ -34,6 +34,27 @@ import com.twitter.scalding.TDsl._, Dsl._
 import com.twitter.scalding.typed.{ IterablePipe, TypedSink }
 
 /**
+ * Cell in a matrix.
+ *
+ * @param position The position of the cell in the matri.
+ * @param content  The contents of the cell.
+ */
+case class Cell[P <: Position](position: P, content: Content) {
+  /**
+   * Return string representation of a cell.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   */
+  def toString(separator: String, descriptive: Boolean): String = {
+    descriptive match {
+      case true => position.toString + separator + content.toString
+      case false => position.toShortString(separator) + separator + content.toShortString(separator)
+    }
+  }
+}
+
+/**
  * Rich wrapper around a `TypedPipe[Cell[P]]`.
  *
  * @param data `TypedPipe[Cell[P]]`.
@@ -56,7 +77,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @see [[Names]]
    */
   def names[D <: Dimension](slice: Slice[P, D])(implicit ev: PosDimDep[P, D]): TypedPipe[(slice.S, Long)] = {
-    Names.number(data.map { case (p, c) => slice.selected(p) }.distinct)
+    Names.number(data.map { case c => slice.selected(c.position) }.distinct)
   }
 
   /**
@@ -72,20 +93,15 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   def types[D <: Dimension](slice: Slice[P, D], specific: Boolean = false)(
     implicit ev: PosDimDep[P, D]): TypedPipe[(slice.S, Type)] = {
     data
-      .map { case (p, c) => (slice.selected(p), c.schema.kind) }
+      .map { case Cell(p, c) => (slice.selected(p), c.schema.kind) }
       .groupBy { case (p, t) => p }
       .reduce[(slice.S, Type)] {
         case ((lp, lt), (rp, rt)) =>
           (lp,
-            if (lt == rt) {
-              lt
-            } else if (!specific && lt.isSpecialisationOf(rt)) {
-              rt
-            } else if (!specific && rt.isSpecialisationOf(lt)) {
-              lt
-            } else {
-              Type.Mixed
-            })
+            if (lt == rt) { lt }
+            else if (!specific && lt.isSpecialisationOf(rt)) { rt }
+            else if (!specific && rt.isSpecialisationOf(lt)) { lt }
+            else { Type.Mixed })
       }
       .values
       .map { case (p, t) => (p, if (specific) t else t.getGeneralisation()) }
@@ -103,7 +119,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def size[D <: Dimension](dim: D, distinct: Boolean = false)(
     implicit ev: PosDimDep[P, D]): TypedPipe[Cell[Position1D]] = {
-    val coords = data.map { case (p, c) => p.get(dim) }
+    val coords = data.map { case c => c.position.get(dim) }
     val dist = distinct match {
       case true => coords
       case false => coords.distinct(Value.Ordering)
@@ -112,7 +128,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     dist
       .map { case _ => 1L }
       .sum
-      .map { case sum => (Position1D(dim.toString), Content(DiscreteSchema[Codex.LongCodex](), sum)) }
+      .map { case sum => Cell(Position1D(dim.toString), Content(DiscreteSchema[Codex.LongCodex](), sum)) }
   }
 
   /**
@@ -123,11 +139,13 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def shape(): TypedPipe[Cell[Position1D]] = {
     data
-      .flatMap { case (p, c) => p.coordinates.map(_.toString).zipWithIndex }
+      .flatMap { case c => c.position.coordinates.map(_.toString).zipWithIndex }
       .distinct
       .groupBy { case (s, i) => i }
       .size
-      .map { case (i, s) => (Position1D(Dimension.All(i).toString), Content(DiscreteSchema[Codex.LongCodex](), s)) }
+      .map {
+        case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema[Codex.LongCodex](), s))
+      }
   }
 
   /**
@@ -157,13 +175,13 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     }
 
     data
-      .groupBy { case (p, c) => slice.selected(p) }
+      .groupBy { case c => slice.selected(c.position) }
       .join(wanted.groupBy { case (p, i) => p })
-      .map { case (_, ((p, c), _)) => (p, c) }
+      .map { case (_, (c, _)) => c }
   }
 
   /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
-  type Predicate = (P, Content) => Boolean
+  type Predicate = Cell[P] => Boolean
 
   /**
    * Query the contents of a matrix and return the positions of those that match the predicate.
@@ -172,7 +190,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A Scalding `TypedPipe[P]' of the positions for which the content matches `predicate`.
    */
-  def which(predicate: Predicate): TypedPipe[P] = data.collect { case (p, c) if predicate(p, c) => p }
+  def which(predicate: Predicate): TypedPipe[P] = data.collect { case c if predicate(c) => c.position }
 
   /**
    * Query the contents of the `positions` of a matrix and return the positions of those that match the predicate.
@@ -205,9 +223,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     val pipe = nampred.tail.foldLeft(nampred.head)((b, a) => b ++ a)
 
     data
-      .groupBy { case (p, c) => slice.selected(p) }
+      .groupBy { case c => slice.selected(c.position) }
       .join(pipe.groupBy { case (p, pred) => p })
-      .collect { case (s, ((p, c), (_, predicate))) if predicate(p, c) => p }
+      .collect { case (_, (c, (_, predicate))) if predicate(c) => c.position }
   }
 
   /**
@@ -219,11 +237,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def get[T](positions: T)(implicit ev: PositionPipeable[T, P]): TypedPipe[Cell[P]] = {
     data
-      .groupBy { case (p, c) => p }
+      .groupBy { case c => c.position }
       .leftJoin(ev.convert(positions).groupBy { case p => p })
       .flatMap {
-        case (_, ((p, c), po)) => po match {
-          case Some(_) => Some((p, c))
+        case (_, (c, po)) => po match {
+          case Some(_) => Some(c)
           case None => None
         }
       }
@@ -240,7 +258,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def toMap[D <: Dimension](slice: Slice[P, D])(implicit ev: PosDimDep[P, D]): ValuePipe[Map[slice.S, slice.C]] = {
     data
-      .map { case (p, c) => (p, slice.toMap(p, c)) }
+      .map { case c => (c.position, slice.toMap(c)) }
       .groupBy { case (p, m) => slice.selected(p) }
       .reduce[(P, Map[slice.S, slice.C])] { case ((lp, lm), (rp, rm)) => (lp, slice.combineMaps(lp, lm, rm)) }
       .map { case (_, (_, m)) => m }
@@ -266,7 +284,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     val reducer = ev1.convert(reducers)
 
     data
-      .map { case (p, c) => (slice.selected(p), reducer.prepare(slice, p, c)) }
+      .map { case c => (slice.selected(c.position), reducer.prepare(slice, c)) }
       .groupBy { case (p, t) => p }
       .reduce[(slice.S, reducer.T)] { case ((lp, lt), (rp, rt)) => (lp, reducer.reduce(lt, rt)) }
       .values
@@ -292,7 +310,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
 
     data
       .leftCross(value)
-      .map { case ((p, c), vo) => (slice.selected(p), reducer.prepare(slice, p, c, vo.get.asInstanceOf[reducer.V])) }
+      .map { case (c, vo) => (slice.selected(c.position), reducer.prepare(slice, c, vo.get)) }
       .groupBy { case (p, t) => p }
       .reduce[(slice.S, reducer.T)] { case ((lp, lt), (rp, rt)) => (lp, reducer.reduce(lt, rt)) }
       .values
@@ -307,7 +325,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A Scalding `TypedPipe[(S, Cell[P])]` where `T` is the partition for the corresponding tuple.
    */
   def partition[S: Ordering](partitioner: Partitioner with Assign { type T = S }): TypedPipe[(S, Cell[P])] = {
-    data.flatMap { case (p, c) => partitioner.assign(p).toList((p, c)) }
+    data.flatMap { case c => partitioner.assign(c.position).toList(c) }
   }
 
   /**
@@ -320,7 +338,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def partitionWithValue[S: Ordering, W](partitioner: Partitioner with AssignWithValue { type V >: W; type T = S },
     value: ValuePipe[W]): TypedPipe[(S, Cell[P])] = {
-    data.flatMapWithValue(value) { case ((p, c), vo) => partitioner.assign(p, vo.get).toList((p, c)) }
+    data.flatMapWithValue(value) { case (c, vo) => partitioner.assign(c.position, vo.get).toList(c) }
   }
 
   /**
@@ -330,7 +348,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A Scalding `TypedPipe[Cell[P]]`.
    */
-  def refine(f: (P, Content) => Boolean): TypedPipe[Cell[P]] = data.filter { case (p, c) => f(p, c) }
+  def refine(f: Cell[P] => Boolean): TypedPipe[Cell[P]] = data.filter { case c => f(c) }
 
   /**
    * Refine (filter) a matrix according to some function `f` using a user supplied value. It keeps only those cells for
@@ -341,8 +359,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A Scalding `TypedPipe[Cell[P]]`.
    */
-  def refineWithValue[V](f: (P, Content, V) => Boolean, value: ValuePipe[V]): TypedPipe[Cell[P]] = {
-    data.filterWithValue(value) { case ((p, c), vo) => f(p, c, vo.get) }
+  def refineWithValue[V](f: (Cell[P], V) => Boolean, value: ValuePipe[V]): TypedPipe[Cell[P]] = {
+    data.filterWithValue(value) { case (c, vo) => f(c, vo.get) }
   }
 
   /**
@@ -352,7 +370,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A Scalding `TypedPipe[Cell[P]]`.
    */
-  def sample(sampler: Sampler with Select): TypedPipe[Cell[P]] = data.filter { case (p, c) => sampler.select(p) }
+  def sample(sampler: Sampler with Select): TypedPipe[Cell[P]] = data.filter { case c => sampler.select(c.position) }
 
   /**
    * Sample a matrix according to some `sampler` using a user supplied value. It keeps only those cells for which
@@ -365,7 +383,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def sampleWithValue[W](sampler: Sampler with SelectWithValue { type V >: W },
     value: ValuePipe[W]): TypedPipe[Cell[P]] = {
-    data.filterWithValue(value) { case ((p, c), vo) => sampler.select(p, vo.get) }
+    data.filterWithValue(value) { case (c, vo) => sampler.select(c.position, vo.get) }
   }
 
   /**
@@ -389,16 +407,16 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
       .join(that.names(slice).groupBy { case (p, i) => p })
 
     data
-      .groupBy { case (p, c) => slice.selected(p) }
+      .groupBy { case c => slice.selected(c.position) }
       .join(keep)
       .values
-      .map { case ((p, c), pi) => (p, c) } ++
+      .map { case (c, pi) => c } ++
       that
       .data
-      .groupBy { case (p, c) => slice.selected(p) }
+      .groupBy { case c => slice.selected(c.position) }
       .join(keep)
       .values
-      .map { case ((p, c), pi) => (p, c) }
+      .map { case (c, pi) => c }
   }
 
   /**
@@ -407,13 +425,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @note Comparison is performed based on the string representation of the `Content`.
    */
   def unique(): TypedPipe[Content] = {
-    implicit def ContentOrdering: Ordering[Content] = new Ordering[Content] {
-      def compare(l: Content, r: Content) = l.toString.compare(r.toString)
-    }
-
     data
-      .map { case (p, c) => c }
-      .distinct
+      .map { case c => c.content }
+      .distinct(new Ordering[Content] { def compare(l: Content, r: Content) = l.toString.compare(r.toString) })
   }
 
   /**
@@ -426,35 +440,31 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @note Comparison is performed based on the string representation of the `Cell[slice.S]`.
    */
   def unique[D <: Dimension](slice: Slice[P, D]): TypedPipe[Cell[slice.S]] = {
-    implicit def CellOrdering: Ordering[Cell[slice.S]] = new Ordering[Cell[slice.S]] {
-      def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString.compare(r.toString)
-    }
-
     data
-      .map { case (p, c) => (slice.selected(p), c) }
-      .distinct
+      .map { case Cell(p, c) => Cell(slice.selected(p), c) }
+      .distinct(new Ordering[Cell[slice.S]] {
+        def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString.compare(r.toString)
+      })
   }
 
   protected def toString(t: Cell[P], separator: String, descriptive: Boolean): String = {
-    descriptive match {
-      case true => t._1.toString + separator + t._2.toString
-      case false => t._1.toShortString(separator) + separator + t._2.toShortString(separator)
-    }
+    t.toString(separator, descriptive)
   }
 
-  private def pairwise[D <: Dimension](slice: Slice[P, D])(implicit ev: PosDimDep[P, D]) = {
+  private def pairwise[D <: Dimension](slice: Slice[P, D])(
+    implicit ev: PosDimDep[P, D]): TypedPipe[(Cell[slice.S], Cell[slice.S], slice.R)] = {
     val wanted = names(slice).map { case (p, i) => p }
-    val values = data.groupBy { case (p, c) => (slice.selected(p), slice.remainder(p)) }
+    val values = data.groupBy { case Cell(p, _) => (slice.selected(p), slice.remainder(p)) }
 
     wanted
       .cross(wanted)
       .cross(names(slice.inverse).asInstanceOf[TypedPipe[(slice.R, Long)]])
-      .map { case ((l, r), (o, i)) => (l, r, o) }
-      .groupBy { case (l, r, o) => (l, o) }
+      .map { case ((l, r), (o, _)) => (l, r, o) }
+      .groupBy { case (l, _, o) => (l, o) }
       .join(values)
-      .groupBy { case (_, ((l, r, o), x)) => (r, o) }
+      .groupBy { case (_, ((_, r, o), _)) => (r, o) }
       .join(values)
-      .map { case (_, ((_, ((lp, rp, r), (_, lc))), (_, rc))) => ((lp, lc), (rp, rc), r) }
+      .map { case (_, ((_, ((lp, rp, r), lc)), rc)) => (Cell(lp, lc.content), Cell(rp, rc.content), r) }
   }
 
   /**
@@ -469,7 +479,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     ev2: Operable[T]): TypedPipe[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
 
-    pairwise(slice).flatMap { case ((lp, lc), (rp, rc), r) => o.compute(slice, lp, lc, rp, rc, r).toList }
+    pairwise(slice).flatMap { case (lc, rc, r) => o.compute(slice)(lc, rc, r).toList }
   }
 
   /**
@@ -486,27 +496,26 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     val o = ev2.convert(operators)
 
     pairwise(slice)
-      .flatMapWithValue(value) {
-        case (((lp, lc), (rp, rc), r), vo) => o.compute(slice, lp, lc, rp, rc, r, vo.get.asInstanceOf[o.V]).toList
-      }
+      .flatMapWithValue(value) { case ((lc, rc, r), vo) => o.compute(slice, vo.get)(lc, rc, r).toList }
   }
 
-  private def pairwiseBetween[D <: Dimension](slice: Slice[P, D], that: Matrix[P])(implicit ev: PosDimDep[P, D]) = {
+  private def pairwiseBetween[D <: Dimension](slice: Slice[P, D], that: Matrix[P])(
+    implicit ev: PosDimDep[P, D]): TypedPipe[(Cell[slice.S], Cell[slice.S], slice.R)] = {
     val thisWanted = names(slice).map { case (p, i) => p }
-    val thisValues = data.groupBy { case (p, c) => (slice.selected(p), slice.remainder(p)) }
+    val thisValues = data.groupBy { case Cell(p, _) => (slice.selected(p), slice.remainder(p)) }
 
     val thatWanted = that.names(slice).map { case (p, i) => p }
-    val thatValues = that.data.groupBy { case (p, c) => (slice.selected(p), slice.remainder(p)) }
+    val thatValues = that.data.groupBy { case Cell(p, _) => (slice.selected(p), slice.remainder(p)) }
 
     thisWanted
       .cross(thatWanted)
       .cross(names(slice.inverse).asInstanceOf[TypedPipe[(slice.R, Long)]])
-      .map { case ((l, r), (o, i)) => (l, r, o) }
-      .groupBy { case (l, r, o) => (l, o) }
+      .map { case ((l, r), (o, _)) => (l, r, o) }
+      .groupBy { case (l, _, o) => (l, o) }
       .join(thisValues)
-      .groupBy { case (_, ((l, r, o), x)) => (r, o) }
+      .groupBy { case (_, ((_, r, o), _)) => (r, o) }
       .join(thatValues)
-      .map { case (_, ((_, ((lp, rp, r), (_, lc))), (_, rc))) => ((lp, lc), (rp, rc), r) }
+      .map { case (_, ((_, ((lp, rp, r), lc)), rc)) => (Cell(lp, lc.content), Cell(rp, rc.content), r) }
   }
 
   /**
@@ -522,7 +531,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     implicit ev1: PosDimDep[P, D], ev2: Operable[T]): TypedPipe[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
 
-    pairwiseBetween(slice, that).flatMap { case ((lp, lc), (rp, rc), r) => o.compute(slice, lp, lc, rp, rc, r).toList }
+    pairwiseBetween(slice, that).flatMap { case (lc, rc, r) => o.compute(slice)(lc, rc, r).toList }
   }
 
   /**
@@ -540,9 +549,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     val o = ev2.convert(operators)
 
     pairwiseBetween(slice, that)
-      .flatMapWithValue(value) {
-        case (((lp, lc), (rp, rc), r), vo) => o.compute(slice, lp, lc, rp, rc, r, vo.get.asInstanceOf[o.V]).toList
-      }
+      .flatMapWithValue(value) { case ((lc, rc, r), vo) => o.compute(slice, vo.get)(lc, rc, r).toList }
   }
 
   protected def persistDictionary(names: TypedPipe[(Position1D, Long)], file: String, dictionary: String,
@@ -589,13 +596,13 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
   def change[T, D <: Dimension](slice: Slice[P, D], positions: T, schema: Schema)(
     implicit ev1: Nameable[T, P, slice.S, D], ev2: PosDimDep[P, D]): TypedPipe[Cell[P]] = {
     data
-      .groupBy { case (p, c) => slice.selected(p) }
+      .groupBy { case c => slice.selected(c.position) }
       .leftJoin(ev1.convert(this, slice, positions).groupBy { case (p, i) => p })
       .values
       .flatMap {
-        case ((p, c), po) => po match {
-          case Some(_) => schema.decode(c.value.toShortString).map { case con => (p, con) }
-          case None => Some((p, c))
+        case (c, po) => po match {
+          case Some(_) => schema.decode(c.content.value.toShortString).map { case con => Cell(c.position, con) }
+          case None => Some(c)
         }
       }
   }
@@ -621,14 +628,9 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
    */
   def set[T](values: T)(implicit ev: Matrixable[T, P]): TypedPipe[Cell[P]] = {
     data
-      .groupBy { case (p, c) => p }
-      .leftJoin(ev.convert(values).groupBy { case (p, c) => p })
-      .map {
-        case (_, ((p, c), co)) => co match {
-          case Some((sp, sc)) => (sp, sc)
-          case None => (p, c)
-        }
-      }
+      .groupBy { case c => c.position }
+      .leftJoin(ev.convert(values).groupBy { case c => c.position })
+      .map { case (_, (c, co)) => co.getOrElse(c) }
   }
 
   /**
@@ -636,12 +638,12 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
    *
    * @param transformers The transformer(s) to apply to the content.
    *
-   * @return A Scalding `TypedPipe[Cell[P#S]]`
+   * @return A Scalding `TypedPipe[Cell[P]]`
    */
-  def transform[T](transformers: T)(implicit ev: Transformable[T]): TypedPipe[Cell[P#S]] = {
+  def transform[T](transformers: T)(implicit ev: Transformable[T]): TypedPipe[Cell[P]] = {
     val t = ev.convert(transformers)
 
-    data.flatMap { case (p, c) => t.present(p, c).toList }
+    data.flatMap { case c => t.present(c).toList }
   }
 
   /**
@@ -650,13 +652,13 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
    * @param transformers The transformer(s) to apply to the content.
    * @param value        A `ValuePipe` holding a user supplied value.
    *
-   * @return A Scalding `TypedPipe[Cell[P#S]]`
+   * @return A Scalding `TypedPipe[Cell[P]]`
    */
   def transformWithValue[T, V](transformers: T, value: ValuePipe[V])(
-    implicit ev: TransformableWithValue[T, V]): TypedPipe[Cell[P#S]] = {
+    implicit ev: TransformableWithValue[T, V]): TypedPipe[Cell[P]] = {
     val t = ev.convert(transformers)
 
-    data.flatMapWithValue(value) { case ((p, c), vo) => t.present(p, c, vo.get.asInstanceOf[t.V]).toList }
+    data.flatMapWithValue(value) { case (c, vo) => t.present(c, vo.get).toList }
   }
 
   /**
@@ -672,12 +674,12 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
     val d = ev2.convert(derivers)
 
     data
-      .map { case (p, c) => (slice.selected(p), slice.remainder(p), c) }
-      .groupBy { case (s, r, c) => s }
-      .sortBy { case (s, r, c) => r }
+      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
+      .groupBy { case (c, r) => c.position }
+      .sortBy { case (c, r) => r }
       .scanLeft(Option.empty[(d.T, Collection[Cell[slice.S#M]])]) {
-        case (None, (s, r, c)) => Some((d.initialise(s, r, c), Collection[Cell[slice.S#M]]()))
-        case (Some((t, _)), (s, r, c)) => Some(d.present(s, r, c, t).asInstanceOf[(d.T, Collection[Cell[slice.S#M]])])
+        case (None, (c, r)) => Some((d.initialise(slice)(c, r), Collection[Cell[slice.S#M]]()))
+        case (Some((t, _)), (c, r)) => Some(d.present(slice)(c, r, t))
       }
       .flatMap {
         case (p, Some((t, c))) => c.toList
@@ -700,14 +702,12 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
 
     data
       .leftCross(value)
-      .map { case ((p, c), vo) => (slice.selected(p), slice.remainder(p), c, vo) }
-      .groupBy { case (s, r, c, vo) => s }
-      .sortBy { case (s, r, c, vo) => r }
+      .map { case (Cell(p, c), vo) => (Cell(slice.selected(p), c), slice.remainder(p), vo.get) }
+      .groupBy { case (c, r, v) => c.position }
+      .sortBy { case (c, r, v) => r }
       .scanLeft(Option.empty[(d.T, Collection[Cell[slice.S#M]])]) {
-        case (None, (s, r, c, vo)) =>
-          Some((d.initialise(s, r, c, vo.get.asInstanceOf[d.V]), Collection[Cell[slice.S#M]]()))
-        case (Some((t, _)), (s, r, c, vo)) =>
-          Some(d.present(s, r, c, t).asInstanceOf[(d.T, Collection[Cell[slice.S#M]])])
+        case (None, (c, r, v)) => Some((d.initialise(slice, v)(c, r), Collection[Cell[slice.S#M]]()))
+        case (Some((t, _)), (c, r, v)) => Some(d.present(slice)(c, r, t))
       }
       .flatMap {
         case (p, Some((t, c))) => c.toList
@@ -725,13 +725,8 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
   def fill(value: Content): TypedPipe[Cell[P]] = {
     domain
       .groupBy { case p => p }
-      .leftJoin(data.groupBy { case (p, c) => p })
-      .map {
-        case (p, (_, co)) => co match {
-          case Some((_, c)) => (p, c)
-          case None => (p, value)
-        }
-      }
+      .leftJoin(data.groupBy { case c => c.position })
+      .map { case (p, (_, co)) => co.getOrElse(Cell(p, value)) }
   }
 
   /**
@@ -748,18 +743,13 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
     implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P]] = {
     val dense = domain
       .groupBy { case p => slice.selected(p) }
-      .join(values.groupBy { case (p, c) => slice.selected(p) })
-      .map { case (_, (p, (_, c))) => (p, c) }
+      .join(values.groupBy { case c => slice.selected(c.position) })
+      .map { case (_, (p, c)) => Cell(p, c.content) }
 
     dense
-      .groupBy { case (p, c) => p }
-      .leftJoin(data.groupBy { case (p, c) => p })
-      .map {
-        case (p, ((_, fc), co)) => co match {
-          case Some((_, c)) => (p, c)
-          case None => (p, fc)
-        }
-      }
+      .groupBy { case c => c.position }
+      .leftJoin(data.groupBy { case c => c.position })
+      .map { case (p, (fc, co)) => co.getOrElse(fc) }
   }
 
   /**
@@ -768,10 +758,10 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
    * @param dim     The dimension to rename.
    * @param renamer Function that renames coordinates.
    *
-   * @return A Scalding `TypedPipe[Cell[P#S]]` where the dimension `dim` has been renamed.
+   * @return A Scalding `TypedPipe[Cell[P]]` where the dimension `dim` has been renamed.
    */
-  def rename[D <: Dimension](dim: D, renamer: (Dimension, P, Content) => P#S)(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P#S]] = data.map { case (p, c) => (renamer(dim, p, c), c) }
+  def rename[D <: Dimension](dim: D, renamer: (Dimension, Cell[P]) => P)(
+    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P]] = data.map { case c => Cell(renamer(dim, c), c.content) }
 
   /**
    * Rename the coordinates of a dimension using user a suplied value.
@@ -780,11 +770,11 @@ trait ModifiableMatrix[P <: Position with ModifiablePosition] { self: Matrix[P] 
    * @param renamer Function that renames coordinates.
    * @param value   A `ValuePipe` holding a user supplied value.
    *
-   * @return A Scalding `TypedPipe[Cell[P#S]]` where the dimension `dim` has been renamed.
+   * @return A Scalding `TypedPipe[Cell[P]]` where the dimension `dim` has been renamed.
    */
-  def renameWithValue[D <: Dimension, V](dim: D, renamer: (Dimension, P, Content, V) => P#S, value: ValuePipe[V])(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P#S]] = {
-    data.mapWithValue(value) { case ((p, c), vo) => (renamer(dim, p, c, vo.get), c) }
+  def renameWithValue[D <: Dimension, V](dim: D, renamer: (Dimension, Cell[P], V) => P, value: ValuePipe[V])(
+    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P]] = {
+    data.mapWithValue(value) { case (c, vo) => Cell(renamer(dim, c, vo.get), c.content) }
   }
 }
 
@@ -801,9 +791,9 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
   def squash[D <: Dimension](dim: D, squasher: Squasher with Reduce)(
     implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P#L]] = {
     data
-      .groupBy { case (p, c) => p.remove(dim) }
-      .reduce[Cell[P]] { case ((xp, xc), (yp, yc)) => squasher.reduce(dim, xp, xc, yp, yc) }
-      .map { case (p, (_, c)) => (p, c) }
+      .groupBy { case c => c.position.remove(dim) }
+      .reduce[Cell[P]] { case (x, y) => squasher.reduce(dim, x, y) }
+      .map { case (p, c) => Cell(p, c.content) }
   }
 
   /**
@@ -815,16 +805,13 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A Scalding `TypedPipe[Cell[P#L]]`.
    */
-  def squashWithValue[D <: Dimension, V](dim: D, squasher: Squasher with ReduceWithValue, value: ValuePipe[V])(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P#L]] = {
+  def squashWithValue[D <: Dimension, W](dim: D, squasher: Squasher with ReduceWithValue { type V >: W },
+    value: ValuePipe[W])(implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P#L]] = {
     data
       .leftCross(value)
-      .groupBy { case ((p, c), vo) => p.remove(dim) }
-      .reduce[(Cell[P], Option[V])] {
-        case (((xp, xc), xvo), ((yp, yc), yvo)) => (squasher.reduce(dim, xp, xc, yp, yc,
-          xvo.get.asInstanceOf[squasher.V]), xvo)
-      }
-      .map { case (p, ((_, c), _)) => (p, c) }
+      .groupBy { case (c, vo) => c.position.remove(dim) }
+      .reduce[(Cell[P], Option[W])] { case ((x, xvo), (y, yvo)) => (squasher.reduce(dim, x, y, xvo.get), xvo) }
+      .map { case (p, (c, _)) => Cell(p, c.content) }
   }
 
   /**
@@ -841,7 +828,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    */
   def melt[D <: Dimension, E <: Dimension](dim: D, into: E, separator: String = ".")(implicit ev1: PosDimDep[P, D],
     ev2: PosDimDep[P, E], ne: D =!= E): TypedPipe[Cell[P#L]] = {
-    data.map { case (p, c) => (p.melt(dim, into, separator), c) }
+    data.map { case Cell(p, c) => Cell(p.melt(dim, into, separator), c) }
   }
 
   /**
@@ -855,7 +842,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
   def reduce[D <: Dimension](slice: Slice[P, D], reducer: Reducer with Prepare with PresentSingle)(
     implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.S]] = {
     data
-      .map { case (p, c) => (slice.selected(p), reducer.prepare(slice, p, c)) }
+      .map { case c => (slice.selected(c.position), reducer.prepare(slice, c)) }
       .groupBy { case (p, t) => p }
       .reduce[(slice.S, reducer.T)] { case ((lp, lt), (rp, rt)) => (lp, reducer.reduce(lt, rt)) }
       .values
@@ -876,7 +863,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
       implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.S]] = {
     data
       .leftCross(value)
-      .map { case ((p, c), vo) => (slice.selected(p), reducer.prepare(slice, p, c, vo.get)) }
+      .map { case (c, vo) => (slice.selected(c.position), reducer.prepare(slice, c, vo.get)) }
       .groupBy { case (p, t) => p }
       .reduce[(slice.S, reducer.T)] { case ((lp, lt), (rp, rt)) => (lp, reducer.reduce(lt, rt)) }
       .values
@@ -896,7 +883,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
   def transformAndExpand[T](transformers: T)(implicit ev: TransformableExpanded[T]): TypedPipe[Cell[P#M]] = {
     val t = ev.convert(transformers)
 
-    data.flatMap { case (p, c) => t.present(p, c).toList }
+    data.flatMap { case c => t.present(c).toList }
   }
 
   /**
@@ -912,7 +899,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
     implicit ev: TransformableExpandedWithValue[T, V]): TypedPipe[Cell[P#M]] = {
     val t = ev.convert(transformers)
 
-    data.flatMapWithValue(value) { case ((p, c), vo) => t.present(p, c, vo.get.asInstanceOf[t.V]).toList }
+    data.flatMapWithValue(value) { case (c, vo) => t.present(c, vo.get).toList }
   }
 
   /**
@@ -922,7 +909,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A Scalding `TypedPipe[Cell[P#M]]`
    */
-  def expand(expander: (P, Content) => P#M): TypedPipe[Cell[P#M]] = data.map { case (p, c) => (expander(p, c), c) }
+  def expand(expander: Cell[P] => P#M): TypedPipe[Cell[P#M]] = data.map { case c => Cell(expander(c), c.content) }
 
   /**
    * Expand a matrix with an extra dimension using a user supplied value.
@@ -932,15 +919,12 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A Scalding `TypedPipe[Cell[P#M]]`
    */
-  def expandWithValue[V](expander: (P, Content, V) => P#M, value: ValuePipe[V]): TypedPipe[Cell[P#M]] = {
-    data.mapWithValue(value) { case ((p, c), vo) => (expander(p, c, vo.get), c) }
+  def expandWithValue[V](expander: (Cell[P], V) => P#M, value: ValuePipe[V]): TypedPipe[Cell[P#M]] = {
+    data.mapWithValue(value) { case (c, vo) => Cell(expander(c, vo.get), c.content) }
   }
 }
 
 object Matrix {
-  /** Type of cell in a Matrix. */
-  type Cell[P <: Position] = (P, Content)
-
   /**
    * Read column oriented, pipe separated matrix data into a `TypedPipe[Cell[Position1D]]`.
    *
@@ -965,7 +949,7 @@ object Matrix {
         case (r, t, e, v) =>
           Schema.fromString(e, t).flatMap {
             case s => (s.decode(v), first.decode(r)) match {
-              case (Some(con), Some(c1)) => Some((Position1D(c1), con))
+              case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
               case _ => None
             }
           }
@@ -998,7 +982,7 @@ object Matrix {
       .flatMap {
         case (e, v) =>
           (schema.decode(v), first.decode(e)) match {
-            case (Some(con), Some(c1)) => Some((Position1D(c1), con))
+            case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
             case _ => None
           }
       }
@@ -1030,7 +1014,7 @@ object Matrix {
       .flatMap {
         case (e, v) =>
           (dict(e).decode(v), first.decode(e)) match {
-            case (Some(con), Some(c1)) => Some((Position1D(c1), con))
+            case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
             case _ => None
           }
       }
@@ -1063,7 +1047,7 @@ object Matrix {
         case (r, c, t, e, v) =>
           Schema.fromString(e, t).flatMap {
             case s => (s.decode(v), first.decode(r), second.decode(c)) match {
-              case (Some(con), Some(c1), Some(c2)) => Some((Position2D(c1, c2), con))
+              case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
               case _ => None
             }
           }
@@ -1098,7 +1082,7 @@ object Matrix {
       .flatMap {
         case (e, a, v) =>
           (schema.decode(v), first.decode(e), second.decode(a)) match {
-            case (Some(con), Some(c1), Some(c2)) => Some((Position2D(c1, c2), con))
+            case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
             case _ => None
           }
       }
@@ -1141,7 +1125,7 @@ object Matrix {
           }
 
           (s.decode(v), first.decode(e), second.decode(a)) match {
-            case (Some(con), Some(c1), Some(c2)) => Some((Position2D(c1, c2), con))
+            case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
             case _ => None
           }
       }
@@ -1177,7 +1161,7 @@ object Matrix {
         case (r, c, d, t, e, v) =>
           Schema.fromString(e, t).flatMap {
             case s => (s.decode(v), first.decode(r), second.decode(c), third.decode(d)) match {
-              case (Some(con), Some(c1), Some(c2), Some(c3)) => Some((Position3D(c1, c2, c3), con))
+              case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
               case _ => None
             }
           }
@@ -1215,7 +1199,7 @@ object Matrix {
       .flatMap {
         case (e, a, t, v) =>
           (schema.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
-            case (Some(con), Some(c1), Some(c2), Some(c3)) => Some((Position3D(c1, c2, c3), con))
+            case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
             case _ => None
           }
       }
@@ -1262,7 +1246,7 @@ object Matrix {
           }
 
           (s.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
-            case (Some(con), Some(c1), Some(c2), Some(c3)) => Some((Position3D(c1, c2, c3), con))
+            case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
             case _ => None
           }
       }
@@ -1289,7 +1273,7 @@ object Matrix {
 
           columns.zipWithIndex.flatMap {
             case ((name, schema), idx) if (idx != pkeyIndex) =>
-              schema.decode(parts(idx).trim).map { case c => (Position2D(pkey, name), c) }
+              schema.decode(parts(idx).trim).map { case c => Cell(Position2D(pkey, name), c) }
             case _ => None
           }
       }
@@ -1308,25 +1292,25 @@ object Matrix {
 
   /** Conversion from `List[(Valueable, Content)]` to a `Matrix1D`. */
   implicit def LVCT2M1D[V: Valueable](list: List[(V, Content)]): Matrix1D = {
-    new Matrix1D(new IterablePipe(list.map { case (v, c) => (Position1D(v), c) }))
+    new Matrix1D(new IterablePipe(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a `Matrix2D`. */
   implicit def LVVCT2M2D[V: Valueable, W: Valueable](list: List[(V, W, Content)]): Matrix2D = {
-    new Matrix2D(new IterablePipe(list.map { case (v, w, c) => (Position2D(v, w), c) }))
+    new Matrix2D(new IterablePipe(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a `Matrix3D`. */
   implicit def LVVVCT2M3D[V: Valueable, W: Valueable, X: Valueable](list: List[(V, W, X, Content)]): Matrix3D = {
-    new Matrix3D(new IterablePipe(list.map { case (v, w, x, c) => (Position3D(v, w, x), c) }))
+    new Matrix3D(new IterablePipe(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a `Matrix4D`. */
   implicit def LVVVVCT2M4D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
     list: List[(V, W, X, Y, Content)]): Matrix4D = {
-    new Matrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => (Position4D(v, w, x, y), c) }))
+    new Matrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a `Matrix5D`. */
   implicit def LVVVVVCT2M5D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
     list: List[(V, W, X, Y, Z, Content)]): Matrix5D = {
-    new Matrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => (Position5D(v, w, x, y, z), c) }))
+    new Matrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
   }
 }
 
@@ -1368,9 +1352,9 @@ class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D]
   def persistIVFileWithNames(file: String, names: TypedPipe[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d",
     separator: String = "|")(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
     data
-      .groupBy { case (p, c) => p }
+      .groupBy { case c => c.position }
       .join(persistDictionary(names, file, dictionary, separator, First))
-      .map { case (_, ((_, c), (_, i))) => i + separator + c.value.toShortString }
+      .map { case (_, (c, (_, i))) => i + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
     data
@@ -1399,12 +1383,19 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    */
   def permute[D <: Dimension, E <: Dimension](first: D, second: E)(implicit ev1: PosDimDep[Position2D, D],
     ev2: PosDimDep[Position2D, E], ne: D =!= E): TypedPipe[Cell[Position2D]] = {
-    data.map { case (p, c) => (p.permute(List(first, second)), c) }
+    data.map { case Cell(p, c) => Cell(p.permute(List(first, second)), c) }
   }
 
   // TODO: Make this work on more than 2D matrices
   def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(
     implicit ev: PosDimDep[Position2D, D]): TypedPipe[Cell[Position1D]] = {
+    implicit def TPP2DSMC2M2D(data: TypedPipe[Cell[slice.S#M]]): Matrix2D = {
+      new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
+    }
+    implicit def TPP2DRMC2M2D(data: TypedPipe[Cell[slice.R#M]]): Matrix2D = {
+      new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
+    }
+
     val marginal = data
       .reduceAndExpand(slice, Entropy("marginal"))
       .pairwise(Over(First), Plus(name = "%s,%s", comparer = Upper))
@@ -1420,6 +1411,13 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
   // TODO: Make this work on more than 2D matrices
   def correlation[D <: Dimension](slice: Slice[Position2D, D])(
     implicit ev: PosDimDep[Position2D, D]): TypedPipe[Cell[Position1D]] = {
+    implicit def TPP2DSC2M1D(data: TypedPipe[Cell[slice.S]]): Matrix1D = {
+      new Matrix1D(data.asInstanceOf[TypedPipe[Cell[Position1D]]])
+    }
+    implicit def TPP2DRMC2M2D(data: TypedPipe[Cell[slice.R#M]]): Matrix2D = {
+      new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
+    }
+
     val mean = data
       .reduce(slice, Mean())
       .toMap(Over(First))
@@ -1498,9 +1496,9 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     }
 
     data
-      .groupBy { case (p, c) => slice.remainder(p).toShortString("") }
+      .groupBy { case c => slice.remainder(c.position).toShortString("") }
       .mapValues {
-        case (p, c) => Map(escapee.escape(slice.selected(p).toShortString(""), separator) ->
+        case Cell(p, c) => Map(escapee.escape(slice.selected(p).toShortString(""), separator) ->
           escapee.escape(c.value.toShortString, separator))
       }
       .sum
@@ -1527,13 +1525,13 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     file: String, names: TypedPipe[(Position1D, Long)], dictionary: String = "%s.dict", separator: String = ":")(
       implicit ev: PosDimDep[Position2D, D], flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
     data
-      .groupBy { case (p, c) => slice.remainder(p).asInstanceOf[Position1D] }
+      .groupBy { case c => slice.remainder(c.position).asInstanceOf[Position1D] }
       .join(persistDictionary(names, file, dictionary, separator))
-      .map { case (_, ((p, c), (_, i))) => (p, " " + i + ":" + c.value.toShortString) }
+      .map { case (_, (Cell(p, c), (_, i))) => (p, " " + i + ":" + c.value.toShortString) }
       .groupBy { case (p, ics) => slice.selected(p).asInstanceOf[Position1D] }
       .reduce[(Position2D, String)] { case ((p, ls), (_, rs)) => (p, ls + rs) }
-      .join(labels.groupBy { case (p, c) => p })
-      .map { case (p, ((_, ics), (_, l))) => l.value.toShortString + " " + p.toShortString(separator) + "|" + ics }
+      .join(labels.groupBy { case c => c.position })
+      .map { case (p, ((_, ics), c)) => c.content.value.toShortString + " " + p.toShortString(separator) + "|" + ics }
       .write(TypedSink(TextLine(file)))
 
     data
@@ -1575,9 +1573,9 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     addId: Boolean = false)(implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position2D]] = {
     data
-      .groupBy { case (p, c) => slice.remainder(p).asInstanceOf[Position1D] }
+      .groupBy { case c => slice.remainder(c.position).asInstanceOf[Position1D] }
       .join(persistDictionary(names, file, dictionary, separator))
-      .map { case (_, ((p, c), (_, i))) => (p, " " + i + ":" + c.value.toShortString, 1L) }
+      .map { case (_, (Cell(p, c), (_, i))) => (p, " " + i + ":" + c.value.toShortString, 1L) }
       .groupBy { case (p, ics, m) => slice.selected(p) }
       .reduce[(Position2D, String, Long)] { case ((p, ls, lm), (_, rs, rm)) => (p, ls + rs, lm + rm) }
       .map { case (p, (_, ics, m)) => if (addId) p.toShortString(separator) + separator + m + ics else m + ics }
@@ -1622,25 +1620,15 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position2D]] = {
     data
-      .groupBy { case (p, c) => Position1D(p.get(First)) }
+      .groupBy { case c => Position1D(c.position.get(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
+      .groupBy { case (c, pi) => Position1D(c.position.get(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
-      .map { case (_, (((_, c), (_, i)), (_, j))) => i + separator + j + separator + c.value.toShortString }
+      .map { case (_, ((c, (_, i)), (_, j))) => i + separator + j + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
     data
-  }
-
-  protected implicit def TPP2DSC2M1D[D <: Dimension](data: TypedPipe[Cell[Slice[Position2D, D]#S]]): Matrix1D = {
-    new Matrix1D(data.asInstanceOf[TypedPipe[Cell[Position1D]]])
-  }
-  protected implicit def TPP2DSMC2M2D[D <: Dimension](data: TypedPipe[Cell[Slice[Position2D, D]#S#M]]): Matrix2D = {
-    new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
-  }
-  protected implicit def TPP2DRMC2M2D[D <: Dimension](data: TypedPipe[Cell[Slice[Position2D, D]#R#M]]): Matrix2D = {
-    new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
   }
 }
 
@@ -1669,7 +1657,7 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
   def permute[D <: Dimension, E <: Dimension, F <: Dimension](first: D, second: E, third: F)(
     implicit ev1: PosDimDep[Position3D, D], ev2: PosDimDep[Position3D, E], ev3: PosDimDep[Position3D, F], ne1: D =!= E,
     ne2: D =!= F, ne3: E =!= F): TypedPipe[Cell[Position3D]] = {
-    data.map { case (p, c) => (p.permute(List(first, second, third)), c) }
+    data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third)), c) }
   }
 
   /**
@@ -1704,17 +1692,17 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
     namesK: TypedPipe[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
       implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
     data
-      .groupBy { case (p, c) => Position1D(p.get(First)) }
+      .groupBy { case c => Position1D(c.position.get(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
+      .groupBy { case (c, pi) => Position1D(c.position.get(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
       .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
-      .groupBy { case ((p, c), pi, pj) => Position1D(p.get(Third)) }
+      .groupBy { case (c, pi, pj) => Position1D(c.position.get(Third)) }
       .join(persistDictionary(namesK, file, dictionary, separator, Third))
       .map {
-        case (_, (((_, c), (_, i), (_, j)), (_, k))) =>
-          i + separator + j + separator + k + separator + c.value.toShortString
+        case (_, ((c, (_, i), (_, j)), (_, k))) =>
+          i + separator + j + separator + k + separator + c.content.value.toShortString
       }
       .write(TypedSink(TextLine(file)))
 
@@ -1750,7 +1738,7 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
     fourth: G)(implicit ev1: PosDimDep[Position4D, D], ev2: PosDimDep[Position4D, E], ev3: PosDimDep[Position4D, F],
       ev4: PosDimDep[Position4D, G], ne1: D =!= E, ne2: D =!= F, ne3: D =!= G, ne4: E =!= F, ne5: E =!= G,
       ne6: F =!= G): TypedPipe[Cell[Position4D]] = {
-    data.map { case (p, c) => (p.permute(List(first, second, third, fourth)), c) }
+    data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth)), c) }
   }
 
   /**
@@ -1788,20 +1776,20 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
     dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position4D]] = {
     data
-      .groupBy { case (p, c) => Position1D(p.get(First)) }
+      .groupBy { case c => Position1D(c.position.get(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
+      .groupBy { case (c, pi) => Position1D(c.position.get(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
       .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
-      .groupBy { case ((p, c), pi, pj) => Position1D(p.get(Third)) }
+      .groupBy { case (c, pi, pj) => Position1D(c.position.get(Third)) }
       .join(persistDictionary(namesK, file, dictionary, separator, Third))
       .map { case (_, ((pc, pi, pj), pk)) => (pc, pi, pj, pk) }
-      .groupBy { case ((p, c), pi, pj, pk) => Position1D(p.get(Fourth)) }
+      .groupBy { case (c, pi, pj, pk) => Position1D(c.position.get(Fourth)) }
       .join(persistDictionary(namesL, file, dictionary, separator, Fourth))
       .map {
-        case (_, (((_, c), (_, i), (_, j), (_, k)), (_, l))) =>
-          i + separator + j + separator + k + separator + l + separator + c.value.toShortString
+        case (_, ((c, (_, i), (_, j), (_, k)), (_, l))) =>
+          i + separator + j + separator + k + separator + l + separator + c.content.value.toShortString
       }
       .write(TypedSink(TextLine(file)))
 
@@ -1840,7 +1828,7 @@ class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D]
       ev3: PosDimDep[Position5D, F], ev4: PosDimDep[Position5D, G], ev5: PosDimDep[Position5D, H], ne1: D =!= E,
       ne2: D =!= F, ne3: D =!= G, ne4: D =!= H, ne5: E =!= F, ne6: E =!= G, ne7: E =!= H, ne8: F =!= G, ne9: F =!= H,
       ne10: G =!= H): TypedPipe[Cell[Position5D]] = {
-    data.map { case (p, c) => (p.permute(List(first, second, third, fourth, fifth)), c) }
+    data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth)), c) }
   }
 
   /**
@@ -1879,23 +1867,23 @@ class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D]
     namesM: TypedPipe[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
       implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position5D]] = {
     data
-      .groupBy { case (p, c) => Position1D(p.get(First)) }
+      .groupBy { case c => Position1D(c.position.get(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case ((p, c), pi) => Position1D(p.get(Second)) }
+      .groupBy { case (c, pi) => Position1D(c.position.get(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
       .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
-      .groupBy { case ((p, c), pi, pj) => Position1D(p.get(Third)) }
+      .groupBy { case (c, pi, pj) => Position1D(c.position.get(Third)) }
       .join(persistDictionary(namesK, file, dictionary, separator, Third))
       .map { case (_, ((pc, pi, pj), pk)) => (pc, pi, pj, pk) }
-      .groupBy { case ((p, c), pi, pj, pk) => Position1D(p.get(Fourth)) }
+      .groupBy { case (c, pi, pj, pk) => Position1D(c.position.get(Fourth)) }
       .join(persistDictionary(namesL, file, dictionary, separator, Fourth))
       .map { case (_, ((pc, pi, pj, pk), pl)) => (pc, pi, pj, pk, pl) }
-      .groupBy { case ((p, c), pi, pj, pk, pl) => Position1D(p.get(Fifth)) }
+      .groupBy { case (c, pi, pj, pk, pl) => Position1D(c.position.get(Fifth)) }
       .join(persistDictionary(namesM, file, dictionary, separator, Fifth))
       .map {
-        case (_, (((_, c), (_, i), (_, j), (_, k), (_, l)), (_, m))) =>
-          i + separator + j + separator + k + separator + l + separator + m + separator + c.value.toShortString
+        case (_, ((c, (_, i), (_, j), (_, k), (_, l)), (_, m))) =>
+          i + separator + j + separator + k + separator + l + separator + m + separator + c.content.value.toShortString
       }
       .write(TypedSink(TextLine(file)))
 
@@ -1922,7 +1910,7 @@ object Matrixable {
   /** Converts a `(PositionPipeable, Content)` tuple into a `TypedPipe[Cell[P]]`. */
   implicit def PPCT2M[T, P <: Position](implicit ev: PositionPipeable[T, P]): Matrixable[(T, Content), P] = {
     new Matrixable[(T, Content), P] {
-      def convert(t: (T, Content)): TypedPipe[Cell[P]] = ev.convert(t._1).map { case p => (p, t._2) }
+      def convert(t: (T, Content)): TypedPipe[Cell[P]] = ev.convert(t._1).map { case p => Cell(p, t._2) }
     }
   }
   /** Converts a `List[Cell[P]]` into a `TypedPipe[Cell[P]]`. */

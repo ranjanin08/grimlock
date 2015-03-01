@@ -61,7 +61,7 @@ class BasicOperations(args : Args) extends Job(args) {
     .persistFile("./demo/transposed.out")
 
   // Construct a simple query
-  def simpleQuery(pos: Position, con: Content) = (con.value gtr 995) || (con.value equ "F")
+  def simpleQuery(cell: Cell[Position2D]) = (cell.content.value gtr 995) || (cell.content.value equ "F")
 
   // Find all co-ordinates that match the above simple query.
   val coords = data
@@ -122,20 +122,21 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   // Determine which features to filter based on statistics. In this case remove all features that occur for 2 or
   // fewer instances. These are removed first to prevent indicator features from being created.
   val rem1 = stats
-    .which((pos: Position, con: Content) => (pos.get(Second) equ "count") && (con.value leq 2))
+    .which((cell: Cell[Position2D]) => (cell.position.get(Second) equ "count") && (cell.content.value leq 2))
     .names(Over(First))
 
   // Also remove constant features (standard deviation is 0, or 1 category). These are removed after indicators have
   // been created.
   val rem2 = stats
-    .which((pos: Position, con: Content) =>
-      ((pos.get(Second) equ "sd") && (con.value equ 0)) || ((pos.get(Second) equ "num.cat") && (con.value equ 1)))
+    .which((cell: Cell[Position2D]) =>
+      ((cell.position.get(Second) equ "sd") && (cell.content.value equ 0)) ||
+      ((cell.position.get(Second) equ "num.cat") && (cell.content.value equ 1)))
     .names(Over(First))
 
   // Finally remove categoricals for which an individual category has only 1 value. These are removed after binarized
   // features have been created.
   val rem3 = stats
-    .which((pos: Position, con: Content) => (pos.get(Second) like ".*=.*".r) && (con.value equ 1))
+    .which((cell: Cell[Position2D]) => (cell.position.get(Second) like ".*=.*".r) && (cell.content.value equ 1))
     .names(Over(Second))
 
   // List of transformations to apply to each partition.
@@ -257,8 +258,9 @@ class LabelWeighting(args: Args) extends Job(args) {
 
     // Adding the weight is a straight forward lookup by the value of the content. Also return this cell
     // (pos.append("label"), con) so no additional join is needed with the original label data.
-    def present[P <: Position with ExpandablePosition](pos: P, con: Content, ext: V): Collection[Cell[pos.M]] = {
-      Collection(List((pos.append("label"), con), (pos.append("weight"), ext(Position1D(con.value.toShortString)))))
+    def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: V): Collection[Cell[P#M]] = {
+      Collection(List(Cell[P#M](cell.position.append("label"), cell.content),
+        Cell[P#M](cell.position.append("weight"), ext(Position1D(cell.content.value.toShortString)))))
     }
   }
 

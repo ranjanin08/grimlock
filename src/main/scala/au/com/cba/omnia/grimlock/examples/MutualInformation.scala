@@ -31,13 +31,13 @@ import com.twitter.scalding._
 // Simple bucketing implementation. For continuous values it generates the rounded up value. All other values are
 // passed through.
 case class CeilingBucketing() extends Transformer with Present {
-  def present[P <: Position with ModifiablePosition](pos: P, con: Content): Collection[Cell[pos.S]] = {
-    val c = (con.schema.kind.isSpecialisationOf(Type.Continuous), con.value.asDouble) match {
+  def present[P <: Position with ModifiablePosition](cell: Cell[P]): Collection[Cell[P]] = {
+    val con = (cell.content.schema.kind.isSpecialisationOf(Type.Continuous), cell.content.value.asDouble) match {
       case (true, Some(d)) => Content(DiscreteSchema[Codex.LongCodex](), math.ceil(d).toLong)
-      case _ => con
+      case _ => cell.content
     }
 
-    Collection(pos.asInstanceOf[pos.S], c)
+    Collection(cell.position, con)
   }
 }
 

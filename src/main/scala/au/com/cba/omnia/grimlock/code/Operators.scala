@@ -18,7 +18,6 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
@@ -43,23 +42,21 @@ trait DoubleOperator { self: Operator with Compute =>
    * Indicate if the cell is selected as part of the sample.
    *
    * @param slice Encapsulates the dimension(s) along which to compute.
-   * @param lp    The selected left cell position to compute for.
-   * @param lc    The contents of the left cell position to compute with.
-   * @param rp    The selected right cell position to compute for.
-   * @param rc    The contents of the right cell position to compute with.
+   * @param left  The selected left cell to compute with.
+   * @param right The selected right cell to compute with.
    * @param rem   The remaining coordinates.
    *
-   * @note The return value is an `Option` to allow, for example, upper or lower triangular matrices to be returned
+   * @note The return value is a `Collection` to allow, for example, upper or lower triangular matrices to be returned
    *       (this can be done by comparing the selected coordinates)
    */
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S,
-    rc: Content, rem: Slice[P, D]#R): Collection[Cell[rem.M]] = {
-    val coordinate = name.format(lp.toShortString(separator), rp.toShortString(separator))
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
+    rem: slice.R): Collection[Cell[slice.R#M]] = {
+    val coordinate = name.format(left.position.toShortString(separator), right.position.toShortString(separator))
 
-    (comparer.check(lp, rp), lc.value.asDouble, rc.value.asDouble) match {
+    (comparer.check(left.position, right.position), left.content.value.asDouble, right.content.value.asDouble) match {
       case (true, Some(l), Some(r)) => Collection(rem.prepend(coordinate),
         Content(ContinuousSchema[Codex.DoubleCodex](), if (inverse) compute(r, l) else compute(l, r)))
-      case _ => Collection[Cell[rem.M]]()
+      case _ => Collection[Cell[slice.R#M]]()
     }
   }
 
@@ -104,15 +101,15 @@ case class Divide(name: String = "(%s/%s)", separator: String = "|", inverse: Bo
  */
 case class Concatenate(name: String = "(%s,%s)", value: String = "%s,%s", separator: String = "|",
   comparer: Comparer = Lower) extends Operator with Compute {
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], lp: Slice[P, D]#S, lc: Content, rp: Slice[P, D]#S,
-    rc: Content, rem: Slice[P, D]#R): Collection[Cell[rem.M]] = {
-    comparer.check(lp, rp) match {
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
+    rem: slice.R): Collection[Cell[slice.R#M]] = {
+    comparer.check(left.position, right.position) match {
       case true =>
-        val coordinate = name.format(lp.toShortString(separator), rp.toShortString(separator))
-        val content = value.format(lc.value.toShortString, rc.value.toShortString)
+        val coordinate = name.format(left.position.toShortString(separator), right.position.toShortString(separator))
+        val content = value.format(left.content.value.toShortString, right.content.value.toShortString)
 
         Collection(rem.prepend(coordinate), Content(NominalSchema[Codex.StringCodex](), content))
-      case false => Collection[Cell[rem.M]]()
+      case false => Collection[Cell[slice.R#M]]()
     }
   }
 }

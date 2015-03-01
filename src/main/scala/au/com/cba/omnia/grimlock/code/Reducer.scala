@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.reduce
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
@@ -46,19 +45,17 @@ trait Reducer {
 trait Prepare extends PrepareWithValue { self: Reducer =>
   type V = Any
 
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content, ext: V): T = prepare(slc, pos, con)
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = prepare(slice, cell)
 
   /**
    * Prepare for reduction.
    *
-   * @param slc Encapsulates the dimension(s) over with to reduce.
-   * @param pos Original position corresponding to the cell. That is, it's the position prior to `slc.selected` being
-   *            applied.
-   * @param con Content which is to be reduced.
+   * @param slice Encapsulates the dimension(s) over with to reduce.
+   * @param cell  Cell which is to be reduced. Note that its position is prior to `slice.selected` being applied.
    *
    * @return State to reduce.
    */
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content): T
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T
 }
 
 /** Base trait for reduction preparation with a user supplied value. */
@@ -69,15 +66,13 @@ trait PrepareWithValue { self: Reducer =>
   /**
    * Prepare for reduction.
    *
-   * @param slc Encapsulates the dimension(s) over with to reduce.
-   * @param pos Original position corresponding to the cell. That is, it's the position prior to `slc.selected` being
-   *            applied.
-   * @param con Content which is to be reduced.
-   * @param ext User provided data required for preparation.
+   * @param slice Encapsulates the dimension(s) over with to reduce.
+   * @param cell  Cell which is to be reduced. Note that its position is prior to `slice.selected` being applied.
+   * @param ext   User provided data required for preparation.
    *
    * @return State to reduce.
    */
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content, ext: V): T
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T
 }
 
 /** Base trait for reductions that return a single value. */
@@ -114,18 +109,18 @@ trait PresentMultiple { self: Reducer =>
    *       `None`. This in turn permits an external API, for simple cases, where the user need not know about the types
    *       of variables of their data.
    */
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]]
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]]
 }
 
 /** Convenience trait for reducers that present a value both as `PresentSingle` and `PresentMultiple`. */
 trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple { self: Reducer =>
 
-  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = content(t).map { case c => (pos, c) }
+  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = content(t).map { case c => Cell(pos, c) }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
     name match {
-      case Some(n) => Collection(content(t).map { case con => Left((pos.append(n), con)) })
-      case None => Collection[Cell[pos.M]]()
+      case Some(n) => Collection(content(t).map { case con => Left(Cell[P#M](pos.append(n), con)) })
+      case None => Collection[Cell[P#M]]()
     }
   }
 
@@ -147,8 +142,8 @@ case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMult
   extends Reducer with Prepare with PresentMultiple {
   type T = List[Any]
 
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content): T = {
-    reducers.map { case reducer => reducer.prepare(slc, pos, con) }
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
+    reducers.map { case reducer => reducer.prepare(slice, cell) }
   }
 
   def reduce(lt: T, rt: T): T = {
@@ -157,7 +152,7 @@ case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMult
     }
   }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
     Collection((reducers, t).zipped.flatMap {
       case (reducer, s) => reducer.presentMultiple(pos, s.asInstanceOf[reducer.T]).toList
     })
@@ -172,13 +167,13 @@ case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMult
  * @note This need not be called in an application. The `ReducibleMultipleWithValue` type class will convert any
  *       `List[Reducer]` automatically to one of these.
  */
-case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValue with PresentMultiple, W](
+case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W](
   reducers: List[T]) extends Reducer with PrepareWithValue with PresentMultiple {
   type T = List[Any]
   type V = W
 
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content, ext: V): T = {
-    reducers.map { case reducer => reducer.prepare(slc, pos, con, ext.asInstanceOf[reducer.V]) }
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
+    reducers.map { case reducer => reducer.prepare(slice, cell, ext) }
   }
 
   def reduce(lt: T, rt: T): T = {
@@ -187,7 +182,7 @@ case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValu
     }
   }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
     Collection((reducers, t).zipped.flatMap {
       case (reducer, s) => reducer.presentMultiple(pos, s.asInstanceOf[reducer.T]).toList
     })
@@ -228,7 +223,7 @@ trait ReducibleMultipleWithValue[T, W] {
    *
    * @param t Object that can be converted to a reducer with `PrepareWithValue` with `PresentMultiple`.
    */
-  def convert(t: T): Reducer with PrepareWithValue with PresentMultiple
+  def convert(t: T): Reducer with PrepareWithValue with PresentMultiple { type V >: W }
 }
 
 /** Companion object for the `ReducibleMultipleWithValue` type class. */
@@ -239,7 +234,7 @@ object ReducibleMultipleWithValue {
    */
   implicit def LR2RMWV[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W]: ReducibleMultipleWithValue[List[T], W] = {
     new ReducibleMultipleWithValue[List[T], W] {
-      def convert(t: List[T]): Reducer with PrepareWithValue with PresentMultiple = {
+      def convert(t: List[T]): Reducer with PrepareWithValue with PresentMultiple { type V >: W } = {
         CombinationReducerMultipleWithValue[T, W](t)
       }
     }
@@ -249,7 +244,9 @@ object ReducibleMultipleWithValue {
    * PresentMultiple`; that is, it is a pass through.
    */
   implicit def R2RMWV[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W]: ReducibleMultipleWithValue[T, W] = {
-    new ReducibleMultipleWithValue[T, W] { def convert(t: T): Reducer with PrepareWithValue with PresentMultiple = t }
+    new ReducibleMultipleWithValue[T, W] {
+      def convert(t: T): Reducer with PrepareWithValue with PresentMultiple { type V >: W } = t
+    }
   }
 }
 

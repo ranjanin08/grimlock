@@ -16,7 +16,6 @@ package au.com.cba.omnia.grimlock.derive
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
@@ -37,35 +36,35 @@ trait Deriver {
   /**
    * Update state with the current cell and, optionally, output derived data.
    *
-   * @param sel The selected coordinates of the current cell.
-   * @param rem The remaining coordinates of the current cell.
-   * @param con The content of the current cell.
-   * @param t   The state.
+   * @param slice Encapsulates the dimension(s) along which to derive.
+   * @param cell  The selected cell to derive from.
+   * @param rem   The remaining coordinates of the cell.
+   * @param t     The state.
    *
    * @return A tuple consisting of updated state together with optional derived data.
    */
-  def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-    t: T): (T, Collection[Cell[sel.M]])
+  def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
+    t: T): (T, Collection[Cell[slice.S#M]])
 }
 
 /** Base trait for initialising a deriver. */
 trait Initialise extends InitialiseWithValue { self: Deriver =>
   type V = Any
 
-  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content, ext: V): T = {
-    initialise(sel, rem, con)
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T = {
+    initialise(slice)(cell, rem)
   }
 
   /**
    * Initialise the state using the first cell (ordered according to its position).
    *
-   * @param sel The selected coordinates of the current cell.
-   * @param rem The remaining coordinates of the current cell.
-   * @param con The content of the first cell.
+   * @param slice Encapsulates the dimension(s) along which to derive.
+   * @param cell  The cell to initialise with.
+   * @param rem   The remaining coordinates of the cell.
    *
    * @return The state for this object.
    */
-  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content): T
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T
 }
 
 /** Base trait for initialising a deriver with a user supplied value. */
@@ -76,14 +75,14 @@ trait InitialiseWithValue { self: Deriver =>
   /**
    * Initialise the state using the first cell (ordered according to its position).
    *
-   * @param sel The selected coordinates of the current cell.
-   * @param rem The remaining coordinates of the current cell.
-   * @param con The content of the first cell.
-   * @param ext The user define the value.
+   * @param slice Encapsulates the dimension(s) along which to derive.
+   * @param ext   The user define the value.
+   * @param cell  The cell to initialise with.
+   * @param rem   The remaining coordinates of the cell.
    *
    * @return The state for this object.
    */
-  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content, ext: V): T
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T
 }
 
 /** Base trait for combination derivers. */
@@ -97,18 +96,18 @@ trait CombinationDerivable[U <: Deriver] { self: Deriver =>
   /**
    * Update state with the current cell and, optionally, output derived data.
    *
-   * @param sel The selected coordinates of the current cell.
-   * @param rem The remaining coordinates of the current cell.
-   * @param con The content of the current cell.
-   * @param t   The state.
+   * @param slice Encapsulates the dimension(s) along which to derive.
+   * @param cell  The selected cell to derive from.
+   * @param rem   The remaining coordinates of the cell.
+   * @param t     The state.
    *
    * @return A tuple consisting of updated state together with optional derived data.
    */
-  def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-    t: T): (T, Collection[Cell[sel.M]]) = {
+  def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
+    t: T): (T, Collection[Cell[slice.S#M]]) = {
     val state = (singles, t)
       .zipped
-      .map { case (deriver, s) => deriver.present(sel, rem, con, s.asInstanceOf[deriver.T]) }
+      .map { case (deriver, s) => deriver.present(slice)(cell, rem, s.asInstanceOf[deriver.T]) }
 
     (state.map { case (t, c) => t }, Collection(state.flatMap { case (t, c) => c.toList }))
   }
@@ -124,8 +123,8 @@ trait CombinationDerivable[U <: Deriver] { self: Deriver =>
  */
 case class CombinationDeriver[T <: Deriver with Initialise](singles: List[T]) extends Deriver with Initialise
   with CombinationDerivable[T] {
-  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content): T = {
-    singles.map { case deriver => deriver.initialise(sel, rem, con) }
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
+    singles.map { case deriver => deriver.initialise(slice)(cell, rem) }
   }
 }
 
@@ -137,12 +136,12 @@ case class CombinationDeriver[T <: Deriver with Initialise](singles: List[T]) ex
  * @note This need not be called in an application. The `DerivableWithValue` type class will convert any
  *       `List[Deriver]` automatically to one of these.
  */
-case class CombinationDeriverWithValue[T <: Deriver with InitialiseWithValue, W](singles: List[T])
-  extends Deriver with InitialiseWithValue with CombinationDerivable[T] {
+case class CombinationDeriverWithValue[T <: Deriver with InitialiseWithValue { type V >: W }, W](
+  singles: List[T]) extends Deriver with InitialiseWithValue with CombinationDerivable[T] {
   type V = W
 
-  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content, ext: V): T = {
-    singles.map { case deriver => deriver.initialise(sel, rem, con, ext.asInstanceOf[deriver.V]) }
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T = {
+    singles.map { case deriver => deriver.initialise(slice, ext)(cell, rem) }
   }
 }
 
@@ -175,7 +174,7 @@ trait DerivableWithValue[T, W] {
    *
    * @param t Object that can be converted to a `Deriver with InitialiseWithValue`.
    */
-  def convert(t: T): Deriver with InitialiseWithValue
+  def convert(t: T): Deriver with InitialiseWithValue { type V >: W }
 }
 
 /** Companion object for the `DerivableWithValue` type class. */
@@ -186,7 +185,7 @@ object DerivableWithValue {
    */
   implicit def DT2DWV[T <: Deriver with InitialiseWithValue { type V >: W }, W]: DerivableWithValue[List[T], W] = {
     new DerivableWithValue[List[T], W] {
-      def convert(t: List[T]): Deriver with InitialiseWithValue = CombinationDeriverWithValue[T, W](t)
+      def convert(t: List[T]): Deriver with InitialiseWithValue { type V >: W } = CombinationDeriverWithValue[T, W](t)
     }
   }
   /**
@@ -194,7 +193,7 @@ object DerivableWithValue {
    * through.
    */
   implicit def D2DWV[T <: Deriver with InitialiseWithValue { type V >: W }, W]: DerivableWithValue[T, W] = {
-    new DerivableWithValue[T, W] { def convert(t: T): Deriver with InitialiseWithValue = t }
+    new DerivableWithValue[T, W] { def convert(t: T): Deriver with InitialiseWithValue { type V >: W } = t }
   }
 }
 

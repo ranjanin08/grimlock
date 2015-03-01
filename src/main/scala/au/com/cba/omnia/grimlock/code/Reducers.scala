@@ -18,7 +18,6 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.Type._
 import au.com.cba.omnia.grimlock.utility._
@@ -66,7 +65,7 @@ trait DefaultReducerValues {
 case class Count private (name: Option[Value]) extends Reducer with Prepare with PresentSingleAndMultiple {
   type T = Long
 
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content): T = 1
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = 1
 
   def reduce(lt: T, rt: T): T = lt + rt
 
@@ -266,14 +265,16 @@ case class Moments private (strict: Boolean, nan: Boolean, moments: List[Int], n
   with Prepare with PresentSingle with PresentMultiple with StrictReduce {
   type T = com.twitter.algebird.Moments
 
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content): T = {
-    com.twitter.algebird.Moments(con.value.asDouble.getOrElse(Double.NaN))
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
+    com.twitter.algebird.Moments(cell.content.value.asDouble.getOrElse(Double.NaN))
   }
 
-  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = content(t).map { case cl => (pos, cl(moments(0))) }
+  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = {
+    content(t).map { case cl => Cell(pos, cl(moments(0))) }
+  }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
-    Collection(content(t).map { case cl => Right(moments.map { case m => (pos.append(names(m)), cl(m)) }) })
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
+    Collection(content(t).map { case cl => Right(moments.map { case m => Cell[P#M](pos.append(names(m)), cl(m)) }) })
   }
 
   protected def invalid(t: T): Boolean = t.mean.isNaN
@@ -556,8 +557,8 @@ object Moments extends DefaultReducerValues {
 trait DoubleReducer extends Reducer with Prepare with PresentSingleAndMultiple with StrictReduce {
   type T = Double
 
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content): T = {
-    con.value.asDouble.getOrElse(Double.NaN)
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
+    cell.content.value.asDouble.getOrElse(Double.NaN)
   }
 
   /** Indicator if 'NaN' value should be output if the reduction failed (for example due to non-numeric data). */
@@ -752,16 +753,14 @@ trait ElementCounts { self: Reducer with Prepare with StrictReduce =>
   /**
    * Prepare for reduction.
    *
-   * @param slc Encapsulates the dimension(s) over with to reduce.
-   * @param pos Original position corresponding to the cell. That is, it's the position prior to `slc.selected` being
-   *            applied.
-   * @param con Content which is to be reduced.
+   * @param slice Encapsulates the dimension(s) over with to reduce.
+   * @param cell  Cell which is to be reduced. Note that its position is prior to `slice.selected` being applied.
    *
    * @return State to reduce.
    */
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content): T = {
-    (all.isEmpty || con.schema.kind.isSpecialisationOf(all.get)) match {
-      case true => Some(Map(con.value.toShortString -> 1))
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
+    (all.isEmpty || cell.content.schema.kind.isSpecialisationOf(all.get)) match {
+      case true => Some(Map(cell.content.value.toShortString -> 1))
       case false => None
     }
   }
@@ -792,14 +791,14 @@ trait ElementCounts { self: Reducer with Prepare with StrictReduce =>
 case class Histogram private (strict: Boolean, all: Option[Type], frequency: Boolean,
   statistics: List[Histogram.Statistic], name: String, separator: String) extends Reducer with Prepare
   with PresentMultiple with StrictReduce with ElementCounts {
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
     Collection(t.map {
       case m =>
         val counts = m.values.toList.sorted
-        val stats = statistics.map { case f => f(pos, counts) }.flatten.asInstanceOf[List[Cell[pos.M]]]
+        val stats = statistics.map { case s => s.compute(pos, counts) }.flatten
         val vals = (m.map {
           case (k, v) =>
-            (pos.append(name.format(pos.toShortString(separator), k)), frequency match {
+            Cell[P#M](pos.append(name.format(pos.toShortString(separator), k)), frequency match {
               case true => Content(DiscreteSchema[Codex.LongCodex](), v)
               case false => Content(ContinuousSchema[Codex.DoubleCodex](), v.toDouble / counts.sum)
             })
@@ -821,11 +820,18 @@ object Histogram extends DefaultReducerValues {
   /** Default value for indicator whether to return frequency or density. */
   val DefaultFrequency: Boolean = true
 
-  /**
-   * Signature for functions that compute a statistic on a histogram. The `ExpandablePosition` is the position of the
-   * cell, while the `List[Long]` are the (ordered) counts in each bin.
-   */
-  type Statistic = (ExpandablePosition, List[Long]) => Option[Cell[ExpandablePosition#M]]
+  /** Trait for computing statistics on a histogram */
+  trait Statistic {
+    /**
+     * Compute statistics on histogram.
+     *
+     * @param pos    The is the position of the cell.
+     * @param counts The the (ordered) counts in each bin.
+     *
+     * @return An optional cell containing the statistic.
+     */
+    def compute[P <: Position with ExpandablePosition](pos: P, counts: List[Long]): Option[Cell[P#M]]
+  }
 
   /**
    * Compute histogram.
@@ -943,8 +949,11 @@ object Histogram extends DefaultReducerValues {
   def numberOfCategories[V](name: V)(implicit ev: Valueable[V]): Statistic = {
     val n = ev.convert(name)
 
-    (pos: ExpandablePosition, counts: List[Long]) =>
-      Some((pos.append(n), Content(DiscreteSchema[Codex.LongCodex](), counts.size)))
+    new Statistic {
+      def compute[P <: Position with ExpandablePosition](pos: P, counts: List[Long]) = {
+        Some(Cell(pos.append(n), Content(DiscreteSchema[Codex.LongCodex](), counts.size)))
+      }
+    }
   }
 
   /**
@@ -957,8 +966,10 @@ object Histogram extends DefaultReducerValues {
   def entropy[V](name: V, nan: Boolean = false)(implicit ev: Valueable[V]): Statistic = {
     val n = ev.convert(name)
 
-    (pos: ExpandablePosition, counts: List[Long]) => {
-      Entropy.compute(counts, nan, false, Entropy.DefaultLog()).map { case con => (pos.append(n), con) }
+    new Statistic {
+      def compute[P <: Position with ExpandablePosition](pos: P, counts: List[Long]) = {
+        Entropy.compute(counts, nan, false, Entropy.DefaultLog()).map { case con => Cell(pos.append(n), con) }
+      }
     }
   }
 
@@ -973,13 +984,16 @@ object Histogram extends DefaultReducerValues {
   def frequencyRatio[V](name: V, nan: Boolean = false)(implicit ev: Valueable[V]): Statistic = {
     val n = ev.convert(name)
 
-    (pos: ExpandablePosition, counts: List[Long]) =>
-      ((counts.size > 1, nan) match {
-        case (true, _) => Some(Content(ContinuousSchema[Codex.DoubleCodex](),
-          counts.last.toDouble / counts(counts.length - 2)))
-        case (false, true) => Some(Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN))
-        case (false, false) => None
-      }).map { case con => (pos.append(n), con) }
+    new Statistic {
+      def compute[P <: Position with ExpandablePosition](pos: P, counts: List[Long]) = {
+        ((counts.size > 1, nan) match {
+          case (true, _) => Some(Content(ContinuousSchema[Codex.DoubleCodex](),
+            counts.last.toDouble / counts(counts.length - 2)))
+          case (false, true) => Some(Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN))
+          case (false, false) => None
+        }).map { case con => Cell(pos.append(n), con) }
+      }
+    }
   }
 }
 
@@ -998,15 +1012,15 @@ case class ThresholdCount private (strict: Boolean, nan: Boolean, threshold: Dou
   extends Reducer with Prepare with PresentMultiple with StrictReduce {
   type T = (Long, Long) // (leq, gtr)
 
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content): T = {
-    con.value.asDouble match {
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
+    cell.content.value.asDouble match {
       case Some(v) => if (v > threshold) (0, 1) else (1, 0)
       case _ => (-1, -1)
     }
   }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
-    Collection(content(t).map { case cl => Right(names.zip(cl).map { case (n, c) => (pos.append(n), c) }) })
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
+    Collection(content(t).map { case cl => Right(names.zip(cl).map { case (n, c) => Cell[P#M](pos.append(n), c) }) })
   }
 
   protected def invalid(t: T): Boolean = t._1 < 0
@@ -1092,9 +1106,9 @@ case class WeightedSum(dim: Dimension) extends Reducer with PrepareWithValue wit
   type T = Double
   type V = Map[Position1D, Content]
 
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content, ext: V): T = {
-    (con.schema.kind.isSpecialisationOf(Numerical), con.value.asDouble,
-      ext.get(Position1D(pos.get(dim))).flatMap(_.value.asDouble)) match {
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
+    (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble,
+      ext.get(Position1D(cell.position.get(dim))).flatMap(_.value.asDouble)) match {
         case (true, Some(v), Some(w)) => v * w
         case _ => 0
       }
@@ -1102,7 +1116,7 @@ case class WeightedSum(dim: Dimension) extends Reducer with PrepareWithValue wit
 
   def reduce(lt: T, rt: T): T = lt + rt
 
-  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = content(t).map { case c => (pos, c) }
+  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = content(t).map { case c => Cell(pos, c) }
 
   private def content(t: T): Option[Content] = Some(Content(ContinuousSchema[Codex.DoubleCodex](), t))
 }
@@ -1116,7 +1130,7 @@ case class WeightedSum(dim: Dimension) extends Reducer with PrepareWithValue wit
 case class DistinctCount private (name: Option[Value]) extends Reducer with Prepare with PresentSingleAndMultiple {
   type T = Set[Value]
 
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content): T = Set(con.value)
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = Set(cell.content.value)
 
   def reduce(lt: T, rt: T): T = lt ++ rt
 
@@ -1149,18 +1163,18 @@ object DistinctCount {
 case class Quantiles(quantiles: Int, name: String = "quantile.%d") extends Reducer with Prepare with PresentMultiple {
   type T = Map[Double, Long]
 
-  def prepare[P <: Position, D <: Dimension](slc: Slice[P, D], pos: P, con: Content): T = {
+  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
     val map = new scala.collection.immutable.TreeMap[Double, Long]()
 
-    con.schema.kind.isSpecialisationOf(Numerical) match {
-      case true => map + (con.value.asDouble.get -> 1)
+    cell.content.schema.kind.isSpecialisationOf(Numerical) match {
+      case true => map + (cell.content.value.asDouble.get -> 1)
       case false => map
     }
   }
 
   def reduce(lt: T, rt: T): T = lt ++ rt.map { case (k, v) => k -> (v + lt.getOrElse(k, 0L)) }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[pos.M]] = {
+  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
     val keys = t.keys.toList
     val values = t.values
 
@@ -1170,7 +1184,8 @@ case class Quantiles(quantiles: Int, name: String = "quantile.%d") extends Reduc
     val boundaries = for (cnt <- (0.0 until N by (N / quantiles)).tail) yield keys(cumsum.indexWhere(_ >= cnt))
 
     Collection((boundaries.zipWithIndex.map {
-      case (quant, idx) => (pos.append(name.format(idx + 1)), Content(ContinuousSchema[Codex.DoubleCodex](), quant))
+      case (quant, idx) =>
+        Cell[P#M](pos.append(name.format(idx + 1)), Content(ContinuousSchema[Codex.DoubleCodex](), quant))
     }).toList)
   }
 }

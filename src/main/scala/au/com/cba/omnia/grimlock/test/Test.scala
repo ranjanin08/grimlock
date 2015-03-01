@@ -41,7 +41,7 @@ import com.twitter.scalding.TDsl._, Dsl._
 import com.twitter.scalding.typed.IterablePipe
 
 object TestReader {
-  def read4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[(Position3D, Content)] = {
+  def read4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
     def hashDate(v: String) = {
       val cal = java.util.Calendar.getInstance()
       cal.setTime(DateCodex.fromValue(DateCodex.decode("2014-05-14").get))
@@ -60,7 +60,7 @@ object TestReader {
             }
           }
 
-          schema.decode(v).map { case c => (Position3D(i, f, hashDate(v)), c) }
+          schema.decode(v).map { case c => Cell(Position3D(i, f, hashDate(v)), c) }
       }
   }
 }
@@ -182,19 +182,20 @@ class Test6(args : Args) extends Job(args) {
   val data = TestReader.read4TupleDataAddDate(args("input"))
 
   data
-    .which((p: Position, c: Content) => c.schema.kind.isSpecialisationOf(Numerical))
+    .which((c: Cell[Position3D]) => c.content.schema.kind.isSpecialisationOf(Numerical))
     .persistFile("./tmp/whc1.out", descriptive=true)
 
   data
-    .which((p: Position, c: Content) => ! c.value.isInstanceOf[StringValue])
+    .which((c: Cell[Position3D]) => ! c.content.value.isInstanceOf[StringValue])
     .persistFile("./tmp/whc2.out", descriptive=true)
 
   data
-    .get(data.which((p: Position, c: Content) => (c.value equ 666) || (c.value leq 11.0) || (c.value equ "KQUPKFEH")))
+    .get(data.which((c: Cell[Position3D]) =>
+      (c.content.value equ 666) || (c.content.value leq 11.0) || (c.content.value equ "KQUPKFEH")))
     .persistFile("./tmp/whc3.out", descriptive=true)
 
   data
-    .which((p: Position, c: Content) => c.value.isInstanceOf[LongValue])
+    .which((c: Cell[Position3D]) => c.content.value.isInstanceOf[LongValue])
     .persistFile("./tmp/whc4.out", descriptive=true)
 
   TestReader.read4TupleDataAddDate(args("input"))
@@ -203,8 +204,8 @@ class Test6(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
     .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
-    .which(Over(Second), List(("count", (pos: Position, con: Content) => con.value leq 2),
-                              ("min", (pos: Position, con: Content) => con.value equ 107)))
+    .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
+                              ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
     .persistFile("./tmp/whc5.out", descriptive=true)
 }
 
@@ -463,12 +464,12 @@ class Test17(args : Args) extends Job(args) {
     .persistCSVFile(Over(Second), "./tmp/trn6.csv")
 
   data
-    .refine((pos: Position2D, con: Content) => con.value gtr 500)
+    .refine((c: Cell[Position2D]) => c.content.value gtr 500)
     .persistCSVFile(Over(Second), "./tmp/flt1.csv")
 
-  def removeGreaterThanMean(pos: Position2D, con: Content, ext: Map[Position1D, Map[Position1D, Content]]): Boolean = {
-    if (con.schema.kind.isSpecialisationOf(Numerical)) {
-      con.value leq ext(Position1D(pos.get(Second)))(Position1D("mean")).value
+  def removeGreaterThanMean(c: Cell[Position2D], ext: Map[Position1D, Map[Position1D, Content]]): Boolean = {
+    if (c.content.schema.kind.isSpecialisationOf(Numerical)) {
+      c.content.value leq ext(Position1D(c.position.get(Second)))(Position1D("mean")).value
     } else {
       true
     }
@@ -491,7 +492,7 @@ class Test18(args : Args) extends Job(args) {
     .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
 
   val rem = stats
-    .which(Over(Second), "count", (pos: Position, con: Content) => con.value leq 2)
+    .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2)
     .names(Over(First))
 
   data
@@ -528,7 +529,7 @@ class Test19(args : Args) extends Job(args) {
     .reduceAndExpand(Along(First), List(Count("count"), MaxAbs("max.abs")))
 
   val rem = stats
-    .which((pos: Position, con: Content) => (pos.get(Second) equ "count") && (con.value leq 2))
+    .which((c: Cell[Position2D]) => (c.position.get(Second) equ "count") && (c.content.value leq 2))
     .names(Over(First))
 
   def cb(key: String, pipe: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {
@@ -578,13 +579,16 @@ class Test22(args : Args) extends Job(args) {
   case class Diff() extends Deriver with Initialise {
     type T = Cell[Position]
 
-    def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content): T = (rem, con)
-    def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-      t: T): (T, Collection[Cell[sel.M]]) = {
-      ((rem, con), (con.value.asDouble, t._2.value.asDouble) match {
-        case (Some(c), Some(l)) => Collection(sel.append(rem.toShortString("") + "-" + t._1.toShortString("")),
-          Content(ContinuousSchema[Codex.DoubleCodex](), c - l))
-        case _ => Collection[Cell[sel.M]]()
+    def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
+      Cell(rem, cell.content)
+    }
+    def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
+      t: T): (T, Collection[Cell[slice.S#M]]) = {
+      (Cell(rem, cell.content), (cell.content.value.asDouble, t.content.value.asDouble) match {
+        case (Some(c), Some(l)) =>
+          Collection(cell.position.append(rem.toShortString("") + "-" + t.position.toShortString("")),
+            Content(ContinuousSchema[Codex.DoubleCodex](), c - l))
+        case _ => Collection[Cell[slice.S#M]]()
       })
     }
   }
@@ -604,15 +608,15 @@ class Test23(args : Args) extends Job(args) {
   val data = read2DFile("somePairwise.txt")
 
   case class DiffSquared() extends Operator with Compute {
-    def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-      rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R): Collection[Cell[rem.M]] = {
-      val xc = leftPos.toShortString("")
-      val yc = rightPos.toShortString("")
+    def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
+      rem: slice.R): Collection[Cell[slice.R#M]] = {
+      val xc = left.position.toShortString("")
+      val yc = right.position.toShortString("")
 
       (xc < yc && xc != yc) match {
         case true => Collection(rem.append("(" + xc + "-" + yc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
-          math.pow(leftCon.value.asLong.get - rightCon.value.asLong.get, 2)))
-        case false => Collection[Cell[rem.M]]
+          math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
+        case false => Collection[Cell[slice.R#M]]
       }
     }
   }

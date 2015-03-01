@@ -14,27 +14,27 @@
 
 package au.com.cba.omnia.grimlock.squash
 
+import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
 /** Reduce two cells preserving the cell with maximal value for the coordinate of the dimension being squashed. */
 case class PreservingMaxPosition() extends Squasher with Reduce {
-  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P, ycon: Content): Cell[P] = {
-    (Value.Ordering.compare(xpos.get(dim), ypos.get(dim)) > 0) match {
-      case true => (xpos, xcon)
-      case false => (ypos, ycon)
+  def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
+    (Value.Ordering.compare(x.position.get(dim), y.position.get(dim)) > 0) match {
+      case true => x
+      case false => y
     }
   }
 }
 
 /** Reduce two cells preserving the cell with minimal value for the coordinate of the dimension being squashed. */
 case class PreservingMinPosition() extends Squasher with Reduce {
-  def reduce[P <: Position](dim: Dimension, xpos: P, xcon: Content, ypos: P, ycon: Content): Cell[P] = {
-    (Value.Ordering.compare(xpos.get(dim), ypos.get(dim)) < 0) match {
-      case true => (xpos, xcon)
-      case false => (ypos, ycon)
+  def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
+    (Value.Ordering.compare(x.position.get(dim), y.position.get(dim)) < 0) match {
+      case true => x
+      case false => y
     }
   }
 }

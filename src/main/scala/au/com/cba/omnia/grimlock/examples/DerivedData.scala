@@ -30,32 +30,34 @@ case class Gradient(dim: Dimension) extends Deriver with Initialise {
   type T = Cell[Position]
 
   // Initialise state to the remainder coordinates (contains the date) and the content.
-  def initialise[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content): T = (rem, con)
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
+    Cell(rem, cell.content)
+  }
 
   val DayInMillis = 1000 * 60 * 60 * 24
   val separator = ""
 
   // For each new cell, output the difference with the previous cell (contained in `t`).
-  def present[P <: Position, D <: Dimension](sel: Slice[P, D]#S, rem: Slice[P, D]#R, con: Content,
-    t: T): (T, Collection[Cell[sel.M]]) = {
+  def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
+    t: T): (T, Collection[Cell[slice.S#M]]) = {
     // Get current date from `rem` and previous date from `t` and compute number of days between the dates.
     val days = rem.get(dim).asDate.flatMap {
-      case dc => t._1.get(dim).asDate.map { case dt => (dc.getTime - dt.getTime) / DayInMillis }
+      case dc => t.position.get(dim).asDate.map { case dt => (dc.getTime - dt.getTime) / DayInMillis }
     }
 
     // Get the difference in current value and previous value.
-    val delta = con.value.asDouble.flatMap { case dc => t._2.value.asDouble.map { case dt => dc - dt } }
+    val delta = cell.content.value.asDouble.flatMap { case dc => t.content.value.asDouble.map { case dt => dc - dt } }
 
     // Generate cell containing the gradient (delta / days).
     val grad = days.flatMap {
       case td => delta.map {
-        case vd => Left((sel.append(t._1.toShortString(separator) + ".to." + rem.toShortString(separator)),
-          Content(ContinuousSchema[Codex.DoubleCodex](), vd / td)))
+        case vd => Left(Cell[slice.S#M](cell.position.append(t.position.toShortString(separator) + ".to." +
+          rem.toShortString(separator)), Content(ContinuousSchema[Codex.DoubleCodex](), vd / td)))
       }
     }
 
     // Update state to be current `rem` and `con`, and output the gradient.
-    ((rem, con), Collection(grad))
+    (Cell(rem, cell.content), Collection(grad))
   }
 }
 

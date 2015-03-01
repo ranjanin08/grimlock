@@ -16,7 +16,6 @@ package au.com.cba.omnia.grimlock.pairwise
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
@@ -56,26 +55,22 @@ trait Operator
 trait Compute extends ComputeWithValue { self: Operator =>
   type V = Any
 
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Collection[Cell[rem.M]] = {
-    compute(slice, leftPos, leftCon, rightPos, rightCon, rem)
-  }
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(left: Cell[slice.S], right: Cell[slice.S],
+    rem: slice.R): Collection[Cell[slice.R#M]] = compute(slice)(left, right, rem)
 
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param slice    Encapsulates the dimension(s) along which to compute.
-   * @param leftPos  The selected left cell position to compute for.
-   * @param leftCon  The contents of the left cell position to compute with.
-   * @param rightPos The selected right cell position to compute for.
-   * @param rightCon The contents of the right cell position to compute with.
-   * @param rem      The remaining coordinates.
+   * @param slice Encapsulates the dimension(s) along which to compute.
+   * @param left  The selected left cell to compute with.
+   * @param right The selected right cell to compute with.
+   * @param rem   The remaining coordinates.
    *
-   * @note The return value is an `Option` to allow, for example, upper or lower triangular matrices to be returned
+   * @note The return value is a `Collection` to allow, for example, upper or lower triangular matrices to be returned
    *       (this can be done by comparing the selected coordinates)
    */
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R): Collection[Cell[rem.M]]
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
+    rem: slice.R): Collection[Cell[slice.R#M]]
 }
 
 /** Base trait for computing pairwise values with a user provided value. */
@@ -86,19 +81,17 @@ trait ComputeWithValue { self: Operator =>
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param slice    Encapsulates the dimension(s) along which to compute.
-   * @param leftPos  The selected left cell position to compute for.
-   * @param leftCon  The contents of the left cell position to compute with.
-   * @param rightPos The selected right cell position to compute for.
-   * @param rightCon The contents of the right cell position to compute with.
-   * @param rem      The remaining coordinates.
-   * @param ext      The user define the value.
+   * @param slice Encapsulates the dimension(s) along which to compute.
+   * @param ext   The user define the value.
+   * @param left  The selected left cell to compute with.
+   * @param right The selected right cell to compute with.
+   * @param rem   The remaining coordinates.
    *
-   * @note The return value is an `Option` to allow, for example, upper or lower triangular matrices to be returned
+   * @note The return value is a `Collection` to allow, for example, upper or lower triangular matrices to be returned
    *       (this can be done by comparing the selected coordinates)
    */
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Collection[Cell[rem.M]]
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(left: Cell[slice.S], right: Cell[slice.S],
+    rem: slice.R): Collection[Cell[slice.R#M]]
 }
 
 /**
@@ -110,11 +103,9 @@ trait ComputeWithValue { self: Operator =>
  *       automatically to one of these.
  */
 case class CombinationOperator[T <: Operator with Compute](singles: List[T]) extends Operator with Compute {
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R): Collection[Cell[rem.M]] = {
-    Collection(singles.flatMap {
-      case operator => operator.compute(slice, leftPos, leftCon, rightPos, rightCon, rem).toList
-    })
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
+    rem: slice.R): Collection[Cell[slice.R#M]] = {
+    Collection(singles.flatMap { case operator => operator.compute(slice)(left, right, rem).toList })
   }
 }
 
@@ -126,16 +117,13 @@ case class CombinationOperator[T <: Operator with Compute](singles: List[T]) ext
  * @note This need not be called in an application. The `OperableWithValue` type class will convert any
  *       `List[Operator]` automatically to one of these.
  */
-case class CombinationOperatorWithValue[T <: Operator with ComputeWithValue, W](singles: List[T]) extends Operator
-  with ComputeWithValue {
+case class CombinationOperatorWithValue[T <: Operator with ComputeWithValue { type V >: W }, W](
+  singles: List[T]) extends Operator with ComputeWithValue {
   type V = W
 
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], leftPos: Slice[P, D]#S, leftCon: Content,
-    rightPos: Slice[P, D]#S, rightCon: Content, rem: Slice[P, D]#R, ext: V): Collection[Cell[rem.M]] = {
-    Collection(singles.flatMap {
-      case operator => operator.compute(slice, leftPos, leftCon, rightPos, rightCon, rem,
-        ext.asInstanceOf[operator.V]).toList
-    })
+  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(left: Cell[slice.S], right: Cell[slice.S],
+    rem: slice.R): Collection[Cell[slice.R#M]] = {
+    Collection(singles.flatMap { case operator => operator.compute(slice, ext)(left, right, rem).toList })
   }
 }
 
@@ -168,7 +156,7 @@ trait OperableWithValue[T, W] {
    *
    * @param t Object that can be converted to a `Operator with ComputeWithValue`.
    */
-  def convert(t: T): Operator with ComputeWithValue
+  def convert(t: T): Operator with ComputeWithValue { type V >: W }
 }
 
 /** Companion object for the `OperableWithValue` type class. */
@@ -179,14 +167,14 @@ object OperableWithValue {
    */
   implicit def OT2OWV[T <: Operator with ComputeWithValue { type V >: W }, W]: OperableWithValue[List[T], W] = {
     new OperableWithValue[List[T], W] {
-      def convert(t: List[T]): Operator with ComputeWithValue = CombinationOperatorWithValue[T, W](t)
+      def convert(t: List[T]): Operator with ComputeWithValue { type V >: W } = CombinationOperatorWithValue[T, W](t)
     }
   }
   /**
    * Converts a `Operator with ComputeWithValue` to a `Operator with ComputeWithValue`; that is, it is a pass through.
    */
   implicit def O2OWV[T <: Operator with ComputeWithValue { type V >: W }, W]: OperableWithValue[T, W] = {
-    new OperableWithValue[T, W] { def convert(t: T): Operator with ComputeWithValue = t }
+    new OperableWithValue[T, W] { def convert(t: T): Operator with ComputeWithValue { type V >: W } = t }
   }
 }
 

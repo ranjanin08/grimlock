@@ -14,8 +14,8 @@
 
 package au.com.cba.omnia.grimlock.utility
 
+import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 
 /**
@@ -72,12 +72,7 @@ case class Collection[T](data: Option[Either[T, List[T]]]) {
     })
   }
 
-  private def flatten[V](tlo: Option[List[V]]): List[V] = {
-    tlo match {
-      case Some(tl) => tl
-      case None => List()
-    }
-  }
+  private def flatten[V](tlo: Option[List[V]]): List[V] = tlo.getOrElse(List())
 }
 
 object Collection {
@@ -104,7 +99,7 @@ object Collection {
    * @param pos The position.
    * @param con The content.
    */
-  def apply[P <: Position](pos: P, con: Content): Collection[Cell[P]] = Collection(Some(Left((pos, con))))
+  def apply[P <: Position](pos: P, con: Content): Collection[Cell[P]] = Collection(Some(Left(Cell(pos, con))))
 
   /** Create an empty collection. */
   def empty[T](): Collection[T] = Collection[T]()

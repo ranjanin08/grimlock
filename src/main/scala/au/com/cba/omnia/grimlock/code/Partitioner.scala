@@ -16,7 +16,6 @@ package au.com.cba.omnia.grimlock.partition
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.Matrix.Cell
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
@@ -121,11 +120,7 @@ class Partitions[T: Ordering, P <: Position](
   }
 
   protected def toString(t: (T, Cell[P]), separator: String, descriptive: Boolean): String = {
-    descriptive match {
-      case true => t._1.toString + separator + t._2._1.toString + separator + t._2._2.toString
-      case false => t._1.toString + separator + t._2._1.toShortString(separator) + separator +
-        t._2._2.toShortString(separator)
-    }
+    t._1.toString + separator + t._2.toString(separator, descriptive)
   }
 }
 
