@@ -39,7 +39,7 @@ class TestCollection extends FlatSpec with Matchers {
 
   it should "create a collection with a cell" in {
     Collection(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "bar")) should be
-      (Collection(Some(Left((Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "bar"))))))
+      (Collection(Some(Left(Cell(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "bar"))))))
   }
 
   it should "identify an empty collection" in {

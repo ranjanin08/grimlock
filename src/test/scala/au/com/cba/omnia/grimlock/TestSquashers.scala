@@ -25,86 +25,86 @@ import org.scalatest._
 trait TestSquashers {
 
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
-  val pos1 = Position3D(1, "b", DateValue(dfmt.parse("2001-01-01"), DateCodex))
-  val pos2 = Position3D(2, "a", DateValue(dfmt.parse("2002-01-01"), DateCodex))
   val con = Content(ContinuousSchema[Codex.LongCodex](), 123)
+  val cell1 = Cell(Position3D(1, "b", DateValue(dfmt.parse("2001-01-01"), DateCodex)), con)
+  val cell2 = Cell(Position3D(2, "a", DateValue(dfmt.parse("2002-01-01"), DateCodex)), con)
 }
 
 class TestPreservingMaxPosition extends FlatSpec with Matchers with TestSquashers {
 
   "A PreservingMaxPosition" should "return the second cell for the first dimension when greater" in {
-    PreservingMaxPosition().reduce(First, pos1, con, pos2, con) should be ((pos2, con))
+    PreservingMaxPosition().reduce(First, cell1, cell2) should be (cell2)
   }
 
   it should "return the first cell for the first dimension when greater" in {
-    PreservingMaxPosition().reduce(First, pos2, con, pos1, con) should be ((pos2, con))
+    PreservingMaxPosition().reduce(First, cell2, cell1) should be (cell2)
   }
 
   it should "return the first cell for the first dimension when equal" in {
-    PreservingMaxPosition().reduce(First, pos2, con, pos2, con) should be ((pos2, con))
+    PreservingMaxPosition().reduce(First, cell2, cell2) should be (cell2)
   }
 
   it should "return the first cell for the second dimension when greater" in {
-    PreservingMaxPosition().reduce(Second, pos1, con, pos2, con) should be ((pos1, con))
+    PreservingMaxPosition().reduce(Second, cell1, cell2) should be (cell1)
   }
 
   it should "return the second cell for the second dimension when greater" in {
-    PreservingMaxPosition().reduce(Second, pos2, con, pos1, con) should be ((pos1, con))
+    PreservingMaxPosition().reduce(Second, cell2, cell1) should be (cell1)
   }
 
   it should "return the first cell for the second dimension when equal" in {
-    PreservingMaxPosition().reduce(Second, pos1, con, pos1, con) should be ((pos1, con))
+    PreservingMaxPosition().reduce(Second, cell1, cell1) should be (cell1)
   }
 
   it should "return the second cell for the third dimension when greater" in {
-    PreservingMaxPosition().reduce(Third, pos1, con, pos2, con) should be ((pos2, con))
+    PreservingMaxPosition().reduce(Third, cell1, cell2) should be (cell2)
   }
 
   it should "return the first cell for the third dimension when greater" in {
-    PreservingMaxPosition().reduce(Third, pos2, con, pos1, con) should be ((pos2, con))
+    PreservingMaxPosition().reduce(Third, cell2, cell1) should be (cell2)
   }
 
   it should "return the first cell for the third dimension when equal" in {
-    PreservingMaxPosition().reduce(Third, pos2, con, pos2, con) should be ((pos2, con))
+    PreservingMaxPosition().reduce(Third, cell2, cell2) should be (cell2)
   }
 }
 
 class TestPreservingMinPosition extends FlatSpec with Matchers with TestSquashers {
 
   "A PreservingMinPosition" should "return the first cell for the first dimension when less" in {
-    PreservingMinPosition().reduce(First, pos1, con, pos2, con) should be ((pos1, con))
+    PreservingMinPosition().reduce(First, cell1, cell2) should be (cell1)
   }
 
   it should "return the second cell for the first dimension when less" in {
-    PreservingMinPosition().reduce(First, pos2, con, pos1, con) should be ((pos1, con))
+    PreservingMinPosition().reduce(First, cell2, cell1) should be (cell1)
   }
 
   it should "return the first cell for the first dimension when equal" in {
-    PreservingMinPosition().reduce(First, pos1, con, pos1, con) should be ((pos1, con))
+    PreservingMinPosition().reduce(First, cell1, cell1) should be (cell1)
   }
 
   it should "return the second cell for the second dimension when less" in {
-    PreservingMinPosition().reduce(Second, pos1, con, pos2, con) should be ((pos2, con))
+    PreservingMinPosition().reduce(Second, cell1, cell2) should be (cell2)
   }
 
   it should "return the first cell for the second dimension when less" in {
-    PreservingMinPosition().reduce(Second, pos2, con, pos1, con) should be ((pos2, con))
+    PreservingMinPosition().reduce(Second, cell2, cell1) should be (cell2)
   }
 
   it should "return the first cell for the second dimension when equal" in {
-    PreservingMinPosition().reduce(Second, pos2, con, pos2, con) should be ((pos2, con))
+    PreservingMinPosition().reduce(Second, cell2, cell2) should be (cell2)
   }
 
   it should "return the first cell for the third dimension when less" in {
-    PreservingMinPosition().reduce(Third, pos1, con, pos2, con) should be ((pos1, con))
+    PreservingMinPosition().reduce(Third, cell1, cell2) should be (cell1)
   }
 
   it should "return the second cell for the third dimension when less" in {
-    PreservingMinPosition().reduce(Third, pos2, con, pos1, con) should be ((pos1, con))
+    PreservingMinPosition().reduce(Third, cell2, cell1) should be (cell1)
   }
 
   it should "return the first cell for the third dimension when equal" in {
-    PreservingMinPosition().reduce(Third, pos1, con, pos1, con) should be ((pos1, con))
+    PreservingMinPosition().reduce(Third, cell1, cell1) should be (cell1)
   }
 }
 
