@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transformer that is a combination of one or more transformers with <code>Present</code>.
 </p></div><dl class="paramcmts block"><dt class="param">singles</dt><dd class="cmt"><p><code>List</code> of transformers that are combined together.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/2f465b61d9d3bb69d919ccd8ee3a4be8a0555f82//src/main/scala/au/com/cba/omnia/grimlock/code/Transformer.scala" target="_blank">Transformer.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This need not be called in an application. The <code>Transformable</code> type class will convert any <code>List[Transformer]</code>
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/9734ff1cc55d5cc7c02dab8706b9f804c907d00f//src/main/scala/au/com/cba/omnia/grimlock/code/Transformer.scala" target="_blank">Transformer.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This need not be called in an application. The <code>Transformable</code> type class will convert any <code>List[Transformer]</code>
       automatically to one of these.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
@@ -349,36 +349,35 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.transform.CombinationTransformer#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ModifiablePosition](pos:P,con:au.com.cba.omnia.grimlock.content.Content):au.com.cba.omnia.grimlock.utility.Collection[(pos.S,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="present[P&lt;:PositionwithModifiablePosition](P,Content):Collection[(present.P.S,Content)]"></a>
+      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ModifiablePosition](cell:au.com.cba.omnia.grimlock.Cell[P]):au.com.cba.omnia.grimlock.utility.Collection[au.com.cba.omnia.grimlock.Cell[P]]"></a>
+      <a id="present[P&lt;:PositionwithModifiablePosition](Cell[P]):Collection[Cell[P]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ModifiablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ModifiablePosition">ModifiablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.transform.CombinationTransformer.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ModifiablePosition.S">present.P.S</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ModifiablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ModifiablePosition">ModifiablePosition</a></span>]</span><span class="params">(<span name="cell">cell: <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.CombinationTransformer.present.P">P</span>]</span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.CombinationTransformer.present.P">P</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the cell.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The content to transform.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a cell or a <code>List</code> of cells where the position is creating by modifiying <code>pos</code> and the
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Optional of either a cell or a <code>List</code> of cells where the position is creating by modifiying <code>pos</code> and the
         content is derived from <code>con</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.transform.CombinationTransformer">CombinationTransformer</a> → <a href="Present.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Present">Present</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.transform.Present#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ModifiablePosition](pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:Present.this.V):au.com.cba.omnia.grimlock.utility.Collection[(pos.S,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="present[P&lt;:PositionwithModifiablePosition](P,Content,V):Collection[(Present.present.P.S,Content)]"></a>
+      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ModifiablePosition](cell:au.com.cba.omnia.grimlock.Cell[P],ext:Present.this.V):au.com.cba.omnia.grimlock.utility.Collection[au.com.cba.omnia.grimlock.Cell[P]]"></a>
+      <a id="present[P&lt;:PositionwithModifiablePosition](Cell[P],V):Collection[Cell[P]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ModifiablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ModifiablePosition">ModifiablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.transform.Present.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.transform.CombinationTransformer.V">V</a></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ModifiablePosition.S">Present.present.P.S</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ModifiablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ModifiablePosition">ModifiablePosition</a></span>]</span><span class="params">(<span name="cell">cell: <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.Present.present.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.transform.CombinationTransformer.V">V</a></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.Present.present.P">P</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the cell.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The content to transform.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The external value.
+</p></div><dl class="paramcmts block"><dt class="param">ext</dt><dd class="cmt"><p>The external value.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a cell or a <code>List</code> of cells where the position is creating by modifiying <code>pos</code> and the
         content is derived from <code>con</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Present.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Present">Present</a> → <a href="PresentWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentWithValue">PresentWithValue</a></dd></dl></div>

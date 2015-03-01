@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that expand a matrix's dimensions.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix">ExpandableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/2f465b61d9d3bb69d919ccd8ee3a4be8a0555f82//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Define operations that expand a matrix's dimensions.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix">ExpandableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/9734ff1cc55d5cc7c02dab8706b9f804c907d00f//src/main/scala/au/com/cba/omnia/grimlock/code/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -212,15 +212,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ExpandableMatrix#expand" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="expand(expander:(P,au.com.cba.omnia.grimlock.content.Content)=&gt;P#M):com.twitter.scalding.TypedPipe[(P#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="expand((P,Content)⇒P.M):TypedPipe[(P.M,Content)]"></a>
+      <a id="expand(expander:au.com.cba.omnia.grimlock.Cell[P]=&gt;P#M):com.twitter.scalding.TypedPipe[au.com.cba.omnia.grimlock.Cell[P#M]]"></a>
+      <a id="expand((Cell[P])⇒P.M):TypedPipe[Cell[P.M]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">expand</span><span class="params">(<span name="expander">expander: (<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+        <span class="name">expand</span><span class="params">(<span name="expander">expander: (<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Expand a matrix with an extra dimension.</p><div class="fullcomment"><div class="comment cmt"><p>Expand a matrix with an extra dimension.
@@ -228,15 +228,15 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P#M]]</code>
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ExpandableMatrix#expandWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="expandWithValue[V](expander:(P,au.com.cba.omnia.grimlock.content.Content,V)=&gt;P#M,value:com.twitter.scalding.ValuePipe[V]):com.twitter.scalding.TypedPipe[(P#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="expandWithValue[V]((P,Content,V)⇒P.M,ValuePipe[V]):TypedPipe[(P.M,Content)]"></a>
+      <a id="expandWithValue[V](expander:(au.com.cba.omnia.grimlock.Cell[P],V)=&gt;P#M,value:com.twitter.scalding.ValuePipe[V]):com.twitter.scalding.TypedPipe[au.com.cba.omnia.grimlock.Cell[P#M]]"></a>
+      <a id="expandWithValue[V]((Cell[P],V)⇒P.M,ValuePipe[V]):TypedPipe[Cell[P.M]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">expandWithValue</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="expander">expander: (<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>, <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.expandWithValue.V">V</span>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span></span>, <span name="value">value: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.expandWithValue.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+        <span class="name">expandWithValue</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="expander">expander: (<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.expandWithValue.V">V</span>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span></span>, <span name="value">value: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.expandWithValue.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Expand a matrix with an extra dimension using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Expand a matrix with an extra dimension using a user supplied value.
@@ -367,15 +367,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ExpandableMatrix#transformAndExpand" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="transformAndExpand[T](transformers:T)(implicitev:au.com.cba.omnia.grimlock.transform.TransformableExpanded[T]):com.twitter.scalding.TypedPipe[(P#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="transformAndExpand[T](T)(TransformableExpanded[T]):TypedPipe[(P.M,Content)]"></a>
+      <a id="transformAndExpand[T](transformers:T)(implicitev:au.com.cba.omnia.grimlock.transform.TransformableExpanded[T]):com.twitter.scalding.TypedPipe[au.com.cba.omnia.grimlock.Cell[P#M]]"></a>
+      <a id="transformAndExpand[T](T)(TransformableExpanded[T]):TypedPipe[Cell[P.M]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">transformAndExpand</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="transformers">transformers: <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpand.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="transform/TransformableExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.TransformableExpanded">TransformableExpanded</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpand.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+        <span class="name">transformAndExpand</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="transformers">transformers: <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpand.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="transform/TransformableExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.transform.TransformableExpanded">TransformableExpanded</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpand.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Transform the content of a matrix and return the transformations with an expanded position.</p><div class="fullcomment"><div class="comment cmt"><p>Transform the content of a matrix and return the transformations with an expanded position.
@@ -383,15 +383,15 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A Scalding <code>TypedPipe[Cell[P#M]]</code>
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.ExpandableMatrix#transformAndExpandWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="transformAndExpandWithValue[T,V](transformers:T,value:com.twitter.scalding.ValuePipe[V])(implicitev:au.com.cba.omnia.grimlock.transform.TransformableExpandedWithValue[T,V]):com.twitter.scalding.TypedPipe[(P#M,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="transformAndExpandWithValue[T,V](T,ValuePipe[V])(TransformableExpandedWithValue[T,V]):TypedPipe[(P.M,Content)]"></a>
+      <a id="transformAndExpandWithValue[T,V](transformers:T,value:com.twitter.scalding.ValuePipe[V])(implicitev:au.com.cba.omnia.grimlock.transform.TransformableExpandedWithValue[T,V]):com.twitter.scalding.TypedPipe[au.com.cba.omnia.grimlock.Cell[P#M]]"></a>
+      <a id="transformAndExpandWithValue[T,V](T,ValuePipe[V])(TransformableExpandedWithValue[T,V]):TypedPipe[Cell[P.M]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">transformAndExpandWithValue</span><span class="tparams">[<span name="T">T</span>, <span name="V">V</span>]</span><span class="params">(<span name="transformers">transformers: <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.T">T</span></span>, <span name="value">value: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.V">V</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="transform/TransformableExpandedWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.TransformableExpandedWithValue">TransformableExpandedWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+        <span class="name">transformAndExpandWithValue</span><span class="tparams">[<span name="T">T</span>, <span name="V">V</span>]</span><span class="params">(<span name="transformers">transformers: <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.T">T</span></span>, <span name="value">value: <span class="extype" name="com.twitter.scalding.ValuePipe">ValuePipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.V">V</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="transform/TransformableExpandedWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.TransformableExpandedWithValue">TransformableExpandedWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.ExpandableMatrix.transformAndExpandWithValue.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.TypedPipe">TypedPipe</span>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">P.M</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Transform the content of a matrix using a user supplied value, and return the transformations with an expanded

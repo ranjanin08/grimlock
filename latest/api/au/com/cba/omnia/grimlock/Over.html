@@ -42,7 +42,7 @@
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Indicates that the selected coordinate is indexed by <code>dimension</code>. In other words, when a groupBy is performed, it is
 performed using a <code>Position1D</code> consisting of the coordinate at index <code>dimension</code>.
 </p></div><dl class="paramcmts block"><dt class="param">dimension</dt><dd class="cmt"><p>Dimension of the selected coordinate.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/2f465b61d9d3bb69d919ccd8ee3a4be8a0555f82//src/main/scala/au/com/cba/omnia/grimlock/code/Slice.scala" target="_blank">Slice.scala</a></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/9734ff1cc55d5cc7c02dab8706b9f804c907d00f//src/main/scala/au/com/cba/omnia/grimlock/code/Slice.scala" target="_blank">Slice.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Over.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Over.D">D</span>], <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Over.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.Over.D">D</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -464,15 +464,15 @@ performed using a <code>Position1D</code> consisting of the coordinate at index 
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.Over#toMap" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toMap(pos:P,con:au.com.cba.omnia.grimlock.content.Content):Map[Over.this.S,Over.this.C]"></a>
-      <a id="toMap(P,Content):Map[S,C]"></a>
+      <a id="toMap(cell:au.com.cba.omnia.grimlock.Cell[P]):Map[Over.this.S,Over.this.C]"></a>
+      <a id="toMap(Cell[P]):Map[S,C]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toMap</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.Over.P">P</span></span>, <span name="con">con: <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.Over.S">S</a>, <a href="#C=P#O" class="extmbr" name="au.com.cba.omnia.grimlock.Over.C">C</a>]</span>
+        <span class="name">toMap</span><span class="params">(<span name="cell">cell: <a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Over.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.Over.S">S</a>, <a href="#C=P#O" class="extmbr" name="au.com.cba.omnia.grimlock.Over.C">C</a>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Convert a cell to an in-memory map.</p><div class="fullcomment"><div class="comment cmt"><p>Convert a cell to an in-memory map.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.Over">Over</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.Slice">Slice</a></dd></dl></div>

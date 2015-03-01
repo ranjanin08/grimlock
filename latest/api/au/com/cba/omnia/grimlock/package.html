@@ -71,6 +71,19 @@
       </span>
       </h4>
       <p class="comment cmt">Indicates that the selected coordinates are all except the one indexed by <code>dimension</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.Cell" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Cell[P&lt;:au.com.cba.omnia.grimlock.position.Position]extendsProductwithSerializable"></a>
+      <a id="Cell[P&lt;:Position]:Cell[P]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Cell.html"><span class="name">Cell</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.Cell.P">P</span></span>, <span name="content">content: <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Cell in a matrix.</p>
     </li><li name="au.com.cba.omnia.grimlock.ExpandableMatrix" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ExpandableMatrix[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition]extendsAnyRef"></a>
       <a id="ExpandableMatrix[P&lt;:PositionwithExpandablePosition]:ExpandableMatrix[P]"></a>
@@ -98,7 +111,7 @@
       </h4>
       
     </li><li name="au.com.cba.omnia.grimlock.Matrix" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Matrix[P&lt;:au.com.cba.omnia.grimlock.position.Position]extendsPersist[(P,au.com.cba.omnia.grimlock.content.Content)]"></a>
+      <a id="Matrix[P&lt;:au.com.cba.omnia.grimlock.position.Position]extendsPersist[au.com.cba.omnia.grimlock.Cell[P]]"></a>
       <a id="Matrix[P&lt;:Position]:Matrix[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -106,7 +119,7 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Matrix.html"><span class="name">Matrix</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="result"> extends <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>, <a href="content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+        <a href="Matrix.html"><span class="name">Matrix</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="result"> extends <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.Persist">Persist</a>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.Matrix.P">P</span>]]</span>
       </span>
       </h4>
       <p class="comment cmt">Rich wrapper around a <code>TypedPipe[Cell[P]]</code>.</p>

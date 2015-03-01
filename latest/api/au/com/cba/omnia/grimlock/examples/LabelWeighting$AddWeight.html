@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/2f465b61d9d3bb69d919ccd8ee3a4be8a0555f82//src/main/scala/au/com/cba/omnia/grimlock/examples/Demo.scala" target="_blank">Demo.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/9734ff1cc55d5cc7c02dab8706b9f804c907d00f//src/main/scala/au/com/cba/omnia/grimlock/examples/Demo.scala" target="_blank">Demo.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../transform/PresentExpandedWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue">PresentExpandedWithValue</a>, <a href="../transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Transformer">Transformer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -312,19 +312,19 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.examples.LabelWeighting.AddWeight#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,con:au.com.cba.omnia.grimlock.content.Content,ext:AddWeight.this.V):au.com.cba.omnia.grimlock.utility.Collection[(pos.M,au.com.cba.omnia.grimlock.content.Content)]"></a>
-      <a id="present[P&lt;:PositionwithExpandablePosition](P,Content,V):Collection[(present.P.M,Content)]"></a>
+      <a id="present[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](cell:au.com.cba.omnia.grimlock.Cell[P],ext:AddWeight.this.V):au.com.cba.omnia.grimlock.utility.Collection[au.com.cba.omnia.grimlock.Cell[P#M]]"></a>
+      <a id="present[P&lt;:PositionwithExpandablePosition](Cell[P],V):Collection[Cell[present.P.M]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.examples.LabelWeighting.AddWeight.present.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a></span>, <span name="ext">ext: <a href="#V=Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]" class="extmbr" name="au.com.cba.omnia.grimlock.examples.LabelWeighting.AddWeight.V">V</a></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">present.P.M</span>, <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>)]</span>
+        <span class="name">present</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="cell">cell: <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.examples.LabelWeighting.AddWeight.present.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]" class="extmbr" name="au.com.cba.omnia.grimlock.examples.LabelWeighting.AddWeight.V">V</a></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">present.P.M</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position of the cell.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The content to transform.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The external value.
+</p></div><dl class="paramcmts block"><dt class="param">ext</dt><dd class="cmt"><p>The external value.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a cell or a <code>List</code> of cells where the position is creating by appending to <code>pos</code> and
         the content is derived from <code>con</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.examples.LabelWeighting.AddWeight">AddWeight</a> → <a href="../transform/PresentExpandedWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.transform.PresentExpandedWithValue">PresentExpandedWithValue</a></dd></dl></div>
