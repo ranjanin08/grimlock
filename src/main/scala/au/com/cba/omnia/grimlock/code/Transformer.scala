@@ -125,11 +125,7 @@ trait PresentExpandedWithValue { self: Transformer =>
 case class AndThenTransformer(first: Transformer with Present, second: Transformer with Present) extends Transformer
   with Present {
   def present[P <: Position with ModifiablePosition](cell: Cell[P]): Collection[Cell[P]] = {
-    Collection(
-      first
-        .present(cell)
-        .toList
-        .flatMap { case c => second.present(c).toList })
+    Collection(first.present(cell).toList.flatMap { case c => second.present(c).toList })
   }
 }
 
@@ -145,11 +141,7 @@ case class AndThenTransformerWithValue[W](first: Transformer with PresentWithVal
   second: Transformer with PresentWithValue { type V >: W }) extends Transformer with PresentWithValue {
   type V = W
   def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    Collection(
-      first
-        .present(cell, ext)
-        .toList
-        .flatMap { case c => second.present(c, ext).toList })
+    Collection(first.present(cell, ext).toList.flatMap { case c => second.present(c, ext).toList })
   }
 }
 

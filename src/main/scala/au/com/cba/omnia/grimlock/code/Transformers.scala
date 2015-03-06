@@ -29,10 +29,7 @@ import com.twitter.scalding.typed.LiteralValue
 trait PresentCell[T] {
   protected def present[P <: Position with ModifiablePosition](dim: Dimension, cell: Cell[P], name: Option[String],
     typ: Option[Type], value: T): Collection[Cell[P]] = {
-    checkContent(cell.content, typ) match {
-      case true => getCell(dim, cell, name, value)
-      case false => Collection[Cell[P]]()
-    }
+    if (checkContent(cell.content, typ)) { getCell(dim, cell, name, value) } else { Collection[Cell[P]]() }
   }
 
   protected def present[P <: Position with ModifiablePosition](dim: Dimension, cell: Cell[P], name: Option[String],
@@ -69,10 +66,7 @@ trait PresentCell[T] {
   protected def getValue(con: Content): Option[T]
 
   private def checkContent(con: Content, typ: Option[Type]): Boolean = {
-    typ match {
-      case Some(t) => con.schema.kind.isSpecialisationOf(t)
-      case None => true
-    }
+    typ.map { t => con.schema.kind.isSpecialisationOf(t) }.getOrElse(true)
   }
 
   private def getValue(key: Position1D, ext: Map[Position1D, Content]): Option[T] = ext.get(key).flatMap(getValue(_))
@@ -85,13 +79,13 @@ trait PresentCell[T] {
     val con = cell.content
 
     name match {
-      case Some(n) => pos.set(dim, n.format(pos.get(dim).toShortString, con.value.toShortString)).asInstanceOf[P]
+      case Some(n) => pos.update(dim, n.format(pos(dim).toShortString, con.value.toShortString)).asInstanceOf[P]
       case None => pos
     }
   }
 
   private def getKey[P <: Position](dim: Dimension, pos: P, key: Option[Position1D]): Position1D = {
-    key.getOrElse(Position1D(pos.get(dim)))
+    key.getOrElse(Position1D(pos(dim)))
   }
 
   private def getCell[P <: Position with ModifiablePosition](dim: Dimension, cell: Cell[P], name: Option[String],
@@ -1205,11 +1199,11 @@ case class Cut private (dim: Dimension, name: Option[String]) extends Transforme
     val con = cell.content
 
     val p = name match {
-      case Some(n) => pos.set(dim, n.format(pos.get(dim).toShortString)).asInstanceOf[P]
+      case Some(n) => pos.update(dim, n.format(pos(dim).toShortString)).asInstanceOf[P]
       case None => pos
     }
 
-    (con.schema.kind.isSpecialisationOf(Numerical), con.value.asDouble, ext.get(Position1D(pos.get(dim)))) match {
+    (con.schema.kind.isSpecialisationOf(Numerical), con.value.asDouble, ext.get(Position1D(pos(dim)))) match {
       case (true, Some(v), Some(r)) =>
         val bins = r.sliding(2).map("(" + _.mkString(",") + "]").toList
 
@@ -1265,9 +1259,7 @@ object Cut {
    * @return A Scalding `ValuePipe` holding the break values.
    */
   def squareRootChoice[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
-    max: X): ValuePipe[Cut#V] = {
-    cut(ext, min, max, extract(_, count).map { case n => math.round(math.sqrt(n)) })
-  }
+    max: X): ValuePipe[Cut#V] = cut(ext, min, max, extract(_, count).map { case n => math.round(math.sqrt(n)) })
 
   /**
    * Define range of bins based on Sturges' formula.
@@ -1280,9 +1272,7 @@ object Cut {
    * @return A Scalding `ValuePipe` holding the break values.
    */
   def sturgesFormula[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
-    max: X): ValuePipe[Cut#V] = {
-    cut(ext, min, max, extract(_, count).map { case n => math.ceil(log2(n) + 1).toLong })
-  }
+    max: X): ValuePipe[Cut#V] = cut(ext, min, max, extract(_, count).map { case n => math.ceil(log2(n) + 1).toLong })
 
   /**
    * Define range of bins based on the Rice rule.

@@ -126,10 +126,7 @@ trait Escape {
  */
 case class Quote(all: Boolean = false, quote: String = "\"") extends Escape {
   def escape(str: String, special: String): String = {
-    (all || str.contains(special)) match {
-      case true => quote + str + quote
-      case false => str
-    }
+    if (all || str.contains(special)) { quote + str + quote } else { str }
   }
 }
 

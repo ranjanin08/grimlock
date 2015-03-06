@@ -567,10 +567,7 @@ trait DoubleReducer extends Reducer with Prepare with PresentSingleAndMultiple w
   protected def invalid(t: T): Boolean = t.isNaN
 
   protected def content(t: T): Option[Content] = {
-    (t.isNaN && !nan) match {
-      case true => None
-      case false => Some(Content(ContinuousSchema[Codex.DoubleCodex](), t))
-    }
+    if (t.isNaN && !nan) { None } else { Some(Content(ContinuousSchema[Codex.DoubleCodex](), t)) }
   }
 }
 
@@ -1108,7 +1105,7 @@ case class WeightedSum(dim: Dimension) extends Reducer with PrepareWithValue wit
 
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
     (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble,
-      ext.get(Position1D(cell.position.get(dim))).flatMap(_.value.asDouble)) match {
+      ext.get(Position1D(cell.position(dim))).flatMap(_.value.asDouble)) match {
         case (true, Some(v), Some(w)) => v * w
         case _ => 0
       }

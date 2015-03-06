@@ -114,10 +114,7 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
         // Get terms from words. Optionally add ngrams.
         val terms = (ngrams > 1) match {
           case false => words
-          case _ => words ++ words
-            .sliding(ngrams)
-            .map(_.mkString(separator))
-            .toList
+          case _ => words ++ words.sliding(ngrams).map(_.mkString(separator)).toList
         }
 
         // Return the term and it's count in the document.

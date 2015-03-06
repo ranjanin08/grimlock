@@ -73,7 +73,7 @@ trait BatchMovingAverage extends Deriver with Initialise with MovingAverage {
   }
 
   private def getCurrent[P <: Position, D <: Dimension](rem: Slice[P, D]#R, con: Content): (Value, Double) = {
-    (rem.get(dim), getDouble(con))
+    (rem(dim), getDouble(con))
   }
 
   private def updateList[P <: Position, D <: Dimension](rem: Slice[P, D]#R, con: Content,
@@ -136,14 +136,14 @@ trait OnlineMovingAverage extends Deriver with Initialise with MovingAverage {
   val dim: Dimension
 
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
-    (getDouble(cell.content), 1, Some((rem.get(dim), getDouble(cell.content))))
+    (getDouble(cell.content), 1, Some((rem(dim), getDouble(cell.content))))
   }
 
   def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
     t: T): (T, Collection[Cell[slice.S#M]]) = {
     val curr = compute(getDouble(cell.content), t)
 
-    ((curr, t._2 + 1, None), getCollection(slice)(cell.position, rem.get(dim), curr, t._3))
+    ((curr, t._2 + 1, None), getCollection(slice)(cell.position, rem(dim), curr, t._3))
   }
 
   protected def compute(curr: Double, t: T): Double

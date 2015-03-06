@@ -31,7 +31,7 @@ trait Position {
    *
    * @param dim Dimension of the coordinate to get.
    */
-  def get(dim: Dimension): Value = coordinates(dim.index)
+  def apply(dim: Dimension): Value = coordinates(dim.index)
 
   /**
    * Converts the position to a consise (terse) string.
@@ -53,18 +53,15 @@ trait Position {
    *       dimensions is performed.
    */
   def compare(that: Position): Int = {
-    val mine = coordinates
-    val theirs = that.coordinates
-
-    (mine.length == theirs.length) match {
+    (coordinates.length == that.coordinates.length) match {
       case true =>
-        val cmp = mine.zip(theirs).map { case (m, t) => Value.Ordering.compare(m, t) }
+        val cmp = coordinates.zip(that.coordinates).map { case (m, t) => Value.Ordering.compare(m, t) }
 
         cmp.indexWhere(_ != 0) match {
           case idx if (idx < 0) => 0
           case idx => cmp(idx)
         }
-      case false => mine.length.compare(theirs.length)
+      case false => coordinates.length.compare(that.coordinates.length)
     }
   }
 }
@@ -82,7 +79,7 @@ trait ModifiablePosition { self: Position =>
    *
    * @return A position of the same size as `this` but with `t` set at index `dim`.
    */
-  def set[T: Valueable](dim: Dimension, t: T): S = {
+  def update[T: Valueable](dim: Dimension, t: T): S = {
     same(coordinates.updated(dim.index, implicitly[Valueable[T]].convert(t)))
   }
 
@@ -132,12 +129,7 @@ trait Mapable1D[P <: Position] extends Mapable[P, Content] {
 /** Trait for converting (2..N)D positions to `Map` values. */
 trait MapableXD[P <: Position] extends Mapable[P, Map[P, Content]] {
   def toMapValue(r: P, c: Content): Map[P, Content] = Map(r -> c)
-  def combineMapValues(x: Option[Map[P, Content]], y: Map[P, Content]): Map[P, Content] = {
-    x match {
-      case Some(l) => l ++ y
-      case None => y
-    }
-  }
+  def combineMapValues(x: Option[Map[P, Content]], y: Map[P, Content]): Map[P, Content] = x.map(_ ++ y).getOrElse(y)
 }
 
 /** `Mapable` object for `PositionXD` with `Along`. */
@@ -167,11 +159,7 @@ trait ReduceablePosition { self: Position =>
    *
    * @return A new position with dimension `dim` removed.
    */
-  def remove(dim: Dimension): L = {
-    val (h, t) = coordinates.splitAt(dim.index)
-
-    less(h ::: t.drop(1))
-  }
+  def remove(dim: Dimension): L = less(coordinates.zipWithIndex.filter(_._2 != dim.index).map(_._1))
 
   /**
    * Melt dimension `dim` into `into`.
@@ -186,12 +174,12 @@ trait ReduceablePosition { self: Position =>
    * @note `dim` and `into` must not be the same.
    */
   def melt(dim: Dimension, into: Dimension, separator: String): L = {
-    val (h, t) = coordinates
+    less(coordinates
       .updated(into.index,
         StringValue(coordinates(into.index).toShortString + separator + coordinates(dim.index).toShortString))
-      .splitAt(dim.index)
-
-    less(h ::: t.drop(1))
+      .zipWithIndex
+      .filter(_._2 != dim.index)
+      .map(_._1))
   }
 
   protected def less(cl: List[Value]): L
@@ -463,16 +451,13 @@ class Positions[P <: Position](protected val data: TypedPipe[P]) extends Persist
    * @see [[Names]]
    */
   def names[D <: Dimension](slice: Slice[P, D])(implicit ev: PosDimDep[P, D]): TypedPipe[(slice.S, Long)] = {
-    implicit def PositionOrdering[T <: Position] = new Ordering[T] { def compare(l: T, r: T) = l.compare(r) }
-
-    Names.number(data.map { case p => slice.selected(p) }.distinct)
+    Names.number(data
+      .map { case p => slice.selected(p) }
+      .distinct(new Ordering[slice.S] { def compare(l: slice.S, r: slice.S) = l.compare(r) }))
   }
 
   protected def toString(t: P, separator: String, descriptive: Boolean): String = {
-    descriptive match {
-      case true => t.toString
-      case false => t.toShortString(separator)
-    }
+    if (descriptive) { t.toString } else { t.toShortString(separator) }
   }
 }
 

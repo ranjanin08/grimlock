@@ -119,11 +119,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def size[D <: Dimension](dim: D, distinct: Boolean = false)(
     implicit ev: PosDimDep[P, D]): TypedPipe[Cell[Position1D]] = {
-    val coords = data.map { case c => c.position.get(dim) }
-    val dist = distinct match {
-      case true => coords
-      case false => coords.distinct(Value.Ordering)
-    }
+    val coords = data.map { case c => c.position(dim) }
+    val dist = if (distinct) { coords } else { coords.distinct(Value.Ordering) }
 
     dist
       .map { case _ => 1L }
@@ -218,7 +215,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def which[T, D <: Dimension](slice: Slice[P, D], pospred: List[(T, Predicate)])(
     implicit ev1: Nameable[T, P, slice.S, D], ev2: PosDimDep[P, D]): TypedPipe[P] = {
-
     val nampred = pospred.map { case (pos, pred) => ev1.convert(this, slice, pos).map { case (p, i) => (p, pred) } }
     val pipe = nampred.tail.foldLeft(nampred.head)((b, a) => b ++ a)
 
@@ -239,12 +235,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     data
       .groupBy { case c => c.position }
       .leftJoin(ev.convert(positions).groupBy { case p => p })
-      .flatMap {
-        case (_, (c, po)) => po match {
-          case Some(_) => Some(c)
-          case None => None
-        }
-      }
+      .flatMap { case (_, (c, po)) => po.map(_ => c) }
   }
 
   /**
@@ -1620,10 +1611,10 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position2D]] = {
     data
-      .groupBy { case c => Position1D(c.position.get(First)) }
+      .groupBy { case c => Position1D(c.position(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case (c, pi) => Position1D(c.position.get(Second)) }
+      .groupBy { case (c, pi) => Position1D(c.position(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
       .map { case (_, ((c, (_, i)), (_, j))) => i + separator + j + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
@@ -1692,13 +1683,13 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
     namesK: TypedPipe[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
       implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
     data
-      .groupBy { case c => Position1D(c.position.get(First)) }
+      .groupBy { case c => Position1D(c.position(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case (c, pi) => Position1D(c.position.get(Second)) }
+      .groupBy { case (c, pi) => Position1D(c.position(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
       .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
-      .groupBy { case (c, pi, pj) => Position1D(c.position.get(Third)) }
+      .groupBy { case (c, pi, pj) => Position1D(c.position(Third)) }
       .join(persistDictionary(namesK, file, dictionary, separator, Third))
       .map {
         case (_, ((c, (_, i), (_, j)), (_, k))) =>
@@ -1776,16 +1767,16 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
     dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position4D]] = {
     data
-      .groupBy { case c => Position1D(c.position.get(First)) }
+      .groupBy { case c => Position1D(c.position(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case (c, pi) => Position1D(c.position.get(Second)) }
+      .groupBy { case (c, pi) => Position1D(c.position(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
       .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
-      .groupBy { case (c, pi, pj) => Position1D(c.position.get(Third)) }
+      .groupBy { case (c, pi, pj) => Position1D(c.position(Third)) }
       .join(persistDictionary(namesK, file, dictionary, separator, Third))
       .map { case (_, ((pc, pi, pj), pk)) => (pc, pi, pj, pk) }
-      .groupBy { case (c, pi, pj, pk) => Position1D(c.position.get(Fourth)) }
+      .groupBy { case (c, pi, pj, pk) => Position1D(c.position(Fourth)) }
       .join(persistDictionary(namesL, file, dictionary, separator, Fourth))
       .map {
         case (_, ((c, (_, i), (_, j), (_, k)), (_, l))) =>
@@ -1867,19 +1858,19 @@ class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D]
     namesM: TypedPipe[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
       implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position5D]] = {
     data
-      .groupBy { case c => Position1D(c.position.get(First)) }
+      .groupBy { case c => Position1D(c.position(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case (c, pi) => Position1D(c.position.get(Second)) }
+      .groupBy { case (c, pi) => Position1D(c.position(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
       .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
-      .groupBy { case (c, pi, pj) => Position1D(c.position.get(Third)) }
+      .groupBy { case (c, pi, pj) => Position1D(c.position(Third)) }
       .join(persistDictionary(namesK, file, dictionary, separator, Third))
       .map { case (_, ((pc, pi, pj), pk)) => (pc, pi, pj, pk) }
-      .groupBy { case (c, pi, pj, pk) => Position1D(c.position.get(Fourth)) }
+      .groupBy { case (c, pi, pj, pk) => Position1D(c.position(Fourth)) }
       .join(persistDictionary(namesL, file, dictionary, separator, Fourth))
       .map { case (_, ((pc, pi, pj, pk), pl)) => (pc, pi, pj, pk, pl) }
-      .groupBy { case (c, pi, pj, pk, pl) => Position1D(c.position.get(Fifth)) }
+      .groupBy { case (c, pi, pj, pk, pl) => Position1D(c.position(Fifth)) }
       .join(persistDictionary(namesM, file, dictionary, separator, Fifth))
       .map {
         case (_, ((c, (_, i), (_, j), (_, k), (_, l)), (_, m))) =>

@@ -22,20 +22,14 @@ import au.com.cba.omnia.grimlock.position._
 /** Reduce two cells preserving the cell with maximal value for the coordinate of the dimension being squashed. */
 case class PreservingMaxPosition() extends Squasher with Reduce {
   def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
-    (Value.Ordering.compare(x.position.get(dim), y.position.get(dim)) > 0) match {
-      case true => x
-      case false => y
-    }
+    if (Value.Ordering.compare(x.position(dim), y.position(dim)) > 0) { x } else { y }
   }
 }
 
 /** Reduce two cells preserving the cell with minimal value for the coordinate of the dimension being squashed. */
 case class PreservingMinPosition() extends Squasher with Reduce {
   def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
-    (Value.Ordering.compare(x.position.get(dim), y.position.get(dim)) < 0) match {
-      case true => x
-      case false => y
-    }
+    if (Value.Ordering.compare(x.position(dim), y.position(dim)) < 0) { x } else { y }
   }
 }
 

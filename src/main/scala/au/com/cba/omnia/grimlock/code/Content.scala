@@ -66,17 +66,6 @@ object Content {
   }
 
   /**
-   * Construct a content using a discrete schema and numeric value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Numeric value of the variable.
-   */
-  def apply[T](schema: DiscreteSchema[Codex.DoubleCodex], value: T)(implicit num: Numeric[T]): Content = {
-    import num._
-    ContentImpl(schema, DoubleValue(value.toDouble))
-  }
-
-  /**
    * Construct a content using a discrete schema and integral value.
    *
    * @param schema Schema of the variable value.
@@ -175,10 +164,7 @@ object Content {
  */
 class Contents(protected val data: TypedPipe[Content]) extends Persist[Content] {
   protected def toString(t: Content, separator: String, descriptive: Boolean): String = {
-    descriptive match {
-      case true => t.toString
-      case false => t.toShortString(separator)
-    }
+    if (descriptive) { t.toString } else { t.toShortString(separator) }
   }
 }
 

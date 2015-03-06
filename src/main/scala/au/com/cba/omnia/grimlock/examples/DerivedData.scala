@@ -41,8 +41,8 @@ case class Gradient(dim: Dimension) extends Deriver with Initialise {
   def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
     t: T): (T, Collection[Cell[slice.S#M]]) = {
     // Get current date from `rem` and previous date from `t` and compute number of days between the dates.
-    val days = rem.get(dim).asDate.flatMap {
-      case dc => t.position.get(dim).asDate.map { case dt => (dc.getTime - dt.getTime) / DayInMillis }
+    val days = rem(dim).asDate.flatMap {
+      case dc => t.position(dim).asDate.map { case dt => (dc.getTime - dt.getTime) / DayInMillis }
     }
 
     // Get the difference in current value and previous value.

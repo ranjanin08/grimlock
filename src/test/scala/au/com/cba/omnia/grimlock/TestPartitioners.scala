@@ -14,14 +14,21 @@
 
 package au.com.cba.omnia.grimlock
 
+import au.com.cba.omnia.grimlock.content._
+import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.partition._
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
+import com.twitter.scalding._
+import com.twitter.scalding.bdd._
+
 import java.util.Date
 
 import org.scalatest._
+
+import scala.collection.mutable
 
 trait TestHashPartitioners {
 
@@ -223,6 +230,97 @@ class TestDateSplit extends FlatSpec with Matchers with TestDatePartitioners {
 
   it should "assign none on the second dimension" in {
     DateSplit(Second, map1).assign(pos2) should be (Collection())
+  }
+}
+
+class TypedPartitions extends WordSpec with Matchers with TBddDsl {
+
+  val data = List(("train", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 1))),
+    ("train", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 2))),
+    ("train", Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 3))),
+    ("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 4))),
+    ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 5))),
+    ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6))))
+
+  def double(key: String, pipe: TypedPipe[Cell[Position1D]]): TypedPipe[Cell[Position1D]] = {
+    pipe
+      .flatMap {
+        case c => c.content.value.asLong.map {
+          case v => Cell(c.position, Content(ContinuousSchema[Codex.LongCodex](), 2 * v))
+        }
+      }
+  }
+
+  "A Partitions" should {
+    "return its keys" in {
+      Given {
+        data
+      } When {
+        parts: TypedPipe[(String, Cell[Position1D])] =>
+          new Partitions(parts).keys()
+      } Then {
+        buffer: mutable.Buffer[String] =>
+          buffer.toList.sorted shouldBe List("test", "train", "valid")
+      }
+    }
+    "get a partition's data" in {
+      Given {
+        data
+      } When {
+        parts: TypedPipe[(String, Cell[Position1D])] =>
+          new Partitions(parts).get("train")
+      } Then {
+        buffer: mutable.Buffer[Cell[Position1D]] =>
+          buffer.toList.sortBy(_.position.toShortString("|")) shouldBe
+            List(Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 1)),
+              Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 2)),
+              Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 3)))
+      }
+    }
+    "add new data" in {
+      Given {
+        data
+      } And {
+        List(Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8)),
+             Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9)))
+      } When {
+        (parts: TypedPipe[(String, Cell[Position1D])], pipe: TypedPipe[Cell[Position1D]]) =>
+          new Partitions(parts).add("xyz", pipe)
+      } Then {
+        buffer: mutable.Buffer[(String, Cell[Position1D])] =>
+          buffer.toList.sortBy(_._2.content.value.toShortString) shouldBe data ++
+            List(("xyz", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))),
+              ("xyz", Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9))))
+      }
+    }
+    "remove a partition's data" in {
+      Given {
+        data
+      } When {
+        parts: TypedPipe[(String, Cell[Position1D])] =>
+          new Partitions(parts).remove("train")
+      } Then {
+        buffer: mutable.Buffer[(String, Cell[Position1D])] =>
+          buffer.toList.sortBy(_._2.content.value.toShortString) shouldBe
+            List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 4))),
+              ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 5))),
+              ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6))))
+      }
+    }
+    "foreach should apply to selected partitions" in {
+      Given {
+        data
+      } When {
+        parts: TypedPipe[(String, Cell[Position1D])] =>
+          new Partitions(parts).foreach(List("test", "valid", "not.there"), double)
+      } Then {
+        buffer: mutable.Buffer[(String, Cell[Position1D])] =>
+          buffer.toList.sortBy(_._2.toString("|", false)) shouldBe
+            List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))),
+              ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 10))),
+              ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 12))))
+      }
+    }
   }
 }
 

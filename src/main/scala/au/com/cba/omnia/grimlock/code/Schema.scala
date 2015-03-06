@@ -276,7 +276,7 @@ object OrdinalSchema {
 case class DateSchema[C <: DateAndTimeCodex]()(implicit val codex: C) extends Schema {
   val kind = Type.Date
 
-  def isValid[V <: Value](value: V): Boolean = !value.asDate.isEmpty
+  def isValid[V <: Value](value: V): Boolean = codex.fromValue(value).isInstanceOf[java.util.Date]
 
   override def toString(): String = "DateSchema[" + codex.toString + "]()"
 }
@@ -285,7 +285,7 @@ case class DateSchema[C <: DateAndTimeCodex]()(implicit val codex: C) extends Sc
 case class EventSchema[C <: EventCodex]()(implicit val codex: C) extends Schema {
   val kind = Type.Event
 
-  def isValid[V <: Value](value: V): Boolean = !value.asEvent.isEmpty
+  def isValid[V <: Value](value: V): Boolean = codex.fromValue(value).isInstanceOf[Event]
 
   override def toString(): String = "EventSchema[" + codex.toString + "]()"
 }

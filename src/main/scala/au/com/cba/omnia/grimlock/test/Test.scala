@@ -266,7 +266,7 @@ class Test9(args : Args) extends Job(args) {
     type T = String
 
     def assign[P <: Position](pos: P): Collection[T] = {
-      Collection(List(pos.get(dim) match {
+      Collection(List(pos(dim) match {
         case StringValue("fid:A") => "training"
         case StringValue("fid:B") => "testing"
       }, "scoring"))
@@ -286,7 +286,7 @@ class Test9(args : Args) extends Job(args) {
     type T = (Int, Int, Int)
 
     def assign[P <: Position](pos: P): Collection[T] = {
-      Collection(List(pos.get(dim) match {
+      Collection(List(pos(dim) match {
         case StringValue("fid:A") => (1, 0, 0)
         case StringValue("fid:B") => (0, 1, 0)
       }, (0, 0, 1)))
@@ -439,7 +439,7 @@ class Test16(args : Args) extends Job(args) {
   val data: Matrix3D = TestReader.read4TupleDataAddDate(args("input"))
 
   case class HashSample() extends Sampler with Select {
-    def select[P <: Position](pos: P): Boolean = (pos.get(First).toString.hashCode % 25) == 0
+    def select[P <: Position](pos: P): Boolean = (pos(First).toString.hashCode % 25) == 0
   }
 
   data
@@ -469,7 +469,7 @@ class Test17(args : Args) extends Job(args) {
 
   def removeGreaterThanMean(c: Cell[Position2D], ext: Map[Position1D, Map[Position1D, Content]]): Boolean = {
     if (c.content.schema.kind.isSpecialisationOf(Numerical)) {
-      c.content.value leq ext(Position1D(c.position.get(Second)))(Position1D("mean")).value
+      c.content.value leq ext(Position1D(c.position(Second)))(Position1D("mean")).value
     } else {
       true
     }
@@ -513,7 +513,7 @@ class Test19(args : Args) extends Job(args) {
 
     val bhs = BinaryHashSplit(dim, 7, left, right, base=10)
     def assign[P <: Position](pos: P): Collection[T] = {
-      if (pos.get(dim).toShortString == "iid:0364354") {
+      if (pos(dim).toShortString == "iid:0364354") {
         Collection(right)
       } else {
         bhs.assign(pos)
@@ -529,7 +529,7 @@ class Test19(args : Args) extends Job(args) {
     .reduceAndExpand(Along(First), List(Count("count"), MaxAbs("max.abs")))
 
   val rem = stats
-    .which((c: Cell[Position2D]) => (c.position.get(Second) equ "count") && (c.content.value leq 2))
+    .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
     .names(Over(First))
 
   def cb(key: String, pipe: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {

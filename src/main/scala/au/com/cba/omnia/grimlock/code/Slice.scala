@@ -57,7 +57,7 @@ sealed trait Slice[P <: Position, D <: Dimension] {
 
 trait Mapable[P <: Position with ReduceablePosition, D <: Dimension] { self: Slice[P, D] =>
   protected def remove(pos: P): pos.L = pos.remove(dimension)
-  protected def single(pos: P): Position1D = Position1D(pos.get(dimension))
+  protected def single(pos: P): Position1D = Position1D(pos(dimension))
 }
 
 /**

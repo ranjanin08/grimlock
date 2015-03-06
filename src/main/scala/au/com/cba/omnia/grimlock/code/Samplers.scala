@@ -39,7 +39,7 @@ case class RandomSample(ratio: Double, rnd: Random = new Random()) extends Sampl
  * @param base  The base of the sampling ratio.
  */
 case class HashSample(dim: Dimension, ratio: Int, base: Int) extends Sampler with Select {
-  def select[P <: Position](pos: P): Boolean = math.abs(pos.get(dim).hashCode % base) < ratio
+  def select[P <: Position](pos: P): Boolean = math.abs(pos(dim).hashCode % base) < ratio
 }
 
 /**
@@ -53,7 +53,7 @@ case class HashSampleToSize(dim: Dimension, size: Long) extends Sampler with Sel
 
   def select[P <: Position](pos: P, ext: V): Boolean = {
     ext(Position1D(dim.toString)).value.asDouble match {
-      case Some(s) => math.abs(pos.get(dim).hashCode % math.round(s / size)) == 0
+      case Some(s) => math.abs(pos(dim).hashCode % math.round(s / size)) == 0
       case _ => false
     }
   }

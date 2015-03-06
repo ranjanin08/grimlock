@@ -68,7 +68,7 @@ trait AssignWithValue { self: Partitioner =>
 class Partitions[T: Ordering, P <: Position](
   protected val data: TypedPipe[(T, Cell[P])]) extends Persist[(T, Cell[P])] {
   /** Return the partition identifiers. */
-  def keys(): TypedPipe[T] = Grouped(data).keys
+  def keys(): TypedPipe[T] = Grouped(data).keys.distinct
 
   /**
    * Return the data for the partition `key`.
@@ -125,7 +125,7 @@ class Partitions[T: Ordering, P <: Position](
 }
 
 object Partitions {
-  /** Conversion from `TypedPipe[(T, (Position, Content))]` to a `Partitions`. */
+  /** Conversion from `TypedPipe[(T, Cell[P])]` to a `Partitions`. */
   implicit def TPTPC2P[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]): Partitions[T, P] = {
     new Partitions(data)
   }

@@ -31,19 +31,11 @@ case class Type(base: Option[Type], name: String) {
    * @param that Variable type to check against.
    */
   def isSpecialisationOf(that: Type): Boolean = {
-    base match {
-      case Some(vt) => (this == that) || vt.isSpecialisationOf(that)
-      case None => (this == that)
-    }
+    base.map { case vt => (this == that) || vt.isSpecialisationOf(that) }.getOrElse(this == that)
   }
 
   /** Returns the most general super type of `this`. */
-  def getGeneralisation(): Type = {
-    base match {
-      case Some(vt) => vt.getGeneralisation()
-      case None => this
-    }
-  }
+  def getGeneralisation(): Type = base.map { vt => vt.getGeneralisation() }.getOrElse(this)
 
   /** Returns the name of `this` type. */
   override def toString = name.capitalize
