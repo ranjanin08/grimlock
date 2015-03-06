@@ -138,7 +138,7 @@ class TestContent extends FlatSpec with Matchers {
 
   "A Date Date Content" should "return its string value" in {
     Content(DateSchema[Codex.DateCodex](), dfmt.parse("2001-01-01")).toString should
-      be ("Content(DateSchema[DateCodex](),DateValue(Mon Jan 01 00:00:00 AEDT 2001,DateCodex))")
+      be ("Content(DateSchema[DateCodex](),DateValue(" + dfmt.parse("2001-01-01").toString + ",DateCodex))")
   }
 
   it should "return its short string value" in {
@@ -150,7 +150,8 @@ class TestContent extends FlatSpec with Matchers {
 
   "A Date DateTime Content" should "return its string value" in {
     Content(DateSchema[Codex.DateTimeCodex](), dtfmt.parse("2001-01-01 01:01:01")).toString should
-      be ("Content(DateSchema[DateTimeCodex](),DateValue(Mon Jan 01 01:01:01 AEDT 2001,DateTimeCodex))")
+      be ("Content(DateSchema[DateTimeCodex](),DateValue(" + dtfmt.parse("2001-01-01 01:01:01").toString +
+        ",DateTimeCodex))")
   }
 
   it should "return its short string value" in {
