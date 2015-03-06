@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Position for zero dimensions.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/9734ff1cc55d5cc7c02dab8706b9f804c907d00f//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Position0D exists so things like <code>names(Over(1))</code> work.
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/05466945bbe383c9066e7c925b81f21b25592e0f//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Position0D exists so things like <code>names(Over(1))</code> work.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -200,6 +200,21 @@
 </p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>The coordinate to append.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A new position with the coordinate <code>t</code> appended.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.position.Position#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply(dim:au.com.cba.omnia.grimlock.position.Dimension):au.com.cba.omnia.grimlock.encoding.Value"></a>
+      <a id="apply(Dimension):Value"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">apply</span><span class="params">(<span name="dim">dim: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>)</span><span class="result">: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Return the coordinate at dimension (index) <code>dim</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return the coordinate at dimension (index) <code>dim</code>.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension of the coordinate to get.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -295,21 +310,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.position.Position#get" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="get(dim:au.com.cba.omnia.grimlock.position.Dimension):au.com.cba.omnia.grimlock.encoding.Value"></a>
-      <a id="get(Dimension):Value"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">get</span><span class="params">(<span name="dim">dim: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>)</span><span class="result">: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Return the coordinate at dimension (index) <code>dim</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return the coordinate at dimension (index) <code>dim</code>.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension of the coordinate to get.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
