@@ -24,9 +24,9 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../../../../../lib/class_big.png" />
+        <a href="WeightedMovingAverage$.html" title="Go to companion"><img src="../../../../../../lib/class_to_object_big.png" /></a>
         <p id="owner"><a href="../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.derive">derive</a></p>
-        <h1>WeightedMovingAverage</h1>
+        <h1><a href="WeightedMovingAverage$.html" title="Go to companion">WeightedMovingAverage</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,13 +35,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">WeightedMovingAverage</span><span class="params">(<span name="window">window: <span class="extype" name="scala.Int">Int</span></span>, <span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a> = <span class="defval" name="au.com.cba.omnia.grimlock.position.First">...</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <a href="BatchMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.derive.BatchMovingAverage">BatchMovingAverage</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">WeightedMovingAverage</span><span class="result"> extends <a href="BatchMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.derive.BatchMovingAverage">BatchMovingAverage</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Compute weighted moving average over last <code>window</code> values.
-</p></div><dl class="paramcmts block"><dt class="param">window</dt><dd class="cmt"><p>Size of the window.</p></dd><dt class="param">dim</dt><dd class="cmt"><p>The dimension in <code>rem</code> from which to get the coordinate to append to <code>sel</code>.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicates if averages should be output when a full window isn't available yet.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/05466945bbe383c9066e7c925b81f21b25592e0f//src/main/scala/au/com/cba/omnia/grimlock/code/Derivers.scala" target="_blank">Derivers.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/0bcc3c9d3bb60eaa1f3937c39a7eb34c4516a50e//src/main/scala/au/com/cba/omnia/grimlock/code/Derivers.scala" target="_blank">Derivers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="BatchMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.derive.BatchMovingAverage">BatchMovingAverage</a>, <a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.derive.MovingAverage">MovingAverage</a>, <a href="Initialise.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Initialise">Initialise</a>, <a href="InitialiseWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.derive.InitialiseWithValue">InitialiseWithValue</a>, <a href="Deriver.html" class="extype" name="au.com.cba.omnia.grimlock.derive.Deriver">Deriver</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -79,24 +78,7 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.derive.WeightedMovingAverage#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(window:Int,dim:au.com.cba.omnia.grimlock.position.Dimension,all:Boolean):au.com.cba.omnia.grimlock.derive.WeightedMovingAverage"></a>
-      <a id="&lt;init&gt;:WeightedMovingAverage"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
-      </span>
-      <span class="symbol">
-        <span class="name">WeightedMovingAverage</span><span class="params">(<span name="window">window: <span class="extype" name="scala.Int">Int</span></span>, <span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a> = <span class="defval" name="au.com.cba.omnia.grimlock.position.First">...</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">window</dt><dd class="cmt"><p>Size of the window.</p></dd><dt class="param">dim</dt><dd class="cmt"><p>The dimension in <code>rem</code> from which to get the coordinate to append to <code>sel</code>.</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicates if averages should be output when a full window isn't available yet.
-</p></dd></dl></div>
-    </li></ol>
-            </div>
+        
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
@@ -210,8 +192,7 @@
         <span class="name">all</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Indicates if averages should be output when a full window isn't available yet.</p><div class="fullcomment"><div class="comment cmt"><p>Indicates if averages should be output when a full window isn't available yet.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.derive.WeightedMovingAverage">WeightedMovingAverage</a> → <a href="BatchMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.derive.BatchMovingAverage">BatchMovingAverage</a></dd></dl></div>
+      <p class="shortcomment cmt">Indicates if averages should be output when a full window isn't available yet.</p><div class="fullcomment"><div class="comment cmt"><p>Indicates if averages should be output when a full window isn't available yet.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.derive.WeightedMovingAverage">WeightedMovingAverage</a> → <a href="BatchMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.derive.BatchMovingAverage">BatchMovingAverage</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -399,6 +380,21 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.derive.WeightedMovingAverage#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="name:Option[String]"></a>
+      <a id="name:Option[String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">name</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Pattern for the new name of the appended coordinate.</p><div class="fullcomment"><div class="comment cmt"><p>Pattern for the new name of the appended coordinate. Use <code>%1$</code><code>s</code> for the string representations of
+              the coordinate.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.derive.WeightedMovingAverage">WeightedMovingAverage</a> → <a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.derive.MovingAverage">MovingAverage</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
