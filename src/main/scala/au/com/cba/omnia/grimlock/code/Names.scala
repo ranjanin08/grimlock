@@ -97,7 +97,18 @@ class Names[P <: Position](protected val data: TypedPipe[(P, Long)]) extends Per
    *         relative ordering.
    */
   def moveToFront[T](position: T)(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
-    data.map { case (p, i) => (p, if (p == ev.convert(position)) 0 else i + 1) }
+    val pos = ev.convert(position)
+    val state = data
+      .map { case (p, i) => Map(p -> i) }
+      .sum
+      .map { case m => Map("curr" -> m(pos)) }
+
+    data
+      .flatMapWithValue(state) {
+        case ((p, i), so) => so.map {
+          case s => (p, if (p == pos) 0 else if (s("curr") > i) i + 1 else i)
+        }
+      }
   }
 
   /**
@@ -109,15 +120,16 @@ class Names[P <: Position](protected val data: TypedPipe[(P, Long)]) extends Per
    *         their relative ordering.
    */
   def moveToBack[T](position: T)(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
+    val pos = ev.convert(position)
     val state = data
       .map { case (p, i) => Map(p -> i) }
       .sum
-      .map { case m => Map("max" -> m.values.max, "curr" -> m(ev.convert(position))) }
+      .map { case m => Map("max" -> m.values.max, "curr" -> m(pos)) }
 
     data
       .flatMapWithValue(state) {
         case ((p, i), so) => so.map {
-          case s => (p, if (s("curr") < i) i - 1 else if (p == ev.convert(position)) s("max") else i)
+          case s => (p, if (s("curr") < i) i - 1 else if (p == pos) s("max") else i)
         }
       }
   }

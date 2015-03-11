@@ -23,18 +23,25 @@ import au.com.cba.omnia.grimlock.utility._
 
 /** Base trait for computing a moving average. */
 trait MovingAverage { self: Deriver =>
+  /** Name pattern for renaming `rem` coordinate. */
+  val name: Option[String]
+
   protected def getCollection[P <: Position, D <: Dimension](slice: Slice[P, D])(sel: slice.S, coord: Value,
     curr: Double, prev: Option[(Value, Double)]): Collection[Cell[slice.S#M]] = {
-    val cell = Cell[slice.S#M](sel.append(coord), Content(ContinuousSchema[Codex.DoubleCodex](), curr))
+    val cell = Cell[slice.S#M](sel.append(getCoordinate(coord)), Content(ContinuousSchema[Codex.DoubleCodex](), curr))
 
     prev match {
       case None => Collection(cell)
-      case Some((c, v)) => Collection(List(Cell[slice.S#M](sel.append(c),
+      case Some((c, v)) => Collection(List(Cell[slice.S#M](sel.append(getCoordinate(c)),
         Content(ContinuousSchema[Codex.DoubleCodex](), v)), cell))
     }
   }
 
   protected def getDouble(con: Content): Double = con.value.asDouble.getOrElse(Double.NaN)
+
+  private def getCoordinate(coord: Value): Value = {
+    name.map { case n => StringValue(n.format(coord.toShortString)) }.getOrElse(coord)
+  }
 }
 
 /**
@@ -78,7 +85,7 @@ trait BatchMovingAverage extends Deriver with Initialise with MovingAverage {
 
   private def updateList[P <: Position, D <: Dimension](rem: Slice[P, D]#R, con: Content,
     lst: List[(Value, Double)]): List[(Value, Double)] = {
-    (if (lst.size == window) { lst.drop(1) } else { lst }) :+ getCurrent(rem, con)
+    (if (lst.size == window) { lst.tail } else { lst }) :+ getCurrent(rem, con)
   }
 
   protected def compute(lst: List[(Value, Double)]): Double
@@ -90,11 +97,105 @@ trait BatchMovingAverage extends Deriver with Initialise with MovingAverage {
  * @param window Size of the window.
  * @param dim    The dimension in `rem` from which to get the coordinate to append to `sel`.
  * @param all    Indicates if averages should be output when a full window isn't available yet.
+ * @param name   Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+ *               the coordinate.
  */
-case class SimpleMovingAverage(window: Int, dim: Dimension = First, all: Boolean = false) extends BatchMovingAverage {
+case class SimpleMovingAverage private (window: Int, dim: Dimension, all: Boolean,
+  name: Option[String]) extends BatchMovingAverage {
   protected val idx = window - 1
 
   protected def compute(lst: List[(Value, Double)]): Double = lst.foldLeft(0.0)((c, p) => p._2 + c) / lst.size
+}
+
+/** Companion object to the `SimpleMovingAverage` class defining constructors. */
+object SimpleMovingAverage {
+  /** Default dimension (into `rem`) if none given. */
+  val DefaultDimension: Dimension = First
+
+  /** Default indicator if all averages should be output (even when ful window isn't available yet). */
+  val DefaultAll: Boolean = false
+
+  /**
+   * Compute simple moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   */
+  def apply(window: Int): SimpleMovingAverage = SimpleMovingAverage(window, DefaultDimension, DefaultAll, None)
+
+  /**
+   * Compute simple moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param dim    The dimension in `rem` from which to get the coordinate to append to `sel`.
+   */
+  def apply(window: Int, dim: Dimension): SimpleMovingAverage = SimpleMovingAverage(window, dim, DefaultAll, None)
+
+  /**
+   * Compute simple moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param all    Indicates if averages should be output when a full window isn't available yet.
+   */
+  def apply(window: Int, all: Boolean): SimpleMovingAverage = SimpleMovingAverage(window, DefaultDimension, all, None)
+
+  /**
+   * Compute simple moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param name   Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *               the coordinate.
+   */
+  def apply(window: Int, name: String): SimpleMovingAverage = {
+    SimpleMovingAverage(window, DefaultDimension, DefaultAll, Some(name))
+  }
+
+  /**
+   * Compute simple moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param dim    The dimension in `rem` from which to get the coordinate to append to `sel`.
+   * @param all    Indicates if averages should be output when a full window isn't available yet.
+   */
+  def apply(window: Int, dim: Dimension, all: Boolean): SimpleMovingAverage = {
+    SimpleMovingAverage(window, dim, all, None)
+  }
+
+  /**
+   * Compute simple moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param dim    The dimension in `rem` from which to get the coordinate to append to `sel`.
+   * @param name   Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *               the coordinate.
+   */
+  def apply(window: Int, dim: Dimension, name: String): SimpleMovingAverage = {
+    SimpleMovingAverage(window, dim, DefaultAll, Some(name))
+  }
+
+  /**
+   * Compute simple moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param all    Indicates if averages should be output when a full window isn't available yet.
+   * @param name   Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *               the coordinate.
+   */
+  def apply(window: Int, all: Boolean, name: String): SimpleMovingAverage = {
+    SimpleMovingAverage(window, DefaultDimension, all, Some(name))
+  }
+
+  /**
+   * Compute simple moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param dim    The dimension in `rem` from which to get the coordinate to append to `sel`.
+   * @param all    Indicates if averages should be output when a full window isn't available yet.
+   * @param name   Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *               the coordinate.
+   */
+  def apply(window: Int, dim: Dimension, all: Boolean, name: String): SimpleMovingAverage = {
+    SimpleMovingAverage(window, dim, all, Some(name))
+  }
 }
 
 /**
@@ -102,13 +203,59 @@ case class SimpleMovingAverage(window: Int, dim: Dimension = First, all: Boolean
  *
  * @param width Number of values before and after a given value to use when computing the moving average.
  * @param dim   The dimension in `rem` from which to get the coordinate to append to `sel`.
+ * @param name  Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+ *              the coordinate.
  */
-case class CenteredMovingAverage(width: Int, dim: Dimension = First) extends BatchMovingAverage {
+case class CenteredMovingAverage private (width: Int, dim: Dimension, name: Option[String]) extends BatchMovingAverage {
   val window = 2 * width + 1
   val all = false
   protected val idx = width
 
   protected def compute(lst: List[(Value, Double)]): Double = lst.foldLeft(0.0)((c, p) => p._2 + c) / lst.size
+}
+
+/** Companion object to the `CenteredMovingAverage` class defining constructors. */
+object CenteredMovingAverage {
+  /** Default dimension (into `rem`) if none given. */
+  val DefaultDimension: Dimension = First
+
+  /**
+   * Compute centered moving average over last `2 * width + 1` values.
+   *
+   * @param width Number of values before and after a given value to use when computing the moving average.
+   */
+  def apply(width: Int): CenteredMovingAverage = CenteredMovingAverage(width, DefaultDimension, None)
+
+  /**
+   * Compute centered moving average over last `2 * width + 1` values.
+   *
+   * @param width Number of values before and after a given value to use when computing the moving average.
+   * @param dim   The dimension in `rem` from which to get the coordinate to append to `sel`.
+   */
+  def apply(width: Int, dim: Dimension): CenteredMovingAverage = CenteredMovingAverage(width, dim, None)
+
+  /**
+   * Compute centered moving average over last `2 * width + 1` values.
+   *
+   * @param width Number of values before and after a given value to use when computing the moving average.
+   * @param name  Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *              the coordinate.
+   */
+  def apply(width: Int, name: String): CenteredMovingAverage = {
+    CenteredMovingAverage(width, DefaultDimension, Some(name))
+  }
+
+  /**
+   * Compute centered moving average over last `2 * width + 1` values.
+   *
+   * @param width Number of values before and after a given value to use when computing the moving average.
+   * @param dim   The dimension in `rem` from which to get the coordinate to append to `sel`.
+   * @param name  Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *              the coordinate.
+   */
+  def apply(width: Int, dim: Dimension, name: String): CenteredMovingAverage = {
+    CenteredMovingAverage(width, dim, Some(name))
+  }
 }
 
 /**
@@ -117,8 +264,11 @@ case class CenteredMovingAverage(width: Int, dim: Dimension = First) extends Bat
  * @param window Size of the window.
  * @param dim    The dimension in `rem` from which to get the coordinate to append to `sel`.
  * @param all    Indicates if averages should be output when a full window isn't available yet.
+ * @param name   Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+ *               the coordinate.
  */
-case class WeightedMovingAverage(window: Int, dim: Dimension = First, all: Boolean = false) extends BatchMovingAverage {
+case class WeightedMovingAverage private (window: Int, dim: Dimension, all: Boolean,
+  name: Option[String]) extends BatchMovingAverage {
   protected val idx = window - 1
 
   protected def compute(lst: List[(Value, Double)]): Double = {
@@ -128,12 +278,108 @@ case class WeightedMovingAverage(window: Int, dim: Dimension = First, all: Boole
   }
 }
 
+/** Companion object to the `WeightedMovingAverage` class defining constructors. */
+object WeightedMovingAverage {
+  /** Default dimension (into `rem`) if none given. */
+  val DefaultDimension: Dimension = First
+
+  /** Default indicator if all averages should be output (even when ful window isn't available yet). */
+  val DefaultAll: Boolean = false
+
+  /**
+   * Compute weighted moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   */
+  def apply(window: Int): WeightedMovingAverage = WeightedMovingAverage(window, DefaultDimension, DefaultAll, None)
+
+  /**
+   * Compute weighted moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param dim    The dimension in `rem` from which to get the coordinate to append to `sel`.
+   */
+  def apply(window: Int, dim: Dimension): WeightedMovingAverage = WeightedMovingAverage(window, dim, DefaultAll, None)
+
+  /**
+   * Compute weighted moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param all    Indicates if averages should be output when a full window isn't available yet.
+   */
+  def apply(window: Int, all: Boolean): WeightedMovingAverage = {
+    WeightedMovingAverage(window, DefaultDimension, all, None)
+  }
+
+  /**
+   * Compute weighted moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param name   Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *               the coordinate.
+   */
+  def apply(window: Int, name: String): WeightedMovingAverage = {
+    WeightedMovingAverage(window, DefaultDimension, DefaultAll, Some(name))
+  }
+
+  /**
+   * Compute weighted moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param dim    The dimension in `rem` from which to get the coordinate to append to `sel`.
+   * @param all    Indicates if averages should be output when a full window isn't available yet.
+   */
+  def apply(window: Int, dim: Dimension, all: Boolean): WeightedMovingAverage = {
+    WeightedMovingAverage(window, dim, all, None)
+  }
+
+  /**
+   * Compute weighted moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param dim    The dimension in `rem` from which to get the coordinate to append to `sel`.
+   * @param name   Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *               the coordinate.
+   */
+  def apply(window: Int, dim: Dimension, name: String): WeightedMovingAverage = {
+    WeightedMovingAverage(window, dim, DefaultAll, Some(name))
+  }
+
+  /**
+   * Compute weighted moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param all    Indicates if averages should be output when a full window isn't available yet.
+   * @param name   Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *               the coordinate.
+   */
+  def apply(window: Int, all: Boolean, name: String): WeightedMovingAverage = {
+    WeightedMovingAverage(window, DefaultDimension, all, Some(name))
+  }
+
+  /**
+   * Compute weighted moving average over last `window` values.
+   *
+   * @param window Size of the window.
+   * @param dim    The dimension in `rem` from which to get the coordinate to append to `sel`.
+   * @param all    Indicates if averages should be output when a full window isn't available yet.
+   * @param name   Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *               the coordinate.
+   */
+  def apply(window: Int, dim: Dimension, all: Boolean, name: String): WeightedMovingAverage = {
+    WeightedMovingAverage(window, dim, all, Some(name))
+  }
+}
+
 /** Trait for computing moving average in online mode. */
 trait OnlineMovingAverage extends Deriver with Initialise with MovingAverage {
   type T = (Double, Long, Option[(Value, Double)])
 
   /** The dimension in `rem` from which to get the coordinate to append to `sel`. */
   val dim: Dimension
+
+  /** Name pattern for renaming `rem` coordinate. */
+  val name: Option[String]
 
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
     (getDouble(cell.content), 1, Some((rem(dim), getDouble(cell.content))))
@@ -152,10 +398,45 @@ trait OnlineMovingAverage extends Deriver with Initialise with MovingAverage {
 /**
  * Compute cumulatve moving average.
  *
- * @param dim The dimension in `rem` from which to get the coordinate to append to `sel`.
+ * @param dim  The dimension in `rem` from which to get the coordinate to append to `sel`.
+ * @param name Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+ *             the coordinate.
  */
-case class CumulativeMovingAverage(dim: Dimension = First) extends OnlineMovingAverage {
+case class CumulativeMovingAverage private (dim: Dimension, name: Option[String]) extends OnlineMovingAverage {
   protected def compute(curr: Double, t: T): Double = (curr + t._2 * t._1) / (t._2 + 1)
+}
+
+/** Companion object to the `CumulativeMovingAverage` class defining constructors. */
+object CumulativeMovingAverage {
+  /** Default dimension (into `rem`) if none given. */
+  val DefaultDimension: Dimension = First
+
+  /** Compute cumulatve moving average. */
+  def apply(): CumulativeMovingAverage = CumulativeMovingAverage(DefaultDimension, None)
+
+  /**
+   * Compute cumulatve moving average.
+   *
+   * @param dim The dimension in `rem` from which to get the coordinate to append to `sel`.
+   */
+  def apply(dim: Dimension): CumulativeMovingAverage = CumulativeMovingAverage(dim, None)
+
+  /**
+   * Compute cumulatve moving average.
+   *
+   * @param name Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *             the coordinate.
+   */
+  def apply(name: String): CumulativeMovingAverage = CumulativeMovingAverage(DefaultDimension, Some(name))
+
+  /**
+   * Compute cumulatve moving average.
+   *
+   * @param dim  The dimension in `rem` from which to get the coordinate to append to `sel`.
+   * @param name Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *             the coordinate.
+   */
+  def apply(dim: Dimension, name: String): CumulativeMovingAverage = CumulativeMovingAverage(dim, Some(name))
 }
 
 /**
@@ -163,8 +444,55 @@ case class CumulativeMovingAverage(dim: Dimension = First) extends OnlineMovingA
  *
  * @param alpha Degree of weighting coefficient.
  * @param dim   The dimension in `rem` from which to get the coordinate to append to `sel`.
+ * @param name  Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+ *              the coordinate.
  */
-case class ExponentialMovingAverage(alpha: Double, dim: Dimension = First) extends OnlineMovingAverage {
+case class ExponentialMovingAverage private (alpha: Double, dim: Dimension,
+  name: Option[String]) extends OnlineMovingAverage {
   protected def compute(curr: Double, t: T): Double = alpha * curr + (1 - alpha) * t._1
+}
+
+/** Companion object to the `ExponentialMovingAverage` class defining constructors. */
+object ExponentialMovingAverage {
+  /** Default dimension (into `rem`) if none given. */
+  val DefaultDimension: Dimension = First
+
+  /**
+   * Compute exponential moving average.
+   *
+   * @param alpha Degree of weighting coefficient.
+   */
+  def apply(alpha: Double): ExponentialMovingAverage = ExponentialMovingAverage(alpha, DefaultDimension, None)
+
+  /**
+   * Compute exponential moving average.
+   *
+   * @param alpha Degree of weighting coefficient.
+   * @param dim   The dimension in `rem` from which to get the coordinate to append to `sel`.
+   */
+  def apply(alpha: Double, dim: Dimension): ExponentialMovingAverage = ExponentialMovingAverage(alpha, dim, None)
+
+  /**
+   * Compute exponential moving average.
+   *
+   * @param alpha Degree of weighting coefficient.
+   * @param name  Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *              the coordinate.
+   */
+  def apply(alpha: Double, name: String): ExponentialMovingAverage = {
+    ExponentialMovingAverage(alpha, DefaultDimension, Some(name))
+  }
+
+  /**
+   * Compute exponential moving average.
+   *
+   * @param alpha Degree of weighting coefficient.
+   * @param dim   The dimension in `rem` from which to get the coordinate to append to `sel`.
+   * @param name  Pattern for the new name of the appended coordinate. Use `%1$``s` for the string representations of
+   *              the coordinate.
+   */
+  def apply(alpha: Double, dim: Dimension, name: String): ExponentialMovingAverage = {
+    ExponentialMovingAverage(alpha, dim, Some(name))
+  }
 }
 

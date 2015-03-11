@@ -20,7 +20,7 @@ import au.com.cba.omnia.grimlock.position._
 import scala.util.Random
 
 /**
- * Randomly sample.
+ * Randomly sample to a ratio.
  *
  * @param ratio The sampling ratio.
  * @param rnd   The random number generator.
@@ -43,7 +43,7 @@ case class HashSample(dim: Dimension, ratio: Int, base: Int) extends Sampler wit
 }
 
 /**
- * Sample based on the hash code of a dimension.
+ * Sample to a defined size based on the hash code of a dimension.
  *
  * @param dim  The dimension to sample from.
  * @param size The size to sample to.
@@ -53,7 +53,7 @@ case class HashSampleToSize(dim: Dimension, size: Long) extends Sampler with Sel
 
   def select[P <: Position](pos: P, ext: V): Boolean = {
     ext(Position1D(dim.toString)).value.asDouble match {
-      case Some(s) => math.abs(pos(dim).hashCode % math.round(s / size)) == 0
+      case Some(s) => math.abs(pos(dim).hashCode % s) < size
       case _ => false
     }
   }

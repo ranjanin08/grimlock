@@ -64,27 +64,27 @@ trait DoubleOperator { self: Operator with Compute =>
 }
 
 /** Add two values. */
-case class Plus(name: String = "(%s+%s)", separator: String = "|", comparer: Comparer = Lower) extends Operator
+case class Plus(name: String = "(%1$s+%2$s)", separator: String = "|", comparer: Comparer = Lower) extends Operator
   with Compute with DoubleOperator {
   val inverse: Boolean = false
   protected def compute(l: Double, r: Double) = l + r
 }
 
 /** Subtract two values. */
-case class Minus(name: String = "(%s-%s)", separator: String = "|", inverse: Boolean = false,
+case class Minus(name: String = "(%1$s-%2$s)", separator: String = "|", inverse: Boolean = false,
   comparer: Comparer = Lower) extends Operator with Compute with DoubleOperator {
   protected def compute(l: Double, r: Double) = l - r
 }
 
 /** Multiply two values. */
-case class Times(name: String = "(%s*%s)", separator: String = "|", comparer: Comparer = Lower) extends Operator
+case class Times(name: String = "(%1$s*%2$s)", separator: String = "|", comparer: Comparer = Lower) extends Operator
   with Compute with DoubleOperator {
   val inverse: Boolean = false
   protected def compute(l: Double, r: Double) = l * r
 }
 
 /** Divide two values. */
-case class Divide(name: String = "(%s/%s)", separator: String = "|", inverse: Boolean = false,
+case class Divide(name: String = "(%1$s/%2$s)", separator: String = "|", inverse: Boolean = false,
   comparer: Comparer = Lower) extends Operator with Compute with DoubleOperator {
   protected def compute(l: Double, r: Double) = l / r
 }
@@ -99,7 +99,7 @@ case class Divide(name: String = "(%s/%s)", separator: String = "|", inverse: Bo
  * @param separator Separator to use when writing positions to string.
  * @param comparer  Comparer object defining which pairwise operations should be computed.
  */
-case class Concatenate(name: String = "(%s,%s)", value: String = "%s,%s", separator: String = "|",
+case class Concatenate(name: String = "(%1$s,%2$s)", value: String = "%1$s,%2$s", separator: String = "|",
   comparer: Comparer = Lower) extends Operator with Compute {
   def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
     rem: slice.R): Collection[Cell[slice.R#M]] = {
