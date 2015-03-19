@@ -138,7 +138,7 @@ trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple { self
  * @note This need not be called in an application. The `ReducibleMultiple` type class will convert any
  *       `List[Reducer]` automatically to one of these.
  */
-case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMultiple](reducers: List[T])
+case class CombinationReducerMultiple[R <: Reducer with Prepare with PresentMultiple](reducers: List[R])
   extends Reducer with Prepare with PresentMultiple {
   type T = List[Any]
 
@@ -167,8 +167,8 @@ case class CombinationReducerMultiple[T <: Reducer with Prepare with PresentMult
  * @note This need not be called in an application. The `ReducibleMultipleWithValue` type class will convert any
  *       `List[Reducer]` automatically to one of these.
  */
-case class CombinationReducerMultipleWithValue[T <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W](
-  reducers: List[T]) extends Reducer with PrepareWithValue with PresentMultiple {
+case class CombinationReducerMultipleWithValue[R <: Reducer with PrepareWithValue with PresentMultiple { type V >: W }, W](
+  reducers: List[R]) extends Reducer with PrepareWithValue with PresentMultiple {
   type T = List[Any]
   type V = W
 

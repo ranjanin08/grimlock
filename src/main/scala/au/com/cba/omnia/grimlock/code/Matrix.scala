@@ -1393,7 +1393,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
 
     val joint = data
       .pairwise(slice, Concatenate(name = "%s,%s", comparer = Upper))
-      .reduceAndExpand(Over(First), Entropy("joint", strict = true, nan = true, negate = true))
+      .reduceAndExpand(Over(First), Entropy("joint", strict = true, nan = true, all = false, negate = true))
 
     (marginal ++ joint)
       .reduce(Over(First), Sum())

@@ -95,7 +95,7 @@ sealed trait Moment {
 
 /** Object for computing the mean. */
 case object Mean extends Moment {
-  val index = 0
+  val index = 1
 
   /** Mean of a distribution. */
   def apply(): Reducer with Prepare with PresentSingle = Moments(Mean)
@@ -132,7 +132,7 @@ case object Mean extends Moment {
 
 /** Object for computing the standard deviation. */
 object StandardDeviation extends Moment {
-  val index = 1
+  val index = 2
 
   /** Standard deviation of a distribution. */
   def apply(): Reducer with Prepare with PresentSingle = Moments(StandardDeviation)
@@ -175,7 +175,7 @@ object StandardDeviation extends Moment {
 
 /** Object for computing the skewness. */
 object Skewness extends Moment {
-  val index = 2
+  val index = 3
 
   /** Skewness of a distribution. */
   def apply(): Reducer with Prepare with PresentSingle = Moments(Skewness)
@@ -214,7 +214,7 @@ object Skewness extends Moment {
 
 /** Object for computing the kurtosis. */
 object Kurtosis extends Moment {
-  val index = 3
+  val index = 4
 
   /** Kurtosis of a distribution. */
   def apply(): Reducer with Prepare with PresentSingle = Moments(Kurtosis)
@@ -258,10 +258,10 @@ object Kurtosis extends Moment {
  *                If not then non-numeric values are silently ignored.
  * @param nan     Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *                data).
- * @param moments Subset of moments (0 to 3) to compute.
- * @param names   Coordinate names of the computed moments. Names must be provided when presenting `PresentMultiple`.
+ * @param moments Subset of moments (1 to 4) to compute together with coordinate name. Names must be provided when
+ *                presenting `PresentMultiple`.
  */
-case class Moments private (strict: Boolean, nan: Boolean, moments: List[Int], names: List[Value]) extends Reducer
+case class Moments private (strict: Boolean, nan: Boolean, moments: List[(Int, Option[Value])]) extends Reducer
   with Prepare with PresentSingle with PresentMultiple with StrictReduce {
   type T = com.twitter.algebird.Moments
 
@@ -270,11 +270,16 @@ case class Moments private (strict: Boolean, nan: Boolean, moments: List[Int], n
   }
 
   def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = {
-    content(t).map { case cl => Cell(pos, cl(moments(0))) }
+    content(t).map { case cl => Cell(pos, cl(moments(0)._1 - 1)) }
   }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
-    Collection(content(t).map { case cl => Right(moments.map { case m => Cell[P#M](pos.append(names(m)), cl(m)) }) })
+    Collection(content(t).map {
+      case cl => Right(moments.map {
+        case (i, Some(n)) => Cell[P#M](pos.append(n), cl(i - 1))
+        case _ => throw new Exception("Missing name")
+      })
+    })
   }
 
   protected def invalid(t: T): Boolean = t.mean.isNaN
@@ -304,7 +309,7 @@ object Moments extends DefaultReducerValues {
    * @param moment Moment to compute.
    */
   def apply(moment: Moment): Reducer with Prepare with PresentSingle = {
-    Moments(DefaultStrict, DefaultNaN, List(moment.index), List())
+    Moments(DefaultStrict, DefaultNaN, List((moment.index, None)))
   }
 
   /**
@@ -317,7 +322,7 @@ object Moments extends DefaultReducerValues {
    *               data).
    */
   def apply(moment: Moment, strict: Boolean, nan: Boolean): Reducer with Prepare with PresentSingle = {
-    Moments(strict, nan, List(moment.index), List())
+    Moments(strict, nan, List((moment.index, None)))
   }
 
   /**
@@ -326,7 +331,7 @@ object Moments extends DefaultReducerValues {
    * @param moment1 Tuple of moment to compute togeter with the name of the coordinate.
    */
   def apply[M <: Moment, T](moment1: (M, T))(implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
-    Moments(DefaultStrict, DefaultNaN, List(moment1._1.index), List(ev1.convert(moment1._2)))
+    Moments(DefaultStrict, DefaultNaN, List((moment1._1.index, Some(ev1.convert(moment1._2)))))
   }
 
   /**
@@ -337,8 +342,8 @@ object Moments extends DefaultReducerValues {
    */
   def apply[M <: Moment, N <: Moment, T, U](moment1: (M, T), moment2: (N, U))(implicit ev1: Valueable[T],
     ev2: Valueable[U], ne1: M =!= N): Reducer with Prepare with PresentMultiple = {
-    Moments(DefaultStrict, DefaultNaN, List(moment1._1.index, moment2._1.index),
-      List(ev1.convert(moment1._2), ev2.convert(moment2._2)))
+    Moments(DefaultStrict, DefaultNaN, List((moment1._1.index, Some(ev1.convert(moment1._2))),
+      (moment2._1.index, Some(ev2.convert(moment2._2)))))
   }
 
   /**
@@ -351,8 +356,8 @@ object Moments extends DefaultReducerValues {
   def apply[M <: Moment, N <: Moment, O <: Moment, T, U, V](moment1: (M, T), moment2: (N, U), moment3: (O, V))(
     implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V], ne1: M =!= N, ne2: M =!= O,
     ne3: N =!= O): Reducer with Prepare with PresentMultiple = {
-    Moments(DefaultStrict, DefaultNaN, List(moment1._1.index, moment2._1.index, moment3._1.index),
-      List(ev1.convert(moment1._2), ev2.convert(moment2._2), ev3.convert(moment3._2)))
+    Moments(DefaultStrict, DefaultNaN, List((moment1._1.index, Some(ev1.convert(moment1._2))),
+      (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2)))))
   }
 
   /**
@@ -367,8 +372,9 @@ object Moments extends DefaultReducerValues {
     moment3: (O, V), moment4: (P, S))(implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V],
       ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
       ne6: O =!= P): Reducer with Prepare with PresentMultiple = {
-    Moments(DefaultStrict, DefaultNaN, List(moment1._1.index, moment2._1.index, moment3._1.index, moment4._1.index),
-      List(ev1.convert(moment1._2), ev2.convert(moment2._2), ev3.convert(moment3._2), ev4.convert(moment4._2)))
+    Moments(DefaultStrict, DefaultNaN, List((moment1._1.index, Some(ev1.convert(moment1._2))),
+      (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2))),
+      (moment4._1.index, Some(ev4.convert(moment4._2)))))
   }
 
   /**
@@ -382,7 +388,7 @@ object Moments extends DefaultReducerValues {
    */
   def apply[M <: Moment, T](moment1: (M, T), strict: Boolean, nan: Boolean)(
     implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
-    Moments(strict, nan, List(moment1._1.index), List(ev1.convert(moment1._2)))
+    Moments(strict, nan, List((moment1._1.index, Some(ev1.convert(moment1._2)))))
   }
 
   /**
@@ -397,8 +403,8 @@ object Moments extends DefaultReducerValues {
    */
   def apply[M <: Moment, N <: Moment, T, U](moment1: (M, T), moment2: (N, U), strict: Boolean, nan: Boolean)(
     implicit ev1: Valueable[T], ev2: Valueable[U], ne1: M =!= N): Reducer with Prepare with PresentMultiple = {
-    Moments(strict, nan, List(moment1._1.index, moment2._1.index),
-      List(ev1.convert(moment1._2), ev2.convert(moment2._2)))
+    Moments(strict, nan, List((moment1._1.index, Some(ev1.convert(moment1._2))),
+      (moment2._1.index, Some(ev2.convert(moment2._2)))))
   }
 
   /**
@@ -415,8 +421,8 @@ object Moments extends DefaultReducerValues {
   def apply[M <: Moment, N <: Moment, O <: Moment, T, U, V](moment1: (M, T), moment2: (N, U), moment3: (O, V),
     strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V], ne1: M =!= N,
       ne2: M =!= O, ne3: N =!= O): Reducer with Prepare with PresentMultiple = {
-    Moments(strict, nan, List(moment1._1.index, moment2._1.index, moment3._1.index),
-      List(ev1.convert(moment1._2), ev2.convert(moment2._2), ev3.convert(moment3._2)))
+    Moments(strict, nan, List((moment1._1.index, Some(ev1.convert(moment1._2))),
+      (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2)))))
   }
 
   /**
@@ -435,8 +441,9 @@ object Moments extends DefaultReducerValues {
     moment3: (O, V), moment4: (P, S), strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T], ev2: Valueable[U],
       ev3: Valueable[V], ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
       ne6: O =!= P): Reducer with Prepare with PresentMultiple = {
-    Moments(strict, nan, List(moment1._1.index, moment2._1.index, moment3._1.index, moment4._1.index),
-      List(ev1.convert(moment1._2), ev2.convert(moment2._2), ev3.convert(moment3._2), ev4.convert(moment4._2)))
+    Moments(strict, nan, List((moment1._1.index, Some(ev1.convert(moment1._2))),
+      (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2))),
+      (moment4._1.index, Some(ev4.convert(moment4._2)))))
   }
 
   /**
@@ -445,7 +452,7 @@ object Moments extends DefaultReducerValues {
    * @param mean Name of the coordinate of the mean.
    */
   def apply[T](mean: T)(implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
-    Moments(DefaultStrict, DefaultNaN, List(Mean.index), List(ev1.convert(mean)))
+    Moments(DefaultStrict, DefaultNaN, List((Mean.index, Some(ev1.convert(mean)))))
   }
 
   /**
@@ -456,8 +463,8 @@ object Moments extends DefaultReducerValues {
    */
   def apply[T, U](mean: T, sd: U)(implicit ev1: Valueable[T],
     ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
-    Moments(DefaultStrict, DefaultNaN, List(Mean.index, StandardDeviation.index),
-      List(ev1.convert(mean), ev2.convert(sd)))
+    Moments(DefaultStrict, DefaultNaN, List((Mean.index, Some(ev1.convert(mean))),
+      (StandardDeviation.index, Some(ev2.convert(sd)))))
   }
 
   /**
@@ -469,8 +476,8 @@ object Moments extends DefaultReducerValues {
    */
   def apply[T, U, V](mean: T, sd: U, skewness: V)(implicit ev1: Valueable[T], ev2: Valueable[U],
     ev3: Valueable[V]): Reducer with Prepare with PresentMultiple = {
-    Moments(DefaultStrict, DefaultNaN, List(Mean.index, StandardDeviation.index, Skewness.index),
-      List(ev1.convert(mean), ev2.convert(sd), ev3.convert(skewness)))
+    Moments(DefaultStrict, DefaultNaN, List((Mean.index, Some(ev1.convert(mean))),
+      (StandardDeviation.index, Some(ev2.convert(sd))), (Skewness.index, Some(ev3.convert(skewness)))))
   }
 
   /**
@@ -483,8 +490,9 @@ object Moments extends DefaultReducerValues {
    */
   def apply[T, U, V, W](mean: T, sd: U, skewness: V, kurtosis: W)(implicit ev1: Valueable[T], ev2: Valueable[U],
     ev3: Valueable[V], ev4: Valueable[W]): Reducer with Prepare with PresentMultiple = {
-    Moments(DefaultStrict, DefaultNaN, List(Mean.index, StandardDeviation.index, Skewness.index, Kurtosis.index),
-      List(ev1.convert(mean), ev2.convert(sd), ev3.convert(skewness), ev4.convert(kurtosis)))
+    Moments(DefaultStrict, DefaultNaN, List((Mean.index, Some(ev1.convert(mean))),
+      (StandardDeviation.index, Some(ev2.convert(sd))), (Skewness.index, Some(ev3.convert(skewness))),
+      (Kurtosis.index, Some(ev4.convert(kurtosis)))))
   }
 
   /**
@@ -498,7 +506,7 @@ object Moments extends DefaultReducerValues {
    */
   def apply[T](mean: T, strict: Boolean, nan: Boolean)(
     implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
-    Moments(strict, nan, List(Mean.index), List(ev1.convert(mean)))
+    Moments(strict, nan, List((Mean.index, Some(ev1.convert(mean)))))
   }
 
   /**
@@ -513,7 +521,7 @@ object Moments extends DefaultReducerValues {
    */
   def apply[T, U](mean: T, sd: U, strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T],
     ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
-    Moments(strict, nan, List(Mean.index, StandardDeviation.index), List(ev1.convert(mean), ev2.convert(sd)))
+    Moments(strict, nan, List((Mean.index, Some(ev1.convert(mean))), (StandardDeviation.index, Some(ev2.convert(sd)))))
   }
 
   /**
@@ -529,8 +537,8 @@ object Moments extends DefaultReducerValues {
    */
   def apply[T, U, V](mean: T, sd: U, skewness: V, strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T],
     ev2: Valueable[U], ev3: Valueable[V]): Reducer with Prepare with PresentMultiple = {
-    Moments(strict, nan, List(Mean.index, StandardDeviation.index, Skewness.index),
-      List(ev1.convert(mean), ev2.convert(sd), ev3.convert(skewness)))
+    Moments(strict, nan, List((Mean.index, Some(ev1.convert(mean))), (StandardDeviation.index, Some(ev2.convert(sd))),
+      (Skewness.index, Some(ev3.convert(skewness)))))
   }
 
   /**
@@ -548,8 +556,8 @@ object Moments extends DefaultReducerValues {
   def apply[T, U, V, W](mean: T, sd: U, skewness: V, kurtosis: W, strict: Boolean, nan: Boolean)(
     implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V],
     ev4: Valueable[W]): Reducer with Prepare with PresentMultiple = {
-    Moments(strict, nan, List(Mean.index, StandardDeviation.index, Skewness.index, Kurtosis.index),
-      List(ev1.convert(mean), ev2.convert(sd), ev3.convert(skewness), ev4.convert(kurtosis)))
+    Moments(strict, nan, List((Mean.index, Some(ev1.convert(mean))), (StandardDeviation.index, Some(ev2.convert(sd))),
+      (Skewness.index, Some(ev3.convert(skewness))), (Kurtosis.index, Some(ev4.convert(kurtosis)))))
   }
 }
 
@@ -999,12 +1007,11 @@ object Histogram extends DefaultReducerValues {
  *
  * @param strict    Indicates if strict data handling is required. If so then any non-numeric value fails the
  *                  reduction. If not then non-numeric values are silently ignored.
- * @param nan       Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
- *                  data).
+ * @param nan       Indicator if 'NaN' value (-1) should be output if the reduction failed (for example due to
+ *                  non-numeric data).
  * @param threshold The threshold value.
  * @param names     Coordinate names of the counts. Names must be provided when presenting `PresentMultiple`.
  */
-// TODO: Test this
 case class ThresholdCount private (strict: Boolean, nan: Boolean, threshold: Double, names: List[Value])
   extends Reducer with Prepare with PresentMultiple with StrictReduce {
   type T = (Long, Long) // (leq, gtr)
@@ -1097,25 +1104,131 @@ object ThresholdCount extends DefaultReducerValues {
 /**
  * Weighted sum reduction. This is particularly useful for scoring linear models.
  *
- * @param dim Dimension for for which to create weigthed variables.
+ * @param dim    Dimension for for which to create weigthed variables.
+ * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+ *               If not then non-numeric values are silently ignored.
+ * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+ *               data).
+ * @param format Format for converting dimension to string, this allows multiple models to be scored simultaneuously.
+ *               Use `%1$``s` for the string representation of the coordinate.
+ * @param name   Coordinate name of the computed weighted sum.
+ *
+ * @note The `Position1D` in the `type V` must all be `StringValue` if a format is used.
  */
-case class WeightedSum(dim: Dimension) extends Reducer with PrepareWithValue with PresentSingle {
+case class WeightedSum private (dim: Dimension, strict: Boolean, nan: Boolean, format: Option[String],
+  name: Option[Value]) extends Reducer
+  with PrepareWithValue with PresentSingleAndMultiple with StrictReduce {
   type T = Double
   type V = Map[Position1D, Content]
 
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
+    val key = format match {
+      case Some(fmt) => Position1D(fmt.format(cell.position(dim).toShortString))
+      case None => Position1D(cell.position(dim))
+    }
+
     (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble,
-      ext.get(Position1D(cell.position(dim))).flatMap(_.value.asDouble)) match {
+      ext.get(key).flatMap(_.value.asDouble)) match {
+        case (false, _, _) => Double.NaN
+        case (true, None, _) => Double.NaN
+        case (true, Some(_), None) => 0
         case (true, Some(v), Some(w)) => v * w
-        case _ => 0
       }
   }
 
-  def reduce(lt: T, rt: T): T = lt + rt
+  protected def invalid(t: T): Boolean = t.isNaN
 
-  def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = content(t).map { case c => Cell(pos, c) }
+  protected def reduction(lt: T, rt: T): T = lt + rt
 
-  private def content(t: T): Option[Content] = Some(Content(ContinuousSchema[Codex.DoubleCodex](), t))
+  protected def content(t: T): Option[Content] = {
+    if (t.isNaN && !nan) { None } else { Some(Content(ContinuousSchema[Codex.DoubleCodex](), t)) }
+  }
+}
+
+/** Companion object to `WeightedSum` reducer class. */
+object WeightedSum extends DefaultReducerValues {
+  /**
+   * Weighted sum reduction. This is particularly useful for scoring linear models.
+   *
+   * @param dim Dimension for for which to create weigthed variables.
+   */
+  def apply(dim: Dimension): Reducer with PrepareWithValue with PresentSingle { type V = WeightedSum#V } = {
+    WeightedSum(dim, DefaultStrict, DefaultNaN, None, None)
+  }
+
+  /**
+   * Weighted sum reduction. This is particularly useful for scoring linear models.
+   *
+   * @param dim    Dimension for for which to create weigthed variables.
+   * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+   *               If not then non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+   *               data).
+   */
+  def apply(dim: Dimension, strict: Boolean,
+    nan: Boolean): Reducer with PrepareWithValue with PresentSingle { type V = WeightedSum#V } = {
+    WeightedSum(dim, strict, nan, None, None)
+  }
+
+  /**
+   * Weighted sum reduction. This is particularly useful for scoring linear models.
+   *
+   * @param dim  Dimension for for which to create weigthed variables.
+   * @param name Coordinate name of the computed weighted sum.
+   */
+  def apply[V](dim: Dimension, name: V)(
+    implicit ev: Valueable[V]): Reducer with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    WeightedSum(dim, DefaultStrict, DefaultNaN, None, Some(ev.convert(name)))
+  }
+
+  /**
+   * Weighted sum reduction. This is particularly useful for scoring linear models.
+   *
+   * @param dim    Dimension for for which to create weigthed variables.
+   * @param name   Coordinate name of the computed weighted sum.
+   * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+   *               If not then non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+   *               data).
+   */
+  def apply[V](dim: Dimension, name: V, strict: Boolean, nan: Boolean)(
+    implicit ev: Valueable[V]): Reducer with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    WeightedSum(dim, strict, nan, None, Some(ev.convert(name)))
+  }
+
+  /**
+   * Weighted sum reduction. This is particularly useful for scoring linear models.
+   *
+   * @param dim    Dimension for for which to create weigthed variables.
+   * @param name   Coordinate name of the computed weighted sum.
+   * @param format Format for converting dimension to string, this allows multiple models to be scored simultaneuously.
+   *               Use `%1$``s` for the string representation of the coordinate.
+   *
+   * @note The `Position1D` in the `type V` must all be `StringValue`.
+   */
+  def apply[V](dim: Dimension, name: V, format: String)(
+    implicit ev: Valueable[V]): Reducer with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    WeightedSum(dim, DefaultStrict, DefaultNaN, Some(format), Some(ev.convert(name)))
+  }
+
+  /**
+   * Weighted sum reduction. This is particularly useful for scoring linear models.
+   *
+   * @param dim    Dimension for for which to create weigthed variables.
+   * @param name   Coordinate name of the computed weighted sum.
+   * @param format Format for converting dimension to string, this allows multiple models to be scored simultaneuously.
+   *               Use `%1$``s` for the string representation of the coordinate.
+   * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+   *               If not then non-numeric values are silently ignored.
+   * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+   *               data).
+   *
+   * @note The `Position1D` in the `type V` must all be `StringValue`.
+   */
+  def apply[V](dim: Dimension, name: V, format: String, strict: Boolean, nan: Boolean)(
+    implicit ev: Valueable[V]): Reducer with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    WeightedSum(dim, strict, nan, Some(format), Some(ev.convert(name)))
+  }
 }
 
 /**
@@ -1123,7 +1236,6 @@ case class WeightedSum(dim: Dimension) extends Reducer with PrepareWithValue wit
  *
  * @param name Optional coordinate name for the count value. Name must be provided when presenting `PresentMultiple`.
  */
-// TODO: Test this
 case class DistinctCount private (name: Option[Value]) extends Reducer with Prepare with PresentSingleAndMultiple {
   type T = Set[Value]
 
@@ -1150,40 +1262,51 @@ object DistinctCount {
 }
 
 /**
- * Compute quantiles.
+ * Compute quantiles using nearest rank method.
  *
  * @param quantiles Number of quantiles to compute.
- * @param name      Name format for the quantiles. Usage of a `%d` in the name will be substituded with percentile
- *                  index.
+ * @param strict    Indicates if strict data handling is required. If so then any non-numeric value fails the
+ *                  reduction. If not then non-numeric values are silently ignored.
+ * @param name      Name format for the quantiles. Usage of a `%1$``d` in the name will be substituded with percentile
+ *                  index, while `%2$``f` will be substituted by the percentage.
  */
-// TODO: Test this
-case class Quantiles(quantiles: Int, name: String = "quantile.%d") extends Reducer with Prepare with PresentMultiple {
-  type T = Map[Double, Long]
+case class Quantiles(quantiles: Int, strict: Boolean = true, name: String = "quantile.%1$d=%2$2.3f") extends Reducer
+  with Prepare with PresentMultiple with StrictReduce {
+  type T = Option[Map[Double, Long]]
 
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
-    val map = new scala.collection.immutable.TreeMap[Double, Long]()
-
     cell.content.schema.kind.isSpecialisationOf(Numerical) match {
-      case true => map + (cell.content.value.asDouble.get -> 1)
-      case false => map
+      case true =>
+        Some(new scala.collection.immutable.TreeMap[Double, Long]() + (cell.content.value.asDouble.get -> 1))
+      case false => None
     }
   }
 
-  def reduce(lt: T, rt: T): T = lt ++ rt.map { case (k, v) => k -> (v + lt.getOrElse(k, 0L)) }
-
   def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
-    val keys = t.keys.toList
-    val values = t.values
+    Collection[Cell[P#M]](t match {
+      case Some(m) =>
+        val keys = m.keys.toList
+        val cumsum = m.values.tail.scanLeft(m.values.head)(_ + _).toList
+        val N = cumsum.last.toDouble
+        val boundaries = for (cnt <- (0.0 until N by (N / quantiles)).tail) yield {
+          (cnt / N, keys(cumsum.indexWhere(_ >= cnt)))
+        }
 
-    val cumsum = values.tail.scanLeft(values.head)(_ + _).toList
-    val N = cumsum.last.toDouble
+        Some(Right((boundaries.zipWithIndex.map {
+          case ((perc, quant), idx) =>
+            Cell[P#M](pos.append(name.format(idx + 1, perc)), Content(ContinuousSchema[Codex.DoubleCodex](), quant))
+        }).toList))
+      case None => Option.empty[Either[Cell[P#M], List[Cell[P#M]]]]
+    })
+  }
 
-    val boundaries = for (cnt <- (0.0 until N by (N / quantiles)).tail) yield keys(cumsum.indexWhere(_ >= cnt))
+  protected def invalid(t: T): Boolean = t.isEmpty
 
-    Collection((boundaries.zipWithIndex.map {
-      case (quant, idx) =>
-        Cell[P#M](pos.append(name.format(idx + 1)), Content(ContinuousSchema[Codex.DoubleCodex](), quant))
-    }).toList)
+  protected def reduction(lt: T, rt: T): T = {
+    (lt, rt) match {
+      case (Some(lm), Some(rm)) => Some(lm ++ rm.map { case (k, v) => k -> (v + lm.getOrElse(k, 0L)) })
+      case _ => throw new Exception("None where Some expected")
+    }
   }
 }
 
@@ -1194,18 +1317,24 @@ case class Quantiles(quantiles: Int, name: String = "quantile.%d") extends Reduc
  *                   reduction. If not then non-numeric values are silently ignored.
  * @param nan        Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *                   data).
+ * @param all        Optional variable type that the content must adhere to.
  * @param negate     Indicator if negative entropy should be returned.
  * @param name       Optional coordinate name for the entropy value. Name must be provided when presenting
  *                   `PresentMultiple`.
  * @param log        The log function to use.
  */
-case class Entropy private (strict: Boolean, nan: Boolean, negate: Boolean, name: Option[Value],
+case class Entropy private (strict: Boolean, nan: Boolean, all: Option[Type], negate: Boolean, name: Option[Value],
   log: (Double) => Double) extends Reducer with Prepare with PresentSingleAndMultiple with StrictReduce
   with ElementCounts {
-  val all = None
 
   protected def content(t: T): Option[Content] = {
-    t.flatMap { case m => Entropy.compute(m.values.toList.sorted, nan, negate, log) }
+    if (t.isEmpty && !nan) {
+      None
+    } else if (t.isEmpty) {
+      Some(Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN))
+    } else {
+      t.flatMap { case m => Entropy.compute(m.values.toList.sorted, nan, negate, log) }
+    }
   }
 }
 
@@ -1214,6 +1343,9 @@ object Entropy extends DefaultReducerValues {
   /** Default value for negative entropy. */
   val DefaultNegate: Boolean = false
 
+  /** Default value for variable type. */
+  val DefaultAll: Option[Type] = Some(Categorical)
+
   /** Default logarithm (base 2). */
   def DefaultLog(): (Double) => Double = (x: Double) => math.log(x) / math.log(2)
 
@@ -1221,8 +1353,8 @@ object Entropy extends DefaultReducerValues {
    * Compute entropy from value counts.
    *
    * @param counts     Counts of each of a variable's values.
-   * @param nan        Indicator if 'NaN' string should be output if the reduction failed (for example due to
-   *                   non-numeric data).
+   * @param nan        Indicator if 'NaN' string should be output if the reduction failed (for example if only a
+   *                   single category is present).
    * @param negate     Indicator if negative entropy should be returned.
    * @param log        The log function to use.
    */
@@ -1243,7 +1375,7 @@ object Entropy extends DefaultReducerValues {
 
   /** Compute entropy. */
   def apply(): Reducer with Prepare with PresentSingle = {
-    Entropy(DefaultStrict, DefaultNaN, DefaultNegate, None, DefaultLog())
+    Entropy(DefaultStrict, DefaultNaN, DefaultAll, DefaultNegate, None, DefaultLog())
   }
 
   /**
@@ -1253,10 +1385,11 @@ object Entropy extends DefaultReducerValues {
    *               If not then non-numeric values are silently ignored.
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
+   * @param all    Indicator if histogram should apply to all data, or only to categorical variables.
    * @param negate Indicator if negative entropy should be returned.
    */
-  def apply(strict: Boolean, nan: Boolean, negate: Boolean): Reducer with Prepare with PresentSingle = {
-    Entropy(strict, nan, negate, None, DefaultLog())
+  def apply(strict: Boolean, nan: Boolean, all: Boolean, negate: Boolean): Reducer with Prepare with PresentSingle = {
+    Entropy(strict, nan, if (all) None else DefaultAll, negate, None, DefaultLog())
   }
 
   /**
@@ -1265,7 +1398,7 @@ object Entropy extends DefaultReducerValues {
    * @param log The log function to use.
    */
   def apply(log: (Double) => Double): Reducer with Prepare with PresentSingle = {
-    Entropy(DefaultStrict, DefaultNaN, DefaultNegate, None, log)
+    Entropy(DefaultStrict, DefaultNaN, DefaultAll, DefaultNegate, None, log)
   }
 
   /**
@@ -1275,11 +1408,14 @@ object Entropy extends DefaultReducerValues {
    *               If not then non-numeric values are silently ignored.
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
+   * @param all    Indicator if histogram should apply to all data, or only to categorical variables.
    * @param negate Indicator if negative entropy should be returned.
    * @param log    The log function to use.
    */
-  def apply(strict: Boolean, nan: Boolean, negate: Boolean,
-    log: (Double) => Double): Reducer with Prepare with PresentSingle = Entropy(strict, nan, negate, None, log)
+  def apply(strict: Boolean, nan: Boolean, all: Boolean, negate: Boolean,
+    log: (Double) => Double): Reducer with Prepare with PresentSingle = {
+    Entropy(strict, nan, if (all) None else DefaultAll, negate, None, log)
+  }
 
   /**
    * Compute entropy.
@@ -1287,7 +1423,7 @@ object Entropy extends DefaultReducerValues {
    * @param name Coordinate name for the entropy value. Name must be provided when presenting `PresentMultiple`.
    */
   def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
-    Entropy(DefaultStrict, DefaultNaN, DefaultNegate, Some(ev.convert(name)), DefaultLog)
+    Entropy(DefaultStrict, DefaultNaN, DefaultAll, DefaultNegate, Some(ev.convert(name)), DefaultLog)
   }
 
   /**
@@ -1298,11 +1434,12 @@ object Entropy extends DefaultReducerValues {
    *               If not then non-numeric values are silently ignored.
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
+   * @param all    Indicator if histogram should apply to all data, or only to categorical variables.
    * @param negate Indicator if negative entropy should be returned.
    */
-  def apply[V](name: V, strict: Boolean, nan: Boolean, negate: Boolean)(
+  def apply[V](name: V, strict: Boolean, nan: Boolean, all: Boolean, negate: Boolean)(
     implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
-    Entropy(strict, nan, negate, Some(ev.convert(name)), DefaultLog)
+    Entropy(strict, nan, if (all) None else DefaultAll, negate, Some(ev.convert(name)), DefaultLog)
   }
 
   /**
@@ -1313,7 +1450,7 @@ object Entropy extends DefaultReducerValues {
    */
   def apply[V](name: V, log: (Double) => Double)(
     implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
-    Entropy(DefaultStrict, DefaultNaN, DefaultNegate, Some(ev.convert(name)), log)
+    Entropy(DefaultStrict, DefaultNaN, DefaultAll, DefaultNegate, Some(ev.convert(name)), log)
   }
 
   /**
@@ -1324,12 +1461,13 @@ object Entropy extends DefaultReducerValues {
    *               If not then non-numeric values are silently ignored.
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
+   * @param all    Indicator if histogram should apply to all data, or only to categorical variables.
    * @param negate Indicator if negative entropy should be returned.
    * @param log    The log function to use.
    */
-  def apply[V](name: V, strict: Boolean, nan: Boolean, negate: Boolean, log: (Double) => Double)(
+  def apply[V](name: V, strict: Boolean, nan: Boolean, all: Boolean, negate: Boolean, log: (Double) => Double)(
     implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
-    Entropy(strict, nan, negate, Some(ev.convert(name)), log)
+    Entropy(strict, nan, if (all) None else DefaultAll, negate, Some(ev.convert(name)), log)
   }
 }
 

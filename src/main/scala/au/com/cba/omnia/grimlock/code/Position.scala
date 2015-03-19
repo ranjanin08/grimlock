@@ -159,7 +159,11 @@ trait ReduceablePosition { self: Position =>
    *
    * @return A new position with dimension `dim` removed.
    */
-  def remove(dim: Dimension): L = less(coordinates.zipWithIndex.filter(_._2 != dim.index).map(_._1))
+  def remove(dim: Dimension): L = {
+    val (h, t) = coordinates.splitAt(dim.index)
+
+    less(h ++ t.tail)
+  }
 
   /**
    * Melt dimension `dim` into `into`.
@@ -214,7 +218,7 @@ trait ExpandablePosition { self: Position =>
 /**
  * Position for zero dimensions.
  *
- * @note Position0D exists so things like `names(Over(1))` work.
+ * @note Position0D exists so things like `names(Over(First))` work.
  */
 case class Position0D() extends Position with ExpandablePosition {
   type M = Position1D

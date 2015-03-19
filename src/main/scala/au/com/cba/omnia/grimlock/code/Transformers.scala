@@ -561,7 +561,7 @@ object BooleanTf {
 case class LogarithmicTf private (dim: Dimension, name: Option[String], log: (Double) => Double) extends Transformer
   with Present with PresentDouble {
   def present[P <: Position with ModifiablePosition](cell: Cell[P]): Collection[Cell[P]] = {
-    present(dim, cell, name, Some(Numerical), (tf: Double) => log(tf + 1))
+    present(dim, cell, name, Some(Numerical), (tf: Double) => 1 + log(tf))
   }
 }
 
@@ -708,16 +708,15 @@ object TfIdf {
  * @param key     Optional key into the map `V` identifying the value to add.
  * @param name    Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
  *                representations of the coordinate, and the content.
- * @param inverse Indicator specifying order of add.
  *
  * @note Add is only applied to numerical variables.
  */
-case class Add private (dim: Dimension, key: Option[Position1D], name: Option[String], inverse: Boolean)
-  extends Transformer with PresentWithValue with PresentDouble {
+case class Add private (dim: Dimension, key: Option[Position1D], name: Option[String]) extends Transformer
+  with PresentWithValue with PresentDouble {
   type V = Map[Position1D, Content]
 
   def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, key, name, Some(Numerical), (l: Double, r: Double) => l + r, inverse)
+    present(dim, cell, ext, key, name, Some(Numerical), (l: Double, r: Double) => l + r, false)
   }
 }
 
@@ -728,7 +727,7 @@ object Add {
    *
    * @param dim Dimension for which to add.
    */
-  def apply(dim: Dimension): Add = Add(dim, None, None, false)
+  def apply(dim: Dimension): Add = Add(dim, None, None)
 
   /**
    * Add a value.
@@ -737,7 +736,7 @@ object Add {
    * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
    *             the coordinate, and the content.
    */
-  def apply(dim: Dimension, name: String): Add = Add(dim, None, Some(name), false)
+  def apply(dim: Dimension, name: String): Add = Add(dim, None, Some(name))
 
   /**
    * Add a value.
@@ -746,16 +745,8 @@ object Add {
    * @param key Key into the map `V` identifying the value to add.
    */
   def apply[T](dim: Dimension, key: T)(implicit ev: Positionable[T, Position1D]): Add = {
-    Add(dim, Some(ev.convert(key)), None, false)
+    Add(dim, Some(ev.convert(key)), None)
   }
-
-  /**
-   * Add a value.
-   *
-   * @param dim     Dimension for which to add.
-   * @param inverse Indicator specifying order of add.
-   */
-  def apply(dim: Dimension, inverse: Boolean): Add = Add(dim, None, None, inverse)
 
   /**
    * Add a value.
@@ -766,41 +757,8 @@ object Add {
    *             the coordinate, and the content.
    */
   def apply[T](dim: Dimension, key: T, name: String)(implicit ev: Positionable[T, Position1D]): Add = {
-    Add(dim, Some(ev.convert(key)), Some(name), false)
+    Add(dim, Some(ev.convert(key)), Some(name))
   }
-
-  /**
-   * Add a value.
-   *
-   * @param dim     Dimension for which to add.
-   * @param key     Key into the map `V` identifying the value to add.
-   * @param inverse Indicator specifying order of add.
-   */
-  def apply[T](dim: Dimension, key: T, inverse: Boolean)(implicit ev: Positionable[T, Position1D]): Add = {
-    Add(dim, Some(ev.convert(key)), None, inverse)
-  }
-
-  /**
-   * Add a value.
-   *
-   * @param dim     Dimension for which to add.
-   * @param name    Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations
-   *                of the coordinate, and the content.
-   * @param inverse Indicator specifying order of add.
-   */
-  def apply(dim: Dimension, name: String, inverse: Boolean): Add = Add(dim, None, Some(name), inverse)
-
-  /**
-   * Add a value.
-   *
-   * @param dim     Dimension for which to add.
-   * @param key     Key into the map `V` identifying the value to add.
-   * @param name    Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations
-   *                of the coordinate, and the content.
-   * @param inverse Indicator specifying order of add.
-   */
-  def apply[T](dim: Dimension, key: T, name: String, inverse: Boolean)(
-    implicit ev: Positionable[T, Position1D]): Add = Add(dim, Some(ev.convert(key)), Some(name), inverse)
 }
 
 /**
@@ -912,16 +870,15 @@ object Subtract {
  * @param key     Optional key into the map `V` identifying the value to multiply by.
  * @param name    Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
  *                representations of the coordinate, and the content.
- * @param inverse Indicator specifying order of division.
  *
  * @note Multiply is only applied to numerical variables.
  */
-case class Multiply private (dim: Dimension, key: Option[Position1D], name: Option[String], inverse: Boolean)
-  extends Transformer with PresentWithValue with PresentDouble {
+case class Multiply private (dim: Dimension, key: Option[Position1D], name: Option[String]) extends Transformer
+  with PresentWithValue with PresentDouble {
   type V = Map[Position1D, Content]
 
   def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, key, name, Some(Numerical), (l: Double, r: Double) => l * r, inverse)
+    present(dim, cell, ext, key, name, Some(Numerical), (l: Double, r: Double) => l * r, false)
   }
 }
 
@@ -932,7 +889,7 @@ object Multiply {
    *
    * @param dim Dimension for which to multiply.
    */
-  def apply(dim: Dimension): Multiply = Multiply(dim, None, None, false)
+  def apply(dim: Dimension): Multiply = Multiply(dim, None, None)
 
   /**
    * Multiply a value.
@@ -941,7 +898,7 @@ object Multiply {
    * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
    *             the coordinate, and the content.
    */
-  def apply(dim: Dimension, name: String): Multiply = Multiply(dim, None, Some(name), false)
+  def apply(dim: Dimension, name: String): Multiply = Multiply(dim, None, Some(name))
 
   /**
    * Multiply a value.
@@ -950,16 +907,8 @@ object Multiply {
    * @param key Key into the map `V` identifying the value to multiply by.
    */
   def apply[T](dim: Dimension, key: T)(implicit ev: Positionable[T, Position1D]): Multiply = {
-    Multiply(dim, Some(ev.convert(key)), None, false)
+    Multiply(dim, Some(ev.convert(key)), None)
   }
-
-  /**
-   * Multiply a value.
-   *
-   * @param dim     Dimension for which to multiply.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply(dim: Dimension, inverse: Boolean): Multiply = Multiply(dim, None, None, inverse)
 
   /**
    * Multiply a value.
@@ -970,41 +919,8 @@ object Multiply {
    *             the coordinate, and the content.
    */
   def apply[T](dim: Dimension, key: T, name: String)(implicit ev: Positionable[T, Position1D]): Multiply = {
-    Multiply(dim, Some(ev.convert(key)), Some(name), false)
+    Multiply(dim, Some(ev.convert(key)), Some(name))
   }
-
-  /**
-   * Multiply a value.
-   *
-   * @param dim     Dimension for which to multiply.
-   * @param key     Key into the map `V` identifying the value to multiply by.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply[T](dim: Dimension, key: T, inverse: Boolean)(implicit ev: Positionable[T, Position1D]): Multiply = {
-    Multiply(dim, Some(ev.convert(key)), None, inverse)
-  }
-
-  /**
-   * Multiply a value.
-   *
-   * @param dim     Dimension for which to multiply.
-   * @param name    Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations
-   *                of the coordinate, and the content.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply(dim: Dimension, name: String, inverse: Boolean): Multiply = Multiply(dim, None, Some(name), inverse)
-
-  /**
-   * Multiply a value.
-   *
-   * @param dim     Dimension for which to multiply.
-   * @param key     Key into the map `V` identifying the value to multiply by.
-   * @param name    Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations
-   *                of the coordinate, and the content.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply[T](dim: Dimension, key: T, name: String, inverse: Boolean)(
-    implicit ev: Positionable[T, Position1D]): Multiply = Multiply(dim, Some(ev.convert(key)), Some(name), inverse)
 }
 
 /**
@@ -1304,7 +1220,7 @@ object Cut {
     max: X, skewness: Y): ValuePipe[Cut#V] = {
     cut(ext, min, max, m => (extract(m, count), extract(m, skewness)) match {
       case (Some(n), Some(s)) =>
-        Some(math.round(1 + log2(n) + log2(1 + math.abs(s) / math.sqrt((6 * n - 12) / (n * n + 4 * n + 3)))))
+        Some(math.round(1 + log2(n) + log2(1 + math.abs(s) / math.sqrt((6 * (n - 2)) / ((n + 1) * (n + 3))))))
       case _ => None
     })
   }
@@ -1338,16 +1254,15 @@ object Cut {
   }
 
   // TODO: Add 'right' and 'labels' options (analogous to R's)
-  // TODO: Double check range
   private def cut[V: Valueable, W: Valueable](ext: ValuePipe[Stats], min: V, max: W,
     bins: (Map[Position1D, Content]) => Option[Long]): ValuePipe[Cut#V] = {
     ext.map(_.flatMap {
       case (pos, map) => (extract(map, min), extract(map, max), bins(map)) match {
         case (Some(l), Some(u), Some(k)) =>
           val delta = math.abs(u - l)
-          val range = (l until u by (delta / k)) :+ u
+          val range = (l to u by (delta / k)).tail.toList
 
-          Some((pos, (l - 0.001 * delta) :: range.tail.toList))
+          Some((pos, (l - 0.001 * delta) :: range))
         case _ => None
       }
     })

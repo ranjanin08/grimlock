@@ -53,6 +53,11 @@ class TestOverPosition1D extends FlatSpec with Matchers with TestSlicePosition1D
     a [IndexOutOfBoundsException] should be thrownBy { Over(Third).selected(pos1) }
     a [IndexOutOfBoundsException] should be thrownBy { Over(Fourth).selected(pos1) }
     a [IndexOutOfBoundsException] should be thrownBy { Over(Fifth).selected(pos1) }
+
+    a [UnsupportedOperationException] should be thrownBy { Over(Second).remainder(pos1) }
+    a [UnsupportedOperationException] should be thrownBy { Over(Third).remainder(pos1) }
+    a [UnsupportedOperationException] should be thrownBy { Over(Fourth).remainder(pos1) }
+    a [UnsupportedOperationException] should be thrownBy { Over(Fifth).remainder(pos1) }
   }
 
   it should "return a map" in {
@@ -84,6 +89,11 @@ class TestAlongPosition1D extends FlatSpec with Matchers with TestSlicePosition1
   }
 
   it should "throw an exception for an invalid dimension" in {
+    a [UnsupportedOperationException] should be thrownBy { Along(Second).selected(pos1) }
+    a [UnsupportedOperationException] should be thrownBy { Along(Third).selected(pos1) }
+    a [UnsupportedOperationException] should be thrownBy { Along(Fourth).selected(pos1) }
+    a [UnsupportedOperationException] should be thrownBy { Along(Fifth).selected(pos1) }
+
     a [IndexOutOfBoundsException] should be thrownBy { Along(Second).remainder(pos1) }
     a [IndexOutOfBoundsException] should be thrownBy { Along(Third).remainder(pos1) }
     a [IndexOutOfBoundsException] should be thrownBy { Along(Fourth).remainder(pos1) }

@@ -28,12 +28,12 @@ import au.com.cba.omnia.grimlock.utility._
 
 import com.twitter.scalding._
 
-// Simple bucketing implementation. For continuous values it generates the rounded up value. All other values are
-// passed through.
+// Simple bucketing implementation. For numerical values it generates categorical values that are the rounded up
+// value. All other values are passed through.
 case class CeilingBucketing() extends Transformer with Present {
   def present[P <: Position with ModifiablePosition](cell: Cell[P]): Collection[Cell[P]] = {
-    val con = (cell.content.schema.kind.isSpecialisationOf(Type.Continuous), cell.content.value.asDouble) match {
-      case (true, Some(d)) => Content(DiscreteSchema[Codex.LongCodex](), math.ceil(d).toLong)
+    val con = (cell.content.schema.kind.isSpecialisationOf(Type.Numerical), cell.content.value.asDouble) match {
+      case (true, Some(d)) => Content(NominalSchema[Codex.LongCodex](), math.ceil(d).toLong)
       case _ => cell.content
     }
 
@@ -63,7 +63,7 @@ class MutualInformation(args : Args) extends Job(args) {
   // 2/ Compute entropy over pairwise values. Negate the result for easy reduction below.
   val joint = data
     .pairwise(Over(Second), Concatenate(name="%s,%s", comparer=Upper))
-    .reduceAndExpand(Over(First), Entropy("joint", strict=true, nan=true, negate=true))
+    .reduceAndExpand(Over(First), Entropy("joint", strict=true, nan=true, all=false, negate=true))
 
   // Generate mutual information
   // 1/ Sum marginal and negated joint entropy
