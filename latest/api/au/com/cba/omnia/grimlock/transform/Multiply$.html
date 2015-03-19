@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to the <code>Multiply</code> class defining constructors.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/0bcc3c9d3bb60eaa1f3937c39a7eb34c4516a50e//src/main/scala/au/com/cba/omnia/grimlock/code/Transformers.scala" target="_blank">Transformers.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to the <code>Multiply</code> class defining constructors.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/571604e9183b0a9541b8d36b1f7c1689b1c61894//src/main/scala/au/com/cba/omnia/grimlock/code/Transformers.scala" target="_blank">Transformers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -151,53 +151,6 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.transform.Multiply#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](dim:au.com.cba.omnia.grimlock.position.Dimension,key:T,name:String,inverse:Boolean)(implicitev:au.com.cba.omnia.grimlock.position.Positionable[T,au.com.cba.omnia.grimlock.position.Position1D]):au.com.cba.omnia.grimlock.transform.Multiply"></a>
-      <a id="apply[T](Dimension,T,String,Boolean)(Positionable[T,Position1D]):Multiply"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="key">key: <span class="extype" name="au.com.cba.omnia.grimlock.transform.Multiply.apply.T">T</span></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="inverse">inverse: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.Multiply.apply.T">T</span>, <a href="../position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>]</span>)</span><span class="result">: <a href="Multiply.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Multiply">Multiply</a></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Multiply a value.</p><div class="fullcomment"><div class="comment cmt"><p>Multiply a value.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for which to multiply.</p></dd><dt class="param">key</dt><dd class="cmt"><p>Key into the map <code>V</code> identifying the value to multiply by.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Pattern for the new name of the coordinate at <code>dim</code>. Use <code>%[12]$</code><code>s</code> for the string representations
-               of the coordinate, and the content.</p></dd><dt class="param">inverse</dt><dd class="cmt"><p>Indicator specifying order of division.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.transform.Multiply#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(dim:au.com.cba.omnia.grimlock.position.Dimension,name:String,inverse:Boolean):au.com.cba.omnia.grimlock.transform.Multiply"></a>
-      <a id="apply(Dimension,String,Boolean):Multiply"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="inverse">inverse: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Multiply.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Multiply">Multiply</a></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Multiply a value.</p><div class="fullcomment"><div class="comment cmt"><p>Multiply a value.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for which to multiply.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Pattern for the new name of the coordinate at <code>dim</code>. Use <code>%[12]$</code><code>s</code> for the string representations
-               of the coordinate, and the content.</p></dd><dt class="param">inverse</dt><dd class="cmt"><p>Indicator specifying order of division.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.transform.Multiply#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](dim:au.com.cba.omnia.grimlock.position.Dimension,key:T,inverse:Boolean)(implicitev:au.com.cba.omnia.grimlock.position.Positionable[T,au.com.cba.omnia.grimlock.position.Position1D]):au.com.cba.omnia.grimlock.transform.Multiply"></a>
-      <a id="apply[T](Dimension,T,Boolean)(Positionable[T,Position1D]):Multiply"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="key">key: <span class="extype" name="au.com.cba.omnia.grimlock.transform.Multiply.apply.T">T</span></span>, <span name="inverse">inverse: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.transform.Multiply.apply.T">T</span>, <a href="../position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position1D">Position1D</a>]</span>)</span><span class="result">: <a href="Multiply.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Multiply">Multiply</a></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Multiply a value.</p><div class="fullcomment"><div class="comment cmt"><p>Multiply a value.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for which to multiply.</p></dd><dt class="param">key</dt><dd class="cmt"><p>Key into the map <code>V</code> identifying the value to multiply by.</p></dd><dt class="param">inverse</dt><dd class="cmt"><p>Indicator specifying order of division.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.transform.Multiply#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply[T](dim:au.com.cba.omnia.grimlock.position.Dimension,key:T,name:String)(implicitev:au.com.cba.omnia.grimlock.position.Positionable[T,au.com.cba.omnia.grimlock.position.Position1D]):au.com.cba.omnia.grimlock.transform.Multiply"></a>
       <a id="apply[T](Dimension,T,String)(Positionable[T,Position1D]):Multiply"></a>
       <h4 class="signature">
@@ -212,21 +165,6 @@
       <p class="shortcomment cmt">Multiply a value.</p><div class="fullcomment"><div class="comment cmt"><p>Multiply a value.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for which to multiply.</p></dd><dt class="param">key</dt><dd class="cmt"><p>Key into the map <code>V</code> identifying the value to multiply by.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Pattern for the new name of the coordinate at <code>dim</code>. Use <code>%[12]$</code><code>s</code> for the string representations of
             the coordinate, and the content.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.transform.Multiply#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(dim:au.com.cba.omnia.grimlock.position.Dimension,inverse:Boolean):au.com.cba.omnia.grimlock.transform.Multiply"></a>
-      <a id="apply(Dimension,Boolean):Multiply"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="inverse">inverse: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Multiply.html" class="extype" name="au.com.cba.omnia.grimlock.transform.Multiply">Multiply</a></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Multiply a value.</p><div class="fullcomment"><div class="comment cmt"><p>Multiply a value.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for which to multiply.</p></dd><dt class="param">inverse</dt><dd class="cmt"><p>Indicator specifying order of division.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.transform.Multiply#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply[T](dim:au.com.cba.omnia.grimlock.position.Dimension,key:T)(implicitev:au.com.cba.omnia.grimlock.position.Positionable[T,au.com.cba.omnia.grimlock.position.Position1D]):au.com.cba.omnia.grimlock.transform.Multiply"></a>

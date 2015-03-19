@@ -24,9 +24,9 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../../../../../lib/class_big.png" />
+        <a href="WeightedSum$.html" title="Go to companion"><img src="../../../../../../lib/class_to_object_big.png" /></a>
         <p id="owner"><a href="../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.reduce">reduce</a></p>
-        <h1>WeightedSum</h1>
+        <h1><a href="WeightedSum$.html" title="Go to companion">WeightedSum</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,15 +35,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">WeightedSum</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">WeightedSum</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> with <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Weighted sum reduction. This is particularly useful for scoring linear models.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for for which to create weigthed variables.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/0bcc3c9d3bb60eaa1f3937c39a7eb34c4516a50e//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/571604e9183b0a9541b8d36b1f7c1689b1c61894//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The <code>Position1D</code> in the <code>type V</code> must all be <code>StringValue</code> if a format is used.
+</p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a>, <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a>, <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a>, <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a>, <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a>, <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a>, <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a>, <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -61,7 +61,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.reduce.WeightedSum"><span>WeightedSum</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentSingle"><span>PresentSingle</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue"><span>PrepareWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Reducer"><span>Reducer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.reduce.WeightedSum"><span>WeightedSum</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.StrictReduce"><span>StrictReduce</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple"><span>PresentSingleAndMultiple</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple"><span>PresentMultiple</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PresentSingle"><span>PresentSingle</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue"><span>PrepareWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.Reducer"><span>Reducer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -79,24 +79,7 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(dim:au.com.cba.omnia.grimlock.position.Dimension):au.com.cba.omnia.grimlock.reduce.WeightedSum"></a>
-      <a id="&lt;init&gt;:WeightedSum"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
-      </span>
-      <span class="symbol">
-        <span class="name">WeightedSum</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>)</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for for which to create weigthed variables.
-</p></dd></dl></div>
-    </li></ol>
-            </div>
+        
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
@@ -230,6 +213,19 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#content" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="content(t:WeightedSum.this.T):Option[au.com.cba.omnia.grimlock.content.Content]"></a>
+      <a id="content(T):Option[Content]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">content</span><span class="params">(<span name="t">t: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.T">T</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.content.Content">Content</a>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum">WeightedSum</a> → <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#dim" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="dim:au.com.cba.omnia.grimlock.position.Dimension"></a>
       <a id="dim:Dimension"></a>
@@ -275,6 +271,20 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#format" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="format:Option[String]"></a>
+      <a id="format:Option[String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">format</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Format for converting dimension to string, this allows multiple models to be scored simultaneuously.</p><div class="fullcomment"><div class="comment cmt"><p>Format for converting dimension to string, this allows multiple models to be scored simultaneuously.
+              Use <code>%1$</code><code>s</code> for the string representation of the coordinate.</p></div></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -288,6 +298,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#invalid" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="invalid(t:WeightedSum.this.T):Boolean"></a>
+      <a id="invalid(T):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">invalid</span><span class="params">(<span name="t">t: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.T">T</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum">WeightedSum</a> → <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -301,6 +324,34 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="name:Option[au.com.cba.omnia.grimlock.encoding.Value]"></a>
+      <a id="name:Option[Value]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">name</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Coordinate name of the computed weighted sum.</p><div class="fullcomment"><div class="comment cmt"><p>Coordinate name of the computed weighted sum.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum">WeightedSum</a> → <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#nan" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="nan:Boolean"></a>
+      <a id="nan:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nan</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+              data).</p>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -356,8 +407,29 @@
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) over with to reduce.</p></dd><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be reduced. Note that its position is prior to <code>slice.selected</code> being applied.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for preparation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum">WeightedSum</a> → <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#presentSingle" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="presentSingle[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P,t:WeightedSum.this.T):Option[au.com.cba.omnia.grimlock.Cell[P]]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple#presentMultiple" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="presentMultiple[P&lt;:au.com.cba.omnia.grimlock.position.Positionwithau.com.cba.omnia.grimlock.position.ExpandablePosition](pos:P,t:PresentSingleAndMultiple.this.T):au.com.cba.omnia.grimlock.utility.Collection[au.com.cba.omnia.grimlock.Cell[P#M]]"></a>
+      <a id="presentMultiple[P&lt;:PositionwithExpandablePosition](P,T):Collection[Cell[PresentSingleAndMultiple.presentMultiple.P.M]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">presentMultiple</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple.presentMultiple.P">P</span></span>, <span name="t">t: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.T">T</a></span>)</span><span class="result">: <a href="../utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.utility.Collection">Collection</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.M">PresentSingleAndMultiple.presentMultiple.P.M</span>]]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Present the reduced content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content(s).
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell tuple where the position is creating by appending to <code>pos</code> (<code>append</code> method) and the
+        content(s) is derived from <code>t</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> → <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow reducers to be selective in what content they apply to. For
+      example, computing the mean is undefined for categorical variables. The reducer now has the option to return
+      <code>None</code>. This in turn permits an external API, for simple cases, where the user need not know about the types
+      of variables of their data.
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple#presentSingle" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="presentSingle[P&lt;:au.com.cba.omnia.grimlock.position.Position](pos:P,t:PresentSingleAndMultiple.this.T):Option[au.com.cba.omnia.grimlock.Cell[P]]"></a>
       <a id="presentSingle[P&lt;:Position](P,T):Option[Cell[P]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -365,19 +437,19 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">presentSingle</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.presentSingle.P">P</span></span>, <span name="t">t: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.T">T</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.presentSingle.P">P</span>]]</span>
+        <span class="name">presentSingle</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple.presentSingle.P">P</span></span>, <span name="t">t: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.T">T</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple.presentSingle.P">P</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the reduced content.</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content.
 </p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell where the position is <code>pos</code> and the content is derived from <code>t</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum">WeightedSum</a> → <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow reducers to be selective in what content they apply to. For
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a> → <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow reducers to be selective in what content they apply to. For
       example, computing the mean is undefined for categorical variables. The reducer now has the option to return
       <code>None</code>. This in turn permits an external API, for simple cases, where the user need not know about the types
       of variables of their data.
 </p></span></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="reduce(lt:WeightedSum.this.T,rt:WeightedSum.this.T):WeightedSum.this.T"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.StrictReduce#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reduce(lt:StrictReduce.this.T,rt:StrictReduce.this.T):StrictReduce.this.T"></a>
       <a id="reduce(T,T):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -391,7 +463,34 @@
       <p class="shortcomment cmt">Standard reduce method.</p><div class="fullcomment"><div class="comment cmt"><p>Standard reduce method.
 </p></div><dl class="paramcmts block"><dt class="param">lt</dt><dd class="cmt"><p>Left state to reduce.</p></dd><dt class="param">rt</dt><dd class="cmt"><p>Right state to reduce.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Reduced state
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum">WeightedSum</a> → <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd></dl></div>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#reduction" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reduction(lt:WeightedSum.this.T,rt:WeightedSum.this.T):WeightedSum.this.T"></a>
+      <a id="reduction(T,T):T"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">reduction</span><span class="params">(<span name="lt">lt: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.T">T</a></span>, <span name="rt">rt: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.T">T</a></span>)</span><span class="result">: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.T">T</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum">WeightedSum</a> → <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#strict" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="strict:Boolean"></a>
+      <a id="strict:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">strict</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Indicates if strict data handling is required.</p><div class="fullcomment"><div class="comment cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+              If not then non-numeric values are silently ignored.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum">WeightedSum</a> → <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -479,6 +578,12 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">
+              <h3>Inherited from <a href="StrictReduce.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.StrictReduce">StrictReduce</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">
+              <h3>Inherited from <a href="PresentSingleAndMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingleAndMultiple">PresentSingleAndMultiple</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">
+              <h3>Inherited from <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">
               <h3>Inherited from <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">

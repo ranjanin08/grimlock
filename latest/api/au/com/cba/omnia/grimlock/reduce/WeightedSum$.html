@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>Sum - au.com.cba.omnia.grimlock.reduce.Sum</title>
-          <meta name="description" content="Sum - au.com.cba.omnia.grimlock.reduce.Sum" />
-          <meta name="keywords" content="Sum au.com.cba.omnia.grimlock.reduce.Sum" />
+          <title>WeightedSum - au.com.cba.omnia.grimlock.reduce.WeightedSum</title>
+          <meta name="description" content="WeightedSum - au.com.cba.omnia.grimlock.reduce.WeightedSum" />
+          <meta name="keywords" content="WeightedSum au.com.cba.omnia.grimlock.reduce.WeightedSum" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../index.html';
-            var hash = 'au.com.cba.omnia.grimlock.reduce.Sum$';
+            var hash = 'au.com.cba.omnia.grimlock.reduce.WeightedSum$';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -24,9 +24,9 @@
         </head>
         <body class="value">
       <div id="definition">
-        <a href="Sum.html" title="Go to companion"><img src="../../../../../../lib/object_to_class_big.png" /></a>
+        <a href="WeightedSum.html" title="Go to companion"><img src="../../../../../../lib/object_to_class_big.png" /></a>
         <p id="owner"><a href="../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.reduce">reduce</a></p>
-        <h1><a href="Sum.html" title="Go to companion">Sum</a></h1>
+        <h1><a href="WeightedSum.html" title="Go to companion">WeightedSum</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,11 +35,11 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">Sum</span><span class="result"> extends <a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">WeightedSum</span><span class="result"> extends <a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>Sum</code> reducer class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/571604e9183b0a9541b8d36b1f7c1689b1c61894//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>WeightedSum</code> reducer class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/571604e9183b0a9541b8d36b1f7c1689b1c61894//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -59,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.reduce.Sum"><span>Sum</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues"><span>DefaultReducerValues</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.reduce.WeightedSum"><span>WeightedSum</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues"><span>DefaultReducerValues</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -176,68 +176,106 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Default indicator for strict handling or invalid values.</p><div class="fullcomment"><div class="comment cmt"><p>Default indicator for strict handling or invalid values.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Sum#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[V](name:V,strict:Boolean,nan:Boolean)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
-      <a id="apply[V](V,Boolean,Boolean)(Valueable[V]):ReducerwithPreparewithPresentMultiple"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply[V](dim:au.com.cba.omnia.grimlock.position.Dimension,name:V,format:String,strict:Boolean,nan:Boolean)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.PrepareWithValuewithau.com.cba.omnia.grimlock.reduce.PresentMultiple{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
+      <a id="apply[V](Dimension,V,String,Boolean,Boolean)(Valueable[V]):ReducerwithPrepareWithValuewithPresentMultiple{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Sum.apply.V">V</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Sum.apply.V">V</span>]</span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.apply.V">V</span></span>, <span name="format">format: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.apply.V">V</span>]</span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> { type V = scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content] }</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Sum value reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Sum value reduction.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Coordinate name of the computed sum.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+      <p class="shortcomment cmt">Weighted sum reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Weighted sum reduction. This is particularly useful for scoring linear models.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for for which to create weigthed variables.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Coordinate name of the computed weighted sum.</p></dd><dt class="param">format</dt><dd class="cmt"><p>Format for converting dimension to string, this allows multiple models to be scored simultaneuously.
+              Use <code>%1$</code><code>s</code> for the string representation of the coordinate.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+              If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+              data).
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The <code>Position1D</code> in the <code>type V</code> must all be <code>StringValue</code>.
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply[V](dim:au.com.cba.omnia.grimlock.position.Dimension,name:V,format:String)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.PrepareWithValuewithau.com.cba.omnia.grimlock.reduce.PresentMultiple{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
+      <a id="apply[V](Dimension,V,String)(Valueable[V]):ReducerwithPrepareWithValuewithPresentMultiple{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">apply</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.apply.V">V</span></span>, <span name="format">format: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.apply.V">V</span>]</span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> { type V = scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content] }</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Weighted sum reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Weighted sum reduction. This is particularly useful for scoring linear models.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for for which to create weigthed variables.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Coordinate name of the computed weighted sum.</p></dd><dt class="param">format</dt><dd class="cmt"><p>Format for converting dimension to string, this allows multiple models to be scored simultaneuously.
+              Use <code>%1$</code><code>s</code> for the string representation of the coordinate.
+</p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The <code>Position1D</code> in the <code>type V</code> must all be <code>StringValue</code>.
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply[V](dim:au.com.cba.omnia.grimlock.position.Dimension,name:V,strict:Boolean,nan:Boolean)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.PrepareWithValuewithau.com.cba.omnia.grimlock.reduce.PresentMultiple{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
+      <a id="apply[V](Dimension,V,Boolean,Boolean)(Valueable[V]):ReducerwithPrepareWithValuewithPresentMultiple{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">apply</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.apply.V">V</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.apply.V">V</span>]</span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> { type V = scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content] }</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Weighted sum reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Weighted sum reduction. This is particularly useful for scoring linear models.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for for which to create weigthed variables.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Coordinate name of the computed weighted sum.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
               data).
 </p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Sum#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[V](name:V)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
-      <a id="apply[V](V)(Valueable[V]):ReducerwithPreparewithPresentMultiple"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply[V](dim:au.com.cba.omnia.grimlock.position.Dimension,name:V)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.PrepareWithValuewithau.com.cba.omnia.grimlock.reduce.PresentMultiple{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
+      <a id="apply[V](Dimension,V)(Valueable[V]):ReducerwithPrepareWithValuewithPresentMultiple{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Sum.apply.V">V</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Sum.apply.V">V</span>]</span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.apply.V">V</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.WeightedSum.apply.V">V</span>]</span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> { type V = scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content] }</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Sum value reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Sum value reduction.
-</p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Coordinate name of the computed sum.
+      <p class="shortcomment cmt">Weighted sum reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Weighted sum reduction. This is particularly useful for scoring linear models.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for for which to create weigthed variables.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Coordinate name of the computed weighted sum.
 </p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Sum#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(strict:Boolean,nan:Boolean):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentSingle"></a>
-      <a id="apply(Boolean,Boolean):ReducerwithPreparewithPresentSingle"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply(dim:au.com.cba.omnia.grimlock.position.Dimension,strict:Boolean,nan:Boolean):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.PrepareWithValuewithau.com.cba.omnia.grimlock.reduce.PresentSingle{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
+      <a id="apply(Dimension,Boolean,Boolean):ReducerwithPrepareWithValuewithPresentSingle{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a></span>
+        <span class="name">apply</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a> { type V = scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content] }</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Sum value reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Sum value reduction.
-</p></div><dl class="paramcmts block"><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+      <p class="shortcomment cmt">Weighted sum reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Weighted sum reduction. This is particularly useful for scoring linear models.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for for which to create weigthed variables.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
               data).
 </p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.reduce.Sum#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="apply():au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentSingle"></a>
-      <a id="apply():ReducerwithPreparewithPresentSingle"></a>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.WeightedSum#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply(dim:au.com.cba.omnia.grimlock.position.Dimension):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.PrepareWithValuewithau.com.cba.omnia.grimlock.reduce.PresentSingle{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
+      <a id="apply(Dimension):ReducerwithPrepareWithValuewithPresentSingle{typeV=scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content]}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">()</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a></span>
+        <span class="name">apply</span><span class="params">(<span name="dim">dim: <a href="../position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PrepareWithValue">PrepareWithValue</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a> { type V = scala.collection.immutable.Map[au.com.cba.omnia.grimlock.position.Position1D,au.com.cba.omnia.grimlock.content.Content] }</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Sum value reduction.</p>
+      <p class="shortcomment cmt">Weighted sum reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Weighted sum reduction. This is particularly useful for scoring linear models.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>Dimension for for which to create weigthed variables.
+</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>

@@ -35,13 +35,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">CombinationReducerMultiple</span><span class="tparams">[<span name="T">T &lt;: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>]</span><span class="params">(<span name="reducers">reducers: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple.T">T</span>]</span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">CombinationReducerMultiple</span><span class="tparams">[<span name="R">R &lt;: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>]</span><span class="params">(<span name="reducers">reducers: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple.R">R</span>]</span>)</span><span class="result"> extends <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Reducer that is a combination of one or more reducer with <code>PresentMultiple</code>.
 </p></div><dl class="paramcmts block"><dt class="param">reducers</dt><dd class="cmt"><p><code>List</code> of reducers that are combined together.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/0bcc3c9d3bb60eaa1f3937c39a7eb34c4516a50e//src/main/scala/au/com/cba/omnia/grimlock/code/Reducer.scala" target="_blank">Reducer.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This need not be called in an application. The <code>ReducibleMultiple</code> type class will convert any
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/571604e9183b0a9541b8d36b1f7c1689b1c61894//src/main/scala/au/com/cba/omnia/grimlock/code/Reducer.scala" target="_blank">Reducer.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This need not be called in an application. The <code>ReducibleMultiple</code> type class will convert any
       <code>List[Reducer]</code> automatically to one of these.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
@@ -84,15 +84,15 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(reducers:List[T]):au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple[T]"></a>
-      <a id="&lt;init&gt;:CombinationReducerMultiple[T]"></a>
+      <a id="&lt;init&gt;(reducers:List[R]):au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple[R]"></a>
+      <a id="&lt;init&gt;:CombinationReducerMultiple[R]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">CombinationReducerMultiple</span><span class="params">(<span name="reducers">reducers: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple.T">T</span>]</span>)</span>
+        <span class="name">CombinationReducerMultiple</span><span class="params">(<span name="reducers">reducers: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple.R">R</span>]</span>)</span>
       </span>
       </h4>
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">reducers</dt><dd class="cmt"><p><code>List</code> of reducers that are combined together.
@@ -399,15 +399,15 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>Reduced state
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple">CombinationReducerMultiple</a> → <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple#reducers" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="reducers:List[T]"></a>
-      <a id="reducers:List[T]"></a>
+      <a id="reducers:List[R]"></a>
+      <a id="reducers:List[R]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">reducers</span><span class="result">: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple.T">T</span>]</span>
+        <span class="name">reducers</span><span class="result">: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.CombinationReducerMultiple.R">R</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt"><code>List</code> of reducers that are combined together.</p>

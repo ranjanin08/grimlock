@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>Entropy</code> reducer class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/0bcc3c9d3bb60eaa1f3937c39a7eb34c4516a50e//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>Entropy</code> reducer class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/571604e9183b0a9541b8d36b1f7c1689b1c61894//src/main/scala/au/com/cba/omnia/grimlock/code/Reducers.scala" target="_blank">Reducers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -150,6 +150,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy#DefaultAll" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DefaultAll:Option[au.com.cba.omnia.grimlock.Type]"></a>
+      <a id="DefaultAll:Option[Type]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">DefaultAll</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../Type.html" class="extype" name="au.com.cba.omnia.grimlock.Type">Type</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Default value for variable type.</p>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy#DefaultLog" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DefaultLog():Double=&gt;Double"></a>
       <a id="DefaultLog():(Double)⇒Double"></a>
@@ -203,21 +216,21 @@
       </h4>
       <p class="shortcomment cmt">Default indicator for strict handling or invalid values.</p><div class="fullcomment"><div class="comment cmt"><p>Default indicator for strict handling or invalid values.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="DefaultReducerValues.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.DefaultReducerValues">DefaultReducerValues</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[V](name:V,strict:Boolean,nan:Boolean,negate:Boolean,log:Double=&gt;Double)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
-      <a id="apply[V](V,Boolean,Boolean,Boolean,(Double)⇒Double)(Valueable[V]):ReducerwithPreparewithPresentMultiple"></a>
+      <a id="apply[V](name:V,strict:Boolean,nan:Boolean,all:Boolean,negate:Boolean,log:Double=&gt;Double)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
+      <a id="apply[V](V,Boolean,Boolean,Boolean,Boolean,(Double)⇒Double)(Valueable[V]):ReducerwithPreparewithPresentMultiple"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Entropy.apply.V">V</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="negate">negate: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="log">log: (<span class="extype" name="scala.Double">Double</span>) ⇒ <span class="extype" name="scala.Double">Double</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Entropy.apply.V">V</span>]</span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Entropy.apply.V">V</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="negate">negate: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="log">log: (<span class="extype" name="scala.Double">Double</span>) ⇒ <span class="extype" name="scala.Double">Double</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Entropy.apply.V">V</span>]</span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Compute entropy.</p><div class="fullcomment"><div class="comment cmt"><p>Compute entropy.
 </p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Coordinate name for the entropy value. Name must be provided when presenting <code>PresentMultiple</code>.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
-              data).</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.</p></dd><dt class="param">log</dt><dd class="cmt"><p>The log function to use.
+              data).</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only to categorical variables.</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.</p></dd><dt class="param">log</dt><dd class="cmt"><p>The log function to use.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply[V](name:V,log:Double=&gt;Double)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -235,21 +248,21 @@
 </p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Coordinate name for the entropy value. Name must be provided when presenting <code>PresentMultiple</code>.</p></dd><dt class="param">log</dt><dd class="cmt"><p>The log function to use.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[V](name:V,strict:Boolean,nan:Boolean,negate:Boolean)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
-      <a id="apply[V](V,Boolean,Boolean,Boolean)(Valueable[V]):ReducerwithPreparewithPresentMultiple"></a>
+      <a id="apply[V](name:V,strict:Boolean,nan:Boolean,all:Boolean,negate:Boolean)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
+      <a id="apply[V](V,Boolean,Boolean,Boolean,Boolean)(Valueable[V]):ReducerwithPreparewithPresentMultiple"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Entropy.apply.V">V</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="negate">negate: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Entropy.apply.V">V</span>]</span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
+        <span class="name">apply</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="au.com.cba.omnia.grimlock.reduce.Entropy.apply.V">V</span></span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="negate">negate: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.reduce.Entropy.apply.V">V</span>]</span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentMultiple">PresentMultiple</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Compute entropy.</p><div class="fullcomment"><div class="comment cmt"><p>Compute entropy.
 </p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Coordinate name for the entropy value. Name must be provided when presenting <code>PresentMultiple</code>.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
-              data).</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.
+              data).</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only to categorical variables.</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply[V](name:V)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[V]):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentMultiple"></a>
@@ -267,21 +280,21 @@
 </p></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>Coordinate name for the entropy value. Name must be provided when presenting <code>PresentMultiple</code>.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(strict:Boolean,nan:Boolean,negate:Boolean,log:Double=&gt;Double):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentSingle"></a>
-      <a id="apply(Boolean,Boolean,Boolean,(Double)⇒Double):ReducerwithPreparewithPresentSingle"></a>
+      <a id="apply(strict:Boolean,nan:Boolean,all:Boolean,negate:Boolean,log:Double=&gt;Double):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentSingle"></a>
+      <a id="apply(Boolean,Boolean,Boolean,Boolean,(Double)⇒Double):ReducerwithPreparewithPresentSingle"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="negate">negate: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="log">log: (<span class="extype" name="scala.Double">Double</span>) ⇒ <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a></span>
+        <span class="name">apply</span><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="negate">negate: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="log">log: (<span class="extype" name="scala.Double">Double</span>) ⇒ <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Compute entropy.</p><div class="fullcomment"><div class="comment cmt"><p>Compute entropy.
 </p></div><dl class="paramcmts block"><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
-              data).</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.</p></dd><dt class="param">log</dt><dd class="cmt"><p>The log function to use.
+              data).</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only to categorical variables.</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.</p></dd><dt class="param">log</dt><dd class="cmt"><p>The log function to use.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="apply(log:Double=&gt;Double):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentSingle"></a>
@@ -299,21 +312,21 @@
 </p></div><dl class="paramcmts block"><dt class="param">log</dt><dd class="cmt"><p>The log function to use.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(strict:Boolean,nan:Boolean,negate:Boolean):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentSingle"></a>
-      <a id="apply(Boolean,Boolean,Boolean):ReducerwithPreparewithPresentSingle"></a>
+      <a id="apply(strict:Boolean,nan:Boolean,all:Boolean,negate:Boolean):au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentSingle"></a>
+      <a id="apply(Boolean,Boolean,Boolean,Boolean):ReducerwithPreparewithPresentSingle"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="negate">negate: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a></span>
+        <span class="name">apply</span><span class="params">(<span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="all">all: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="negate">negate: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <a href="Reducer.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Reducer">Reducer</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.Prepare">Prepare</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.reduce.PresentSingle">PresentSingle</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Compute entropy.</p><div class="fullcomment"><div class="comment cmt"><p>Compute entropy.
 </p></div><dl class="paramcmts block"><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
-              data).</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.
+              data).</p></dd><dt class="param">all</dt><dd class="cmt"><p>Indicator if histogram should apply to all data, or only to categorical variables.</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.reduce.Entropy#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="apply():au.com.cba.omnia.grimlock.reduce.Reducerwithau.com.cba.omnia.grimlock.reduce.Preparewithau.com.cba.omnia.grimlock.reduce.PresentSingle"></a>
@@ -373,8 +386,8 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Compute entropy from value counts.</p><div class="fullcomment"><div class="comment cmt"><p>Compute entropy from value counts.
-</p></div><dl class="paramcmts block"><dt class="param">counts</dt><dd class="cmt"><p>Counts of each of a variable's values.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to
-                  non-numeric data).</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.</p></dd><dt class="param">log</dt><dd class="cmt"><p>The log function to use.
+</p></div><dl class="paramcmts block"><dt class="param">counts</dt><dd class="cmt"><p>Counts of each of a variable's values.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example if only a
+                  single category is present).</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.</p></dd><dt class="param">log</dt><dd class="cmt"><p>The log function to use.
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
