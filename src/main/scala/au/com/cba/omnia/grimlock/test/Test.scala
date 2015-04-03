@@ -363,11 +363,11 @@ class Test12(args : Args) extends Job(args) {
 
   data
     .squash(Third, PreservingMaxPosition())
-    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
     .persistCSVFile(Over(Second), "./tmp/fll1.out")
 
   data
-    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
     .persistFile("./tmp/fll3.out", descriptive=true)
 }
 
@@ -382,15 +382,15 @@ class Test13(args : Args) extends Job(args) {
 
   val inds = data
     .transform(Indicator(Second, name="%1$s.ind"))
-    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
 
   data
     .join(Over(First), inds)
-    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
     .persistCSVFile(Over(Second), "./tmp/fll2.out")
 
   data
-    .fill(Over(Second), all.reduceAndExpand(Over(Second), Mean("mean", strict=true, nan=true)).permute(Second, First))
+    .fillHetrogenous(Over(Second))(all.reduce(Over(Second), Mean(strict=true, nan=true)))
     .join(Over(First), inds)
     .persistCSVFile(Over(Second), "./tmp/fll4.out")
 }
@@ -537,7 +537,7 @@ class Test19(args : Args) extends Job(args) {
       .slice(Over(Second), rem, false)
       .transformWithValue(List(Indicator(Second, name="%1$s.ind"), Binarise(Second), Normalise(Second, key="max.abs")),
         stats.toMap(Over(First)))
-      .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+      .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
       .persistCSVFile(Over(Second), "./tmp/pln_" + key + ".csv")
   }
 

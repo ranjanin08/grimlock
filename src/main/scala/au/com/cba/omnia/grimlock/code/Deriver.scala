@@ -32,6 +32,29 @@ import au.com.cba.omnia.grimlock.utility._
 trait Deriver {
   /** Type of the state. */
   type T
+}
+
+/** Base trait for initialising a deriver. */
+trait Initialise extends InitialiseWithValue { self: Deriver =>
+  type V = Any
+
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T = {
+    initialise(slice)(cell, rem)
+  }
+
+  def present[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R,
+    t: T): (T, Collection[Cell[slice.S#M]]) = present(slice)(cell, rem, t)
+
+  /**
+   * Initialise the state using the first cell (ordered according to its position).
+   *
+   * @param slice Encapsulates the dimension(s) along which to derive.
+   * @param cell  The cell to initialise with.
+   * @param rem   The remaining coordinates of the cell.
+   *
+   * @return The state for this object.
+   */
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T
 
   /**
    * Update state with the current cell and, optionally, output derived data.
@@ -45,26 +68,6 @@ trait Deriver {
    */
   def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
     t: T): (T, Collection[Cell[slice.S#M]])
-}
-
-/** Base trait for initialising a deriver. */
-trait Initialise extends InitialiseWithValue { self: Deriver =>
-  type V = Any
-
-  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T = {
-    initialise(slice)(cell, rem)
-  }
-
-  /**
-   * Initialise the state using the first cell (ordered according to its position).
-   *
-   * @param slice Encapsulates the dimension(s) along which to derive.
-   * @param cell  The cell to initialise with.
-   * @param rem   The remaining coordinates of the cell.
-   *
-   * @return The state for this object.
-   */
-  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T
 }
 
 /** Base trait for initialising a deriver with a user supplied value. */
@@ -83,26 +86,37 @@ trait InitialiseWithValue { self: Deriver =>
    * @return The state for this object.
    */
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T
-}
-
-/** Base trait for combination derivers. */
-trait CombinationDerivable[U <: Deriver] { self: Deriver =>
-  /** Type of the state. */
-  type T = List[Any]
-
-  /** List of derivers that are combined. */
-  val singles: List[U]
 
   /**
    * Update state with the current cell and, optionally, output derived data.
    *
    * @param slice Encapsulates the dimension(s) along which to derive.
+   * @param ext   The user define the value.
    * @param cell  The selected cell to derive from.
    * @param rem   The remaining coordinates of the cell.
    * @param t     The state.
    *
    * @return A tuple consisting of updated state together with optional derived data.
    */
+  def present[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R,
+    t: T): (T, Collection[Cell[slice.S#M]])
+}
+
+/**
+ * Deriver that is a combination of one or more derivers with `Initialise`.
+ *
+ * @param singles `List` of derivers that are combined together.
+ *
+ * @note This need not be called in an application. The `Derivable` type class will convert any `List[Deriver]`
+ *       automatically to one of these.
+ */
+case class CombinationDeriver[T <: Deriver with Initialise](singles: List[T]) extends Deriver with Initialise {
+  type T = List[Any]
+
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
+    singles.map { case deriver => deriver.initialise(slice)(cell, rem) }
+  }
+
   def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
     t: T): (T, Collection[Cell[slice.S#M]]) = {
     val state = (singles, t)
@@ -114,21 +128,6 @@ trait CombinationDerivable[U <: Deriver] { self: Deriver =>
 }
 
 /**
- * Deriver that is a combination of one or more derivers with `Initialise`.
- *
- * @param singles `List` of derivers that are combined together.
- *
- * @note This need not be called in an application. The `Derivable` type class will convert any `List[Deriver]`
- *       automatically to one of these.
- */
-case class CombinationDeriver[T <: Deriver with Initialise](singles: List[T]) extends Deriver with Initialise
-  with CombinationDerivable[T] {
-  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
-    singles.map { case deriver => deriver.initialise(slice)(cell, rem) }
-  }
-}
-
-/**
  * Deriver that is a combination of one or more derivers with `InitialiseWithValue`.
  *
  * @param singles `List` of derivers that are combined together.
@@ -136,12 +135,22 @@ case class CombinationDeriver[T <: Deriver with Initialise](singles: List[T]) ex
  * @note This need not be called in an application. The `DerivableWithValue` type class will convert any
  *       `List[Deriver]` automatically to one of these.
  */
-case class CombinationDeriverWithValue[T <: Deriver with InitialiseWithValue { type V >: W }, W](
-  singles: List[T]) extends Deriver with InitialiseWithValue with CombinationDerivable[T] {
+case class CombinationDeriverWithValue[T <: Deriver with InitialiseWithValue { type V >: W }, W](singles: List[T])
+  extends Deriver with InitialiseWithValue {
+  type T = List[Any]
   type V = W
 
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T = {
     singles.map { case deriver => deriver.initialise(slice, ext)(cell, rem) }
+  }
+
+  def present[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R,
+    t: T): (T, Collection[Cell[slice.S#M]]) = {
+    val state = (singles, t)
+      .zipped
+      .map { case (deriver, s) => deriver.present(slice, ext)(cell, rem, s.asInstanceOf[deriver.T]) }
+
+    (state.map { case (t, c) => t }, Collection(state.flatMap { case (t, c) => c.toList }))
   }
 }
 

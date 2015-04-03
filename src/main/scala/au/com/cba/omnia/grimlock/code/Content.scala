@@ -154,6 +154,17 @@ object Content {
     ContentImpl(schema, DateValue(value, schema.codex))
   }
 
+  /**
+   * Construct a content using a date schema and value.
+   *
+   * @param schema Schema of the variable value.
+   * @param value  The value
+   *
+   * @note The caller must ensure that `schema` and `value` both have the same codex.
+   */
+  // TODO: Is is possible to enforce that both codex have to be the same?
+  def apply(schema: Schema, value: Value): Content = ContentImpl(schema, value)
+
   private case class ContentImpl(schema: Schema, value: Value) extends Content
 }
 

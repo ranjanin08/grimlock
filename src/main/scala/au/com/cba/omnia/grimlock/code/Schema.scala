@@ -42,7 +42,7 @@ trait Schema {
    */
   def decode(str: String): Option[Content] = {
     codex.decode(str) match {
-      case Some(v) if isValid(v) => Some(new Content { val schema = Schema.this; val value = v })
+      case Some(v) if isValid(v) => Some(Content(Schema.this, v))
       case _ => None
     }
   }

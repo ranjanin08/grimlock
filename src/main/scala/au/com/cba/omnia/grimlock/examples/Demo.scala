@@ -166,7 +166,7 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
-      //.fill(Content(ContinuousSchema[Codex.DoubleCodex], 0))
+      //.fillHomogenous(Content(ContinuousSchema[Codex.DoubleCodex], 0))
       .persistCSVFile(Over(Second), "./demo/" + key + ".csv")
   }
 

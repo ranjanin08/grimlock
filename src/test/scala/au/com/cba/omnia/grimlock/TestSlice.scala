@@ -100,15 +100,13 @@ class TestAlongPosition1D extends FlatSpec with Matchers with TestSlicePosition1
     a [IndexOutOfBoundsException] should be thrownBy { Along(Fifth).remainder(pos1) }
   }
 
-  it should "return a map" in {
-    along.toMap(Cell(pos1, con1)) should be (Map(along.selected(pos1) -> con1))
+  it should "throw an exception for returning a map" in {
+    a [Exception] should be thrownBy { along.toMap(Cell(pos1, con1)) }
   }
 
-  it should "combine two maps" in {
-    along.combineMaps(pos1, along.toMap(Cell(pos1, con1)), along.toMap(Cell(pos2, con2))) should
-      be (Map(along.selected(pos1) -> con1, along.selected(pos2) -> con2))
-    along.combineMaps(pos1, along.toMap(Cell(pos1, con1)), along.toMap(Cell(pos1, con1))) should
-      be (Map(along.selected(pos1) -> con1))
+  it should "throw an exception for combining two maps" in {
+    a [Exception] should be thrownBy { along.combineMaps(pos1, Map(Position0D() -> con1), Map(Position0D() -> con2)) }
+    a [Exception] should be thrownBy { along.combineMaps(pos1, Map(Position0D() -> con1), Map(Position0D() -> con1)) }
   }
 }
 

@@ -105,15 +105,6 @@ class TestPosition1D extends FlatSpec with Matchers {
     a [UnsupportedOperationException] should be thrownBy { pos.update(Fifth, 123) }
   }
 
-  it should "permute" in {
-    pos.permute(List(First)) should be (pos)
-  }
-
-  it should "throw an exception for an invalid permute dimension" in {
-    a [IndexOutOfBoundsException] should be thrownBy { pos.permute(List(Second)) }
-    a [IndexOutOfBoundsException] should be thrownBy { pos.permute(List(First, Second)) }
-  }
-
   val con1 = Content(ContinuousSchema[Codex.LongCodex](), 1)
   val con2 = Content(ContinuousSchema[Codex.LongCodex](), 2)
 
@@ -126,13 +117,13 @@ class TestPosition1D extends FlatSpec with Matchers {
     pos.over.combineMapValues(None, con2) should be (con2)
   }
 
-  it should "return an along map" in {
-    pos.along.toMapValue(pos, con1) should be (con1)
+  it should "throw an exception for an along map" in {
+    a [Exception] should be thrownBy { pos.along.toMapValue(pos, con1) should be (con1) }
   }
 
-  it should "combine two along maps" in {
-    pos.along.combineMapValues(Some(con1), con2) should be (con2)
-    pos.along.combineMapValues(None, con2) should be (con2)
+  it should "throw an exception on combine two along maps" in {
+    a [Exception] should be thrownBy { pos.along.combineMapValues(Some(con1), con2) }
+    a [Exception] should be thrownBy { pos.along.combineMapValues(None, con2) }
   }
 
   it should "remove" in {

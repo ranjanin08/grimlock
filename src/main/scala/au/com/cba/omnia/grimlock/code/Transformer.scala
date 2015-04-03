@@ -26,7 +26,7 @@ trait Transformer
 trait Present extends PresentWithValue { self: Transformer =>
   type V = Any
 
-  def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]] = present(cell)
+  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = present(cell)
 
   /**
    * Present the transformed content(s).
@@ -37,7 +37,7 @@ trait Present extends PresentWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by modifiying `pos` and the
    *         content is derived from `con`.
    */
-  def present[P <: Position with ModifiablePosition](cell: Cell[P]): Collection[Cell[P]]
+  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]]
 
   /**
    * Operator for chaining transformations.
@@ -64,7 +64,7 @@ trait PresentWithValue { self: Transformer =>
    * @return Optional of either a cell or a `List` of cells where the position is creating by modifiying `pos` and the
    *         content is derived from `con`.
    */
-  def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]]
+  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]]
 
   /**
    * Operator for chaining transformations.
@@ -124,7 +124,7 @@ trait PresentExpandedWithValue { self: Transformer =>
  */
 case class AndThenTransformer(first: Transformer with Present, second: Transformer with Present) extends Transformer
   with Present {
-  def present[P <: Position with ModifiablePosition](cell: Cell[P]): Collection[Cell[P]] = {
+  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
     Collection(first.present(cell).toList.flatMap { case c => second.present(c).toList })
   }
 }
@@ -140,7 +140,7 @@ case class AndThenTransformer(first: Transformer with Present, second: Transform
 case class AndThenTransformerWithValue[W](first: Transformer with PresentWithValue { type V >: W },
   second: Transformer with PresentWithValue { type V >: W }) extends Transformer with PresentWithValue {
   type V = W
-  def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
     Collection(first.present(cell, ext).toList.flatMap { case c => second.present(c, ext).toList })
   }
 }
@@ -154,7 +154,7 @@ case class AndThenTransformerWithValue[W](first: Transformer with PresentWithVal
  *       automatically to one of these.
  */
 case class CombinationTransformer[T <: Transformer with Present](singles: List[T]) extends Transformer with Present {
-  def present[P <: Position with ModifiablePosition](cell: Cell[P]): Collection[Cell[P]] = {
+  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
     Collection(singles.flatMap { case s => s.present(cell).toList })
   }
 }
@@ -170,7 +170,7 @@ case class CombinationTransformer[T <: Transformer with Present](singles: List[T
 case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue { type V >: W }, W](singles: List[T])
   extends Transformer with PresentWithValue {
   type V = W
-  def present[P <: Position with ModifiablePosition](cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
     Collection(singles.flatMap { case s => s.present(cell, ext).toList })
   }
 }

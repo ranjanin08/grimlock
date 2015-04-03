@@ -34,6 +34,18 @@ trait Position {
   def apply(dim: Dimension): Value = coordinates(dim.index)
 
   /**
+   * Update the coordinate at `dim` with `t`.
+   *
+   * @param dim The dimension to set.
+   * @param t   The coordinate to set.
+   *
+   * @return A position of the same size as `this` but with `t` set at index `dim`.
+   */
+  def update[T](dim: Dimension, t: T)(implicit ev: Valueable[T]): this.type = {
+    same(coordinates.updated(dim.index, ev.convert(t))).asInstanceOf[this.type]
+  }
+
+  /**
    * Converts the position to a consise (terse) string.
    *
    * @param separator The separator to use between the coordinates.
@@ -64,93 +76,25 @@ trait Position {
       case false => coordinates.length.compare(that.coordinates.length)
     }
   }
-}
 
-/** Trait for operations that modify a position (but keep the number of dimensions the same). */
-trait ModifiablePosition { self: Position =>
   /** Type for positions of same number of dimensions. */
-  type S <: Position
-
-  /**
-   * Update the coordinate at `dim` with `t`.
-   *
-   * @param dim The dimension to set.
-   * @param t   The coordinate to set.
-   *
-   * @return A position of the same size as `this` but with `t` set at index `dim`.
-   */
-  def update[T: Valueable](dim: Dimension, t: T): S = {
-    same(coordinates.updated(dim.index, implicitly[Valueable[T]].convert(t)))
-  }
-
-  /**
-   * Permute the order of coordinates.
-   *
-   * @param order The new ordering of the coordinates.
-   *
-   * @return A position of the same size as `this` but with the coordinates ordered according to `order`.
-   *
-   * @note The ordering must contain each dimension exactly once.
-   */
-  def permute(order: List[Dimension]): S = same(order.map { case d => coordinates(d.index) })
+  protected type S <: Position
 
   protected def same(cl: List[Value]): S
 }
 
-/** Base trait for converting a position to a `Map`. */
-trait Mapable[P <: Position, T] {
-  /**
-   * Convert a cell to `Map` content value.
-   *
-   * @param pos Position of the cell.
-   * @param con Content of the cell.
-   *
-   * @return The value placed in a `Map` after a call to `toMap` on a `Slice`.
-   */
-  def toMapValue(pos: P, con: Content): T
+object Position {
+  /** Define an ordering between 2 position. Only use with position of the same type coordinates. */
+  def Ordering[T <: Position]: Ordering[T] = new Ordering[T] { def compare(x: T, y: T): Int = x.compare(y) }
 
-  /**
-   * Combine two map values.
-   *
-   * @param x An optional `Map` content value.
-   * @param y The `Map` content value to combine with.
-   *
-   * @return The combined `Map` content value.
-   */
-  def combineMapValues(x: Option[T], y: T): T
+  /** `MapablePosition` object for `PositionND` (N > 1) with `Along`. */
+  case object MapAlong extends MapMapablePosition[Position1D] {}
 }
-
-/** Trait for converting 1D positions to `Map` values. */
-trait Mapable1D[P <: Position] extends Mapable[P, Content] {
-  def toMapValue(r: P, c: Content): Content = c
-  def combineMapValues(x: Option[Content], y: Content): Content = y
-}
-
-/** Trait for converting (2..N)D positions to `Map` values. */
-trait MapableXD[P <: Position] extends Mapable[P, Map[P, Content]] {
-  def toMapValue(r: P, c: Content): Map[P, Content] = Map(r -> c)
-  def combineMapValues(x: Option[Map[P, Content]], y: Map[P, Content]): Map[P, Content] = x.map(_ ++ y).getOrElse(y)
-}
-
-/** `Mapable` object for `PositionXD` with `Along`. */
-case object PositionXDAlong extends MapableXD[Position1D] {}
 
 /** Trait for operations that reduce a position by one dimension. */
 trait ReduceablePosition { self: Position =>
   /** Type for positions of one less number of dimensions. */
   type L <: Position with ExpandablePosition
-
-  /** Type of the `Map` content when `Over.toMap` is called. */
-  type O
-
-  /** Type of the `Map` content when `Along.toMap` is called. */
-  type A
-
-  /** Object with `Mapable` implementation to `Over.toMap` and `Over.combineMaps`. */
-  val over: Mapable[L, O]
-
-  /** Object with `Mapable` implementation to `Along.toMap` and `Along.combineMaps`. */
-  val along: Mapable[Position1D, A]
 
   /**
    * Remove the coordinate at dimension `dim`.
@@ -201,7 +145,7 @@ trait ExpandablePosition { self: Position =>
    *
    * @return A new position with the coordinate `t` prepended.
    */
-  def prepend[T: Valueable](t: T): M = more(implicitly[Valueable[T]].convert(t) +: coordinates)
+  def prepend[T](t: T)(implicit ev: Valueable[T]): M = more(ev.convert(t) +: coordinates)
 
   /**
    * Append a coordinate to the position.
@@ -210,9 +154,72 @@ trait ExpandablePosition { self: Position =>
    *
    * @return A new position with the coordinate `t` appended.
    */
-  def append[T: Valueable](t: T): M = more(coordinates :+ implicitly[Valueable[T]].convert(t))
+  def append[T](t: T)(implicit ev: Valueable[T]): M = more(coordinates :+ ev.convert(t))
 
   protected def more(cl: List[Value]): M
+}
+
+/** Trait for operations that modify a position (but keep the number of dimensions the same). */
+trait PermutablePosition { self: Position =>
+  /**
+   * Permute the order of coordinates.
+   *
+   * @param order The new ordering of the coordinates.
+   *
+   * @return A position of the same size as `this` but with the coordinates ordered according to `order`.
+   *
+   * @note The ordering must contain each dimension exactly once.
+   */
+  def permute(order: List[Dimension]): this.type = {
+    same(order.map { case d => coordinates(d.index) }).asInstanceOf[this.type]
+  }
+}
+
+/** Base trait for converting a position to a `Map`. */
+trait MapablePosition[P <: Position, T] {
+  /**
+   * Convert a cell to `Map` content value.
+   *
+   * @param pos Position of the cell.
+   * @param con Content of the cell.
+   *
+   * @return The value placed in a `Map` after a call to `toMap` on a `Slice`.
+   */
+  def toMapValue(pos: P, con: Content): T
+
+  /**
+   * Combine two map values.
+   *
+   * @param x An optional `Map` content value.
+   * @param y The `Map` content value to combine with.
+   *
+   * @return The combined `Map` content value.
+   */
+  def combineMapValues(x: Option[T], y: T): T
+}
+
+/** Trait for converting (2..N)D positions to `Map` values. */
+trait MapMapablePosition[P <: Position] extends MapablePosition[P, Map[P, Content]] {
+  def toMapValue(r: P, c: Content): Map[P, Content] = Map(r -> c)
+  def combineMapValues(x: Option[Map[P, Content]], y: Map[P, Content]): Map[P, Content] = x.map(_ ++ y).getOrElse(y)
+}
+
+/** Trait for mapping over a position. */
+trait MapOverPosition { self: Position with ReduceablePosition =>
+  /** Type of the `Map` content when `Over.toMap` is called. */
+  type O
+
+  /** Object with `MapablePosition` implementation to `Over.toMap` and `Over.combineMaps`. */
+  val over: MapablePosition[L, O]
+}
+
+/** Trait for mapping along a position. */
+trait MapAlongPosition { self: Position =>
+  /** Type of the `Map` content when `Along.toMap` is called. */
+  type A
+
+  /** Object with `MapablePosition` implementation to `Along.toMap` and `Along.combineMaps`. */
+  val along: MapablePosition[Position1D, A]
 }
 
 /**
@@ -225,7 +232,10 @@ case class Position0D() extends Position with ExpandablePosition {
 
   val coordinates = List()
 
-  def more(cl: List[Value]): M = Position1D(cl(0))
+  protected type S = Position0D
+
+  protected def same(cl: List[Value]): S = Position0D()
+  protected def more(cl: List[Value]): M = Position1D(cl(0))
 }
 
 /**
@@ -233,28 +243,23 @@ case class Position0D() extends Position with ExpandablePosition {
  *
  * @param first Coordinate for the first dimension.
  */
-case class Position1D(first: Value) extends Position with ModifiablePosition with ReduceablePosition
-  with ExpandablePosition {
+case class Position1D(first: Value) extends Position with ReduceablePosition with ExpandablePosition
+  with MapOverPosition with MapAlongPosition {
   type L = Position0D
-  type S = Position1D
   type M = Position2D
   type O = Content
   type A = Content
 
-  val over = Position1DOver
-  val along = Position1DAlong
+  val over = Position1D.MapOver
+  val along = Position1D.MapAlong
   val coordinates = List(first)
+
+  protected type S = Position1D
 
   protected def less(cl: List[Value]): L = Position0D()
   protected def same(cl: List[Value]): S = Position1D(cl(0))
   protected def more(cl: List[Value]): M = Position2D(cl(0), cl(1))
 }
-
-/** `Mapable` object for `Position1D` with `Over`. */
-case object Position1DOver extends Mapable1D[Position0D] {}
-
-/** `Mapable` object for `Position1D` with `Along`. */
-case object Position1DAlong extends Mapable1D[Position1D] {}
 
 /** Companion object to `Position1D`. */
 object Position1D {
@@ -263,7 +268,19 @@ object Position1D {
    *
    * @param s The coordinate value from which to create a `Position1D`.
    */
-  def apply[S: Valueable](s: S): Position1D = Position1D(implicitly[Valueable[S]].convert(s))
+  def apply[S](s: S)(implicit ev1: Valueable[S]): Position1D = Position1D(ev1.convert(s))
+
+  /** `MapablePosition` object for `Position1D` with `Over`. */
+  case object MapOver extends MapablePosition[Position0D, Content] {
+    def toMapValue(r: Position0D, c: Content): Content = c
+    def combineMapValues(x: Option[Content], y: Content): Content = y
+  }
+
+  /** `MapablePosition` object for `Position1D` with `Along`. */
+  case object MapAlong extends MapablePosition[Position1D, Content] {
+    def toMapValue(r: Position1D, c: Content): Content = throw new Exception("Can't map along 1D")
+    def combineMapValues(x: Option[Content], y: Content): Content = throw new Exception("Can't map along 1D")
+  }
 }
 
 /**
@@ -272,25 +289,23 @@ object Position1D {
  * @param first  Coordinate for the first dimension.
  * @param second Coordinate for the second dimension.
  */
-case class Position2D(first: Value, second: Value) extends Position with ModifiablePosition with ReduceablePosition
-  with ExpandablePosition {
+case class Position2D(first: Value, second: Value) extends Position with ReduceablePosition with ExpandablePosition
+  with PermutablePosition with MapOverPosition with MapAlongPosition {
   type L = Position1D
-  type S = Position2D
   type M = Position3D
   type O = Map[Position1D, Content]
   type A = Map[Position1D, Content]
 
-  val over = Position2DOver
-  val along = PositionXDAlong
+  val over = Position2D.MapOver
+  val along = Position.MapAlong
   val coordinates = List(first, second)
+
+  protected type S = Position2D
 
   protected def less(cl: List[Value]): L = Position1D(cl(0))
   protected def same(cl: List[Value]): S = Position2D(cl(0), cl(1))
   protected def more(cl: List[Value]): M = Position3D(cl(0), cl(1), cl(2))
 }
-
-/** `Mapable` object for `Position2D` with `Over`. */
-case object Position2DOver extends MapableXD[Position1D] {}
 
 /** Companion object to `Position2D`. */
 object Position2D {
@@ -300,9 +315,12 @@ object Position2D {
    * @param s The first coordinate value from which to create a `Position2D`.
    * @param t The second coordinate value from which to create a `Position2D`.
    */
-  def apply[S: Valueable, T: Valueable](s: S, t: T): Position2D = {
-    Position2D(implicitly[Valueable[S]].convert(s), implicitly[Valueable[T]].convert(t))
+  def apply[S, T](s: S, t: T)(implicit ev1: Valueable[S], ev2: Valueable[T]): Position2D = {
+    Position2D(ev1.convert(s), ev2.convert(t))
   }
+
+  /** `MapablePosition` object for `Position2D` with `Over`. */
+  case object MapOver extends MapMapablePosition[Position1D] {}
 }
 
 /**
@@ -312,25 +330,23 @@ object Position2D {
  * @param second Coordinate for the second dimension.
  * @param third  Coordinate for the third dimension.
  */
-case class Position3D(first: Value, second: Value, third: Value) extends Position with ModifiablePosition
-  with ReduceablePosition with ExpandablePosition {
+case class Position3D(first: Value, second: Value, third: Value) extends Position with ReduceablePosition
+  with ExpandablePosition with PermutablePosition with MapOverPosition with MapAlongPosition {
   type L = Position2D
-  type S = Position3D
   type M = Position4D
   type O = Map[Position2D, Content]
   type A = Map[Position1D, Content]
 
-  val over = Position3DOver
-  val along = PositionXDAlong
+  val over = Position3D.MapOver
+  val along = Position.MapAlong
   val coordinates = List(first, second, third)
+
+  protected type S = Position3D
 
   protected def less(cl: List[Value]): L = Position2D(cl(0), cl(1))
   protected def same(cl: List[Value]): S = Position3D(cl(0), cl(1), cl(2))
   protected def more(cl: List[Value]): M = Position4D(cl(0), cl(1), cl(2), cl(3))
 }
-
-/** `Mapable` object for `Position3D` with `Over`. */
-case object Position3DOver extends MapableXD[Position2D] {}
 
 /** Companion object to `Position3D`. */
 object Position3D {
@@ -341,10 +357,12 @@ object Position3D {
    * @param t The second coordinate value from which to create a `Position3D`.
    * @param u The third coordinate value from which to create a `Position3D`.
    */
-  def apply[S: Valueable, T: Valueable, U: Valueable](s: S, t: T, u: U): Position3D = {
-    Position3D(implicitly[Valueable[S]].convert(s), implicitly[Valueable[T]].convert(t),
-      implicitly[Valueable[U]].convert(u))
+  def apply[S, T, U](s: S, t: T, u: U)(implicit ev1: Valueable[S], ev2: Valueable[T], ev3: Valueable[U]): Position3D = {
+    Position3D(ev1.convert(s), ev2.convert(t), ev3.convert(u))
   }
+
+  /** `MapablePosition` object for `Position3D` with `Over`. */
+  case object MapOver extends MapMapablePosition[Position2D] {}
 }
 
 /**
@@ -356,24 +374,22 @@ object Position3D {
  * @param fourth Coordinate for the fourth dimension.
  */
 case class Position4D(first: Value, second: Value, third: Value, fourth: Value) extends Position
-  with ModifiablePosition with ReduceablePosition with ExpandablePosition {
+  with ReduceablePosition with ExpandablePosition with PermutablePosition with MapOverPosition with MapAlongPosition {
   type L = Position3D
-  type S = Position4D
   type M = Position5D
   type O = Map[Position3D, Content]
   type A = Map[Position1D, Content]
 
-  val over = Position4DOver
-  val along = PositionXDAlong
+  val over = Position4D.MapOver
+  val along = Position.MapAlong
   val coordinates = List(first, second, third, fourth)
+
+  protected type S = Position4D
 
   protected def less(cl: List[Value]): L = Position3D(cl(0), cl(1), cl(2))
   protected def same(cl: List[Value]): S = Position4D(cl(0), cl(1), cl(2), cl(3))
   protected def more(cl: List[Value]): M = Position5D(cl(0), cl(1), cl(2), cl(3), cl(4))
 }
-
-/** `Mapable` object for `Position4D` with `Over`. */
-case object Position4DOver extends MapableXD[Position3D] {}
 
 /** Companion object to `Position4D`. */
 object Position4D {
@@ -385,10 +401,13 @@ object Position4D {
    * @param u The third coordinate value from which to create a `Position4D`.
    * @param v The fourth coordinate value from which to create a `Position4D`.
    */
-  def apply[S: Valueable, T: Valueable, U: Valueable, V: Valueable](s: S, t: T, u: U, v: V): Position4D = {
-    Position4D(implicitly[Valueable[S]].convert(s), implicitly[Valueable[T]].convert(t),
-      implicitly[Valueable[U]].convert(u), implicitly[Valueable[V]].convert(v))
+  def apply[S, T, U, V](s: S, t: T, u: U, v: V)(implicit ev1: Valueable[S], ev2: Valueable[T], ev3: Valueable[U],
+    ev4: Valueable[V]): Position4D = {
+    Position4D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v))
   }
+
+  /** `MapablePosition` object for `Position4D` with `Over`. */
+  case object MapOver extends MapMapablePosition[Position3D] {}
 }
 
 /**
@@ -401,22 +420,20 @@ object Position4D {
  * @param fifth  Coordinate for the fifth dimension.
  */
 case class Position5D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value) extends Position
-  with ModifiablePosition with ReduceablePosition {
+  with ReduceablePosition with PermutablePosition with MapOverPosition with MapAlongPosition {
   type L = Position4D
-  type S = Position5D
   type O = Map[Position4D, Content]
   type A = Map[Position1D, Content]
 
-  val over = Position5DOver
-  val along = PositionXDAlong
+  val over = Position5D.MapOver
+  val along = Position.MapAlong
   val coordinates = List(first, second, third, fourth, fifth)
+
+  protected type S = Position5D
 
   protected def less(cl: List[Value]): L = Position4D(cl(0), cl(1), cl(2), cl(3))
   protected def same(cl: List[Value]): S = Position5D(cl(0), cl(1), cl(2), cl(3), cl(4))
 }
-
-/** `Mapable` object for `Position5D` with `Over`. */
-case object Position5DOver extends MapableXD[Position4D] {}
 
 /** Companion object to `Position5D`. */
 object Position5D {
@@ -429,11 +446,13 @@ object Position5D {
    * @param v The fourth coordinate value from which to create a `Position5D`.
    * @param w The fifth coordinate value from which to create a `Position5D`.
    */
-  def apply[S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable](s: S, t: T, u: U, v: V,
-    w: W): Position5D = {
-    Position5D(implicitly[Valueable[S]].convert(s), implicitly[Valueable[T]].convert(t),
-      implicitly[Valueable[U]].convert(u), implicitly[Valueable[V]].convert(v), implicitly[Valueable[W]].convert(w))
+  def apply[S, T, U, V, W](s: S, t: T, u: U, v: V, w: W)(implicit ev1: Valueable[S], ev2: Valueable[T],
+    ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W]): Position5D = {
+    Position5D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w))
   }
+
+  /** `MapablePosition` object for `Position5D` with `Over`. */
+  case object MapOver extends MapMapablePosition[Position4D] {}
 }
 
 /**
@@ -486,8 +505,8 @@ object Positionable {
   /** Converts a position to a position; that is, it's a pass through. */
   implicit def P2P[T <: Position]: Positionable[T, T] = new Positionable[T, T] { def convert(t: T): T = t }
   /** Converts a `Valueable` to a position. */
-  implicit def V2P[T: Valueable]: Positionable[T, Position1D] = {
-    new Positionable[T, Position1D] { def convert(t: T): Position1D = Position1D(implicitly[Valueable[T]].convert(t)) }
+  implicit def V2P[T](implicit ev: Valueable[T]): Positionable[T, Position1D] = {
+    new Positionable[T, Position1D] { def convert(t: T): Position1D = Position1D(ev.convert(t)) }
   }
 }
 
