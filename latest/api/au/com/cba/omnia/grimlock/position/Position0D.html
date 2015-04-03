@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Position for zero dimensions.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/571604e9183b0a9541b8d36b1f7c1689b1c61894//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Position0D exists so things like <code>names(Over(First))</code> work.
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/d41e5e03d17fa2853508308bcf692d80037f90f7//src/main/scala/au/com/cba/omnia/grimlock/code/Position.scala" target="_blank">Position.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Position0D exists so things like <code>names(Over(First))</code> work.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a>, <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -112,6 +112,19 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Type for positions of one more number of dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Type for positions of one more number of dimensions.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.Position0D">Position0D</a> → <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.position.Position0D.S" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="S=au.com.cba.omnia.grimlock.position.Position0D"></a>
+      <a id="S:S"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">S</span><span class="result"> = <a href="" class="extype" name="au.com.cba.omnia.grimlock.position.Position0D">Position0D</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Type for positions of same number of dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Type for positions of same number of dimensions.</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.Position0D">Position0D</a> → <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -185,7 +198,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.position.ExpandablePosition#append" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="append[T](t:T)(implicitevidence$3:au.com.cba.omnia.grimlock.encoding.Valueable[T]):ExpandablePosition.this.M"></a>
+      <a id="append[T](t:T)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[T]):ExpandablePosition.this.M"></a>
       <a id="append[T](T)(Valueable[T]):M"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -193,7 +206,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">append</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.append.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.append.T">T</span>]</span>)</span><span class="result">: <a href="#M=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.position.Position0D.M">M</a></span>
+        <span class="name">append</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.append.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.append.T">T</span>]</span>)</span><span class="result">: <a href="#M=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.position.Position0D.M">M</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Append a coordinate to the position.</p><div class="fullcomment"><div class="comment cmt"><p>Append a coordinate to the position.
@@ -336,7 +349,7 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.position.Position0D#more" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="au.com.cba.omnia.grimlock.position.Position0D#more" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="more(cl:List[au.com.cba.omnia.grimlock.encoding.Value]):Position0D.this.M"></a>
       <a id="more(List[Value]):M"></a>
       <h4 class="signature">
@@ -348,7 +361,7 @@
         <span class="name">more</span><span class="params">(<span name="cl">cl: <span class="extype" name="scala.List">List</span>[<a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a>]</span>)</span><span class="result">: <a href="#M=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.position.Position0D.M">M</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.Position0D">Position0D</a> → <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.Position0D">Position0D</a> → <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -389,7 +402,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.position.ExpandablePosition#prepend" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepend[T](t:T)(implicitevidence$2:au.com.cba.omnia.grimlock.encoding.Valueable[T]):ExpandablePosition.this.M"></a>
+      <a id="prepend[T](t:T)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[T]):ExpandablePosition.this.M"></a>
       <a id="prepend[T](T)(Valueable[T]):M"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -397,13 +410,26 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepend</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.prepend.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.prepend.T">T</span>]</span>)</span><span class="result">: <a href="#M=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.position.Position0D.M">M</a></span>
+        <span class="name">prepend</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.prepend.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition.prepend.T">T</span>]</span>)</span><span class="result">: <a href="#M=au.com.cba.omnia.grimlock.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.position.Position0D.M">M</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Prepend a coordinate to the position.</p><div class="fullcomment"><div class="comment cmt"><p>Prepend a coordinate to the position.
 </p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>The coordinate to prepend.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A new position with the coordinate <code>t</code> prepended.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.position.ExpandablePosition">ExpandablePosition</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.position.Position0D#same" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="same(cl:List[au.com.cba.omnia.grimlock.encoding.Value]):Position0D.this.S"></a>
+      <a id="same(List[Value]):S"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">same</span><span class="params">(<span name="cl">cl: <span class="extype" name="scala.List">List</span>[<a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Value">Value</a>]</span>)</span><span class="result">: <a href="#S=au.com.cba.omnia.grimlock.position.Position0D" class="extmbr" name="au.com.cba.omnia.grimlock.position.Position0D.S">S</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.position.Position0D">Position0D</a> → <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -432,6 +458,22 @@
       <p class="shortcomment cmt">Converts the position to a consise (terse) string.</p><div class="fullcomment"><div class="comment cmt"><p>Converts the position to a consise (terse) string.
 </p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>The separator to use between the coordinates.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Short string representation.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.position.Position#update" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="update[T](dim:au.com.cba.omnia.grimlock.position.Dimension,t:T)(implicitev:au.com.cba.omnia.grimlock.encoding.Valueable[T]):Position.this.type"></a>
+      <a id="update[T](Dimension,T)(Valueable[T]):Position0D.this.type"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">update</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="dim">dim: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.position.Dimension">Dimension</a></span>, <span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.position.Position.update.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.position.Position.update.T">T</span>]</span>)</span><span class="result">: <a href="" class="extype" name="au.com.cba.omnia.grimlock.position.Position0D">Position0D</a>.this.type</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Update the coordinate at <code>dim</code> with <code>t</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Update the coordinate at <code>dim</code> with <code>t</code>.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to set.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The coordinate to set.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A position of the same size as <code>this</code> but with <code>t</code> set at index <code>dim</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.position.Position">Position</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
