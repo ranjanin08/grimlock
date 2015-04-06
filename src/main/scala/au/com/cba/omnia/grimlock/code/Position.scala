@@ -21,6 +21,10 @@ import au.com.cba.omnia.grimlock.encoding._
 import com.twitter.scalding._
 import com.twitter.scalding.typed.IterablePipe
 
+import org.apache.spark.rdd._
+
+import scala.reflect._
+
 /** Base trait for dealing with positions. */
 trait Position {
   /** List of coordinates of the position. */
@@ -455,12 +459,39 @@ object Position5D {
   case object MapOver extends MapMapablePosition[Position4D] {}
 }
 
+/** Base trait that represents the positions of a matrix. */
+trait Positions[P <: Position] {
+  /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
+  type U[_]
+
+  /**
+   * Returns the distinct position(s) (or names) for a given `slice`.
+   *
+   * @param slice Encapsulates the dimension(s) for which the names are to be returned.
+   *
+   * @return A `U[(Slice.S, Long)]` of the distinct position(s) together with a unique index.
+   *
+   * @note The position(s) are returned with an index so the return value can be used in various `persist` methods. The
+   *       index itself is unique for each position but no ordering is defined.
+   *
+   * @see [[Names]]
+   */
+  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D],
+    ev2: ClassTag[slice.S]): U[(slice.S, Long)]
+
+  protected def toString(t: P, separator: String, descriptive: Boolean): String = {
+    if (descriptive) { t.toString } else { t.toShortString(separator) }
+  }
+}
+
 /**
  * Rich wrapper around a `TypedPipe[Position]`.
  *
  * @param data The `TypedPipe[Position]`.
  */
-class Positions[P <: Position](protected val data: TypedPipe[P]) extends Persist[P] {
+class ScaldingPositions[P <: Position](val data: TypedPipe[P]) extends Positions[P] with ScaldingPersist[P] {
+  type U[A] = TypedPipe[A]
+
   /**
    * Returns the distinct position(s) (or names) for a given `slice`.
    *
@@ -473,21 +504,52 @@ class Positions[P <: Position](protected val data: TypedPipe[P]) extends Persist
    *
    * @see [[Names]]
    */
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev: PosDimDep[P, D]): TypedPipe[(slice.S, Long)] = {
-    Names.number(data
+  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D],
+    ev2: ClassTag[slice.S]): TypedPipe[(slice.S, Long)] = {
+    ScaldingNames.number(data
       .map { case p => slice.selected(p) }
-      .distinct(new Ordering[slice.S] { def compare(l: slice.S, r: slice.S) = l.compare(r) }))
-  }
-
-  protected def toString(t: P, separator: String, descriptive: Boolean): String = {
-    if (descriptive) { t.toString } else { t.toShortString(separator) }
+      .distinct(Position.Ordering[slice.S]))
   }
 }
 
-/** Companion object for the `Positions` class. */
-object Positions {
-  /** Converts a `TypedPipe[Position]` to a `Positions`. */
-  implicit def TPP2P[P <: Position](data: TypedPipe[P]): Positions[P] = new Positions(data)
+/** Companion object for the `ScaldingPositions` class. */
+object ScaldingPositions {
+  /** Converts a `TypedPipe[Position]` to a `ScaldingPositions`. */
+  implicit def TPP2P[P <: Position](data: TypedPipe[P]): ScaldingPositions[P] = new ScaldingPositions(data)
+}
+
+/**
+ * Rich wrapper around a `RDD[Position]`.
+ *
+ * @param data The `RDD[Position]`.
+ */
+class SparkPositions[P <: Position](val data: RDD[P]) extends Positions[P] with SparkPersist[P] {
+  type U[A] = RDD[A]
+
+  /**
+   * Returns the distinct position(s) (or names) for a given `slice`.
+   *
+   * @param slice Encapsulates the dimension(s) for which the names are to be returned.
+   *
+   * @return A Spark `RDD[(Slice.S, Long)]` of the distinct position(s) together with a unique index.
+   *
+   * @note The position(s) are returned with an index so the return value can be used in various `persist` methods. The
+   *       index itself is unique for each position but no ordering is defined.
+   *
+   * @see [[Names]]
+   */
+  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D],
+    ev2: ClassTag[slice.S]): RDD[(slice.S, Long)] = {
+    SparkNames.number(data
+      .map { case p => slice.selected(p) }
+      .distinct)
+  }
+}
+
+/** Companion object for the `SparkPositions` class. */
+object SparkPositions {
+  /** Converts a `RDD[Position]` to a `SparkPositions`. */
+  implicit def RDDP2P[P <: Position](data: RDD[P]): SparkPositions[P] = new SparkPositions(data)
 }
 
 /** Type class for transforming a type `T` into a `Position`. */

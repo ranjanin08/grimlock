@@ -18,20 +18,17 @@ import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.typed.TypedSink
 
-trait Persist[T] {
-  protected val data: TypedPipe[T]
+import org.apache.spark.rdd._
 
-  /**
-   * Persist to disk.
-   *
-   * @param file        Name of the output file.
-   * @param separator   Separator to use between the fields.
-   * @param descriptive Indicates if the output should be descriptive.
-   *
-   * @return A Scalding `TypedPipe[T]` which is this object's data.
-   */
-  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[T] = persist(TypedSink(TextLine(file)), separator, descriptive)
+/** Trait for peristing a data. */
+trait Persist[T] {
+  protected def toString(t: T, separator: String, descriptive: Boolean): String
+}
+
+/** Trait for peristing a Scalding `TypedPipe`. */
+trait ScaldingPersist[T] extends Persist[T] {
+  /** The data to persist. */
+  val data: TypedPipe[T]
 
   /**
    * Persist to a sink.
@@ -51,6 +48,39 @@ trait Persist[T] {
     data
   }
 
-  protected def toString(t: T, separator: String, descriptive: Boolean): String
+  /**
+   * Persist to disk.
+   *
+   * @param file        Name of the output file.
+   * @param separator   Separator to use between the fields.
+   * @param descriptive Indicates if the output should be descriptive.
+   *
+   * @return A Scalding `TypedPipe[T]` which is this object's data.
+   */
+  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+    mode: Mode): TypedPipe[T] = persist(TypedSink(TextLine(file)), separator, descriptive)
+}
+
+/** Trait for peristing a Spark `RDD`. */
+trait SparkPersist[T] extends Persist[T] with java.io.Serializable {
+  /** The data to persist. */
+  val data: RDD[T]
+
+  /**
+   * Persist to disk.
+   *
+   * @param file        Name of the output file.
+   * @param separator   Separator to use between the fields.
+   * @param descriptive Indicates if the output should be descriptive.
+   *
+   * @return A Spark `RDD[T]` which is this object's data.
+   */
+  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false): RDD[T] = {
+    data
+      .map(toString(_, separator, descriptive))
+      .saveAsTextFile(file)
+
+    data
+  }
 }
 

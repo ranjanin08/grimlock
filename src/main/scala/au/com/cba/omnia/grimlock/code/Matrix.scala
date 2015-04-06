@@ -59,7 +59,7 @@ case class Cell[P <: Position](position: P, content: Content) {
  *
  * @param data `TypedPipe[Cell[P]]`.
  */
-trait Matrix[P <: Position] extends Persist[Cell[P]] {
+trait Matrix[P <: Position] extends ScaldingPersist[Cell[P]] {
   /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
   type Predicate = Cell[P] => Boolean
 
@@ -206,7 +206,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D): TypedPipe[(slice.S, Long)] = {
-    Names.number(data.map { case c => slice.selected(c.position) }.distinct)
+    ScaldingNames.number(data.map { case c => slice.selected(c.position) }.distinct)
   }
 
   /**
@@ -669,7 +669,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
       .collect { case (_, (c, (_, predicate))) if predicate(c) => c.position }
   }
 
-  protected val data: TypedPipe[Cell[P]]
+  val data: TypedPipe[Cell[P]]
 
   protected def persistDictionary(names: TypedPipe[(Position1D, Long)], file: String, dictionary: String,
     separator: String)(implicit flow: FlowDef, mode: Mode) = {

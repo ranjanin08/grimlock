@@ -18,6 +18,8 @@ import au.com.cba.omnia.grimlock.position._
 
 import com.twitter.scalding._
 
+import org.apache.spark.rdd._
+
 /**
  * Base class for variable types.
  *
@@ -66,14 +68,11 @@ object Type {
   val Event = Type(None, "event")
 }
 
-/**
- * Rich wrapper around a `TypedPipe[(Position, Type)]`.
- *
- * @param data `TypedPipe[(Position, Type)]`.
- *
- * @note This class represents the variable type along the dimensions of a matrix.
- */
-class Types[P <: Position](protected val data: TypedPipe[(P, Type)]) extends Persist[(P, Type)] {
+/** Base trait that represents the variable type along the dimensions of a matrix. */
+trait Types[P <: Position] {
+  /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
+  type U[_]
+
   protected def toString(t: (P, Type), separator: String, descriptive: Boolean): String = {
     descriptive match {
       case true => t._1.toString + separator + t._2.toString
@@ -82,8 +81,37 @@ class Types[P <: Position](protected val data: TypedPipe[(P, Type)]) extends Per
   }
 }
 
-object Types {
+/**
+ * Rich wrapper around a `TypedPipe[(Position, Type)]`.
+ *
+ * @param data `TypedPipe[(Position, Type)]`.
+ *
+ * @note This class represents the variable type along the dimensions of a matrix.
+ */
+class ScaldingTypes[P <: Position](val data: TypedPipe[(P, Type)]) extends Types[P] with ScaldingPersist[(P, Type)] {
+  type U[A] = TypedPipe[A]
+}
+
+/** Companion object for the `ScaldingTypes` class. */
+object ScaldingTypes {
   /** Conversion from `TypedPipe[(Position, Type)]` to a `Types`. */
-  implicit def TPPT2T[P <: Position](data: TypedPipe[(P, Type)]): Types[P] = new Types(data)
+  implicit def TPPT2T[P <: Position](data: TypedPipe[(P, Type)]): ScaldingTypes[P] = new ScaldingTypes(data)
+}
+
+/**
+ * Rich wrapper around a `RDD[(Position, Type)]`.
+ *
+ * @param data `RDD[(Position, Type)]`.
+ *
+ * @note This class represents the variable type along the dimensions of a matrix.
+ */
+class SparkTypes[P <: Position](val data: RDD[(P, Type)]) extends Types[P] with SparkPersist[(P, Type)] {
+  type U[A] = RDD[A]
+}
+
+/** Companion object for the `SparkTypes` class. */
+object SparkTypes {
+  /** Conversion from `RDD[(Position, Type)]` to a `SparkTypes`. */
+  implicit def RDDPT2T[P <: Position](data: RDD[(P, Type)]): SparkTypes[P] = new SparkTypes(data)
 }
 

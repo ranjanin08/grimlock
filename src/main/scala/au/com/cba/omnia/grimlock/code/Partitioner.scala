@@ -22,6 +22,10 @@ import au.com.cba.omnia.grimlock.utility._
 import com.twitter.scalding._
 import com.twitter.scalding.typed.Grouped
 
+import org.apache.spark.rdd._
+
+import scala.reflect._
+
 /** Base trait for partitioning operations. */
 trait Partitioner {
   /** Type of the partition assignments. */
@@ -60,24 +64,10 @@ trait AssignWithValue { self: Partitioner =>
   def assign[P <: Position](pos: P, ext: V): Collection[T]
 }
 
-/**
- * Rich wrapper around a `TypedPipe[(T, (Position, Content))]`.
- *
- * @param data The `TypedPipe[(T, (Position, Content))]`.
- */
-class Partitions[T: Ordering, P <: Position](
-  protected val data: TypedPipe[(T, Cell[P])]) extends Persist[(T, Cell[P])] {
-  /** Return the partition identifiers. */
-  def keys(): TypedPipe[T] = Grouped(data).keys.distinct
-
-  /**
-   * Return the data for the partition `key`.
-   *
-   * @param key The partition for which to get the data.
-   *
-   * @return A `TypedPipe[Cell[P]]`; that is a matrix.
-   */
-  def get(key: T): TypedPipe[Cell[P]] = data.collect { case (t, pc) if (key == t) => pc }
+/** Base trait that represents the partitions of matrices */
+trait Partitions[T, P <: Position] {
+  /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
+  type U[_]
 
   /**
    * Add a partition.
@@ -85,20 +75,9 @@ class Partitions[T: Ordering, P <: Position](
    * @param key       The partition identifier.
    * @param partition The partition to add.
    *
-   * @return A `TypedPipe[(T, Cell[P])]` containing existing and new paritions.
+   * @return A `U[(T, Cell[P])]` containing existing and new paritions.
    */
-  def add(key: T, partition: TypedPipe[Cell[P]]): TypedPipe[(T, Cell[P])] = {
-    data ++ (partition.map { case c => (key, c) })
-  }
-
-  /**
-   * Remove a partition.
-   *
-   * @param key The identifier for the partition to remove.
-   *
-   * @return A `TypedPipe[(T, Cell[P])]` with the selected parition removed.
-   */
-  def remove(key: T): TypedPipe[(T, Cell[P])] = data.filter { case (t, c) => t != key }
+  def add(key: T, partition: U[Cell[P]]): U[(T, Cell[P])]
 
   /**
    * Apply function `fn` to each partition in `keys`.
@@ -106,11 +85,53 @@ class Partitions[T: Ordering, P <: Position](
    * @param keys The list of partitions to apply `fn` to.
    * @param fn   The function to apply to each partition.
    *
-   * @return A `TypedPipe[(T, Cell[Q])]` containing the paritions in `keys` with `fn` applied to them.
+   * @return A `U[(T, Cell[Q])]` containing the paritions in `keys` with `fn` applied to them.
    */
+  def foreach[Q <: Position](keys: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])]
+
+  /**
+   * Return the data for the partition `key`.
+   *
+   * @param key The partition for which to get the data.
+   *
+   * @return A `U[Cell[P]]`; that is a matrix.
+   */
+  def get(key: T): U[Cell[P]]
+
+  /** Return the partition identifiers. */
+  // TODO: Rename to prevent resolution clashes (see TestPartitioners.scala:262)
+  def keys()(implicit ev: ClassTag[T]): U[T]
+
+  /**
+   * Remove a partition.
+   *
+   * @param key The identifier for the partition to remove.
+   *
+   * @return A `U[(T, Cell[P])]` with the selected parition removed.
+   */
+  def remove(key: T): U[(T, Cell[P])]
+
+  protected def toString(t: (T, Cell[P]), separator: String, descriptive: Boolean): String = {
+    t._1.toString + separator + t._2.toString(separator, descriptive)
+  }
+}
+
+/**
+ * Rich wrapper around a `TypedPipe[(T, Cell[P])]`.
+ *
+ * @param data The `TypedPipe[(T, Cell[P])]`.
+ */
+class ScaldingPartitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cell[P])]) extends Partitions[T, P]
+  with ScaldingPersist[(T, Cell[P])] {
+  type U[A] = TypedPipe[A]
+
+  def add(key: T, partition: TypedPipe[Cell[P]]): TypedPipe[(T, Cell[P])] = {
+    data ++ (partition.map { case c => (key, c) })
+  }
+
   def foreach[Q <: Position](keys: List[T],
     fn: (T, TypedPipe[Cell[P]]) => TypedPipe[Cell[Q]]): TypedPipe[(T, Cell[Q])] = {
-    import Partitions._
+    import ScaldingPartitions._
 
     // TODO: This reads the data keys.length times. Is there a way to read it only once?
     //       Perhaps with Grouped.mapGroup and Execution[T]?
@@ -119,15 +140,51 @@ class Partitions[T: Ordering, P <: Position](
       .reduce[TypedPipe[(T, Cell[Q])]]((x, y) => x ++ y)
   }
 
-  protected def toString(t: (T, Cell[P]), separator: String, descriptive: Boolean): String = {
-    t._1.toString + separator + t._2.toString(separator, descriptive)
+  def get(key: T): TypedPipe[Cell[P]] = data.collect { case (t, pc) if (key == t) => pc }
+
+  def keys()(implicit ev: ClassTag[T]): TypedPipe[T] = Grouped(data).keys.distinct
+
+  def remove(key: T): TypedPipe[(T, Cell[P])] = data.filter { case (t, c) => t != key }
+}
+
+object ScaldingPartitions {
+  /** Conversion from `TypedPipe[(T, Cell[P])]` to a `ScaldingPartitions`. */
+  implicit def TPTC2P[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]): ScaldingPartitions[T, P] = {
+    new ScaldingPartitions(data)
   }
 }
 
-object Partitions {
-  /** Conversion from `TypedPipe[(T, Cell[P])]` to a `Partitions`. */
-  implicit def TPTPC2P[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]): Partitions[T, P] = {
-    new Partitions(data)
+/**
+ * Rich wrapper around a `RDD[(T, Cell[P])]`.
+ *
+ * @param data The `RDD[(T, Cell[P])]`.
+ */
+class SparkPartitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) extends Partitions[T, P]
+  with SparkPersist[(T, Cell[P])] {
+  type U[A] = RDD[A]
+
+  def add(key: T, partition: RDD[Cell[P]]): RDD[(T, Cell[P])] = data ++ (partition.map { case c => (key, c) })
+
+  def foreach[Q <: Position](keys: List[T], fn: (T, RDD[Cell[P]]) => RDD[Cell[Q]]): RDD[(T, Cell[Q])] = {
+    import SparkPartitions._
+
+    // TODO: This reads the data keys.length times. Is there a way to read it only once?
+    keys
+      .map { case k => fn(k, data.get(k)).map { case c => (k, c) } }
+      .reduce[RDD[(T, Cell[Q])]]((x, y) => x ++ y)
+  }
+
+  def get(key: T): RDD[Cell[P]] = data.collect { case (t, pc) if (key == t) => pc }
+
+  def keys()(implicit ev: ClassTag[T]): RDD[T] = data.map(_._1).distinct
+
+  def remove(key: T): RDD[(T, Cell[P])] = data.filter { case (t, c) => t != key }
+}
+
+object SparkPartitions {
+  /** Conversion from `RDD[(T, Cell[P])]` to a `SparkPartitions`. */
+  implicit def RDDTC2P[T: Ordering, P <: Position](data: RDD[(T, Cell[P])]): SparkPartitions[T, P] = {
+    new SparkPartitions(data)
   }
 }
 

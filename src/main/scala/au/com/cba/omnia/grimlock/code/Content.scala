@@ -20,6 +20,8 @@ import au.com.cba.omnia.grimlock.content.metadata._
 
 import com.twitter.scalding._
 
+import org.apache.spark.rdd._
+
 /** Contents of a cell in a matrix. */
 trait Content {
   /** Schema (description) of the value. */
@@ -168,20 +170,43 @@ object Content {
   private case class ContentImpl(schema: Schema, value: Value) extends Content
 }
 
-/**
- * Rich wrapper around a `TypedPipe[Content]`.
- *
- * @param data The `TypedPipe[Content]`.
- */
-class Contents(protected val data: TypedPipe[Content]) extends Persist[Content] {
+/** Base trait that represents the contents of a matrix. */
+trait Contents {
+  /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
+  type U[_]
+
   protected def toString(t: Content, separator: String, descriptive: Boolean): String = {
     if (descriptive) { t.toString } else { t.toShortString(separator) }
   }
 }
 
-/** Companion object for the `Contents` class. */
-object Contents {
+/**
+ * Rich wrapper around a `TypedPipe[Content]`.
+ *
+ * @param data The `TypedPipe[Content]`.
+ */
+class ScaldingContents(val data: TypedPipe[Content]) extends Contents with ScaldingPersist[Content] {
+  type U[A] = TypedPipe[A]
+}
+
+/** Companion object for the `ScaldingContents` class. */
+object ScaldingContents {
   /** Converts a `TypedPipe[Content]` to a `Contents`. */
-  implicit def TPC2C(data: TypedPipe[Content]): Contents = new Contents(data)
+  implicit def TPC2C(data: TypedPipe[Content]): ScaldingContents = new ScaldingContents(data)
+}
+
+/**
+ * Rich wrapper around a `RDD[Content]`.
+ *
+ * @param data The `RDD[Content]`.
+ */
+class SparkContents(val data: RDD[Content]) extends Contents with SparkPersist[Content] {
+  type U[A] = RDD[A]
+}
+
+/** Companion object for the `SparkContents` class. */
+object SparkContents {
+  /** Converts a `RDD[Content]` to a `Contents`. */
+  implicit def RDDC2C(data: RDD[Content]): SparkContents = new SparkContents(data)
 }
 

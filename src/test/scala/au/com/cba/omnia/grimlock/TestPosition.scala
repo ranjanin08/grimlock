@@ -18,6 +18,7 @@ import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.position.ScaldingPositions._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._
@@ -867,7 +868,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position1D(s) }
       } When {
         positions: TypedPipe[Position1D] =>
-          new Positions(positions).names(Over(First))
+          positions.names(Over(First))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
@@ -879,7 +880,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position1D(s) }
       } When {
         positions: TypedPipe[Position1D] =>
-          new Positions(positions).names(Along(First))
+          positions.names(Along(First))
       } Then {
         buffer: mutable.Buffer[(Position0D, Long)] =>
           buffer.toList shouldBe List((Position0D(), 0))
@@ -893,7 +894,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position2D(s, i) }
       } When {
         positions: TypedPipe[Position2D] =>
-          new Positions(positions).names(Over(First))
+          positions.names(Over(First))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
@@ -905,7 +906,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position2D(s, i) }
       } When {
         positions: TypedPipe[Position2D] =>
-          new Positions(positions).names(Over(Second))
+          positions.names(Over(Second))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
@@ -917,7 +918,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position2D(s, i) }
       } When {
         positions: TypedPipe[Position2D] =>
-          new Positions(positions).names(Along(First))
+          positions.names(Along(First))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
@@ -929,7 +930,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position2D(s, i) }
       } When {
         positions: TypedPipe[Position2D] =>
-          new Positions(positions).names(Along(Second))
+          positions.names(Along(Second))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
@@ -943,7 +944,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position3D(s, i, i + 1) }
       } When {
         positions: TypedPipe[Position3D] =>
-          new Positions(positions).names(Over(First))
+          positions.names(Over(First))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
@@ -955,7 +956,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position3D(s, i, i + 1) }
       } When {
         positions: TypedPipe[Position3D] =>
-          new Positions(positions).names(Over(Second))
+          positions.names(Over(Second))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
@@ -967,7 +968,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position3D(s, i, i + 1) }
       } When {
         positions: TypedPipe[Position3D] =>
-          new Positions(positions).names(Over(Third))
+          positions.names(Over(Third))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i + 1), i) }
@@ -979,7 +980,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position3D(s, i, i + 1) }
       } When {
         positions: TypedPipe[Position3D] =>
-          new Positions(positions).names(Along(First))
+          positions.names(Along(First))
       } Then {
         buffer: mutable.Buffer[(Position2D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position2D(i, i + 1), i) }
@@ -991,7 +992,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position3D(s, i, i + 1) }
       } When {
         positions: TypedPipe[Position3D] =>
-          new Positions(positions).names(Along(Second))
+          positions.names(Along(Second))
       } Then {
         buffer: mutable.Buffer[(Position2D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position2D(s, i + 1), i) }
@@ -1003,7 +1004,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position3D(s, i, i + 1) }
       } When {
         positions: TypedPipe[Position3D] =>
-          new Positions(positions).names(Along(Third))
+          positions.names(Along(Third))
       } Then {
         buffer: mutable.Buffer[(Position2D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position2D(s, i), i) }
@@ -1017,7 +1018,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
       } When {
         positions: TypedPipe[Position4D] =>
-          new Positions(positions).names(Over(First))
+          positions.names(Over(First))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
@@ -1029,7 +1030,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
       } When {
         positions: TypedPipe[Position4D] =>
-          new Positions(positions).names(Over(Second))
+          positions.names(Over(Second))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
@@ -1041,7 +1042,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
       } When {
         positions: TypedPipe[Position4D] =>
-          new Positions(positions).names(Over(Third))
+          positions.names(Over(Third))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i + 1), i) }
@@ -1053,7 +1054,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
       } When {
         positions: TypedPipe[Position4D] =>
-          new Positions(positions).names(Over(Fourth))
+          positions.names(Over(Fourth))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i + 2), i) }
@@ -1065,7 +1066,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
       } When {
         positions: TypedPipe[Position4D] =>
-          new Positions(positions).names(Along(First))
+          positions.names(Along(First))
       } Then {
         buffer: mutable.Buffer[(Position3D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position3D(i, i + 1, i + 2), i) }
@@ -1077,7 +1078,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
       } When {
         positions: TypedPipe[Position4D] =>
-          new Positions(positions).names(Along(Second))
+          positions.names(Along(Second))
       } Then {
         buffer: mutable.Buffer[(Position3D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position3D(s, i + 1, i + 2), i) }
@@ -1089,7 +1090,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
       } When {
         positions: TypedPipe[Position4D] =>
-          new Positions(positions).names(Along(Third))
+          positions.names(Along(Third))
       } Then {
         buffer: mutable.Buffer[(Position3D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position3D(s, i, i + 2), i) }
@@ -1101,7 +1102,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
       } When {
         positions: TypedPipe[Position4D] =>
-          new Positions(positions).names(Along(Fourth))
+          positions.names(Along(Fourth))
       } Then {
         buffer: mutable.Buffer[(Position3D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position3D(s, i, i + 1), i) }
@@ -1115,7 +1116,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       } When {
         positions: TypedPipe[Position5D] =>
-          new Positions(positions).names(Over(First))
+          positions.names(Over(First))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
@@ -1127,7 +1128,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       } When {
         positions: TypedPipe[Position5D] =>
-          new Positions(positions).names(Over(Second))
+          positions.names(Over(Second))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
@@ -1139,7 +1140,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       } When {
         positions: TypedPipe[Position5D] =>
-          new Positions(positions).names(Over(Third))
+          positions.names(Over(Third))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i + 1), i) }
@@ -1151,7 +1152,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       } When {
         positions: TypedPipe[Position5D] =>
-          new Positions(positions).names(Over(Fourth))
+          positions.names(Over(Fourth))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i + 2), i) }
@@ -1163,7 +1164,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       } When {
         positions: TypedPipe[Position5D] =>
-          new Positions(positions).names(Over(Fifth))
+          positions.names(Over(Fifth))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(i + 3), i) }
@@ -1175,7 +1176,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       } When {
         positions: TypedPipe[Position5D] =>
-          new Positions(positions).names(Along(First))
+          positions.names(Along(First))
       } Then {
         buffer: mutable.Buffer[(Position4D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position4D(i, i + 1, i + 2, i + 3), i) }
@@ -1187,7 +1188,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       } When {
         positions: TypedPipe[Position5D] =>
-          new Positions(positions).names(Along(Second))
+          positions.names(Along(Second))
       } Then {
         buffer: mutable.Buffer[(Position4D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position4D(s, i + 1, i + 2, i + 3), i) }
@@ -1199,7 +1200,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       } When {
         positions: TypedPipe[Position5D] =>
-          new Positions(positions).names(Along(Third))
+          positions.names(Along(Third))
       } Then {
         buffer: mutable.Buffer[(Position4D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position4D(s, i, i + 2, i + 3), i) }
@@ -1211,7 +1212,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       } When {
         positions: TypedPipe[Position5D] =>
-          new Positions(positions).names(Along(Fourth))
+          positions.names(Along(Fourth))
       } Then {
         buffer: mutable.Buffer[(Position4D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position4D(s, i, i + 1, i + 3), i) }
@@ -1223,7 +1224,7 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
         data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       } When {
         positions: TypedPipe[Position5D] =>
-          new Positions(positions).names(Along(Fifth))
+          positions.names(Along(Fifth))
       } Then {
         buffer: mutable.Buffer[(Position4D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position4D(s, i, i + 1, i + 2), i) }

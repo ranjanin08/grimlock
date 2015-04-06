@@ -18,22 +18,59 @@ import au.com.cba.omnia.grimlock.position._
 
 import com.twitter.scalding._
 
+import org.apache.spark.rdd._
+
+import scala.reflect._
 import scala.util.matching.Regex
 
-/**
- * Rich wrapper around a `TypedPipe[(Position, Long)]`.
- *
- * @param data `TypedPipe[(Position, Long)]`.
- *
- * @note This class represents the names along the dimensions of a matrix.
- */
-class Names[P <: Position](protected val data: TypedPipe[(P, Long)]) extends Persist[(P, Long)] {
-  /** Renumber the names. */
-  def renumber(): TypedPipe[(P, Long)] = Names.number(data.map { case (p, i) => p })
+/** Base trait that represents the names along the dimensions of a matrix. */
+trait Names[P <: Position] {
+  /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
+  type U[_]
 
-  private def slice(keep: Boolean, f: P => Boolean): TypedPipe[(P, Long)] = {
-    Names.number(data.collect { case (p, i) if !keep ^ f(p) => p })
+  /**
+   * Renumber the indices such that `position` is last.
+   *
+   * @param position The position to move to the back.
+   *
+   * @return A `U[(P, Long)]` with `position` at the greatest index and all others renumbered but preserving
+   *         their relative ordering.
+   */
+  def moveToBack[T](position: T)(implicit ev: Positionable[T, P]): U[(P, Long)]
+
+  /**
+   * Renumber the indices such that `position` is first.
+   *
+   * @param position The position to move to the front.
+   *
+   * @return A `U[(P, Long)]` with `position` at index 0 and all others renumbered but preserving their
+   *         relative ordering.
+   */
+  def moveToFront[T](position: T)(implicit ev: Positionable[T, P]): U[(P, Long)]
+
+  /** Renumber the names. */
+  def renumber()(implicit ev: ClassTag[P]): U[(P, Long)]
+
+  /**
+   * Set the index of a single position.
+   *
+   * @param position The position whose index is to be set.
+   * @param index    The new index.
+   *
+   * @return A `U[(P, Long)]` with only the index at the specified position updated.
+   */
+  def set[T](position: T, index: Long)(implicit ev: Positionable[T, P]): U[(P, Long)] = {
+    set(Map(position -> index))
   }
+
+  /**
+   * Set the index of multiple positions.
+   *
+   * @param positions A `Map` of positions (together with their new index) whose index is to be set.
+   *
+   * @return A `U[(P, Long)]` with only the indices at the specified positions updated.
+   */
+  def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): U[(P, Long)]
 
   /**
    * Slice the names using a regular expression.
@@ -42,12 +79,12 @@ class Names[P <: Position](protected val data: TypedPipe[(P, Long)]) extends Per
    * @param keep      Indicator if the matched names should be kept or removed.
    * @param spearator Separator used to convert each position to string.
    *
-   * @return A `TypedPipe[(P, Long)]` with only the names of interest.
+   * @return A `U[(P, Long)]` with only the names of interest.
    *
    * @note The matching is done by converting each position to its short string reprensentation and then applying the
    *       regular expression.
    */
-  def slice(regex: Regex, keep: Boolean, separator: String): TypedPipe[(P, Long)] = {
+  def slice(regex: Regex, keep: Boolean, separator: String)(implicit ev: ClassTag[P]): U[(P, Long)] = {
     slice(keep, p => regex.pattern.matcher(p.toShortString(separator)).matches)
   }
 
@@ -57,45 +94,32 @@ class Names[P <: Position](protected val data: TypedPipe[(P, Long)]) extends Per
    * @param positions The positions to slice on.
    * @param keep      Indicator if the matched names should be kept or removed.
    *
-   * @return A `TypedPipe[(P, Long)]` with only the names of interest.
+   * @return A `U[(P, Long)]` with only the names of interest.
    */
-  def slice[T](positions: T, keep: Boolean)(implicit ev: PositionListable[T, P]): TypedPipe[(P, Long)] = {
-    slice(keep, p => ev.convert(positions).contains(p))
+  def slice[T](positions: T, keep: Boolean)(implicit ev1: PositionListable[T, P], ev2: ClassTag[P]): U[(P, Long)] = {
+    slice(keep, p => ev1.convert(positions).contains(p))
   }
 
-  /**
-   * Set the index of a single position.
-   *
-   * @param position The position whose index is to be set.
-   * @param index    The new index.
-   *
-   * @return A `TypedPipe[(P, Long)]` with only the index at the specified position updated.
-   */
-  def set[T](position: T, index: Long)(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
-    set(Map(position -> index))
+  protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[(P, Long)]
+
+  protected def toString(t: (P, Long), separator: String, descriptive: Boolean): String = {
+    descriptive match {
+      case true => t._1.toString + separator + t._2.toString
+      case false => t._1.toShortString(separator) + separator + t._2.toString
+    }
   }
+}
 
-  /**
-   * Set the index of multiple positions.
-   *
-   * @param positions A `Map` of positions (together with their new index) whose index is to be set.
-   *
-   * @return A `TypedPipe[(P, Long)]` with only the indices at the specified positions updated.
-   */
-  def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
-    val converted = positions.map { case (k, v) => ev.convert(k) -> v }
+/**
+ * Rich wrapper around a `TypedPipe[(Position, Long)]`.
+ *
+ * @param data `TypedPipe[(Position, Long)]`.
+ *
+ * @note This class represents the names along the dimensions of a matrix.
+ */
+class ScaldingNames[P <: Position](val data: TypedPipe[(P, Long)]) extends Names[P] with ScaldingPersist[(P, Long)] {
+  type U[A] = TypedPipe[A]
 
-    data.map { case (p, i) => (p, converted.getOrElse(p, i)) }
-  }
-
-  /**
-   * Renumber the indices such that `position` is first.
-   *
-   * @param position The position to move to the front.
-   *
-   * @return A `TypedPipe[(P, Long)]` with `position` at index 0 and all others renumbered but preserving their
-   *         relative ordering.
-   */
   def moveToFront[T](position: T)(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
     val pos = ev.convert(position)
     val state = data
@@ -111,14 +135,6 @@ class Names[P <: Position](protected val data: TypedPipe[(P, Long)]) extends Per
       }
   }
 
-  /**
-   * Renumber the indices such that `position` is last.
-   *
-   * @param position The position to move to the back.
-   *
-   * @return A `TypedPipe[(P, Long)]` with `position` at the greatest index and all others renumbered but preserving
-   *         their relative ordering.
-   */
   def moveToBack[T](position: T)(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
     val pos = ev.convert(position)
     val state = data
@@ -134,15 +150,20 @@ class Names[P <: Position](protected val data: TypedPipe[(P, Long)]) extends Per
       }
   }
 
-  protected def toString(t: (P, Long), separator: String, descriptive: Boolean): String = {
-    descriptive match {
-      case true => t._1.toString + separator + t._2.toString
-      case false => t._1.toShortString(separator) + separator + t._2.toString
-    }
+  def renumber()(implicit ev: ClassTag[P]): TypedPipe[(P, Long)] = ScaldingNames.number(data.map { case (p, i) => p })
+
+  def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
+    val converted = positions.map { case (k, v) => ev.convert(k) -> v }
+
+    data.map { case (p, i) => (p, converted.getOrElse(p, i)) }
+  }
+
+  protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): TypedPipe[(P, Long)] = {
+    ScaldingNames.number(data.collect { case (p, i) if !keep ^ f(p) => p })
   }
 }
 
-object Names {
+object ScaldingNames {
   /**
    * Number a `TypedPipe[Position]`
    *
@@ -159,8 +180,65 @@ object Names {
       .map { case ((), (p, i)) => (p, i) }
   }
 
-  /** Conversion from `TypedPipe[(Position, Long)]` to a `Names`. */
-  implicit def TPPL2N[P <: Position](data: TypedPipe[(P, Long)]): Names[P] = new Names(data)
+  /** Conversion from `TypedPipe[(Position, Long)]` to a `ScaldingNames`. */
+  implicit def TPPL2N[P <: Position](data: TypedPipe[(P, Long)]): ScaldingNames[P] = new ScaldingNames(data)
+}
+
+/**
+ * Rich wrapper around a `RDD[(Position, Long)]`.
+ *
+ * @param data `RDD[(Position, Long)]`.
+ *
+ * @note This class represents the names along the dimensions of a matrix.
+ */
+class SparkNames[P <: Position](val data: RDD[(P, Long)]) extends Names[P] with SparkPersist[(P, Long)] {
+  type U[A] = RDD[A]
+
+  def moveToFront[T](position: T)(implicit ev: Positionable[T, P]): RDD[(P, Long)] = {
+    val pos = ev.convert(position)
+    val state = data
+      .map { case (p, i) => Map(p -> i) }
+      .reduce(_ ++ _)
+
+    data.map { case (p, i) => (p, if (p == pos) 0 else if (state(pos) > i) i + 1 else i) }
+  }
+
+  def moveToBack[T](position: T)(implicit ev: Positionable[T, P]): RDD[(P, Long)] = {
+    val pos = ev.convert(position)
+    val state = data
+      .map { case (p, i) => Map(p -> i) }
+      .reduce(_ ++ _)
+
+    data.map { case (p, i) => (p, if (state(pos) < i) i - 1 else if (p == pos) state.values.max else i) }
+  }
+
+  def renumber()(implicit ev: ClassTag[P]): RDD[(P, Long)] = SparkNames.number(data.map { case (p, i) => p })
+
+  def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): RDD[(P, Long)] = {
+    val converted = positions.map { case (k, v) => ev.convert(k) -> v }
+
+    data.map { case (p, i) => (p, converted.getOrElse(p, i)) }
+  }
+
+  protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): RDD[(P, Long)] = {
+    SparkNames.number(data.collect { case (p, i) if !keep ^ f(p) => p })
+  }
+}
+
+object SparkNames {
+  /**
+   * Number a `RDD[Position]`
+   *
+   * @param data `RDD[Position]` to number.
+   *
+   * @return A `RDD[(Position, Long)]`.
+   *
+   * @note No ordering is defined on the indices for each position, but each index will be unique.
+   */
+  def number[P <: Position](data: RDD[P]): RDD[(P, Long)] = data.zipWithIndex
+
+  /** Conversion from `RDD[(Position, Long)]` to a `SparkNames`. */
+  implicit def RDDPL2N[P <: Position](data: RDD[(P, Long)]): SparkNames[P] = new SparkNames(data)
 }
 
 /** Type class for transforming a type `T` into a `TypedPipe[(Q, Long)]`. */
@@ -185,15 +263,15 @@ object Nameable {
   /** Converts a `TypedPipe[Q]` into a `TypedPipe[(Q, Long)]`. */
   implicit def PP2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[Q], P, Q, D] = {
     new Nameable[TypedPipe[Q], P, Q, D] {
-      def convert(m: Matrix[P], s: Slice[P, D], t: TypedPipe[Q]): TypedPipe[(Q, Long)] = Names.number(t)
+      def convert(m: Matrix[P], s: Slice[P, D], t: TypedPipe[Q]): TypedPipe[(Q, Long)] = ScaldingNames.number(t)
     }
   }
   /** Converts a `PositionListable` into a `TypedPipe[(Q, Long)]`. */
   implicit def PL2N[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
-    ev2: PosDimDep[P, D]): Nameable[T, P, Q, D] = {
+    ev2: PosDimDep[P, D], ev3: ClassTag[Q]): Nameable[T, P, Q, D] = {
     new Nameable[T, P, Q, D] {
       def convert(m: Matrix[P], s: Slice[P, D], t: T): TypedPipe[(Q, Long)] = {
-        new Names(m.names(s).asInstanceOf[TypedPipe[(Q, Long)]]).slice(t, true)
+        new ScaldingNames(m.names(s).asInstanceOf[TypedPipe[(Q, Long)]]).slice(t, true)
       }
     }
   }

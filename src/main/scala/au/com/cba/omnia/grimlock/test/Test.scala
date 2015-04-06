@@ -16,23 +16,23 @@ package au.com.cba.omnia.grimlock.test
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.Contents._
+import au.com.cba.omnia.grimlock.content.ScaldingContents._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.derive._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.Matrix._
-import au.com.cba.omnia.grimlock.Names._
+import au.com.cba.omnia.grimlock.ScaldingNames._
 import au.com.cba.omnia.grimlock.pairwise._
 import au.com.cba.omnia.grimlock.partition._
-import au.com.cba.omnia.grimlock.partition.Partitions._
+import au.com.cba.omnia.grimlock.partition.ScaldingPartitions._
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.position.Positions._
+import au.com.cba.omnia.grimlock.position.ScaldingPositions._
 import au.com.cba.omnia.grimlock.reduce._
 import au.com.cba.omnia.grimlock.sample._
 import au.com.cba.omnia.grimlock.squash._
 import au.com.cba.omnia.grimlock.transform._
 import au.com.cba.omnia.grimlock.Type._
-import au.com.cba.omnia.grimlock.Types._
+import au.com.cba.omnia.grimlock.ScaldingTypes._
 import au.com.cba.omnia.grimlock.utility._
 
 import cascading.flow.FlowDef

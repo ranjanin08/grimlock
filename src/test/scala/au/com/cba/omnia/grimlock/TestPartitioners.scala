@@ -18,6 +18,7 @@ import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.partition._
+import au.com.cba.omnia.grimlock.partition.ScaldingPartitions._
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
@@ -29,6 +30,7 @@ import java.util.Date
 import org.scalatest._
 
 import scala.collection.mutable
+import scala.reflect._
 
 trait TestHashPartitioners {
 
@@ -257,18 +259,19 @@ class TypedPartitions extends WordSpec with Matchers with TBddDsl {
         data
       } When {
         parts: TypedPipe[(String, Cell[Position1D])] =>
-          new Partitions(parts).keys()
+          new ScaldingPartitions(parts).keys()
       } Then {
         buffer: mutable.Buffer[String] =>
           buffer.toList.sorted shouldBe List("test", "train", "valid")
       }
     }
+
     "get a partition's data" in {
       Given {
         data
       } When {
         parts: TypedPipe[(String, Cell[Position1D])] =>
-          new Partitions(parts).get("train")
+          parts.get("train")
       } Then {
         buffer: mutable.Buffer[Cell[Position1D]] =>
           buffer.toList.sortBy(_.position.toShortString("|")) shouldBe
@@ -277,6 +280,7 @@ class TypedPartitions extends WordSpec with Matchers with TBddDsl {
               Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 3)))
       }
     }
+
     "add new data" in {
       Given {
         data
@@ -285,7 +289,7 @@ class TypedPartitions extends WordSpec with Matchers with TBddDsl {
              Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9)))
       } When {
         (parts: TypedPipe[(String, Cell[Position1D])], pipe: TypedPipe[Cell[Position1D]]) =>
-          new Partitions(parts).add("xyz", pipe)
+          parts.add("xyz", pipe)
       } Then {
         buffer: mutable.Buffer[(String, Cell[Position1D])] =>
           buffer.toList.sortBy(_._2.content.value.toShortString) shouldBe data ++
@@ -293,12 +297,13 @@ class TypedPartitions extends WordSpec with Matchers with TBddDsl {
               ("xyz", Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9))))
       }
     }
+
     "remove a partition's data" in {
       Given {
         data
       } When {
         parts: TypedPipe[(String, Cell[Position1D])] =>
-          new Partitions(parts).remove("train")
+          parts.remove("train")
       } Then {
         buffer: mutable.Buffer[(String, Cell[Position1D])] =>
           buffer.toList.sortBy(_._2.content.value.toShortString) shouldBe
@@ -307,12 +312,13 @@ class TypedPartitions extends WordSpec with Matchers with TBddDsl {
               ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6))))
       }
     }
+
     "foreach should apply to selected partitions" in {
       Given {
         data
       } When {
         parts: TypedPipe[(String, Cell[Position1D])] =>
-          new Partitions(parts).foreach(List("test", "valid", "not.there"), double)
+          parts.foreach(List("test", "valid", "not.there"), double)
       } Then {
         buffer: mutable.Buffer[(String, Cell[Position1D])] =>
           buffer.toList.sortBy(_._2.toString("|", false)) shouldBe

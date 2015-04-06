@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.ScaldingNames._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._
@@ -40,85 +41,92 @@ class TypedNames extends WordSpec with Matchers with TBddDsl {
         data.map { case (p, i) => (p, i + 5) }
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).renumber()
+          names.renumber()
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data
       }
     }
+
     "slice and keep by regular expression" in {
       Given {
         data
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice("fid:A.*".r, true, "|")
+          names.slice("fid:A.*".r, true, "|")
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe List((Position1D("fid:A"), 0), (Position1D("fid:AA"), 1))
       }
     }
+
     "slice and keep nothing by regular expression" in {
       Given {
         data
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice("not.there.*".r, true, "|")
+          names.slice("not.there.*".r, true, "|")
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe List()
       }
     }
+
     "slice and remove by regular expression" in {
       Given {
         data
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice("fid:A.*".r, false, "|")
+          names.slice("fid:A.*".r, false, "|")
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe List((Position1D("fid:B"), 0L), (Position1D("fid:C"), 1L),
             (Position1D("fid:D"), 2L), (Position1D("fid:E"), 3L))
       }
     }
+
     "slice and remove nothing by regular expression" in {
       Given {
         data
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice("not.there.*".r, false, "|")
+          names.slice("not.there.*".r, false, "|")
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data
       }
     }
+
     "slice and keep by single name" in {
       Given {
         data
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice("fid:AA", true)
+          names.slice("fid:AA", true)
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe List((Position1D("fid:AA"), 0))
       }
     }
+
     "slice and keep by multiple names" in {
       Given {
         data
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice(List("fid:AA", "fid:B", "not.there"), true)
+          names.slice(List("fid:AA", "fid:B", "not.there"), true)
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe List((Position1D("fid:AA"), 0), (Position1D("fid:B"), 1))
       }
     }
+
     "set a single name" in {
       Given {
         data
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).set("fid:C", 123)
+          names.set("fid:C", 123)
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map {
@@ -127,12 +135,13 @@ class TypedNames extends WordSpec with Matchers with TBddDsl {
           }
       }
     }
+
     "set multiple names" in {
       Given {
         data
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).set(Map("fid:C" -> 123, "fid:D" -> 456, "not.there" -> 789))
+          names.set(Map("fid:C" -> 123, "fid:D" -> 456, "not.there" -> 789))
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map {
@@ -142,12 +151,13 @@ class TypedNames extends WordSpec with Matchers with TBddDsl {
           }
       }
     }
+
     "move a name to front" in {
       Given {
         data
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).moveToFront("fid:C")
+          names.moveToFront("fid:C")
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe List((Position1D("fid:A"), 1L), (Position1D("fid:AA"), 2L),
@@ -155,12 +165,13 @@ class TypedNames extends WordSpec with Matchers with TBddDsl {
             (Position1D("fid:E"), 5L))
       }
     }
+
     "move a name to back" in {
       Given {
         data
       } When {
         names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).moveToBack("fid:C")
+          names.moveToBack("fid:C")
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe List((Position1D("fid:A"), 0L), (Position1D("fid:AA"), 1L),
