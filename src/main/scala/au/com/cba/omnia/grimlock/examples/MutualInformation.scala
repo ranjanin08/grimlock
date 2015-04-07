@@ -18,13 +18,14 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix._
 import au.com.cba.omnia.grimlock.pairwise._
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.reduce._
 import au.com.cba.omnia.grimlock.transform._
 import au.com.cba.omnia.grimlock.squash._
 import au.com.cba.omnia.grimlock.utility._
+
+import au.com.cba.omnia.grimlock.ScaldingMatrix._
 
 import com.twitter.scalding._
 

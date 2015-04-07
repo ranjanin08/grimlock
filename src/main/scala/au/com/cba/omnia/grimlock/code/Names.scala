@@ -241,37 +241,63 @@ object SparkNames {
   implicit def RDDPL2N[P <: Position](data: RDD[(P, Long)]): SparkNames[P] = new SparkNames(data)
 }
 
-/** Type class for transforming a type `T` into a `TypedPipe[(Q, Long)]`. */
-trait Nameable[T, P <: Position, Q <: Position, D <: Dimension] {
+/** Type class for transforming a type `T` into a `U[(Q, Long)]`. */
+trait Nameable[T, P <: Position, Q <: Position, D <: Dimension, U[_]] {
   /**
-   * Returns a `TypedPipe[(Q, Long)]` for type `T`.
+   * Returns a `U[(Q, Long)]` for type `T`.
    *
    * @param m The matrix to get names from.
    * @param s Encapsulates the dimension(s) for which to get names.
-   * @param t Object that can be converted to a `TypedPipe[(Q, Long)]`.
+   * @param t Object that can be converted to a `U[(Q, Long)]`.
    */
-  def convert(m: Matrix[P], s: Slice[P, D], t: T): TypedPipe[(Q, Long)]
+  def convert(m: Matrix[P], s: Slice[P, D], t: T): U[(Q, Long)]
 }
 
-object Nameable {
+/** Scalding Companion object for the `Nameable` type class. */
+object ScaldingNameable {
   /** Converts a `TypedPipe[(Q, Long)]` into a `TypedPipe[(Q, Long)]`; that is, it is a pass through. */
-  implicit def N2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[(Q, Long)], P, Q, D] = {
-    new Nameable[TypedPipe[(Q, Long)], P, Q, D] {
+  implicit def TPQL2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[(Q, Long)], P, Q, D, TypedPipe] = {
+    new Nameable[TypedPipe[(Q, Long)], P, Q, D, TypedPipe] {
       def convert(m: Matrix[P], s: Slice[P, D], t: TypedPipe[(Q, Long)]): TypedPipe[(Q, Long)] = t
     }
   }
   /** Converts a `TypedPipe[Q]` into a `TypedPipe[(Q, Long)]`. */
-  implicit def PP2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[Q], P, Q, D] = {
-    new Nameable[TypedPipe[Q], P, Q, D] {
+  implicit def TPQ2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[Q], P, Q, D, TypedPipe] = {
+    new Nameable[TypedPipe[Q], P, Q, D, TypedPipe] {
       def convert(m: Matrix[P], s: Slice[P, D], t: TypedPipe[Q]): TypedPipe[(Q, Long)] = ScaldingNames.number(t)
     }
   }
   /** Converts a `PositionListable` into a `TypedPipe[(Q, Long)]`. */
   implicit def PL2N[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
-    ev2: PosDimDep[P, D], ev3: ClassTag[Q]): Nameable[T, P, Q, D] = {
-    new Nameable[T, P, Q, D] {
+    ev2: PosDimDep[P, D], ev3: ClassTag[Q]): Nameable[T, P, Q, D, TypedPipe] = {
+    new Nameable[T, P, Q, D, TypedPipe] {
       def convert(m: Matrix[P], s: Slice[P, D], t: T): TypedPipe[(Q, Long)] = {
         new ScaldingNames(m.names(s).asInstanceOf[TypedPipe[(Q, Long)]]).slice(t, true)
+      }
+    }
+  }
+}
+
+/** Spark Companion object for the `Nameable` type class. */
+object SparkNameable {
+  /** Converts a `RDD[(Q, Long)]` into a `RDD[(Q, Long)]`; that is, it is a pass through. */
+  implicit def RDDQL2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[RDD[(Q, Long)], P, Q, D, RDD] = {
+    new Nameable[RDD[(Q, Long)], P, Q, D, RDD] {
+      def convert(m: Matrix[P], s: Slice[P, D], t: RDD[(Q, Long)]): RDD[(Q, Long)] = t
+    }
+  }
+  /** Converts a `RDD[Q]` into a `RDD[(Q, Long)]`. */
+  implicit def RDDQ2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[RDD[Q], P, Q, D, RDD] = {
+    new Nameable[RDD[Q], P, Q, D, RDD] {
+      def convert(m: Matrix[P], s: Slice[P, D], t: RDD[Q]): RDD[(Q, Long)] = SparkNames.number(t)
+    }
+  }
+  /** Converts a `PositionListable` into a `RDD[(Q, Long)]`. */
+  implicit def PL2N[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
+    ev2: PosDimDep[P, D], ev3: ClassTag[Q]): Nameable[T, P, Q, D, RDD] = {
+    new Nameable[T, P, Q, D, RDD] {
+      def convert(m: Matrix[P], s: Slice[P, D], t: T): RDD[(Q, Long)] = {
+        new SparkNames(m.names(s).asInstanceOf[RDD[(Q, Long)]]).slice(t, true)
       }
     }
   }

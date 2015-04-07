@@ -21,6 +21,7 @@ import au.com.cba.omnia.grimlock.encoding._
 import com.twitter.scalding._
 import com.twitter.scalding.typed.IterablePipe
 
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd._
 
 import scala.reflect._
@@ -594,28 +595,54 @@ object PositionListable {
   }
 }
 
-/** Type class for transforming a type `T` into a `TypedPipe[Position]`. */
-trait PositionPipeable[T, P <: Position] {
+/** Type class for transforming a type `T` into a `U[Position]`. */
+trait PositionDistributable[T, P <: Position, U[_]] {
   /**
-   * Returns a `TypedPipe[Position]` for type `T`.
+   * Returns a `U[Position]` for type `T`.
    *
-   * @param t Object that can be converted to a `TypedPipe[Position]`.
+   * @param t Object that can be converted to a `U[Position]`.
    */
-  def convert(t: T): TypedPipe[P]
+  def convert(t: T): U[P]
 }
 
-object PositionPipeable {
+/** Scalding Companion object for the `PositionDistributable` type class. */
+object ScaldingPositionDistributable {
   /** Converts a `TypedPipe[Position]` to a `TypedPipe[Position]`; that is, it's a pass through. */
-  implicit def TPP2PP[P <: Position]: PositionPipeable[TypedPipe[P], P] = {
-    new PositionPipeable[TypedPipe[P], P] { def convert(t: TypedPipe[P]): TypedPipe[P] = t }
+  implicit def TPP2PD[P <: Position]: PositionDistributable[TypedPipe[P], P, TypedPipe] = {
+    new PositionDistributable[TypedPipe[P], P, TypedPipe] { def convert(t: TypedPipe[P]): TypedPipe[P] = t }
   }
   /** Converts a `List[Positionable]` to a `TypedPipe[Position]`. */
-  implicit def LP2PP[T, P <: Position](implicit ev: Positionable[T, P]): PositionPipeable[List[T], P] = {
-    new PositionPipeable[List[T], P] { def convert(t: List[T]): TypedPipe[P] = new IterablePipe(t.map(ev.convert(_))) }
+  implicit def LP2PD[T, P <: Position](
+    implicit ev: Positionable[T, P]): PositionDistributable[List[T], P, TypedPipe] = {
+    new PositionDistributable[List[T], P, TypedPipe] {
+      def convert(t: List[T]): TypedPipe[P] = new IterablePipe(t.map(ev.convert(_)))
+    }
   }
   /** Converts a `Positionable` to a `TypedPipe[Position]`. */
-  implicit def P2PP[T, P <: Position](implicit ev: Positionable[T, P]): PositionPipeable[T, P] = {
-    new PositionPipeable[T, P] { def convert(t: T): TypedPipe[P] = new IterablePipe(List(ev.convert(t))) }
+  implicit def P2PD[T, P <: Position](implicit ev: Positionable[T, P]): PositionDistributable[T, P, TypedPipe] = {
+    new PositionDistributable[T, P, TypedPipe] {
+      def convert(t: T): TypedPipe[P] = new IterablePipe(List(ev.convert(t)))
+    }
+  }
+}
+
+/** Spark Companion object for the `PositionDistributable` type class. */
+object SparkPositionDistributable {
+  /** Converts a `RDD[Position]` to a `RDD[Position]`; that is, it's a pass through. */
+  implicit def RDDP2PD[P <: Position]: PositionDistributable[RDD[P], P, RDD] = {
+    new PositionDistributable[RDD[P], P, RDD] { def convert(t: RDD[P]): RDD[P] = t }
+  }
+  /** Converts a `List[Positionable]` to a `RDD[Position]`. */
+  implicit def LP2PD[T, P <: Position](implicit ev: Positionable[T, P], sc: SparkContext,
+    ct: ClassTag[P]): PositionDistributable[List[T], P, RDD] = {
+    new PositionDistributable[List[T], P, RDD] {
+      def convert(t: List[T]): RDD[P] = sc.parallelize(t.map(ev.convert(_)))
+    }
+  }
+  /** Converts a `Positionable` to a `RDD[Position]`. */
+  implicit def P2PD[T, P <: Position](implicit ev: Positionable[T, P], sc: SparkContext,
+    ct: ClassTag[P]): PositionDistributable[T, P, RDD] = {
+    new PositionDistributable[T, P, RDD] { def convert(t: T): RDD[P] = sc.parallelize(List(ev.convert(t))) }
   }
 }
 

@@ -18,16 +18,19 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix._
-import au.com.cba.omnia.grimlock.ScaldingNames._
 import au.com.cba.omnia.grimlock.partition._
-import au.com.cba.omnia.grimlock.partition.ScaldingPartitions._
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.position.ScaldingPositions._
 import au.com.cba.omnia.grimlock.reduce._
 import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.ScaldingTypes._
 import au.com.cba.omnia.grimlock.utility._
+
+import au.com.cba.omnia.grimlock.ScaldingMatrix._
+import au.com.cba.omnia.grimlock.ScaldingNameable._
+import au.com.cba.omnia.grimlock.ScaldingNames._
+import au.com.cba.omnia.grimlock.partition.ScaldingPartitions._
+import au.com.cba.omnia.grimlock.position.ScaldingPositions._
+import au.com.cba.omnia.grimlock.position.ScaldingPositionDistributable._
+import au.com.cba.omnia.grimlock.ScaldingTypes._
 
 import com.twitter.scalding._
 
