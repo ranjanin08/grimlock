@@ -16,10 +16,6 @@ package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.position._
 
-import com.twitter.scalding._
-
-import org.apache.spark.rdd._
-
 /**
  * Base class for variable types.
  *
@@ -79,39 +75,5 @@ trait Types[P <: Position] {
       case false => t._1.toShortString(separator) + separator + t._2.name
     }
   }
-}
-
-/**
- * Rich wrapper around a `TypedPipe[(Position, Type)]`.
- *
- * @param data `TypedPipe[(Position, Type)]`.
- *
- * @note This class represents the variable type along the dimensions of a matrix.
- */
-class ScaldingTypes[P <: Position](val data: TypedPipe[(P, Type)]) extends Types[P] with ScaldingPersist[(P, Type)] {
-  type U[A] = TypedPipe[A]
-}
-
-/** Companion object for the `ScaldingTypes` class. */
-object ScaldingTypes {
-  /** Conversion from `TypedPipe[(Position, Type)]` to a `Types`. */
-  implicit def TPPT2T[P <: Position](data: TypedPipe[(P, Type)]): ScaldingTypes[P] = new ScaldingTypes(data)
-}
-
-/**
- * Rich wrapper around a `RDD[(Position, Type)]`.
- *
- * @param data `RDD[(Position, Type)]`.
- *
- * @note This class represents the variable type along the dimensions of a matrix.
- */
-class SparkTypes[P <: Position](val data: RDD[(P, Type)]) extends Types[P] with SparkPersist[(P, Type)] {
-  type U[A] = RDD[A]
-}
-
-/** Companion object for the `SparkTypes` class. */
-object SparkTypes {
-  /** Conversion from `RDD[(Position, Type)]` to a `SparkTypes`. */
-  implicit def RDDPT2T[P <: Position](data: RDD[(P, Type)]): SparkTypes[P] = new SparkTypes(data)
 }
 

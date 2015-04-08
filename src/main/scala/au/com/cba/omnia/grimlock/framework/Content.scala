@@ -180,33 +180,3 @@ trait Contents {
   }
 }
 
-/**
- * Rich wrapper around a `TypedPipe[Content]`.
- *
- * @param data The `TypedPipe[Content]`.
- */
-class ScaldingContents(val data: TypedPipe[Content]) extends Contents with ScaldingPersist[Content] {
-  type U[A] = TypedPipe[A]
-}
-
-/** Companion object for the `ScaldingContents` class. */
-object ScaldingContents {
-  /** Converts a `TypedPipe[Content]` to a `Contents`. */
-  implicit def TPC2C(data: TypedPipe[Content]): ScaldingContents = new ScaldingContents(data)
-}
-
-/**
- * Rich wrapper around a `RDD[Content]`.
- *
- * @param data The `RDD[Content]`.
- */
-class SparkContents(val data: RDD[Content]) extends Contents with SparkPersist[Content] {
-  type U[A] = RDD[A]
-}
-
-/** Companion object for the `SparkContents` class. */
-object SparkContents {
-  /** Converts a `RDD[Content]` to a `Contents`. */
-  implicit def RDDC2C(data: RDD[Content]): SparkContents = new SparkContents(data)
-}
-

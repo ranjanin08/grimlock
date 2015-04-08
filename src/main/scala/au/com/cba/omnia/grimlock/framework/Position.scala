@@ -18,12 +18,6 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.encoding._
 
-import com.twitter.scalding._
-import com.twitter.scalding.typed.IterablePipe
-
-import org.apache.spark.SparkContext
-import org.apache.spark.rdd._
-
 import scala.reflect._
 
 /** Base trait for dealing with positions. */
@@ -485,74 +479,6 @@ trait Positions[P <: Position] {
   }
 }
 
-/**
- * Rich wrapper around a `TypedPipe[Position]`.
- *
- * @param data The `TypedPipe[Position]`.
- */
-class ScaldingPositions[P <: Position](val data: TypedPipe[P]) extends Positions[P] with ScaldingPersist[P] {
-  type U[A] = TypedPipe[A]
-
-  /**
-   * Returns the distinct position(s) (or names) for a given `slice`.
-   *
-   * @param slice Encapsulates the dimension(s) for which the names are to be returned.
-   *
-   * @return A Scalding `TypedPipe[(Slice.S, Long)]` of the distinct position(s) together with a unique index.
-   *
-   * @note The position(s) are returned with an index so the return value can be used in various `persist` methods. The
-   *       index itself is unique for each position but no ordering is defined.
-   *
-   * @see [[Names]]
-   */
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D],
-    ev2: ClassTag[slice.S]): TypedPipe[(slice.S, Long)] = {
-    ScaldingNames.number(data
-      .map { case p => slice.selected(p) }
-      .distinct(Position.Ordering[slice.S]))
-  }
-}
-
-/** Companion object for the `ScaldingPositions` class. */
-object ScaldingPositions {
-  /** Converts a `TypedPipe[Position]` to a `ScaldingPositions`. */
-  implicit def TPP2P[P <: Position](data: TypedPipe[P]): ScaldingPositions[P] = new ScaldingPositions(data)
-}
-
-/**
- * Rich wrapper around a `RDD[Position]`.
- *
- * @param data The `RDD[Position]`.
- */
-class SparkPositions[P <: Position](val data: RDD[P]) extends Positions[P] with SparkPersist[P] {
-  type U[A] = RDD[A]
-
-  /**
-   * Returns the distinct position(s) (or names) for a given `slice`.
-   *
-   * @param slice Encapsulates the dimension(s) for which the names are to be returned.
-   *
-   * @return A Spark `RDD[(Slice.S, Long)]` of the distinct position(s) together with a unique index.
-   *
-   * @note The position(s) are returned with an index so the return value can be used in various `persist` methods. The
-   *       index itself is unique for each position but no ordering is defined.
-   *
-   * @see [[Names]]
-   */
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D],
-    ev2: ClassTag[slice.S]): RDD[(slice.S, Long)] = {
-    SparkNames.number(data
-      .map { case p => slice.selected(p) }
-      .distinct)
-  }
-}
-
-/** Companion object for the `SparkPositions` class. */
-object SparkPositions {
-  /** Converts a `RDD[Position]` to a `SparkPositions`. */
-  implicit def RDDP2P[P <: Position](data: RDD[P]): SparkPositions[P] = new SparkPositions(data)
-}
-
 /** Type class for transforming a type `T` into a `Position`. */
 trait Positionable[T, P <: Position] {
   /**
@@ -603,46 +529,5 @@ trait PositionDistributable[T, P <: Position, U[_]] {
    * @param t Object that can be converted to a `U[Position]`.
    */
   def convert(t: T): U[P]
-}
-
-/** Scalding Companion object for the `PositionDistributable` type class. */
-object ScaldingPositionDistributable {
-  /** Converts a `TypedPipe[Position]` to a `TypedPipe[Position]`; that is, it's a pass through. */
-  implicit def TPP2PD[P <: Position]: PositionDistributable[TypedPipe[P], P, TypedPipe] = {
-    new PositionDistributable[TypedPipe[P], P, TypedPipe] { def convert(t: TypedPipe[P]): TypedPipe[P] = t }
-  }
-  /** Converts a `List[Positionable]` to a `TypedPipe[Position]`. */
-  implicit def LP2PD[T, P <: Position](
-    implicit ev: Positionable[T, P]): PositionDistributable[List[T], P, TypedPipe] = {
-    new PositionDistributable[List[T], P, TypedPipe] {
-      def convert(t: List[T]): TypedPipe[P] = new IterablePipe(t.map(ev.convert(_)))
-    }
-  }
-  /** Converts a `Positionable` to a `TypedPipe[Position]`. */
-  implicit def P2PD[T, P <: Position](implicit ev: Positionable[T, P]): PositionDistributable[T, P, TypedPipe] = {
-    new PositionDistributable[T, P, TypedPipe] {
-      def convert(t: T): TypedPipe[P] = new IterablePipe(List(ev.convert(t)))
-    }
-  }
-}
-
-/** Spark Companion object for the `PositionDistributable` type class. */
-object SparkPositionDistributable {
-  /** Converts a `RDD[Position]` to a `RDD[Position]`; that is, it's a pass through. */
-  implicit def RDDP2PD[P <: Position]: PositionDistributable[RDD[P], P, RDD] = {
-    new PositionDistributable[RDD[P], P, RDD] { def convert(t: RDD[P]): RDD[P] = t }
-  }
-  /** Converts a `List[Positionable]` to a `RDD[Position]`. */
-  implicit def LP2PD[T, P <: Position](implicit ev: Positionable[T, P], sc: SparkContext,
-    ct: ClassTag[P]): PositionDistributable[List[T], P, RDD] = {
-    new PositionDistributable[List[T], P, RDD] {
-      def convert(t: List[T]): RDD[P] = sc.parallelize(t.map(ev.convert(_)))
-    }
-  }
-  /** Converts a `Positionable` to a `RDD[Position]`. */
-  implicit def P2PD[T, P <: Position](implicit ev: Positionable[T, P], sc: SparkContext,
-    ct: ClassTag[P]): PositionDistributable[T, P, RDD] = {
-    new PositionDistributable[T, P, RDD] { def convert(t: T): RDD[P] = sc.parallelize(List(ev.convert(t))) }
-  }
 }
 

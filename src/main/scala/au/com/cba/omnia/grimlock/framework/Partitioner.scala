@@ -19,11 +19,6 @@ import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
-import com.twitter.scalding._
-import com.twitter.scalding.typed.Grouped
-
-import org.apache.spark.rdd._
-
 import scala.reflect._
 
 /** Base trait for partitioning operations. */
@@ -113,78 +108,6 @@ trait Partitions[T, P <: Position] {
 
   protected def toString(t: (T, Cell[P]), separator: String, descriptive: Boolean): String = {
     t._1.toString + separator + t._2.toString(separator, descriptive)
-  }
-}
-
-/**
- * Rich wrapper around a `TypedPipe[(T, Cell[P])]`.
- *
- * @param data The `TypedPipe[(T, Cell[P])]`.
- */
-class ScaldingPartitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cell[P])]) extends Partitions[T, P]
-  with ScaldingPersist[(T, Cell[P])] {
-  type U[A] = TypedPipe[A]
-
-  def add(key: T, partition: TypedPipe[Cell[P]]): TypedPipe[(T, Cell[P])] = {
-    data ++ (partition.map { case c => (key, c) })
-  }
-
-  def foreach[Q <: Position](keys: List[T],
-    fn: (T, TypedPipe[Cell[P]]) => TypedPipe[Cell[Q]]): TypedPipe[(T, Cell[Q])] = {
-    import ScaldingPartitions._
-
-    // TODO: This reads the data keys.length times. Is there a way to read it only once?
-    //       Perhaps with Grouped.mapGroup and Execution[T]?
-    keys
-      .map { case k => fn(k, data.get(k)).map { case c => (k, c) } }
-      .reduce[TypedPipe[(T, Cell[Q])]]((x, y) => x ++ y)
-  }
-
-  def get(key: T): TypedPipe[Cell[P]] = data.collect { case (t, pc) if (key == t) => pc }
-
-  def keys()(implicit ev: ClassTag[T]): TypedPipe[T] = Grouped(data).keys.distinct
-
-  def remove(key: T): TypedPipe[(T, Cell[P])] = data.filter { case (t, c) => t != key }
-}
-
-object ScaldingPartitions {
-  /** Conversion from `TypedPipe[(T, Cell[P])]` to a `ScaldingPartitions`. */
-  implicit def TPTC2P[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]): ScaldingPartitions[T, P] = {
-    new ScaldingPartitions(data)
-  }
-}
-
-/**
- * Rich wrapper around a `RDD[(T, Cell[P])]`.
- *
- * @param data The `RDD[(T, Cell[P])]`.
- */
-class SparkPartitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) extends Partitions[T, P]
-  with SparkPersist[(T, Cell[P])] {
-  type U[A] = RDD[A]
-
-  def add(key: T, partition: RDD[Cell[P]]): RDD[(T, Cell[P])] = data ++ (partition.map { case c => (key, c) })
-
-  def foreach[Q <: Position](keys: List[T], fn: (T, RDD[Cell[P]]) => RDD[Cell[Q]]): RDD[(T, Cell[Q])] = {
-    import SparkPartitions._
-
-    // TODO: This reads the data keys.length times. Is there a way to read it only once?
-    keys
-      .map { case k => fn(k, data.get(k)).map { case c => (k, c) } }
-      .reduce[RDD[(T, Cell[Q])]]((x, y) => x ++ y)
-  }
-
-  def get(key: T): RDD[Cell[P]] = data.collect { case (t, pc) if (key == t) => pc }
-
-  def keys()(implicit ev: ClassTag[T]): RDD[T] = data.map(_._1).distinct
-
-  def remove(key: T): RDD[(T, Cell[P])] = data.filter { case (t, c) => t != key }
-}
-
-object SparkPartitions {
-  /** Conversion from `RDD[(T, Cell[P])]` to a `SparkPartitions`. */
-  implicit def RDDTC2P[T: Ordering, P <: Position](data: RDD[(T, Cell[P])]): SparkPartitions[T, P] = {
-    new SparkPartitions(data)
   }
 }
 

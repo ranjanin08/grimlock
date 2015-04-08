@@ -23,8 +23,8 @@ import au.com.cba.omnia.grimlock.utility._
 /**
  * Base trait for reductions.
  *
- * @note Aggregator/aggregate are already available on a `TypedPipe`. So, to prevent name clashes, Reducer/reduce are
- *       used instead. The net effect is still that Reducers aggregator over a matrix.
+ * @note Aggregator/aggregate are already available on a Scalding `TypedPipe`. So, to prevent name clashes,
+ *       Reducer/reduce are used instead. The net effect is still that Reducers aggregator over a matrix.
  */
 trait Reducer {
   /** Type of the state being reduced (aggregated). */

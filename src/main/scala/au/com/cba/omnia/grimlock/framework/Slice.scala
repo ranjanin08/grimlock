@@ -33,17 +33,12 @@ sealed trait Slice[P <: Position, D <: Dimension] {
    */
   type R <: Position with ExpandablePosition
 
-  /** Return type of `inverse` method.  */
-  type I <: Slice[P, D]
-
   val dimension: D
 
   /** Returns the selected coordinate(s) for the given `pos`. */
   def selected(pos: P): S
   /** Returns the remaining coordinate(s) for the given `pos`. */
   def remainder(pos: P): R
-  /** Returns the inverse of this. */
-  def inverse(): I
 
   /** Type of the content in an in-memory version of a matrix. */
   type C
@@ -66,17 +61,14 @@ trait Mapable[P <: Position with ReduceablePosition, D <: Dimension] { self: Sli
  *
  * @param dimension Dimension of the selected coordinate.
  */
-case class Over[P <: Position with ReduceablePosition with MapOverPosition with MapAlongPosition, D <: Dimension](
-  dimension: D) extends Slice[P, D]
-  with Mapable[P, D] {
+case class Over[P <: Position with ReduceablePosition with MapOverPosition, D <: Dimension](
+  dimension: D) extends Slice[P, D] with Mapable[P, D] {
   type S = Position1D
   type R = P#L
-  type I = Along[P, D]
   type C = P#O
 
   def selected(pos: P): S = single(pos)
   def remainder(pos: P): R = remove(pos)
-  def inverse(): I = Along(dimension)
 
   def toMap(cell: Cell[P]): Map[S, C] = {
     Map(single(cell.position) -> cell.position.over.toMapValue(remove(cell.position), cell.content))
@@ -95,17 +87,14 @@ case class Over[P <: Position with ReduceablePosition with MapOverPosition with 
  *
  * @param dimension Dimension of the coordinate to exclude.
  */
-case class Along[P <: Position with ReduceablePosition with MapOverPosition with MapAlongPosition, D <: Dimension](
-  dimension: D) extends Slice[P, D]
-  with Mapable[P, D] {
+case class Along[P <: Position with ReduceablePosition with MapAlongPosition, D <: Dimension](
+  dimension: D) extends Slice[P, D] with Mapable[P, D] {
   type S = P#L
   type R = Position1D
-  type I = Over[P, D]
   type C = P#A
 
   def selected(pos: P): S = remove(pos)
   def remainder(pos: P): R = single(pos)
-  def inverse(): I = Over(dimension)
 
   def toMap(cell: Cell[P]): Map[S, C] = {
     Map(remove(cell.position) -> cell.position.along.toMapValue(single(cell.position), cell.content))

@@ -44,10 +44,6 @@ class TestOverPosition1D extends FlatSpec with Matchers with TestSlicePosition1D
     over.remainder(pos1) should be (pos1.remove(First))
   }
 
-  it should "return a its inverse" in {
-    over.inverse() should be (Along(First))
-  }
-
   it should "throw an exception for an invalid dimension" in {
     a [IndexOutOfBoundsException] should be thrownBy { Over(Second).selected(pos1) }
     a [IndexOutOfBoundsException] should be thrownBy { Over(Third).selected(pos1) }
@@ -82,10 +78,6 @@ class TestAlongPosition1D extends FlatSpec with Matchers with TestSlicePosition1
 
   it should "return a Position1D for the remainder" in {
     along.remainder(pos1) should be (Position1D(pos1(First)))
-  }
-
-  it should "return a its inverse" in {
-    along.inverse() should be (Over(First))
   }
 
   it should "throw an exception for an invalid dimension" in {
@@ -128,10 +120,6 @@ class TestOverPosition2D extends FlatSpec with Matchers with TestSlicePosition2D
     list.map { case (o, d) => o.remainder(pos1) should be (pos1.remove(d)) }
   }
 
-  it should "return a its inverse" in {
-    list.map { case (o, d) => o.inverse() should be (Along(d)) }
-  }
-
   it should "throw an exception for an invalid dimension" in {
     a [IndexOutOfBoundsException] should be thrownBy { Over(Third).selected(pos1) }
     a [IndexOutOfBoundsException] should be thrownBy { Over(Fourth).selected(pos1) }
@@ -167,10 +155,6 @@ class TestAlongPosition2D extends FlatSpec with Matchers with TestSlicePosition2
 
   it should "return a Position1D for the remainder" in {
     list.map { case (a, d) => a.remainder(pos1) should be (Position1D(pos1(d))) }
-  }
-
-  it should "return a its inverse" in {
-    list.map { case (a, d) => a.inverse() should be (Over(d)) }
   }
 
   it should "throw an exception for an invalid dimension" in {
@@ -216,10 +200,6 @@ class TestOverPosition3D extends FlatSpec with Matchers with TestSlicePosition3D
     list.map { case (o, d) => o.remainder(pos1) should be (pos1.remove(d)) }
   }
 
-  it should "return a its inverse" in {
-    list.map { case (o, d) => o.inverse() should be (Along(d)) }
-  }
-
   it should "throw an exception for an invalid dimension" in {
     a [IndexOutOfBoundsException] should be thrownBy { Over(Fourth).selected(pos1) }
     a [IndexOutOfBoundsException] should be thrownBy { Over(Fifth).selected(pos1) }
@@ -255,10 +235,6 @@ class TestAlongPosition3D extends FlatSpec with Matchers with TestSlicePosition3
 
   it should "return a Position1D for the remainder" in {
     list.map { case (a, d) => a.remainder(pos1) should be (Position1D(pos1(d))) }
-  }
-
-  it should "return a its inverse" in {
-    list.map { case (a, d) => a.inverse() should be (Over(d)) }
   }
 
   it should "throw an exception for an invalid dimension" in {
@@ -304,10 +280,6 @@ class TestOverPosition4D extends FlatSpec with Matchers with TestSlicePosition4D
     list.map { case (o, d) => o.remainder(pos1) should be (pos1.remove(d)) }
   }
 
-  it should "return a its inverse" in {
-    list.map { case (o, d) => o.inverse() should be (Along(d)) }
-  }
-
   it should "throw an exception for an invalid dimension" in {
     a [IndexOutOfBoundsException] should be thrownBy { Over(Fifth).selected(pos1) }
   }
@@ -343,10 +315,6 @@ class TestAlongPosition4D extends FlatSpec with Matchers with TestSlicePosition4
 
   it should "return a Position1D for the remainder" in {
     list.map { case (a, d) => a.remainder(pos1) should be (Position1D(pos1(d))) }
-  }
-
-  it should "return a its inverse" in {
-    list.map { case (a, d) => a.inverse() should be (Over(d)) }
   }
 
   it should "throw an exception for an invalid dimension" in {
@@ -392,10 +360,6 @@ class TestOverPosition5D extends FlatSpec with Matchers with TestSlicePosition5D
     list.map { case (o, d) => o.remainder(pos1) should be (pos1.remove(d)) }
   }
 
-  it should "return a its inverse" in {
-    list.map { case (o, d) => o.inverse() should be (Along(d)) }
-  }
-
   it should "return a map" in {
     list.map {
       case (o, _) => o.toMap(Cell(pos1, con1)) should be (Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1)))
@@ -428,10 +392,6 @@ class TestAlongPosition5D extends FlatSpec with Matchers with TestSlicePosition5
 
   it should "return a Position1D for the remainder" in {
     list.map { case (a, d) => a.remainder(pos1) should be (Position1D(pos1(d))) }
-  }
-
-  it should "return a its inverse" in {
-    list.map { case (a, d) => a.inverse() should be (Over(d)) }
   }
 
   it should "return a map" in {
