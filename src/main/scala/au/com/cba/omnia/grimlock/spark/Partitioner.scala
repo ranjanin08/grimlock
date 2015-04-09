@@ -21,7 +21,7 @@ import au.com.cba.omnia.grimlock.utility._
 
 import org.apache.spark.rdd._
 
-import scala.reflect._
+import scala.reflect.ClassTag
 
 /**
  * Rich wrapper around a `RDD[(T, Cell[P])]`.
@@ -34,7 +34,7 @@ class SparkPartitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) e
 
   def add(key: T, partition: RDD[Cell[P]]): RDD[(T, Cell[P])] = data ++ (partition.map { case c => (key, c) })
 
-  def foreach[Q <: Position](keys: List[T], fn: (T, RDD[Cell[P]]) => RDD[Cell[Q]]): RDD[(T, Cell[Q])] = {
+  def forEach[Q <: Position](keys: List[T], fn: (T, RDD[Cell[P]]) => RDD[Cell[Q]]): RDD[(T, Cell[Q])] = {
     import SparkPartitions._
 
     // TODO: This reads the data keys.length times. Is there a way to read it only once?
@@ -45,7 +45,7 @@ class SparkPartitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) e
 
   def get(key: T): RDD[Cell[P]] = data.collect { case (t, pc) if (key == t) => pc }
 
-  def keys()(implicit ev: ClassTag[T]): RDD[T] = data.map(_._1).distinct
+  def keys()(implicit ev: ClassTag[T]): RDD[T] = data.keys.distinct
 
   def remove(key: T): RDD[(T, Cell[P])] = data.filter { case (t, c) => t != key }
 }

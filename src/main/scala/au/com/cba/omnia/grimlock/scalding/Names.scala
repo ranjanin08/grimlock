@@ -18,7 +18,7 @@ import au.com.cba.omnia.grimlock.position._
 
 import com.twitter.scalding._
 
-import scala.reflect._
+import scala.reflect.ClassTag
 
 /**
  * Rich wrapper around a `TypedPipe[(Position, Long)]`.
@@ -30,8 +30,8 @@ import scala.reflect._
 class ScaldingNames[P <: Position](val data: TypedPipe[(P, Long)]) extends Names[P] with ScaldingPersist[(P, Long)] {
   type U[A] = TypedPipe[A]
 
-  def moveToFront[T](position: T)(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
-    val pos = ev.convert(position)
+  def moveToFront[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): TypedPipe[(P, Long)] = {
+    val pos = ev1.convert(position)
     val state = data
       .map { case (p, i) => Map(p -> i) }
       .sum
@@ -45,8 +45,8 @@ class ScaldingNames[P <: Position](val data: TypedPipe[(P, Long)]) extends Names
       }
   }
 
-  def moveToBack[T](position: T)(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
-    val pos = ev.convert(position)
+  def moveToBack[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): TypedPipe[(P, Long)] = {
+    val pos = ev1.convert(position)
     val state = data
       .map { case (p, i) => Map(p -> i) }
       .sum

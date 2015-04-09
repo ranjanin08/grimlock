@@ -17,8 +17,9 @@ package au.com.cba.omnia.grimlock.position
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.encoding._
+import au.com.cba.omnia.grimlock.utility._
 
-import scala.reflect._
+import scala.reflect.ClassTag
 
 /** Base trait for dealing with positions. */
 trait Position {
@@ -471,8 +472,8 @@ trait Positions[P <: Position] {
    *
    * @see [[Names]]
    */
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D],
-    ev2: ClassTag[slice.S]): U[(slice.S, Long)]
+  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
+    ev3: ClassTag[slice.S]): U[(slice.S, Long)]
 
   protected def toString(t: P, separator: String, descriptive: Boolean): String = {
     if (descriptive) { t.toString } else { t.toShortString(separator) }
@@ -480,7 +481,7 @@ trait Positions[P <: Position] {
 }
 
 /** Type class for transforming a type `T` into a `Position`. */
-trait Positionable[T, P <: Position] {
+trait Positionable[T, P <: Position] extends java.io.Serializable {
   /**
    * Returns a position for type `T`.
    *
@@ -500,7 +501,7 @@ object Positionable {
 }
 
 /** Type class for transforming a type `T` into a `List[Position]`. */
-trait PositionListable[T, P <: Position] {
+trait PositionListable[T, P <: Position] extends java.io.Serializable {
   /**
    * Returns a `List[Position]` for type `T`.
    *

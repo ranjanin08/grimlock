@@ -18,7 +18,7 @@ import au.com.cba.omnia.grimlock.position._
 
 import org.apache.spark.rdd._
 
-import scala.reflect._
+import scala.reflect.ClassTag
 
 /**
  * Rich wrapper around a `RDD[(Position, Long)]`.
@@ -30,20 +30,16 @@ import scala.reflect._
 class SparkNames[P <: Position](val data: RDD[(P, Long)]) extends Names[P] with SparkPersist[(P, Long)] {
   type U[A] = RDD[A]
 
-  def moveToFront[T](position: T)(implicit ev: Positionable[T, P]): RDD[(P, Long)] = {
-    val pos = ev.convert(position)
-    val state = data
-      .map { case (p, i) => Map(p -> i) }
-      .reduce(_ ++ _)
+  def moveToFront[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): RDD[(P, Long)] = {
+    val pos = ev1.convert(position)
+    val state = data.collectAsMap
 
     data.map { case (p, i) => (p, if (p == pos) 0 else if (state(pos) > i) i + 1 else i) }
   }
 
-  def moveToBack[T](position: T)(implicit ev: Positionable[T, P]): RDD[(P, Long)] = {
-    val pos = ev.convert(position)
-    val state = data
-      .map { case (p, i) => Map(p -> i) }
-      .reduce(_ ++ _)
+  def moveToBack[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): RDD[(P, Long)] = {
+    val pos = ev1.convert(position)
+    val state = data.collectAsMap
 
     data.map { case (p, i) => (p, if (state(pos) < i) i - 1 else if (p == pos) state.values.max else i) }
   }

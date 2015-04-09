@@ -17,11 +17,12 @@ package au.com.cba.omnia.grimlock.position
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.encoding._
+import au.com.cba.omnia.grimlock.utility._
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd._
 
-import scala.reflect._
+import scala.reflect.ClassTag
 
 /**
  * Rich wrapper around a `RDD[Position]`.
@@ -43,8 +44,8 @@ class SparkPositions[P <: Position](val data: RDD[P]) extends Positions[P] with 
    *
    * @see [[Names]]
    */
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D],
-    ev2: ClassTag[slice.S]): RDD[(slice.S, Long)] = {
+  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
+    ev3: ClassTag[slice.S]): RDD[(slice.S, Long)] = {
     SparkNames.number(data
       .map { case p => slice.selected(p) }
       .distinct)

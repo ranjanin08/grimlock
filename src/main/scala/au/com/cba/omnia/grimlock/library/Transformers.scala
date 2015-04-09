@@ -22,9 +22,6 @@ import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.Type._
 import au.com.cba.omnia.grimlock.utility._
 
-import com.twitter.scalding._
-import com.twitter.scalding.typed.LiteralValue
-
 /** Convenience trait defining common functionality patterns for implementing transformers. */
 trait PresentCell[T] {
   protected def present[P <: Position](dim: Dimension, cell: Cell[P], name: Option[String], typ: Option[Type],
@@ -1124,9 +1121,6 @@ case class Cut private (dim: Dimension, name: Option[String]) extends Transforme
 
 /** Companion object to the `Cut` class defining constructors. */
 object Cut {
-  /** Type of statistics data from which the number of bins is comuted. */
-  type Stats = Map[Position1D, Map[Position1D, Content]]
-
   /**
    * Convert numerical value to categorical.
    *
@@ -1142,76 +1136,98 @@ object Cut {
    *             the coordinate.
    */
   def apply(dim: Dimension, name: String): Cut = Cut(dim, Some(name))
+}
+
+/** Base trait that defined various rules for cutting continuous data. */
+trait CutRules {
+  /** Type of 'wrapper' around user defined data. */
+  type E[_]
+
+  /** Type of statistics data from which the number of bins is comuted. */
+  type Stats = Map[Position1D, Map[Position1D, Content]]
 
   /**
    * Define range of `k` approximately equal size bins.
    *
-   * @param ext A Scaling `ValuePipe` containing the feature statistics.
+   * @param ext A `E` containing the feature statistics.
    * @param min Key (into `ext`) that identifies the minimum value.
    * @param max Key (into `ext`) that identifies the maximum value.
    * @param k   The number of bins.
    *
-   * @return A Scalding `ValuePipe` holding the break values.
+   * @return A `E` holding the break values.
    */
-  def fixed[V: Valueable, W: Valueable](ext: ValuePipe[Stats], min: V, max: W, k: Long): ValuePipe[Cut#V] = {
-    cut(ext, min, max, _ => Some(k))
+  def fixed[V: Valueable, W: Valueable](ext: E[Stats], min: V, max: W, k: Long): E[Cut#V]
+
+  protected def fixedFromStats[V: Valueable, W: Valueable](stats: Stats, min: V, max: W, k: Long): Cut#V = {
+    cut(stats, min, max, _ => Some(k))
   }
 
   /**
    * Define range of bins based on the square-root choice.
    *
-   * @param ext   A Scaling `ValuePipe` containing the feature statistics.
+   * @param ext   A `E` containing the feature statistics.
    * @param count Key (into `ext`) that identifies the number of features.
    * @param min   Key (into `ext`) that identifies the minimum value.
    * @param max   Key (into `ext`) that identifies the maximum value.
    *
-   * @return A Scalding `ValuePipe` holding the break values.
+   * @return A `E` holding the break values.
    */
-  def squareRootChoice[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
-    max: X): ValuePipe[Cut#V] = cut(ext, min, max, extract(_, count).map { case n => math.round(math.sqrt(n)) })
+  def squareRootChoice[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W, max: X): E[Cut#V]
+
+  protected def squareRootChoiceFromStats[V: Valueable, W: Valueable, X: Valueable](stats: Stats, count: V, min: W,
+    max: X): Cut#V = {
+    cut(stats, min, max, extract(_, count).map { case n => math.round(math.sqrt(n)) })
+  }
 
   /**
    * Define range of bins based on Sturges' formula.
    *
-   * @param ext   A Scaling `ValuePipe` containing the feature statistics.
+   * @param ext   A `E` containing the feature statistics.
    * @param count Key (into `ext`) that identifies the number of features.
    * @param min   Key (into `ext`) that identifies the minimum value.
    * @param max   Key (into `ext`) that identifies the maximum value.
    *
-   * @return A Scalding `ValuePipe` holding the break values.
+   * @return A `E` holding the break values.
    */
-  def sturgesFormula[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
-    max: X): ValuePipe[Cut#V] = cut(ext, min, max, extract(_, count).map { case n => math.ceil(log2(n) + 1).toLong })
+  def sturgesFormula[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W, max: X): E[Cut#V]
+
+  protected def sturgesFormulaFromStats[V: Valueable, W: Valueable, X: Valueable](stats: Stats, count: V, min: W,
+    max: X): Cut#V = cut(stats, min, max, extract(_, count).map { case n => math.ceil(log2(n) + 1).toLong })
 
   /**
    * Define range of bins based on the Rice rule.
    *
-   * @param ext   A Scaling `ValuePipe` containing the feature statistics.
+   * @param ext   A `E` containing the feature statistics.
    * @param count Key (into `ext`) that identifies the number of features.
    * @param min   Key (into `ext`) that identifies the minimum value.
    * @param max   Key (into `ext`) that identifies the maximum value.
    *
-   * @return A Scalding `ValuePipe` holding the break values.
+   * @return A `E` holding the break values.
    */
-  def riceRule[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
-    max: X): ValuePipe[Cut#V] = {
-    cut(ext, min, max, extract(_, count).map { case n => math.ceil(2 * math.pow(n, 1.0 / 3.0)).toLong })
+  def riceRule[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W, max: X): E[Cut#V]
+
+  protected def riceRuleFromStats[V: Valueable, W: Valueable, X: Valueable](stats: Stats, count: V, min: W,
+    max: X): Cut#V = {
+    cut(stats, min, max, extract(_, count).map { case n => math.ceil(2 * math.pow(n, 1.0 / 3.0)).toLong })
   }
 
   /**
    * Define range of bins based on Doane's formula.
    *
-   * @param ext      A Scaling `ValuePipe` containing the feature statistics.
+   * @param ext      A `E` containing the feature statistics.
    * @param count    Key (into `ext`) that identifies the number of features.
    * @param min      Key (into `ext`) that identifies the minimum value.
    * @param max      Key (into `ext`) that identifies the maximum value.
    * @param skewness Key (into `ext`) that identifies the skewwness.
    *
-   * @return A Scalding `ValuePipe` holding the break values.
+   * @return A `E` holding the break values.
    */
-  def doanesFormula[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: ValuePipe[Stats], count: V, min: W,
-    max: X, skewness: Y): ValuePipe[Cut#V] = {
-    cut(ext, min, max, m => (extract(m, count), extract(m, skewness)) match {
+  def doanesFormula[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: E[Stats], count: V, min: W, max: X,
+    skewness: Y): E[Cut#V]
+
+  protected def doanesFormulaFromStats[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](stats: Stats, count: V,
+    min: W, max: X, skewness: Y): Cut#V = {
+    cut(stats, min, max, m => (extract(m, count), extract(m, skewness)) match {
       case (Some(n), Some(s)) =>
         Some(math.round(1 + log2(n) + log2(1 + math.abs(s) / math.sqrt((6 * (n - 2)) / ((n + 1) * (n + 3))))))
       case _ => None
@@ -1221,35 +1237,40 @@ object Cut {
   /**
    * Define range of bins based on Scott's normal reference rule.
    *
-   * @param ext   A Scaling `ValuePipe` containing the feature statistics.
+   * @param ext   A `E` containing the feature statistics.
    * @param count Key (into `ext`) that identifies the number of features.
    * @param min   Key (into `ext`) that identifies the minimum value.
    * @param max   Key (into `ext`) that identifies the maximum value.
    * @param sd    Key (into `ext`) that identifies the standard deviation.
    *
-   * @return A Scalding `ValuePipe` holding the break values.
+   * @return A `E` holding the break values.
    */
-  def scottsNormalReferenceRule[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: ValuePipe[Stats],
-    count: V, min: W, max: X, sd: Y): ValuePipe[Cut#V] = {
-    cut(ext, min, max, m => (extract(m, count), extract(m, min), extract(m, max), extract(m, sd)) match {
+  def scottsNormalReferenceRule[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: E[Stats], count: V,
+    min: W, max: X, sd: Y): E[Cut#V]
+
+  protected def scottsNormalReferenceRuleFromStats[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](stats: Stats,
+    count: V, min: W, max: X, sd: Y): Cut#V = {
+    cut(stats, min, max, m => (extract(m, count), extract(m, min), extract(m, max), extract(m, sd)) match {
       case (Some(n), Some(l), Some(u), Some(s)) => Some(math.ceil((u - l) / (3.5 * s / math.pow(n, 1.0 / 3.0))).toLong)
       case _ => None
     })
   }
 
   /**
-   * Return a Scalding `ValuePipe` holding the user defined break values.
+   * Return a `E` holding the user defined break values.
    *
    * @param range A map (holding for each key) the bins range of that feature.
    */
-  def breaks[V: Valueable](range: Map[V, List[Double]]): ValuePipe[Cut#V] = {
-    new LiteralValue(range.map { case (v, l) => (Position1D(v), l) })
+  def breaks[V: Valueable](range: Map[V, List[Double]]): E[Cut#V]
+
+  protected def breaksFromMap[V: Valueable](range: Map[V, List[Double]]): Cut#V = {
+    range.map { case (v, l) => (Position1D(v), l) }
   }
 
   // TODO: Add 'right' and 'labels' options (analogous to R's)
-  private def cut[V: Valueable, W: Valueable](ext: ValuePipe[Stats], min: V, max: W,
-    bins: (Map[Position1D, Content]) => Option[Long]): ValuePipe[Cut#V] = {
-    ext.map(_.flatMap {
+  private def cut[V: Valueable, W: Valueable](stats: Stats, min: V, max: W,
+    bins: (Map[Position1D, Content]) => Option[Long]): Cut#V = {
+    stats.flatMap {
       case (pos, map) => (extract(map, min), extract(map, max), bins(map)) match {
         case (Some(l), Some(u), Some(k)) =>
           val delta = math.abs(u - l)
@@ -1258,7 +1279,7 @@ object Cut {
           Some((pos, (l - 0.001 * delta) :: range))
         case _ => None
       }
-    })
+    }
   }
 
   private def extract[V: Valueable](ext: Map[Position1D, Content], key: V): Option[Double] = {

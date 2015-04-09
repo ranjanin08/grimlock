@@ -18,10 +18,6 @@ import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.content.metadata._
 
-import com.twitter.scalding._
-
-import org.apache.spark.rdd._
-
 /** Contents of a cell in a matrix. */
 trait Content {
   /** Schema (description) of the value. */

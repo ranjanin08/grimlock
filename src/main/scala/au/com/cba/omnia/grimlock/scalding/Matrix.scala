@@ -33,9 +33,9 @@ import au.com.cba.omnia.grimlock.ScaldingMatrixable._
 import cascading.flow.FlowDef
 import com.twitter.scalding._
 import com.twitter.scalding.TDsl._, Dsl._
-import com.twitter.scalding.typed.{ IterablePipe, TypedSink }
+import com.twitter.scalding.typed.{ IterablePipe, TypedSink, Grouped }
 
-import scala.reflect._
+import scala.reflect.ClassTag
 
 /** Base trait for matrix operations using a `TypedPipe[Cell[P]]`. */
 trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[P]] {
@@ -133,7 +133,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
 
   def pairwiseWithValue[D <: Dimension, T, W](slice: Slice[P, D], operators: T, value: ValuePipe[W])(
     implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-      ev5: ClassTag[slice.R]): TypedPipe[Cell[slice.R#M]] = {
+    ev5: ClassTag[slice.R]): TypedPipe[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
 
     pairwise(slice)
@@ -142,7 +142,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
 
   def pairwiseBetween[D <: Dimension, T](slice: Slice[P, D], that: ScaldingMatrix[P], operators: T)(
     implicit ev1: PosDimDep[P, D], ev2: Operable[T], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-      ev5: ClassTag[slice.R]): TypedPipe[Cell[slice.R#M]] = {
+    ev5: ClassTag[slice.R]): TypedPipe[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
 
     pairwiseBetween(slice, that).flatMap { case (lc, rc, r) => o.compute(slice)(lc, rc, r).toList }
@@ -179,7 +179,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
 
   def reduceAndExpandWithValue[T, D <: Dimension, V](slice: Slice[P, D], reducers: T, value: ValuePipe[V])(
     implicit ev1: PosDimDep[P, D], ev2: ReducibleMultipleWithValue[T, V],
-      ev3: ClassTag[slice.S]): TypedPipe[Cell[slice.S#M]] = {
+    ev3: ClassTag[slice.S]): TypedPipe[Cell[slice.S#M]] = {
     val reducer = ev2.convert(reducers)
 
     data
@@ -298,25 +298,18 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
     data
       .map { case Cell(p, c) => (slice.selected(p), c.schema.kind) }
       .groupBy { case (p, t) => p }
-      .reduce[(slice.S, Type)] {
-        case ((lp, lt), (rp, rt)) =>
-          (lp,
-            if (lt == rt) { lt }
-            else if (lt.isSpecialisationOf(rt)) { rt }
-            else if (rt.isSpecialisationOf(lt)) { lt }
-            else if (lt.isSpecialisationOf(rt.getGeneralisation())) { rt.getGeneralisation() }
-            else if (rt.isSpecialisationOf(lt.getGeneralisation())) { lt.getGeneralisation() }
-            else { Type.Mixed })
-      }
+      .reduce[(slice.S, Type)] { case ((lp, lt), (rp, rt)) => (lp, Type.getCommonType(lt, rt)) }
       .map { case (_, (p, t)) => (p, if (specific) t else t.getGeneralisation()) }
   }
 
+  /** @note Comparison is performed based on the string representation of the `Content`. */
   def unique(): TypedPipe[Content] = {
     data
       .map { case c => c.content }
       .distinct(new Ordering[Content] { def compare(l: Content, r: Content) = l.toString.compare(r.toString) })
   }
 
+  /** @note Comparison is performed based on the string representation of the `Content`. */
   def unique[D <: Dimension](slice: Slice[P, D])(implicit ev: slice.S =!= Position0D): TypedPipe[Cell[slice.S]] = {
     data
       .map { case Cell(p, c) => Cell(slice.selected(p), c) }
@@ -349,24 +342,20 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
 
   protected def persistDictionary(names: TypedPipe[(Position1D, Long)], file: String, dictionary: String,
     separator: String)(implicit flow: FlowDef, mode: Mode) = {
-    val dict = names.groupBy { case (p, i) => p }
-
-    dict
-      .map { case (_, (p, i)) => p.toShortString(separator) + separator + i }
+    names
+      .map { case (p, i) => p.toShortString(separator) + separator + i }
       .write(TypedSink(TextLine(dictionary.format(file))))
 
-    dict
+    Grouped(names)
   }
 
   protected def persistDictionary(names: TypedPipe[(Position1D, Long)], file: String, dictionary: String,
     separator: String, dim: Dimension)(implicit flow: FlowDef, mode: Mode) = {
-    val dict = names.groupBy { case (p, j) => p }
-
-    dict
-      .map { case (_, (p, i)) => p.toShortString(separator) + separator + i }
+    names
+      .map { case (p, i) => p.toShortString(separator) + separator + i }
       .write(TypedSink(TextLine(dictionary.format(file, dim.index))))
 
-    dict
+    Grouped(names)
   }
 
   private def pairwise[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D],
@@ -413,7 +402,7 @@ trait ScaldingReduceableMatrix[P <: Position with ReduceablePosition] extends Re
   self: ScaldingMatrix[P] =>
 
   def fillHetrogenous[D <: Dimension](slice: Slice[P, D])(values: TypedPipe[Cell[slice.S]])(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[P]] = {
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S]): TypedPipe[Cell[P]] = {
     val dense = domain
       .groupBy[Slice[P, D]#S] { case p => slice.selected(p) }
       .join(values.groupBy { case c => c.position })
@@ -425,7 +414,7 @@ trait ScaldingReduceableMatrix[P <: Position with ReduceablePosition] extends Re
       .map { case (p, (fc, co)) => co.getOrElse(fc) }
   }
 
-  def fillHomogenous(value: Content): TypedPipe[Cell[P]] = {
+  def fillHomogenous(value: Content)(implicit ev: ClassTag[P]): TypedPipe[Cell[P]] = {
     domain
       .groupBy { case p => p }
       .leftJoin(data.groupBy { case c => c.position })
@@ -438,7 +427,7 @@ trait ScaldingReduceableMatrix[P <: Position with ReduceablePosition] extends Re
   }
 
   def reduce[D <: Dimension](slice: Slice[P, D], reducer: Reducer with Prepare with PresentSingle)(
-    implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.S]] = {
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): TypedPipe[Cell[slice.S]] = {
     data
       .map { case c => (slice.selected(c.position), reducer.prepare(slice, c)) }
       .groupBy { case (p, t) => p }
@@ -448,7 +437,7 @@ trait ScaldingReduceableMatrix[P <: Position with ReduceablePosition] extends Re
 
   def reduceWithValue[D <: Dimension, W](slice: Slice[P, D],
     reducer: Reducer with PrepareWithValue with PresentSingle { type V >: W }, value: ValuePipe[W])(
-      implicit ev: PosDimDep[P, D]): TypedPipe[Cell[slice.S]] = {
+      implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): TypedPipe[Cell[slice.S]] = {
     data
       .leftCross(value)
       .map { case (c, vo) => (slice.selected(c.position), reducer.prepare(slice, c, vo.get)) }
@@ -501,72 +490,14 @@ trait ScaldingExpandableMatrix[P <: Position with ExpandablePosition] extends Ex
 
 object ScaldingMatrix {
   /**
-   * Read source of `(String, String, String, String)` data into a `TypedPipe[Cell[Position1D]]`.
-   *
-   * @param source The source to read from.
-   * @param first  The codex for decoding the first dimension.
-   */
-  def read1D(source: TypedSource[(String, String, String, String)],
-    first: Codex = StringCodex): TypedPipe[Cell[Position1D]] = {
-    source
-      .flatMap {
-        case (r, t, e, v) =>
-          Schema.fromString(e, t).flatMap {
-            case s => (s.decode(v), first.decode(r)) match {
-              case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
-              case _ => None
-            }
-          }
-      }
-  }
-
-  /**
-   * Read source of `(String, String)` data into a `TypedPipe[Cell[Position1D]]`.
-   *
-   * @param source The source to read from.
-   * @param dict   The dictionary describing the features in the data.
-   * @param first  The codex for decoding the first dimension.
-   */
-  def read1DWithDictionary(source: TypedSource[(String, String)], dict: Map[String, Schema],
-    first: Codex = StringCodex): TypedPipe[Cell[Position1D]] = {
-    source
-      .flatMap {
-        case (e, v) =>
-          (dict(e).decode(v), first.decode(e)) match {
-            case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
-            case _ => None
-          }
-      }
-  }
-
-  /**
-   * Read source of `(String, String)` data into a `TypedPipe[Cell[Position1D]]`.
-   *
-   * @param source The source to read from.
-   * @param schema The schema for decoding the data.
-   * @param first  The codex for decoding the first dimension.
-   */
-  def read1DWithSchema(source: TypedSource[(String, String)], schema: Schema,
-    first: Codex = StringCodex): TypedPipe[Cell[Position1D]] = {
-    source
-      .flatMap {
-        case (e, v) =>
-          (schema.decode(v), first.decode(e)) match {
-            case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
-            case _ => None
-          }
-      }
-  }
-
-  /**
    * Read column oriented, pipe separated matrix data into a `TypedPipe[Cell[Position1D]]`.
    *
    * @param file      The file to read from.
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
    */
-  def read1DFile(file: String, separator: String = "|", first: Codex = StringCodex): TypedPipe[Cell[Position1D]] = {
-    read1D(FixedPathTypedDelimited[(String, String, String, String)](file, separator), first)
+  def read1D(file: String, separator: String = "|", first: Codex = StringCodex): TypedPipe[Cell[Position1D]] = {
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse1D(_, separator, first) }
   }
 
   /**
@@ -577,9 +508,9 @@ object ScaldingMatrix {
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
    */
-  def read1DFileWithDictionary(file: String, dict: Map[String, Schema], separator: String = "|",
+  def read1DWithDictionary(file: String, dict: Map[String, Schema], separator: String = "|",
     first: Codex = StringCodex): TypedPipe[Cell[Position1D]] = {
-    read1DWithDictionary(FixedPathTypedDelimited[(String, String)](file, separator), dict, first)
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse1DWithDictionary(_, dict, separator, first) }
   }
 
   /**
@@ -590,77 +521,9 @@ object ScaldingMatrix {
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
    */
-  def read1DFileWithSchema(file: String, schema: Schema, separator: String = "|",
+  def read1DWithSchema(file: String, schema: Schema, separator: String = "|",
     first: Codex = StringCodex): TypedPipe[Cell[Position1D]] = {
-    read1DWithSchema(FixedPathTypedDelimited[(String, String)](file, separator), schema, first)
-  }
-
-  /**
-   * Read source of `(String, String, String, String, String)` data into a `TypedPipe[Cell[Position2D]]`.
-   *
-   * @param source The source to read from.
-   * @param first  The codex for decoding the first dimension.
-   * @param second The codex for decoding the second dimension.
-   */
-  def read2D(source: TypedSource[(String, String, String, String, String)], first: Codex = StringCodex,
-    second: Codex = StringCodex): TypedPipe[Cell[Position2D]] = {
-    source
-      .flatMap {
-        case (r, c, t, e, v) =>
-          Schema.fromString(e, t).flatMap {
-            case s => (s.decode(v), first.decode(r), second.decode(c)) match {
-              case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
-              case _ => None
-            }
-          }
-      }
-  }
-
-  /**
-   * Read source of `(String, String, String)` data into a `TypedPipe[Cell[Position2D]]`.
-   *
-   * @param source The source to read from.
-   * @param dict   The dictionary describing the features in the data.
-   * @param dim    The dimension on which to apply the dictionary.
-   * @param first  The codex for decoding the first dimension.
-   * @param second The codex for decoding the second dimension.
-   */
-  def read2DWithDictionary[D <: Dimension](source: TypedSource[(String, String, String)], dict: Map[String, Schema],
-    dim: D = Second, first: Codex = StringCodex, second: Codex = StringCodex)(
-      implicit ev: PosDimDep[Position2D, D]): TypedPipe[Cell[Position2D]] = {
-    source
-      .flatMap {
-        case (e, a, v) =>
-          val s = dim match {
-            case First => dict(e)
-            case Second => dict(a)
-          }
-
-          (s.decode(v), first.decode(e), second.decode(a)) match {
-            case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
-            case _ => None
-          }
-      }
-  }
-
-  /**
-   * Read source of `(String, String, String)` data into a `TypedPipe[Cell[Position2D]]`.
-   *
-   * @param source The source to read from.
-   * @param schema The schema for decoding the data.
-   * @param first  The codex for decoding the first dimension.
-   * @param second The codex for decoding the second dimension.
-   */
-  def read2DWithSchema(source: TypedSource[(String, String, String)], schema: Schema, first: Codex = StringCodex,
-    second: Codex = StringCodex): TypedPipe[Cell[Position2D]] = {
-    source
-      .flatMap {
-        case (e, a, v) =>
-          (schema.decode(v), first.decode(e), second.decode(a)) match {
-            case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
-            case _ => None
-          }
-      }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse1DWithSchema(_, schema, separator, first) }
   }
 
   /**
@@ -671,9 +534,9 @@ object ScaldingMatrix {
    * @param first     The codex for decoding the first dimension.
    * @param second    The codex for decoding the second dimension.
    */
-  def read2DFile(file: String, separator: String = "|", first: Codex = StringCodex,
+  def read2D(file: String, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex): TypedPipe[Cell[Position2D]] = {
-    read2D(FixedPathTypedDelimited[(String, String, String, String, String)](file, separator), first, second)
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse2D(_, separator, first, second) }
   }
 
   /**
@@ -686,10 +549,10 @@ object ScaldingMatrix {
    * @param first     The codex for decoding the first dimension.
    * @param second    The codex for decoding the second dimension.
    */
-  def read2DFileWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
+  def read2DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
     separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex)(
       implicit ev: PosDimDep[Position2D, D]): TypedPipe[Cell[Position2D]] = {
-    read2DWithDictionary(FixedPathTypedDelimited[(String, String, String)](file, separator), dict, dim, first, second)
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse2DWithDictionary(_, dict, dim, separator, first, second) }
   }
 
   /**
@@ -701,81 +564,9 @@ object ScaldingMatrix {
    * @param first     The codex for decoding the first dimension.
    * @param second    The codex for decoding the second dimension.
    */
-  def read2DFileWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
+  def read2DWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex): TypedPipe[Cell[Position2D]] = {
-    read2DWithSchema(FixedPathTypedDelimited[(String, String, String)](file, separator), schema, first, second)
-  }
-
-  /**
-   * Read source of `(String, String, String, String, String, String)` data into a `TypedPipe[Cell[Position3D]]`.
-   *
-   * @param source The source to read from.
-   * @param first  The codex for decoding the first dimension.
-   * @param second The codex for decoding the second dimension.
-   * @param third  The codex for decoding the third dimension.
-   */
-  def read3D(source: TypedSource[(String, String, String, String, String, String)], first: Codex = StringCodex,
-    second: Codex = StringCodex, third: Codex = StringCodex): TypedPipe[Cell[Position3D]] = {
-    source
-      .flatMap {
-        case (r, c, d, t, e, v) =>
-          Schema.fromString(e, t).flatMap {
-            case s => (s.decode(v), first.decode(r), second.decode(c), third.decode(d)) match {
-              case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
-              case _ => None
-            }
-          }
-      }
-  }
-
-  /**
-   * Read source of `(String, String, String, String)` data into a `TypedPipe[Cell[Position3D]]`.
-   *
-   * @param source The source to read from.
-   * @param dict   The dictionary describing the features in the data.
-   * @param dim    The dimension on which to apply the dictionary.
-   * @param first  The codex for decoding the first dimension.
-   * @param second The codex for decoding the second dimension.
-   * @param third  The codex for decoding the third dimension.
-   */
-  def read3DWithDictionary[D <: Dimension](source: TypedSource[(String, String, String, String)],
-    dict: Map[String, Schema], dim: D = Second, first: Codex = StringCodex, second: Codex = StringCodex,
-    third: Codex = DateCodex)(implicit ev: PosDimDep[Position3D, D]): TypedPipe[Cell[Position3D]] = {
-    source
-      .flatMap {
-        case (e, a, t, v) =>
-          val s = dim match {
-            case First => dict(e)
-            case Second => dict(a)
-            case Third => dict(t)
-          }
-
-          (s.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
-            case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
-            case _ => None
-          }
-      }
-  }
-
-  /**
-   * Read source of `(String, String, String, String)` data into a `TypedPipe[Cell[Position3D]]`.
-   *
-   * @param source The source to read from.
-   * @param schema The schema for decoding the data.
-   * @param first  The codex for decoding the first dimension.
-   * @param second The codex for decoding the second dimension.
-   * @param third  The codex for decoding the third dimension.
-   */
-  def read3DWithSchema(source: TypedSource[(String, String, String, String)], schema: Schema,
-    first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = DateCodex): TypedPipe[Cell[Position3D]] = {
-    source
-      .flatMap {
-        case (e, a, t, v) =>
-          (schema.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
-            case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
-            case _ => None
-          }
-      }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse2DWithSchema(_, schema, separator, first, second) }
   }
 
   /**
@@ -787,10 +578,9 @@ object ScaldingMatrix {
    * @param second    The codex for decoding the second dimension.
    * @param third     The codex for decoding the third dimension.
    */
-  def read3DFile(file: String, separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
+  def read3D(file: String, separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
     third: Codex = StringCodex): TypedPipe[Cell[Position3D]] = {
-    read3D(FixedPathTypedDelimited[(String, String, String, String, String, String)](file, separator), first, second,
-      third)
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse3D(_, separator, first, second, third) }
   }
 
   /**
@@ -804,11 +594,10 @@ object ScaldingMatrix {
    * @param second    The codex for decoding the second dimension.
    * @param third     The codex for decoding the third dimension.
    */
-  def read3DFileWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
+  def read3DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
     separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = DateCodex)(
       implicit ev: PosDimDep[Position3D, D]): TypedPipe[Cell[Position3D]] = {
-    read3DWithDictionary(FixedPathTypedDelimited[(String, String, String, String)](file, separator), dict, dim, first,
-      second, third)
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse3DWithDictionary(_, dict, dim, separator, first, second, third) }
   }
 
   /**
@@ -821,10 +610,9 @@ object ScaldingMatrix {
    * @param second    The codex for decoding the second dimension.
    * @param third     The codex for decoding the third dimension.
    */
-  def read3DFileWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
+  def read3DWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex, third: Codex = DateCodex): TypedPipe[Cell[Position3D]] = {
-    read3DWithSchema(FixedPathTypedDelimited[(String, String, String, String)](file, separator), schema, first, second,
-      third)
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse3DWithSchema(_, schema, separator, first, second, third) }
   }
 
   /**
@@ -840,18 +628,7 @@ object ScaldingMatrix {
    */
   def readTable(table: String, columns: List[(String, Schema)], pkeyIndex: Int = 0,
     separator: String = "\01"): TypedPipe[Cell[Position2D]] = {
-    TypedPipe.from(TextLine(table))
-      .flatMap {
-        case line =>
-          val parts = line.trim.split(separator, columns.length).toList
-          val pkey = parts(pkeyIndex)
-
-          columns.zipWithIndex.flatMap {
-            case ((name, schema), idx) if (idx != pkeyIndex) =>
-              schema.decode(parts(idx).trim).map { case c => Cell(Position2D(pkey, name), c) }
-            case _ => None
-          }
-      }
+    TypedPipe.from(TextLine(table)).flatMap { Cell.parseTable(_, columns, pkeyIndex, separator) }
   }
 
   /** Conversion from `TypedPipe[Cell[Position1D]]` to a `ScaldingMatrix1D`. */
@@ -910,9 +687,9 @@ class ScaldingMatrix1D(val data: TypedPipe[Cell[Position1D]]) extends ScaldingMa
    *
    * @return A `TypedPipe[Cell[Position1D]]`; that is it returns `data`.
    */
-  def persistIVFile(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
+  def persistAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
     implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
-    persistIVFileWithNames(file, names(Over(First)), dictionary, separator)
+    persistAsIVWithNames(file, names(Over(First)), dictionary, separator)
   }
 
   /**
@@ -927,12 +704,12 @@ class ScaldingMatrix1D(val data: TypedPipe[Cell[Position1D]]) extends ScaldingMa
    *
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
    */
-  def persistIVFileWithNames(file: String, names: TypedPipe[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d",
+  def persistAsIVWithNames(file: String, names: TypedPipe[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d",
     separator: String = "|")(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
     data
       .groupBy { case c => c.position }
       .join(persistDictionary(names, file, dictionary, separator, First))
-      .map { case (_, (c, (_, i))) => i + separator + c.content.value.toShortString }
+      .map { case (_, (c, i)) => i + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
     data
@@ -1030,11 +807,11 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
    *
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    */
-  def persistCSVFile[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
+  def persistAsCSV[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
     escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
     rowId: String = "id")(implicit ev1: Nameable[TypedPipe[(slice.S, Long)], Position2D, slice.S, D, TypedPipe],
       ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S], flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
-    persistCSVFileWithNames(slice, file, names(slice), separator, escapee, writeHeader, header, writeRowId, rowId)
+    persistAsCSVWithNames(slice, file, names(slice), separator, escapee, writeHeader, header, writeRowId, rowId)
   }
 
   /**
@@ -1054,7 +831,7 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
    *
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
    */
-  def persistCSVFileWithNames[T, D <: Dimension](slice: Slice[Position2D, D], file: String, names: T,
+  def persistAsCSVWithNames[T, D <: Dimension](slice: Slice[Position2D, D], file: String, names: T,
     separator: String = "|", escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header",
     writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: Nameable[T, Position2D, slice.S, D, TypedPipe],
       ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S], flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
@@ -1102,12 +879,12 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
    *
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    *
-   * @note R's slam package has a simple triplet matrx format (which in turn is used by the tm package). This format
+   * @note R's slam package has a simple triplet matrix format (which in turn is used by the tm package). This format
    *       should be compatible.
    */
-  def persistIVFile(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
+  def persistAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
     implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
-    persistIVFileWithNames(file, names(Over(First)), names(Over(Second)), dictionary, separator)
+    persistAsIVWithNames(file, names(Over(First)), names(Over(Second)), dictionary, separator)
   }
 
   /**
@@ -1122,19 +899,19 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    *
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   * @note R's slam package has a simple triplet matrx format (which in turn is used by the tm package). This format
+   * @note R's slam package has a simple triplet matrix format (which in turn is used by the tm package). This format
    *       should be compatible.
    */
-  def persistIVFileWithNames(file: String, namesI: TypedPipe[(Position1D, Long)], namesJ: TypedPipe[(Position1D, Long)],
+  def persistAsIVWithNames(file: String, namesI: TypedPipe[(Position1D, Long)], namesJ: TypedPipe[(Position1D, Long)],
     dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position2D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case (c, pi) => Position1D(c.position(Second)) }
+      .groupBy { case (c, i) => Position1D(c.position(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
-      .map { case (_, ((c, (_, i)), (_, j))) => i + separator + j + separator + c.content.value.toShortString }
+      .map { case (_, ((c, i), j)) => i + separator + j + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
     data
@@ -1151,10 +928,10 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
    *
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    */
-  def persistLDAFile[D <: Dimension](slice: Slice[Position2D, D], file: String, dictionary: String = "%s.dict",
+  def persistAsLDA[D <: Dimension](slice: Slice[Position2D, D], file: String, dictionary: String = "%s.dict",
     separator: String = "|", addId: Boolean = false)(implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position2D]] = {
-    persistLDAFileWithNames(slice, file, names(Along(slice.dimension)), dictionary, separator, addId)
+    persistAsLDAWithNames(slice, file, names(Along(slice.dimension)), dictionary, separator, addId)
   }
 
   /**
@@ -1171,14 +948,14 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
    *
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
    */
-  def persistLDAFileWithNames[D <: Dimension](slice: Slice[Position2D, D], file: String,
+  def persistAsLDAWithNames[D <: Dimension](slice: Slice[Position2D, D], file: String,
     names: TypedPipe[(Position1D, Long)], dictionary: String = "%s.dict", separator: String = "|",
     addId: Boolean = false)(implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position2D]] = {
     data
       .groupBy { case c => slice.remainder(c.position).asInstanceOf[Position1D] }
       .join(persistDictionary(names, file, dictionary, separator))
-      .map { case (_, (Cell(p, c), (_, i))) => (p, " " + i + ":" + c.value.toShortString, 1L) }
+      .map { case (_, (Cell(p, c), i)) => (p, " " + i + ":" + c.value.toShortString, 1L) }
       .groupBy { case (p, ics, m) => slice.selected(p) }
       .reduce[(Position2D, String, Long)] { case ((p, ls, lm), (_, rs, rm)) => (p, ls + rs, lm + rm) }
       .map { case (p, (_, ics, m)) => if (addId) p.toShortString(separator) + separator + m + ics else m + ics }
@@ -1198,10 +975,10 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
    *
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    */
-  def persistVWFile[D <: Dimension](slice: Slice[Position2D, D], labels: TypedPipe[Cell[Position1D]], file: String,
+  def persistAsVW[D <: Dimension](slice: Slice[Position2D, D], labels: TypedPipe[Cell[Position1D]], file: String,
     dictionary: String = "%s.dict", separator: String = ":")(implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position2D]] = {
-    persistVWFileWithNames(slice, labels, file, names(Along(slice.dimension)), dictionary, separator)
+    persistAsVWWithNames(slice, labels, file, names(Along(slice.dimension)), dictionary, separator)
   }
 
   /**
@@ -1218,13 +995,13 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
    *
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
    */
-  def persistVWFileWithNames[D <: Dimension](slice: Slice[Position2D, D], labels: TypedPipe[Cell[Position1D]],
+  def persistAsVWWithNames[D <: Dimension](slice: Slice[Position2D, D], labels: TypedPipe[Cell[Position1D]],
     file: String, names: TypedPipe[(Position1D, Long)], dictionary: String = "%s.dict", separator: String = ":")(
       implicit ev: PosDimDep[Position2D, D], flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
     data
       .groupBy { case c => slice.remainder(c.position).asInstanceOf[Position1D] }
       .join(persistDictionary(names, file, dictionary, separator))
-      .map { case (_, (Cell(p, c), (_, i))) => (p, " " + i + ":" + c.value.toShortString) }
+      .map { case (_, (Cell(p, c), i)) => (p, " " + i + ":" + c.value.toShortString) }
       .groupBy { case (p, ics) => slice.selected(p).asInstanceOf[Position1D] }
       .reduce[(Position2D, String)] { case ((p, ls), (_, rs)) => (p, ls + rs) }
       .join(labels.groupBy { case c => c.position })
@@ -1272,9 +1049,9 @@ class ScaldingMatrix3D(val data: TypedPipe[Cell[Position3D]]) extends ScaldingMa
    *
    * @return A `TypedPipe[Cell[Position3D]]`; that is it returns `data`.
    */
-  def persistIVFile(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
+  def persistAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
     implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
-    persistIVFileWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), dictionary, separator)
+    persistAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), dictionary, separator)
   }
 
   /**
@@ -1291,22 +1068,19 @@ class ScaldingMatrix3D(val data: TypedPipe[Cell[Position3D]]) extends ScaldingMa
    *
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
    */
-  def persistIVFileWithNames(file: String, namesI: TypedPipe[(Position1D, Long)], namesJ: TypedPipe[(Position1D, Long)],
+  def persistAsIVWithNames(file: String, namesI: TypedPipe[(Position1D, Long)], namesJ: TypedPipe[(Position1D, Long)],
     namesK: TypedPipe[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
       implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case (c, pi) => Position1D(c.position(Second)) }
+      .groupBy { case (c, i) => Position1D(c.position(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
-      .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
-      .groupBy { case (c, pi, pj) => Position1D(c.position(Third)) }
+      .map { case (_, ((c, i), j)) => (c, i, j) }
+      .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
       .join(persistDictionary(namesK, file, dictionary, separator, Third))
-      .map {
-        case (_, ((c, (_, i), (_, j)), (_, k))) =>
-          i + separator + j + separator + k + separator + c.content.value.toShortString
-      }
+      .map { case (_, ((c, i, j), k)) => i + separator + j + separator + k + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
     data
@@ -1353,9 +1127,9 @@ class ScaldingMatrix4D(val data: TypedPipe[Cell[Position4D]]) extends ScaldingMa
    *
    * @return A `TypedPipe[Cell[Position4D]]`; that is it returns `data`.
    */
-  def persistIVFile(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
+  def persistAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
     implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position4D]] = {
-    persistIVFileWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
+    persistAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
       dictionary, separator)
   }
 
@@ -1374,7 +1148,7 @@ class ScaldingMatrix4D(val data: TypedPipe[Cell[Position4D]]) extends ScaldingMa
    *
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
    */
-  def persistIVFileWithNames(file: String, namesI: TypedPipe[(Position1D, Long)], namesJ: TypedPipe[(Position1D, Long)],
+  def persistAsIVWithNames(file: String, namesI: TypedPipe[(Position1D, Long)], namesJ: TypedPipe[(Position1D, Long)],
     namesK: TypedPipe[(Position1D, Long)], namesL: TypedPipe[(Position1D, Long)],
     dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
       mode: Mode): TypedPipe[Cell[Position4D]] = {
@@ -1382,16 +1156,16 @@ class ScaldingMatrix4D(val data: TypedPipe[Cell[Position4D]]) extends ScaldingMa
       .groupBy { case c => Position1D(c.position(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case (c, pi) => Position1D(c.position(Second)) }
+      .groupBy { case (c, i) => Position1D(c.position(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
-      .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
-      .groupBy { case (c, pi, pj) => Position1D(c.position(Third)) }
+      .map { case (_, ((c, i), j)) => (c, i, j) }
+      .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
       .join(persistDictionary(namesK, file, dictionary, separator, Third))
-      .map { case (_, ((pc, pi, pj), pk)) => (pc, pi, pj, pk) }
-      .groupBy { case (c, pi, pj, pk) => Position1D(c.position(Fourth)) }
+      .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
+      .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
       .join(persistDictionary(namesL, file, dictionary, separator, Fourth))
       .map {
-        case (_, ((c, (_, i), (_, j), (_, k)), (_, l))) =>
+        case (_, ((c, i, j, k), l)) =>
           i + separator + j + separator + k + separator + l + separator + c.content.value.toShortString
       }
       .write(TypedSink(TextLine(file)))
@@ -1443,9 +1217,9 @@ class ScaldingMatrix5D(val data: TypedPipe[Cell[Position5D]]) extends ScaldingMa
    *
    * @return A `TypedPipe[Cell[Position5D]]`; that is it returns `data`.
    */
-  def persistIVFile(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
+  def persistAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
     implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position5D]] = {
-    persistIVFileWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
+    persistAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
       names(Over(Fifth)), dictionary, separator)
   }
 
@@ -1465,7 +1239,7 @@ class ScaldingMatrix5D(val data: TypedPipe[Cell[Position5D]]) extends ScaldingMa
    *
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
    */
-  def persistIVFileWithNames(file: String, namesI: TypedPipe[(Position1D, Long)], namesJ: TypedPipe[(Position1D, Long)],
+  def persistAsIVWithNames(file: String, namesI: TypedPipe[(Position1D, Long)], namesJ: TypedPipe[(Position1D, Long)],
     namesK: TypedPipe[(Position1D, Long)], namesL: TypedPipe[(Position1D, Long)],
     namesM: TypedPipe[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
       implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position5D]] = {
@@ -1473,19 +1247,19 @@ class ScaldingMatrix5D(val data: TypedPipe[Cell[Position5D]]) extends ScaldingMa
       .groupBy { case c => Position1D(c.position(First)) }
       .join(persistDictionary(namesI, file, dictionary, separator, First))
       .values
-      .groupBy { case (c, pi) => Position1D(c.position(Second)) }
+      .groupBy { case (c, i) => Position1D(c.position(Second)) }
       .join(persistDictionary(namesJ, file, dictionary, separator, Second))
-      .map { case (_, ((pc, pi), pj)) => (pc, pi, pj) }
-      .groupBy { case (c, pi, pj) => Position1D(c.position(Third)) }
+      .map { case (_, ((c, i), j)) => (c, i, j) }
+      .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
       .join(persistDictionary(namesK, file, dictionary, separator, Third))
-      .map { case (_, ((pc, pi, pj), pk)) => (pc, pi, pj, pk) }
-      .groupBy { case (c, pi, pj, pk) => Position1D(c.position(Fourth)) }
+      .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
+      .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
       .join(persistDictionary(namesL, file, dictionary, separator, Fourth))
-      .map { case (_, ((pc, pi, pj, pk), pl)) => (pc, pi, pj, pk, pl) }
-      .groupBy { case (c, pi, pj, pk, pl) => Position1D(c.position(Fifth)) }
+      .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
+      .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
       .join(persistDictionary(namesM, file, dictionary, separator, Fifth))
       .map {
-        case (_, ((c, (_, i), (_, j), (_, k), (_, l)), (_, m))) =>
+        case (_, ((c, i, j, k, l), m)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator + c.content.value.toShortString
       }
       .write(TypedSink(TextLine(file)))

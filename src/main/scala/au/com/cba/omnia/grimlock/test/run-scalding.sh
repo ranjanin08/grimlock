@@ -80,8 +80,8 @@ then
       hadoop fs -put exampleLabels.txt
       hadoop fs -put exampleEvents.txt
       hadoop fs -put exampleDictionary.txt
-      hadoop fs -put exampleMIData.txt
-      hadoop fs -put exampleDDData.txt
+      hadoop fs -put exampleMutual.txt
+      hadoop fs -put exampleDerived.txt
     fi
 
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \

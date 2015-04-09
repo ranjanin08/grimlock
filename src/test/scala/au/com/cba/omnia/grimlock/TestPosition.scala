@@ -18,10 +18,14 @@ import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.position._
+
 import au.com.cba.omnia.grimlock.position.ScaldingPositions._
+import au.com.cba.omnia.grimlock.position.SparkPositions._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._
+
+import org.apache.spark.rdd._
 
 import org.scalatest._
 
@@ -858,9 +862,12 @@ class TestPosition5D extends FlatSpec with Matchers {
   }
 }
 
-class TypedPositions extends WordSpec with Matchers with TBddDsl {
+trait TestPositions {
 
   val data = List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F").zipWithIndex
+}
+
+class TestScaldingPositions extends WordSpec with Matchers with TBddDsl with TestPositions {
 
   "A Positions of Position1D" should {
     "return its First over names" in {
@@ -872,18 +879,6 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
       } Then {
         buffer: mutable.Buffer[(Position1D, Long)] =>
           buffer.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
-      }
-    }
-
-    "return its First along names" in {
-      Given {
-        data.map { case (s, i) => Position1D(s) }
-      } When {
-        positions: TypedPipe[Position1D] =>
-          positions.names(Along(First))
-      } Then {
-        buffer: mutable.Buffer[(Position0D, Long)] =>
-          buffer.toList shouldBe List((Position0D(), 0))
       }
     }
   }
@@ -1230,6 +1225,311 @@ class TypedPositions extends WordSpec with Matchers with TBddDsl {
           buffer.toList shouldBe data.map { case (s, i) => (Position4D(s, i, i + 1, i + 2), i) }
       }
     }
+  }
+}
+
+class TestSparkPositions extends FlatSpec with Matchers with TestPositions {
+
+  implicit def PositionOrdering[P <: Position] = Position.Ordering[P]
+
+  "A Positions of Position1D" should "return its First over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position1D(s) }
+      .names(Over(First))
+      .toLocalIterator
+      .toList should be (List((Position1D("fid:B"), 0), (Position1D("fid:A"), 1), (Position1D("fid:E"), 2),
+        (Position1D("fid:F"), 3), (Position1D("fid:D"), 4), (Position1D("fid:C"), 5)))
+  }
+
+  "A Positions of Position2D" should "return its First over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position2D(s, i) }
+      .names(Over(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("fid:A"), 1), (Position1D("fid:B"), 0), (Position1D("fid:C"), 5),
+        (Position1D("fid:D"), 4), (Position1D("fid:E"), 2), (Position1D("fid:F"), 3)))
+  }
+
+  it should "return its Second over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position2D(s, i) }
+      .names(Over(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
+        (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2)))
+  }
+
+  it should "return its First along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position2D(s, i) }
+      .names(Along(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
+        (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2)))
+  }
+
+  it should "return its Second along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position2D(s, i) }
+      .names(Along(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("fid:A"), 1), (Position1D("fid:B"), 0), (Position1D("fid:C"), 5),
+        (Position1D("fid:D"), 4), (Position1D("fid:E"), 2), (Position1D("fid:F"), 3)))
+  }
+
+  "A Positions of Position3D" should "return its First over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position3D(s, i, i + 1) }
+      .names(Over(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("fid:A"), 1), (Position1D("fid:B"), 0), (Position1D("fid:C"), 5),
+        (Position1D("fid:D"), 4), (Position1D("fid:E"), 2), (Position1D("fid:F"), 3)))
+  }
+
+  it should "return its Second over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position3D(s, i, i + 1) }
+      .names(Over(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
+        (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2)))
+  }
+
+  it should "return its Third over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position3D(s, i, i + 1) }
+      .names(Over(Third))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), 5), (Position1D(2), 0), (Position1D(3), 1),
+        (Position1D(4), 3), (Position1D(5), 2), (Position1D(6), 4)))
+  }
+
+  it should "return its First along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position3D(s, i, i + 1) }
+      .names(Along(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D(0, 1), 0), (Position2D(1, 2), 2), (Position2D(2,3), 3),
+        (Position2D(3, 4), 4), (Position2D(4, 5), 1), (Position2D(5, 6), 5)))
+  }
+
+  it should "return its Second along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position3D(s, i, i + 1) }
+      .names(Along(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D("fid:A", 1), 0), (Position2D("fid:B", 2), 2),
+        (Position2D("fid:C", 3), 4), (Position2D("fid:D", 4), 3), (Position2D("fid:E", 5), 1),
+        (Position2D("fid:F", 6), 5)))
+  }
+
+  it should "return its Third along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position3D(s, i, i + 1) }
+      .names(Along(Third))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D("fid:A", 0), 0), (Position2D("fid:B", 1), 3),
+        (Position2D("fid:C", 2), 4), (Position2D("fid:D", 3), 2), (Position2D("fid:E", 4), 1),
+        (Position2D("fid:F", 5), 5)))
+  }
+
+  "A Positions of Position4D" should "return its First over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+      .names(Over(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("fid:A"), 1), (Position1D("fid:B"), 0), (Position1D("fid:C"), 5),
+        (Position1D("fid:D"), 4), (Position1D("fid:E"), 2), (Position1D("fid:F"), 3)))
+  }
+
+  it should "return its Second over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+      .names(Over(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
+        (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2)))
+  }
+
+  it should "return its Third over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+      .names(Over(Third))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), 5), (Position1D(2), 0), (Position1D(3), 1),
+        (Position1D(4), 3), (Position1D(5), 2), (Position1D(6), 4)))
+  }
+
+  it should "return its Fourth over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+      .names(Over(Fourth))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(2), 0), (Position1D(3), 1), (Position1D(4), 3),
+        (Position1D(5), 2), (Position1D(6), 4), (Position1D(7), 5)))
+  }
+
+  it should "return its First along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+      .names(Along(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position3D(0, 1, 2), 3), (Position3D(1, 2, 3), 5), (Position3D(2, 3, 4), 4),
+        (Position3D(3, 4, 5), 1), (Position3D(4, 5, 6), 0), (Position3D(5, 6, 7), 2)))
+  }
+
+  it should "return its Second along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+      .names(Along(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position3D("fid:A", 1, 2), 0), (Position3D("fid:B", 2, 3), 5),
+        (Position3D("fid:C", 3, 4), 2), (Position3D("fid:D", 4, 5), 4), (Position3D("fid:E", 5, 6), 3),
+        (Position3D("fid:F", 6, 7), 1)))
+  }
+
+  it should "return its Third along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+      .names(Along(Third))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position3D("fid:A", 0, 2), 4), (Position3D("fid:B", 1, 3), 2),
+        (Position3D("fid:C", 2, 4), 5), (Position3D("fid:D", 3, 5), 3), (Position3D("fid:E", 4, 6), 0),
+        (Position3D("fid:F", 5, 7), 1)))
+  }
+
+  it should "return its Fourth along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+      .names(Along(Fourth))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position3D("fid:A", 0, 1), 5), (Position3D("fid:B", 1, 2), 3),
+        (Position3D("fid:C", 2, 3), 2), (Position3D("fid:D", 3, 4), 1), (Position3D("fid:E", 4, 5), 0),
+        (Position3D("fid:F", 5, 6), 4)))
+  }
+
+  "A Positions of Position5D" should "return its First over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+      .names(Over(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("fid:A"), 1), (Position1D("fid:B"), 0), (Position1D("fid:C"), 5),
+        (Position1D("fid:D"), 4), (Position1D("fid:E"), 2), (Position1D("fid:F"), 3)))
+  }
+
+  it should "return its Second over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+      .names(Over(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
+        (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2)))
+  }
+
+  it should "return its Third over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+      .names(Over(Third))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), 5), (Position1D(2), 0), (Position1D(3), 1),
+        (Position1D(4), 3), (Position1D(5), 2), (Position1D(6), 4)))
+  }
+
+  it should "return its Fourth over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+      .names(Over(Fourth))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(2), 0), (Position1D(3), 1), (Position1D(4), 3),
+        (Position1D(5), 2), (Position1D(6), 4), (Position1D(7), 5)))
+  }
+
+  it should "return its Fifth over names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+      .names(Over(Fifth))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(3), 0), (Position1D(4), 3), (Position1D(5), 1),
+        (Position1D(6), 4), (Position1D(7), 5), (Position1D(8), 2)))
+  }
+
+  it should "return its First along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+      .names(Along(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position4D(0, 1, 2, 3), 0), (Position4D(1, 2, 3, 4), 3),
+        (Position4D(2, 3, 4, 5), 4), (Position4D(3, 4, 5, 6), 2), (Position4D(4, 5, 6, 7), 1),
+        (Position4D(5, 6, 7, 8), 5)))
+  }
+
+  it should "return its Second along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+      .names(Along(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position4D("fid:A", 1, 2, 3), 1), (Position4D("fid:B", 2, 3, 4), 3),
+        (Position4D("fid:C", 3, 4, 5), 4), (Position4D("fid:D", 4, 5, 6), 0), (Position4D("fid:E", 5, 6, 7), 2),
+        (Position4D("fid:F", 6, 7, 8), 5)))
+  }
+
+  it should "return its Third along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+      .names(Along(Third))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position4D("fid:A", 0, 2, 3), 5), (Position4D("fid:B", 1, 3, 4), 1),
+        (Position4D("fid:C", 2, 4, 5), 3), (Position4D("fid:D", 3, 5, 6), 2), (Position4D("fid:E", 4, 6, 7), 0),
+        (Position4D("fid:F", 5, 7, 8), 4)))
+  }
+
+  it should "return its Fourth along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+      .names(Along(Fourth))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position4D("fid:A", 0, 1, 3) ,0), (Position4D("fid:B", 1, 2, 4), 2),
+        (Position4D("fid:C", 2, 3, 5), 5), (Position4D("fid:D", 3, 4, 6), 1), (Position4D("fid:E", 4, 5, 7), 4),
+        (Position4D("fid:F", 5, 6, 8), 3)))
+  }
+
+  it should "return its Fifth along names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+      .names(Along(Fifth))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position4D("fid:A", 0, 1, 2), 1), (Position4D("fid:B", 1, 2, 3), 5),
+        (Position4D("fid:C", 2, 3, 4), 3), (Position4D("fid:D", 3, 4, 5), 2), (Position4D("fid:E", 4, 5, 6), 0),
+        (Position4D("fid:F", 5, 6, 7), 4)))
   }
 }
 

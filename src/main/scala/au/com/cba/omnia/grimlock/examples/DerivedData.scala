@@ -69,9 +69,9 @@ class DerivedData(args : Args) extends Job(args) {
   // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
   //    feature.from.gradient)
   // 4/ Persist 2D gradient features.
-  read3DFile("exampleDDData.txt", third=DateCodex)
+  read3D("exampleDerived.txt", third=DateCodex)
     .derive(Along(Third), Gradient(First))
     .melt(Third, Second, ".from.")
-    .persistFile("./demo/gradient.out")
+    .persist("./demo/gradient.out")
 }
 

@@ -16,7 +16,7 @@ package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.position._
 
-import scala.reflect._
+import scala.reflect.ClassTag
 import scala.util.matching.Regex
 
 /** Base trait that represents the names along the dimensions of a matrix. */
@@ -32,7 +32,7 @@ trait Names[P <: Position] {
    * @return A `U[(P, Long)]` with `position` at the greatest index and all others renumbered but preserving
    *         their relative ordering.
    */
-  def moveToBack[T](position: T)(implicit ev: Positionable[T, P]): U[(P, Long)]
+  def moveToBack[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): U[(P, Long)]
 
   /**
    * Renumber the indices such that `position` is first.
@@ -42,7 +42,7 @@ trait Names[P <: Position] {
    * @return A `U[(P, Long)]` with `position` at index 0 and all others renumbered but preserving their
    *         relative ordering.
    */
-  def moveToFront[T](position: T)(implicit ev: Positionable[T, P]): U[(P, Long)]
+  def moveToFront[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): U[(P, Long)]
 
   /** Renumber the names. */
   def renumber()(implicit ev: ClassTag[P]): U[(P, Long)]

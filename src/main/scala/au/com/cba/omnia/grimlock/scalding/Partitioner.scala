@@ -22,7 +22,7 @@ import au.com.cba.omnia.grimlock.utility._
 import com.twitter.scalding._
 import com.twitter.scalding.typed.Grouped
 
-import scala.reflect._
+import scala.reflect.ClassTag
 
 /**
  * Rich wrapper around a `TypedPipe[(T, Cell[P])]`.
@@ -37,7 +37,7 @@ class ScaldingPartitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cel
     data ++ (partition.map { case c => (key, c) })
   }
 
-  def foreach[Q <: Position](keys: List[T],
+  def forEach[Q <: Position](keys: List[T],
     fn: (T, TypedPipe[Cell[P]]) => TypedPipe[Cell[Q]]): TypedPipe[(T, Cell[Q])] = {
     import ScaldingPartitions._
 

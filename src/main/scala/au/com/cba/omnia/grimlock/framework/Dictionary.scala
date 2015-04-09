@@ -22,9 +22,9 @@ object Dictionary {
    *
    * @return A dictionary object.
    */
-  def read(file: String, separator: String = "\\|"): Map[String, Schema] = {
+  def read(file: String, separator: String = "|"): Map[String, Schema] = {
     (for (line <- scala.io.Source.fromFile(file).getLines()) yield {
-      val parts = line.split(separator)
+      val parts = line.split(java.util.regex.Pattern.quote(separator))
       (parts(0), Schema.fromString(parts(1), parts(2)).get)
     }).toMap
   }

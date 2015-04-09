@@ -17,16 +17,20 @@ package au.com.cba.omnia.grimlock
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.position._
+
 import au.com.cba.omnia.grimlock.ScaldingNames._
+import au.com.cba.omnia.grimlock.SparkNames._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._
+
+import org.apache.spark.rdd._
 
 import org.scalatest._
 
 import scala.collection.mutable
 
-class TypedNames extends WordSpec with Matchers with TBddDsl {
+trait TestNames {
 
   val data = List((Position1D("fid:A"), 0L),
     (Position1D("fid:AA"), 1L),
@@ -34,6 +38,9 @@ class TypedNames extends WordSpec with Matchers with TBddDsl {
     (Position1D("fid:C"), 3L),
     (Position1D("fid:D"), 4L),
     (Position1D("fid:E"), 5L))
+}
+
+class TypedScaldingNames extends WordSpec with Matchers with TBddDsl with TestNames {
 
   "A Names" should {
     "renumber" in {
@@ -179,6 +186,108 @@ class TypedNames extends WordSpec with Matchers with TBddDsl {
             (Position1D("fid:E"), 4L))
       }
     }
+  }
+}
+
+class TestSparkNames extends FlatSpec with Matchers with TestNames {
+
+  "A Names" should "renumber" in {
+    TestSpark.spark
+      .parallelize(data)
+      .map { case (p, i) =>  (p, i + 5) }
+      .renumber()
+      .toLocalIterator
+      .toList should be (data)
+  }
+
+  it should "slice and keep by regular expression" in {
+    TestSpark.spark
+      .parallelize(data)
+      .slice("fid:A.*".r, true, "|")
+      .toLocalIterator
+      .toList should be (List((Position1D("fid:A"), 0), (Position1D("fid:AA"), 1)))
+  }
+
+  it should "slice and keep nothing by regular expression" in {
+    TestSpark.spark
+      .parallelize(data)
+      .slice("not.there.*".r, true, "|")
+      .toLocalIterator
+      .toList should be (List())
+  }
+
+  it should "slice and remove by regular expression" in {
+    TestSpark.spark
+      .parallelize(data)
+      .slice("fid:A.*".r, false, "|")
+      .toLocalIterator
+      .toList should be (List((Position1D("fid:B"), 0L), (Position1D("fid:C"), 1L), (Position1D("fid:D"), 2L),
+        (Position1D("fid:E"), 3L)))
+  }
+
+  it should "slice and remove nothing by regular expression" in {
+    TestSpark.spark
+      .parallelize(data)
+      .slice("not.there.*".r, false, "|")
+      .toLocalIterator
+      .toList should be (data)
+  }
+
+  it should "slice and keep by single name" in {
+    TestSpark.spark
+      .parallelize(data)
+      .slice("fid:AA", true)
+      .toLocalIterator
+      .toList should be (List((Position1D("fid:AA"), 0)))
+  }
+
+  it should "slice and keep by multiple names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .slice(List("fid:AA", "fid:B", "not.there"), true)
+      .toLocalIterator
+      .toList should be (List((Position1D("fid:AA"), 0), (Position1D("fid:B"), 1)))
+  }
+
+  it should "set a single name" in {
+    TestSpark.spark
+      .parallelize(data)
+      .set("fid:C", 123)
+      .toLocalIterator
+      .toList should be (data.map {
+        case (p @ Position1D(StringValue("fid:C")), _) => (p, 123)
+        case x => x
+      })
+  }
+
+  it should "set multiple names" in {
+    TestSpark.spark
+      .parallelize(data)
+      .set(Map("fid:C" -> 123, "fid:D" -> 456, "not.there" -> 789))
+      .toLocalIterator
+      .toList should be (data.map {
+        case (p @ Position1D(StringValue("fid:C")), _) => (p, 123)
+        case (p @ Position1D(StringValue("fid:D")), _) => (p, 456)
+        case x => x
+      })
+  }
+
+  it should "move a name to front" in {
+    TestSpark.spark
+      .parallelize(data)
+      .moveToFront("fid:C")
+      .toLocalIterator
+      .toList should be (List((Position1D("fid:A"), 1L), (Position1D("fid:AA"), 2L), (Position1D("fid:B"), 3L),
+        (Position1D("fid:C"), 0L), (Position1D("fid:D"), 4L), (Position1D("fid:E"), 5L)))
+  }
+
+  it should "move a name to back" in {
+    TestSpark.spark
+      .parallelize(data)
+      .moveToBack("fid:C")
+      .toLocalIterator
+      .toList should be (List((Position1D("fid:A"), 0L), (Position1D("fid:AA"), 1L), (Position1D("fid:B"), 2L),
+        (Position1D("fid:C"), 5L), (Position1D("fid:D"), 3L), (Position1D("fid:E"), 4L)))
   }
 }
 

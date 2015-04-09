@@ -638,6 +638,9 @@ class TestCut extends FlatSpec with Matchers with TestTransformers {
   it should "not present with missing bins" in {
     Cut(First).present(cell, Map()) should be (Collection())
   }
+}
+
+class TestScaldingCutRules extends FlatSpec with Matchers with TestTransformers {
 
   import com.twitter.scalding.typed.ValuePipe
 
@@ -646,83 +649,173 @@ class TestCut extends FlatSpec with Matchers with TestTransformers {
     Position1D("sd") -> getDoubleContent(2), Position1D("skewness") -> getDoubleContent(2))))
 
   "A fixed" should "cut" in {
-    Cut.fixed(stats, "min", "max", 5) should be (ValuePipe(Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5))))
-  }
-
-  it should "not cut with missing values" in {
-    Cut.fixed(stats, "not.there", "max", 5) should be (ValuePipe(Map()))
-    Cut.fixed(stats, "min", "not.there", 5) should be (ValuePipe(Map()))
-  }
-
-  "A squareRootChoice" should "cut" in {
-    Cut.squareRootChoice(stats, "count", "min", "max") should
+    ScaldingCutRules.fixed(stats, "min", "max", 5) should
       be (ValuePipe(Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5))))
   }
 
   it should "not cut with missing values" in {
-    Cut.squareRootChoice(stats, "not.there", "min", "max") should be (ValuePipe(Map()))
-    Cut.squareRootChoice(stats, "count", "not.there", "max") should be (ValuePipe(Map()))
-    Cut.squareRootChoice(stats, "count", "min", "not.there") should be (ValuePipe(Map()))
+    ScaldingCutRules.fixed(stats, "not.there", "max", 5) should be (ValuePipe(Map()))
+    ScaldingCutRules.fixed(stats, "min", "not.there", 5) should be (ValuePipe(Map()))
+  }
+
+  "A squareRootChoice" should "cut" in {
+    ScaldingCutRules.squareRootChoice(stats, "count", "min", "max") should
+      be (ValuePipe(Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5))))
+  }
+
+  it should "not cut with missing values" in {
+    ScaldingCutRules.squareRootChoice(stats, "not.there", "min", "max") should be (ValuePipe(Map()))
+    ScaldingCutRules.squareRootChoice(stats, "count", "not.there", "max") should be (ValuePipe(Map()))
+    ScaldingCutRules.squareRootChoice(stats, "count", "min", "not.there") should be (ValuePipe(Map()))
   }
 
   "A sturgesFormula" should "cut" in {
     // math.ceil(log2(25) + 1) = 6
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 6)).tail
 
-    Cut.sturgesFormula(stats, "count", "min", "max") should be (ValuePipe(Map(Position1D("foo") -> vals)))
+    ScaldingCutRules.sturgesFormula(stats, "count", "min", "max") should be (ValuePipe(Map(Position1D("foo") -> vals)))
   }
 
   it should "not cut with missing values" in {
-    Cut.sturgesFormula(stats, "not.there", "min", "max") should be (ValuePipe(Map()))
-    Cut.sturgesFormula(stats, "count", "not.there", "max") should be (ValuePipe(Map()))
-    Cut.sturgesFormula(stats, "count", "min", "not.there") should be (ValuePipe(Map()))
+    ScaldingCutRules.sturgesFormula(stats, "not.there", "min", "max") should be (ValuePipe(Map()))
+    ScaldingCutRules.sturgesFormula(stats, "count", "not.there", "max") should be (ValuePipe(Map()))
+    ScaldingCutRules.sturgesFormula(stats, "count", "min", "not.there") should be (ValuePipe(Map()))
   }
 
   "A riceRule" should "cut" in {
     // math.ceil(2 * math.pow(25, 1.0 / 3.0)) = 6
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 6)).tail
 
-    Cut.riceRule(stats, "count", "min", "max") should be (ValuePipe(Map(Position1D("foo") -> vals)))
+    ScaldingCutRules.riceRule(stats, "count", "min", "max") should be (ValuePipe(Map(Position1D("foo") -> vals)))
   }
 
   it should "not cut with missing values" in {
-    Cut.riceRule(stats, "not.there", "min", "max") should be (ValuePipe(Map()))
-    Cut.riceRule(stats, "count", "not.there", "max") should be (ValuePipe(Map()))
-    Cut.riceRule(stats, "count", "min", "not.there") should be (ValuePipe(Map()))
+    ScaldingCutRules.riceRule(stats, "not.there", "min", "max") should be (ValuePipe(Map()))
+    ScaldingCutRules.riceRule(stats, "count", "not.there", "max") should be (ValuePipe(Map()))
+    ScaldingCutRules.riceRule(stats, "count", "min", "not.there") should be (ValuePipe(Map()))
   }
 
   "A doanesFormula" should "cut" in {
     // math.round(1 + log2(25) + log2(1 + math.abs(2) / math.sqrt((6.0 * 23.0) / (26.0 * 28.0)))) = 8
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 8)).tail
 
-    Cut.doanesFormula(stats, "count", "min", "max", "skewness") should be (ValuePipe(Map(Position1D("foo") -> vals)))
+    ScaldingCutRules.doanesFormula(stats, "count", "min", "max", "skewness") should
+      be (ValuePipe(Map(Position1D("foo") -> vals)))
   }
 
   it should "not cut with missing values" in {
-    Cut.doanesFormula(stats, "not.there", "min", "max", "skewness") should be (ValuePipe(Map()))
-    Cut.doanesFormula(stats, "count", "not.there", "max", "skewness") should be (ValuePipe(Map()))
-    Cut.doanesFormula(stats, "count", "min", "not.there", "skewness") should be (ValuePipe(Map()))
-    Cut.doanesFormula(stats, "count", "min", "max", "not.there") should be (ValuePipe(Map()))
+    ScaldingCutRules.doanesFormula(stats, "not.there", "min", "max", "skewness") should be (ValuePipe(Map()))
+    ScaldingCutRules.doanesFormula(stats, "count", "not.there", "max", "skewness") should be (ValuePipe(Map()))
+    ScaldingCutRules.doanesFormula(stats, "count", "min", "not.there", "skewness") should be (ValuePipe(Map()))
+    ScaldingCutRules.doanesFormula(stats, "count", "min", "max", "not.there") should be (ValuePipe(Map()))
   }
 
   "A scottsNormalReferenceRule" should "cut" in {
     // math.ceil((5.0 - 0) / (3.5 * 2 / math.pow(25, 1.0 / 3.0))) = 3
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 3)).tail
 
-    Cut.scottsNormalReferenceRule(stats, "count", "min", "max", "sd") should
+    ScaldingCutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd") should
       be (ValuePipe(Map(Position1D("foo") -> vals)))
   }
 
   it should "not cut with missing values" in {
-    Cut.scottsNormalReferenceRule(stats, "not.there", "min", "max", "sd") should be (ValuePipe(Map()))
-    Cut.scottsNormalReferenceRule(stats, "count", "not.there", "max", "sd") should be (ValuePipe(Map()))
-    Cut.scottsNormalReferenceRule(stats, "count", "min", "not.there", "sd") should be (ValuePipe(Map()))
-    Cut.scottsNormalReferenceRule(stats, "count", "min", "max", "not.there") should be (ValuePipe(Map()))
+    ScaldingCutRules.scottsNormalReferenceRule(stats, "not.there", "min", "max", "sd") should be (ValuePipe(Map()))
+    ScaldingCutRules.scottsNormalReferenceRule(stats, "count", "not.there", "max", "sd") should be (ValuePipe(Map()))
+    ScaldingCutRules.scottsNormalReferenceRule(stats, "count", "min", "not.there", "sd") should be (ValuePipe(Map()))
+    ScaldingCutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "not.there") should be (ValuePipe(Map()))
   }
 
   "A breaks" should "cut" in {
-    Cut.breaks(Map("foo" -> List[Double](0,1,2,3,4,5))) should
+    ScaldingCutRules.breaks(Map("foo" -> List[Double](0,1,2,3,4,5))) should
       be (ValuePipe(Map(Position1D("foo") -> List[Double](0,1,2,3,4,5))))
+  }
+}
+
+class TestSparkCutRules extends FlatSpec with Matchers with TestTransformers {
+
+  val stats = Map(Position1D("foo") -> Map(Position1D("min") -> getDoubleContent(0),
+    Position1D("max") -> getDoubleContent(5), Position1D("count") -> getDoubleContent(25),
+    Position1D("sd") -> getDoubleContent(2), Position1D("skewness") -> getDoubleContent(2)))
+
+  "A fixed" should "cut" in {
+    SparkCutRules.fixed(stats, "min", "max", 5) should
+      be (Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5)))
+  }
+
+  it should "not cut with missing values" in {
+    SparkCutRules.fixed(stats, "not.there", "max", 5) should be (Map())
+    SparkCutRules.fixed(stats, "min", "not.there", 5) should be (Map())
+  }
+
+  "A squareRootChoice" should "cut" in {
+    SparkCutRules.squareRootChoice(stats, "count", "min", "max") should
+      be (Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5)))
+  }
+
+  it should "not cut with missing values" in {
+    SparkCutRules.squareRootChoice(stats, "not.there", "min", "max") should be (Map())
+    SparkCutRules.squareRootChoice(stats, "count", "not.there", "max") should be (Map())
+    SparkCutRules.squareRootChoice(stats, "count", "min", "not.there") should be (Map())
+  }
+
+  "A sturgesFormula" should "cut" in {
+    // math.ceil(log2(25) + 1) = 6
+    val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 6)).tail
+
+    SparkCutRules.sturgesFormula(stats, "count", "min", "max") should be (Map(Position1D("foo") -> vals))
+  }
+
+  it should "not cut with missing values" in {
+    SparkCutRules.sturgesFormula(stats, "not.there", "min", "max") should be (Map())
+    SparkCutRules.sturgesFormula(stats, "count", "not.there", "max") should be (Map())
+    SparkCutRules.sturgesFormula(stats, "count", "min", "not.there") should be (Map())
+  }
+
+  "A riceRule" should "cut" in {
+    // math.ceil(2 * math.pow(25, 1.0 / 3.0)) = 6
+    val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 6)).tail
+
+    SparkCutRules.riceRule(stats, "count", "min", "max") should be (Map(Position1D("foo") -> vals))
+  }
+
+  it should "not cut with missing values" in {
+    SparkCutRules.riceRule(stats, "not.there", "min", "max") should be (Map())
+    SparkCutRules.riceRule(stats, "count", "not.there", "max") should be (Map())
+    SparkCutRules.riceRule(stats, "count", "min", "not.there") should be (Map())
+  }
+
+  "A doanesFormula" should "cut" in {
+    // math.round(1 + log2(25) + log2(1 + math.abs(2) / math.sqrt((6.0 * 23.0) / (26.0 * 28.0)))) = 8
+    val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 8)).tail
+
+    SparkCutRules.doanesFormula(stats, "count", "min", "max", "skewness") should be (Map(Position1D("foo") -> vals))
+  }
+
+  it should "not cut with missing values" in {
+    SparkCutRules.doanesFormula(stats, "not.there", "min", "max", "skewness") should be (Map())
+    SparkCutRules.doanesFormula(stats, "count", "not.there", "max", "skewness") should be (Map())
+    SparkCutRules.doanesFormula(stats, "count", "min", "not.there", "skewness") should be (Map())
+    SparkCutRules.doanesFormula(stats, "count", "min", "max", "not.there") should be (Map())
+  }
+
+  "A scottsNormalReferenceRule" should "cut" in {
+    // math.ceil((5.0 - 0) / (3.5 * 2 / math.pow(25, 1.0 / 3.0))) = 3
+    val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 3)).tail
+
+    SparkCutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd") should
+      be (Map(Position1D("foo") -> vals))
+  }
+
+  it should "not cut with missing values" in {
+    SparkCutRules.scottsNormalReferenceRule(stats, "not.there", "min", "max", "sd") should be (Map())
+    SparkCutRules.scottsNormalReferenceRule(stats, "count", "not.there", "max", "sd") should be (Map())
+    SparkCutRules.scottsNormalReferenceRule(stats, "count", "min", "not.there", "sd") should be (Map())
+    SparkCutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "not.there") should be (Map())
+  }
+
+  "A breaks" should "cut" in {
+    SparkCutRules.breaks(Map("foo" -> List[Double](0,1,2,3,4,5))) should
+      be (Map(Position1D("foo") -> List[Double](0,1,2,3,4,5)))
   }
 }
 

@@ -17,11 +17,12 @@ package au.com.cba.omnia.grimlock.position
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.encoding._
+import au.com.cba.omnia.grimlock.utility._
 
 import com.twitter.scalding._
 import com.twitter.scalding.typed.IterablePipe
 
-import scala.reflect._
+import scala.reflect.ClassTag
 
 /**
  * Rich wrapper around a `TypedPipe[Position]`.
@@ -43,8 +44,8 @@ class ScaldingPositions[P <: Position](val data: TypedPipe[P]) extends Positions
    *
    * @see [[Names]]
    */
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D],
-    ev2: ClassTag[slice.S]): TypedPipe[(slice.S, Long)] = {
+  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
+    ev3: ClassTag[slice.S]): TypedPipe[(slice.S, Long)] = {
     ScaldingNames.number(data
       .map { case p => slice.selected(p) }
       .distinct(Position.Ordering[slice.S]))

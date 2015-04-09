@@ -30,7 +30,7 @@ trait SparkPersist[T] extends Persist[T] with java.io.Serializable {
    *
    * @return A Spark `RDD[T]` which is this object's data.
    */
-  def persistFile(file: String, separator: String = "|", descriptive: Boolean = false): RDD[T] = {
+  def persist(file: String, separator: String = "|", descriptive: Boolean = false): RDD[T] = {
     data
       .map(toString(_, separator, descriptive))
       .saveAsTextFile(file)

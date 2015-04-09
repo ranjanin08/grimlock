@@ -62,6 +62,16 @@ object Type {
   val Date = Type(None, "date")
   /** Type for event types. */
   val Event = Type(None, "event")
+
+  /** Returns the first type `lt` and `rt` have in common, or `Mixed` if nothing in common. */
+  def getCommonType(lt: Type, rt: Type): Type = {
+    if (lt == rt) { lt }
+    else if (lt.isSpecialisationOf(rt)) { rt }
+    else if (rt.isSpecialisationOf(lt)) { lt }
+    else if (lt.isSpecialisationOf(rt.getGeneralisation())) { rt.getGeneralisation() }
+    else if (rt.isSpecialisationOf(lt.getGeneralisation())) { lt.getGeneralisation() }
+    else { Type.Mixed }
+  }
 }
 
 /** Base trait that represents the variable type along the dimensions of a matrix. */

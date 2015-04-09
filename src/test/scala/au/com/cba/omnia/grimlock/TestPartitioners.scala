@@ -18,14 +18,18 @@ import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.content.metadata._
 import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.partition._
-import au.com.cba.omnia.grimlock.partition.ScaldingPartitions._
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
+
+import au.com.cba.omnia.grimlock.partition.ScaldingPartitions._
+import au.com.cba.omnia.grimlock.partition.SparkPartitions._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._
 
 import java.util.Date
+
+import org.apache.spark.rdd._
 
 import org.scalatest._
 
@@ -235,7 +239,7 @@ class TestDateSplit extends FlatSpec with Matchers with TestDatePartitioners {
   }
 }
 
-class TypedPartitions extends WordSpec with Matchers with TBddDsl {
+trait TestPartitions {
 
   val data = List(("train", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 1))),
     ("train", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 2))),
@@ -243,6 +247,9 @@ class TypedPartitions extends WordSpec with Matchers with TBddDsl {
     ("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 4))),
     ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 5))),
     ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6))))
+}
+
+class TestScaldingPartitions extends WordSpec with Matchers with TBddDsl with TestPartitions {
 
   def double(key: String, pipe: TypedPipe[Cell[Position1D]]): TypedPipe[Cell[Position1D]] = {
     pipe
@@ -318,7 +325,7 @@ class TypedPartitions extends WordSpec with Matchers with TBddDsl {
         data
       } When {
         parts: TypedPipe[(String, Cell[Position1D])] =>
-          parts.foreach(List("test", "valid", "not.there"), double)
+          parts.forEach(List("test", "valid", "not.there"), double)
       } Then {
         buffer: mutable.Buffer[(String, Cell[Position1D])] =>
           buffer.toList.sortBy(_._2.toString("|", false)) shouldBe
@@ -327,6 +334,78 @@ class TypedPartitions extends WordSpec with Matchers with TBddDsl {
               ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 12))))
       }
     }
+  }
+}
+
+class TestSparkPartitions extends FlatSpec with Matchers with TestPartitions {
+
+  def double(key: String, pipe: RDD[Cell[Position1D]]): RDD[Cell[Position1D]] = {
+    pipe
+      .flatMap {
+        case c => c.content.value.asLong.map {
+          case v => Cell(c.position, Content(ContinuousSchema[Codex.LongCodex](), 2 * v))
+        }
+      }
+  }
+
+  "A Partitions" should "return its keys" in {
+    TestSpark.spark
+      .parallelize(data)
+      .keys()
+      .toLocalIterator
+      .toList
+      .sorted should be (List("test", "train", "valid"))
+  }
+
+  it should "get a partition's data" in {
+    TestSpark.spark
+      .parallelize(data)
+      .get("train")
+      .toLocalIterator
+      .toList
+      .sortBy(_.position.toShortString("|")) should
+        be (List(Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 1)),
+          Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 2)),
+          Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 3))))
+  }
+
+  it should "add new data" in {
+    val pipe = TestSpark.spark.parallelize(List(
+      Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8)),
+      Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9))))
+
+    TestSpark.spark
+      .parallelize(data)
+      .add("xyz", pipe)
+      .toLocalIterator
+      .toList
+      .sortBy(_._2.content.value.toShortString) should be (data ++
+        List(("xyz", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))),
+          ("xyz", Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9)))))
+  }
+
+  it should "remove a partition's data" in {
+    TestSpark.spark
+      .parallelize(data)
+      .remove("train")
+      .toLocalIterator
+      .toList
+      .sortBy(_._2.content.value.toShortString) should
+        be (List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 4))),
+          ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 5))),
+          ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6)))))
+  }
+
+  it should "foreach should apply to selected partitions" in {
+    TestSpark.spark
+      .parallelize(data)
+      .forEach(List("test", "valid", "not.there"), double)
+      .toLocalIterator
+      .toList
+      .sortBy(_._2.toString("|", false)) should
+        be (List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))),
+          ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 10))),
+          ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 12)))))
   }
 }
 

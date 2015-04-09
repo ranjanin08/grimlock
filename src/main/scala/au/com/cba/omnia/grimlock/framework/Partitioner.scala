@@ -19,7 +19,7 @@ import au.com.cba.omnia.grimlock.content._
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
-import scala.reflect._
+import scala.reflect.ClassTag
 
 /** Base trait for partitioning operations. */
 trait Partitioner {
@@ -82,7 +82,7 @@ trait Partitions[T, P <: Position] {
    *
    * @return A `U[(T, Cell[Q])]` containing the paritions in `keys` with `fn` applied to them.
    */
-  def foreach[Q <: Position](keys: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])]
+  def forEach[Q <: Position](keys: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])]
 
   /**
    * Return the data for the partition `key`.

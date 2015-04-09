@@ -199,7 +199,7 @@ case class EventValue[T <: Event](value: T, codex: EventCodex) extends Value {
 }
 
 /** Type class for transforming a type `T` into a `Value`. */
-trait Valueable[T] {
+trait Valueable[T] extends java.io.Serializable {
   /**
    * Returns a `Value` for type `T`.
    *
