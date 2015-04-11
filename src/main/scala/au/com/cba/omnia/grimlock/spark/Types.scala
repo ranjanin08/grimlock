@@ -32,6 +32,6 @@ class SparkTypes[P <: Position](val data: RDD[(P, Type)]) extends Types[P] with 
 /** Companion object for the `SparkTypes` class. */
 object SparkTypes {
   /** Conversion from `RDD[(Position, Type)]` to a `SparkTypes`. */
-  implicit def RDDPT2T[P <: Position](data: RDD[(P, Type)]): SparkTypes[P] = new SparkTypes(data)
+  implicit def RDDPT2RDDT[P <: Position](data: RDD[(P, Type)]): SparkTypes[P] = new SparkTypes(data)
 }
 

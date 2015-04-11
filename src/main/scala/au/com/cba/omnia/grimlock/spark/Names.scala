@@ -70,19 +70,19 @@ object SparkNames {
   def number[P <: Position](data: RDD[P]): RDD[(P, Long)] = data.zipWithIndex
 
   /** Conversion from `RDD[(Position, Long)]` to a `SparkNames`. */
-  implicit def RDDPL2N[P <: Position](data: RDD[(P, Long)]): SparkNames[P] = new SparkNames(data)
+  implicit def RDDPL2RDDN[P <: Position](data: RDD[(P, Long)]): SparkNames[P] = new SparkNames(data)
 }
 
 /** Spark Companion object for the `Nameable` type class. */
 object SparkNameable {
   /** Converts a `RDD[(Q, Long)]` into a `RDD[(Q, Long)]`; that is, it is a pass through. */
-  implicit def RDDQL2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[RDD[(Q, Long)], P, Q, D, RDD] = {
+  implicit def RDDQL2RDDN[P <: Position, Q <: Position, D <: Dimension]: Nameable[RDD[(Q, Long)], P, Q, D, RDD] = {
     new Nameable[RDD[(Q, Long)], P, Q, D, RDD] {
       def convert(m: Matrix[P], s: Slice[P, D], t: RDD[(Q, Long)])(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = t
     }
   }
   /** Converts a `RDD[Q]` into a `RDD[(Q, Long)]`. */
-  implicit def RDDQ2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[RDD[Q], P, Q, D, RDD] = {
+  implicit def RDDQ2RDDN[P <: Position, Q <: Position, D <: Dimension]: Nameable[RDD[Q], P, Q, D, RDD] = {
     new Nameable[RDD[Q], P, Q, D, RDD] {
       def convert(m: Matrix[P], s: Slice[P, D], t: RDD[Q])(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = {
         SparkNames.number(t)
@@ -90,7 +90,7 @@ object SparkNameable {
     }
   }
   /** Converts a `PositionListable` into a `RDD[(Q, Long)]`. */
-  implicit def PL2N[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
+  implicit def PL2RDDN[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
     ev2: PosDimDep[P, D], ev3: ClassTag[Q]): Nameable[T, P, Q, D, RDD] = {
     new Nameable[T, P, Q, D, RDD] {
       def convert(m: Matrix[P], s: Slice[P, D], t: T)(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = {

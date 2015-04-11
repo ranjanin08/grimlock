@@ -33,9 +33,16 @@ import au.com.cba.omnia.grimlock.ScaldingMatrixable._
 import au.com.cba.omnia.grimlock.position.ScaldingPositionDistributable._
 import au.com.cba.omnia.grimlock.ScaldingNameable._
 
+import au.com.cba.omnia.grimlock.SparkMatrix._
+import au.com.cba.omnia.grimlock.SparkMatrixable._
+import au.com.cba.omnia.grimlock.position.SparkPositionDistributable._
+import au.com.cba.omnia.grimlock.SparkNameable._
+
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._
 import com.twitter.scalding.typed.ValuePipe
+
+import org.apache.spark.rdd._
 
 import org.scalatest._
 
@@ -112,7 +119,7 @@ trait TestMatrix {
   implicit def PositionOrdering[T <: Position] = Position.Ordering[T]
 }
 
-class TestMatrixNames extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestScaldingMatrixNames extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.names" should {
     "return its first over names in 1D" in {
@@ -257,7 +264,109 @@ class TestMatrixNames extends WordSpec with Matchers with TBddDsl with TestMatri
   }
 }
 
-class TestMatrixTypes extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixNames extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.names" should "return its first over names in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .names(Over(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
+        (Position1D("qux"), 3)))
+  }
+
+  it should "return its first over names in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .names(Over(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
+        (Position1D("qux"), 3)))
+    }
+
+  it should "return its first along names in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .names(Along(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 0), (Position1D(3), 1),
+        (Position1D(4), 2)))
+    }
+
+  it should "return its second over names in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .names(Over(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 0), (Position1D(3), 1),
+        (Position1D(4), 2)))
+    }
+
+  it should "return its second along names in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .names(Along(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
+        (Position1D("qux"), 3)))
+    }
+
+  it should "return its first over names in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .names(Over(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
+        (Position1D("qux"), 3)))
+    }
+
+  it should "return its first along names in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .names(Along(First))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D(1, "xyz"), 3), (Position2D(2, "xyz"), 2),
+        (Position2D(3, "xyz"), 1), (Position2D(4, "xyz"), 0)))
+    }
+
+  it should "return its second over names in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .names(Over(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 0), (Position1D(3), 1),
+        (Position1D(4), 2)))
+    }
+
+  it should "return its second along names in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .names(Along(Second))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D("bar", "xyz"), 2), (Position2D("baz", "xyz"), 1),
+        (Position2D("foo", "xyz"), 0), (Position2D("qux", "xyz"), 3)))
+    }
+
+  it should "return its third over names in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .names(Over(Third))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("xyz"), 0)))
+    }
+
+  it should "return its third along names in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .names(Along(Third))
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D("bar", 1), 1), (Position2D("bar", 2), 6),
+        (Position2D("bar", 3), 2), (Position2D("baz", 1), 9), (Position2D("baz", 2), 4), (Position2D("foo", 1), 0),
+        (Position2D("foo", 2), 3), (Position2D("foo", 3), 8), (Position2D("foo", 4), 5), (Position2D("qux", 1), 7)))
+    }
+}
+
+class TestScaldingMatrixTypes extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.types" should {
     "return its first over types in 1D" in {
@@ -552,7 +661,210 @@ class TestMatrixTypes extends WordSpec with Matchers with TBddDsl with TestMatri
   }
 }
 
-class TestMatrixSize extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixTypes extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.types" should "return its first over types in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .types(Over(First), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), Categorical), (Position1D("baz"), Categorical),
+        (Position1D("foo"), Categorical), (Position1D("qux"), Categorical)))
+  }
+
+  it should "return its first over specific types in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .types(Over(First), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), Ordinal), (Position1D("baz"), Ordinal),
+        (Position1D("foo"), Ordinal), (Position1D("qux"), Ordinal)))
+    }
+
+  it should "return its first over types in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .types(Over(First), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), Mixed), (Position1D("baz"), Mixed),
+        (Position1D("foo"), Mixed), (Position1D("qux"), Categorical)))
+    }
+
+  it should "return its first over specific types in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .types(Over(First), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), Mixed), (Position1D("baz"), Mixed),
+        (Position1D("foo"), Mixed), (Position1D("qux"), Ordinal)))
+    }
+
+  it should "return its first along types in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .types(Along(First), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), Categorical), (Position1D(2), Numerical),
+        (Position1D(3), Categorical), (Position1D(4), Date)))
+    }
+
+  it should "return its first along specific types in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .types(Along(First), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), Ordinal), (Position1D(2), Numerical),
+        (Position1D(3), Categorical), (Position1D(4), Date)))
+    }
+
+  it should "return its second over types in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .types(Over(Second), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), Categorical), (Position1D(2), Numerical),
+        (Position1D(3), Categorical), (Position1D(4), Date)))
+    }
+
+  it should "return its second over specific types in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .types(Over(Second), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), Ordinal), (Position1D(2), Numerical),
+        (Position1D(3), Categorical), (Position1D(4), Date)))
+    }
+
+  it should "return its second along types in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .types(Along(Second), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), Mixed), (Position1D("baz"), Mixed),
+        (Position1D("foo"), Mixed), (Position1D("qux"), Categorical)))
+    }
+
+  it should "return its second along specific types in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .types(Along(Second), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), Mixed), (Position1D("baz"), Mixed),
+        (Position1D("foo"), Mixed), (Position1D("qux"), Ordinal)))
+    }
+
+  it should "return its first over types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Over(First), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), Mixed), (Position1D("baz"), Mixed),
+        (Position1D("foo"), Mixed), (Position1D("qux"), Categorical)))
+    }
+
+  it should "return its first over specific types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Over(First), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), Mixed), (Position1D("baz"), Mixed),
+        (Position1D("foo"), Mixed), (Position1D("qux"), Ordinal)))
+    }
+
+  it should "return its first along types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Along(First), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D(1, "xyz"), Categorical), (Position2D(2, "xyz"), Numerical),
+        (Position2D(3, "xyz"), Categorical), (Position2D(4, "xyz"), Date)))
+    }
+
+  it should "return its first along specific types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Along(First), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D(1, "xyz"), Ordinal), (Position2D(2, "xyz"), Numerical),
+        (Position2D(3, "xyz"), Categorical), (Position2D(4, "xyz"), Date)))
+    }
+
+  it should "return its second over types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Over(Second), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), Categorical), (Position1D(2), Numerical),
+        (Position1D(3), Categorical), (Position1D(4), Date)))
+    }
+
+  it should "return its second over specific types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Over(Second), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D(1), Ordinal), (Position1D(2), Numerical),
+        (Position1D(3), Categorical), (Position1D(4), Date)))
+    }
+
+  it should "return its second along types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Along(Second), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D("bar", "xyz"), Mixed), (Position2D("baz", "xyz"), Mixed),
+        (Position2D("foo", "xyz"), Mixed), (Position2D("qux", "xyz"), Categorical)))
+    }
+
+  it should "return its second along specific types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Along(Second), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D("bar", "xyz"), Mixed), (Position2D("baz", "xyz"), Mixed),
+        (Position2D("foo", "xyz"), Mixed), (Position2D("qux", "xyz"), Ordinal)))
+    }
+
+  it should "return its third over types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Over(Third), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("xyz"), Mixed)))
+    }
+
+  it should "return its third over specific types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Over(Third), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position1D("xyz"), Mixed)))
+    }
+
+  it should "return its third along types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Along(Third), false)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D("bar", 1), Categorical), (Position2D("bar", 2), Numerical),
+        (Position2D("bar", 3), Categorical), (Position2D("baz", 1), Categorical), (Position2D("baz", 2), Numerical),
+        (Position2D("foo", 1), Categorical), (Position2D("foo", 2), Numerical), (Position2D("foo", 3), Categorical),
+        (Position2D("foo", 4), Date), (Position2D("qux", 1), Categorical)))
+    }
+
+  it should "return its third along specific types in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .types(Along(Third), true)
+      .toLocalIterator
+      .toList.sortBy(_._1) should be (List((Position2D("bar", 1), Ordinal), (Position2D("bar", 2), Continuous),
+        (Position2D("bar", 3), Ordinal), (Position2D("baz", 1), Ordinal), (Position2D("baz", 2), Discrete),
+        (Position2D("foo", 1), Ordinal), (Position2D("foo", 2), Continuous), (Position2D("foo", 3), Nominal),
+        (Position2D("foo", 4), Date), (Position2D("qux", 1), Ordinal)))
+  }
+}
+
+class TestScaldingMatrixSize extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.size" should {
     "return its first size in 1D" in {
@@ -720,7 +1032,116 @@ class TestMatrixSize extends WordSpec with Matchers with TBddDsl with TestMatrix
   }
 }
 
-class TestMatrixShape extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixSize extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.size" should "return its first size in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .size(First, false)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("First"), Content(DiscreteSchema[Codex.LongCodex](), 4))))
+  }
+
+  it should "return its first distinct size in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .size(First, true)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("First"), Content(DiscreteSchema[Codex.LongCodex](), 4))))
+  }
+
+  it should "return its first size in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .size(First, false)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("First"), Content(DiscreteSchema[Codex.LongCodex](), 4))))
+  }
+
+  it should "return its first distinct size in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .size(First, true)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("First"), Content(DiscreteSchema[Codex.LongCodex](), data2.length))))
+  }
+
+  it should "return its second size in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .size(Second, false)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("Second"), Content(DiscreteSchema[Codex.LongCodex](), 4))))
+  }
+
+  it should "return its second distinct size in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .size(Second, true)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("Second"), Content(DiscreteSchema[Codex.LongCodex](), data2.length))))
+  }
+
+  it should "return its first size in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .size(First, false)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("First"), Content(DiscreteSchema[Codex.LongCodex](), 4))))
+  }
+
+  it should "return its first distinct size in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .size(First, true)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("First"), Content(DiscreteSchema[Codex.LongCodex](), data3.length))))
+  }
+
+  it should "return its second size in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .size(Second, false)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("Second"), Content(DiscreteSchema[Codex.LongCodex](), 4))))
+  }
+
+  it should "return its second distinct size in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .size(Second, true)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("Second"), Content(DiscreteSchema[Codex.LongCodex](), data3.length))))
+  }
+
+  it should "return its third size in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .size(Third, false)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("Third"), Content(DiscreteSchema[Codex.LongCodex](), 1))))
+  }
+
+  it should "return its third distinct size in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .size(Third, true)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("Third"), Content(DiscreteSchema[Codex.LongCodex](), data3.length))))
+  }
+
+  it should "return its distinct size" in {
+    TestSpark.spark
+      .parallelize(List(Cell(Position2D(1, 1), Content(OrdinalSchema[Codex.StringCodex](), "a")),
+        Cell(Position2D(2, 2), Content(OrdinalSchema[Codex.StringCodex](), "b")),
+        Cell(Position2D(3, 3), Content(OrdinalSchema[Codex.StringCodex](), "c"))))
+      .size(Second, true)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("Second"), Content(DiscreteSchema[Codex.LongCodex](), 3))))
+  }
+}
+
+class TestScaldingMatrixShape extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.shape" should {
     "return its shape in 1D" in {
@@ -764,7 +1185,37 @@ class TestMatrixShape extends WordSpec with Matchers with TBddDsl with TestMatri
   }
 }
 
-class TestMatrixSlice extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixShape extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.shape" should "return its shape in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .shape()
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("First"), Content(DiscreteSchema[Codex.LongCodex](), 4))))
+  }
+
+  it should "return its shape in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .shape()
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("First"), Content(DiscreteSchema[Codex.LongCodex](), 4)),
+        Cell(Position1D("Second"), Content(DiscreteSchema[Codex.LongCodex](), 4))))
+  }
+
+  it should "return its shape in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .shape()
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("First"), Content(DiscreteSchema[Codex.LongCodex](), 4)),
+        Cell(Position1D("Second"), Content(DiscreteSchema[Codex.LongCodex](), 4)),
+        Cell(Position1D("Third"), Content(DiscreteSchema[Codex.LongCodex](), 1))))
+  }
+}
+
+class TestScaldingMatrixSlice extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.slice" should {
     "return its first over slice in 1D" in {
@@ -1126,7 +1577,289 @@ class TestMatrixSlice extends WordSpec with Matchers with TBddDsl with TestMatri
   }
 }
 
-class TestMatrixWhich extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixSlice extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.slice" should "return its first over slice in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .slice(Over(First), List("bar", "qux"), false)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14"))))
+  }
+
+  it should "return its first over inverse slice in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .slice(Over(First), List("bar", "qux"), true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first over slice in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .slice(Over(First), List("bar", "qux"), false)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its first over inverse slice in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .slice(Over(First), List("bar", "qux"), true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first along slice in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .slice(Along(First), List(1, 3), false)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its first along inverse slice in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .slice(Along(First), List(1, 3), true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second over slice in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .slice(Over(Second), List(1, 3), false)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second over inverse slice in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .slice(Over(Second), List(1, 3), true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second along slice in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .slice(Along(Second), List("bar", "qux"), false)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second along inverse slice in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .slice(Along(Second), List("bar", "qux"), true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first over slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Over(First), List("bar", "qux"), false)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its first over inverse slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Over(First), List("bar", "qux"), true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first along slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Along(First), List(Position2D(1, "xyz"), Position2D(3, "xyz")), false)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its first along inverse slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Along(First), List(Position2D(1, "xyz"), Position2D(3, "xyz")), true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second over slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Over(Second), List(1, 3), false)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second over inverse slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Over(Second), List(1, 3), true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second along slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), false)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second along inverse slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third over slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Over(Third), "xyz", false)
+      .toLocalIterator
+      .toList should be (List())
+  }
+
+  it should "return its third over inverse slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Over(Third), "xyz", true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (data3.sortBy(_.position))
+  }
+
+  it should "return its third along slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), false)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third along inverse slice in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), true)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42"))))
+  }
+}
+
+class TestScaldingMatrixWhich extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   def predicate[P <: Position](cell: Cell[P]): Boolean = {
     (cell.content.schema == NominalSchema[Codex.StringCodex]()) ||
@@ -1459,7 +2192,240 @@ class TestMatrixWhich extends WordSpec with Matchers with TBddDsl with TestMatri
   }
 }
 
-class TestMatrixGet extends WordSpec with Matchers with TBddDsl with TestMatrix {
+object TestMatrixWhich {
+  def predicate[P <: Position](cell: Cell[P]): Boolean = {
+    (cell.content.schema == NominalSchema[Codex.StringCodex]()) ||
+    (cell.content.schema.codex == DateTimeCodex) ||
+    (cell.content.value equ "12.56")
+  }
+}
+
+class TestSparkMatrixWhich extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.which" should "return its coordinates in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .which(TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position1D("qux")))
+  }
+
+  it should "return its first over coordinates in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .which(Over(First), List("bar", "qux"), TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position1D("qux")))
+  }
+
+  it should "return its first over multiple coordinates in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .which(Over(First), List((List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c)),
+        (List("foo"), (c: Cell[Position1D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (List(Position1D("foo"), Position1D("qux")))
+  }
+
+  it should "return its coordinates in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .which(TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position2D("foo", 3), Position2D("foo", 4), Position2D("qux", 1)))
+  }
+
+  it should "return its first over coordinates in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .which(Over(First), List("bar", "qux"), TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position2D("qux", 1)))
+  }
+
+  it should "return its first along coordinates in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .which(Along(First), List(2, 4), TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position2D("foo", 4)))
+  }
+
+  it should "return its second over coordinates in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .which(Over(Second), List(2, 4), TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position2D("foo", 4)))
+  }
+
+  it should "return its second along coordinates in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .which(Along(Second), List("bar", "qux"), TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position2D("qux", 1)))
+  }
+
+  it should "return its first over multiple coordinates in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .which(Over(First), List((List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (List(Position2D("foo", 1), Position2D("foo", 2), Position2D("qux", 1)))
+  }
+
+  it should "return its first along multiple coordinates in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .which(Along(First), List((List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (List(Position2D("bar", 2), Position2D("baz", 2), Position2D("foo", 2),
+        Position2D("foo", 4)))
+  }
+
+  it should "return its second over multiple coordinates in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .which(Over(Second), List((List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (List(Position2D("bar", 2), Position2D("baz", 2), Position2D("foo", 2),
+        Position2D("foo", 4)))
+  }
+
+  it should "return its second along multiple coordinates in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .which(Along(Second), List((List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (List(Position2D("foo", 1), Position2D("foo", 2), Position2D("qux", 1)))
+  }
+
+  it should "return its coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("foo", 3, "xyz"), Position3D("foo", 4, "xyz"),
+        Position3D("qux", 1, "xyz")))
+  }
+
+  it should "return its first over coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Over(First), List("bar", "qux"), TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("qux", 1, "xyz")))
+  }
+
+  it should "return its first along coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Along(First), List(Position2D(2, "xyz"), Position2D(4, "xyz")), TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("foo", 4, "xyz")))
+  }
+
+  it should "return its second over coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Over(Second), List(2, 4), TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("foo", 4, "xyz")))
+  }
+
+  it should "return its second along coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("qux", 1, "xyz")))
+  }
+
+  it should "return its third over coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Over(Third), "xyz", TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("foo", 3, "xyz"), Position3D("foo", 4, "xyz"),
+        Position3D("qux", 1, "xyz")))
+  }
+
+  it should "return its third along coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Along(Third), List(Position2D("bar", 2), Position2D("qux", 1)), TestMatrixWhich.predicate)
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("qux", 1, "xyz")))
+  }
+
+  it should "return its first over multiple coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Over(First), List((List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+        (List("foo"), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("foo", 1, "xyz"), Position3D("foo", 2, "xyz"),
+        Position3D("qux", 1, "xyz")))
+  }
+
+  it should "return its first along multiple coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Along(First), List((List(Position2D(2, "xyz"), Position2D(4, "xyz")),
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), (List(Position2D(2, "xyz")),
+        (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("bar", 2, "xyz"), Position3D("baz", 2, "xyz"),
+        Position3D("foo", 2, "xyz"), Position3D("foo", 4, "xyz")))
+  }
+
+  it should "return its second over multiple coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Over(Second), List((List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+        (List(2), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("bar", 2, "xyz"), Position3D("baz", 2, "xyz"),
+        Position3D("foo", 2, "xyz"), Position3D("foo", 4, "xyz")))
+  }
+
+  it should "return its second along multiple coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Along(Second), List((List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), (List(Position2D("foo", "xyz")),
+        (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("foo", 1, "xyz"), Position3D("foo", 2, "xyz"),
+        Position3D("qux", 1, "xyz")))
+  }
+
+  it should "return its third over multiple coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Over(Third), List(("xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+        ("xyz", (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (data3.map(_.position).sorted)
+  }
+
+  it should "return its third along multiple coordinates in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .which(Along(Third), List((List(Position2D("foo", 1), Position2D("qux", 1)),
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), (List(Position2D("foo", 2)),
+        (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))))
+      .toLocalIterator
+      .toList.sorted should be (List(Position3D("foo", 2, "xyz"), Position3D("qux", 1, "xyz")))
+  }
+}
+
+class TestScaldingMatrixGet extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.get" should {
     "return its cells in 1D" in {
@@ -1503,7 +2469,41 @@ class TestMatrixGet extends WordSpec with Matchers with TBddDsl with TestMatrix 
   }
 }
 
-class TestMatrixToMap extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixGet extends FlatSpec with Matchers with TestMatrix {
+
+  implicit val sc = TestSpark.spark
+
+  "A Matrix.get" should "return its cells in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .get("qux")
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its cells in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .get(List(Position2D("foo", 3), Position2D("qux", 1), Position2D("baz", 4)))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its cells in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .get(List(Position3D("foo", 3, "xyz"), Position3D("qux", 1, "xyz"), Position3D("baz", 4, "xyz")))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+}
+
+class TestScaldingMatrixToMap extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.toMap" should {
     "return its first over map in 1D" in {
@@ -1751,7 +2751,186 @@ class TestMatrixToMap extends WordSpec with Matchers with TBddDsl with TestMatri
   }
 }
 
-class TestMatrixReduce extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixToMap extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.toMap" should "return its first over map in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .toMap(Over(First)) should be (data1.map { case c => c.position -> c.content }.toMap)
+  }
+
+  it should "return its first over map in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .toMap(Over(First)) should be (Map(
+        Position1D("foo") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+          Position1D(2) -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+          Position1D(3) -> Content(NominalSchema[Codex.StringCodex](), "9.42"),
+          Position1D(4) -> Content(DateSchema[Codex.DateTimeCodex](),
+            (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Position1D("bar") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+          Position1D(2) -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+          Position1D(3) -> Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Position1D("baz") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "9.42"),
+          Position1D(2) -> Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Position1D("qux") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first along map in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .toMap(Along(First)) should be (Map(
+        Position1D(1) -> Map(Position1D("foo") -> Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+          Position1D("bar") -> Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+          Position1D("baz") -> Content(OrdinalSchema[Codex.StringCodex](), "9.42"),
+          Position1D("qux") -> Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Position1D(2) -> Map(Position1D("foo") -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+          Position1D("bar") -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+          Position1D("baz") -> Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Position1D(3) -> Map(Position1D("foo") -> Content(NominalSchema[Codex.StringCodex](), "9.42"),
+          Position1D("bar") -> Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Position1D(4) -> Map(Position1D("foo") -> Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second over map in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .toMap(Over(Second)) should be (Map(
+        Position1D(1) -> Map(Position1D("foo") -> Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+          Position1D("bar") -> Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+          Position1D("baz") -> Content(OrdinalSchema[Codex.StringCodex](), "9.42"),
+          Position1D("qux") -> Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Position1D(2) -> Map(Position1D("foo") -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+          Position1D("bar") -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+          Position1D("baz") -> Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Position1D(3) -> Map(Position1D("foo") -> Content(NominalSchema[Codex.StringCodex](), "9.42"),
+          Position1D("bar") -> Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Position1D(4) -> Map(Position1D("foo") -> Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second along map in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .toMap(Along(Second)) should be (Map(
+        Position1D("foo") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+          Position1D(2) -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+          Position1D(3) -> Content(NominalSchema[Codex.StringCodex](), "9.42"),
+          Position1D(4) -> Content(DateSchema[Codex.DateTimeCodex](),
+            (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Position1D("bar") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+          Position1D(2) -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+          Position1D(3) -> Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Position1D("baz") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "9.42"),
+          Position1D(2) -> Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Position1D("qux") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first over map in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .toMap(Over(First)) should be (Map(
+        Position1D("foo") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+          Position2D(2, "xyz") -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+          Position2D(3, "xyz") -> Content(NominalSchema[Codex.StringCodex](), "9.42"),
+          Position2D(4, "xyz") -> Content(DateSchema[Codex.DateTimeCodex](),
+            (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Position1D("bar") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+          Position2D(2, "xyz") -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+          Position2D(3, "xyz") -> Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Position1D("baz") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "9.42"),
+          Position2D(2, "xyz") -> Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Position1D("qux") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first along map in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .toMap(Along(First)) should be (Map(
+        Position2D(1, "xyz") -> Map(Position1D("foo") -> Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+          Position1D("bar") -> Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+          Position1D("baz") -> Content(OrdinalSchema[Codex.StringCodex](), "9.42"),
+          Position1D("qux") -> Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Position2D(2, "xyz") -> Map(Position1D("foo") -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+          Position1D("bar") -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+          Position1D("baz") -> Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Position2D(3, "xyz") -> Map(Position1D("foo") -> Content(NominalSchema[Codex.StringCodex](), "9.42"),
+          Position1D("bar") -> Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Position2D(4, "xyz") -> Map(Position1D("foo") -> Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second over map in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .toMap(Over(Second)) should be (Map(
+        Position1D(1) -> Map(Position2D("foo", "xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+          Position2D("bar", "xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+          Position2D("baz", "xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "9.42"),
+          Position2D("qux", "xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Position1D(2) -> Map(Position2D("foo", "xyz") -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+          Position2D("bar", "xyz") -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+          Position2D("baz", "xyz") -> Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Position1D(3) -> Map(Position2D("foo", "xyz") -> Content(NominalSchema[Codex.StringCodex](), "9.42"),
+          Position2D("bar", "xyz") -> Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Position1D(4) -> Map(Position2D("foo", "xyz") -> Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second along map in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .toMap(Along(Second)) should be (Map(
+        Position2D("foo", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+          Position1D(2) -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+          Position1D(3) -> Content(NominalSchema[Codex.StringCodex](), "9.42"),
+          Position1D(4) -> Content(DateSchema[Codex.DateTimeCodex](),
+            (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Position2D("bar", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+          Position1D(2) -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+          Position1D(3) -> Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Position2D("baz", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "9.42"),
+          Position1D(2) -> Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Position2D("qux", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third over map in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .toMap(Over(Third)) should be (Map(Position1D("xyz") -> Map(
+        Position2D("foo", 1) -> Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+        Position2D("bar", 1) -> Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+        Position2D("baz", 1) -> Content(OrdinalSchema[Codex.StringCodex](), "9.42"),
+        Position2D("qux", 1) -> Content(OrdinalSchema[Codex.StringCodex](), "12.56"),
+        Position2D("foo", 2) -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+        Position2D("bar", 2) -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+        Position2D("baz", 2) -> Content(DiscreteSchema[Codex.LongCodex](), 19),
+        Position2D("foo", 3) -> Content(NominalSchema[Codex.StringCodex](), "9.42"),
+        Position2D("bar", 3) -> Content(OrdinalSchema[Codex.LongCodex](), 19),
+        Position2D("foo", 4) -> Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its third along map in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .toMap(Along(Third)) should be (Map(
+        Position2D("foo", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Position2D("foo", 2) -> Map(Position1D("xyz") -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Position2D("foo", 3) -> Map(Position1D("xyz") -> Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Position2D("foo", 4) -> Map(Position1D("xyz") -> Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Position2D("bar", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Position2D("bar", 2) -> Map(Position1D("xyz") -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Position2D("bar", 3) -> Map(Position1D("xyz") -> Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Position2D("baz", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Position2D("baz", 2) -> Map(Position1D("xyz") -> Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Position2D("qux", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+}
+
+class TestScaldingMatrixReduce extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   val ext = ValuePipe(Map(Position1D("foo") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1.0 / 1),
     Position1D("bar") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1.0 / 2),
@@ -2556,8 +3735,631 @@ class TestMatrixReduce extends WordSpec with Matchers with TBddDsl with TestMatr
     }
   }
 }
+/* Doesn't compile yet (missing ClassTag[reducer.T])
+class TestSparkMatrixReduce extends FlatSpec with Matchers with TestMatrix {
 
-class TestMatrixPartition extends WordSpec with Matchers with TBddDsl with TestMatrix {
+  val ext = Map(Position1D("foo") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1.0 / 1),
+    Position1D("bar") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1.0 / 2),
+    Position1D("baz") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1.0 / 3),
+    Position1D("qux") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1.0 / 4),
+    Position1D("foo.2") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1),
+    Position1D("bar.2") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1),
+    Position1D("baz.2") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1),
+    Position1D("qux.2") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1),
+    Position1D(1) -> Content(ContinuousSchema[Codex.DoubleCodex](), 1.0 / 2),
+    Position1D(2) -> Content(ContinuousSchema[Codex.DoubleCodex](), 1.0 / 4),
+    Position1D(3) -> Content(ContinuousSchema[Codex.DoubleCodex](), 1.0 / 6),
+    Position1D(4) -> Content(ContinuousSchema[Codex.DoubleCodex](), 1.0 / 8),
+    Position1D("1.2") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1),
+    Position1D("2.2") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1),
+    Position1D("3.2") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1),
+    Position1D("4.2") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1),
+    Position1D("xyz") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1 / 3.14),
+    Position1D("xyz.2") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1 / 6.28))
+
+  "A Matrix.reduce" should "return its first over aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduce(Over(First), Min())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D("baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position1D("qux"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its first along aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduce(Along(First), Max())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D(1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position1D(3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position1D(4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second over aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduce(Over(Second), Max())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D(1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position1D(3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position1D(4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second along aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduce(Along(Second), Min())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D("baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position1D("qux"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its first over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduce(Over(First), Min())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D("baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position1D("qux"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its first along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduce(Along(First), Max())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D(2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D(3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D(4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduce(Over(Second), Max())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D(1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position1D(3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position1D(4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduce(Along(Second), Min())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("baz", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("qux", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its third over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduce(Over(Third), Max())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84))))
+  }
+
+  it should "return its third along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduce(Along(Third), Min())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("foo", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  "A Matrix.reduceWithValue" should "return its first over aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceWithValue(Over(First), WeightedSum(First), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+        Cell(Position1D("baz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 3))),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+        Cell(Position1D("qux"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 4)))))
+  }
+
+  it should "return its first along aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceWithValue(Along(First), WeightedSum(Second), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D(1), Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+        Cell(Position1D(3), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 6))),
+        Cell(Position1D(4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 8)))))
+  }
+
+  it should "return its second over aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceWithValue(Over(Second), WeightedSum(Second), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D(1), Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+        Cell(Position1D(3), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 6))),
+        Cell(Position1D(4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 8)))))
+  }
+
+  it should "return its second along aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceWithValue(Along(Second), WeightedSum(First), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+        Cell(Position1D("baz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 3))),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+        Cell(Position1D("qux"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 4)))))
+  }
+
+  it should "return its first over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceWithValue(Over(First), WeightedSum(First), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+        Cell(Position1D("baz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 3))),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+        Cell(Position1D("qux"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 4)))))
+  }
+
+  it should "return its first along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceWithValue(Along(First), WeightedSum(Second), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+        Cell(Position2D(2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+        Cell(Position2D(3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 6))),
+        Cell(Position2D(4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 8)))))
+  }
+
+  it should "return its second over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceWithValue(Over(Second), WeightedSum(Second), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D(1), Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+        Cell(Position1D(3), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 6))),
+        Cell(Position1D(4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 8)))))
+  }
+
+  it should "return its second along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceWithValue(Along(Second), WeightedSum(First), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+        Cell(Position2D("baz", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 3))),
+        Cell(Position2D("foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+        Cell(Position2D("qux", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 4)))))
+  }
+
+  it should "return its third over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceWithValue(Over(Third), WeightedSum(Third), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(Cell(Position1D("xyz"), Content(ContinuousSchema[Codex.DoubleCodex](),
+        (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 3.14))))
+  }
+
+  it should "return its third along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceWithValue(Along(Third), WeightedSum(Third), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 3.14)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 3.14)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 3.14)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 3.14)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 3.14)),
+        Cell(Position2D("foo", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 / 3.14)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 3.14)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 3.14)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 3.14)),
+        Cell(Position2D("qux", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 3.14))))
+  }
+
+  "A Matrix.reduceAndExpand" should "return its first over aggregates in 1D" in {
+    TestSpark.spark
+      .parallelize(num1)
+      .reduceAndExpand(Over(First), Min("min"))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("baz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("qux", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its first along aggregates in 1D" in {
+    TestSpark.spark
+      .parallelize(num1)
+      .reduceAndExpand(Along(First), List(Min("min"), Max("max")))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("max"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D("min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14))))
+  }
+
+  it should "return its first over aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceAndExpand(Over(First), Min("min"))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("baz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("qux", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its first along aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceAndExpand(Along(First), List(Min("min"), Max("max")))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D(1, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D(2, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D(2, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D(3, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D(3, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D(4, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D(4, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second over aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceAndExpand(Over(Second), List(Min("min"), Max("max")))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D(1, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D(2, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D(2, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D(3, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D(3, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D(4, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D(4, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second along aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceAndExpand(Along(Second), Min("min"))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("baz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("qux", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its first over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpand(Over(First), Min("min"))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("baz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("qux", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its first along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpand(Along(First), List(Min("min"), Max("max")))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D(1, "xyz", "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D(1, "xyz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D(2, "xyz", "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D(2, "xyz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D(3, "xyz", "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D(3, "xyz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D(4, "xyz", "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D(4, "xyz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpand(Over(Second), List(Min("min"), Max("max")))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D(1, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D(2, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D(2, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D(3, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D(3, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D(4, "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D(4, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpand(Along(Second), Min("min"))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", "xyz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("baz", "xyz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("foo", "xyz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("qux", "xyz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its third over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpand(Over(Third), List(Min("min"), Max("max")))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("xyz", "max"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("xyz", "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14))))
+  }
+
+  it should "return its third along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpand(Along(Third), Min("min"))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar", 2, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("baz", 1, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("baz", 2, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("foo", 1, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("foo", 4, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 1, "min"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  "A Matrix.reduceAndExpandWithValue" should "return its first over aggregates in 1D" in {
+    TestSpark.spark
+      .parallelize(num1)
+      .reduceAndExpandWithValue(Over(First), WeightedSum(First, "sum"), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 2)),
+        Cell(Position2D("baz", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 * (1.0 / 3))),
+        Cell(Position2D("foo", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 / 1)),
+        Cell(Position2D("qux", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 4))))
+  }
+
+  it should "return its first along aggregates in 1D" in {
+    TestSpark.spark
+      .parallelize(num1)
+      .reduceAndExpandWithValue(Along(First), List(WeightedSum(First, "sum.1"), WeightedSum(First, "sum.2", "%1$s.2")),
+        ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D("sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 31.40))))
+  }
+
+  it should "return its first over aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceAndExpandWithValue(Over(First), WeightedSum(First, "sum"), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "sum"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+        Cell(Position2D("baz", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 3))),
+        Cell(Position2D("foo", "sum"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+        Cell(Position2D("qux", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 4)))))
+  }
+
+  it should "return its first along aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceAndExpandWithValue(Along(First), List(WeightedSum(Second, "sum.1"),
+        WeightedSum(First, "sum.2", "%1$s.2")), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "sum.1"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+        Cell(Position2D(1, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28 + 9.42 + 12.56)),
+        Cell(Position2D(2, "sum.1"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+        Cell(Position2D(2, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56 + 18.84)),
+        Cell(Position2D(3, "sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 6))),
+        Cell(Position2D(3, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position2D(4, "sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 8))),
+        Cell(Position2D(4, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second over aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceAndExpandWithValue(Over(Second), List(WeightedSum(Second, "sum.1"),
+        WeightedSum(Second, "sum.2", "%1$s.2")), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "sum.1"),
+              Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+        Cell(Position2D(1, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28 + 9.42 + 12.56)),
+        Cell(Position2D(2, "sum.1"),
+              Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+        Cell(Position2D(2, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56 + 18.84)),
+        Cell(Position2D(3, "sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 6))),
+        Cell(Position2D(3, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position2D(4, "sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 8))),
+        Cell(Position2D(4, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second along aggregates in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .reduceAndExpandWithValue(Along(Second), WeightedSum(First, "sum"), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "sum"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+        Cell(Position2D("baz", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 3))),
+        Cell(Position2D("foo", "sum"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+        Cell(Position2D("qux", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 4)))))
+  }
+
+  it should "return its first over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpandWithValue(Over(First), WeightedSum(First, "sum"), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "sum"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+        Cell(Position2D("baz", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 3))),
+        Cell(Position2D("foo", "sum"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+        Cell(Position2D("qux", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 4)))))
+  }
+
+  it should "return its first along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpandWithValue(Along(First), List(WeightedSum(Second, "sum.1"),
+        WeightedSum(Second, "sum.2", "%1$s.2")), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D(1, "xyz", "sum.1"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+        Cell(Position3D(1, "xyz", "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28 + 9.42 + 12.56)),
+        Cell(Position3D(2, "xyz", "sum.1"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+        Cell(Position3D(2, "xyz", "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56 + 18.84)),
+        Cell(Position3D(3, "xyz", "sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 6))),
+        Cell(Position3D(3, "xyz", "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position3D(4, "xyz", "sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 8))),
+        Cell(Position3D(4, "xyz", "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpandWithValue(Over(Second), List(WeightedSum(Second, "sum.1"),
+        WeightedSum(Second, "sum.2", "%1$s.2")), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "sum.1"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+        Cell(Position2D(1, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28 + 9.42 + 12.56)),
+        Cell(Position2D(2, "sum.1"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+        Cell(Position2D(2, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56 + 18.84)),
+        Cell(Position2D(3, "sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 6))),
+        Cell(Position2D(3, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position2D(4, "sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 8))),
+        Cell(Position2D(4, "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its second along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpandWithValue(Along(Second), WeightedSum(First, "sum"), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", "xyz", "sum"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+        Cell(Position3D("baz", "xyz", "sum"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 3))),
+        Cell(Position3D("foo", "xyz", "sum"),
+          Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+        Cell(Position3D("qux", "xyz", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 * (1.0 / 4)))))
+  }
+
+  it should "return its third over aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpandWithValue(Over(Third), List(WeightedSum(Third, "sum.1"), WeightedSum(Third, "sum.2", "%1$s.2")),
+        ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("xyz", "sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 3.14)),
+        Cell(Position2D("xyz", "sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 6.28))))
+  }
+
+  it should "return its third along aggregates in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .reduceAndExpandWithValue(Along(Third), WeightedSum(Third, "sum"), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 3.14)),
+        Cell(Position3D("bar", 2, "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 3.14)),
+        Cell(Position3D("bar", 3, "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 3.14)),
+        Cell(Position3D("baz", 1, "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 3.14)),
+        Cell(Position3D("baz", 2, "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 3.14)),
+        Cell(Position3D("foo", 1, "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 / 3.14)),
+        Cell(Position3D("foo", 2, "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 3.14)),
+        Cell(Position3D("foo", 3, "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 3.14)),
+        Cell(Position3D("foo", 4, "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 3.14)),
+        Cell(Position3D("qux", 1, "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 3.14))))
+  }
+}
+*/
+class TestScaldingMatrixPartition extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   case class TestPartitioner(dim: Dimension) extends Partitioner with Assign {
     type T = String
@@ -2719,7 +4521,132 @@ class TestMatrixPartition extends WordSpec with Matchers with TBddDsl with TestM
   }
 }
 
-class TestMatrixRefine extends WordSpec with Matchers with TBddDsl with TestMatrix {
+object TestMatrixPartition {
+  case class TestPartitioner(dim: Dimension) extends Partitioner with Assign {
+    type T = String
+    def assign[P <: Position](pos: P): Collection[T] = Collection(pos(dim).toShortString)
+  }
+
+  case class TestPartitionerWithValue() extends Partitioner with AssignWithValue {
+    type T = String
+    type V = Dimension
+    def assign[P <: Position](pos: P, ext: V): Collection[T] = Collection(pos(ext).toShortString)
+  }
+
+  def TupleOrdering[P <: Position]() = new Ordering[(String, Cell[P])] {
+    def compare(x: (String, Cell[P]), y: (String, Cell[P])): Int = {
+      x._1.compare(y._1) match {
+        case cmp if (cmp == 0) => x._2.position.compare(y._2.position)
+        case cmp => cmp
+      }
+    }
+  }
+}
+
+class TestSparkMatrixPartition extends FlatSpec with Matchers with TestMatrix {
+
+  implicit val TO1 = TestMatrixPartition.TupleOrdering[Position1D]
+  implicit val TO2 = TestMatrixPartition.TupleOrdering[Position2D]
+  implicit val TO3 = TestMatrixPartition.TupleOrdering[Position3D]
+
+  "A Matrix.partition" should "return its first partitions in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .partition(TestMatrixPartition.TestPartitioner(First))
+      .toLocalIterator
+      .toList.sorted should be (data1.map { case c => (c.position(First).toShortString, c) }.sorted)
+  }
+
+  it should "return its first partitions in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .partition(TestMatrixPartition.TestPartitioner(First))
+      .toLocalIterator
+      .toList.sorted should be (data2.map { case c => (c.position(First).toShortString, c) }.sorted)
+  }
+
+  it should "return its second partitions in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .partition(TestMatrixPartition.TestPartitioner(Second))
+      .toLocalIterator
+      .toList.sorted should be (data2.map { case c => (c.position(Second).toShortString, c) }.sorted)
+  }
+
+  it should "return its first partitions in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .partition(TestMatrixPartition.TestPartitioner(First))
+      .toLocalIterator
+      .toList.sorted should be (data3.map { case c => (c.position(First).toShortString, c) }.sorted)
+  }
+
+  it should "return its second partitions in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .partition(TestMatrixPartition.TestPartitioner(Second))
+      .toLocalIterator
+      .toList.sorted should be (data3.map { case c => (c.position(Second).toShortString, c) }.sorted)
+  }
+
+  it should "return its third partitions in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .partition(TestMatrixPartition.TestPartitioner(Third))
+      .toLocalIterator
+      .toList.sorted should be (data3.map { case c => (c.position(Third).toShortString, c) }.sorted)
+  }
+
+  "A Matrix.partitionWithValue" should "return its first partitions in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .partitionWithValue(TestMatrixPartition.TestPartitionerWithValue(), First)
+      .toLocalIterator
+      .toList.sorted should be (data1.map { case c => (c.position(First).toShortString, c) }.sorted)
+  }
+
+  it should "return its first partitions in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .partitionWithValue(TestMatrixPartition.TestPartitionerWithValue(), First)
+      .toLocalIterator
+      .toList.sorted should be (data2.map { case c => (c.position(First).toShortString, c) }.sorted)
+  }
+
+  it should "return its second partitions in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .partitionWithValue(TestMatrixPartition.TestPartitionerWithValue(), Second)
+      .toLocalIterator
+      .toList.sorted should be (data2.map { case c => (c.position(Second).toShortString, c) }.sorted)
+  }
+
+  it should "return its first partitions in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .partitionWithValue(TestMatrixPartition.TestPartitionerWithValue(), First)
+      .toLocalIterator
+      .toList.sorted should be (data3.map { case c => (c.position(First).toShortString, c) }.sorted)
+  }
+
+  it should "return its second partitions in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .partitionWithValue(TestMatrixPartition.TestPartitionerWithValue(), Second)
+      .toLocalIterator
+      .toList.sorted should be (data3.map { case c => (c.position(Second).toShortString, c) }.sorted)
+  }
+
+  it should "return its third partitions in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .partitionWithValue(TestMatrixPartition.TestPartitionerWithValue(), Third)
+      .toLocalIterator
+      .toList.sorted should be (data3.map { case c => (c.position(Third).toShortString, c) }.sorted)
+  }
+}
+
+class TestScaldingMatrixRefine extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   def filter[P <: Position](cell: Cell[P]): Boolean = {
     cell.position.coordinates.contains(StringValue("foo")) || cell.position.coordinates.contains(LongValue(2))
@@ -2828,7 +4755,92 @@ class TestMatrixRefine extends WordSpec with Matchers with TBddDsl with TestMatr
   }
 }
 
-class TestMatrixSample extends WordSpec with Matchers with TBddDsl with TestMatrix {
+object TestMatrixRefine {
+  def filter[P <: Position](cell: Cell[P]): Boolean = {
+    cell.position.coordinates.contains(StringValue("foo")) || cell.position.coordinates.contains(LongValue(2))
+  }
+
+  def filterWithValue[P <: Position](cell: Cell[P], ext: String): Boolean = {
+    cell.position.coordinates.contains(StringValue(ext))
+  }
+}
+
+class TestSparkMatrixRefine extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.refine" should "return its refined data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .refine(TestMatrixRefine.filter)
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14"))))
+  }
+
+  it should "return its refined data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .refine(TestMatrixRefine.filter)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its refined data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .refine(TestMatrixRefine.filter)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  "A Matrix.refineWithValue" should "return its refined data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .refineWithValue(TestMatrixRefine.filterWithValue, "foo")
+      .toLocalIterator
+      .toList should be (List(Cell(Position1D("foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14"))))
+  }
+
+  it should "return its refined data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .refineWithValue(TestMatrixRefine.filterWithValue, "foo")
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its refined data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .refineWithValue(TestMatrixRefine.filterWithValue, "foo")
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+}
+
+class TestScaldingMatrixSample extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   case class TestSampler() extends Sampler with Select {
     def select[P <: Position](pos: P): Boolean = {
@@ -2940,7 +4952,98 @@ class TestMatrixSample extends WordSpec with Matchers with TBddDsl with TestMatr
   }
 }
 
-class TestMatrixDomain extends WordSpec with Matchers with TBddDsl with TestMatrix {
+object TestMatrixSample {
+
+  case class TestSampler() extends Sampler with Select {
+    def select[P <: Position](pos: P): Boolean = {
+      pos.coordinates.contains(StringValue("foo")) || pos.coordinates.contains(LongValue(2))
+    }
+  }
+
+  case class TestSamplerWithValue() extends Sampler with SelectWithValue {
+    type V = String
+    def select[P <: Position](pos: P, ext: V): Boolean = pos.coordinates.contains(StringValue(ext))
+  }
+}
+
+class TestSparkMatrixSample extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.sample" should "return its sampled data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .sample(TestMatrixSample.TestSampler())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14"))))
+  }
+
+  it should "return its sampled data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .sample(TestMatrixSample.TestSampler())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its sampled data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .sample(TestMatrixSample.TestSampler())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  "A Matrix.sampleWithValue" should "return its sampled data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .sampleWithValue(TestMatrixSample.TestSamplerWithValue(), "foo")
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14"))))
+  }
+
+  it should "return its sampled data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .sampleWithValue(TestMatrixSample.TestSamplerWithValue(), "foo")
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its sampled data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .sampleWithValue(TestMatrixSample.TestSamplerWithValue(), "foo")
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+}
+
+class TestScaldingMatrixDomain extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.domain" should {
     "return its domain in 1D" in {
@@ -3031,7 +5134,76 @@ class TestMatrixDomain extends WordSpec with Matchers with TBddDsl with TestMatr
   }
 }
 
-class TestMatrixJoin extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixDomain extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.domain" should "return its domain in 1D" in {
+    TestSpark.spark
+      .parallelize(List(Cell(Position1D(1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D(3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42))))
+      .domain()
+      .toLocalIterator
+      .toList.sorted should be (List(Position1D(1), Position1D(2), Position1D(3)))
+  }
+
+  it should "return its domain in 2D" in {
+    TestSpark.spark
+      .parallelize(List(Cell(Position2D(1, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D(2, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D(3, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42))))
+      .domain()
+      .toLocalIterator
+      .toList.sorted should be (List(Position2D(1, 1), Position2D(1, 2), Position2D(1, 3), Position2D(2, 1),
+        Position2D(2, 2), Position2D(2, 3), Position2D(3, 1), Position2D(3, 2), Position2D(3, 3)))
+  }
+
+  it should "return its domain in 3D" in {
+    val l = List(1, 2, 3)
+    val i = for (a <- l; b <- l; c <- l) yield Iterable(Position3D(a, b, c))
+
+    TestSpark.spark
+      .parallelize(List(Cell(Position3D(1, 1, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D(2, 2, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D(3, 3, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D(1, 2, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 0))))
+      .domain()
+      .toLocalIterator
+      .toList.sorted should be (i.toList.flatten.sorted)
+  }
+
+  it should "return its domain in 4D" in {
+    val l = List(1, 2, 3, 4)
+    val i = for (a <- l; b <- l; c <- l; d <- l) yield Iterable(Position4D(a, b, c, d))
+
+    TestSpark.spark
+      .parallelize(List(Cell(Position4D(1, 4, 2, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position4D(2, 3, 1, 4), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position4D(3, 2, 4, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position4D(4, 1, 3, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position4D(1, 2, 3, 4), Content(ContinuousSchema[Codex.DoubleCodex](), 0))))
+      .domain()
+      .toLocalIterator
+      .toList.sorted should be (i.toList.flatten.sorted)
+  }
+
+  it should "return its domain in 5D" in {
+    val l = List(1, 2, 3, 4, 5)
+    val i = for (a <- l; b <- l; c <- l; d <- l; e <- l) yield Iterable(Position5D(a, b, c, d, e))
+
+    TestSpark.spark
+      .parallelize(List(Cell(Position5D(1, 5, 4, 3, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position5D(2, 1, 5, 4, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position5D(3, 2, 1, 5, 4), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position5D(4, 3, 2, 1, 5), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position5D(5, 4, 3, 2, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position5D(1, 2, 3, 4, 5), Content(ContinuousSchema[Codex.DoubleCodex](), 0))))
+      .domain()
+      .toLocalIterator
+      .toList.sorted should be (i.toList.flatten.sorted)
+  }
+}
+
+class TestScaldingMatrixJoin extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.join" should {
     "return its first over join in 2D" in {
@@ -3337,7 +5509,281 @@ class TestMatrixJoin extends WordSpec with Matchers with TBddDsl with TestMatrix
   }
 }
 
-class TestMatrixUnique extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixJoin extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.join" should "return its first over join in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("bar", 5), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("baz", 5), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("qux", 5), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position2D("bar", 6), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("baz", 6), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("bar", 7), Content(OrdinalSchema[Codex.LongCodex](), 19))))
+
+    TestSpark.spark
+      .parallelize(data2)
+      .join(Over(First), that)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("bar", 5), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 6), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 7), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 5), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 6), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position2D("qux", 5), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first along join in 2D" in {
+    val cells = TestSpark.spark
+      .parallelize(data2)
+
+    TestSpark.spark
+      .parallelize(List(Cell(Position2D("foo.2", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("bar.2", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("baz.2", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo.2", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("bar.2", 3), Content(OrdinalSchema[Codex.LongCodex](), 19))))
+      .join(Along(First), cells)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("bar.2", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar.2", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz.2", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo.2", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo.2", 3), Content(NominalSchema[Codex.StringCodex](), "9.42"))))
+  }
+
+  it should "return its second over join in 2D" in {
+    val cells = TestSpark.spark
+      .parallelize(data2)
+
+    TestSpark.spark
+      .parallelize(List(Cell(Position2D("foo.2", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("bar.2", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("baz.2", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo.2", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("bar.2", 3), Content(OrdinalSchema[Codex.LongCodex](), 19))))
+      .join(Over(Second), cells)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("bar.2", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar.2", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz.2", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo.2", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo.2", 3), Content(NominalSchema[Codex.StringCodex](), "9.42"))))
+  }
+
+  it should "return its second along join in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("bar", 5), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("baz", 5), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("qux", 5), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position2D("bar", 6), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("baz", 6), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("bar", 7), Content(OrdinalSchema[Codex.LongCodex](), 19))))
+
+    TestSpark.spark
+      .parallelize(data2)
+      .join(Along(Second), that)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("bar", 5), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 6), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 7), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 5), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 6), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position2D("qux", 5), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first over join in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19))))
+
+    TestSpark.spark
+      .parallelize(data3)
+      .join(Over(First), that)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first along join in 3D" in {
+    val cells = TestSpark.spark
+      .parallelize(data3)
+
+    TestSpark.spark
+      .parallelize(List(Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19))))
+      .join(Along(First), cells)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42"))))
+  }
+
+  it should "return its second over join in 3D" in {
+    val cells = TestSpark.spark
+      .parallelize(data3)
+
+    TestSpark.spark
+      .parallelize(List(Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19))))
+      .join(Over(Second), cells)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42"))))
+  }
+
+  it should "return its second along join in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19))))
+
+    TestSpark.spark
+      .parallelize(data3)
+      .join(Along(Second), that)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third over join in 3D" in {
+    val cells = TestSpark.spark
+      .parallelize(data3)
+
+    TestSpark.spark
+      .parallelize(List(Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19))))
+      .join(Over(Third), cells)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third along join in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 1, "xyz.2"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("baz", 1, "xyz.2"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("qux", 1, "xyz.2"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position3D("bar", 2, "xyz.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("baz", 2, "xyz.2"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("bar", 3, "xyz.2"), Content(OrdinalSchema[Codex.LongCodex](), 19))))
+
+    TestSpark.spark
+      .parallelize(data3)
+      .join(Along(Third), that)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 1, "xyz.2"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 2, "xyz.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("bar", 3, "xyz.2"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 1, "xyz.2"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 2, "xyz.2"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position3D("qux", 1, "xyz.2"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+}
+
+class TestScaldingMatrixUnique extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.unique" should {
     "return its content in 1D" in {
@@ -3637,7 +6083,259 @@ class TestMatrixUnique extends WordSpec with Matchers with TBddDsl with TestMatr
   }
 }
 
-class TestMatrixPairwise extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixUnique extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.unique" should "return its content in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .unique()
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(Content(OrdinalSchema[Codex.StringCodex](), "12.56"),
+        Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+        Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+        Content(OrdinalSchema[Codex.StringCodex](), "9.42")))
+  }
+
+  it should "return its first over content in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .unique(Over(First))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its content in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .unique()
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+        Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+        Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")),
+        Content(DiscreteSchema[Codex.LongCodex](), 19),
+        Content(NominalSchema[Codex.StringCodex](), "9.42"),
+        Content(OrdinalSchema[Codex.LongCodex](), 19),
+        Content(OrdinalSchema[Codex.StringCodex](), "12.56"),
+        Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+        Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+        Content(OrdinalSchema[Codex.StringCodex](), "9.42")))
+  }
+
+  it should "return its first over content in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .unique(Over(First))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("baz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D("foo"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first along content in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .unique(Along(First))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D(2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D(3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D(3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D(4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second over content in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .unique(Over(Second))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D(2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D(3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D(3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D(4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second along content in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .unique(Along(Second))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("baz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D("foo"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its content in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .unique()
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+        Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+        Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")),
+        Content(DiscreteSchema[Codex.LongCodex](), 19),
+        Content(NominalSchema[Codex.StringCodex](), "9.42"),
+        Content(OrdinalSchema[Codex.LongCodex](), 19),
+        Content(OrdinalSchema[Codex.StringCodex](), "12.56"),
+        Content(OrdinalSchema[Codex.StringCodex](), "3.14"),
+        Content(OrdinalSchema[Codex.StringCodex](), "6.28"),
+        Content(OrdinalSchema[Codex.StringCodex](), "9.42")))
+  }
+
+  it should "return its first over content in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .unique(Over(First))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("baz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D("foo"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first along content in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .unique(Along(First))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position2D(1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position2D(1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D(1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D(1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D(2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D(2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D(2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D(3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D(3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D(4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second over content in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .unique(Over(Second))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D(2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D(3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D(3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D(4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second along content in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .unique(Along(Second))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position2D("bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("bar", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("baz", "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("foo", "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("qux", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third over content in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .unique(Over(Third))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position1D("xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D("xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D("xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position1D("xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position1D("xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D("xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42"))))
+  }
+
+  it should "return its third along content in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .unique(Along(Third))
+      .toLocalIterator
+      .toList.sortBy(_.toString) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+}
+
+class TestScaldingMatrixPairwise extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   case class PlusX() extends Operator with ComputeWithValue {
     type V = Double
@@ -4862,7 +7560,1073 @@ class TestMatrixPairwise extends WordSpec with Matchers with TBddDsl with TestMa
   }
 }
 
-class TestMatrixChange extends WordSpec with Matchers with TBddDsl with TestMatrix {
+object TestMatrixPairwise {
+
+  case class PlusX() extends Operator with ComputeWithValue {
+    type V = Double
+
+    val plus = Plus()
+
+    def compute[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(left: Cell[slice.S], right: Cell[slice.S],
+      rem: slice.R): Collection[Cell[slice.R#M]] = {
+      Collection(plus.compute(slice)(left, right, rem).toList.map {
+        case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema[Codex.DoubleCodex](), d + ext)) 
+      })
+    }
+  }
+
+  case class MinusX() extends Operator with ComputeWithValue {
+    type V = Double
+
+    val minus = Minus()
+
+    def compute[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(left: Cell[slice.S], right: Cell[slice.S],
+      rem: slice.R): Collection[Cell[slice.R#M]] = {
+      Collection(minus.compute(slice)(left, right, rem).toList.map {
+        case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema[Codex.DoubleCodex](), d - ext)) 
+      })
+    }
+  }
+}
+
+class TestSparkMatrixPairwise extends FlatSpec with Matchers with TestMatrix {
+
+  val ext = 1.0
+
+  "A Matrix.pairwise" should "return its first over pairwise in 1D" in {
+    TestSpark.spark
+      .parallelize(num1)
+      .pairwise(Over(First), Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("(baz+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position1D("(foo+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28)),
+        Cell(Position1D("(foo+baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42)),
+        Cell(Position1D("(qux+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position1D("(qux+baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position1D("(qux+foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14))))
+  }
+
+  it should "return its first over pairwise in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwise(Over(First), Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56)),
+        Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28)),
+        Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56)),
+        Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42)),
+        Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84)),
+        Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14))))
+  }
+
+  it should "return its first along pairwise in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwise(Along(First), List(Plus(), Minus()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 9.42)),
+        Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3.14)),
+        Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28)),
+        Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3.14)),
+        Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56)),
+        Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 6.28)),
+        Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3.14)),
+        Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14)),
+        Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its second over pairwise in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwise(Over(Second), List(Plus(), Minus()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 9.42)),
+        Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3.14)),
+        Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28)),
+        Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3.14)),
+        Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56)),
+        Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 6.28)),
+        Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3.14)),
+        Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14)),
+        Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its second along pairwise in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwise(Along(Second), Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56)),
+        Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28)),
+        Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56)),
+        Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42)),
+        Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84)),
+        Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14))))
+  }
+
+  it should "return its first over pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwise(Over(First), Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56)),
+        Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28)),
+        Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56)),
+        Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42)),
+        Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84)),
+        Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position3D("(qux+foo)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14))))
+  }
+
+  it should "return its first along pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwise(Along(First), List(Plus(), Minus()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(2|xyz+1|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(2|xyz+1|xyz)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 9.42)),
+        Cell(Position2D("(2|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3.14)),
+        Cell(Position2D("(2|xyz-1|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("(2|xyz-1|xyz)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("(2|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("(3|xyz+1|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28)),
+        Cell(Position2D("(3|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3.14)),
+        Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56)),
+        Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position2D("(3|xyz-1|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 6.28)),
+        Cell(Position2D("(3|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3.14)),
+        Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("(4|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14)),
+        Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(4|xyz+3|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position2D("(4|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("(4|xyz-3|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its second over pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwise(Over(Second), List(Plus(), Minus()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("(2+1)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position3D("(2+1)", "baz", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 9.42)),
+        Cell(Position3D("(2+1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3.14)),
+        Cell(Position3D("(2-1)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position3D("(2-1)", "baz", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position3D("(2-1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position3D("(3+1)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28)),
+        Cell(Position3D("(3+1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3.14)),
+        Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56)),
+        Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position3D("(3-1)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 6.28)),
+        Cell(Position3D("(3-1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3.14)),
+        Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position3D("(4+1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14)),
+        Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position3D("(4+3)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position3D("(4-1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position3D("(4-3)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its second along pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwise(Along(Second), Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42)),
+        Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84)),
+        Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position2D("(qux|xyz+foo|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14))))
+  }
+
+  it should "return its third over pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwise(Over(Third), List(Plus(), Minus()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List())
+  }
+
+  it should "return its third along pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwise(Along(Third), Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28)),
+        Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56)),
+        Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 12.56)),
+        Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28)),
+        Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56)),
+        Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 18.84)),
+        Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 9.42)),
+        Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28)),
+        Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 12.56)),
+        Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 18.84)),
+        Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42)),
+        Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 18.84)),
+        Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 6.28)),
+        Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56)),
+        Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84)),
+        Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 9.42)),
+        Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84)),
+        Cell(Position2D("(foo|2+foo|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3.14)),
+        Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 12.56)),
+        Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 9.42)),
+        Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84)),
+        Cell(Position2D("(foo|3+foo|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3.14)),
+        Cell(Position2D("(foo|3+foo|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28)),
+        Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 12.56)),
+        Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 18.84)),
+        Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 18.84)),
+        Cell(Position2D("(foo|4+foo|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14)),
+        Cell(Position2D("(foo|4+foo|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(foo|4+foo|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 12.56)),
+        Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 18.84)),
+        Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 18.84)),
+        Cell(Position2D("(qux|1+foo|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14)),
+        Cell(Position2D("(qux|1+foo|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28)),
+        Cell(Position2D("(qux|1+foo|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42)),
+        Cell(Position2D("(qux|1+foo|4)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 12.56))))
+  }
+
+  "A Matrix.pairwiseWithValue" should "return its first over pairwise in 1D" in {
+    TestSpark.spark
+      .parallelize(num1)
+      .pairwiseWithValue(Over(First), TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("(baz+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position1D("(foo+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28 + 1)),
+        Cell(Position1D("(foo+baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42 + 1)),
+        Cell(Position1D("(qux+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position1D("(qux+baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position1D("(qux+foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1))))
+  }
+
+  it should "return its first over pairwise in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseWithValue(Over(First), TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56 + 1)),
+        Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28 + 1)),
+        Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56 + 1)),
+        Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84 + 1)),
+        Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42 + 1)),
+        Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84 + 1)),
+        Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1))))
+  }
+
+  it should "return its first along pairwise in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseWithValue(Along(First), List(TestMatrixPairwise.PlusX(), TestMatrixPairwise.MinusX()), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 9.42 + 1)),
+        Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3.14 + 1)),
+        Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28 - 1)),
+        Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42 - 1)),
+        Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14 - 1)),
+        Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28 + 1)),
+        Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3.14 + 1)),
+        Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56 + 1)),
+        Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 6.28 - 1)),
+        Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3.14 - 1)),
+        Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56 - 1)),
+        Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28 - 1)),
+        Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1)),
+        Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14 - 1)),
+        Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28 - 1)),
+        Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42 - 1))))
+  }
+
+  it should "return its second over pairwise in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseWithValue(Over(Second), List(TestMatrixPairwise.PlusX(), TestMatrixPairwise.MinusX()), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 9.42 + 1)),
+        Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3.14 + 1)),
+        Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28 - 1)),
+        Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42 - 1)),
+        Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14 - 1)),
+        Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28 + 1)),
+        Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3.14 + 1)),
+        Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56 + 1)),
+        Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 6.28 - 1)),
+        Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3.14 - 1)),
+        Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56 - 1)),
+        Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28 - 1)),
+        Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1)),
+        Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14 - 1)),
+        Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28 - 1)),
+        Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42 - 1))))
+  }
+
+  it should "return its second along pairwise in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseWithValue(Along(Second), TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56 + 1)),
+        Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28 + 1)),
+        Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56 + 1)),
+        Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84 + 1)),
+        Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42 + 1)),
+        Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84 + 1)),
+        Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1))))
+  }
+
+  it should "return its first over pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseWithValue(Over(First), TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56 + 1)),
+        Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28 + 1)),
+        Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56 + 1)),
+        Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84 + 1)),
+        Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42 + 1)),
+        Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84 + 1)),
+        Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position3D("(qux+foo)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1))))
+  }
+
+  it should "return its first along pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseWithValue(Along(First), List(TestMatrixPairwise.PlusX(), TestMatrixPairwise.MinusX()), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(2|xyz+1|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(2|xyz+1|xyz)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 9.42 + 1)),
+        Cell(Position2D("(2|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3.14 + 1)),
+        Cell(Position2D("(2|xyz-1|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28 - 1)),
+        Cell(Position2D("(2|xyz-1|xyz)", "baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42 - 1)),
+        Cell(Position2D("(2|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14 - 1)),
+        Cell(Position2D("(3|xyz+1|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28 + 1)),
+        Cell(Position2D("(3|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3.14 + 1)),
+        Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56 + 1)),
+        Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position2D("(3|xyz-1|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 6.28 - 1)),
+        Cell(Position2D("(3|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3.14 - 1)),
+        Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56 - 1)),
+        Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28 - 1)),
+        Cell(Position2D("(4|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1)),
+        Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(4|xyz+3|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position2D("(4|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14 - 1)),
+        Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28 - 1)),
+        Cell(Position2D("(4|xyz-3|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42 - 1))))
+  }
+
+  it should "return its second over pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseWithValue(Over(Second), List(TestMatrixPairwise.PlusX(), TestMatrixPairwise.MinusX()), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("(2+1)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position3D("(2+1)", "baz", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 9.42 + 1)),
+        Cell(Position3D("(2+1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3.14 + 1)),
+        Cell(Position3D("(2-1)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28 - 1)),
+        Cell(Position3D("(2-1)", "baz", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42 - 1)),
+        Cell(Position3D("(2-1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14 - 1)),
+        Cell(Position3D("(3+1)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28 + 1)),
+        Cell(Position3D("(3+1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3.14 + 1)),
+        Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56 + 1)),
+        Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position3D("(3-1)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 6.28 - 1)),
+        Cell(Position3D("(3-1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3.14 - 1)),
+        Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56 - 1)),
+        Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28 - 1)),
+        Cell(Position3D("(4+1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1)),
+        Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position3D("(4+3)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position3D("(4-1)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14 - 1)),
+        Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28 - 1)),
+        Cell(Position3D("(4-3)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42 - 1))))
+  }
+
+  it should "return its second along pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseWithValue(Along(Second), TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56 + 1)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28 + 1)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56 + 1)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84 + 1)),
+        Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42 + 1)),
+        Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84 + 1)),
+        Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position2D("(qux|xyz+foo|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1))))
+  }
+
+  it should "return its third over pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseWithValue(Over(Third), List(TestMatrixPairwise.PlusX(), TestMatrixPairwise.MinusX()), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List())
+  }
+
+  it should "return its third along pairwise in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseWithValue(Along(Third), TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28 + 1)),
+        Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56 + 1)),
+        Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 12.56 + 1)),
+        Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84 + 1)),
+        Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 6.28 + 1)),
+        Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 12.56 + 1)),
+        Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 18.84 + 1)),
+        Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 9.42 + 1)),
+        Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 6.28 + 1)),
+        Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 12.56 + 1)),
+        Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 18.84 + 1)),
+        Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 9.42 + 1)),
+        Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 18.84 + 1)),
+        Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 6.28 + 1)),
+        Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 12.56 + 1)),
+        Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84 + 1)),
+        Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 9.42 + 1)),
+        Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 18.84 + 1)),
+        Cell(Position2D("(foo|2+foo|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3.14 + 1)),
+        Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 12.56 + 1)),
+        Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84 + 1)),
+        Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 9.42 + 1)),
+        Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 18.84 + 1)),
+        Cell(Position2D("(foo|3+foo|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3.14 + 1)),
+        Cell(Position2D("(foo|3+foo|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 6.28 + 1)),
+        Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 12.56 + 1)),
+        Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 18.84 + 1)),
+        Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 18.84 + 1)),
+        Cell(Position2D("(foo|4+foo|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1)),
+        Cell(Position2D("(foo|4+foo|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(foo|4+foo|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 12.56 + 1)),
+        Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 18.84 + 1)),
+        Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 18.84 + 1)),
+        Cell(Position2D("(qux|1+foo|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3.14 + 1)),
+        Cell(Position2D("(qux|1+foo|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 6.28 + 1)),
+        Cell(Position2D("(qux|1+foo|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 9.42 + 1)),
+        Cell(Position2D("(qux|1+foo|4)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 12.56 + 1))))
+  }
+
+  "A Matrix.pairwiseBetween" should "return its first over pairwise in 1D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position1D("baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2))))
+
+    TestSpark.spark
+      .parallelize(num1)
+      .pairwiseBetween(Over(First), that, Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("(baz+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1)),
+        Cell(Position1D("(foo+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1)),
+        Cell(Position1D("(foo+baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 2)),
+        Cell(Position1D("(qux+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1)),
+        Cell(Position1D("(qux+baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 2))))
+  }
+
+  it should "return its first over pairwise in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))
+
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseBetween(Over(First), that, Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1)),
+        Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2)),
+        Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1)),
+        Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 2)),
+        Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3)),
+        Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 4)),
+        Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 5)),
+        Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1)),
+        Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4))))
+  }
+
+  it should "return its first along pairwise in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 4))))
+
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseBetween(Along(First), that, List(Plus(), Minus()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1)),
+        Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3)),
+        Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 1)),
+        Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3)),
+        Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3)),
+        Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3))))
+  }
+
+  it should "return its second over pairwise in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 4))))
+
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseBetween(Over(Second), that, List(Plus(), Minus()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1)),
+        Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3)),
+        Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 1)),
+        Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3)),
+        Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3)),
+        Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3))))
+  }
+
+  it should "return its second along pairwise in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))
+
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseBetween(Along(Second), that, Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1)),
+        Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2)),
+        Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1)),
+        Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 2)),
+        Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3)),
+        Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 4)),
+        Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 5)),
+        Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1)),
+        Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4))))
+  }
+
+  it should "return its first over pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetween(Over(First), that, Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1)),
+        Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2)),
+        Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1)),
+        Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 2)),
+        Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3)),
+        Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 4)),
+        Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 5)),
+        Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1)),
+        Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4))))
+  }
+
+  it should "return its first along pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetween(Along(First), that, List(Plus(), Minus()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1)),
+        Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3)),
+        Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 1)),
+        Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3)),
+        Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3)),
+        Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3))))
+  }
+
+  it should "return its second over pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetween(Over(Second), that, List(Plus(), Minus()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1)),
+        Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3)),
+        Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 1)),
+        Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3)),
+        Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3)),
+        Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3))))
+  }
+
+  it should "return its second along pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetween(Along(Second), that, Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1)),
+        Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 2)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3)),
+        Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 4)),
+        Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 5)),
+        Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1)),
+        Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4))))
+  }
+
+  it should "return its third over pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetween(Over(Third), that, List(Plus(), Minus()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List())
+  }
+
+  it should "return its third along pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetween(Along(Third), that, Plus())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1)),
+        Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1)),
+        Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2)),
+        Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1)),
+        Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 2)),
+        Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3)),
+        Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1)),
+        Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2)),
+        Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 3)),
+        Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 4)),
+        Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1)),
+        Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 2)),
+        Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 3)),
+        Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 4)),
+        Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 5)),
+        Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 1)),
+        Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 2)),
+        Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3)),
+        Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 4)),
+        Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 5)),
+        Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1)),
+        Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 2)),
+        Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3)),
+        Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 4)),
+        Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 5)),
+        Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1)),
+        Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 2)),
+        Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3)),
+        Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4)),
+        Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 5)),
+        Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1)),
+        Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 2)),
+        Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3)),
+        Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4)),
+        Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 5))))
+  }
+
+  "A Matrix.pairwiseBetweenWithValue" should "return its first over pairwise in 1D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position1D("baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2))))
+
+    TestSpark.spark
+      .parallelize(num1)
+      .pairwiseBetweenWithValue(Over(First), that, TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("(baz+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1 + 1)),
+        Cell(Position1D("(foo+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1 + 1)),
+        Cell(Position1D("(foo+baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 2 + 1)),
+        Cell(Position1D("(qux+bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1 + 1)),
+        Cell(Position1D("(qux+baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 2 + 1))))
+  }
+
+  it should "return its first over pairwise in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))
+
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseBetweenWithValue(Over(First), that, TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1 + 1)),
+        Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2 + 1)),
+        Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1 + 1)),
+        Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 2 + 1)),
+        Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3 + 1)),
+        Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 4 + 1)),
+        Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 5 + 1)),
+        Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1 + 1)),
+        Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4 + 1))))
+  }
+
+  it should "return its first along pairwise in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 4))))
+
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseBetweenWithValue(Along(First), that, List(TestMatrixPairwise.PlusX(), TestMatrixPairwise.MinusX()), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1 + 1)),
+        Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3 + 1)),
+        Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 1 - 1)),
+        Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3 - 1)),
+        Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3 + 1)),
+        Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3 - 1))))
+  }
+
+  it should "return its second over pairwise in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 4))))
+
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseBetweenWithValue(Over(Second), that, List(TestMatrixPairwise.PlusX(), TestMatrixPairwise.MinusX()), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1 + 1)),
+        Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3 + 1)),
+        Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 1 - 1)),
+        Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3 - 1)),
+        Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3 + 1)),
+        Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3 - 1))))
+  }
+
+  it should "return its second along pairwise in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))
+
+    TestSpark.spark
+      .parallelize(num2)
+      .pairwiseBetweenWithValue(Along(Second), that, TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1 + 1)),
+        Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2 + 1)),
+        Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1 + 1)),
+        Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 2 + 1)),
+        Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3 + 1)),
+        Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 4 + 1)),
+        Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 5 + 1)),
+        Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1 + 1)),
+        Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4 + 1))))
+  }
+
+  it should "return its first over pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetweenWithValue(Over(First), that, TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1 + 1)),
+        Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2 + 1)),
+        Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1 + 1)),
+        Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 2 + 1)),
+        Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3 + 1)),
+        Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 4 + 1)),
+        Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 5 + 1)),
+        Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1 + 1)),
+        Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4 + 1))))
+  }
+
+  it should "return its first along pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetweenWithValue(Along(First), that, List(TestMatrixPairwise.PlusX(), TestMatrixPairwise.MinusX()), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1 + 1)),
+        Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3 + 1)),
+        Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 1 - 1)),
+        Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3 - 1)),
+        Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3 + 1)),
+        Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3 - 1))))
+  }
+
+  it should "return its second over pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetweenWithValue(Over(Second), that, List(TestMatrixPairwise.PlusX(), TestMatrixPairwise.MinusX()), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1 + 1)),
+        Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3 + 1)),
+        Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 1 - 1)),
+        Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 3 - 1)),
+        Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3 + 1)),
+        Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3 - 1))))
+  }
+
+  it should "return its second along pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetweenWithValue(Along(Second), that, TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1 + 1)),
+        Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2 + 1)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1 + 1)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 2 + 1)),
+        Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3 + 1)),
+        Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 4 + 1)),
+        Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 5 + 1)),
+        Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1 + 1)),
+        Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4 + 1))))
+  }
+
+  it should "return its third over pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetweenWithValue(Over(Third), that, List(TestMatrixPairwise.PlusX(), TestMatrixPairwise.MinusX()), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List())
+  }
+
+  it should "return its third along pairwise in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))
+
+    TestSpark.spark
+      .parallelize(num3)
+      .pairwiseBetweenWithValue(Along(Third), that, TestMatrixPairwise.PlusX(), ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1 + 1)),
+        Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1 + 1)),
+        Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2 + 1)),
+        Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1 + 1)),
+        Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 2 + 1)),
+        Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3 + 1)),
+        Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 1 + 1)),
+        Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 2 + 1)),
+        Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 3 + 1)),
+        Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 + 4 + 1)),
+        Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 1 + 1)),
+        Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 2 + 1)),
+        Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 3 + 1)),
+        Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 4 + 1)),
+        Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 + 5 + 1)),
+        Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 1 + 1)),
+        Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 2 + 1)),
+        Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 3 + 1)),
+        Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 4 + 1)),
+        Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 + 5 + 1)),
+        Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 1 + 1)),
+        Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 2 + 1)),
+        Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 3 + 1)),
+        Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 4 + 1)),
+        Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 + 5 + 1)),
+        Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1 + 1)),
+        Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 2 + 1)),
+        Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3 + 1)),
+        Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4 + 1)),
+        Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 5 + 1)),
+        Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 1 + 1)),
+        Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 2 + 1)),
+        Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 3 + 1)),
+        Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 4 + 1)),
+        Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 + 5 + 1))))
+  }
+}
+
+class TestScaldingMatrixChange extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.change" should {
     "return its first over data in 1D" in {
@@ -5096,7 +8860,194 @@ class TestMatrixChange extends WordSpec with Matchers with TBddDsl with TestMatr
   }
 }
 
-class TestMatrixSet extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixChange extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.change" should "return its first over data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .change(Over(First), "foo", ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first over data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .change(Over(First), "foo", ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first along data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .change(Along(First), List(3, 4), ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second over data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .change(Over(Second), List(3, 4), ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second along data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .change(Along(Second), "foo", ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first over data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .change(Over(First), "foo", ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first along data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .change(Along(First), List(Position2D(3, "xyz"), Position2D(4, "xyz")), ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second over data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .change(Over(Second), List(3, 4), ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second along data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .change(Along(Second), Position2D("foo", "xyz"), ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third over data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .change(Over(Third), List("xyz"), ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+
+  it should "return its third along data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .change(Along(Third), Position2D("foo", 1), ContinuousSchema[Codex.DoubleCodex]())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+}
+
+class TestScaldingMatrixSet extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.set" should {
     "return its updated data in 1D" in {
@@ -5304,7 +9255,181 @@ class TestMatrixSet extends WordSpec with Matchers with TBddDsl with TestMatrix 
   }
 }
 
-class TestMatrixTransform extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixSet extends FlatSpec with Matchers with TestMatrix {
+
+  implicit val sc = TestSpark.spark
+
+  "A Matrix.set" should "return its updated data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .set("foo", Content(ContinuousSchema[Codex.DoubleCodex](), 1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its updated and added data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .set(List("foo", "quxx"), Content(ContinuousSchema[Codex.DoubleCodex](), 1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position1D("quxx"), Content(ContinuousSchema[Codex.DoubleCodex](), 1))))
+  }
+
+  it should "return its matrix updated data in 1D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position1D("quxx"), Content(ContinuousSchema[Codex.DoubleCodex](), 2))))
+
+    TestSpark.spark
+      .parallelize(data1)
+      .set(that)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position1D("quxx"), Content(ContinuousSchema[Codex.DoubleCodex](), 2))))
+  }
+
+  it should "return its updated data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .set(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its updated and added data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .set(List(Position2D("foo", 2), Position2D("quxx", 5)), Content(ContinuousSchema[Codex.DoubleCodex](), 1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position2D("quxx", 5), Content(ContinuousSchema[Codex.DoubleCodex](), 1))))
+  }
+
+  it should "return its matrix updated data in 2D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("quxx", 5), Content(ContinuousSchema[Codex.DoubleCodex](), 2))))
+
+    TestSpark.spark
+      .parallelize(data2)
+      .set(that)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position2D("quxx", 5), Content(ContinuousSchema[Codex.DoubleCodex](), 2))))
+  }
+
+  it should "return its updated data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .set(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its updated and added data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc")),
+        Content(ContinuousSchema[Codex.DoubleCodex](), 1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position3D("quxx", 5, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 1))))
+  }
+
+  it should "return its matrix updated data in 3D" in {
+    val that = TestSpark.spark
+      .parallelize(List(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("quxx", 5, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 2))))
+
+    TestSpark.spark
+      .parallelize(data3)
+      .set(that)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+        Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position3D("quxx", 5, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 2))))
+  }
+}
+
+class TestScaldingMatrixTransform extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   val ext = ValuePipe(Map(
     Position1D("foo") -> Map(Position1D("max.abs") -> Content(ContinuousSchema[Codex.DoubleCodex](), 3.14),
@@ -5635,7 +9760,287 @@ class TestMatrixTransform extends WordSpec with Matchers with TBddDsl with TestM
   }
 }
 
-class TestMatrixDerive extends WordSpec with Matchers with TBddDsl with TestMatrix {
+object TestMatrixTransform {
+
+  val ext = Map(
+    Position1D("foo") -> Map(Position1D("max.abs") -> Content(ContinuousSchema[Codex.DoubleCodex](), 3.14),
+      Position1D("mean") -> Content(ContinuousSchema[Codex.DoubleCodex](), 3.14),
+      Position1D("sd") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
+    Position1D("bar") -> Map(Position1D("max.abs") -> Content(ContinuousSchema[Codex.DoubleCodex](), 6.28),
+      Position1D("mean") -> Content(ContinuousSchema[Codex.DoubleCodex](), 3.14),
+      Position1D("sd") -> Content(ContinuousSchema[Codex.DoubleCodex](), 2)),
+    Position1D("baz") -> Map(Position1D("max.abs") -> Content(ContinuousSchema[Codex.DoubleCodex](), 9.42),
+      Position1D("mean") -> Content(ContinuousSchema[Codex.DoubleCodex](), 3.14),
+      Position1D("sd") -> Content(ContinuousSchema[Codex.DoubleCodex](), 3)),
+    Position1D("qux") -> Map(Position1D("max.abs") -> Content(ContinuousSchema[Codex.DoubleCodex](), 12.56),
+      Position1D("mean") -> Content(ContinuousSchema[Codex.DoubleCodex](), 3.14),
+      Position1D("sd") -> Content(ContinuousSchema[Codex.DoubleCodex](), 4)))
+
+  case class IndicatorX(dim: Dimension, name: String) extends transform.Transformer with PresentExpanded {
+    val indicator = Indicator(dim, name)
+    def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]] = {
+      Collection(indicator.present(cell).toList.map { case c => Cell[P#M](c.position.append("ind"), c.content) })
+    }
+  }
+
+  case class BinariseX(dim: Dimension) extends transform.Transformer with PresentExpanded {
+    val binarise = Binarise(dim)
+    def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]] = {
+      Collection(binarise.present(cell).toList.map { case c => Cell[P#M](c.position.append("bin"), c.content) })
+    }
+  }
+
+  case class NormaliseX(dim: Dimension, key: String, name: String) extends transform.Transformer
+    with PresentExpandedWithValue {
+    type V = Normalise#V
+    val normalise = Normalise(dim, key, name)
+    def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: V): Collection[Cell[P#M]] = {
+      Collection(normalise.present(cell, ext).toList.map { case c => Cell[P#M](c.position.append("nrm"), c.content) })
+    }
+  }
+
+  case class StandardiseX(dim: Dimension, mean: String, sd: String, name: String) extends transform.Transformer
+    with PresentExpandedWithValue {
+    type V = Standardise#V
+    val standardise = Standardise(dim, mean, sd, name)
+    def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: V): Collection[Cell[P#M]] = {
+      Collection(standardise.present(cell, ext).toList.map { case c => Cell[P#M](c.position.append("std"), c.content) })
+    }
+  }
+}
+
+class TestSparkMatrixTransform extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.transform" should "return its transformed data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .transform(Indicator(First, "%1$s.ind"))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar.ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position1D("baz.ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position1D("foo.ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position1D("qux.ind"), Content(DiscreteSchema[Codex.LongCodex](), 1))))
+  }
+
+  it should "return its transformed data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .transform(List(Indicator(First, "%1$s.ind"), Binarise(First)))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar.ind", 1), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("bar.ind", 2), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("bar.ind", 3), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("bar=19", 3), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("bar=6.28", 1), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("baz.ind", 1), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("baz.ind", 2), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("baz=9.42", 1), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("foo.ind", 1), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("foo.ind", 2), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("foo.ind", 3), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("foo.ind", 4), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("foo=3.14", 1), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("foo=9.42", 3), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("qux.ind", 1), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("qux=12.56", 1), Content(DiscreteSchema[Codex.LongCodex](), 1))))
+  }
+
+  it should "return its transformed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .transform(List(Indicator(First, "%1$s.ind"), Binarise(First)))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar.ind", 1, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("bar.ind", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("bar.ind", 3, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("bar=19", 3, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("bar=6.28", 1, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("baz.ind", 1, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("baz.ind", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("baz=9.42", 1, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo.ind", 1, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo.ind", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo.ind", 3, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo.ind", 4, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo=3.14", 1, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo=9.42", 3, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("qux.ind", 1, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("qux=12.56", 1, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 1))))
+  }
+
+  "A Matrix.transformWithValue" should "return its transformed data in 1D" in {
+    TestSpark.spark
+      .parallelize(num1)
+      .transformWithValue(List(Normalise(First, "max.abs", "%1$s.n"), Standardise(First, "mean", "sd", "%1$s.s")),
+        TestMatrixTransform.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar.n"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 6.28)),
+        Cell(Position1D("bar.s"), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 - 3.14) / 2)),
+        Cell(Position1D("baz.n"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 9.42)),
+        Cell(Position1D("baz.s"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 - 3.14) / 3)),
+        Cell(Position1D("foo.n"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 / 3.14)),
+        Cell(Position1D("foo.s"), Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 - 3.14) / 1)),
+        Cell(Position1D("qux.n"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 12.56)),
+        Cell(Position1D("qux.s"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56 - 3.14) / 4))))
+  }
+
+  it should "return its transformed data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .transformWithValue(Normalise(First, "max.abs", "%1$s.n"), TestMatrixTransform.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar.n", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 6.28)),
+        Cell(Position2D("bar.n", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 6.28)),
+        Cell(Position2D("bar.n", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 6.28)),
+        Cell(Position2D("baz.n", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 9.42)),
+        Cell(Position2D("baz.n", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 9.42)),
+        Cell(Position2D("foo.n", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 / 3.14)),
+        Cell(Position2D("foo.n", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 3.14)),
+        Cell(Position2D("foo.n", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 3.14)),
+        Cell(Position2D("foo.n", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 3.14)),
+        Cell(Position2D("qux.n", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 12.56))))
+  }
+
+  it should "return its transformed data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .transformWithValue(Normalise(First, "max.abs", "%1$s.n"), TestMatrixTransform.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar.n", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 6.28)),
+        Cell(Position3D("bar.n", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 6.28)),
+        Cell(Position3D("bar.n", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 6.28)),
+        Cell(Position3D("baz.n", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 9.42)),
+        Cell(Position3D("baz.n", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 9.42)),
+        Cell(Position3D("foo.n", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 / 3.14)),
+        Cell(Position3D("foo.n", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 3.14)),
+        Cell(Position3D("foo.n", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 3.14)),
+        Cell(Position3D("foo.n", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 3.14)),
+        Cell(Position3D("qux.n", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 12.56))))
+  }
+
+  "A Matrix.transformAndExpand" should "return its transformed data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .transformAndExpand(TestMatrixTransform.IndicatorX(First, "%1$s.ind"))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar.ind", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("baz.ind", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("foo.ind", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position2D("qux.ind", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1))))
+  }
+
+  it should "return its transformed data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .transformAndExpand(List(TestMatrixTransform.IndicatorX(First, "%1$s.ind"),
+        TestMatrixTransform.BinariseX(First)))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar.ind", 1, "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("bar.ind", 2, "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("bar.ind", 3, "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("bar=19", 3, "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("bar=6.28", 1, "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("baz.ind", 1, "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("baz.ind", 2, "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("baz=9.42", 1, "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo.ind", 1, "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo.ind", 2, "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo.ind", 3, "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo.ind", 4, "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo=3.14", 1, "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("foo=9.42", 3, "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("qux.ind", 1, "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position3D("qux=12.56", 1, "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1))))
+  }
+
+  it should "return its transformed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .transformAndExpand(List(TestMatrixTransform.IndicatorX(First, "%1$s.ind"),
+        TestMatrixTransform.BinariseX(First)))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position4D("bar.ind", 1, "xyz", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("bar.ind", 2, "xyz", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("bar.ind", 3, "xyz", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("bar=19", 3, "xyz", "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("bar=6.28", 1, "xyz", "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("baz.ind", 1, "xyz", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("baz.ind", 2, "xyz", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("baz=9.42", 1, "xyz", "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("foo.ind", 1, "xyz", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("foo.ind", 2, "xyz", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("foo.ind", 3, "xyz", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("foo.ind", 4, "xyz", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("foo=3.14", 1, "xyz", "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("foo=9.42", 3, "xyz", "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("qux.ind", 1, "xyz", "ind"), Content(DiscreteSchema[Codex.LongCodex](), 1)),
+        Cell(Position4D("qux=12.56", 1, "xyz", "bin"), Content(DiscreteSchema[Codex.LongCodex](), 1))))
+  }
+
+  "A Matrix.transformAndExpandWithValue" should "return its transformed data in 1D" in {
+    TestSpark.spark
+      .parallelize(num1)
+      .transformAndExpandWithValue(List(TestMatrixTransform.NormaliseX(First, "max.abs", "%1$s.n"),
+        TestMatrixTransform.StandardiseX(First, "mean", "sd", "%1$s.s")), TestMatrixTransform.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar.n", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 6.28)),
+        Cell(Position2D("bar.s", "std"), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 - 3.14) / 2)),
+        Cell(Position2D("baz.n", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 9.42)),
+        Cell(Position2D("baz.s", "std"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 - 3.14) / 3)),
+        Cell(Position2D("foo.n", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 / 3.14)),
+        Cell(Position2D("foo.s", "std"), Content(ContinuousSchema[Codex.DoubleCodex](), (3.14 - 3.14) / 1)),
+        Cell(Position2D("qux.n", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 12.56)),
+        Cell(Position2D("qux.s", "std"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56 - 3.14) / 4))))
+  }
+
+  it should "return its transformed data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .transformAndExpandWithValue(TestMatrixTransform.NormaliseX(First, "max.abs", "%1$s.n"), TestMatrixTransform.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar.n", 1, "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 6.28)),
+        Cell(Position3D("bar.n", 2, "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 6.28)),
+        Cell(Position3D("bar.n", 3, "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 6.28)),
+        Cell(Position3D("baz.n", 1, "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 9.42)),
+        Cell(Position3D("baz.n", 2, "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 9.42)),
+        Cell(Position3D("foo.n", 1, "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 / 3.14)),
+        Cell(Position3D("foo.n", 2, "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 3.14)),
+        Cell(Position3D("foo.n", 3, "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 3.14)),
+        Cell(Position3D("foo.n", 4, "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 3.14)),
+        Cell(Position3D("qux.n", 1, "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 12.56))))
+  }
+
+  it should "return its transformed data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .transformAndExpandWithValue(TestMatrixTransform.NormaliseX(First, "max.abs", "%1$s.n"), TestMatrixTransform.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position4D("bar.n", 1, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 6.28)),
+        Cell(Position4D("bar.n", 2, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 6.28)),
+        Cell(Position4D("bar.n", 3, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 6.28)),
+        Cell(Position4D("baz.n", 1, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 9.42)),
+        Cell(Position4D("baz.n", 2, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 / 9.42)),
+        Cell(Position4D("foo.n", 1, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 / 3.14)),
+        Cell(Position4D("foo.n", 2, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 / 3.14)),
+        Cell(Position4D("foo.n", 3, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 / 3.14)),
+        Cell(Position4D("foo.n", 4, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 3.14)),
+        Cell(Position4D("qux.n", 1, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 12.56))))
+  }
+}
+
+class TestScaldingMatrixDerive extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   case class Delta(times: Int) extends Deriver with Initialise {
     type T = Cell[Position]
@@ -6075,7 +10480,359 @@ class TestMatrixDerive extends WordSpec with Matchers with TBddDsl with TestMatr
   }
 }
 
-class TestMatrixFill extends WordSpec with Matchers with TBddDsl with TestMatrix {
+object TestMatrixDerive {
+
+  val ext = Map("one" -> 1, "two" -> 2)
+
+  case class Delta(times: Int) extends Deriver with Initialise {
+    type T = Cell[Position]
+
+    def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
+      Cell(rem, cell.content)
+    }
+
+    def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
+      t: T): (T, Collection[Cell[slice.S#M]]) = {
+      val delta = cell.content.value.asDouble.flatMap {
+        case dc => t.content.value.asDouble.map {
+          case dt => Left(Cell[slice.S#M](cell.position.append(times + "*(" + rem.toShortString("|") + "-" +
+            t.position.toShortString("|") + ")"), Content(ContinuousSchema[Codex.DoubleCodex](), times * (dc - dt))))
+        }
+      }
+
+      (Cell(rem, cell.content), Collection(delta))
+    }
+  }
+
+  case class DeltaWithValue(key: String) extends Deriver with InitialiseWithValue {
+    type T = Cell[Position]
+    type V = Map[String, Int]
+
+    def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T = {
+      Cell(rem, cell.content)
+    }
+
+    def present[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R,
+      t: T): (T, Collection[Cell[slice.S#M]]) = {
+      val delta = cell.content.value.asDouble.flatMap {
+        case dc => t.content.value.asDouble.map {
+          case dt => Left(Cell[slice.S#M](cell.position.append(ext(key) + "*(" + rem.toShortString("|") + "-" +
+            t.position.toShortString("|") + ")"), Content(ContinuousSchema[Codex.DoubleCodex](), ext(key) * (dc - dt))))
+        }
+      }
+
+      (Cell(rem, cell.content), Collection(delta))
+    }
+  }
+}
+/* Doesn't compile yet (missing scanLeft)
+class TestSparkMatrixDerive extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.derive" should "return its first along derived data in 1D" in {
+    TestSpark.spark
+      .parallelize(num1)
+      .derive(Along(First), List(TestMatrixDerive.Delta(1), TestMatrixDerive.Delta(2)))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position1D("1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 9.42)),
+        Cell(Position1D("1*(qux-foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position1D("2*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 2 * (9.42 - 6.28))),
+        Cell(Position1D("2*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 2 * (3.14 - 9.42))),
+        Cell(Position1D("2*(qux-foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 2 * (12.56 - 3.14)))))
+  }
+
+  it should "return its first over derived data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .derive(Over(First), TestMatrixDerive.Delta(1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("bar", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("baz", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("foo", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("foo", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("foo", "1*(4-3)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its first along derived data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .derive(Along(First), TestMatrixDerive.Delta(1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 9.42)),
+        Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 18.84)),
+        Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 18.84))))
+  }
+
+  it should "return its second over derived data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .derive(Over(Second), TestMatrixDerive.Delta(1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 9.42)),
+        Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 18.84)),
+        Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 18.84))))
+  }
+
+  it should "return its second along derived data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .derive(Along(Second), TestMatrixDerive.Delta(1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("bar", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("baz", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("foo", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("foo", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("foo", "1*(4-3)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its first over derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .derive(Over(First), TestMatrixDerive.Delta(1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("bar", "1*(3|xyz-2|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("baz", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("foo", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("foo", "1*(3|xyz-2|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("foo", "1*(4|xyz-3|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its first along derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .derive(Along(First), TestMatrixDerive.Delta(1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D(1, "xyz", "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position3D(1, "xyz", "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 9.42)),
+        Cell(Position3D(1, "xyz", "1*(qux-foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position3D(2, "xyz", "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position3D(2, "xyz", "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 18.84)),
+        Cell(Position3D(3, "xyz", "1*(foo-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 18.84))))
+  }
+
+  it should "return its second over derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .derive(Over(Second), TestMatrixDerive.Delta(1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D(1, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 9.42)),
+        Cell(Position2D(1, "1*(qux|xyz-foo|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position2D(2, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D(2, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 18.84)),
+        Cell(Position2D(3, "1*(foo|xyz-bar|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 18.84))))
+  }
+
+  it should "return its second along derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .derive(Along(Second), TestMatrixDerive.Delta(1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", "xyz", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position3D("bar", "xyz", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position3D("baz", "xyz", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position3D("foo", "xyz", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position3D("foo", "xyz", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position3D("foo", "xyz", "1*(4-3)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its third over derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .derive(Over(Third), TestMatrixDerive.Delta(1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("xyz", "1*(bar|2-bar|1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("xyz", "1*(bar|3-bar|2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("xyz", "1*(baz|1-bar|3)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 18.84)),
+        Cell(Position2D("xyz", "1*(baz|2-baz|1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("xyz", "1*(foo|1-baz|2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 18.84)),
+        Cell(Position2D("xyz", "1*(foo|2-foo|1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("xyz", "1*(foo|3-foo|2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("xyz", "1*(foo|4-foo|3)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42)),
+        Cell(Position2D("xyz", "1*(qux|1-foo|4)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 12.56))))
+  }
+
+  it should "return its third along derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .derive(Along(Third), TestMatrixDerive.Delta(1))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List())
+  }
+
+  "A Matrix.deriveWithValue" should "return its first along derived data in 1D" in {
+    TestSpark.spark
+      .parallelize(num1)
+      .deriveWithValue(Along(First), List(TestMatrixDerive.DeltaWithValue("one"),
+        TestMatrixDerive.DeltaWithValue("two")), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position1D("1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 9.42)),
+        Cell(Position1D("1*(qux-foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position1D("2*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 2 * (9.42 - 6.28))),
+        Cell(Position1D("2*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 2 * (3.14 - 9.42))),
+        Cell(Position1D("2*(qux-foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 2 * (12.56 - 3.14)))))
+  }
+
+  it should "return its first over derived data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .deriveWithValue(Over(First), TestMatrixDerive.DeltaWithValue("one"), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("bar", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("baz", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("foo", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("foo", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("foo", "1*(4-3)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its first along derived data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .deriveWithValue(Along(First), TestMatrixDerive.DeltaWithValue("one"), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 9.42)),
+        Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 18.84)),
+        Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 18.84))))
+  }
+
+  it should "return its second over derived data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .deriveWithValue(Over(Second), TestMatrixDerive.DeltaWithValue("one"), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 9.42)),
+        Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 18.84)),
+        Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 18.84))))
+  }
+
+  it should "return its second along derived data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .deriveWithValue(Along(Second), TestMatrixDerive.DeltaWithValue("one"), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("bar", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("baz", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("foo", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("foo", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("foo", "1*(4-3)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its first over derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .deriveWithValue(Over(First), TestMatrixDerive.DeltaWithValue("one"), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("bar", "1*(3|xyz-2|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("baz", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("foo", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("foo", "1*(3|xyz-2|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("foo", "1*(4|xyz-3|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its first along derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .deriveWithValue(Along(First), TestMatrixDerive.DeltaWithValue("one"), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D(1, "xyz", "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position3D(1, "xyz", "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 9.42)),
+        Cell(Position3D(1, "xyz", "1*(qux-foo)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position3D(2, "xyz", "1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position3D(2, "xyz", "1*(foo-baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 18.84)),
+        Cell(Position3D(3, "xyz", "1*(foo-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 18.84))))
+  }
+
+  it should "return its second over derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .deriveWithValue(Over(Second), TestMatrixDerive.DeltaWithValue("one"), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D(1, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 9.42)),
+        Cell(Position2D(1, "1*(qux|xyz-foo|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 3.14)),
+        Cell(Position2D(2, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D(2, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 18.84)),
+        Cell(Position2D(3, "1*(foo|xyz-bar|xyz)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 18.84))))
+  }
+
+  it should "return its second along derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .deriveWithValue(Along(Second), TestMatrixDerive.DeltaWithValue("one"), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", "xyz", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position3D("bar", "xyz", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position3D("baz", "xyz", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position3D("foo", "xyz", "1*(2-1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position3D("foo", "xyz", "1*(3-2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position3D("foo", "xyz", "1*(4-3)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42))))
+  }
+
+  it should "return its third over derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .deriveWithValue(Over(Third), TestMatrixDerive.DeltaWithValue("one"), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("xyz", "1*(bar|2-bar|1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 6.28)),
+        Cell(Position2D("xyz", "1*(bar|3-bar|2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 12.56)),
+        Cell(Position2D("xyz", "1*(baz|1-bar|3)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 18.84)),
+        Cell(Position2D("xyz", "1*(baz|2-baz|1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84 - 9.42)),
+        Cell(Position2D("xyz", "1*(foo|1-baz|2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 - 18.84)),
+        Cell(Position2D("xyz", "1*(foo|2-foo|1)"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28 - 3.14)),
+        Cell(Position2D("xyz", "1*(foo|3-foo|2)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
+        Cell(Position2D("xyz", "1*(foo|4-foo|3)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 9.42)),
+        Cell(Position2D("xyz", "1*(qux|1-foo|4)"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 - 12.56))))
+  }
+
+  it should "return its third along derived data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .deriveWithValue(Along(Third), TestMatrixDerive.DeltaWithValue("one"), TestMatrixDerive.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List())
+  }
+}
+*/
+class TestScaldingMatrixFill extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.fillHomogenous" should {
     "return its filled data in 2D" in {
@@ -6422,7 +11179,319 @@ class TestMatrixFill extends WordSpec with Matchers with TBddDsl with TestMatrix
   }
 }
 
-class TestMatrixRename extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixFill extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.fillHomogenous" should "return its filled data in 2D" in {
+    TestSpark.spark
+      .parallelize(num2)
+      .fillHomogenous(Content(ContinuousSchema[Codex.DoubleCodex](), 0))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("bar", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 0)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("baz", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 0)),
+        Cell(Position2D("baz", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 0)),
+        Cell(Position2D("foo", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 0)),
+        Cell(Position2D("qux", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 0)),
+        Cell(Position2D("qux", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 0))))
+  }
+
+  it should "return its filled data in 3D" in {
+    TestSpark.spark
+      .parallelize(num3)
+      .fillHomogenous(Content(ContinuousSchema[Codex.DoubleCodex](), 0))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 0)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 0)),
+        Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 0)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 0)),
+        Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 0)),
+        Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 0))))
+  }
+/* Doesn't compile yet (missing ClassTag[reducer.T])
+  "A Matrix.fillHetrogenous" should "return its first over filled data in 2D" in {
+    val cells = TestSpark.spark
+      .parallelize(num2)
+
+    cells
+      .fillHetrogenous(Over(First))(cells.reduce(Over(First), Mean()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("bar", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) / 3)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("baz", 3), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position2D("baz", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position2D("foo", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 2), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position2D("qux", 3), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position2D("qux", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1))))
+  }
+
+  it should "return its first along filled data in 2D" in {
+    val cells = TestSpark.spark
+      .parallelize(num2)
+
+    cells
+      .fillHetrogenous(Along(First))(cells.reduce(Along(First), Mean()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("bar", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("baz", 3), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position2D("baz", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position2D("foo", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 2), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) / 3)),
+        Cell(Position2D("qux", 3), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position2D("qux", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1))))
+  }
+
+  it should "return its second over filled data in 2D" in {
+    val cells = TestSpark.spark
+      .parallelize(num2)
+
+    cells
+      .fillHetrogenous(Over(Second))(cells.reduce(Over(Second), Mean()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("bar", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("baz", 3), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position2D("baz", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position2D("foo", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 2), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) / 3)),
+        Cell(Position2D("qux", 3), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position2D("qux", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1))))
+  }
+
+  it should "return its second along filled data in 2D" in {
+    val cells = TestSpark.spark
+      .parallelize(num2)
+
+    cells
+      .fillHetrogenous(Along(Second))(cells.reduce(Along(Second), Mean()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("bar", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) / 3)),
+        Cell(Position2D("baz", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("baz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position2D("baz", 3), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position2D("baz", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position2D("foo", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D("foo", 4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("qux", 2), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position2D("qux", 3), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position2D("qux", 4), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1))))
+  }
+
+  it should "return its first over filled data in 3D" in {
+    val cells = TestSpark.spark
+      .parallelize(num3)
+
+    cells
+      .fillHetrogenous(Over(First))(cells.reduce(Over(First), Mean()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) / 3)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1))))
+  }
+
+  it should "return its first along filled data in 3D" in {
+    val cells = TestSpark.spark
+      .parallelize(num3)
+
+    cells
+      .fillHetrogenous(Along(First))(cells.reduce(Along(First), Mean()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) / 3)),
+        Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1))))
+  }
+
+  it should "return its second over filled data in 3D" in {
+    val cells = TestSpark.spark
+      .parallelize(num3)
+
+    cells
+      .fillHetrogenous(Over(Second))(cells.reduce(Over(Second), Mean()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) / 3)),
+        Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1))))
+  }
+
+  it should "return its second along filled data in 3D" in {
+    val cells = TestSpark.spark
+      .parallelize(num3)
+
+    cells
+      .fillHetrogenous(Along(Second))(cells.reduce(Along(Second), Mean()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) / 3)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) / 2)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1)),
+        Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), (12.56) / 1))))
+  }
+
+  it should "return its third over filled data in 3D" in {
+    val cells = TestSpark.spark
+      .parallelize(num3)
+
+    cells
+      .fillHetrogenous(Over(Third))(cells.reduce(Over(Third), Mean()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)),
+        Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)),
+        Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)),
+        Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10))))
+  }
+
+  it should "return its third along filled data in 3D" in {
+    val cells = TestSpark.spark
+      .parallelize(num3)
+
+    cells
+      .fillHetrogenous(Along(Third))(cells.reduce(Along(Third), Mean()))
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+  }
+*/
+}
+
+class TestScaldingMatrixRename extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   def renamer[P <: Position](dim: Dimension, cell: Cell[P]): P = {
     cell.position.update(dim, cell.position(dim).toShortString + ".new").asInstanceOf[P]
@@ -6701,7 +11770,237 @@ class TestMatrixRename extends WordSpec with Matchers with TBddDsl with TestMatr
   }
 }
 
-class TestMatrixSquash extends WordSpec with Matchers with TBddDsl with TestMatrix {
+object TestMatrixRename {
+
+  def renamer[P <: Position](dim: Dimension, cell: Cell[P]): P = {
+    cell.position.update(dim, cell.position(dim).toShortString + ".new").asInstanceOf[P]
+  }
+
+  def renamerWithValue[P <: Position](dim: Dimension, cell: Cell[P], ext: String): P = {
+    cell.position.update(dim, cell.position(dim).toShortString + ext).asInstanceOf[P]
+  }
+
+  val ext = ".new"
+}
+
+class TestSparkMatrixRename extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.rename" should "return its first renamed data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .rename(First, TestMatrixRename.renamer)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar.new"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("baz.new"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo.new"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D("qux.new"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first renamed data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .rename(First, TestMatrixRename.renamer)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar.new", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar.new", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar.new", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz.new", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz.new", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo.new", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo.new", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo.new", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo.new", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux.new", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second renamed data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .rename(Second, TestMatrixRename.renamer)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "1.new"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", "2.new"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", "3.new"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", "1.new"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", "2.new"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", "1.new"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", "2.new"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", "3.new"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", "4.new"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", "1.new"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first renamed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .rename(First, TestMatrixRename.renamer)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar.new", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar.new", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar.new", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz.new", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz.new", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo.new", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo.new", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo.new", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo.new", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux.new", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second renamed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .rename(Second, TestMatrixRename.renamer)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", "1.new", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", "2.new", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", "3.new", "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", "1.new", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", "2.new", "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", "1.new", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", "2.new", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", "3.new", "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", "4.new", "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", "1.new", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third renamed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .rename(Third, TestMatrixRename.renamer)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz.new"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz.new"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz.new"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz.new"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz.new"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz.new"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz.new"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz.new"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz.new"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", 1, "xyz.new"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  "A Matrix.renameWithValue" should "return its first renamed data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .renameWithValue(First, TestMatrixRename.renamerWithValue, TestMatrixRename.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar.new"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("baz.new"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo.new"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D("qux.new"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first renamed data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .renameWithValue(First, TestMatrixRename.renamerWithValue, TestMatrixRename.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar.new", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar.new", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar.new", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz.new", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz.new", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo.new", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo.new", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo.new", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo.new", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux.new", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second renamed data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .renameWithValue(Second, TestMatrixRename.renamerWithValue, TestMatrixRename.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "1.new"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", "2.new"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", "3.new"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", "1.new"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", "2.new"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", "1.new"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", "2.new"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", "3.new"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", "4.new"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", "1.new"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first renamed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .renameWithValue(First, TestMatrixRename.renamerWithValue, TestMatrixRename.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar.new", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar.new", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar.new", 3, "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz.new", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz.new", 2, "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo.new", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo.new", 2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo.new", 3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo.new", 4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux.new", 1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its second renamed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .renameWithValue(Second, TestMatrixRename.renamerWithValue, TestMatrixRename.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", "1.new", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", "2.new", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", "3.new", "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", "1.new", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", "2.new", "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", "1.new", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", "2.new", "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", "3.new", "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", "4.new", "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", "1.new", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third renamed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .renameWithValue(Third, TestMatrixRename.renamerWithValue, TestMatrixRename.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "xyz.new"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "xyz.new"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "xyz.new"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "xyz.new"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "xyz.new"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "xyz.new"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "xyz.new"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "xyz.new"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "xyz.new"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", 1, "xyz.new"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+}
+
+class TestScaldingMatrixSquash extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   case class PreservingMaxPositionWithValue() extends Squasher with ReduceWithValue {
     type V = String
@@ -6902,7 +12201,167 @@ class TestMatrixSquash extends WordSpec with Matchers with TBddDsl with TestMatr
   }
 }
 
-class TestMatrixMelt extends WordSpec with Matchers with TBddDsl with TestMatrix {
+object TestMatrixSquash {
+
+  case class PreservingMaxPositionWithValue() extends Squasher with ReduceWithValue {
+    type V = String
+
+    val squasher = PreservingMaxPosition()
+
+    def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P], ext: V): Cell[P] = {
+      if (ext == "ext") squasher.reduce(dim, x, y) else x
+    }
+  }
+
+  val ext = "ext"
+}
+
+class TestSparkMatrixSquash extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.squash" should "return its first squashed data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .squash(First, PreservingMaxPosition())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D(3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D(4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second squashed data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .squash(Second, PreservingMaxPosition())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("baz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("foo"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first squashed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .squash(First, PreservingMaxPosition())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position2D(2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D(3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D(4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second squashed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .squash(Second, PreservingMaxPosition())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third squashed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .squash(Third, PreservingMaxPosition())
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  "A Matrix.squashWithValue" should "return its first squashed data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .squashWithValue(First, TestMatrixSquash.PreservingMaxPositionWithValue(), TestMatrixSquash.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D(1), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position1D(2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D(3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D(4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second squashed data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .squashWithValue(Second, TestMatrixSquash.PreservingMaxPositionWithValue(), TestMatrixSquash.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("baz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("foo"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position1D("qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first squashed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .squashWithValue(First, TestMatrixSquash.PreservingMaxPositionWithValue(), TestMatrixSquash.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position2D(2, "xyz"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D(3, "xyz"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D(4, "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second squashed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .squashWithValue(Second, TestMatrixSquash.PreservingMaxPositionWithValue(), TestMatrixSquash.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "xyz"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", "xyz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", "xyz"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", "xyz"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third squashed data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .squashWithValue(Third, TestMatrixSquash.PreservingMaxPositionWithValue(), TestMatrixSquash.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+}
+
+class TestScaldingMatrixMelt extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.melt" should {
     "return its first melted data in 2D" in {
@@ -7022,7 +12481,105 @@ class TestMatrixMelt extends WordSpec with Matchers with TBddDsl with TestMatrix
   }
 }
 
-class TestMatrixExpand extends WordSpec with Matchers with TBddDsl with TestMatrix {
+class TestSparkMatrixMelt extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.melt" should "return its first melted data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .melt(First, Second)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("1.bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("1.baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("1.foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D("1.qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position1D("2.bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D("2.baz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("2.foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D("3.bar"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("3.foo"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("4.foo"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second melted data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .melt(Second, First)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position1D("bar.1"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position1D("bar.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position1D("bar.3"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("baz.1"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("baz.2"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position1D("foo.1"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position1D("foo.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position1D("foo.3"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position1D("foo.4"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position1D("qux.1"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its first melted data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .melt(First, Third)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, "xyz.bar"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D(1, "xyz.baz"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D(1, "xyz.foo"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D(1, "xyz.qux"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")),
+        Cell(Position2D(2, "xyz.bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D(2, "xyz.baz"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D(2, "xyz.foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D(3, "xyz.bar"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D(3, "xyz.foo"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D(4, "xyz.foo"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
+  }
+
+  it should "return its second melted data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .melt(Second, Third)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "xyz.1"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar", "xyz.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar", "xyz.3"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz", "xyz.1"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz", "xyz.2"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo", "xyz.1"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo", "xyz.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo", "xyz.3"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", "xyz.4"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux", "xyz.1"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its third melted data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .melt(Third, First)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar.xyz", 1), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("bar.xyz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position2D("bar.xyz", 3), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("baz.xyz", 1), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("baz.xyz", 2), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position2D("foo.xyz", 1), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("foo.xyz", 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D("foo.xyz", 3), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo.xyz", 4), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position2D("qux.xyz", 1), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+}
+
+class TestScaldingMatrixExpand extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   def expander[P <: Position with ExpandablePosition](cell: Cell[P]): P#M = cell.position.append("abc")
 
@@ -7161,7 +12718,121 @@ class TestMatrixExpand extends WordSpec with Matchers with TBddDsl with TestMatr
   }
 }
 
-class TestMatrixPermute extends WordSpec with Matchers with TBddDsl with TestMatrix {
+object TestMatrixExpand {
+
+  def expander[P <: Position with ExpandablePosition](cell: Cell[P]): P#M = cell.position.append("abc")
+
+  def expanderWithValue[P <: Position with ExpandablePosition](cell: Cell[P], ext: String): P#M = {
+    cell.position.append(ext)
+  }
+
+  val ext = "abc"
+}
+
+class TestSparkMatrixExpand extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.expand" should "return its expanded data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .expand(TestMatrixExpand.expander)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("baz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("qux", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its expanded data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .expand(TestMatrixExpand.expander)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "abc"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "abc"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "abc"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "abc"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its expanded data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .expand(TestMatrixExpand.expander)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position4D("bar", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position4D("bar", 2, "xyz", "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position4D("bar", 3, "xyz", "abc"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position4D("baz", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position4D("baz", 2, "xyz", "abc"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position4D("foo", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position4D("foo", 2, "xyz", "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position4D("foo", 3, "xyz", "abc"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position4D("foo", 4, "xyz", "abc"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position4D("qux", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  "A Matrix.expandWithValue" should "return its expanded data in 1D" in {
+    TestSpark.spark
+      .parallelize(data1)
+      .expandWithValue(TestMatrixExpand.expanderWithValue, TestMatrixExpand.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D("bar", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position2D("baz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position2D("foo", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position2D("qux", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its expanded data in 2D" in {
+    TestSpark.spark
+      .parallelize(data2)
+      .expandWithValue(TestMatrixExpand.expanderWithValue, TestMatrixExpand.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D("bar", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position3D("bar", 2, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position3D("bar", 3, "abc"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("baz", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("baz", 2, "abc"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position3D("foo", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position3D("foo", 2, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D("foo", 3, "abc"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position3D("foo", 4, "abc"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position3D("qux", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+
+  it should "return its expanded data in 3D" in {
+    TestSpark.spark
+      .parallelize(data3)
+      .expandWithValue(TestMatrixExpand.expanderWithValue, TestMatrixExpand.ext)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position4D("bar", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+        Cell(Position4D("bar", 2, "xyz", "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position4D("bar", 3, "xyz", "abc"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+        Cell(Position4D("baz", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position4D("baz", 2, "xyz", "abc"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+        Cell(Position4D("foo", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+        Cell(Position4D("foo", 2, "xyz", "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position4D("foo", 3, "xyz", "abc"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+        Cell(Position4D("foo", 4, "xyz", "abc"), Content(DateSchema[Codex.DateTimeCodex](),
+          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+        Cell(Position4D("qux", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56"))))
+  }
+}
+
+class TestScaldingMatrixPermute extends WordSpec with Matchers with TBddDsl with TestMatrix {
 
   "A Matrix.permute" should {
     "return its permutation in 2D" in {
@@ -7236,6 +12907,67 @@ class TestMatrixPermute extends WordSpec with Matchers with TBddDsl with TestMat
             Cell(Position5D(2, 4, 5, 1, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)))
       }
     }
+  }
+}
+
+class TestSparkMatrixPermute extends FlatSpec with Matchers with TestMatrix {
+
+  "A Matrix.permute" should "return its permutation in 2D" in {
+    TestSpark.spark
+      .parallelize(List(Cell(Position2D(1, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position2D(2, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D(3, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42))))
+      .permute(Second, First)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position2D(1, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position2D(2, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position2D(3, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14))))
+  }
+
+  it should "return its permutation in 3D" in {
+    TestSpark.spark
+      .parallelize(List(Cell(Position3D(1, 2, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position3D(2, 2, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D(3, 2, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42))))
+      .permute(Second, Third, First)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position3D(2, 1, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position3D(2, 2, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position3D(2, 3, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14))))
+  }
+
+  it should "return its permutation in 4D" in {
+    TestSpark.spark
+      .parallelize(List(Cell(Position4D(1, 2, 3, 4), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position4D(2, 2, 2, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position4D(1, 1, 4, 4), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position4D(4, 1, 3, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56))))
+      .permute(Fourth, Third, First, Second)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position4D(2, 2, 2, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position4D(2, 3, 4, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position4D(4, 3, 1, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position4D(4, 4, 1, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42))))
+  }
+
+  it should "return its permutation in 5D" in {
+    TestSpark.spark
+      .parallelize(List(Cell(Position5D(1, 2, 3, 4, 5), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position5D(2, 2, 2, 2, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position5D(1, 1, 3, 5, 5), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
+        Cell(Position5D(4, 4, 4, 1, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position5D(5, 4, 3, 2, 1), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84))))
+      .permute(Fourth, Second, First, Fifth, Third)
+      .toLocalIterator
+      .toList.sortBy(_.position) should be (List(
+        Cell(Position5D(1, 4, 4, 1, 4), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+        Cell(Position5D(2, 2, 2, 2, 2), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+        Cell(Position5D(2, 4, 5, 1, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 18.84)),
+        Cell(Position5D(4, 2, 1, 5, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
+        Cell(Position5D(5, 1, 1, 5, 3), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42))))
   }
 }
 

@@ -203,8 +203,8 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
   def set[T](values: T)(implicit ev1: Matrixable[T, P, RDD], ev2: ClassTag[P]): RDD[Cell[P]] = {
     data
       .keyBy { case c => c.position }
-      .leftOuterJoin(ev1.convert(values).keyBy { case c => c.position })
-      .map { case (_, (c, cn)) => cn.getOrElse(c) }
+      .fullOuterJoin(ev1.convert(values).keyBy { case c => c.position })
+      .map { case (_, (c, cn)) => cn.getOrElse(c.get) }
   }
 
   def shape(): RDD[Cell[Position1D]] = {
@@ -601,39 +601,39 @@ object SparkMatrix {
   }
 
   /** Conversion from `RDD[Cell[Position1D]]` to a `SparkMatrix1D`. */
-  implicit def RDDP1DC2M1D(data: RDD[Cell[Position1D]]): SparkMatrix1D = new SparkMatrix1D(data)
+  implicit def RDDP1DC2RDDM1D(data: RDD[Cell[Position1D]]): SparkMatrix1D = new SparkMatrix1D(data)
   /** Conversion from `RDD[Cell[Position2D]]` to a `SparkMatrix2D`. */
-  implicit def RDDP2DC2M2D(data: RDD[Cell[Position2D]]): SparkMatrix2D = new SparkMatrix2D(data)
+  implicit def RDDP2DC2RDDM2D(data: RDD[Cell[Position2D]]): SparkMatrix2D = new SparkMatrix2D(data)
   /** Conversion from `RDD[Cell[Position3D]]` to a `SparkMatrix3D`. */
-  implicit def RDDP3DC2M3D(data: RDD[Cell[Position3D]]): SparkMatrix3D = new SparkMatrix3D(data)
+  implicit def RDDP3DC2RDDM3D(data: RDD[Cell[Position3D]]): SparkMatrix3D = new SparkMatrix3D(data)
   /** Conversion from `RDD[Cell[Position4D]]` to a `SparkMatrix4D`. */
-  implicit def RDDP4DC2M4D(data: RDD[Cell[Position4D]]): SparkMatrix4D = new SparkMatrix4D(data)
+  implicit def RDDP4DC2RDDM4D(data: RDD[Cell[Position4D]]): SparkMatrix4D = new SparkMatrix4D(data)
   /** Conversion from `RDD[Cell[Position5D]]` to a `SparkMatrix5D`. */
-  implicit def RDDP5DC2M5D(data: RDD[Cell[Position5D]]): SparkMatrix5D = new SparkMatrix5D(data)
+  implicit def RDDP5DC2RDDM5D(data: RDD[Cell[Position5D]]): SparkMatrix5D = new SparkMatrix5D(data)
 
   /** Conversion from `List[(Valueable, Content)]` to a `SparkMatrix1D`. */
-  implicit def LVCT2M1D[V: Valueable](list: List[(V, Content)])(implicit sc: SparkContext): SparkMatrix1D = {
+  implicit def LVCT2RDDM1D[V: Valueable](list: List[(V, Content)])(implicit sc: SparkContext): SparkMatrix1D = {
     new SparkMatrix1D(sc.parallelize(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a `SparkMatrix2D`. */
-  implicit def LVVCT2M2D[V: Valueable, W: Valueable](list: List[(V, W, Content)])(
+  implicit def LVVCT2RDDM2D[V: Valueable, W: Valueable](list: List[(V, W, Content)])(
     implicit sc: SparkContext): SparkMatrix2D = {
     new SparkMatrix2D(sc.parallelize(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a `SparkMatrix3D`. */
-  implicit def LVVVCT2M3D[V: Valueable, W: Valueable, X: Valueable](
+  implicit def LVVVCT2RDDM3D[V: Valueable, W: Valueable, X: Valueable](
     list: List[(V, W, X, Content)])(implicit sc: SparkContext): SparkMatrix3D = {
     new SparkMatrix3D(sc.parallelize(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a `SparkMatrix4D`. */
-  implicit def LVVVVCT2M4D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
+  implicit def LVVVVCT2RDDM4D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
     list: List[(V, W, X, Y, Content)])(implicit sc: SparkContext): SparkMatrix4D = {
     new SparkMatrix4D(sc.parallelize(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a `SparkMatrix5D`.
    */
-  implicit def LVVVVVCT2M5D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LVVVVVCT2RDDM5D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
     list: List[(V, W, X, Y, Z, Content)])(implicit sc: SparkContext): SparkMatrix5D = {
     new SparkMatrix5D(sc.parallelize(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
   }
@@ -1185,15 +1185,15 @@ class SparkMatrix5D(val data: RDD[Cell[Position5D]]) extends SparkMatrix[Positio
 /** Spark Companion object for the `Matrixable` type class. */
 object SparkMatrixable {
   /** Converts a `RDD[Cell[P]]` into a `RDD[Cell[P]]`; that is, it is a  pass through. */
-  implicit def TPC2M[P <: Position]: Matrixable[RDD[Cell[P]], P, RDD] = {
+  implicit def RDDC2RDDM[P <: Position]: Matrixable[RDD[Cell[P]], P, RDD] = {
     new Matrixable[RDD[Cell[P]], P, RDD] { def convert(t: RDD[Cell[P]]): RDD[Cell[P]] = t }
   }
   /** Converts a `List[Cell[P]]` into a `RDD[Cell[P]]`. */
-  implicit def LC2M[P <: Position](implicit sc: SparkContext, ct: ClassTag[P]): Matrixable[List[Cell[P]], P, RDD] = {
+  implicit def LC2RDDM[P <: Position](implicit sc: SparkContext, ct: ClassTag[P]): Matrixable[List[Cell[P]], P, RDD] = {
     new Matrixable[List[Cell[P]], P, RDD] { def convert(t: List[Cell[P]]): RDD[Cell[P]] = sc.parallelize(t) }
   }
   /** Converts a `Cell[P]` into a `RDD[Cell[P]]`. */
-  implicit def C2M[P <: Position](implicit sc: SparkContext, ct: ClassTag[P]): Matrixable[Cell[P], P, RDD] = {
+  implicit def C2RDDM[P <: Position](implicit sc: SparkContext, ct: ClassTag[P]): Matrixable[Cell[P], P, RDD] = {
     new Matrixable[Cell[P], P, RDD] { def convert(t: Cell[P]): RDD[Cell[P]] = sc.parallelize(List(t)) }
   }
 }

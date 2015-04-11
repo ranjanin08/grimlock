@@ -632,38 +632,38 @@ object ScaldingMatrix {
   }
 
   /** Conversion from `TypedPipe[Cell[Position1D]]` to a `ScaldingMatrix1D`. */
-  implicit def TPP1DC2M1D(data: TypedPipe[Cell[Position1D]]): ScaldingMatrix1D = new ScaldingMatrix1D(data)
+  implicit def TPP1DC2TPM1D(data: TypedPipe[Cell[Position1D]]): ScaldingMatrix1D = new ScaldingMatrix1D(data)
   /** Conversion from `TypedPipe[Cell[Position2D]]` to a `ScaldingMatrix2D`. */
-  implicit def TPP2DC2M2D(data: TypedPipe[Cell[Position2D]]): ScaldingMatrix2D = new ScaldingMatrix2D(data)
+  implicit def TPP2DC2TPM2D(data: TypedPipe[Cell[Position2D]]): ScaldingMatrix2D = new ScaldingMatrix2D(data)
   /** Conversion from `TypedPipe[Cell[Position3D]]` to a `ScaldingMatrix3D`. */
-  implicit def TPP3DC2M3D(data: TypedPipe[Cell[Position3D]]): ScaldingMatrix3D = new ScaldingMatrix3D(data)
+  implicit def TPP3DC2TPM3D(data: TypedPipe[Cell[Position3D]]): ScaldingMatrix3D = new ScaldingMatrix3D(data)
   /** Conversion from `TypedPipe[Cell[Position4D]]` to a `ScaldingMatrix4D`. */
-  implicit def TPP4DC2M4D(data: TypedPipe[Cell[Position4D]]): ScaldingMatrix4D = new ScaldingMatrix4D(data)
+  implicit def TPP4DC2TPM4D(data: TypedPipe[Cell[Position4D]]): ScaldingMatrix4D = new ScaldingMatrix4D(data)
   /** Conversion from `TypedPipe[Cell[Position5D]]` to a `ScaldingMatrix5D`. */
-  implicit def TPP5DC2M5D(data: TypedPipe[Cell[Position5D]]): ScaldingMatrix5D = new ScaldingMatrix5D(data)
+  implicit def TPP5DC2TPM5D(data: TypedPipe[Cell[Position5D]]): ScaldingMatrix5D = new ScaldingMatrix5D(data)
 
   /** Conversion from `List[(Valueable, Content)]` to a `ScaldingMatrix1D`. */
-  implicit def LVCT2M1D[V: Valueable](list: List[(V, Content)]): ScaldingMatrix1D = {
+  implicit def LVCT2TPM1D[V: Valueable](list: List[(V, Content)]): ScaldingMatrix1D = {
     new ScaldingMatrix1D(new IterablePipe(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a `ScaldingMatrix2D`. */
-  implicit def LVVCT2M2D[V: Valueable, W: Valueable](list: List[(V, W, Content)]): ScaldingMatrix2D = {
+  implicit def LVVCT2TPM2D[V: Valueable, W: Valueable](list: List[(V, W, Content)]): ScaldingMatrix2D = {
     new ScaldingMatrix2D(new IterablePipe(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a `ScaldingMatrix3D`. */
-  implicit def LVVVCT2M3D[V: Valueable, W: Valueable, X: Valueable](
+  implicit def LVVVCT2TPM3D[V: Valueable, W: Valueable, X: Valueable](
     list: List[(V, W, X, Content)]): ScaldingMatrix3D = {
     new ScaldingMatrix3D(new IterablePipe(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a `ScaldingMatrix4D`. */
-  implicit def LVVVVCT2M4D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
+  implicit def LVVVVCT2TPM4D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
     list: List[(V, W, X, Y, Content)]): ScaldingMatrix4D = {
     new ScaldingMatrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a `ScaldingMatrix5D`.
    */
-  implicit def LVVVVVCT2M5D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LVVVVVCT2TPM5D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
     list: List[(V, W, X, Y, Z, Content)]): ScaldingMatrix5D = {
     new ScaldingMatrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
   }
@@ -1271,17 +1271,17 @@ class ScaldingMatrix5D(val data: TypedPipe[Cell[Position5D]]) extends ScaldingMa
 /** Scalding Companion object for the `Matrixable` type class. */
 object ScaldingMatrixable {
   /** Converts a `TypedPipe[Cell[P]]` into a `TypedPipe[Cell[P]]`; that is, it is a  pass through. */
-  implicit def TPC2M[P <: Position]: Matrixable[TypedPipe[Cell[P]], P, TypedPipe] = {
+  implicit def TPC2TPM[P <: Position]: Matrixable[TypedPipe[Cell[P]], P, TypedPipe] = {
     new Matrixable[TypedPipe[Cell[P]], P, TypedPipe] { def convert(t: TypedPipe[Cell[P]]): TypedPipe[Cell[P]] = t }
   }
   /** Converts a `List[Cell[P]]` into a `TypedPipe[Cell[P]]`. */
-  implicit def LC2M[P <: Position]: Matrixable[List[Cell[P]], P, TypedPipe] = {
+  implicit def LC2TPM[P <: Position]: Matrixable[List[Cell[P]], P, TypedPipe] = {
     new Matrixable[List[Cell[P]], P, TypedPipe] {
       def convert(t: List[Cell[P]]): TypedPipe[Cell[P]] = new IterablePipe(t)
     }
   }
   /** Converts a `Cell[P]` into a `TypedPipe[Cell[P]]`. */
-  implicit def C2M[P <: Position]: Matrixable[Cell[P], P, TypedPipe] = {
+  implicit def C2TPM[P <: Position]: Matrixable[Cell[P], P, TypedPipe] = {
     new Matrixable[Cell[P], P, TypedPipe] { def convert(t: Cell[P]): TypedPipe[Cell[P]] = new IterablePipe(List(t)) }
   }
 }

@@ -58,7 +58,7 @@ class ScaldingPartitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cel
 /** Companion object for the `ScaldingPartitions` class. */
 object ScaldingPartitions {
   /** Conversion from `TypedPipe[(T, Cell[P])]` to a `ScaldingPartitions`. */
-  implicit def TPTC2P[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]): ScaldingPartitions[T, P] = {
+  implicit def TPTC2TPP[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]): ScaldingPartitions[T, P] = {
     new ScaldingPartitions(data)
   }
 }

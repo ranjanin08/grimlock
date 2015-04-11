@@ -32,6 +32,6 @@ class ScaldingTypes[P <: Position](val data: TypedPipe[(P, Type)]) extends Types
 /** Companion object for the `ScaldingTypes` class. */
 object ScaldingTypes {
   /** Conversion from `TypedPipe[(Position, Type)]` to a `Types`. */
-  implicit def TPPT2T[P <: Position](data: TypedPipe[(P, Type)]): ScaldingTypes[P] = new ScaldingTypes(data)
+  implicit def TPPT2TPT[P <: Position](data: TypedPipe[(P, Type)]): ScaldingTypes[P] = new ScaldingTypes(data)
 }
 

@@ -53,7 +53,7 @@ class SparkPartitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) e
 /** Companion object for the `SparkPartitions` class. */
 object SparkPartitions {
   /** Conversion from `RDD[(T, Cell[P])]` to a `SparkPartitions`. */
-  implicit def RDDTC2P[T: Ordering, P <: Position](data: RDD[(T, Cell[P])]): SparkPartitions[T, P] = {
+  implicit def RDDTC2RDDP[T: Ordering, P <: Position](data: RDD[(T, Cell[P])]): SparkPartitions[T, P] = {
     new SparkPartitions(data)
   }
 }

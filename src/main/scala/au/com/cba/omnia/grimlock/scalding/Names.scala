@@ -91,20 +91,20 @@ object ScaldingNames {
   }
 
   /** Conversion from `TypedPipe[(Position, Long)]` to a `ScaldingNames`. */
-  implicit def TPPL2N[P <: Position](data: TypedPipe[(P, Long)]): ScaldingNames[P] = new ScaldingNames(data)
+  implicit def TPPL2TPN[P <: Position](data: TypedPipe[(P, Long)]): ScaldingNames[P] = new ScaldingNames(data)
 }
 
 /** Scalding Companion object for the `Nameable` type class. */
 object ScaldingNameable {
   /** Converts a `TypedPipe[(Q, Long)]` into a `TypedPipe[(Q, Long)]`; that is, it is a pass through. */
-  implicit def TPQL2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[(Q, Long)], P, Q, D, TypedPipe] = {
+  implicit def TPQL2TPN[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[(Q, Long)], P, Q, D, TypedPipe] = {
     new Nameable[TypedPipe[(Q, Long)], P, Q, D, TypedPipe] {
       def convert(m: Matrix[P], s: Slice[P, D], t: TypedPipe[(Q, Long)])(
         implicit ev: ClassTag[s.S]): TypedPipe[(Q, Long)] = t
     }
   }
   /** Converts a `TypedPipe[Q]` into a `TypedPipe[(Q, Long)]`. */
-  implicit def TPQ2N[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[Q], P, Q, D, TypedPipe] = {
+  implicit def TPQ2TPN[P <: Position, Q <: Position, D <: Dimension]: Nameable[TypedPipe[Q], P, Q, D, TypedPipe] = {
     new Nameable[TypedPipe[Q], P, Q, D, TypedPipe] {
       def convert(m: Matrix[P], s: Slice[P, D], t: TypedPipe[Q])(implicit ev: ClassTag[s.S]): TypedPipe[(Q, Long)] = {
         ScaldingNames.number(t)
@@ -112,7 +112,7 @@ object ScaldingNameable {
     }
   }
   /** Converts a `PositionListable` into a `TypedPipe[(Q, Long)]`. */
-  implicit def PL2N[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
+  implicit def PL2TPN[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
     ev2: PosDimDep[P, D], ev3: ClassTag[Q]): Nameable[T, P, Q, D, TypedPipe] = {
     new Nameable[T, P, Q, D, TypedPipe] {
       def convert(m: Matrix[P], s: Slice[P, D], t: T)(implicit ev: ClassTag[s.S]): TypedPipe[(Q, Long)] = {

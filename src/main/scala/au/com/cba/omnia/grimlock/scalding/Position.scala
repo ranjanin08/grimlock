@@ -55,24 +55,24 @@ class ScaldingPositions[P <: Position](val data: TypedPipe[P]) extends Positions
 /** Companion object for the `ScaldingPositions` class. */
 object ScaldingPositions {
   /** Converts a `TypedPipe[Position]` to a `ScaldingPositions`. */
-  implicit def TPP2P[P <: Position](data: TypedPipe[P]): ScaldingPositions[P] = new ScaldingPositions(data)
+  implicit def TPP2TPP[P <: Position](data: TypedPipe[P]): ScaldingPositions[P] = new ScaldingPositions(data)
 }
 
 /** Scalding Companion object for the `PositionDistributable` type class. */
 object ScaldingPositionDistributable {
   /** Converts a `TypedPipe[Position]` to a `TypedPipe[Position]`; that is, it's a pass through. */
-  implicit def TPP2PD[P <: Position]: PositionDistributable[TypedPipe[P], P, TypedPipe] = {
+  implicit def TPP2TPPD[P <: Position]: PositionDistributable[TypedPipe[P], P, TypedPipe] = {
     new PositionDistributable[TypedPipe[P], P, TypedPipe] { def convert(t: TypedPipe[P]): TypedPipe[P] = t }
   }
   /** Converts a `List[Positionable]` to a `TypedPipe[Position]`. */
-  implicit def LP2PD[T, P <: Position](
+  implicit def LP2TPPD[T, P <: Position](
     implicit ev: Positionable[T, P]): PositionDistributable[List[T], P, TypedPipe] = {
     new PositionDistributable[List[T], P, TypedPipe] {
       def convert(t: List[T]): TypedPipe[P] = new IterablePipe(t.map(ev.convert(_)))
     }
   }
   /** Converts a `Positionable` to a `TypedPipe[Position]`. */
-  implicit def P2PD[T, P <: Position](implicit ev: Positionable[T, P]): PositionDistributable[T, P, TypedPipe] = {
+  implicit def P2TPPD[T, P <: Position](implicit ev: Positionable[T, P]): PositionDistributable[T, P, TypedPipe] = {
     new PositionDistributable[T, P, TypedPipe] {
       def convert(t: T): TypedPipe[P] = new IterablePipe(List(ev.convert(t)))
     }

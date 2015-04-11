@@ -32,6 +32,6 @@ class SparkContents(val data: RDD[Content]) extends Contents with SparkPersist[C
 /** Companion object for the `SparkContents` class. */
 object SparkContents {
   /** Converts a `RDD[Content]` to a `Contents`. */
-  implicit def RDDC2C(data: RDD[Content]): SparkContents = new SparkContents(data)
+  implicit def RDDC2RDDC(data: RDD[Content]): SparkContents = new SparkContents(data)
 }
 

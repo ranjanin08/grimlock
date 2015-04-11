@@ -55,24 +55,24 @@ class SparkPositions[P <: Position](val data: RDD[P]) extends Positions[P] with 
 /** Companion object for the `SparkPositions` class. */
 object SparkPositions {
   /** Converts a `RDD[Position]` to a `SparkPositions`. */
-  implicit def RDDP2P[P <: Position](data: RDD[P]): SparkPositions[P] = new SparkPositions(data)
+  implicit def RDDP2RDDP[P <: Position](data: RDD[P]): SparkPositions[P] = new SparkPositions(data)
 }
 
 /** Spark Companion object for the `PositionDistributable` type class. */
 object SparkPositionDistributable {
   /** Converts a `RDD[Position]` to a `RDD[Position]`; that is, it's a pass through. */
-  implicit def RDDP2PD[P <: Position]: PositionDistributable[RDD[P], P, RDD] = {
+  implicit def RDDP2RDDPD[P <: Position]: PositionDistributable[RDD[P], P, RDD] = {
     new PositionDistributable[RDD[P], P, RDD] { def convert(t: RDD[P]): RDD[P] = t }
   }
   /** Converts a `List[Positionable]` to a `RDD[Position]`. */
-  implicit def LP2PD[T, P <: Position](implicit ev: Positionable[T, P], sc: SparkContext,
+  implicit def LP2RDDPD[T, P <: Position](implicit ev: Positionable[T, P], sc: SparkContext,
     ct: ClassTag[P]): PositionDistributable[List[T], P, RDD] = {
     new PositionDistributable[List[T], P, RDD] {
       def convert(t: List[T]): RDD[P] = sc.parallelize(t.map(ev.convert(_)))
     }
   }
   /** Converts a `Positionable` to a `RDD[Position]`. */
-  implicit def P2PD[T, P <: Position](implicit ev: Positionable[T, P], sc: SparkContext,
+  implicit def P2RDDPD[T, P <: Position](implicit ev: Positionable[T, P], sc: SparkContext,
     ct: ClassTag[P]): PositionDistributable[T, P, RDD] = {
     new PositionDistributable[T, P, RDD] { def convert(t: T): RDD[P] = sc.parallelize(List(ev.convert(t))) }
   }

@@ -32,6 +32,6 @@ class ScaldingContents(val data: TypedPipe[Content]) extends Contents with Scald
 /** Companion object for the `ScaldingContents` class. */
 object ScaldingContents {
   /** Converts a `TypedPipe[Content]` to a `Contents`. */
-  implicit def TPC2C(data: TypedPipe[Content]): ScaldingContents = new ScaldingContents(data)
+  implicit def TPC2TPC(data: TypedPipe[Content]): ScaldingContents = new ScaldingContents(data)
 }
 

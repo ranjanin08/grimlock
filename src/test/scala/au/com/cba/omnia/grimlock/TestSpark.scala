@@ -14,10 +14,13 @@
 
 package au.com.cba.omnia.grimlock
 
-import org.apache.spark.{ SparkContext, SparkConf }
+import org.apache.log4j.{ Level, Logger }
+import org.apache.spark.{ SparkConf, SparkContext }
 
 object TestSpark {
 
   val spark = new SparkContext("local", "Test Spark", new SparkConf())
+
+  Logger.getRootLogger().setLevel(Level.WARN);
 }
 
