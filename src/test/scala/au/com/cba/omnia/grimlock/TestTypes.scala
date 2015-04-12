@@ -16,216 +16,214 @@ package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.Type._
 
-import org.scalatest._
-
-class TestMixedType extends FlatSpec with Matchers {
+class TestMixedType extends TestGrimlock {
 
   "A Mixed" should "return its short name" in {
-    Mixed.toShortString should be ("mixed")
+    Mixed.toShortString shouldBe "mixed"
   }
 
   it should "return its name" in {
-    Mixed.toString should be ("Mixed")
+    Mixed.toString shouldBe "Mixed"
   }
 
   it should "return correct generalised type" in {
-    Mixed.getGeneralisation should be (Mixed)
+    Mixed.getGeneralisation shouldBe Mixed
   }
 
   it should "match correct specialisation" in {
-    Mixed.isSpecialisationOf(Mixed) should be (true)
+    Mixed.isSpecialisationOf(Mixed) shouldBe true
   }
 
   it should "not match incorrect specialisation" in {
-    Mixed.isSpecialisationOf(Numerical) should be (false)
+    Mixed.isSpecialisationOf(Numerical) shouldBe false
   }
 }
 
-class TestNumericalType extends FlatSpec with Matchers {
+class TestNumericalType extends TestGrimlock {
 
   "A Numerical" should "return its short name" in {
-    Numerical.toShortString should be ("numerical")
+    Numerical.toShortString shouldBe "numerical"
   }
 
   it should "return its name" in {
-    Numerical.toString should be ("Numerical")
+    Numerical.toString shouldBe "Numerical"
   }
 
   it should "return correct generalised type" in {
-    Numerical.getGeneralisation should be (Numerical)
+    Numerical.getGeneralisation shouldBe Numerical
   }
 
   it should "match correct specialisation" in {
-    Numerical.isSpecialisationOf(Numerical) should be (true)
+    Numerical.isSpecialisationOf(Numerical) shouldBe true
   }
 
   it should "not match incorrect specialisation" in {
-    Numerical.isSpecialisationOf(Continuous) should be (false)
+    Numerical.isSpecialisationOf(Continuous) shouldBe false
   }
 }
 
-class TestContinuousType extends FlatSpec with Matchers {
+class TestContinuousType extends TestGrimlock {
 
   "A Continuous" should "return its short name" in {
-    Continuous.toShortString should be ("continuous")
+    Continuous.toShortString shouldBe "continuous"
   }
 
   it should "return its name" in {
-    Continuous.toString should be ("Continuous")
+    Continuous.toString shouldBe "Continuous"
   }
 
   it should "return correct generalised type" in {
-    Continuous.getGeneralisation should be (Numerical)
+    Continuous.getGeneralisation shouldBe Numerical
   }
 
   it should "match correct specialisation" in {
-    Continuous.isSpecialisationOf(Continuous) should be (true)
-    Continuous.isSpecialisationOf(Numerical) should be (true)
+    Continuous.isSpecialisationOf(Continuous) shouldBe true
+    Continuous.isSpecialisationOf(Numerical) shouldBe true
   }
 
   it should "not match incorrect specialisation" in {
-    Continuous.isSpecialisationOf(Mixed) should be (false)
+    Continuous.isSpecialisationOf(Mixed) shouldBe false
   }
 }
 
-class TestDiscreteType extends FlatSpec with Matchers {
+class TestDiscreteType extends TestGrimlock {
 
   "A Discrete" should "return its short name" in {
-    Discrete.toShortString should be ("discrete")
+    Discrete.toShortString shouldBe "discrete"
   }
 
   it should "return its name" in {
-    Discrete.toString should be ("Discrete")
+    Discrete.toString shouldBe "Discrete"
   }
 
   it should "return correct generalised type" in {
-    Discrete.getGeneralisation should be (Numerical)
+    Discrete.getGeneralisation shouldBe Numerical
   }
 
   it should "match correct specialisation" in {
-    Discrete.isSpecialisationOf(Discrete) should be (true)
-    Discrete.isSpecialisationOf(Numerical) should be (true)
+    Discrete.isSpecialisationOf(Discrete) shouldBe true
+    Discrete.isSpecialisationOf(Numerical) shouldBe true
   }
 
   it should "not match incorrect specialisation" in {
-    Discrete.isSpecialisationOf(Mixed) should be (false)
+    Discrete.isSpecialisationOf(Mixed) shouldBe false
   }
 }
 
-class TestCategoricalType extends FlatSpec with Matchers {
+class TestCategoricalType extends TestGrimlock {
 
   "A Categorical" should "return its short name" in {
-    Categorical.toShortString should be ("categorical")
+    Categorical.toShortString shouldBe "categorical"
   }
 
   it should "return its name" in {
-    Categorical.toString should be ("Categorical")
+    Categorical.toString shouldBe "Categorical"
   }
 
   it should "return correct generalised type" in {
-    Categorical.getGeneralisation should be (Categorical)
+    Categorical.getGeneralisation shouldBe Categorical
   }
 
   it should "match correct specialisation" in {
-    Categorical.isSpecialisationOf(Categorical) should be (true)
+    Categorical.isSpecialisationOf(Categorical) shouldBe true
   }
 
   it should "not match incorrect specialisation" in {
-    Categorical.isSpecialisationOf(Continuous) should be (false)
+    Categorical.isSpecialisationOf(Continuous) shouldBe false
   }
 }
 
-class TestNominalType extends FlatSpec with Matchers {
+class TestNominalType extends TestGrimlock {
 
   "A Nominal" should "return its short name" in {
-    Nominal.toShortString should be ("nominal")
+    Nominal.toShortString shouldBe "nominal"
   }
 
   it should "return its name" in {
-    Nominal.toString should be ("Nominal")
+    Nominal.toString shouldBe "Nominal"
   }
 
   it should "return correct generalised type" in {
-    Nominal.getGeneralisation should be (Categorical)
+    Nominal.getGeneralisation shouldBe Categorical
   }
 
   it should "match correct specialisation" in {
-    Nominal.isSpecialisationOf(Nominal) should be (true)
-    Nominal.isSpecialisationOf(Categorical) should be (true)
+    Nominal.isSpecialisationOf(Nominal) shouldBe true
+    Nominal.isSpecialisationOf(Categorical) shouldBe true
   }
 
   it should "not match incorrect specialisation" in {
-    Nominal.isSpecialisationOf(Mixed) should be (false)
+    Nominal.isSpecialisationOf(Mixed) shouldBe false
   }
 }
 
-class TestOrdinalType extends FlatSpec with Matchers {
+class TestOrdinalType extends TestGrimlock {
 
   "A Ordinal" should "return its short name" in {
-    Ordinal.toShortString should be ("ordinal")
+    Ordinal.toShortString shouldBe "ordinal"
   }
 
   it should "return its name" in {
-    Ordinal.toString should be ("Ordinal")
+    Ordinal.toString shouldBe "Ordinal"
   }
 
   it should "return correct generalised type" in {
-    Ordinal.getGeneralisation should be (Categorical)
+    Ordinal.getGeneralisation shouldBe Categorical
   }
 
   it should "match correct specialisation" in {
-    Ordinal.isSpecialisationOf(Ordinal) should be (true)
-    Ordinal.isSpecialisationOf(Categorical) should be (true)
+    Ordinal.isSpecialisationOf(Ordinal) shouldBe true
+    Ordinal.isSpecialisationOf(Categorical) shouldBe true
   }
 
   it should "not match incorrect specialisation" in {
-    Ordinal.isSpecialisationOf(Mixed) should be (false)
+    Ordinal.isSpecialisationOf(Mixed) shouldBe false
   }
 }
 
-class TestDateType extends FlatSpec with Matchers {
+class TestDateType extends TestGrimlock {
 
   "A Date" should "return its short name" in {
-    Date.toShortString should be ("date")
+    Date.toShortString shouldBe "date"
   }
 
   it should "return its name" in {
-    Date.toString should be ("Date")
+    Date.toString shouldBe "Date"
   }
 
   it should "return correct generalised type" in {
-    Date.getGeneralisation should be (Date)
+    Date.getGeneralisation shouldBe Date
   }
 
   it should "match correct specialisation" in {
-    Date.isSpecialisationOf(Date) should be (true)
+    Date.isSpecialisationOf(Date) shouldBe true
   }
 
   it should "not match incorrect specialisation" in {
-    Date.isSpecialisationOf(Numerical) should be (false)
+    Date.isSpecialisationOf(Numerical) shouldBe false
   }
 }
 
-class TestEventType extends FlatSpec with Matchers {
+class TestEventType extends TestGrimlock {
 
   "A Event" should "return its short name" in {
-    Event.toShortString should be ("event")
+    Event.toShortString shouldBe "event"
   }
 
   it should "return its name" in {
-    Event.toString should be ("Event")
+    Event.toString shouldBe "Event"
   }
 
   it should "return correct generalised type" in {
-    Event.getGeneralisation should be (Event)
+    Event.getGeneralisation shouldBe Event
   }
 
   it should "match correct specialisation" in {
-    Event.isSpecialisationOf(Event) should be (true)
+    Event.isSpecialisationOf(Event) shouldBe true
   }
 
   it should "not match incorrect specialisation" in {
-    Event.isSpecialisationOf(Numerical) should be (false)
+    Event.isSpecialisationOf(Numerical) shouldBe false
   }
 }
 

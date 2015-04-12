@@ -31,12 +31,7 @@ import java.util.Date
 
 import org.apache.spark.rdd._
 
-import org.scalatest._
-
-import scala.collection.mutable
-import scala.reflect._
-
-trait TestHashPartitioners {
+trait TestHashPartitioners extends TestGrimlock {
 
   // In scalding REPL:
   //
@@ -55,107 +50,107 @@ trait TestHashPartitioners {
   val pos3 = Position2D(4, "c")
 }
 
-class TestBinaryHashSplit extends FlatSpec with Matchers with TestHashPartitioners {
+class TestBinaryHashSplit extends TestHashPartitioners {
 
   "A BinaryHashSplit" should "assign left on the first dimension" in {
-    BinaryHashSplit(First, 5, "left", "right", 10).assign(pos1) should be (Collection("left"))
+    BinaryHashSplit(First, 5, "left", "right", 10).assign(pos1) shouldBe Collection("left")
   }
 
   it should "assign left on the first dimension when on boundary" in {
-    BinaryHashSplit(First, 4, "left", "right", 10).assign(pos1) should be (Collection("left"))
+    BinaryHashSplit(First, 4, "left", "right", 10).assign(pos1) shouldBe Collection("left")
   }
 
   it should "assign right on the first dimension" in {
-    BinaryHashSplit(First, 5, "left", "right", 10).assign(pos2) should be (Collection("right"))
+    BinaryHashSplit(First, 5, "left", "right", 10).assign(pos2) shouldBe Collection("right")
   }
 
   it should "assign left on the second dimension" in {
-    BinaryHashSplit(Second, 7, "left", "right", 10).assign(pos1) should be (Collection("left"))
+    BinaryHashSplit(Second, 7, "left", "right", 10).assign(pos1) shouldBe Collection("left")
   }
 
   it should "assign left on the second dimension when on boundary" in {
-    BinaryHashSplit(Second, 6, "left", "right", 10).assign(pos1) should be (Collection("left"))
+    BinaryHashSplit(Second, 6, "left", "right", 10).assign(pos1) shouldBe Collection("left")
   }
 
   it should "assign right on the second dimension" in {
-    BinaryHashSplit(Second, 7, "left", "right", 10).assign(pos2) should be (Collection("right"))
+    BinaryHashSplit(Second, 7, "left", "right", 10).assign(pos2) shouldBe Collection("right")
   }
 }
 
-class TestTernaryHashSplit extends FlatSpec with Matchers with TestHashPartitioners {
+class TestTernaryHashSplit extends TestHashPartitioners {
 
   "A TernaryHashSplit" should "assign left on the first dimension" in {
-    TernaryHashSplit(First, 3, 7, "left", "middle", "right", 10).assign(pos3) should be (Collection("left"))
+    TernaryHashSplit(First, 3, 7, "left", "middle", "right", 10).assign(pos3) shouldBe Collection("left")
   }
 
   it should "assign left on the first dimension when on boundary" in {
-    TernaryHashSplit(First, 4, 7, "left", "middle", "right", 10).assign(pos3) should be (Collection("left"))
+    TernaryHashSplit(First, 4, 7, "left", "middle", "right", 10).assign(pos3) shouldBe Collection("left")
   }
 
   it should "assign middle on the first dimension" in {
-    TernaryHashSplit(First, 3, 7, "left", "middle", "right", 10).assign(pos1) should be (Collection("middle"))
+    TernaryHashSplit(First, 3, 7, "left", "middle", "right", 10).assign(pos1) shouldBe Collection("middle")
   }
 
   it should "assign middle on the first dimension when on boundary" in {
-    TernaryHashSplit(First, 3, 4, "left", "middle", "right", 10).assign(pos1) should be (Collection("middle"))
+    TernaryHashSplit(First, 3, 4, "left", "middle", "right", 10).assign(pos1) shouldBe Collection("middle")
   }
 
   it should "assign right on the first dimension" in {
-    TernaryHashSplit(First, 4, 7, "left", "middle", "right", 10).assign(pos2) should be (Collection("right"))
+    TernaryHashSplit(First, 4, 7, "left", "middle", "right", 10).assign(pos2) shouldBe Collection("right")
   }
 
   it should "assign left on the second dimension" in {
-    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(pos3) should be (Collection("left"))
+    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(pos3) shouldBe Collection("left")
   }
 
   it should "assign left on the second dimension when on boundary" in {
-    TernaryHashSplit(Second, 6, 7, "left", "middle", "right", 10).assign(pos3) should be (Collection("left"))
+    TernaryHashSplit(Second, 6, 7, "left", "middle", "right", 10).assign(pos3) shouldBe Collection("left")
   }
 
   it should "assign middle on the second dimension" in {
-    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(pos1) should be (Collection("middle"))
+    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(pos1) shouldBe Collection("middle")
   }
 
   it should "assign middle on the second dimension when on boundary" in {
-    TernaryHashSplit(Second, 3, 8, "left", "middle", "right", 10).assign(pos1) should be (Collection("middle"))
+    TernaryHashSplit(Second, 3, 8, "left", "middle", "right", 10).assign(pos1) shouldBe Collection("middle")
   }
 
   it should "assign right on the second dimension" in {
-    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(pos2) should be (Collection("right"))
+    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(pos2) shouldBe Collection("right")
   }
 }
 
-class TestHashSplit extends FlatSpec with Matchers with TestHashPartitioners {
+class TestHashSplit extends TestHashPartitioners {
 
   val map1: Map[String, (Int, Int)] = Map("lower.left" -> ((0, 4)), "upper.left" -> ((1, 5)), "right" -> ((6, 10)))
   val map2: Map[String, (Int, Int)] = Map("lower.left" -> ((0, 6)), "upper.left" -> ((1, 7)), "right" -> ((7, 10)))
 
   "A HashSplit" should "assign both left on the first dimension" in {
-    HashSplit(First, map1, 10).assign(pos1) should be (Collection(List("lower.left", "upper.left")))
+    HashSplit(First, map1, 10).assign(pos1) shouldBe Collection(List("lower.left", "upper.left"))
   }
 
   it should "assign right on the first dimension" in {
-    HashSplit(First, map1, 10).assign(pos2) should be (Collection("right"))
+    HashSplit(First, map1, 10).assign(pos2) shouldBe Collection("right")
   }
 
   it should "assign none on the first dimension" in {
-    HashSplit(First, map1, 10).assign(pos3) should be (Collection())
+    HashSplit(First, map1, 10).assign(pos3) shouldBe Collection()
   }
 
   it should "assign both left on the second dimension" in {
-    HashSplit(Second, map2, 10).assign(pos1) should be (Collection(List("lower.left", "upper.left")))
+    HashSplit(Second, map2, 10).assign(pos1) shouldBe Collection(List("lower.left", "upper.left"))
   }
 
   it should "assign right on the second dimension" in {
-    HashSplit(Second, map2, 10).assign(pos2) should be (Collection("right"))
+    HashSplit(Second, map2, 10).assign(pos2) shouldBe Collection("right")
   }
 
   it should "assign none on the second dimension" in {
-    HashSplit(Second, map2, 10).assign(pos3) should be (Collection())
+    HashSplit(Second, map2, 10).assign(pos3) shouldBe Collection()
   }
 }
 
-trait TestDatePartitioners {
+trait TestDatePartitioners extends TestGrimlock {
 
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
 
@@ -164,82 +159,82 @@ trait TestDatePartitioners {
   val pos3 = Position2D(3, DateValue(dfmt.parse("2007-01-01"), DateCodex))
 }
 
-class TestBinaryDateSplit extends FlatSpec with Matchers with TestDatePartitioners {
+class TestBinaryDateSplit extends TestDatePartitioners {
 
   "A BinaryDateSplit" should "assign none on the first dimension" in {
-    BinaryDateSplit(First, dfmt.parse("2005-01-01"), "left", "right").assign(pos1) should be (Collection())
+    BinaryDateSplit(First, dfmt.parse("2005-01-01"), "left", "right").assign(pos1) shouldBe Collection()
   }
 
   it should "assign left on the second dimension" in {
-    BinaryDateSplit(Second, dfmt.parse("2005-01-01"), "left", "right").assign(pos1) should be (Collection("left"))
+    BinaryDateSplit(Second, dfmt.parse("2005-01-01"), "left", "right").assign(pos1) shouldBe Collection("left")
   }
 
   it should "assign left on the second dimension when on boundary" in {
-    BinaryDateSplit(Second, dfmt.parse("2004-01-01"), "left", "right").assign(pos1) should be (Collection("left"))
+    BinaryDateSplit(Second, dfmt.parse("2004-01-01"), "left", "right").assign(pos1) shouldBe Collection("left")
   }
 
   it should "assign right on the second dimension" in {
-    BinaryDateSplit(Second, dfmt.parse("2005-01-01"), "left", "right").assign(pos2) should be (Collection("right"))
+    BinaryDateSplit(Second, dfmt.parse("2005-01-01"), "left", "right").assign(pos2) shouldBe Collection("right")
   }
 }
 
-class TestTernaryDateSplit extends FlatSpec with Matchers with TestDatePartitioners {
+class TestTernaryDateSplit extends TestDatePartitioners {
 
   "A TernaryDateSplit" should "assign none on the first dimension" in {
     TernaryDateSplit(First, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right")
-      .assign(pos1) should be (Collection())
+      .assign(pos1) shouldBe Collection()
   }
 
   it should "assign left on the second dimension" in {
     TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right")
-      .assign(pos1) should be (Collection("left"))
+      .assign(pos1) shouldBe Collection("left")
   }
 
   it should "assign left on the second dimension when on boundary" in {
     TernaryDateSplit(Second, dfmt.parse("2004-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right")
-      .assign(pos1) should be (Collection("left"))
+      .assign(pos1) shouldBe Collection("left")
   }
 
   it should "assign middle on the second dimension" in {
     TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-01-01"), "left", "middle", "right")
-      .assign(pos2) should be (Collection("middle"))
+      .assign(pos2) shouldBe Collection("middle")
   }
 
   it should "assign middle on the second dimension when on boundary" in {
     TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-01-01"), "left", "middle", "right")
-      .assign(pos2) should be (Collection("middle"))
+      .assign(pos2) shouldBe Collection("middle")
   }
 
   it should "assign right on the second dimension" in {
     TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right")
-      .assign(pos3) should be (Collection("right"))
+      .assign(pos3) shouldBe Collection("right")
   }
 }
 
-class TestDateSplit extends FlatSpec with Matchers with TestDatePartitioners {
+class TestDateSplit extends TestDatePartitioners {
 
   val map1: Map[String, (Date, Date)] = Map("lower.left" -> ((dfmt.parse("2003-01-01"), dfmt.parse("2005-01-01"))),
     "upper.left" -> ((dfmt.parse("2003-06-30"), dfmt.parse("2005-06-30"))),
     "right" -> ((dfmt.parse("2006-06-30"), dfmt.parse("2008-01-01"))))
 
   "A DateSplit" should "assign none on the first dimension" in {
-    DateSplit(First, map1).assign(pos1) should be (Collection())
+    DateSplit(First, map1).assign(pos1) shouldBe Collection()
   }
 
   it should "assign both left on the second dimension" in {
-    DateSplit(Second, map1).assign(pos1) should be (Collection(List("lower.left", "upper.left")))
+    DateSplit(Second, map1).assign(pos1) shouldBe Collection(List("lower.left", "upper.left"))
   }
 
   it should "assign right on the second dimension" in {
-    DateSplit(Second, map1).assign(pos3) should be (Collection("right"))
+    DateSplit(Second, map1).assign(pos3) shouldBe Collection("right")
   }
 
   it should "assign none on the second dimension" in {
-    DateSplit(Second, map1).assign(pos2) should be (Collection())
+    DateSplit(Second, map1).assign(pos2) shouldBe Collection()
   }
 }
 
-trait TestPartitions {
+trait TestPartitions extends TestGrimlock {
 
   val data = List(("train", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 1))),
     ("train", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 2))),
@@ -247,165 +242,130 @@ trait TestPartitions {
     ("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 4))),
     ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 5))),
     ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6))))
+
+  val data2 = List(Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8)),
+    Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9)))
+
+  val result1 = List("test", "train", "valid")
+
+  val result2 = List(Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 1)),
+    Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 2)),
+    Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 3)))
+
+  val result3 = data ++ List(("xyz", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))),
+    ("xyz", Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9))))
+
+  val result4 = List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 4))),
+    ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 5))),
+    ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6))))
+
+  val result5 = List(("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 10))),
+    ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 12))),
+    ("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))))
 }
 
-class TestScaldingPartitions extends WordSpec with Matchers with TBddDsl with TestPartitions {
+object TestPartitions {
 
-  def double(key: String, pipe: TypedPipe[Cell[Position1D]]): TypedPipe[Cell[Position1D]] = {
-    pipe
-      .flatMap {
-        case c => c.content.value.asLong.map {
-          case v => Cell(c.position, Content(ContinuousSchema[Codex.LongCodex](), 2 * v))
-        }
-      }
-  }
-
-  "A Partitions" should {
-    "return its keys" in {
-      Given {
-        data
-      } When {
-        parts: TypedPipe[(String, Cell[Position1D])] =>
-          new ScaldingPartitions(parts).keys()
-      } Then {
-        buffer: mutable.Buffer[String] =>
-          buffer.toList.sorted shouldBe List("test", "train", "valid")
-      }
-    }
-
-    "get a partition's data" in {
-      Given {
-        data
-      } When {
-        parts: TypedPipe[(String, Cell[Position1D])] =>
-          parts.get("train")
-      } Then {
-        buffer: mutable.Buffer[Cell[Position1D]] =>
-          buffer.toList.sortBy(_.position.toShortString("|")) shouldBe
-            List(Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 1)),
-              Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 2)),
-              Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 3)))
-      }
-    }
-
-    "add new data" in {
-      Given {
-        data
-      } And {
-        List(Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8)),
-             Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9)))
-      } When {
-        (parts: TypedPipe[(String, Cell[Position1D])], pipe: TypedPipe[Cell[Position1D]]) =>
-          parts.add("xyz", pipe)
-      } Then {
-        buffer: mutable.Buffer[(String, Cell[Position1D])] =>
-          buffer.toList.sortBy(_._2.content.value.toShortString) shouldBe data ++
-            List(("xyz", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))),
-              ("xyz", Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9))))
-      }
-    }
-
-    "remove a partition's data" in {
-      Given {
-        data
-      } When {
-        parts: TypedPipe[(String, Cell[Position1D])] =>
-          parts.remove("train")
-      } Then {
-        buffer: mutable.Buffer[(String, Cell[Position1D])] =>
-          buffer.toList.sortBy(_._2.content.value.toShortString) shouldBe
-            List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 4))),
-              ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 5))),
-              ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6))))
-      }
-    }
-
-    "foreach should apply to selected partitions" in {
-      Given {
-        data
-      } When {
-        parts: TypedPipe[(String, Cell[Position1D])] =>
-          parts.forEach(List("test", "valid", "not.there"), double)
-      } Then {
-        buffer: mutable.Buffer[(String, Cell[Position1D])] =>
-          buffer.toList.sortBy(_._2.toString("|", false)) shouldBe
-            List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))),
-              ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 10))),
-              ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 12))))
-      }
+  def double(cell: Cell[Position1D]): Option[Cell[Position1D]] = {
+    cell.content.value.asLong.map {
+      case v => Cell(cell.position, Content(ContinuousSchema[Codex.LongCodex](), 2 * v))
     }
   }
+
+  def double(key: String, pipe: TypedPipe[Cell[Position1D]]): TypedPipe[Cell[Position1D]] = pipe.flatMap { double(_) }
+  def double(key: String, pipe: RDD[Cell[Position1D]]): RDD[Cell[Position1D]] = pipe.flatMap { double(_) }
 }
 
-class TestSparkPartitions extends FlatSpec with Matchers with TestPartitions {
-
-  def double(key: String, pipe: RDD[Cell[Position1D]]): RDD[Cell[Position1D]] = {
-    pipe
-      .flatMap {
-        case c => c.content.value.asLong.map {
-          case v => Cell(c.position, Content(ContinuousSchema[Codex.LongCodex](), 2 * v))
-        }
-      }
-  }
+class TestScaldingPartitions extends TestPartitions with TBddDsl {
 
   "A Partitions" should "return its keys" in {
-    TestSpark.spark
-      .parallelize(data)
-      .keys()
-      .toLocalIterator
-      .toList
-      .sorted should be (List("test", "train", "valid"))
+    Given {
+      data
+    } When {
+      parts: TypedPipe[(String, Cell[Position1D])] =>
+        new ScaldingPartitions(parts).keys()
+    } Then {
+      _.toList.sorted shouldBe result1
+    }
   }
 
   it should "get a partition's data" in {
-    TestSpark.spark
-      .parallelize(data)
-      .get("train")
-      .toLocalIterator
-      .toList
-      .sortBy(_.position.toShortString("|")) should
-        be (List(Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 1)),
-          Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 2)),
-          Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 3))))
+    Given {
+      data
+    } When {
+      parts: TypedPipe[(String, Cell[Position1D])] =>
+        parts.get("train")
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result2
+    }
   }
 
   it should "add new data" in {
-    val pipe = TestSpark.spark.parallelize(List(
-      Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8)),
-      Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9))))
-
-    TestSpark.spark
-      .parallelize(data)
-      .add("xyz", pipe)
-      .toLocalIterator
-      .toList
-      .sortBy(_._2.content.value.toShortString) should be (data ++
-        List(("xyz", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))),
-          ("xyz", Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9)))))
+    Given {
+      data
+    } And {
+      data2
+    } When {
+      (parts: TypedPipe[(String, Cell[Position1D])], pipe: TypedPipe[Cell[Position1D]]) =>
+        parts.add("xyz", pipe)
+    } Then {
+      _.toList.sortBy(_._2.content.value.toShortString) shouldBe result3
+    }
   }
 
   it should "remove a partition's data" in {
-    TestSpark.spark
-      .parallelize(data)
-      .remove("train")
-      .toLocalIterator
-      .toList
-      .sortBy(_._2.content.value.toShortString) should
-        be (List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 4))),
-          ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 5))),
-          ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6)))))
+    Given {
+      data
+    } When {
+      parts: TypedPipe[(String, Cell[Position1D])] =>
+        parts.remove("train")
+    } Then {
+      _.toList.sortBy(_._2.content.value.toShortString) shouldBe result4
+    }
   }
 
   it should "foreach should apply to selected partitions" in {
-    TestSpark.spark
-      .parallelize(data)
-      .forEach(List("test", "valid", "not.there"), double)
-      .toLocalIterator
-      .toList
-      .sortBy(_._2.toString("|", false)) should
-        be (List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))),
-          ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 10))),
-          ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 12)))))
+    Given {
+      data
+    } When {
+      parts: TypedPipe[(String, Cell[Position1D])] =>
+        parts.forEach(List("test", "valid", "not.there"), TestPartitions.double)
+    } Then {
+      _.toList.sortBy(_._2.content.value.toShortString) shouldBe result5
+    }
+  }
+}
+
+class TestSparkPartitions extends TestPartitions {
+
+  "A Partitions" should "return its keys" in {
+    toRDD(data)
+      .keys()
+      .toList.sorted shouldBe result1
+  }
+
+  it should "get a partition's data" in {
+    toRDD(data)
+      .get("train")
+      .toList.sortBy(_.position) shouldBe result2
+  }
+
+  it should "add new data" in {
+    toRDD(data)
+      .add("xyz", toRDD(data2))
+      .toList.sortBy(_._2.content.value.toShortString) shouldBe result3
+  }
+
+  it should "remove a partition's data" in {
+    toRDD(data)
+      .remove("train")
+      .toList.sortBy(_._2.content.value.toShortString) shouldBe result4
+  }
+
+  it should "foreach should apply to selected partitions" in {
+    toRDD(data)
+      .forEach(List("test", "valid", "not.there"), TestPartitions.double)
+      .toList.sortBy(_._2.content.value.toShortString) shouldBe result5
   }
 }
 

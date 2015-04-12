@@ -94,7 +94,7 @@ trait Partitions[T, P <: Position] {
   def get(key: T): U[Cell[P]]
 
   /** Return the partition identifiers. */
-  // TODO: Rename to prevent resolution clashes (see TestPartitioners.scala:262)
+  // TODO: Rename to prevent resolution clashes (see TestPartitioners.scala)
   def keys()(implicit ev: ClassTag[T]): U[T]
 
   /**

@@ -22,9 +22,7 @@ import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
-import org.scalatest._
-
-trait TestBatchMovingAverage {
+trait TestBatchMovingAverage extends TestGrimlock {
   // test initilise
   val sliceInitialise = Over[Position3D, First.type](First)
   val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Codex.LongCodex](), 1))
@@ -42,231 +40,181 @@ trait TestBatchMovingAverage {
   }
 }
 
-class TestSimpleMovingAverage extends FlatSpec with Matchers with TestBatchMovingAverage {
+class TestSimpleMovingAverage extends TestBatchMovingAverage {
 
   "A SimpleMovingAverage" should "initialise correctly" in {
-    SimpleMovingAverage(1, First, false).initialise(sliceInitialise)(cell, rem) should be ((List(first), None))
-    SimpleMovingAverage(1, First, true).initialise(sliceInitialise)(cell, rem) should be ((List(first), Some(first)))
-    SimpleMovingAverage(1, Second, false).initialise(sliceInitialise)(cell, rem) should be ((List(second), None))
-    SimpleMovingAverage(1, Second, true).initialise(sliceInitialise)(cell, rem) should be ((List(second), Some(second)))
-    SimpleMovingAverage(5, First, false).initialise(sliceInitialise)(cell, rem) should be ((List(first), None))
-    SimpleMovingAverage(5, First, true).initialise(sliceInitialise)(cell, rem) should be ((List(first), Some(first)))
-    SimpleMovingAverage(5, Second, false).initialise(sliceInitialise)(cell, rem) should be ((List(second), None))
-    SimpleMovingAverage(5, Second, true).initialise(sliceInitialise)(cell, rem) should be ((List(second), Some(second)))
+    SimpleMovingAverage(1, First, false).initialise(sliceInitialise)(cell, rem) shouldBe ((List(first), None))
+    SimpleMovingAverage(1, First, true).initialise(sliceInitialise)(cell, rem) shouldBe ((List(first), Some(first)))
+    SimpleMovingAverage(1, Second, false).initialise(sliceInitialise)(cell, rem) shouldBe ((List(second), None))
+    SimpleMovingAverage(1, Second, true).initialise(sliceInitialise)(cell, rem) shouldBe ((List(second), Some(second)))
+    SimpleMovingAverage(5, First, false).initialise(sliceInitialise)(cell, rem) shouldBe ((List(first), None))
+    SimpleMovingAverage(5, First, true).initialise(sliceInitialise)(cell, rem) shouldBe ((List(first), Some(first)))
+    SimpleMovingAverage(5, Second, false).initialise(sliceInitialise)(cell, rem) shouldBe ((List(second), None))
+    SimpleMovingAverage(5, Second, true).initialise(sliceInitialise)(cell, rem) shouldBe ((List(second), Some(second)))
   }
 
   it should "present correctly" in {
     val obj = SimpleMovingAverage(5, First, false)
 
     val init = obj.initialise(slicePresent)(Cell(sel, createContent(4)), Position1D("2003"))
-    init should be ((List((StringValue("2003"), 4.0)), None))
+    init shouldBe ((List((StringValue("2003"), 4.0)), None))
 
     val first = obj.present(slicePresent)(Cell(sel, createContent(6)), Position1D("2004"), init)
-    first should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0)), None), Collection()))
+    first shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0)), None), Collection()))
 
     val second = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("2005"), first._1)
-    second should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0)), None), Collection()))
+    second shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0)), None),
+      Collection()))
 
     val third = obj.present(slicePresent)(Cell(sel, createContent(8)), Position1D("2006"), second._1)
-    third should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
+    third shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
       (StringValue("2006"), 8.0)), None), Collection()))
 
     val fourth = obj.present(slicePresent)(Cell(sel, createContent(9)), Position1D("2007"), third._1)
-    fourth should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
-      (StringValue("2006"), 8.0),
-      (StringValue("2007"), 9.0)), None), createCollection("2007", 6.4)))
+    fourth shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
+      (StringValue("2006"), 8.0), (StringValue("2007"), 9.0)), None), createCollection("2007", 6.4)))
 
     val fifth = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
-    fifth should be (((List((StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
-      (StringValue("2006"), 8.0),
-      (StringValue("2007"), 9.0),
-      (StringValue("2008"), 5.0)), None), createCollection("2008", 6.6)))
+    fifth shouldBe (((List((StringValue("2004"), 6.0), (StringValue("2005"), 5.0), (StringValue("2006"), 8.0),
+      (StringValue("2007"), 9.0), (StringValue("2008"), 5.0)), None), createCollection("2008", 6.6)))
   }
 
   it should "present all correctly" in {
     val obj = SimpleMovingAverage(5, First, true)
 
     val init = obj.initialise(slicePresent)(Cell(sel, createContent(4)), Position1D("2003"))
-    init should be ((List((StringValue("2003"), 4.0)), Some((StringValue("2003"), 4.0))))
+    init shouldBe ((List((StringValue("2003"), 4.0)), Some((StringValue("2003"), 4.0))))
 
     val first = obj.present(slicePresent)(Cell(sel, createContent(6)), Position1D("2004"), init)
-    first should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0)), None), Collection(List(
+    first shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0)), None), Collection(List(
         Cell(Position2D("sales", "2003"), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
         Cell(Position2D("sales", "2004"), Content(ContinuousSchema[Codex.DoubleCodex](), 5))))))
 
     val second = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("2005"), first._1)
-    second should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0)), None), createCollection("2005", 5)))
+    second shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0)), None),
+      createCollection("2005", 5)))
 
     val third = obj.present(slicePresent)(Cell(sel, createContent(8)), Position1D("2006"), second._1)
-    third should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
+    third shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
       (StringValue("2006"), 8.0)), None), createCollection("2006", 5.75)))
 
     val fourth = obj.present(slicePresent)(Cell(sel, createContent(9)), Position1D("2007"), third._1)
-    fourth should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
-      (StringValue("2006"), 8.0),
-      (StringValue("2007"), 9.0)), None), createCollection("2007", 6.4)))
+    fourth shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
+      (StringValue("2006"), 8.0), (StringValue("2007"), 9.0)), None), createCollection("2007", 6.4)))
 
     val fifth = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
-    fifth should be (((List((StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
-      (StringValue("2006"), 8.0),
-      (StringValue("2007"), 9.0),
-      (StringValue("2008"), 5.0)), None), createCollection("2008", 6.6)))
+    fifth shouldBe (((List((StringValue("2004"), 6.0), (StringValue("2005"), 5.0), (StringValue("2006"), 8.0),
+      (StringValue("2007"), 9.0), (StringValue("2008"), 5.0)), None), createCollection("2008", 6.6)))
   }
 }
 
-class TestCenteredMovingAverage extends FlatSpec with Matchers with TestBatchMovingAverage {
+class TestCenteredMovingAverage extends TestBatchMovingAverage {
 
   "A CenteredMovingAverage" should "initialise correctly" in {
-    CenteredMovingAverage(1, First).initialise(sliceInitialise)(cell, rem) should be ((List(first), None))
-    CenteredMovingAverage(1, Second).initialise(sliceInitialise)(cell, rem) should be ((List(second), None))
-    CenteredMovingAverage(5, First).initialise(sliceInitialise)(cell, rem) should be ((List(first), None))
-    CenteredMovingAverage(5, Second).initialise(sliceInitialise)(cell, rem) should be ((List(second), None))
+    CenteredMovingAverage(1, First).initialise(sliceInitialise)(cell, rem) shouldBe ((List(first), None))
+    CenteredMovingAverage(1, Second).initialise(sliceInitialise)(cell, rem) shouldBe ((List(second), None))
+    CenteredMovingAverage(5, First).initialise(sliceInitialise)(cell, rem) shouldBe ((List(first), None))
+    CenteredMovingAverage(5, Second).initialise(sliceInitialise)(cell, rem) shouldBe ((List(second), None))
   }
 
   it should "present correctly" in {
     val obj = CenteredMovingAverage(2, First)
 
     val init = obj.initialise(slicePresent)(Cell(sel, createContent(4)), Position1D("2003"))
-    init should be ((List((StringValue("2003"), 4.0)), None))
+    init shouldBe ((List((StringValue("2003"), 4.0)), None))
 
     val first = obj.present(slicePresent)(Cell(sel, createContent(6)), Position1D("2004"), init)
-    first should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0)), None), Collection()))
+    first shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0)), None), Collection()))
 
     val second = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("2005"), first._1)
-    second should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0)), None), Collection()))
+    second shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0)), None),
+      Collection()))
 
     val third = obj.present(slicePresent)(Cell(sel, createContent(8)), Position1D("2006"), second._1)
-    third should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
+    third shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
       (StringValue("2006"), 8.0)), None), Collection()))
 
     val fourth = obj.present(slicePresent)(Cell(sel, createContent(9)), Position1D("2007"), third._1)
-    fourth should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
-      (StringValue("2006"), 8.0),
-      (StringValue("2007"), 9.0)), None), createCollection("2005", 6.4)))
+    fourth shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
+      (StringValue("2006"), 8.0), (StringValue("2007"), 9.0)), None), createCollection("2005", 6.4)))
 
     val fifth = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
-    fifth should be (((List((StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
-      (StringValue("2006"), 8.0),
-      (StringValue("2007"), 9.0),
-      (StringValue("2008"), 5.0)), None), createCollection("2006", 6.6)))
+    fifth shouldBe (((List((StringValue("2004"), 6.0), (StringValue("2005"), 5.0), (StringValue("2006"), 8.0),
+      (StringValue("2007"), 9.0), (StringValue("2008"), 5.0)), None), createCollection("2006", 6.6)))
   }
 }
 
-class TestWeightedMovingAverage extends FlatSpec with Matchers with TestBatchMovingAverage {
+class TestWeightedMovingAverage extends TestBatchMovingAverage {
 
   "A WeightedMovingAverage" should "initialise correctly" in {
-    WeightedMovingAverage(1, First, false).initialise(sliceInitialise)(cell, rem) should be ((List(first), None))
-    WeightedMovingAverage(1, First, true).initialise(sliceInitialise)(cell, rem) should be ((List(first), Some(first)))
-    WeightedMovingAverage(1, Second, false).initialise(sliceInitialise)(cell, rem) should be ((List(second), None))
-    WeightedMovingAverage(1, Second, true).initialise(sliceInitialise)(cell, rem) should
-      be ((List(second), Some(second)))
-    WeightedMovingAverage(5, First, false).initialise(sliceInitialise)(cell, rem) should be ((List(first), None))
-    WeightedMovingAverage(5, First, true).initialise(sliceInitialise)(cell, rem) should be ((List(first), Some(first)))
-    WeightedMovingAverage(5, Second, false).initialise(sliceInitialise)(cell, rem) should be ((List(second), None))
-    WeightedMovingAverage(5, Second, true).initialise(sliceInitialise)(cell, rem) should
-      be ((List(second), Some(second)))
+    WeightedMovingAverage(1, First, false).initialise(sliceInitialise)(cell, rem) shouldBe ((List(first), None))
+    WeightedMovingAverage(1, First, true).initialise(sliceInitialise)(cell, rem) shouldBe ((List(first), Some(first)))
+    WeightedMovingAverage(1, Second, false).initialise(sliceInitialise)(cell, rem) shouldBe ((List(second), None))
+    WeightedMovingAverage(1, Second, true).initialise(sliceInitialise)(cell, rem) shouldBe
+      ((List(second), Some(second)))
+    WeightedMovingAverage(5, First, false).initialise(sliceInitialise)(cell, rem) shouldBe ((List(first), None))
+    WeightedMovingAverage(5, First, true).initialise(sliceInitialise)(cell, rem) shouldBe ((List(first), Some(first)))
+    WeightedMovingAverage(5, Second, false).initialise(sliceInitialise)(cell, rem) shouldBe ((List(second), None))
+    WeightedMovingAverage(5, Second, true).initialise(sliceInitialise)(cell, rem) shouldBe
+      ((List(second), Some(second)))
   }
 
   it should "present correctly" in {
     val obj = WeightedMovingAverage(5, First, false)
 
     val init = obj.initialise(slicePresent)(Cell(sel, createContent(4)), Position1D("2003"))
-    init should be ((List((StringValue("2003"), 4.0)), None))
+    init shouldBe ((List((StringValue("2003"), 4.0)), None))
 
     val first = obj.present(slicePresent)(Cell(sel, createContent(6)), Position1D("2004"), init)
-    first should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0)), None), Collection()))
+    first shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0)), None), Collection()))
 
     val second = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("2005"), first._1)
-    second should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0)), None), Collection()))
+    second shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0)), None),
+      Collection()))
 
     val third = obj.present(slicePresent)(Cell(sel, createContent(8)), Position1D("2006"), second._1)
-    third should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
+    third shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
       (StringValue("2006"), 8.0)), None), Collection()))
 
     val fourth = obj.present(slicePresent)(Cell(sel, createContent(9)), Position1D("2007"), third._1)
-    fourth should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
-      (StringValue("2006"), 8.0),
-      (StringValue("2007"), 9.0)), None), createCollection("2007", 7.2)))
+    fourth shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
+      (StringValue("2006"), 8.0), (StringValue("2007"), 9.0)), None), createCollection("2007", 7.2)))
 
     val fifth = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
-    fifth should be (((List((StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
-      (StringValue("2006"), 8.0),
-      (StringValue("2007"), 9.0),
-      (StringValue("2008"), 5.0)), None), createCollection("2008", 6.733333333333333)))
+    fifth shouldBe (((List((StringValue("2004"), 6.0), (StringValue("2005"), 5.0), (StringValue("2006"), 8.0),
+      (StringValue("2007"), 9.0), (StringValue("2008"), 5.0)), None), createCollection("2008", 6.733333333333333)))
   }
 
   it should "present all correctly" in {
     val obj = WeightedMovingAverage(5, First, true)
 
     val init = obj.initialise(slicePresent)(Cell(sel, createContent(4)), Position1D("2003"))
-    init should be ((List((StringValue("2003"), 4.0)), Some((StringValue("2003"), 4.0))))
+    init shouldBe ((List((StringValue("2003"), 4.0)), Some((StringValue("2003"), 4.0))))
 
     val first = obj.present(slicePresent)(Cell(sel, createContent(6)), Position1D("2004"), init)
-    first should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0)), None), Collection(List(
+    first shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0)), None), Collection(List(
         Cell(Position2D("sales", "2003"), Content(ContinuousSchema[Codex.DoubleCodex](), 4)),
         Cell(Position2D("sales", "2004"), Content(ContinuousSchema[Codex.DoubleCodex](), 5.333333333333333))))))
 
     val second = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("2005"), first._1)
-    second should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0)), None), createCollection("2005", 5.166666666666667)))
+    second shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0)), None),
+      createCollection("2005", 5.166666666666667)))
 
     val third = obj.present(slicePresent)(Cell(sel, createContent(8)), Position1D("2006"), second._1)
-    third should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
+    third shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
       (StringValue("2006"), 8.0)), None), createCollection("2006", 6.3)))
 
     val fourth = obj.present(slicePresent)(Cell(sel, createContent(9)), Position1D("2007"), third._1)
-    fourth should be (((List((StringValue("2003"), 4.0),
-      (StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
-      (StringValue("2006"), 8.0),
-      (StringValue("2007"), 9.0)), None), createCollection("2007", 7.2)))
+    fourth shouldBe (((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
+      (StringValue("2006"), 8.0), (StringValue("2007"), 9.0)), None), createCollection("2007", 7.2)))
 
     val fifth = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
-    fifth should be (((List((StringValue("2004"), 6.0),
-      (StringValue("2005"), 5.0),
-      (StringValue("2006"), 8.0),
-      (StringValue("2007"), 9.0),
-      (StringValue("2008"), 5.0)), None), createCollection("2008", 6.733333333333333)))
+    fifth shouldBe (((List((StringValue("2004"), 6.0), (StringValue("2005"), 5.0), (StringValue("2006"), 8.0),
+      (StringValue("2007"), 9.0), (StringValue("2008"), 5.0)), None), createCollection("2008", 6.733333333333333)))
   }
 }
 
-trait TestOnlineMovingAverage {
+trait TestOnlineMovingAverage extends TestGrimlock {
   // test initilise
   val sliceInitialise = Over[Position3D, First.type](First)
   val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Codex.LongCodex](), 1))
@@ -284,65 +232,65 @@ trait TestOnlineMovingAverage {
   }
 }
 
-class TestCumulativeMovingAverage extends FlatSpec with Matchers with TestOnlineMovingAverage {
+class TestCumulativeMovingAverage extends TestOnlineMovingAverage {
 
   "A CumulativeMovingAverage" should "initialise correctly" in {
-    CumulativeMovingAverage(First).initialise(sliceInitialise)(cell, rem) should be (first)
-    CumulativeMovingAverage(Second).initialise(sliceInitialise)(cell, rem) should be (second)
+    CumulativeMovingAverage(First).initialise(sliceInitialise)(cell, rem) shouldBe first
+    CumulativeMovingAverage(Second).initialise(sliceInitialise)(cell, rem) shouldBe second
   }
 
   it should "present correctly" in {
     val obj = CumulativeMovingAverage(First)
 
     val init = obj.initialise(slicePresent)(Cell(sel, createContent(1)), Position1D("val.1"))
-    init should be ((1.0, 1, Some((StringValue("val.1"), 1.0))))
+    init shouldBe ((1.0, 1, Some((StringValue("val.1"), 1.0))))
 
     val first = obj.present(slicePresent)(Cell(sel, createContent(2)), Position1D("val.2"), init)
-    first should be (((1.5, 2, None), Collection(List(Cell(Position1D("val.1"), createContent(1.0)),
+    first shouldBe (((1.5, 2, None), Collection(List(Cell(Position1D("val.1"), createContent(1.0)),
       Cell(Position1D("val.2"), createContent(1.5))))))
 
     val second = obj.present(slicePresent)(Cell(sel, createContent(3)), Position1D("val.3"), first._1)
-    second should be (((2.0, 3, None), createCollection("val.3", 2)))
+    second shouldBe (((2.0, 3, None), createCollection("val.3", 2)))
 
     val third = obj.present(slicePresent)(Cell(sel, createContent(4)), Position1D("val.4"), second._1)
-    third should be (((2.5, 4, None), createCollection("val.4", 2.5)))
+    third shouldBe (((2.5, 4, None), createCollection("val.4", 2.5)))
 
     val fourth = obj.present(slicePresent)(Cell(sel, createContent(5)), Position1D("val.5"), third._1)
-    fourth should be (((3.0, 5, None), createCollection("val.5", 3)))
+    fourth shouldBe (((3.0, 5, None), createCollection("val.5", 3)))
   }
 }
 
-class TestExponentialMovingAverage extends FlatSpec with Matchers with TestOnlineMovingAverage {
+class TestExponentialMovingAverage extends TestOnlineMovingAverage {
 
   "A ExponentialMovingAverage" should "initialise correctly" in {
-    ExponentialMovingAverage(0.33, First).initialise(sliceInitialise)(cell, rem) should be (first)
-    ExponentialMovingAverage(3, First).initialise(sliceInitialise)(cell, rem) should be (first)
-    ExponentialMovingAverage(0.33, Second).initialise(sliceInitialise)(cell, rem) should be (second)
-    ExponentialMovingAverage(3, Second).initialise(sliceInitialise)(cell, rem) should be (second)
+    ExponentialMovingAverage(0.33, First).initialise(sliceInitialise)(cell, rem) shouldBe first
+    ExponentialMovingAverage(3, First).initialise(sliceInitialise)(cell, rem) shouldBe first
+    ExponentialMovingAverage(0.33, Second).initialise(sliceInitialise)(cell, rem) shouldBe second
+    ExponentialMovingAverage(3, Second).initialise(sliceInitialise)(cell, rem) shouldBe second
   }
 
   it should "present correctly" in {
     val obj = ExponentialMovingAverage(0.33, First)
 
     val init = obj.initialise(slicePresent)(Cell(sel, createContent(16)), Position1D("day.1"))
-    init should be ((16.0, 1, Some((StringValue("day.1"), 16.0))))
+    init shouldBe ((16.0, 1, Some((StringValue("day.1"), 16.0))))
 
     val first = obj.present(slicePresent)(Cell(sel, createContent(17)), Position1D("day.2"), init)
-    first should be (((16.33, 2, None), Collection(List(Cell(Position1D("day.1"), createContent(16)),
+    first shouldBe (((16.33, 2, None), Collection(List(Cell(Position1D("day.1"), createContent(16)),
       Cell(Position1D("day.2"), createContent(16.33))))))
 
     val second = obj.present(slicePresent)(Cell(sel, createContent(17)), Position1D("day.3"), first._1)
-    second should be (((16.551099999999998, 3, None), createCollection("day.3", 16.551099999999998)))
+    second shouldBe (((16.551099999999998, 3, None), createCollection("day.3", 16.551099999999998)))
 
     val third = obj.present(slicePresent)(Cell(sel, createContent(10)), Position1D("day.4"), second._1)
-    third should be (((14.389236999999998, 4, None), createCollection("day.4", 14.389236999999998)))
+    third shouldBe (((14.389236999999998, 4, None), createCollection("day.4", 14.389236999999998)))
 
     val fourth = obj.present(slicePresent)(Cell(sel, createContent(17)), Position1D("day.5"), third._1)
-    fourth should be (((15.250788789999998, 5, None), createCollection("day.5", 15.250788789999998)))
+    fourth shouldBe (((15.250788789999998, 5, None), createCollection("day.5", 15.250788789999998)))
   }
 }
 
-class TestCombinationDeriver extends FlatSpec with Matchers {
+class TestCombinationDeriver extends TestGrimlock {
 
   "A CombinationDeriver" should "present correctly" in {
     val slice = Over[Position2D, Second.type](Second)
@@ -352,39 +300,34 @@ class TestCombinationDeriver extends FlatSpec with Matchers {
       WeightedMovingAverage(5, First, false, "%1$s.weighted")))
 
     val init = obj.initialise(slice)(Cell(sel, createContent(4)), Position1D("2003"))
-    init should be (List((List((StringValue("2003"), 4.0)), None),
-      (List((StringValue("2003"), 4.0)), None)))
+    init shouldBe List((List((StringValue("2003"), 4.0)), None), (List((StringValue("2003"), 4.0)), None))
 
     val first = obj.present(slice)(Cell(sel, createContent(6)), Position1D("2004"), init)
-    first should be ((List(
-      (List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0)), None),
-      (List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0)), None)),
-      Collection(List())))
+    first shouldBe ((List((List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0)), None),
+      (List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0)), None)), Collection(List())))
 
     val second = obj.present(slice)(Cell(sel, createContent(5)), Position1D("2005"), first._1)
-    second should be ((List(
+    second shouldBe ((List(
       (List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0)), None),
       (List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0)), None)),
       Collection(List())))
 
     val third = obj.present(slice)(Cell(sel, createContent(8)), Position1D("2006"), second._1)
-    third should be ((List(
+    third shouldBe ((List(
       (List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0),
         (StringValue("2005"), 5.0), (StringValue("2006"), 8.0)), None),
       (List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0),
-        (StringValue("2005"), 5.0), (StringValue("2006"), 8.0)), None)),
-      Collection(List())))
+        (StringValue("2005"), 5.0), (StringValue("2006"), 8.0)), None)), Collection(List())))
 
     val fourth = obj.present(slice)(Cell(sel, createContent(9)), Position1D("2007"), third._1)
-    fourth should be ((List(
+    fourth shouldBe ((List(
       (List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
         (StringValue("2006"), 8.0), (StringValue("2007"), 9.0)), None),
       (List((StringValue("2003"), 4.0), (StringValue("2004"), 6.0), (StringValue("2005"), 5.0),
-        (StringValue("2006"), 8.0), (StringValue("2007"), 9.0)), None)),
-      createCollection("2007", 6.4, 7.2)))
+        (StringValue("2006"), 8.0), (StringValue("2007"), 9.0)), None)), createCollection("2007", 6.4, 7.2)))
 
     val fifth = obj.present(slice)(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
-    fifth should be ((List(
+    fifth shouldBe ((List(
       (List((StringValue("2004"), 6.0), (StringValue("2005"), 5.0), (StringValue("2006"), 8.0),
         (StringValue("2007"), 9.0), (StringValue("2008"), 5.0)), None),
       (List((StringValue("2004"), 6.0), (StringValue("2005"), 5.0), (StringValue("2006"), 8.0),
