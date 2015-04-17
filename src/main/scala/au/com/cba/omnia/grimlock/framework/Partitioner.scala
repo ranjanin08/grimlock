@@ -67,44 +67,43 @@ trait Partitions[T, P <: Position] {
   /**
    * Add a partition.
    *
-   * @param key       The partition identifier.
+   * @param id        The partition identifier.
    * @param partition The partition to add.
    *
    * @return A `U[(T, Cell[P])]` containing existing and new paritions.
    */
-  def add(key: T, partition: U[Cell[P]]): U[(T, Cell[P])]
+  def add(id: T, partition: U[Cell[P]]): U[(T, Cell[P])]
 
   /**
-   * Apply function `fn` to each partition in `keys`.
+   * Apply function `fn` to each partition in `ids`.
    *
-   * @param keys The list of partitions to apply `fn` to.
-   * @param fn   The function to apply to each partition.
+   * @param ids The list of partitions to apply `fn` to.
+   * @param fn  The function to apply to each partition.
    *
-   * @return A `U[(T, Cell[Q])]` containing the paritions in `keys` with `fn` applied to them.
+   * @return A `U[(T, Cell[Q])]` containing the paritions in `ids` with `fn` applied to them.
    */
-  def forEach[Q <: Position](keys: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])]
+  def forEach[Q <: Position](ids: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])]
 
   /**
-   * Return the data for the partition `key`.
+   * Return the data for the partition `id`.
    *
-   * @param key The partition for which to get the data.
+   * @param id The partition for which to get the data.
    *
    * @return A `U[Cell[P]]`; that is a matrix.
    */
-  def get(key: T): U[Cell[P]]
+  def get(id: T): U[Cell[P]]
 
   /** Return the partition identifiers. */
-  // TODO: Rename to prevent resolution clashes (see TestPartitioners.scala)
-  def keys()(implicit ev: ClassTag[T]): U[T]
+  def ids()(implicit ev: ClassTag[T]): U[T]
 
   /**
    * Remove a partition.
    *
-   * @param key The identifier for the partition to remove.
+   * @param id The identifier for the partition to remove.
    *
    * @return A `U[(T, Cell[P])]` with the selected parition removed.
    */
-  def remove(key: T): U[(T, Cell[P])]
+  def remove(id: T): U[(T, Cell[P])]
 
   protected def toString(t: (T, Cell[P]), separator: String, descriptive: Boolean): String = {
     t._1.toString + separator + t._2.toString(separator, descriptive)

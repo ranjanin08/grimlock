@@ -20,6 +20,8 @@ import au.com.cba.omnia.grimlock.encoding._
 import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.utility._
 
+import scala.reflect.ClassTag
+
 /**
  * Base trait for reductions.
  *
@@ -29,6 +31,9 @@ import au.com.cba.omnia.grimlock.utility._
 trait Reducer {
   /** Type of the state being reduced (aggregated). */
   type T
+
+  /** Serialisation ClassTag for state `T`. */
+  val ct: ClassTag[T]
 
   /**
    * Standard reduce method.
@@ -142,6 +147,8 @@ case class CombinationReducerMultiple[R <: Reducer with Prepare with PresentMult
   extends Reducer with Prepare with PresentMultiple {
   type T = List[Any]
 
+  val ct = ClassTag[List[Any]](List.getClass)
+
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
     reducers.map { case reducer => reducer.prepare(slice, cell) }
   }
@@ -171,6 +178,8 @@ case class CombinationReducerMultipleWithValue[R <: Reducer with PrepareWithValu
   reducers: List[R]) extends Reducer with PrepareWithValue with PresentMultiple {
   type T = List[Any]
   type V = W
+
+  val ct = ClassTag[List[Any]](List.getClass)
 
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
     reducers.map { case reducer => reducer.prepare(slice, cell, ext) }

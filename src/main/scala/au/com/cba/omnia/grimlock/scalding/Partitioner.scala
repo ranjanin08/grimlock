@@ -33,26 +33,26 @@ class ScaldingPartitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cel
   with ScaldingPersist[(T, Cell[P])] {
   type U[A] = TypedPipe[A]
 
-  def add(key: T, partition: TypedPipe[Cell[P]]): TypedPipe[(T, Cell[P])] = {
-    data ++ (partition.map { case c => (key, c) })
+  def add(id: T, partition: TypedPipe[Cell[P]]): TypedPipe[(T, Cell[P])] = {
+    data ++ (partition.map { case c => (id, c) })
   }
 
-  def forEach[Q <: Position](keys: List[T],
+  def forEach[Q <: Position](ids: List[T],
     fn: (T, TypedPipe[Cell[P]]) => TypedPipe[Cell[Q]]): TypedPipe[(T, Cell[Q])] = {
     import ScaldingPartitions._
 
-    // TODO: This reads the data keys.length times. Is there a way to read it only once?
+    // TODO: This reads the data ids.length times. Is there a way to read it only once?
     //       Perhaps with Grouped.mapGroup and Execution[T]?
-    keys
+    ids
       .map { case k => fn(k, data.get(k)).map { case c => (k, c) } }
       .reduce[TypedPipe[(T, Cell[Q])]]((x, y) => x ++ y)
   }
 
-  def get(key: T): TypedPipe[Cell[P]] = data.collect { case (t, pc) if (key == t) => pc }
+  def get(id: T): TypedPipe[Cell[P]] = data.collect { case (t, pc) if (id == t) => pc }
 
-  def keys()(implicit ev: ClassTag[T]): TypedPipe[T] = Grouped(data).keys.distinct
+  def ids()(implicit ev: ClassTag[T]): TypedPipe[T] = Grouped(data).keys.distinct
 
-  def remove(key: T): TypedPipe[(T, Cell[P])] = data.filter { case (t, c) => t != key }
+  def remove(id: T): TypedPipe[(T, Cell[P])] = data.filter { case (t, c) => t != id }
 }
 
 /** Companion object for the `ScaldingPartitions` class. */

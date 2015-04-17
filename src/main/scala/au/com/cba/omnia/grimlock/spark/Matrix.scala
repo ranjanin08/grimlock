@@ -161,25 +161,27 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
   }
 
   def reduceAndExpand[T, D <: Dimension](slice: Slice[P, D], reducers: T)(implicit ev1: PosDimDep[P, D],
-    ev2: ReducibleMultiple[T], ev3: ClassTag[slice.S]): RDD[Cell[slice.S#M]] = ??? /*{
+    ev2: ReducibleMultiple[T], ev3: ClassTag[slice.S]): RDD[Cell[slice.S#M]] = {
     val reducer = ev2.convert(reducers)
+    implicit val ct = reducer.ct
 
     data
       .map { case c => (slice.selected(c.position), reducer.prepare(slice, c)) }
       .reduceByKey { case (lt, rt) => reducer.reduce(lt, rt) }
       .flatMap { case (p, t) => reducer.presentMultiple(p, t).toList }
-  }*/
+  }
 
   def reduceAndExpandWithValue[T, D <: Dimension, V](slice: Slice[P, D], reducers: T, value: V)(
     implicit ev1: PosDimDep[P, D], ev2: ReducibleMultipleWithValue[T, V],
-      ev3: ClassTag[slice.S]): RDD[Cell[slice.S#M]] = ??? /*{
+      ev3: ClassTag[slice.S]): RDD[Cell[slice.S#M]] = {
     val reducer = ev2.convert(reducers)
+    implicit val ct = reducer.ct
 
     data
       .map { case c => (slice.selected(c.position), reducer.prepare(slice, c, value)) }
       .reduceByKey { case (lt, rt) => reducer.reduce(lt, rt) }
       .flatMap { case (p, t) => reducer.presentMultiple(p, t).toList }
-  }*/
+  }
 
   def refine(f: Cell[P] => Boolean): RDD[Cell[P]] = data.filter { case c => f(c) }
 
@@ -400,21 +402,25 @@ trait SparkReduceableMatrix[P <: Position with ReduceablePosition] extends Reduc
   }
 
   def reduce[D <: Dimension](slice: Slice[P, D], reducer: Reducer with Prepare with PresentSingle)(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): RDD[Cell[slice.S]] = ??? /*{
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): RDD[Cell[slice.S]] = {
+    implicit val ct = reducer.ct
+
     data
       .map { case c => (slice.selected(c.position), reducer.prepare(slice, c)) }
       .reduceByKey { case (lt, rt) => reducer.reduce(lt, rt) }
       .flatMap { case (p, t) => reducer.presentSingle(p, t) }
-  }*/
+  }
 
   def reduceWithValue[D <: Dimension, W](slice: Slice[P, D],
     reducer: Reducer with PrepareWithValue with PresentSingle { type V >: W }, value: W)(implicit ev1: PosDimDep[P, D],
-      ev2: ClassTag[slice.S]): RDD[Cell[slice.S]] = ??? /*{
+      ev2: ClassTag[slice.S]): RDD[Cell[slice.S]] = {
+    implicit val ct = reducer.ct
+
     data
       .map { case c => (slice.selected(c.position), reducer.prepare(slice, c, value)) }
       .reduceByKey { case (lt, rt) => reducer.reduce(lt, rt) }
       .flatMap { case (p, t) => reducer.presentSingle(p, t) }
-  }*/
+  }
 
   def squash[D <: Dimension](dim: D, squasher: Squasher with Reduce)(implicit ev: PosDimDep[P, D]): RDD[Cell[P#L]] = {
     data

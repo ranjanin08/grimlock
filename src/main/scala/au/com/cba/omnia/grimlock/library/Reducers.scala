@@ -22,6 +22,8 @@ import au.com.cba.omnia.grimlock.position._
 import au.com.cba.omnia.grimlock.Type._
 import au.com.cba.omnia.grimlock.utility._
 
+import scala.reflect.ClassTag
+
 /** Trait for reducers that can be lenient or strict when it comes to invalid (or unexpected) values. */
 trait StrictReduce { self: Reducer =>
   /**
@@ -64,6 +66,8 @@ trait DefaultReducerValues {
  */
 case class Count private (name: Option[Value]) extends Reducer with Prepare with PresentSingleAndMultiple {
   type T = Long
+
+  val ct = ClassTag[Long](Long.getClass)
 
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = 1
 
@@ -264,6 +268,8 @@ object Kurtosis extends Moment {
 case class Moments private (strict: Boolean, nan: Boolean, moments: List[(Int, Option[Value])]) extends Reducer
   with Prepare with PresentSingle with PresentMultiple with StrictReduce {
   type T = com.twitter.algebird.Moments
+
+  val ct = ClassTag[com.twitter.algebird.Moments](com.twitter.algebird.Moments.getClass)
 
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
     com.twitter.algebird.Moments(cell.content.value.asDouble.getOrElse(Double.NaN))
@@ -565,6 +571,8 @@ object Moments extends DefaultReducerValues {
 trait DoubleReducer extends Reducer with Prepare with PresentSingleAndMultiple with StrictReduce {
   type T = Double
 
+  val ct = ClassTag[Double](Double.getClass)
+
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
     cell.content.value.asDouble.getOrElse(Double.NaN)
   }
@@ -751,6 +759,9 @@ object Sum extends DefaultReducerValues {
 trait ElementCounts { self: Reducer with Prepare with StrictReduce =>
   /** Type of the state being reduced (aggregated). */
   type T = Option[Map[String, Long]]
+
+  /** Serialisation ClassTag for state `T`. */
+  val ct = ClassTag[Option[Map[String, Long]]](Option.getClass)
 
   /** Optional variable type that the content must adhere to. */
   val all: Option[Type]
@@ -1016,6 +1027,8 @@ case class ThresholdCount private (strict: Boolean, nan: Boolean, threshold: Dou
   extends Reducer with Prepare with PresentMultiple with StrictReduce {
   type T = (Long, Long) // (leq, gtr)
 
+  val ct = ClassTag[(Long, Long)]((Long, Long).getClass)
+
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
     cell.content.value.asDouble match {
       case Some(v) => if (v > threshold) (0, 1) else (1, 0)
@@ -1119,6 +1132,9 @@ case class WeightedSum private (dim: Dimension, strict: Boolean, nan: Boolean, f
   name: Option[Value]) extends Reducer
   with PrepareWithValue with PresentSingleAndMultiple with StrictReduce {
   type T = Double
+
+  val ct = ClassTag[Double](Double.getClass)
+
   type V = Map[Position1D, Content]
 
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
@@ -1239,6 +1255,8 @@ object WeightedSum extends DefaultReducerValues {
 case class DistinctCount private (name: Option[Value]) extends Reducer with Prepare with PresentSingleAndMultiple {
   type T = Set[Value]
 
+  val ct = ClassTag[Set[Value]](Set.getClass)
+
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = Set(cell.content.value)
 
   def reduce(lt: T, rt: T): T = lt ++ rt
@@ -1273,6 +1291,8 @@ object DistinctCount {
 case class Quantiles(quantiles: Int, strict: Boolean = true, name: String = "quantile.%1$d=%2$2.3f") extends Reducer
   with Prepare with PresentMultiple with StrictReduce {
   type T = Option[Map[Double, Long]]
+
+  val ct = ClassTag[Option[Map[Double, Long]]](Option.getClass)
 
   def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P]): T = {
     cell.content.schema.kind.isSpecialisationOf(Numerical) match {

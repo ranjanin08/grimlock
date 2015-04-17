@@ -278,12 +278,12 @@ object TestPartitions {
 
 class TestScaldingPartitions extends TestPartitions with TBddDsl {
 
-  "A Partitions" should "return its keys" in {
+  "A Partitions" should "return its ids" in {
     Given {
       data
     } When {
       parts: TypedPipe[(String, Cell[Position1D])] =>
-        new ScaldingPartitions(parts).keys()
+        parts.ids()
     } Then {
       _.toList.sorted shouldBe result1
     }
@@ -338,9 +338,9 @@ class TestScaldingPartitions extends TestPartitions with TBddDsl {
 
 class TestSparkPartitions extends TestPartitions {
 
-  "A Partitions" should "return its keys" in {
+  "A Partitions" should "return its ids" in {
     toRDD(data)
-      .keys()
+      .ids()
       .toList.sorted shouldBe result1
   }
 
