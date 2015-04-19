@@ -393,7 +393,7 @@ class Test13(args : Args) extends Job(args) {
     .persistAsCSV(Over(Second), "./tmp/fll2.out")
 
   data
-    .fillHetrogenous(Over(Second))(all.reduce(Over(Second), Mean(strict=true, nan=true)))
+    .fillHetrogenous(Over(Second), all.reduce(Over(Second), Mean(strict=true, nan=true)))
     .join(Over(First), inds)
     .persistAsCSV(Over(Second), "./tmp/fll4.out")
 }

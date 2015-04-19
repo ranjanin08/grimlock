@@ -376,11 +376,11 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
 trait SparkReduceableMatrix[P <: Position with ReduceablePosition] extends ReduceableMatrix[P] {
   self: SparkMatrix[P] =>
 
-  def fillHetrogenous[D <: Dimension](slice: Slice[P, D])(values: RDD[Cell[slice.S]])(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S]): RDD[Cell[P]] = {
+  def fillHetrogenous[D <: Dimension, Q <: Position](slice: Slice[P, D], values: RDD[Cell[Q]])(
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q): RDD[Cell[P]] = {
     val dense = domain
       .keyBy { case p => slice.selected(p) }
-      .join(values.keyBy { case c => c.position })
+      .join(values.keyBy { case c => c.position.asInstanceOf[slice.S] })
       .map { case (_, (p, c)) => Cell(p, c.content) }
 
     dense

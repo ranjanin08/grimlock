@@ -695,9 +695,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @note This joins `values` onto this matrix, as such it can be used for imputing missing values.
    */
-  // TODO: Is it possible to do this without currying `values`?
-  def fillHetrogenous[D <: Dimension](slice: Slice[P, D])(values: U[Cell[slice.S]])(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S]): U[Cell[P]]
+  def fillHetrogenous[D <: Dimension, Q <: Position](slice: Slice[P, D], values: U[Cell[Q]])(
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q): U[Cell[P]]
 
   /**
    * Fill a matrix with `value`.

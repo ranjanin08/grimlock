@@ -16,17 +16,28 @@ package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.position._
 
+import org.apache.log4j.{ Level, Logger }
+import org.apache.spark.{ SparkConf, SparkContext }
 import org.apache.spark.rdd._
 
 import org.scalatest._
 
-import scala.reflect._
+import scala.reflect.ClassTag
 
 trait TestGrimlock extends FlatSpec with Matchers {
-  def toRDD[T](list: List[T])(implicit ev: ClassTag[T]): RDD[T] = TestSpark.spark.parallelize(list)
+  def toRDD[T](list: List[T])(implicit ev: ClassTag[T]): RDD[T] = TestGrimlock.spark.parallelize(list)
 
   implicit def toList[T](rdd: RDD[T]): List[T] = rdd.toLocalIterator.toList
 
   implicit def PositionOrdering[T <: Position] = Position.Ordering[T]
+
+  implicit val sc = TestGrimlock.spark
+}
+
+object TestGrimlock {
+
+  val spark = new SparkContext("local", "Test Spark", new SparkConf())
+
+  Logger.getRootLogger().setLevel(Level.WARN);
 }
 

@@ -401,11 +401,11 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
 trait ScaldingReduceableMatrix[P <: Position with ReduceablePosition] extends ReduceableMatrix[P] {
   self: ScaldingMatrix[P] =>
 
-  def fillHetrogenous[D <: Dimension](slice: Slice[P, D])(values: TypedPipe[Cell[slice.S]])(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S]): TypedPipe[Cell[P]] = {
+  def fillHetrogenous[D <: Dimension, Q <: Position](slice: Slice[P, D], values: TypedPipe[Cell[Q]])(
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q): TypedPipe[Cell[P]] = {
     val dense = domain
       .groupBy[Slice[P, D]#S] { case p => slice.selected(p) }
-      .join(values.groupBy { case c => c.position })
+      .join(values.groupBy { case c => c.position.asInstanceOf[slice.S] })
       .map { case (_, (p, c)) => Cell(p, c.content) }
 
     dense
