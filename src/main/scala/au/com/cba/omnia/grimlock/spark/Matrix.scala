@@ -12,37 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock
+package au.com.cba.omnia.grimlock.spark
 
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.derive._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.pairwise._
-import au.com.cba.omnia.grimlock.partition._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.reduce._
-import au.com.cba.omnia.grimlock.sample._
-import au.com.cba.omnia.grimlock.squash._
-import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework.{
+  ExpandableMatrix => BaseExpandableMatrix,
+  Matrix => BaseMatrix,
+  Matrixable => BaseMatrixable,
+  Nameable => BaseNameable,
+  Persist => BasePersist,
+  ReduceableMatrix => BaseReduceableMatrix,
+  _
+}
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.derive._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.pairwise._
+import au.com.cba.omnia.grimlock.framework.partition._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.reduce._
+import au.com.cba.omnia.grimlock.framework.sample._
+import au.com.cba.omnia.grimlock.framework.squash._
+import au.com.cba.omnia.grimlock.framework.transform._
+import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.SparkMatrix._
-import au.com.cba.omnia.grimlock.SparkMatrixable._
+import au.com.cba.omnia.grimlock.spark.Matrix._
+import au.com.cba.omnia.grimlock.spark.Matrixable._
 
 import org.apache.spark.SparkContext
-import org.apache.spark.rdd._
+import org.apache.spark.rdd.RDD
 
 import scala.reflect.ClassTag
 
 /** Base trait for matrix operations using a `RDD[Cell[P]]`. */
-trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
+trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type U[A] = RDD[A]
   type E[B] = B
-  type S = SparkMatrix[P]
+  type S = Matrix[P]
 
   def change[T, D <: Dimension](slice: Slice[P, D], positions: T, schema: Schema)(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S]): RDD[Cell[P]] = {
+    ev2: BaseNameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S]): RDD[Cell[P]] = {
     data
       .keyBy { case c => slice.selected(c.position) }
       .leftOuterJoin(ev2.convert(this, slice, positions).keyBy { case (p, i) => p })
@@ -98,8 +107,8 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
       .map { case (_, (c, _)) => c }
   }
 
-  def join[D <: Dimension](slice: Slice[P, D], that: SparkMatrix[P])(implicit ev1: PosDimDep[P, D],
-    ev2: P =!= Position1D, ev3: ClassTag[slice.S]): RDD[Cell[P]] = {
+  def join[D <: Dimension](slice: Slice[P, D], that: Matrix[P])(implicit ev1: PosDimDep[P, D], ev2: P =!= Position1D,
+    ev3: ClassTag[slice.S]): RDD[Cell[P]] = {
     val keep = names(slice)
       .keyBy { case (p, i) => p }
       .join(that.names(slice).keyBy { case (p, i) => p })
@@ -117,7 +126,7 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
 
   def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
     ev3: ClassTag[slice.S]): RDD[(slice.S, Long)] = {
-    SparkNames.number(data.map { case c => slice.selected(c.position) }.distinct)
+    Names.number(data.map { case c => slice.selected(c.position) }.distinct)
   }
 
   def pairwise[D <: Dimension, T](slice: Slice[P, D], operators: T)(implicit ev1: PosDimDep[P, D], ev2: Operable[T],
@@ -135,7 +144,7 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
     pairwise(slice).flatMap { case (lc, rc, r) => o.compute(slice, value)(lc, rc, r).toList }
   }
 
-  def pairwiseBetween[D <: Dimension, T](slice: Slice[P, D], that: SparkMatrix[P], operators: T)(
+  def pairwiseBetween[D <: Dimension, T](slice: Slice[P, D], that: Matrix[P], operators: T)(
     implicit ev1: PosDimDep[P, D], ev2: Operable[T], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
       ev5: ClassTag[slice.R]): RDD[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
@@ -143,9 +152,9 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
     pairwiseBetween(slice, that).flatMap { case (lc, rc, r) => o.compute(slice)(lc, rc, r).toList }
   }
 
-  def pairwiseBetweenWithValue[D <: Dimension, T, W](slice: Slice[P, D], that: SparkMatrix[P], operators: T,
-    value: W)(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, W], ev3: slice.S =!= Position0D,
-      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): RDD[Cell[slice.R#M]] = {
+  def pairwiseBetweenWithValue[D <: Dimension, T, W](slice: Slice[P, D], that: Matrix[P], operators: T, value: W)(
+    implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
+      ev5: ClassTag[slice.R]): RDD[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
 
     pairwiseBetween(slice, that).flatMap { case (lc, rc, r) => o.compute(slice, value)(lc, rc, r).toList }
@@ -202,7 +211,7 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
   def set[T](positions: T, value: Content)(implicit ev1: PositionDistributable[T, P, RDD],
     ev2: ClassTag[P]): RDD[Cell[P]] = set(ev1.convert(positions).map { case p => Cell(p, value) })
 
-  def set[T](values: T)(implicit ev1: Matrixable[T, P, RDD], ev2: ClassTag[P]): RDD[Cell[P]] = {
+  def set[T](values: T)(implicit ev1: BaseMatrixable[T, P, RDD], ev2: ClassTag[P]): RDD[Cell[P]] = {
     data
       .keyBy { case c => c.position }
       .fullOuterJoin(ev1.convert(values).keyBy { case c => c.position })
@@ -229,7 +238,7 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
   }
 
   def slice[T, D <: Dimension](slice: Slice[P, D], positions: T, keep: Boolean)(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S]): RDD[Cell[P]] = {
+    ev2: BaseNameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S]): RDD[Cell[P]] = {
     val pos = ev2.convert(this, slice, positions)
     val wanted = keep match {
       case true => pos
@@ -298,12 +307,12 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
   }
 
   def which[T, D <: Dimension](slice: Slice[P, D], positions: T, predicate: Predicate)(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S], ev4: ClassTag[P]): RDD[P] = {
+    ev2: BaseNameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S], ev4: ClassTag[P]): RDD[P] = {
     which(slice, List((positions, predicate)))
   }
 
   def which[T, D <: Dimension](slice: Slice[P, D], pospred: List[(T, Predicate)])(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S], ev4: ClassTag[P]): RDD[P] = {
+    ev2: BaseNameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S], ev4: ClassTag[P]): RDD[P] = {
     val nampred = pospred.map { case (pos, pred) => ev2.convert(this, slice, pos).map { case (p, i) => (p, pred) } }
     val pipe = nampred.tail.foldLeft(nampred.head)((b, a) => b ++ a)
 
@@ -350,7 +359,7 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
       .map { case (_, ((_, ((lp, rp, r), lc)), rc)) => (Cell(lp, lc.content), Cell(rp, rc.content), r) }
   }
 
-  private def pairwiseBetween[D <: Dimension](slice: Slice[P, D], that: SparkMatrix[P])(implicit ev1: PosDimDep[P, D],
+  private def pairwiseBetween[D <: Dimension](slice: Slice[P, D], that: Matrix[P])(implicit ev1: PosDimDep[P, D],
     ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): RDD[(Cell[slice.S], Cell[slice.S], slice.R)] = {
     val thisWanted = names(slice).map { case (p, i) => p }
     val thisValues = data.keyBy { case Cell(p, _) => (slice.selected(p), slice.remainder(p)) }
@@ -373,8 +382,7 @@ trait SparkMatrix[P <: Position] extends Matrix[P] with SparkPersist[Cell[P]] {
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled using a `RDD[Cell[P]]`. */
-trait SparkReduceableMatrix[P <: Position with ReduceablePosition] extends ReduceableMatrix[P] {
-  self: SparkMatrix[P] =>
+trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduceableMatrix[P] { self: Matrix[P] =>
 
   def fillHetrogenous[D <: Dimension, Q <: Position](slice: Slice[P, D], values: RDD[Cell[Q]])(
     implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q): RDD[Cell[P]] = {
@@ -439,8 +447,7 @@ trait SparkReduceableMatrix[P <: Position with ReduceablePosition] extends Reduc
 }
 
 /** Base trait for methods that expand the number of dimension of a matrix using a `RDD[Cell[P]]`. */
-trait SparkExpandableMatrix[P <: Position with ExpandablePosition] extends ExpandableMatrix[P] {
-  self: SparkMatrix[P] =>
+trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
 
   def expand(expander: Cell[P] => P#M): RDD[Cell[P#M]] = data.map { case c => Cell(expander(c), c.content) }
 
@@ -462,7 +469,7 @@ trait SparkExpandableMatrix[P <: Position with ExpandablePosition] extends Expan
   }
 }
 
-object SparkMatrix {
+object Matrix {
   /**
    * Read column oriented, pipe separated matrix data into a `RDD[Cell[Position1D]]`.
    *
@@ -606,42 +613,42 @@ object SparkMatrix {
     sc.textFile(table).flatMap { Cell.parseTable(_, columns, pkeyIndex, separator) }
   }
 
-  /** Conversion from `RDD[Cell[Position1D]]` to a `SparkMatrix1D`. */
-  implicit def RDDP1DC2RDDM1D(data: RDD[Cell[Position1D]]): SparkMatrix1D = new SparkMatrix1D(data)
-  /** Conversion from `RDD[Cell[Position2D]]` to a `SparkMatrix2D`. */
-  implicit def RDDP2DC2RDDM2D(data: RDD[Cell[Position2D]]): SparkMatrix2D = new SparkMatrix2D(data)
-  /** Conversion from `RDD[Cell[Position3D]]` to a `SparkMatrix3D`. */
-  implicit def RDDP3DC2RDDM3D(data: RDD[Cell[Position3D]]): SparkMatrix3D = new SparkMatrix3D(data)
-  /** Conversion from `RDD[Cell[Position4D]]` to a `SparkMatrix4D`. */
-  implicit def RDDP4DC2RDDM4D(data: RDD[Cell[Position4D]]): SparkMatrix4D = new SparkMatrix4D(data)
-  /** Conversion from `RDD[Cell[Position5D]]` to a `SparkMatrix5D`. */
-  implicit def RDDP5DC2RDDM5D(data: RDD[Cell[Position5D]]): SparkMatrix5D = new SparkMatrix5D(data)
+  /** Conversion from `RDD[Cell[Position1D]]` to a Spark `Matrix1D`. */
+  implicit def RDDP1DC2RDDM1D(data: RDD[Cell[Position1D]]): Matrix1D = new Matrix1D(data)
+  /** Conversion from `RDD[Cell[Position2D]]` to a Spark `Matrix2D`. */
+  implicit def RDDP2DC2RDDM2D(data: RDD[Cell[Position2D]]): Matrix2D = new Matrix2D(data)
+  /** Conversion from `RDD[Cell[Position3D]]` to a Spark `Matrix3D`. */
+  implicit def RDDP3DC2RDDM3D(data: RDD[Cell[Position3D]]): Matrix3D = new Matrix3D(data)
+  /** Conversion from `RDD[Cell[Position4D]]` to a Spark `Matrix4D`. */
+  implicit def RDDP4DC2RDDM4D(data: RDD[Cell[Position4D]]): Matrix4D = new Matrix4D(data)
+  /** Conversion from `RDD[Cell[Position5D]]` to a Spark `Matrix5D`. */
+  implicit def RDDP5DC2RDDM5D(data: RDD[Cell[Position5D]]): Matrix5D = new Matrix5D(data)
 
-  /** Conversion from `List[(Valueable, Content)]` to a `SparkMatrix1D`. */
-  implicit def LVCT2RDDM1D[V: Valueable](list: List[(V, Content)])(implicit sc: SparkContext): SparkMatrix1D = {
-    new SparkMatrix1D(sc.parallelize(list.map { case (v, c) => Cell(Position1D(v), c) }))
+  /** Conversion from `List[(Valueable, Content)]` to a Spark `Matrix1D`. */
+  implicit def LVCT2RDDM1D[V: Valueable](list: List[(V, Content)])(implicit sc: SparkContext): Matrix1D = {
+    new Matrix1D(sc.parallelize(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
-  /** Conversion from `List[(Valueable, Valueable, Content)]` to a `SparkMatrix2D`. */
+  /** Conversion from `List[(Valueable, Valueable, Content)]` to a Spark `Matrix2D`. */
   implicit def LVVCT2RDDM2D[V: Valueable, W: Valueable](list: List[(V, W, Content)])(
-    implicit sc: SparkContext): SparkMatrix2D = {
-    new SparkMatrix2D(sc.parallelize(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
+    implicit sc: SparkContext): Matrix2D = {
+    new Matrix2D(sc.parallelize(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
-  /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a `SparkMatrix3D`. */
+  /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix3D`. */
   implicit def LVVVCT2RDDM3D[V: Valueable, W: Valueable, X: Valueable](
-    list: List[(V, W, X, Content)])(implicit sc: SparkContext): SparkMatrix3D = {
-    new SparkMatrix3D(sc.parallelize(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
+    list: List[(V, W, X, Content)])(implicit sc: SparkContext): Matrix3D = {
+    new Matrix3D(sc.parallelize(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
-  /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a `SparkMatrix4D`. */
+  /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix4D`. */
   implicit def LVVVVCT2RDDM4D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
-    list: List[(V, W, X, Y, Content)])(implicit sc: SparkContext): SparkMatrix4D = {
-    new SparkMatrix4D(sc.parallelize(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
+    list: List[(V, W, X, Y, Content)])(implicit sc: SparkContext): Matrix4D = {
+    new Matrix4D(sc.parallelize(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /**
-   * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a `SparkMatrix5D`.
+   * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix5D`.
    */
   implicit def LVVVVVCT2RDDM5D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
-    list: List[(V, W, X, Y, Z, Content)])(implicit sc: SparkContext): SparkMatrix5D = {
-    new SparkMatrix5D(sc.parallelize(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
+    list: List[(V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix5D = {
+    new Matrix5D(sc.parallelize(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
   }
 }
 
@@ -650,8 +657,7 @@ object SparkMatrix {
  *
  * @param data `RDD[Cell[Position1D]]`.
  */
-class SparkMatrix1D(val data: RDD[Cell[Position1D]]) extends SparkMatrix[Position1D]
-  with SparkExpandableMatrix[Position1D] {
+class Matrix1D(val data: RDD[Cell[Position1D]]) extends Matrix[Position1D] with ExpandableMatrix[Position1D] {
   def domain(): RDD[Position1D] = names(Over(First)).map { case (p, i) => p }
 
   /**
@@ -697,8 +703,8 @@ class SparkMatrix1D(val data: RDD[Cell[Position1D]]) extends SparkMatrix[Positio
  *
  * @param data `RDD[Cell[Position2D]]`.
  */
-class SparkMatrix2D(val data: RDD[Cell[Position2D]]) extends SparkMatrix[Position2D]
-  with SparkReduceableMatrix[Position2D] with SparkExpandableMatrix[Position2D] {
+class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
+  with ExpandableMatrix[Position2D] {
   def domain(): RDD[Position2D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -733,7 +739,7 @@ class SparkMatrix2D(val data: RDD[Cell[Position2D]]) extends SparkMatrix[Positio
    */
   def persistAsCSV[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
     escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
-    rowId: String = "id")(implicit ev1: Nameable[RDD[(slice.S, Long)], Position2D, slice.S, D, RDD],
+    rowId: String = "id")(implicit ev1: BaseNameable[RDD[(slice.S, Long)], Position2D, slice.S, D, RDD],
       ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S]): RDD[Cell[Position2D]] = {
     persistAsCSVWithNames(slice, file, names(slice), separator, escapee, writeHeader, header, writeRowId, rowId)
   }
@@ -757,7 +763,7 @@ class SparkMatrix2D(val data: RDD[Cell[Position2D]]) extends SparkMatrix[Positio
    */
   def persistAsCSVWithNames[T, D <: Dimension](slice: Slice[Position2D, D], file: String, names: T,
     separator: String = "|", escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header",
-    writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: Nameable[T, Position2D, slice.S, D, RDD],
+    writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: BaseNameable[T, Position2D, slice.S, D, RDD],
       ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S]): RDD[Cell[Position2D]] = ??? /*{
     // Note: Usage of .toShortString should be safe as data is written as string anyways. It does assume that all
     //       indices have unique short string representations.
@@ -939,8 +945,8 @@ class SparkMatrix2D(val data: RDD[Cell[Position2D]]) extends SparkMatrix[Positio
  *
  * @param data `RDD[Cell[Position3D]]`.
  */
-class SparkMatrix3D(val data: RDD[Cell[Position3D]]) extends SparkMatrix[Position3D]
-  with SparkReduceableMatrix[Position3D] with SparkExpandableMatrix[Position3D] {
+class Matrix3D(val data: RDD[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
+  with ExpandableMatrix[Position3D] {
   def domain(): RDD[Position3D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -1014,8 +1020,8 @@ class SparkMatrix3D(val data: RDD[Cell[Position3D]]) extends SparkMatrix[Positio
  *
  * @param data `RDD[Cell[Position4D]]`.
  */
-class SparkMatrix4D(val data: RDD[Cell[Position4D]]) extends SparkMatrix[Position4D]
-  with SparkReduceableMatrix[Position4D] with SparkExpandableMatrix[Position4D] {
+class Matrix4D(val data: RDD[Cell[Position4D]]) extends Matrix[Position4D] with ReduceableMatrix[Position4D]
+  with ExpandableMatrix[Position4D] {
   def domain(): RDD[Position4D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -1100,8 +1106,7 @@ class SparkMatrix4D(val data: RDD[Cell[Position4D]]) extends SparkMatrix[Positio
  *
  * @param data `RDD[Cell[Position5D]]`.
  */
-class SparkMatrix5D(val data: RDD[Cell[Position5D]]) extends SparkMatrix[Position5D]
-  with SparkReduceableMatrix[Position5D] {
+class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D] {
   def domain(): RDD[Position5D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -1189,18 +1194,21 @@ class SparkMatrix5D(val data: RDD[Cell[Position5D]]) extends SparkMatrix[Positio
 }
 
 /** Spark Companion object for the `Matrixable` type class. */
-object SparkMatrixable {
+object Matrixable {
   /** Converts a `RDD[Cell[P]]` into a `RDD[Cell[P]]`; that is, it is a  pass through. */
-  implicit def RDDC2RDDM[P <: Position]: Matrixable[RDD[Cell[P]], P, RDD] = {
-    new Matrixable[RDD[Cell[P]], P, RDD] { def convert(t: RDD[Cell[P]]): RDD[Cell[P]] = t }
+  implicit def RDDC2RDDM[P <: Position]: BaseMatrixable[RDD[Cell[P]], P, RDD] = {
+    new BaseMatrixable[RDD[Cell[P]], P, RDD] { def convert(t: RDD[Cell[P]]): RDD[Cell[P]] = t }
   }
+
   /** Converts a `List[Cell[P]]` into a `RDD[Cell[P]]`. */
-  implicit def LC2RDDM[P <: Position](implicit sc: SparkContext, ct: ClassTag[P]): Matrixable[List[Cell[P]], P, RDD] = {
-    new Matrixable[List[Cell[P]], P, RDD] { def convert(t: List[Cell[P]]): RDD[Cell[P]] = sc.parallelize(t) }
+  implicit def LC2RDDM[P <: Position](implicit sc: SparkContext,
+    ct: ClassTag[P]): BaseMatrixable[List[Cell[P]], P, RDD] = {
+    new BaseMatrixable[List[Cell[P]], P, RDD] { def convert(t: List[Cell[P]]): RDD[Cell[P]] = sc.parallelize(t) }
   }
+
   /** Converts a `Cell[P]` into a `RDD[Cell[P]]`. */
-  implicit def C2RDDM[P <: Position](implicit sc: SparkContext, ct: ClassTag[P]): Matrixable[Cell[P], P, RDD] = {
-    new Matrixable[Cell[P], P, RDD] { def convert(t: Cell[P]): RDD[Cell[P]] = sc.parallelize(List(t)) }
+  implicit def C2RDDM[P <: Position](implicit sc: SparkContext, ct: ClassTag[P]): BaseMatrixable[Cell[P], P, RDD] = {
+    new BaseMatrixable[Cell[P], P, RDD] { def convert(t: Cell[P]): RDD[Cell[P]] = sc.parallelize(List(t)) }
   }
 }
 

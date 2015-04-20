@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock
+package au.com.cba.omnia.grimlock.scalding
 
-import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist, Types => BaseTypes, _ }
+import au.com.cba.omnia.grimlock.framework.position._
 
-import com.twitter.scalding._
+import com.twitter.scalding.typed.TypedPipe
 
 /**
  * Rich wrapper around a `TypedPipe[(Position, Type)]`.
@@ -25,13 +26,13 @@ import com.twitter.scalding._
  *
  * @note This class represents the variable type along the dimensions of a matrix.
  */
-class ScaldingTypes[P <: Position](val data: TypedPipe[(P, Type)]) extends Types[P] with ScaldingPersist[(P, Type)] {
+class Types[P <: Position](val data: TypedPipe[(P, Type)]) extends BaseTypes[P] with Persist[(P, Type)] {
   type U[A] = TypedPipe[A]
 }
 
-/** Companion object for the `ScaldingTypes` class. */
-object ScaldingTypes {
+/** Companion object for the Scalding `Types` class. */
+object Types {
   /** Conversion from `TypedPipe[(Position, Type)]` to a `Types`. */
-  implicit def TPPT2TPT[P <: Position](data: TypedPipe[(P, Type)]): ScaldingTypes[P] = new ScaldingTypes(data)
+  implicit def TPPT2TPT[P <: Position](data: TypedPipe[(P, Type)]): Types[P] = new Types(data)
 }
 

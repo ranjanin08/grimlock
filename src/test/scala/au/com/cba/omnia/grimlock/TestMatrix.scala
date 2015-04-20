@@ -14,29 +14,35 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.derive._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.pairwise._
-import au.com.cba.omnia.grimlock.partition._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.reduce._
-import au.com.cba.omnia.grimlock.sample._
-import au.com.cba.omnia.grimlock.squash._
-import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.Type._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.derive._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.pairwise._
+import au.com.cba.omnia.grimlock.framework.partition._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.reduce._
+import au.com.cba.omnia.grimlock.framework.sample._
+import au.com.cba.omnia.grimlock.framework.squash._
+import au.com.cba.omnia.grimlock.framework.transform._
+import au.com.cba.omnia.grimlock.framework.Type._
+import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.ScaldingMatrix._
-import au.com.cba.omnia.grimlock.ScaldingMatrixable._
-import au.com.cba.omnia.grimlock.position.ScaldingPositionDistributable._
-import au.com.cba.omnia.grimlock.ScaldingNameable._
+import au.com.cba.omnia.grimlock.library.pairwise._
+import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.squash._
+import au.com.cba.omnia.grimlock.library.transform._
 
-import au.com.cba.omnia.grimlock.SparkMatrix._
-import au.com.cba.omnia.grimlock.SparkMatrixable._
-import au.com.cba.omnia.grimlock.position.SparkPositionDistributable._
-import au.com.cba.omnia.grimlock.SparkNameable._
+import au.com.cba.omnia.grimlock.scalding.Matrix._
+import au.com.cba.omnia.grimlock.scalding.Matrixable._
+import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
+import au.com.cba.omnia.grimlock.scalding.Nameable._
+
+import au.com.cba.omnia.grimlock.spark.Matrix._
+import au.com.cba.omnia.grimlock.spark.Matrixable._
+import au.com.cba.omnia.grimlock.spark.position.PositionDistributable._
+import au.com.cba.omnia.grimlock.spark.Nameable._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._
@@ -3317,61 +3323,61 @@ class TestScaldingMatrixReduce extends TestMatrixReduce with TBddDsl {
 class TestSparkMatrixReduce extends TestMatrixReduce {
 
   "A Matrix.reduce" should "return its first over aggregates in 2D" in {
-    new SparkMatrix2D(toRDD(num2))
+    new spark.Matrix2D(toRDD(num2))
       .reduce(Over(First), Min())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first along aggregates in 2D" in {
-    new SparkMatrix2D(toRDD(num2))
+    new spark.Matrix2D(toRDD(num2))
       .reduce(Along(First), Max())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its second over aggregates in 2D" in {
-    new SparkMatrix2D(toRDD(num2))
+    new spark.Matrix2D(toRDD(num2))
       .reduce(Over(Second), Max())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second along aggregates in 2D" in {
-    new SparkMatrix2D(toRDD(num2))
+    new spark.Matrix2D(toRDD(num2))
       .reduce(Along(Second), Min())
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its first over aggregates in 3D" in {
-    new SparkMatrix3D(toRDD(num3))
+    new spark.Matrix3D(toRDD(num3))
       .reduce(Over(First), Min())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first along aggregates in 3D" in {
-    new SparkMatrix3D(toRDD(num3))
+    new spark.Matrix3D(toRDD(num3))
       .reduce(Along(First), Max())
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its second over aggregates in 3D" in {
-    new SparkMatrix3D(toRDD(num3))
+    new spark.Matrix3D(toRDD(num3))
       .reduce(Over(Second), Max())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second along aggregates in 3D" in {
-    new SparkMatrix3D(toRDD(num3))
+    new spark.Matrix3D(toRDD(num3))
       .reduce(Along(Second), Min())
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its third over aggregates in 3D" in {
-    new SparkMatrix3D(toRDD(num3))
+    new spark.Matrix3D(toRDD(num3))
       .reduce(Over(Third), Max())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third along aggregates in 3D" in {
-    new SparkMatrix3D(toRDD(num3))
+    new spark.Matrix3D(toRDD(num3))
       .reduce(Along(Third), Min())
       .toList.sortBy(_.position) shouldBe result10
   }
@@ -8604,7 +8610,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
   }
 
   "A Matrix.fillHetrogenous" should "return its first over filled data in 2D" in {
-    val cells = new SparkMatrix2D(toRDD(num2))
+    val cells = new spark.Matrix2D(toRDD(num2))
 
     cells
       .fillHetrogenous(Over(First), cells.reduce(Over(First), Mean()))
@@ -8612,7 +8618,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
   }
 
   it should "return its first along filled data in 2D" in {
-    val cells = new SparkMatrix2D(toRDD(num2))
+    val cells = new spark.Matrix2D(toRDD(num2))
 
     cells
       .fillHetrogenous(Along(First), cells.reduce(Along(First), Mean()))
@@ -8620,7 +8626,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
   }
 
   it should "return its second over filled data in 2D" in {
-    val cells = new SparkMatrix2D(toRDD(num2))
+    val cells = new spark.Matrix2D(toRDD(num2))
 
     cells
       .fillHetrogenous(Over(Second), cells.reduce(Over(Second), Mean()))
@@ -8628,7 +8634,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
   }
 
   it should "return its second along filled data in 2D" in {
-    val cells = new SparkMatrix2D(toRDD(num2))
+    val cells = new spark.Matrix2D(toRDD(num2))
 
     cells
       .fillHetrogenous(Along(Second), cells.reduce(Along(Second), Mean()))
@@ -8636,7 +8642,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
   }
 
   it should "return its first over filled data in 3D" in {
-    val cells = new SparkMatrix3D(toRDD(num3))
+    val cells = new spark.Matrix3D(toRDD(num3))
 
     cells
       .fillHetrogenous(Over(First), cells.reduce(Over(First), Mean()))
@@ -8644,7 +8650,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
   }
 
   it should "return its first along filled data in 3D" in {
-    val cells = new SparkMatrix3D(toRDD(num3))
+    val cells = new spark.Matrix3D(toRDD(num3))
 
     cells
       .fillHetrogenous(Along(First), cells.reduce(Along(First), Mean()))
@@ -8652,7 +8658,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
   }
 
   it should "return its second over filled data in 3D" in {
-    val cells = new SparkMatrix3D(toRDD(num3))
+    val cells = new spark.Matrix3D(toRDD(num3))
 
     cells
       .fillHetrogenous(Over(Second), cells.reduce(Over(Second), Mean()))
@@ -8660,7 +8666,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
   }
 
   it should "return its second along filled data in 3D" in {
-    val cells = new SparkMatrix3D(toRDD(num3))
+    val cells = new spark.Matrix3D(toRDD(num3))
 
     cells
       .fillHetrogenous(Along(Second), cells.reduce(Along(Second), Mean()))
@@ -8668,7 +8674,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
   }
 
   it should "return its third over filled data in 3D" in {
-    val cells = new SparkMatrix3D(toRDD(num3))
+    val cells = new spark.Matrix3D(toRDD(num3))
 
     cells
       .fillHetrogenous(Over(Third), cells.reduce(Over(Third), Mean()))
@@ -8676,7 +8682,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
   }
 
   it should "return its third along filled data in 3D" in {
-    val cells = new SparkMatrix3D(toRDD(num3))
+    val cells = new spark.Matrix3D(toRDD(num3))
 
     cells
       .fillHetrogenous(Along(Third), cells.reduce(Along(Third), Mean()))

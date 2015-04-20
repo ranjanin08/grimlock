@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.framework.position._
 
 import org.apache.log4j.{ Level, Logger }
 import org.apache.spark.{ SparkConf, SparkContext }

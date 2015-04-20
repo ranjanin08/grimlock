@@ -14,34 +14,39 @@
 
 package au.com.cba.omnia.grimlock.test
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.derive._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.pairwise._
-import au.com.cba.omnia.grimlock.partition._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.reduce._
-import au.com.cba.omnia.grimlock.sample._
-import au.com.cba.omnia.grimlock.squash._
-import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.Type._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.derive._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.pairwise._
+import au.com.cba.omnia.grimlock.framework.partition._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.sample._
+import au.com.cba.omnia.grimlock.framework.Type._
+import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.content.ScaldingContents._
-import au.com.cba.omnia.grimlock.ScaldingMatrix._
-import au.com.cba.omnia.grimlock.ScaldingNameable._
-import au.com.cba.omnia.grimlock.ScaldingNames._
-import au.com.cba.omnia.grimlock.partition.ScaldingPartitions._
-import au.com.cba.omnia.grimlock.position.ScaldingPositions._
-import au.com.cba.omnia.grimlock.position.ScaldingPositionDistributable._
-import au.com.cba.omnia.grimlock.ScaldingTypes._
+import au.com.cba.omnia.grimlock.library.derive._
+import au.com.cba.omnia.grimlock.library.pairwise._
+import au.com.cba.omnia.grimlock.library.partition._
+import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.squash._
+import au.com.cba.omnia.grimlock.library.transform._
+
+import au.com.cba.omnia.grimlock.scalding.content.Contents._
+import au.com.cba.omnia.grimlock.scalding.Matrix._
+import au.com.cba.omnia.grimlock.scalding.Nameable._
+import au.com.cba.omnia.grimlock.scalding.Names._
+import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
+import au.com.cba.omnia.grimlock.scalding.position.Positions._
+import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
+import au.com.cba.omnia.grimlock.scalding.transform._
+import au.com.cba.omnia.grimlock.scalding.Types._
 
 import cascading.flow.FlowDef
-import com.twitter.scalding._
-import com.twitter.scalding.TDsl._, Dsl._
-import com.twitter.scalding.typed.IterablePipe
+import com.twitter.scalding.{ Args, Job, Mode, TypedPsv }
+import com.twitter.scalding.TDsl.sourceToTypedPipe
+import com.twitter.scalding.typed.{ IterablePipe, TypedPipe }
 
 object TestReader {
   def read4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
@@ -716,33 +721,33 @@ class Test28(args: Args) extends Job(args) {
     .toMap(Over(First))
 
   data
-    .transformWithValue(Cut(Second), ScaldingCutRules.fixed(stats, "min", "max", 4))
+    .transformWithValue(Cut(Second), CutRules.fixed(stats, "min", "max", 4))
     .persist("./tmp/cut1.out")
 
   data
-    .transformWithValue(Cut(Second, "%s.square"), ScaldingCutRules.squareRootChoice(stats, "count", "min", "max"))
+    .transformWithValue(Cut(Second, "%s.square"), CutRules.squareRootChoice(stats, "count", "min", "max"))
     .persist("./tmp/cut2.out")
 
   data
-    .transformWithValue(Cut(Second, "%s.sturges"), ScaldingCutRules.sturgesFormula(stats, "count", "min", "max"))
+    .transformWithValue(Cut(Second, "%s.sturges"), CutRules.sturgesFormula(stats, "count", "min", "max"))
     .persist("./tmp/cut3.out")
 
   data
-    .transformWithValue(Cut(Second, "%s.rice"), ScaldingCutRules.riceRule(stats, "count", "min", "max"))
+    .transformWithValue(Cut(Second, "%s.rice"), CutRules.riceRule(stats, "count", "min", "max"))
     .persist("./tmp/cut4.out")
 
   data
     .transformWithValue(Cut(Second, "%s.doane"),
-      ScaldingCutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
+      CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
     .persist("./tmp/cut5.out")
 
   data
     .transformWithValue(Cut(Second, "%s.scott"),
-      ScaldingCutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
+      CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
     .persist("./tmp/cut6.out")
 
   data
-    .transformWithValue(Cut(Second, "%s.break"), ScaldingCutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
+    .transformWithValue(Cut(Second, "%s.break"), CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
     .persist("./tmp/cut7.out")
 }
 

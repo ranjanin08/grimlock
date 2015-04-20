@@ -14,12 +14,13 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.position._
 
-import au.com.cba.omnia.grimlock.ScaldingNames._
-import au.com.cba.omnia.grimlock.SparkNames._
+import au.com.cba.omnia.grimlock.scalding.Names._
+
+import au.com.cba.omnia.grimlock.spark.Names._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._

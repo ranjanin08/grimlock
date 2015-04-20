@@ -14,15 +14,19 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.partition._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.partition._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.partition.ScaldingPartitions._
-import au.com.cba.omnia.grimlock.partition.SparkPartitions._
+import au.com.cba.omnia.grimlock.library.partition._
+
+import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
+
+import au.com.cba.omnia.grimlock.spark.partition.Partitions._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._

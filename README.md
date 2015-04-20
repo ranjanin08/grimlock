@@ -178,18 +178,9 @@ When at the Scalding REPL console, the first step is to import Grimlock's functi
 
 import au.com.cba.omnia.grimlock._
 import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.Matrix._
-import au.com.cba.omnia.grimlock.Names._
-import au.com.cba.omnia.grimlock.partition._
-import au.com.cba.omnia.grimlock.partition.Partitions._
 import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.position.Positions._
 import au.com.cba.omnia.grimlock.reduce._
-import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.Types._
-import au.com.cba.omnia.grimlock.utility.Miscellaneous.Collection
+import au.com.cba.omnia.grimlock.scalding.Matrix._
 
 ```
 

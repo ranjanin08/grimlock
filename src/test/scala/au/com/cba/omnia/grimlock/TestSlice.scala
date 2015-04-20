@@ -14,10 +14,11 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.position._
 
 trait TestSlice extends TestGrimlock {
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")

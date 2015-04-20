@@ -12,26 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.content
+package au.com.cba.omnia.grimlock.scalding.content
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.content.metadata._
+import au.com.cba.omnia.grimlock.framework.content.{ Contents => BaseContents, _ }
 
-import com.twitter.scalding._
+import au.com.cba.omnia.grimlock.scalding._
+
+import com.twitter.scalding.TypedPipe
 
 /**
  * Rich wrapper around a `TypedPipe[Content]`.
  *
  * @param data The `TypedPipe[Content]`.
  */
-class ScaldingContents(val data: TypedPipe[Content]) extends Contents with ScaldingPersist[Content] {
+class Contents(val data: TypedPipe[Content]) extends BaseContents with Persist[Content] {
   type U[A] = TypedPipe[A]
 }
 
-/** Companion object for the `ScaldingContents` class. */
-object ScaldingContents {
+/** Companion object for the Scalding `Contents` class. */
+object Contents {
   /** Converts a `TypedPipe[Content]` to a `Contents`. */
-  implicit def TPC2TPC(data: TypedPipe[Content]): ScaldingContents = new ScaldingContents(data)
+  implicit def TPC2TPC(data: TypedPipe[Content]): Contents = new Contents(data)
 }
 

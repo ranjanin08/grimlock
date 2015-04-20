@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.squash
+package au.com.cba.omnia.grimlock.framework.squash
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for squashing. */
 trait Squasher

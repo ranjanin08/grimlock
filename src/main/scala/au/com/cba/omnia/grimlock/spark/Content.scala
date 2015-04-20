@@ -12,26 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.content
+package au.com.cba.omnia.grimlock.spark.content
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.content.metadata._
+import au.com.cba.omnia.grimlock.framework.content.{ Contents => BaseContents, _ }
 
-import org.apache.spark.rdd._
+import au.com.cba.omnia.grimlock.spark._
+
+import org.apache.spark.rdd.RDD
 
 /**
  * Rich wrapper around a `RDD[Content]`.
  *
  * @param data The `RDD[Content]`.
  */
-class SparkContents(val data: RDD[Content]) extends Contents with SparkPersist[Content] {
+class Contents(val data: RDD[Content]) extends BaseContents with Persist[Content] {
   type U[A] = RDD[A]
 }
 
-/** Companion object for the `SparkContents` class. */
-object SparkContents {
+/** Companion object for the Spark `Contents` class. */
+object Contents {
   /** Converts a `RDD[Content]` to a `Contents`. */
-  implicit def RDDC2RDDC(data: RDD[Content]): SparkContents = new SparkContents(data)
+  implicit def RDDC2RDDC(data: RDD[Content]): Contents = new Contents(data)
 }
 

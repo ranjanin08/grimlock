@@ -14,20 +14,22 @@
 
 package au.com.cba.omnia.grimlock.examples
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.pairwise._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.reduce._
-import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.squash._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.pairwise._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.transform._
+import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.ScaldingMatrix._
+import au.com.cba.omnia.grimlock.library.pairwise._
+import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.squash._
 
-import com.twitter.scalding._
+import au.com.cba.omnia.grimlock.scalding.Matrix._
+
+import com.twitter.scalding.{ Args, Job }
 
 // Simple bucketing implementation. For numerical values it generates categorical values that are the rounded up
 // value. All other values are passed through.

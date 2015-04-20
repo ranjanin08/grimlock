@@ -14,12 +14,15 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.transform._
+import au.com.cba.omnia.grimlock.framework.utility._
+
+import au.com.cba.omnia.grimlock.library.transform._
 
 trait TestTransformers extends TestGrimlock {
   def getLongContent(value: Long): Content = Content(DiscreteSchema[Codex.LongCodex](), value)
@@ -628,6 +631,8 @@ class TestCut extends TestTransformers {
 
 class TestScaldingCutRules extends TestTransformers {
 
+  import au.com.cba.omnia.grimlock.scalding.transform.CutRules
+
   import com.twitter.scalding.typed.ValuePipe
 
   val stats = ValuePipe(Map(Position1D("foo") -> Map(Position1D("min") -> getDoubleContent(0),
@@ -635,170 +640,170 @@ class TestScaldingCutRules extends TestTransformers {
     Position1D("sd") -> getDoubleContent(2), Position1D("skewness") -> getDoubleContent(2))))
 
   "A fixed" should "cut" in {
-    ScaldingCutRules.fixed(stats, "min", "max", 5) shouldBe
-      ValuePipe(Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5)))
+    CutRules.fixed(stats, "min", "max", 5) shouldBe ValuePipe(Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5)))
   }
 
   it should "not cut with missing values" in {
-    ScaldingCutRules.fixed(stats, "not.there", "max", 5) shouldBe ValuePipe(Map())
-    ScaldingCutRules.fixed(stats, "min", "not.there", 5) shouldBe ValuePipe(Map())
+    CutRules.fixed(stats, "not.there", "max", 5) shouldBe ValuePipe(Map())
+    CutRules.fixed(stats, "min", "not.there", 5) shouldBe ValuePipe(Map())
   }
 
   "A squareRootChoice" should "cut" in {
-    ScaldingCutRules.squareRootChoice(stats, "count", "min", "max") shouldBe
+    CutRules.squareRootChoice(stats, "count", "min", "max") shouldBe
       ValuePipe(Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5)))
   }
 
   it should "not cut with missing values" in {
-    ScaldingCutRules.squareRootChoice(stats, "not.there", "min", "max") shouldBe ValuePipe(Map())
-    ScaldingCutRules.squareRootChoice(stats, "count", "not.there", "max") shouldBe ValuePipe(Map())
-    ScaldingCutRules.squareRootChoice(stats, "count", "min", "not.there") shouldBe ValuePipe(Map())
+    CutRules.squareRootChoice(stats, "not.there", "min", "max") shouldBe ValuePipe(Map())
+    CutRules.squareRootChoice(stats, "count", "not.there", "max") shouldBe ValuePipe(Map())
+    CutRules.squareRootChoice(stats, "count", "min", "not.there") shouldBe ValuePipe(Map())
   }
 
   "A sturgesFormula" should "cut" in {
     // math.ceil(log2(25) + 1) = 6
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 6)).tail
 
-    ScaldingCutRules.sturgesFormula(stats, "count", "min", "max") shouldBe ValuePipe(Map(Position1D("foo") -> vals))
+    CutRules.sturgesFormula(stats, "count", "min", "max") shouldBe ValuePipe(Map(Position1D("foo") -> vals))
   }
 
   it should "not cut with missing values" in {
-    ScaldingCutRules.sturgesFormula(stats, "not.there", "min", "max") shouldBe ValuePipe(Map())
-    ScaldingCutRules.sturgesFormula(stats, "count", "not.there", "max") shouldBe ValuePipe(Map())
-    ScaldingCutRules.sturgesFormula(stats, "count", "min", "not.there") shouldBe ValuePipe(Map())
+    CutRules.sturgesFormula(stats, "not.there", "min", "max") shouldBe ValuePipe(Map())
+    CutRules.sturgesFormula(stats, "count", "not.there", "max") shouldBe ValuePipe(Map())
+    CutRules.sturgesFormula(stats, "count", "min", "not.there") shouldBe ValuePipe(Map())
   }
 
   "A riceRule" should "cut" in {
     // math.ceil(2 * math.pow(25, 1.0 / 3.0)) = 6
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 6)).tail
 
-    ScaldingCutRules.riceRule(stats, "count", "min", "max") shouldBe ValuePipe(Map(Position1D("foo") -> vals))
+    CutRules.riceRule(stats, "count", "min", "max") shouldBe ValuePipe(Map(Position1D("foo") -> vals))
   }
 
   it should "not cut with missing values" in {
-    ScaldingCutRules.riceRule(stats, "not.there", "min", "max") shouldBe ValuePipe(Map())
-    ScaldingCutRules.riceRule(stats, "count", "not.there", "max") shouldBe ValuePipe(Map())
-    ScaldingCutRules.riceRule(stats, "count", "min", "not.there") shouldBe ValuePipe(Map())
+    CutRules.riceRule(stats, "not.there", "min", "max") shouldBe ValuePipe(Map())
+    CutRules.riceRule(stats, "count", "not.there", "max") shouldBe ValuePipe(Map())
+    CutRules.riceRule(stats, "count", "min", "not.there") shouldBe ValuePipe(Map())
   }
 
   "A doanesFormula" should "cut" in {
     // math.round(1 + log2(25) + log2(1 + math.abs(2) / math.sqrt((6.0 * 23.0) / (26.0 * 28.0)))) = 8
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 8)).tail
 
-    ScaldingCutRules.doanesFormula(stats, "count", "min", "max", "skewness") shouldBe
-      ValuePipe(Map(Position1D("foo") -> vals))
+    CutRules.doanesFormula(stats, "count", "min", "max", "skewness") shouldBe ValuePipe(Map(Position1D("foo") -> vals))
   }
 
   it should "not cut with missing values" in {
-    ScaldingCutRules.doanesFormula(stats, "not.there", "min", "max", "skewness") shouldBe ValuePipe(Map())
-    ScaldingCutRules.doanesFormula(stats, "count", "not.there", "max", "skewness") shouldBe ValuePipe(Map())
-    ScaldingCutRules.doanesFormula(stats, "count", "min", "not.there", "skewness") shouldBe ValuePipe(Map())
-    ScaldingCutRules.doanesFormula(stats, "count", "min", "max", "not.there") shouldBe ValuePipe(Map())
+    CutRules.doanesFormula(stats, "not.there", "min", "max", "skewness") shouldBe ValuePipe(Map())
+    CutRules.doanesFormula(stats, "count", "not.there", "max", "skewness") shouldBe ValuePipe(Map())
+    CutRules.doanesFormula(stats, "count", "min", "not.there", "skewness") shouldBe ValuePipe(Map())
+    CutRules.doanesFormula(stats, "count", "min", "max", "not.there") shouldBe ValuePipe(Map())
   }
 
   "A scottsNormalReferenceRule" should "cut" in {
     // math.ceil((5.0 - 0) / (3.5 * 2 / math.pow(25, 1.0 / 3.0))) = 3
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 3)).tail
 
-    ScaldingCutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd") shouldBe
+    CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd") shouldBe
       ValuePipe(Map(Position1D("foo") -> vals))
   }
 
   it should "not cut with missing values" in {
-    ScaldingCutRules.scottsNormalReferenceRule(stats, "not.there", "min", "max", "sd") shouldBe ValuePipe(Map())
-    ScaldingCutRules.scottsNormalReferenceRule(stats, "count", "not.there", "max", "sd") shouldBe ValuePipe(Map())
-    ScaldingCutRules.scottsNormalReferenceRule(stats, "count", "min", "not.there", "sd") shouldBe ValuePipe(Map())
-    ScaldingCutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "not.there") shouldBe ValuePipe(Map())
+    CutRules.scottsNormalReferenceRule(stats, "not.there", "min", "max", "sd") shouldBe ValuePipe(Map())
+    CutRules.scottsNormalReferenceRule(stats, "count", "not.there", "max", "sd") shouldBe ValuePipe(Map())
+    CutRules.scottsNormalReferenceRule(stats, "count", "min", "not.there", "sd") shouldBe ValuePipe(Map())
+    CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "not.there") shouldBe ValuePipe(Map())
   }
 
   "A breaks" should "cut" in {
-    ScaldingCutRules.breaks(Map("foo" -> List[Double](0,1,2,3,4,5))) shouldBe
+    CutRules.breaks(Map("foo" -> List[Double](0,1,2,3,4,5))) shouldBe
       ValuePipe(Map(Position1D("foo") -> List[Double](0,1,2,3,4,5)))
   }
 }
 
 class TestSparkCutRules extends TestTransformers {
 
+  import au.com.cba.omnia.grimlock.spark.transform.CutRules
+
   val stats = Map(Position1D("foo") -> Map(Position1D("min") -> getDoubleContent(0),
     Position1D("max") -> getDoubleContent(5), Position1D("count") -> getDoubleContent(25),
     Position1D("sd") -> getDoubleContent(2), Position1D("skewness") -> getDoubleContent(2)))
 
   "A fixed" should "cut" in {
-    SparkCutRules.fixed(stats, "min", "max", 5) shouldBe Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5))
+    CutRules.fixed(stats, "min", "max", 5) shouldBe Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5))
   }
 
   it should "not cut with missing values" in {
-    SparkCutRules.fixed(stats, "not.there", "max", 5) shouldBe Map()
-    SparkCutRules.fixed(stats, "min", "not.there", 5) shouldBe Map()
+    CutRules.fixed(stats, "not.there", "max", 5) shouldBe Map()
+    CutRules.fixed(stats, "min", "not.there", 5) shouldBe Map()
   }
 
   "A squareRootChoice" should "cut" in {
-    SparkCutRules.squareRootChoice(stats, "count", "min", "max") shouldBe
+    CutRules.squareRootChoice(stats, "count", "min", "max") shouldBe
       Map(Position1D("foo") -> List[Double](-0.005,1,2,3,4,5))
   }
 
   it should "not cut with missing values" in {
-    SparkCutRules.squareRootChoice(stats, "not.there", "min", "max") shouldBe Map()
-    SparkCutRules.squareRootChoice(stats, "count", "not.there", "max") shouldBe Map()
-    SparkCutRules.squareRootChoice(stats, "count", "min", "not.there") shouldBe Map()
+    CutRules.squareRootChoice(stats, "not.there", "min", "max") shouldBe Map()
+    CutRules.squareRootChoice(stats, "count", "not.there", "max") shouldBe Map()
+    CutRules.squareRootChoice(stats, "count", "min", "not.there") shouldBe Map()
   }
 
   "A sturgesFormula" should "cut" in {
     // math.ceil(log2(25) + 1) = 6
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 6)).tail
 
-    SparkCutRules.sturgesFormula(stats, "count", "min", "max") shouldBe Map(Position1D("foo") -> vals)
+    CutRules.sturgesFormula(stats, "count", "min", "max") shouldBe Map(Position1D("foo") -> vals)
   }
 
   it should "not cut with missing values" in {
-    SparkCutRules.sturgesFormula(stats, "not.there", "min", "max") shouldBe Map()
-    SparkCutRules.sturgesFormula(stats, "count", "not.there", "max") shouldBe Map()
-    SparkCutRules.sturgesFormula(stats, "count", "min", "not.there") shouldBe Map()
+    CutRules.sturgesFormula(stats, "not.there", "min", "max") shouldBe Map()
+    CutRules.sturgesFormula(stats, "count", "not.there", "max") shouldBe Map()
+    CutRules.sturgesFormula(stats, "count", "min", "not.there") shouldBe Map()
   }
 
   "A riceRule" should "cut" in {
     // math.ceil(2 * math.pow(25, 1.0 / 3.0)) = 6
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 6)).tail
 
-    SparkCutRules.riceRule(stats, "count", "min", "max") shouldBe Map(Position1D("foo") -> vals)
+    CutRules.riceRule(stats, "count", "min", "max") shouldBe Map(Position1D("foo") -> vals)
   }
 
   it should "not cut with missing values" in {
-    SparkCutRules.riceRule(stats, "not.there", "min", "max") shouldBe Map()
-    SparkCutRules.riceRule(stats, "count", "not.there", "max") shouldBe Map()
-    SparkCutRules.riceRule(stats, "count", "min", "not.there") shouldBe Map()
+    CutRules.riceRule(stats, "not.there", "min", "max") shouldBe Map()
+    CutRules.riceRule(stats, "count", "not.there", "max") shouldBe Map()
+    CutRules.riceRule(stats, "count", "min", "not.there") shouldBe Map()
   }
 
   "A doanesFormula" should "cut" in {
     // math.round(1 + log2(25) + log2(1 + math.abs(2) / math.sqrt((6.0 * 23.0) / (26.0 * 28.0)))) = 8
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 8)).tail
 
-    SparkCutRules.doanesFormula(stats, "count", "min", "max", "skewness") shouldBe Map(Position1D("foo") -> vals)
+    CutRules.doanesFormula(stats, "count", "min", "max", "skewness") shouldBe Map(Position1D("foo") -> vals)
   }
 
   it should "not cut with missing values" in {
-    SparkCutRules.doanesFormula(stats, "not.there", "min", "max", "skewness") shouldBe Map()
-    SparkCutRules.doanesFormula(stats, "count", "not.there", "max", "skewness") shouldBe Map()
-    SparkCutRules.doanesFormula(stats, "count", "min", "not.there", "skewness") shouldBe Map()
-    SparkCutRules.doanesFormula(stats, "count", "min", "max", "not.there") shouldBe Map()
+    CutRules.doanesFormula(stats, "not.there", "min", "max", "skewness") shouldBe Map()
+    CutRules.doanesFormula(stats, "count", "not.there", "max", "skewness") shouldBe Map()
+    CutRules.doanesFormula(stats, "count", "min", "not.there", "skewness") shouldBe Map()
+    CutRules.doanesFormula(stats, "count", "min", "max", "not.there") shouldBe Map()
   }
 
   "A scottsNormalReferenceRule" should "cut" in {
     // math.ceil((5.0 - 0) / (3.5 * 2 / math.pow(25, 1.0 / 3.0))) = 3
     val vals = -0.005 +: (0.0 to 5.0 by (5.0 / 3)).tail
 
-    SparkCutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd") shouldBe Map(Position1D("foo") -> vals)
+    CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd") shouldBe Map(Position1D("foo") -> vals)
   }
 
   it should "not cut with missing values" in {
-    SparkCutRules.scottsNormalReferenceRule(stats, "not.there", "min", "max", "sd") shouldBe Map()
-    SparkCutRules.scottsNormalReferenceRule(stats, "count", "not.there", "max", "sd") shouldBe Map()
-    SparkCutRules.scottsNormalReferenceRule(stats, "count", "min", "not.there", "sd") shouldBe Map()
-    SparkCutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "not.there") shouldBe Map()
+    CutRules.scottsNormalReferenceRule(stats, "not.there", "min", "max", "sd") shouldBe Map()
+    CutRules.scottsNormalReferenceRule(stats, "count", "not.there", "max", "sd") shouldBe Map()
+    CutRules.scottsNormalReferenceRule(stats, "count", "min", "not.there", "sd") shouldBe Map()
+    CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "not.there") shouldBe Map()
   }
 
   "A breaks" should "cut" in {
-    SparkCutRules.breaks(Map("foo" -> List[Double](0,1,2,3,4,5))) shouldBe
+    CutRules.breaks(Map("foo" -> List[Double](0,1,2,3,4,5))) shouldBe
       Map(Position1D("foo") -> List[Double](0,1,2,3,4,5))
   }
 }

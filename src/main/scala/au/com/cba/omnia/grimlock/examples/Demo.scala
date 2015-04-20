@@ -14,25 +14,28 @@
 
 package au.com.cba.omnia.grimlock.examples
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.partition._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.reduce._
-import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.partition._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.transform._
+import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.ScaldingMatrix._
-import au.com.cba.omnia.grimlock.ScaldingNameable._
-import au.com.cba.omnia.grimlock.ScaldingNames._
-import au.com.cba.omnia.grimlock.partition.ScaldingPartitions._
-import au.com.cba.omnia.grimlock.position.ScaldingPositions._
-import au.com.cba.omnia.grimlock.position.ScaldingPositionDistributable._
-import au.com.cba.omnia.grimlock.ScaldingTypes._
+import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.transform._
 
-import com.twitter.scalding._
+import au.com.cba.omnia.grimlock.scalding.Matrix._
+import au.com.cba.omnia.grimlock.scalding.Nameable._
+import au.com.cba.omnia.grimlock.scalding.Names._
+import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
+import au.com.cba.omnia.grimlock.scalding.position.Positions._
+import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
+import au.com.cba.omnia.grimlock.scalding.Types._
+
+import com.twitter.scalding.{ Args, Job }
+import com.twitter.scalding.typed.TypedPipe
 
 class BasicOperations(args : Args) extends Job(args) {
   // Read the data. This returns a 2D matrix (instance x feature).

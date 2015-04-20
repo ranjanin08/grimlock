@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.sample
+package au.com.cba.omnia.grimlock.framework.sample
 
-import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for sampling. */
 trait Sampler

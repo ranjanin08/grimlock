@@ -12,11 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock
+package au.com.cba.omnia.grimlock.spark
 
-import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.framework.{
+  Matrix => BaseMatrix,
+  Names => BaseNames,
+  Nameable => BaseNameable,
+  Persist => BasePersist,
+  _
+}
+import au.com.cba.omnia.grimlock.framework.position._
 
-import org.apache.spark.rdd._
+import org.apache.spark.rdd.RDD
 
 import scala.reflect.ClassTag
 
@@ -27,7 +34,7 @@ import scala.reflect.ClassTag
  *
  * @note This class represents the names along the dimensions of a matrix.
  */
-class SparkNames[P <: Position](val data: RDD[(P, Long)]) extends Names[P] with SparkPersist[(P, Long)] {
+class Names[P <: Position](val data: RDD[(P, Long)]) extends BaseNames[P] with Persist[(P, Long)] {
   type U[A] = RDD[A]
 
   def moveToFront[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): RDD[(P, Long)] = {
@@ -44,7 +51,7 @@ class SparkNames[P <: Position](val data: RDD[(P, Long)]) extends Names[P] with 
     data.map { case (p, i) => (p, if (state(pos) < i) i - 1 else if (p == pos) state.values.max else i) }
   }
 
-  def renumber()(implicit ev: ClassTag[P]): RDD[(P, Long)] = SparkNames.number(data.map { case (p, i) => p })
+  def renumber()(implicit ev: ClassTag[P]): RDD[(P, Long)] = Names.number(data.map { case (p, i) => p })
 
   def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): RDD[(P, Long)] = {
     val converted = positions.map { case (k, v) => ev.convert(k) -> v }
@@ -53,11 +60,12 @@ class SparkNames[P <: Position](val data: RDD[(P, Long)]) extends Names[P] with 
   }
 
   protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): RDD[(P, Long)] = {
-    SparkNames.number(data.collect { case (p, i) if !keep ^ f(p) => p })
+    Names.number(data.collect { case (p, i) if !keep ^ f(p) => p })
   }
 }
 
-object SparkNames {
+/** Companion object for the Spark `Names` class. */
+object Names {
   /**
    * Number a `RDD[Position]`
    *
@@ -69,32 +77,34 @@ object SparkNames {
    */
   def number[P <: Position](data: RDD[P]): RDD[(P, Long)] = data.zipWithIndex
 
-  /** Conversion from `RDD[(Position, Long)]` to a `SparkNames`. */
-  implicit def RDDPL2RDDN[P <: Position](data: RDD[(P, Long)]): SparkNames[P] = new SparkNames(data)
+  /** Conversion from `RDD[(Position, Long)]` to a Spark `Names`. */
+  implicit def RDDPL2RDDN[P <: Position](data: RDD[(P, Long)]): Names[P] = new Names(data)
 }
 
-/** Spark Companion object for the `Nameable` type class. */
-object SparkNameable {
+/** Spark companion object for the `Nameable` type class. */
+object Nameable {
   /** Converts a `RDD[(Q, Long)]` into a `RDD[(Q, Long)]`; that is, it is a pass through. */
-  implicit def RDDQL2RDDN[P <: Position, Q <: Position, D <: Dimension]: Nameable[RDD[(Q, Long)], P, Q, D, RDD] = {
-    new Nameable[RDD[(Q, Long)], P, Q, D, RDD] {
-      def convert(m: Matrix[P], s: Slice[P, D], t: RDD[(Q, Long)])(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = t
+  implicit def RDDQL2RDDN[P <: Position, Q <: Position, D <: Dimension]: BaseNameable[RDD[(Q, Long)], P, Q, D, RDD] = {
+    new BaseNameable[RDD[(Q, Long)], P, Q, D, RDD] {
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: RDD[(Q, Long)])(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = t
     }
   }
+
   /** Converts a `RDD[Q]` into a `RDD[(Q, Long)]`. */
-  implicit def RDDQ2RDDN[P <: Position, Q <: Position, D <: Dimension]: Nameable[RDD[Q], P, Q, D, RDD] = {
-    new Nameable[RDD[Q], P, Q, D, RDD] {
-      def convert(m: Matrix[P], s: Slice[P, D], t: RDD[Q])(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = {
-        SparkNames.number(t)
+  implicit def RDDQ2RDDN[P <: Position, Q <: Position, D <: Dimension]: BaseNameable[RDD[Q], P, Q, D, RDD] = {
+    new BaseNameable[RDD[Q], P, Q, D, RDD] {
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: RDD[Q])(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = {
+        Names.number(t)
       }
     }
   }
+
   /** Converts a `PositionListable` into a `RDD[(Q, Long)]`. */
   implicit def PL2RDDN[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
-    ev2: PosDimDep[P, D], ev3: ClassTag[Q]): Nameable[T, P, Q, D, RDD] = {
-    new Nameable[T, P, Q, D, RDD] {
-      def convert(m: Matrix[P], s: Slice[P, D], t: T)(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = {
-        new SparkNames(m.names(s).asInstanceOf[RDD[(Q, Long)]]).slice(t, true)
+    ev2: PosDimDep[P, D], ev3: ClassTag[Q]): BaseNameable[T, P, Q, D, RDD] = {
+    new BaseNameable[T, P, Q, D, RDD] {
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: T)(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = {
+        new Names(m.names(s).asInstanceOf[RDD[(Q, Long)]]).slice(t, true)
       }
     }
   }

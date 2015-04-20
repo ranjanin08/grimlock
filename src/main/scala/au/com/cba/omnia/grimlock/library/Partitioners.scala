@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.partition
+package au.com.cba.omnia.grimlock.library.partition
 
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.partition._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.utility._
 
 import java.util.Date
 

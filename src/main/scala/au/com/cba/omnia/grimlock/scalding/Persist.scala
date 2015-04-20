@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock
+package au.com.cba.omnia.grimlock.scalding
+
+import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist, _ }
 
 import cascading.flow.FlowDef
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedSink
+import com.twitter.scalding.{ Mode, TextLine }
+import com.twitter.scalding.typed.{ TypedPipe, TypedSink }
 
 /** Trait for peristing a Scalding `TypedPipe`. */
-trait ScaldingPersist[T] extends Persist[T] {
+trait Persist[T] extends BasePersist[T] {
   /** The data to persist. */
   val data: TypedPipe[T]
 

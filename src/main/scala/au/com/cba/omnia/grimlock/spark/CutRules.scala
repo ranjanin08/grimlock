@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.transform
+package au.com.cba.omnia.grimlock.spark.transform
 
-import au.com.cba.omnia.grimlock.encoding._
+import au.com.cba.omnia.grimlock.framework.encoding._
 
-/** Implement cut rules using spark. */
-object SparkCutRules extends CutRules {
+import au.com.cba.omnia.grimlock.library.transform.{ CutRules => BaseCutRules, _ }
+
+/** Implement cut rules for Spark. */
+object CutRules extends BaseCutRules {
   type E[A] = A
 
   def fixed[V: Valueable, W: Valueable](ext: Stats, min: V, max: W, k: Long): Cut#V = fixedFromStats(ext, min, max, k)

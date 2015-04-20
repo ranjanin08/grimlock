@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.content
+package au.com.cba.omnia.grimlock.framework.content
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.content.metadata._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
 
 /** Contents of a cell in a matrix. */
 trait Content {

@@ -12,39 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock
+package au.com.cba.omnia.grimlock.scalding
 
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.derive._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.pairwise._
-import au.com.cba.omnia.grimlock.partition._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.reduce._
-import au.com.cba.omnia.grimlock.sample._
-import au.com.cba.omnia.grimlock.squash._
-import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework.{
+  ExpandableMatrix => BaseExpandableMatrix,
+  Matrix => BaseMatrix,
+  Matrixable => BaseMatrixable,
+  Nameable => BaseNameable,
+  Persist => BasePersist,
+  ReduceableMatrix => BaseReduceableMatrix,
+  _
+}
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.derive._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.pairwise._
+import au.com.cba.omnia.grimlock.framework.partition._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.reduce._
+import au.com.cba.omnia.grimlock.framework.sample._
+import au.com.cba.omnia.grimlock.framework.squash._
+import au.com.cba.omnia.grimlock.framework.transform._
+import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.ScaldingMatrix._
-import au.com.cba.omnia.grimlock.ScaldingMatrixable._
+import au.com.cba.omnia.grimlock.scalding.Matrix._
+import au.com.cba.omnia.grimlock.scalding.Matrixable._
 
 import cascading.flow.FlowDef
-import com.twitter.scalding._
-import com.twitter.scalding.TDsl._, Dsl._
-import com.twitter.scalding.typed.{ IterablePipe, TypedSink, Grouped }
+import com.twitter.scalding.{ Mode, TextLine }
+import com.twitter.scalding.typed.{ IterablePipe, Grouped, TypedPipe, TypedSink, ValuePipe }
 
 import scala.reflect.ClassTag
 
 /** Base trait for matrix operations using a `TypedPipe[Cell[P]]`. */
-trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[P]] {
+trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type U[A] = TypedPipe[A]
   type E[B] = ValuePipe[B]
-  type S = ScaldingMatrix[P]
+  type S = Matrix[P]
 
   def change[T, D <: Dimension](slice: Slice[P, D], positions: T, schema: Schema)(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S]): TypedPipe[Cell[P]] = {
+    ev2: BaseNameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S]): TypedPipe[Cell[P]] = {
     data
       .groupBy { case c => slice.selected(c.position) }
       .leftJoin(ev2.convert(this, slice, positions).groupBy { case (p, i) => p })
@@ -102,7 +110,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
       .map { case (_, (c, p)) => c }
   }
 
-  def join[D <: Dimension](slice: Slice[P, D], that: ScaldingMatrix[P])(implicit ev1: PosDimDep[P, D],
+  def join[D <: Dimension](slice: Slice[P, D], that: Matrix[P])(implicit ev1: PosDimDep[P, D],
     ev2: P =!= Position1D, ev3: ClassTag[slice.S]): TypedPipe[Cell[P]] = {
     val keep = names(slice)
       .groupBy { case (p, i) => p }
@@ -121,7 +129,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
 
   def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
     ev3: ClassTag[slice.S]): TypedPipe[(slice.S, Long)] = {
-    ScaldingNames.number(data.map { case c => slice.selected(c.position) }.distinct)
+    Names.number(data.map { case c => slice.selected(c.position) }.distinct)
   }
 
   def pairwise[D <: Dimension, T](slice: Slice[P, D], operators: T)(implicit ev1: PosDimDep[P, D], ev2: Operable[T],
@@ -140,7 +148,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
       .flatMapWithValue(value) { case ((lc, rc, r), vo) => o.compute(slice, vo.get)(lc, rc, r).toList }
   }
 
-  def pairwiseBetween[D <: Dimension, T](slice: Slice[P, D], that: ScaldingMatrix[P], operators: T)(
+  def pairwiseBetween[D <: Dimension, T](slice: Slice[P, D], that: Matrix[P], operators: T)(
     implicit ev1: PosDimDep[P, D], ev2: Operable[T], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
     ev5: ClassTag[slice.R]): TypedPipe[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
@@ -148,7 +156,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
     pairwiseBetween(slice, that).flatMap { case (lc, rc, r) => o.compute(slice)(lc, rc, r).toList }
   }
 
-  def pairwiseBetweenWithValue[D <: Dimension, T, W](slice: Slice[P, D], that: ScaldingMatrix[P], operators: T,
+  def pairwiseBetweenWithValue[D <: Dimension, T, W](slice: Slice[P, D], that: Matrix[P], operators: T,
     value: ValuePipe[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, W], ev3: slice.S =!= Position0D,
       ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): TypedPipe[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
@@ -216,7 +224,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
     set(ev1.convert(positions).map { case p => Cell(p, value) })
   }
 
-  def set[T](values: T)(implicit ev1: Matrixable[T, P, TypedPipe], ev2: ClassTag[P]): TypedPipe[Cell[P]] = {
+  def set[T](values: T)(implicit ev1: BaseMatrixable[T, P, TypedPipe], ev2: ClassTag[P]): TypedPipe[Cell[P]] = {
     data
       .groupBy { case c => c.position }
       .outerJoin(ev1.convert(values).groupBy { case c => c.position })
@@ -246,7 +254,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
   }
 
   def slice[T, D <: Dimension](slice: Slice[P, D], positions: T, keep: Boolean)(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S]): TypedPipe[Cell[P]] = {
+    ev2: BaseNameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S]): TypedPipe[Cell[P]] = {
     val pos = ev2.convert(this, slice, positions)
     val wanted = keep match {
       case true => pos
@@ -323,12 +331,12 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
   }
 
   def which[T, D <: Dimension](slice: Slice[P, D], positions: T, predicate: Predicate)(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S], ev4: ClassTag[P]): TypedPipe[P] = {
+    ev2: BaseNameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S], ev4: ClassTag[P]): TypedPipe[P] = {
     which(slice, List((positions, predicate)))
   }
 
   def which[T, D <: Dimension](slice: Slice[P, D], pospred: List[(T, Predicate)])(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S], ev4: ClassTag[P]): TypedPipe[P] = {
+    ev2: BaseNameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S], ev4: ClassTag[P]): TypedPipe[P] = {
     val nampred = pospred.map { case (pos, pred) => ev2.convert(this, slice, pos).map { case (p, i) => (p, pred) } }
     val pipe = nampred.tail.foldLeft(nampred.head)((b, a) => b ++ a)
 
@@ -375,7 +383,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
       .map { case (_, ((_, ((lp, rp, r), lc)), rc)) => (Cell(lp, lc.content), Cell(rp, rc.content), r) }
   }
 
-  private def pairwiseBetween[D <: Dimension](slice: Slice[P, D], that: ScaldingMatrix[P])(
+  private def pairwiseBetween[D <: Dimension](slice: Slice[P, D], that: Matrix[P])(
     implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): TypedPipe[(Cell[slice.S], Cell[slice.S], slice.R)] = {
     val thisWanted = names(slice).map { case (p, i) => p }
     val thisValues = data.groupBy { case Cell(p, _) => (slice.selected(p), slice.remainder(p)) }
@@ -398,8 +406,7 @@ trait ScaldingMatrix[P <: Position] extends Matrix[P] with ScaldingPersist[Cell[
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled using a `TypedPipe[Cell[P]]`. */
-trait ScaldingReduceableMatrix[P <: Position with ReduceablePosition] extends ReduceableMatrix[P] {
-  self: ScaldingMatrix[P] =>
+trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduceableMatrix[P] { self: Matrix[P] =>
 
   def fillHetrogenous[D <: Dimension, Q <: Position](slice: Slice[P, D], values: TypedPipe[Cell[Q]])(
     implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q): TypedPipe[Cell[P]] = {
@@ -465,8 +472,7 @@ trait ScaldingReduceableMatrix[P <: Position with ReduceablePosition] extends Re
 }
 
 /** Base trait for methods that expand the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
-trait ScaldingExpandableMatrix[P <: Position with ExpandablePosition] extends ExpandableMatrix[P] {
-  self: ScaldingMatrix[P] =>
+trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
 
   def expand(expander: Cell[P] => P#M): TypedPipe[Cell[P#M]] = data.map { case c => Cell(expander(c), c.content) }
 
@@ -488,7 +494,7 @@ trait ScaldingExpandableMatrix[P <: Position with ExpandablePosition] extends Ex
   }
 }
 
-object ScaldingMatrix {
+object Matrix {
   /**
    * Read column oriented, pipe separated matrix data into a `TypedPipe[Cell[Position1D]]`.
    *
@@ -631,41 +637,41 @@ object ScaldingMatrix {
     TypedPipe.from(TextLine(table)).flatMap { Cell.parseTable(_, columns, pkeyIndex, separator) }
   }
 
-  /** Conversion from `TypedPipe[Cell[Position1D]]` to a `ScaldingMatrix1D`. */
-  implicit def TPP1DC2TPM1D(data: TypedPipe[Cell[Position1D]]): ScaldingMatrix1D = new ScaldingMatrix1D(data)
-  /** Conversion from `TypedPipe[Cell[Position2D]]` to a `ScaldingMatrix2D`. */
-  implicit def TPP2DC2TPM2D(data: TypedPipe[Cell[Position2D]]): ScaldingMatrix2D = new ScaldingMatrix2D(data)
-  /** Conversion from `TypedPipe[Cell[Position3D]]` to a `ScaldingMatrix3D`. */
-  implicit def TPP3DC2TPM3D(data: TypedPipe[Cell[Position3D]]): ScaldingMatrix3D = new ScaldingMatrix3D(data)
-  /** Conversion from `TypedPipe[Cell[Position4D]]` to a `ScaldingMatrix4D`. */
-  implicit def TPP4DC2TPM4D(data: TypedPipe[Cell[Position4D]]): ScaldingMatrix4D = new ScaldingMatrix4D(data)
-  /** Conversion from `TypedPipe[Cell[Position5D]]` to a `ScaldingMatrix5D`. */
-  implicit def TPP5DC2TPM5D(data: TypedPipe[Cell[Position5D]]): ScaldingMatrix5D = new ScaldingMatrix5D(data)
+  /** Conversion from `TypedPipe[Cell[Position1D]]` to a Scalding `Matrix1D`. */
+  implicit def TPP1DC2TPM1D(data: TypedPipe[Cell[Position1D]]): Matrix1D = new Matrix1D(data)
+  /** Conversion from `TypedPipe[Cell[Position2D]]` to a Scalding `Matrix2D`. */
+  implicit def TPP2DC2TPM2D(data: TypedPipe[Cell[Position2D]]): Matrix2D = new Matrix2D(data)
+  /** Conversion from `TypedPipe[Cell[Position3D]]` to a Scalding `Matrix3D`. */
+  implicit def TPP3DC2TPM3D(data: TypedPipe[Cell[Position3D]]): Matrix3D = new Matrix3D(data)
+  /** Conversion from `TypedPipe[Cell[Position4D]]` to a Scalding `Matrix4D`. */
+  implicit def TPP4DC2TPM4D(data: TypedPipe[Cell[Position4D]]): Matrix4D = new Matrix4D(data)
+  /** Conversion from `TypedPipe[Cell[Position5D]]` to a Scalding `Matrix5D`. */
+  implicit def TPP5DC2TPM5D(data: TypedPipe[Cell[Position5D]]): Matrix5D = new Matrix5D(data)
 
-  /** Conversion from `List[(Valueable, Content)]` to a `ScaldingMatrix1D`. */
-  implicit def LVCT2TPM1D[V: Valueable](list: List[(V, Content)]): ScaldingMatrix1D = {
-    new ScaldingMatrix1D(new IterablePipe(list.map { case (v, c) => Cell(Position1D(v), c) }))
+  /** Conversion from `List[(Valueable, Content)]` to a Scalding `Matrix1D`. */
+  implicit def LVCT2TPM1D[V: Valueable](list: List[(V, Content)]): Matrix1D = {
+    new Matrix1D(new IterablePipe(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
-  /** Conversion from `List[(Valueable, Valueable, Content)]` to a `ScaldingMatrix2D`. */
-  implicit def LVVCT2TPM2D[V: Valueable, W: Valueable](list: List[(V, W, Content)]): ScaldingMatrix2D = {
-    new ScaldingMatrix2D(new IterablePipe(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
+  /** Conversion from `List[(Valueable, Valueable, Content)]` to a Scalding `Matrix2D`. */
+  implicit def LVVCT2TPM2D[V: Valueable, W: Valueable](list: List[(V, W, Content)]): Matrix2D = {
+    new Matrix2D(new IterablePipe(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
-  /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a `ScaldingMatrix3D`. */
+  /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a Scalding `Matrix3D`. */
   implicit def LVVVCT2TPM3D[V: Valueable, W: Valueable, X: Valueable](
-    list: List[(V, W, X, Content)]): ScaldingMatrix3D = {
-    new ScaldingMatrix3D(new IterablePipe(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
+    list: List[(V, W, X, Content)]): Matrix3D = {
+    new Matrix3D(new IterablePipe(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
-  /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a `ScaldingMatrix4D`. */
+  /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a Scalding `Matrix4D`. */
   implicit def LVVVVCT2TPM4D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
-    list: List[(V, W, X, Y, Content)]): ScaldingMatrix4D = {
-    new ScaldingMatrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
+    list: List[(V, W, X, Y, Content)]): Matrix4D = {
+    new Matrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /**
-   * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a `ScaldingMatrix5D`.
+   * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a Scalding `Matrix5D`.
    */
   implicit def LVVVVVCT2TPM5D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
-    list: List[(V, W, X, Y, Z, Content)]): ScaldingMatrix5D = {
-    new ScaldingMatrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
+    list: List[(V, W, X, Y, Z, Content)]): Matrix5D = {
+    new Matrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
   }
 }
 
@@ -674,8 +680,7 @@ object ScaldingMatrix {
  *
  * @param data `TypedPipe[Cell[Position1D]]`.
  */
-class ScaldingMatrix1D(val data: TypedPipe[Cell[Position1D]]) extends ScaldingMatrix[Position1D]
-  with ScaldingExpandableMatrix[Position1D] {
+class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D] with ExpandableMatrix[Position1D] {
   def domain(): TypedPipe[Position1D] = names(Over(First)).map { case (p, i) => p }
 
   /**
@@ -721,16 +726,21 @@ class ScaldingMatrix1D(val data: TypedPipe[Cell[Position1D]]) extends ScaldingMa
  *
  * @param data `TypedPipe[Cell[Position2D]]`.
  */
-class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMatrix[Position2D]
-  with ScaldingReduceableMatrix[Position2D] with ScaldingExpandableMatrix[Position2D] {
+class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
+  with ExpandableMatrix[Position2D] {
+
+  import au.com.cba.omnia.grimlock.library.pairwise._
+  import au.com.cba.omnia.grimlock.library.reduce._
+  import au.com.cba.omnia.grimlock.library.transform._
+
   // TODO: Make this work on more than 2D matrices
   def correlation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
     ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): TypedPipe[Cell[Position1D]] = {
-    implicit def TPP2DSC2M1D(data: TypedPipe[Cell[slice.S]]): ScaldingMatrix1D = {
-      new ScaldingMatrix1D(data.asInstanceOf[TypedPipe[Cell[Position1D]]])
+    implicit def TPP2DSC2M1D(data: TypedPipe[Cell[slice.S]]): Matrix1D = {
+      new Matrix1D(data.asInstanceOf[TypedPipe[Cell[Position1D]]])
     }
-    implicit def TPP2DRMC2M2D(data: TypedPipe[Cell[slice.R#M]]): ScaldingMatrix2D = {
-      new ScaldingMatrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
+    implicit def TPP2DRMC2M2D(data: TypedPipe[Cell[slice.R#M]]): Matrix2D = {
+      new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
     }
 
     val mean = data
@@ -763,11 +773,11 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
   // TODO: Make this work on more than 2D matrices
   def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
     ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): TypedPipe[Cell[Position1D]] = {
-    implicit def TPP2DSMC2M2D(data: TypedPipe[Cell[slice.S#M]]): ScaldingMatrix2D = {
-      new ScaldingMatrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
+    implicit def TPP2DSMC2M2D(data: TypedPipe[Cell[slice.S#M]]): Matrix2D = {
+      new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
     }
-    implicit def TPP2DRMC2M2D(data: TypedPipe[Cell[slice.R#M]]): ScaldingMatrix2D = {
-      new ScaldingMatrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
+    implicit def TPP2DRMC2M2D(data: TypedPipe[Cell[slice.R#M]]): Matrix2D = {
+      new Matrix2D(data.asInstanceOf[TypedPipe[Cell[Position2D]]])
     }
 
     val marginal = data
@@ -809,7 +819,7 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
    */
   def persistAsCSV[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
     escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
-    rowId: String = "id")(implicit ev1: Nameable[TypedPipe[(slice.S, Long)], Position2D, slice.S, D, TypedPipe],
+    rowId: String = "id")(implicit ev1: BaseNameable[TypedPipe[(slice.S, Long)], Position2D, slice.S, D, TypedPipe],
       ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S], flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
     persistAsCSVWithNames(slice, file, names(slice), separator, escapee, writeHeader, header, writeRowId, rowId)
   }
@@ -833,7 +843,7 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
    */
   def persistAsCSVWithNames[T, D <: Dimension](slice: Slice[Position2D, D], file: String, names: T,
     separator: String = "|", escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header",
-    writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: Nameable[T, Position2D, slice.S, D, TypedPipe],
+    writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: BaseNameable[T, Position2D, slice.S, D, TypedPipe],
       ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S], flow: FlowDef, mode: Mode): TypedPipe[Cell[Position2D]] = {
     // Note: Usage of .toShortString should be safe as data is written as string anyways. It does assume that all
     //       indices have unique short string representations.
@@ -1017,8 +1027,8 @@ class ScaldingMatrix2D(val data: TypedPipe[Cell[Position2D]]) extends ScaldingMa
  *
  * @param data `TypedPipe[Cell[Position3D]]`.
  */
-class ScaldingMatrix3D(val data: TypedPipe[Cell[Position3D]]) extends ScaldingMatrix[Position3D]
-  with ScaldingReduceableMatrix[Position3D] with ScaldingExpandableMatrix[Position3D] {
+class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
+  with ExpandableMatrix[Position3D] {
   def domain(): TypedPipe[Position3D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -1092,8 +1102,8 @@ class ScaldingMatrix3D(val data: TypedPipe[Cell[Position3D]]) extends ScaldingMa
  *
  * @param data `TypedPipe[Cell[Position4D]]`.
  */
-class ScaldingMatrix4D(val data: TypedPipe[Cell[Position4D]]) extends ScaldingMatrix[Position4D]
-  with ScaldingReduceableMatrix[Position4D] with ScaldingExpandableMatrix[Position4D] {
+class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D] with ReduceableMatrix[Position4D]
+  with ExpandableMatrix[Position4D] {
   def domain(): TypedPipe[Position4D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -1179,8 +1189,7 @@ class ScaldingMatrix4D(val data: TypedPipe[Cell[Position4D]]) extends ScaldingMa
  *
  * @param data `TypedPipe[Cell[Position5D]]`.
  */
-class ScaldingMatrix5D(val data: TypedPipe[Cell[Position5D]]) extends ScaldingMatrix[Position5D]
-  with ScaldingReduceableMatrix[Position5D] {
+class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D] {
   def domain(): TypedPipe[Position5D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -1269,20 +1278,22 @@ class ScaldingMatrix5D(val data: TypedPipe[Cell[Position5D]]) extends ScaldingMa
 }
 
 /** Scalding Companion object for the `Matrixable` type class. */
-object ScaldingMatrixable {
+object Matrixable {
   /** Converts a `TypedPipe[Cell[P]]` into a `TypedPipe[Cell[P]]`; that is, it is a  pass through. */
-  implicit def TPC2TPM[P <: Position]: Matrixable[TypedPipe[Cell[P]], P, TypedPipe] = {
-    new Matrixable[TypedPipe[Cell[P]], P, TypedPipe] { def convert(t: TypedPipe[Cell[P]]): TypedPipe[Cell[P]] = t }
+  implicit def TPC2TPM[P <: Position]: BaseMatrixable[TypedPipe[Cell[P]], P, TypedPipe] = {
+    new BaseMatrixable[TypedPipe[Cell[P]], P, TypedPipe] { def convert(t: TypedPipe[Cell[P]]): TypedPipe[Cell[P]] = t }
   }
   /** Converts a `List[Cell[P]]` into a `TypedPipe[Cell[P]]`. */
-  implicit def LC2TPM[P <: Position]: Matrixable[List[Cell[P]], P, TypedPipe] = {
-    new Matrixable[List[Cell[P]], P, TypedPipe] {
+  implicit def LC2TPM[P <: Position]: BaseMatrixable[List[Cell[P]], P, TypedPipe] = {
+    new BaseMatrixable[List[Cell[P]], P, TypedPipe] {
       def convert(t: List[Cell[P]]): TypedPipe[Cell[P]] = new IterablePipe(t)
     }
   }
   /** Converts a `Cell[P]` into a `TypedPipe[Cell[P]]`. */
-  implicit def C2TPM[P <: Position]: Matrixable[Cell[P], P, TypedPipe] = {
-    new Matrixable[Cell[P], P, TypedPipe] { def convert(t: Cell[P]): TypedPipe[Cell[P]] = new IterablePipe(List(t)) }
+  implicit def C2TPM[P <: Position]: BaseMatrixable[Cell[P], P, TypedPipe] = {
+    new BaseMatrixable[Cell[P], P, TypedPipe] {
+      def convert(t: Cell[P]): TypedPipe[Cell[P]] = new IterablePipe(List(t))
+    }
   }
 }
 

@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.transform
+package au.com.cba.omnia.grimlock.scalding.transform
 
-import au.com.cba.omnia.grimlock.encoding._
+import au.com.cba.omnia.grimlock.framework.encoding._
 
-import com.twitter.scalding._
-import com.twitter.scalding.typed.LiteralValue
+import au.com.cba.omnia.grimlock.library.transform.{ CutRules => BaseCutRules, _ }
 
-/** Implement cut rules using scalding. */
-object ScaldingCutRules extends CutRules {
+import com.twitter.scalding.typed.{ LiteralValue, ValuePipe }
+
+/** Implement cut rules using Scalding. */
+object CutRules extends BaseCutRules {
   type E[A] = ValuePipe[A]
 
   def fixed[V: Valueable, W: Valueable](ext: ValuePipe[Stats], min: V, max: W, k: Long): ValuePipe[Cut#V] = {

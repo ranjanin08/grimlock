@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock
+package au.com.cba.omnia.grimlock.spark
 
-import org.apache.spark.rdd._
+import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist, _ }
+
+import org.apache.spark.rdd.RDD
 
 /** Trait for peristing a Spark `RDD`. */
-trait SparkPersist[T] extends Persist[T] with java.io.Serializable {
+trait Persist[T] extends BasePersist[T] with java.io.Serializable {
   /** The data to persist. */
   val data: RDD[T]
 

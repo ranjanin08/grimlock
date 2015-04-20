@@ -14,21 +14,24 @@
 
 package au.com.cba.omnia.grimlock.examples
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.nlp._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.reduce._
-import au.com.cba.omnia.grimlock.transform._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.nlp._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.transform._
+import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.ScaldingMatrix._
+import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.transform._
+
+import au.com.cba.omnia.grimlock.scalding.Matrix._
 
 import cascading.flow.FlowDef
-import com.twitter.scalding._
-import com.twitter.scalding.TDsl._, Dsl._
+import com.twitter.scalding.{ Args, Job, Mode, TextLine }
+import com.twitter.scalding.TDsl.sourceToTypedPipe
+import com.twitter.scalding.typed.TypedPipe
 
 // Define a simple event (structured) data type. It has an id, a type, a start time and duration. It applies to one or
 // more instances and has a detailed information field.

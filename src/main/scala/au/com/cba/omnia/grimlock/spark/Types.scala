@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock
+package au.com.cba.omnia.grimlock.spark
 
-import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist, Types => BaseTypes, _ }
+import au.com.cba.omnia.grimlock.framework.position._
 
-import org.apache.spark.rdd._
+import org.apache.spark.rdd.RDD
 
 /**
  * Rich wrapper around a `RDD[(Position, Type)]`.
@@ -25,13 +26,13 @@ import org.apache.spark.rdd._
  *
  * @note This class represents the variable type along the dimensions of a matrix.
  */
-class SparkTypes[P <: Position](val data: RDD[(P, Type)]) extends Types[P] with SparkPersist[(P, Type)] {
+class Types[P <: Position](val data: RDD[(P, Type)]) extends BaseTypes[P] with Persist[(P, Type)] {
   type U[A] = RDD[A]
 }
 
-/** Companion object for the `SparkTypes` class. */
-object SparkTypes {
-  /** Conversion from `RDD[(Position, Type)]` to a `SparkTypes`. */
-  implicit def RDDPT2RDDT[P <: Position](data: RDD[(P, Type)]): SparkTypes[P] = new SparkTypes(data)
+/** Companion object for the Spark `Types` class. */
+object Types {
+  /** Conversion from `RDD[(Position, Type)]` to a `Types`. */
+  implicit def RDDPT2RDDT[P <: Position](data: RDD[(P, Type)]): Types[P] = new Types(data)
 }
 

@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.partition
+package au.com.cba.omnia.grimlock.spark.partition
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist, _ }
+import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => BasePartitions, _ }
+import au.com.cba.omnia.grimlock.framework.position._
 
-import org.apache.spark.rdd._
+import au.com.cba.omnia.grimlock.spark._
+
+import org.apache.spark.rdd.RDD
 
 import scala.reflect.ClassTag
 
@@ -28,14 +29,14 @@ import scala.reflect.ClassTag
  *
  * @param data The `RDD[(T, Cell[P])]`.
  */
-class SparkPartitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) extends Partitions[T, P]
-  with SparkPersist[(T, Cell[P])] {
+class Partitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) extends BasePartitions[T, P]
+  with Persist[(T, Cell[P])] {
   type U[A] = RDD[A]
 
   def add(id: T, partition: RDD[Cell[P]]): RDD[(T, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
   def forEach[Q <: Position](ids: List[T], fn: (T, RDD[Cell[P]]) => RDD[Cell[Q]]): RDD[(T, Cell[Q])] = {
-    import SparkPartitions._
+    import Partitions._
 
     // TODO: This reads the data ids.length times. Is there a way to read it only once?
     ids
@@ -50,11 +51,9 @@ class SparkPartitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) e
   def remove(id: T): RDD[(T, Cell[P])] = data.filter { case (t, c) => t != id }
 }
 
-/** Companion object for the `SparkPartitions` class. */
-object SparkPartitions {
-  /** Conversion from `RDD[(T, Cell[P])]` to a `SparkPartitions`. */
-  implicit def RDDTC2RDDP[T: Ordering, P <: Position](data: RDD[(T, Cell[P])]): SparkPartitions[T, P] = {
-    new SparkPartitions(data)
-  }
+/** Companion object for the Spark `Partitions` class. */
+object Partitions {
+  /** Conversion from `RDD[(T, Cell[P])]` to a Spark `Partitions`. */
+  implicit def RDDTC2RDDP[T: Ordering, P <: Position](data: RDD[(T, Cell[P])]): Partitions[T, P] = new Partitions(data)
 }
 

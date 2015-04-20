@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.sample
+package au.com.cba.omnia.grimlock.library.sample
 
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.sample._
 
 import scala.util.Random
 

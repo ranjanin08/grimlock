@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.Type._
+import au.com.cba.omnia.grimlock.framework.Type._
 
 class TestMixedType extends TestGrimlock {
 

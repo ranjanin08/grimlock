@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.partition
+package au.com.cba.omnia.grimlock.scalding.partition
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist, _ }
+import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => BasePartitions, _ }
+import au.com.cba.omnia.grimlock.framework.position._
 
-import com.twitter.scalding._
-import com.twitter.scalding.typed.Grouped
+import au.com.cba.omnia.grimlock.scalding._
+
+import com.twitter.scalding.typed.{ Grouped, TypedPipe }
 
 import scala.reflect.ClassTag
 
@@ -29,8 +29,8 @@ import scala.reflect.ClassTag
  *
  * @param data The `TypedPipe[(T, Cell[P])]`.
  */
-class ScaldingPartitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cell[P])]) extends Partitions[T, P]
-  with ScaldingPersist[(T, Cell[P])] {
+class Partitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cell[P])]) extends BasePartitions[T, P]
+  with Persist[(T, Cell[P])] {
   type U[A] = TypedPipe[A]
 
   def add(id: T, partition: TypedPipe[Cell[P]]): TypedPipe[(T, Cell[P])] = {
@@ -39,7 +39,7 @@ class ScaldingPartitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cel
 
   def forEach[Q <: Position](ids: List[T],
     fn: (T, TypedPipe[Cell[P]]) => TypedPipe[Cell[Q]]): TypedPipe[(T, Cell[Q])] = {
-    import ScaldingPartitions._
+    import Partitions._
 
     // TODO: This reads the data ids.length times. Is there a way to read it only once?
     //       Perhaps with Grouped.mapGroup and Execution[T]?
@@ -55,11 +55,11 @@ class ScaldingPartitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cel
   def remove(id: T): TypedPipe[(T, Cell[P])] = data.filter { case (t, c) => t != id }
 }
 
-/** Companion object for the `ScaldingPartitions` class. */
-object ScaldingPartitions {
-  /** Conversion from `TypedPipe[(T, Cell[P])]` to a `ScaldingPartitions`. */
-  implicit def TPTC2TPP[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]): ScaldingPartitions[T, P] = {
-    new ScaldingPartitions(data)
+/** Companion object for the Scalding `Partitions` class. */
+object Partitions {
+  /** Conversion from `TypedPipe[(T, Cell[P])]` to a Scalding `Partitions`. */
+  implicit def TPTC2TPP[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]): Partitions[T, P] = {
+    new Partitions(data)
   }
 }
 
