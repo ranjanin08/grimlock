@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.examples
+package au.com.cba.omnia.grimlock.spark.examples
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
@@ -26,12 +26,11 @@ import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.library.reduce._
 import au.com.cba.omnia.grimlock.library.transform._
 
-import au.com.cba.omnia.grimlock.scalding.Matrix._
+import au.com.cba.omnia.grimlock.spark._
+import au.com.cba.omnia.grimlock.spark.Matrix._
 
-import cascading.flow.FlowDef
-import com.twitter.scalding.{ Args, Job, Mode, TextLine }
-import com.twitter.scalding.TDsl.sourceToTypedPipe
-import com.twitter.scalding.typed.TypedPipe
+import org.apache.spark.{ SparkConf, SparkContext }
+import org.apache.spark.rdd.RDD
 
 // Define a simple event (structured) data type. It has an id, a type, a start time and duration. It applies to one or
 // more instances and has a detailed information field.
@@ -45,9 +44,9 @@ case class ExampleEvent(
 
 object ExampleEvent {
   // Function to read a file with event data.
-  def read(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
+  def read(file: String)(implicit sc: SparkContext): RDD[Cell[Position1D]] = {
     val es = EventSchema[ExampleEventCodex]()
-    TextLine(file)
+    sc.textFile(file)
       .flatMap { case s => es.decode(s).map { case e => Cell(Position1D(es.codex.fromValue(e.value).eventId), e) } }
   }
 
@@ -134,40 +133,46 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
 }
 
 // Simple tf-idf example (input data is same as tf-idf example here: http://en.wikipedia.org/wiki/Tf%E2%80%93idf).
-class InstanceCentricTfIdf(args : Args) extends Job(args) {
-  // Read event data, then de-normalises the events and return a 2D matrix (event id x instance id).
-  val data = ExampleEvent.read("exampleEvents.txt")
-    .transformAndExpand(Denormalise())
+object InstanceCentricTfIdf {
 
-  // For each event, append the word counts to the 3D matrix. The result is a 3D matrix (event id x instance id x word
-  // count). Then reduce (aggregate) out the event id. The result is a 2D matrix (instance x word count) where the
-  // counts are the sums over all events.
-  val tf = data
-    .transformAndExpand(WordCounts(stopwords=List()))
-    .reduce(Along(First), Sum())
+  def main(args: Array[String]) {
+    // Define implicit context for reading.
+    implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
-  // Get the number of instances (i.e. documents)
-  val n = tf
-    .size(First)
-    .toMap(Over(First))
+    // Read event data, then de-normalises the events and return a 2D matrix (event id x instance id).
+    val data = ExampleEvent.read("exampleEvents.txt")
+      .transformAndExpand(Denormalise())
 
-  // Using the number of documents, compute Idf:
-  //  1/ Compute document frequency;
-  //  2/ Apply Idf transformation (using document count);
-  //  3/ Save as Map for use in Tf-Idf below.
-  val idf = tf
-    .reduce(Along(First), Count())
-    .transformWithValue(Idf(First, key=First.toString, idf=Idf.Transform(math.log10, 0)), n)
-    .toMap(Over(First))
+    // For each event, append the word counts to the 3D matrix. The result is a 3D matrix (event id x instance id x word
+    // count). Then reduce (aggregate) out the event id. The result is a 2D matrix (instance x word count) where the
+    // counts are the sums over all events.
+    val tf: Matrix2D = new Matrix3D(data
+      .transformAndExpand(WordCounts(stopwords=List())))
+      .reduce(Along(First), Sum())
 
-  // Apply TfIdf to the term frequency matrix with the Idf values, then save the results to file.
-  //
-  // Uncomment one of the 3 lines below to try different tf-idf versions.
-  val tfIdf = tf
-    //.transform(BooleanTf(Second))
-    //.transform(LogarithmicTf(Second))
-    //.transformWithValue(AugmentedTf(First), tf.reduce(Along(Second), Max()).toMap(Over(First)))
-    .transformWithValue(TfIdf(Second), idf)
-    .persist("./demo/tfidf_entity.out")
+    // Get the number of instances (i.e. documents)
+    val n = tf
+      .size(First)
+      .toMap(Over(First))
+
+    // Using the number of documents, compute Idf:
+    //  1/ Compute document frequency;
+    //  2/ Apply Idf transformation (using document count);
+    //  3/ Save as Map for use in Tf-Idf below.
+    val idf = tf
+      .reduce(Along(First), Count())
+      .transformWithValue(Idf(First, key=First.toString, idf=Idf.Transform(math.log10, 0)), n)
+      .toMap(Over(First))
+
+    // Apply TfIdf to the term frequency matrix with the Idf values, then save the results to file.
+    //
+    // Uncomment one of the 3 lines below to try different tf-idf versions.
+    val tfIdf = tf
+      //.transform(BooleanTf(Second))
+      //.transform(LogarithmicTf(Second))
+      //.transformWithValue(AugmentedTf(First), tf.reduce(Along(Second), Max()).toMap(Over(First)))
+      .transformWithValue(TfIdf(Second), idf)
+      .save("./demo.spark/tfidf_entity.out")
+  }
 }
 

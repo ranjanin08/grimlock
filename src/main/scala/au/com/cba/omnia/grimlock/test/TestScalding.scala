@@ -48,7 +48,7 @@ import com.twitter.scalding.{ Args, Job, Mode, TypedPsv }
 import com.twitter.scalding.TDsl.sourceToTypedPipe
 import com.twitter.scalding.typed.{ IterablePipe, TypedPipe }
 
-object TestReader {
+object TestScaldingReader {
   def read4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
     def hashDate(v: String) = {
       val cal = java.util.Calendar.getInstance()
@@ -73,140 +73,138 @@ object TestReader {
   }
 }
 
-class Test1(args : Args) extends Job(args) {
+class TestScalding1(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
-    .persist("./tmp/dat1.out", descriptive=true)
+    .save("./tmp.scalding/dat1.out", descriptive=true)
 
   data
     .set(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
       Content(ContinuousSchema[Codex.LongCodex](), 1234))
     .slice(Over(First), "iid:1548763", true)
-    .persist("./tmp/dat2.out", descriptive=true)
+    .save("./tmp.scalding/dat2.out", descriptive=true)
 
   read3D("smallInputfile.txt")
-    .persist("./tmp/dat3.out", descriptive=true)
+    .save("./tmp.scalding/dat3.out", descriptive=true)
 }
 
-class Test2(args : Args) extends Job(args) {
+class TestScalding2(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   (data.names(Over(First)) ++ data.names(Over(Second)) ++ data.names(Over(Third)))
-    .groupAll
-    .values
     .renumber
-    .persist("./tmp/nm0.out", descriptive=true)
+    .save("./tmp.scalding/nm0.out", descriptive=true)
 
   data
     .names(Over(Second))
     .moveToFront("fid:Z")
-    .persist("./tmp/nm1.out", descriptive=true)
+    .save("./tmp.scalding/nm1.out", descriptive=true)
 
   data
     .names(Over(Second))
     .slice("fid:M", false)
-    .persist("./tmp/nm2.out", descriptive=true)
+    .save("./tmp.scalding/nm2.out", descriptive=true)
 
   data
     .names(Over(Second))
     .set(Map("fid:A" -> 100L, "fid:C" -> 200L))
-    .persist("./tmp/nm3.out", descriptive=true)
+    .save("./tmp.scalding/nm3.out", descriptive=true)
 
   data
     .names(Over(Second))
     .moveToBack("fid:B")
-    .persist("./tmp/nm4.out", descriptive=true)
+    .save("./tmp.scalding/nm4.out", descriptive=true)
 
   data
     .names(Over(Second))
     .slice(""".*[BCD]$""".r, true, "")
-    .persist("./tmp/nm5.out", descriptive=true)
+    .save("./tmp.scalding/nm5.out", descriptive=true)
 }
 
-class Test3(args : Args) extends Job(args) {
+class TestScalding3(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   (data.types(Over(First)) ++ data.types(Over(Second)) ++ data.types(Over(Third)))
-    .persist("./tmp/typ1.out", descriptive=true)
+    .save("./tmp.scalding/typ1.out", descriptive=true)
 
   (data.types(Over(First), true) ++ data.types(Over(Second), true) ++ data.types(Over(Third), true))
-    .persist("./tmp/typ2.out", descriptive=true)
+    .save("./tmp.scalding/typ2.out", descriptive=true)
 }
 
-class Test4(args : Args) extends Job(args) {
+class TestScalding4(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
     .slice(Over(Second), "fid:B", true)
-    .persist("./tmp/scl0.out", descriptive=true)
+    .save("./tmp.scalding/scl0.out", descriptive=true)
 
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", true)
-    .persist("./tmp/scl1.out", descriptive=true)
+    .save("./tmp.scalding/scl1.out", descriptive=true)
 
   val rem = List("fid:B", "fid:D", "fid:F", "fid:H", "fid:J", "fid:L", "fid:N",
                  "fid:P", "fid:R", "fid:T", "fid:V", "fid:X", "fid:Z")
   data
     .slice(Over(Second), data.names(Over(Second)).slice(rem, false), false)
-    .persist("./tmp/scl2.out", descriptive=true)
+    .save("./tmp.scalding/scl2.out", descriptive=true)
 }
 
-class Test5(args : Args) extends Job(args) {
+class TestScalding5(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", true)
     .squash(Third, PreservingMaxPosition())
-    .persist("./tmp/sqs1.out", descriptive=true)
+    .save("./tmp.scalding/sqs1.out", descriptive=true)
 
   data
     .squash(Third, PreservingMaxPosition())
-    .persist("./tmp/sqs2.out", descriptive=true)
+    .save("./tmp.scalding/sqs2.out", descriptive=true)
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition())
-    .persistAsCSV(Over(First), "./tmp/sqs3.out")
+    .saveAsCSV(Over(First), "./tmp.scalding/sqs3.out")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
-    .persistAsCSV(Over(First), "./tmp/sqs4.out")
+    .saveAsCSV(Over(First), "./tmp.scalding/sqs4.out")
 }
 
-class Test6(args : Args) extends Job(args) {
+class TestScalding6(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
     .which((c: Cell[Position3D]) => c.content.schema.kind.isSpecialisationOf(Numerical))
-    .persist("./tmp/whc1.out", descriptive=true)
+    .save("./tmp.scalding/whc1.out", descriptive=true)
 
   data
     .which((c: Cell[Position3D]) => ! c.content.value.isInstanceOf[StringValue])
-    .persist("./tmp/whc2.out", descriptive=true)
+    .save("./tmp.scalding/whc2.out", descriptive=true)
 
   data
     .get(data.which((c: Cell[Position3D]) =>
       (c.content.value equ 666) || (c.content.value leq 11.0) || (c.content.value equ "KQUPKFEH")))
-    .persist("./tmp/whc3.out", descriptive=true)
+    .save("./tmp.scalding/whc3.out", descriptive=true)
 
   data
     .which((c: Cell[Position3D]) => c.content.value.isInstanceOf[LongValue])
-    .persist("./tmp/whc4.out", descriptive=true)
+    .save("./tmp.scalding/whc4.out", descriptive=true)
 
-  TestReader.read4TupleDataAddDate(args("input"))
+  TestScaldingReader.read4TupleDataAddDate(args("input"))
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -214,61 +212,61 @@ class Test6(args : Args) extends Job(args) {
     .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
     .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
                               ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
-    .persist("./tmp/whc5.out", descriptive=true)
+    .save("./tmp.scalding/whc5.out", descriptive=true)
 }
 
-class Test7(args : Args) extends Job(args) {
+class TestScalding7(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
     .get(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get))
-    .persist("./tmp/get1.out", descriptive=true)
+    .save("./tmp.scalding/get1.out", descriptive=true)
 
   data
     .get(List(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
               Position3D("iid:1303823", "fid:A", DateCodex.decode("2014-05-05").get)))
-    .persist("./tmp/get2.out", descriptive=true)
+    .save("./tmp.scalding/get2.out", descriptive=true)
 }
 
-class Test8(args : Args) extends Job(args) {
+class TestScalding8(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
     .slice(Over(Second), "fid:B", true)
     .squash(Third, PreservingMaxPosition())
     .unique
-    .persist("./tmp/uniq.out", descriptive=true)
+    .save("./tmp.scalding/uniq.out", descriptive=true)
 
   read2D("mutualInputfile.txt")
     .unique(Over(Second))
-    .persist("./tmp/uni2.out")
+    .save("./tmp.scalding/uni2.out")
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition())
-    .persistAsCSV(Over(Second), "./tmp/test.csv")
-    .persistAsCSV(Over(First), "./tmp/tset.csv", writeHeader=false, separator=",")
+    .saveAsCSV(Over(Second), "./tmp.scalding/test.csv")
+    .saveAsCSV(Over(First), "./tmp.scalding/tset.csv", writeHeader=false, separator=",")
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition())
     .permute(Second, First)
-    .persist("./tmp/trs1.out", descriptive=true)
+    .save("./tmp.scalding/trs1.out", descriptive=true)
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition())
-    .persist("./tmp/data.txt")
+    .save("./tmp.scalding/data.txt")
 }
 
-class Test9(args : Args) extends Job(args) {
+class TestScalding9(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   case class StringPartitioner(dim: Dimension) extends Partitioner with Assign {
     type T = String
@@ -288,7 +286,7 @@ class Test9(args : Args) extends Job(args) {
     .partition(StringPartitioner(Second))
 
   prt1
-    .persist("./tmp/prt1.out", descriptive=true)
+    .save("./tmp.scalding/prt1.out", descriptive=true)
 
   case class IntTuplePartitioner(dim: Dimension) extends Partitioner with Assign {
     type T = (Int, Int, Int)
@@ -306,35 +304,35 @@ class Test9(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition())
     .partition(IntTuplePartitioner(Second))
-    .persist("./tmp/prt2.out", descriptive=true)
+    .save("./tmp.scalding/prt2.out", descriptive=true)
 
   prt1
     .get("training")
-    .persist("./tmp/train.out", descriptive=true)
+    .save("./tmp.scalding/train.out", descriptive=true)
 
   prt1
     .get("testing")
-    .persist("./tmp/test.out", descriptive=true)
+    .save("./tmp.scalding/test.out", descriptive=true)
 
   prt1
     .get("scoring")
-    .persist("./tmp/score.out", descriptive=true)
+    .save("./tmp.scalding/score.out", descriptive=true)
 }
 
-class Test10(args : Args) extends Job(args) {
+class TestScalding10(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
     .reduceAndExpand(Over(Second), Mean("mean", strict=true, nan=true))
-    .persistAsCSV(Over(Second), "./tmp/agg1.csv")
+    .saveAsCSV(Over(Second), "./tmp.scalding/agg1.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition())
     .reduceAndExpand(Along(Second), Count("count"))
-    .persistAsCSV(Over(Second), "./tmp/agg2.csv")
+    .saveAsCSV(Over(Second), "./tmp.scalding/agg2.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -342,46 +340,46 @@ class Test10(args : Args) extends Job(args) {
     .squash(Third, PreservingMaxPosition())
     .reduceAndExpand(Along(First), List(Count("count"), Moments("mean", "sd", "skewness", "kurtosis"), Min("min"),
       Max("max"), MaxAbs("max.abs")))
-    .persistAsCSV(Over(Second), "./tmp/agg3.csv")
+    .saveAsCSV(Over(Second), "./tmp.scalding/agg3.csv")
 }
 
-class Test11(args : Args) extends Job(args) {
+class TestScalding11(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .transform(Indicator(Second, name="%1$s.ind"))
-    .persist("./tmp/trn2.out", descriptive=true)
+    .save("./tmp.scalding/trn2.out", descriptive=true)
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition())
     .transform(Binarise(Second))
-    .persistAsCSV(Over(Second), "./tmp/trn3.out")
+    .saveAsCSV(Over(Second), "./tmp.scalding/trn3.out")
 }
 
-class Test12(args : Args) extends Job(args) {
+class TestScalding12(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
   data
     .squash(Third, PreservingMaxPosition())
     .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
-    .persistAsCSV(Over(Second), "./tmp/fll1.out")
+    .saveAsCSV(Over(Second), "./tmp.scalding/fll1.out")
 
   data
     .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
-    .persist("./tmp/fll3.out", descriptive=true)
+    .save("./tmp.scalding/fll3.out", descriptive=true)
 }
 
-class Test13(args : Args) extends Job(args) {
+class TestScalding13(args : Args) extends Job(args) {
 
-  val all = TestReader.read4TupleDataAddDate(args("input"))
+  val all = TestScaldingReader.read4TupleDataAddDate(args("input"))
   val data = all
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
@@ -395,35 +393,35 @@ class Test13(args : Args) extends Job(args) {
   data
     .join(Over(First), inds)
     .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
-    .persistAsCSV(Over(Second), "./tmp/fll2.out")
+    .saveAsCSV(Over(Second), "./tmp.scalding/fll2.out")
 
   data
     .fillHetrogenous(Over(Second), all.reduce(Over(Second), Mean(strict=true, nan=true)))
     .join(Over(First), inds)
-    .persistAsCSV(Over(Second), "./tmp/fll4.out")
+    .saveAsCSV(Over(Second), "./tmp.scalding/fll4.out")
 }
 
-class Test14(args : Args) extends Job(args) {
+class TestScalding14(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
   data
     .change(Over(Second), "fid:A", NominalSchema[Codex.LongCodex]())
-    .persist("./tmp/chg1.out", descriptive=true)
+    .save("./tmp.scalding/chg1.out", descriptive=true)
 }
 
-class Test15(args : Args) extends Job(args) {
+class TestScalding15(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
     .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .reduceAndExpand(Along(Third), Sum("sum"))
     .melt(Third, Second)
-    .persistAsCSV(Over(Second), "./tmp/rsh1.out")
+    .saveAsCSV(Over(Second), "./tmp.scalding/rsh1.out")
 
   val inds = data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -431,7 +429,7 @@ class Test15(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
     .transform(Indicator(Second, name="%1$s.ind"))
-    .persistAsCSV(Over(Second), "./tmp/trn1.csv")
+    .saveAsCSV(Over(Second), "./tmp.scalding/trn1.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -439,12 +437,12 @@ class Test15(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
     .join(Over(First), inds)
-    .persistAsCSV(Over(Second), "./tmp/jn1.csv")
+    .saveAsCSV(Over(Second), "./tmp.scalding/jn1.csv")
 }
 
-class Test16(args : Args) extends Job(args) {
+class TestScalding16(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   case class HashSample() extends Sampler with Select {
     def select[P <: Position](pos: P): Boolean = (pos(First).toString.hashCode % 25) == 0
@@ -452,12 +450,12 @@ class Test16(args : Args) extends Job(args) {
 
   data
     .sample(HashSample())
-    .persist("./tmp/smp1.out")
+    .save("./tmp.scalding/smp1.out")
 }
 
-class Test17(args : Args) extends Job(args) {
+class TestScalding17(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -469,11 +467,11 @@ class Test17(args : Args) extends Job(args) {
 
   data
     .transformWithValue(Normalise(Second, key="max.abs"), stats)
-    .persistAsCSV(Over(Second), "./tmp/trn6.csv")
+    .saveAsCSV(Over(Second), "./tmp.scalding/trn6.csv")
 
   data
     .refine((c: Cell[Position2D]) => c.content.value gtr 500)
-    .persistAsCSV(Over(Second), "./tmp/flt1.csv")
+    .saveAsCSV(Over(Second), "./tmp.scalding/flt1.csv")
 
   def removeGreaterThanMean(c: Cell[Position2D], ext: Map[Position1D, Map[Position1D, Content]]): Boolean = {
     if (c.content.schema.kind.isSpecialisationOf(Numerical)) {
@@ -485,12 +483,12 @@ class Test17(args : Args) extends Job(args) {
 
   data
     .refineWithValue(removeGreaterThanMean, stats)
-    .persistAsCSV(Over(Second), "./tmp/flt2.csv")
+    .saveAsCSV(Over(Second), "./tmp.scalding/flt2.csv")
 }
 
-class Test18(args : Args) extends Job(args) {
+class TestScalding18(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -505,12 +503,12 @@ class Test18(args : Args) extends Job(args) {
 
   data
     .slice(Over(Second), rem, false)
-    .persistAsCSV(Over(Second), "./tmp/flt3.csv")
+    .saveAsCSV(Over(Second), "./tmp.scalding/flt3.csv")
 }
 
-class Test19(args : Args) extends Job(args) {
+class TestScalding19(args : Args) extends Job(args) {
 
-  val raw = TestReader.read4TupleDataAddDate(args("input"))
+  val raw = TestScaldingReader.read4TupleDataAddDate(args("input"))
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -546,41 +544,41 @@ class Test19(args : Args) extends Job(args) {
       .transformWithValue(List(Indicator(Second, name="%1$s.ind"), Binarise(Second), Normalise(Second, key="max.abs")),
         stats.toMap(Over(First)))
       .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
-      .persistAsCSV(Over(Second), "./tmp/pln_" + key + ".csv")
+      .saveAsCSV(Over(Second), "./tmp.scalding/pln_" + key + ".csv")
   }
 
   parts
     .forEach(List("train", "test"), cb)
 }
 
-class Test20(args : Args) extends Job(args) {
+class TestScalding20(args : Args) extends Job(args) {
 
   read3DWithDictionary("./ivoryInputfile1.txt", Dictionary.read("./dict.txt"))
-    .persist("./tmp/ivr1.out")
+    .save("./tmp.scalding/ivr1.out")
 }
 
-class Test21(args : Args) extends Job(args) {
+class TestScalding21(args : Args) extends Job(args) {
 
-  val data = TestReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
     .shape()
-    .persist("./tmp/siz0.out")
+    .save("./tmp.scalding/siz0.out")
 
   data
     .size(First)
-    .persist("./tmp/siz1.out")
+    .save("./tmp.scalding/siz1.out")
 
   data
     .size(Second)
-    .persist("./tmp/siz2.out")
+    .save("./tmp.scalding/siz2.out")
 
   data
     .size(Third)
-    .persist("./tmp/siz3.out")
+    .save("./tmp.scalding/siz3.out")
 }
 
-class Test22(args : Args) extends Job(args) {
+class TestScalding22(args : Args) extends Job(args) {
 
   val data = read2D("numericInputfile.txt")
 
@@ -603,15 +601,15 @@ class Test22(args : Args) extends Job(args) {
 
   data
     .derive(Over(First), Diff())
-    .persist("./tmp/dif1.out")
+    .save("./tmp.scalding/dif1.out")
 
   data
     .derive(Over(Second), Diff())
     .permute(Second, First)
-    .persist("./tmp/dif2.out")
+    .save("./tmp.scalding/dif2.out")
 }
 
-class Test23(args : Args) extends Job(args) {
+class TestScalding23(args : Args) extends Job(args) {
 
   val data = read2D("somePairwise.txt")
 
@@ -631,10 +629,10 @@ class Test23(args : Args) extends Job(args) {
 
   data
     .pairwise(Over(Second), DiffSquared())
-    .persist("./tmp/pws1.out")
+    .save("./tmp.scalding/pws1.out")
 }
 
-class Test24(args: Args) extends Job(args) {
+class TestScalding24(args: Args) extends Job(args) {
 
   // see http://www.mathsisfun.com/data/correlation.html for data
 
@@ -645,7 +643,7 @@ class Test24(args: Args) extends Job(args) {
 
   data
     .correlation(Over(Second))
-    .persist("./tmp/pws2.out")
+    .save("./tmp.scalding/pws2.out")
 
   val schema2 = List(("day", NominalSchema[Codex.StringCodex]()),
                      ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
@@ -655,61 +653,61 @@ class Test24(args: Args) extends Job(args) {
 
   data2
     .correlation(Over(Second))
-    .persist("./tmp/pws3.out")
+    .save("./tmp.scalding/pws3.out")
 }
 
-class Test25(args: Args) extends Job(args) {
+class TestScalding25(args: Args) extends Job(args) {
 
   read2D("mutualInputfile.txt")
     .mutualInformation(Over(Second))
-    .persist("./tmp/mi.out")
+    .save("./tmp.scalding/mi.out")
 }
 
-class Test26(args: Args) extends Job(args) {
+class TestScalding26(args: Args) extends Job(args) {
 
   val left = read2D("algebraInputfile1.txt")
   val right = read2D("algebraInputfile2.txt")
 
   left
     .pairwiseBetween(Over(First), right, Times(comparer=All))
-    .persist("./tmp/alg.out")
+    .save("./tmp.scalding/alg.out")
 }
 
-class Test27(args: Args) extends Job(args) {
+class TestScalding27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
   read2D("simMovAvgInputfile.txt", first=LongCodex)
     .derive(Over(Second), SimpleMovingAverage(5))
-    .persist("./tmp/sma1.out")
+    .save("./tmp.scalding/sma1.out")
 
   read2D("simMovAvgInputfile.txt", first=LongCodex)
     .derive(Over(Second), SimpleMovingAverage(5, all=true))
-    .persist("./tmp/sma2.out")
+    .save("./tmp.scalding/sma2.out")
 
   read2D("simMovAvgInputfile.txt", first=LongCodex)
     .derive(Over(Second), CenteredMovingAverage(2))
-    .persist("./tmp/tma.out")
+    .save("./tmp.scalding/tma.out")
 
   read2D("simMovAvgInputfile.txt", first=LongCodex)
     .derive(Over(Second), WeightedMovingAverage(5))
-    .persist("./tmp/wma1.out")
+    .save("./tmp.scalding/wma1.out")
 
   read2D("simMovAvgInputfile.txt", first=LongCodex)
     .derive(Over(Second), WeightedMovingAverage(5, all=true))
-    .persist("./tmp/wma2.out")
+    .save("./tmp.scalding/wma2.out")
 
   // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
   read1D("cumMovAvgInputfile.txt")
     .derive(Along(First), CumulativeMovingAverage())
-    .persist("./tmp/cma.out")
+    .save("./tmp.scalding/cma.out")
 
   // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
   read1D("expMovAvgInputfile.txt")
     .derive(Along(First), ExponentialMovingAverage(0.33))
-    .persist("./tmp/ema.out")
+    .save("./tmp.scalding/ema.out")
 }
 
-class Test28(args: Args) extends Job(args) {
+class TestScalding28(args: Args) extends Job(args) {
 
   val data = List
     .range(0, 16)
@@ -722,32 +720,32 @@ class Test28(args: Args) extends Job(args) {
 
   data
     .transformWithValue(Cut(Second), CutRules.fixed(stats, "min", "max", 4))
-    .persist("./tmp/cut1.out")
+    .save("./tmp.scalding/cut1.out")
 
   data
     .transformWithValue(Cut(Second, "%s.square"), CutRules.squareRootChoice(stats, "count", "min", "max"))
-    .persist("./tmp/cut2.out")
+    .save("./tmp.scalding/cut2.out")
 
   data
     .transformWithValue(Cut(Second, "%s.sturges"), CutRules.sturgesFormula(stats, "count", "min", "max"))
-    .persist("./tmp/cut3.out")
+    .save("./tmp.scalding/cut3.out")
 
   data
     .transformWithValue(Cut(Second, "%s.rice"), CutRules.riceRule(stats, "count", "min", "max"))
-    .persist("./tmp/cut4.out")
+    .save("./tmp.scalding/cut4.out")
 
   data
     .transformWithValue(Cut(Second, "%s.doane"),
       CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
-    .persist("./tmp/cut5.out")
+    .save("./tmp.scalding/cut5.out")
 
   data
     .transformWithValue(Cut(Second, "%s.scott"),
       CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
-    .persist("./tmp/cut6.out")
+    .save("./tmp.scalding/cut6.out")
 
   data
     .transformWithValue(Cut(Second, "%s.break"), CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
-    .persist("./tmp/cut7.out")
+    .save("./tmp.scalding/cut7.out")
 }
 

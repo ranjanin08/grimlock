@@ -467,7 +467,7 @@ trait Positions[P <: Position] {
    *
    * @return A `U[(Slice.S, Long)]` of the distinct position(s) together with a unique index.
    *
-   * @note The position(s) are returned with an index so the return value can be used in various `persist` methods. The
+   * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
    *       index itself is unique for each position but no ordering is defined.
    *
    * @see [[Names]]

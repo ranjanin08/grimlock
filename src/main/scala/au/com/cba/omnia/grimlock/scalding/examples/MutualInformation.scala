@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.examples
+package au.com.cba.omnia.grimlock.scalding.examples
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
@@ -73,6 +73,6 @@ class MutualInformation(args : Args) extends Job(args) {
   // 2/ Persist mutual information.
   (marginal ++ joint)
     .reduce(Over(First), Sum())
-    .persist("./demo/mi.out")
+    .save("./demo.scalding/mi.out")
 }
 

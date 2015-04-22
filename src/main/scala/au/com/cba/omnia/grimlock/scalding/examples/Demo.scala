@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.examples
+package au.com.cba.omnia.grimlock.scalding.examples
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
@@ -44,27 +44,27 @@ class BasicOperations(args : Args) extends Job(args) {
   // Get the number of rows.
   data
     .size(First)
-    .persist("./demo/row_size.out")
+    .save("./demo.scalding/row_size.out")
 
   // Get all dimensions of the matrix.
   data
     .shape()
-    .persist("./demo/matrix_shape.out")
+    .save("./demo.scalding/matrix_shape.out")
 
   // Get the column names.
   data
     .names(Over(Second))
-    .persist("./demo/column_names.out")
+    .save("./demo.scalding/column_names.out")
 
   // Get the type of variables of each column.
   data
     .types(Over(Second), true)
-    .persist("./demo/column_types.txt")
+    .save("./demo.scalding/column_types.txt")
 
   // Transpose the matrix.
   data
     .permute(Second, First)
-    .persist("./demo/transposed.out")
+    .save("./demo.scalding/transposed.out")
 
   // Construct a simple query
   def simpleQuery(cell: Cell[Position2D]) = (cell.content.value gtr 995) || (cell.content.value equ "F")
@@ -72,18 +72,18 @@ class BasicOperations(args : Args) extends Job(args) {
   // Find all co-ordinates that match the above simple query.
   val coords = data
     .which(simpleQuery)
-    .persist("./demo/query.txt")
+    .save("./demo.scalding/query.txt")
 
   // Get the data for the above coordinates.
   data
     .get(coords)
-    .persist("./demo/values.txt")
+    .save("./demo.scalding/values.txt")
 
   // Keep columns A and B, and remove row 0221707
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", false)
-    .persist("./demo/sliced.txt")
+    .save("./demo.scalding/sliced.txt")
 }
 
 class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
@@ -108,7 +108,6 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   val parts = data
     .partition(CustomPartition(First, "train", "test"))
 
-
   // Compute statistics on the training data. The results are written to file.
   val statistics = List(
     Count("count"),
@@ -123,7 +122,7 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
   val stats = parts
     .get("train")
     .reduceAndExpand(Along(First), statistics)
-    .persist("./demo/stats.out")
+    .save("./demo.scalding/stats.out")
 
   // Determine which features to filter based on statistics. In this case remove all features that occur for 2 or
   // fewer instances. These are removed first to prevent indicator features from being created.
@@ -173,7 +172,7 @@ class DataSciencePipelineWithFiltering(args : Args) extends Job(args) {
 
     (ind ++ csb)
       //.fillHomogenous(Content(ContinuousSchema[Codex.DoubleCodex], 0))
-      .persistAsCSV(Over(Second), "./demo/" + key + ".csv")
+      .saveAsCSV(Over(Second), "./demo.scalding/" + key + ".csv")
   }
 
   // Prepare each partition.
@@ -185,7 +184,7 @@ class Scoring(args : Args) extends Job(args) {
   // Read the data. This returns a 2D matrix (instance x feature).
   val data = read2D("exampleInput.txt")
   // Read the statistics from the above example.
-  val stats = read2D("./demo/stats.out").toMap(Over(First))
+  val stats = read2D("./demo.scalding/stats.out").toMap(Over(First))
   // Read externally learned weights.
   val weights = read1D("exampleWeights.txt").toMap(Over(First))
 
@@ -201,7 +200,7 @@ class Scoring(args : Args) extends Job(args) {
   data
     .transformWithValue(transforms, stats)
     .reduceWithValue(Over(First), WeightedSum(Second), weights)
-    .persist("./demo/scores.out")
+    .save("./demo.scalding/scores.out")
 }
 
 class DataQualityAndAnalysis(args : Args) extends Job(args) {
@@ -215,9 +214,9 @@ class DataQualityAndAnalysis(args : Args) extends Job(args) {
   //  4/ Save the moments.
   data
     .reduce(Over(First), Count())
-    .persist("./demo/feature_count.out")
+    .save("./demo.scalding/feature_count.out")
     .reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
-    .persist("./demo/feature_density.out")
+    .save("./demo.scalding/feature_density.out")
 
   // For the features:
   //  1/ Compute the number of instance that have a value for each features;
@@ -226,9 +225,9 @@ class DataQualityAndAnalysis(args : Args) extends Job(args) {
   //  4/ Save the moments.
   data
     .reduce(Over(Second), Count())
-    .persist("./demo/instance_count.out")
+    .save("./demo.scalding/instance_count.out")
     .reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
-    .persist("./demo/instance_density.out")
+    .save("./demo.scalding/instance_density.out")
 }
 
 class LabelWeighting(args: Args) extends Job(args) {
@@ -273,6 +272,6 @@ class LabelWeighting(args: Args) extends Job(args) {
   // Re-read labels and add the computed weight.
   read2DWithSchema("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
     .transformAndExpandWithValue(AddWeight(), weights)
-    .persist("./demo/weighted.out")
+    .save("./demo.scalding/weighted.out")
 }
 

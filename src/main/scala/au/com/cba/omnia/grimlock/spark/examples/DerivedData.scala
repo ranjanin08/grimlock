@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.examples
+package au.com.cba.omnia.grimlock.spark.examples
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
@@ -22,9 +22,9 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.scalding.Matrix._
+import au.com.cba.omnia.grimlock.spark.Matrix._
 
-import com.twitter.scalding.{ Args, Job }
+import org.apache.spark.{ SparkConf, SparkContext }
 
 // Simple gradient feature genertor
 case class Gradient(dim: Dimension) extends Deriver with Initialise {
@@ -62,16 +62,22 @@ case class Gradient(dim: Dimension) extends Deriver with Initialise {
   }
 }
 
-class DerivedData(args : Args) extends Job(args) {
-  // Generate gradient features:
-  // 1/ Read the data as 3D matrix (instance x feature x date).
-  // 2/ Compute gradients along the date axis. The result is a 3D matrix (instance x feature x gradient).
-  // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
-  //    feature.from.gradient)
-  // 4/ Persist 2D gradient features.
-  read3D("exampleDerived.txt", third=DateCodex)
-    .derive(Along(Third), Gradient(First))
-    .melt(Third, Second, ".from.")
-    .persist("./demo/gradient.out")
+object DerivedData {
+
+  def main(args: Array[String]) {
+    // Define implicit context for reading.
+    implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
+
+    // Generate gradient features:
+    // 1/ Read the data as 3D matrix (instance x feature x date).
+    // 2/ Compute gradients along the date axis. The result is a 3D matrix (instance x feature x gradient).
+    // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
+    //    feature.from.gradient)
+    // 4/ Persist 2D gradient features.
+    read3D("exampleDerived.txt", third=DateCodex)
+      .derive(Along(Third), Gradient(First))
+      .melt(Third, Second, ".from.")
+      .save("./demo.spark/gradient.out")
+  }
 }
 

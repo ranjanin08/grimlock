@@ -176,10 +176,11 @@ When at the Scalding REPL console, the first step is to import Grimlock's functi
 > scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.reduce._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.reduce._
+import au.com.cba.omnia.grimlock.library.reduce._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 
 ```
@@ -190,20 +191,20 @@ The next step is to read in data (be sure to change <path to> to the correct pat
 scala> val data = read2D("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/examples/exampleInput.txt")
 ```
 
-The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used in the REPL, use the matrix `persist` API for writing to disk:
+The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used in the REPL, use the matrix `save` API for writing to disk:
 
 ```
 scala> data.dump
-(Position2D(StringValue(iid:0064402),StringValue(fid:B)),Content(NominalSchema[StringCodex](),StringValue(H)))
-(Position2D(StringValue(iid:0064402),StringValue(fid:E)),Content(ContinuousSchema[LongCodex](),LongValue(219)))
-(Position2D(StringValue(iid:0064402),StringValue(fid:H)),Content(NominalSchema[StringCodex](),StringValue(C)))
-(Position2D(StringValue(iid:0066848),StringValue(fid:A)),Content(ContinuousSchema[LongCodex](),LongValue(371)))
-(Position2D(StringValue(iid:0066848),StringValue(fid:B)),Content(NominalSchema[StringCodex](),StringValue(H)))
-(Position2D(StringValue(iid:0066848),StringValue(fid:C)),Content(ContinuousSchema[LongCodex](),LongValue(259)))
-(Position2D(StringValue(iid:0066848),StringValue(fid:D)),Content(NominalSchema[StringCodex](),StringValue(F)))
-(Position2D(StringValue(iid:0066848),StringValue(fid:E)),Content(ContinuousSchema[LongCodex](),LongValue(830)))
-(Position2D(StringValue(iid:0066848),StringValue(fid:F)),Content(NominalSchema[StringCodex](),StringValue(G)))
-(Position2D(StringValue(iid:0066848),StringValue(fid:H)),Content(NominalSchema[StringCodex](),StringValue(B)))
+Cell(Position2D(StringValue(iid:0064402),StringValue(fid:B)),Content(NominalSchema[StringCodex](),StringValue(H)))
+Cell(Position2D(StringValue(iid:0064402),StringValue(fid:E)),Content(ContinuousSchema[LongCodex](),LongValue(219)))
+Cell(Position2D(StringValue(iid:0064402),StringValue(fid:H)),Content(NominalSchema[StringCodex](),StringValue(C)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:A)),Content(ContinuousSchema[LongCodex](),LongValue(371)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:B)),Content(NominalSchema[StringCodex](),StringValue(H)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:C)),Content(ContinuousSchema[LongCodex](),LongValue(259)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:D)),Content(NominalSchema[StringCodex](),StringValue(F)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:E)),Content(ContinuousSchema[LongCodex](),LongValue(830)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:F)),Content(NominalSchema[StringCodex](),StringValue(G)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:H)),Content(NominalSchema[StringCodex](),StringValue(B)))
 ...
 ```
 
@@ -211,7 +212,7 @@ The following shows a number of basic operations (get number of rows, get type o
 
 ```
 scala> data.size(First).dump
-(Position1D(StringValue(First)),Content(DiscreteSchema[LongCodex](),LongValue(9)))
+Cell(Position1D(StringValue(First)),Content(DiscreteSchema[LongCodex](),LongValue(9)))
 
 scala> data.types(Over(Second)).dump
 (Position1D(StringValue(fid:A)),Numerical)
@@ -223,7 +224,7 @@ scala> data.types(Over(Second)).dump
 (Position1D(StringValue(fid:G)),Numerical)
 (Position1D(StringValue(fid:H)),Categorical)
 
-scala> data.which((pos: Position, con: Content) => (con.value gtr 995) || (con.value equ "F")).dump
+scala> data.which((cell: Cell[Position2D]) => (cell.content.value gtr 995) || (cell.content.value equ "F")).dump
 Position2D(StringValue(iid:0066848),StringValue(fid:D))
 Position2D(StringValue(iid:0216406),StringValue(fid:E))
 Position2D(StringValue(iid:0444510),StringValue(fid:D))
@@ -235,21 +236,21 @@ Now for something a little more intersting. Let's compute the number of features
 scala> val counts = data.reduce(Over(First), Count())
 
 scala> counts.dump
-(Position1D(StringValue(iid:0064402)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
-(Position1D(StringValue(iid:0066848)),Content(DiscreteSchema[LongCodex](),LongValue(7)))
-(Position1D(StringValue(iid:0216406)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
-(Position1D(StringValue(iid:0221707)),Content(DiscreteSchema[LongCodex](),LongValue(4)))
-(Position1D(StringValue(iid:0262443)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
-(Position1D(StringValue(iid:0364354)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
-(Position1D(StringValue(iid:0375226)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
-(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
-(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
+Cell(Position1D(StringValue(iid:0064402)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
+Cell(Position1D(StringValue(iid:0066848)),Content(DiscreteSchema[LongCodex](),LongValue(7)))
+Cell(Position1D(StringValue(iid:0216406)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
+Cell(Position1D(StringValue(iid:0221707)),Content(DiscreteSchema[LongCodex](),LongValue(4)))
+Cell(Position1D(StringValue(iid:0262443)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
+Cell(Position1D(StringValue(iid:0364354)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
+Cell(Position1D(StringValue(iid:0375226)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
+Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
+Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
 
 scala> counts.reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis")).dump
-(Position1D(StringValue(mean)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(4.0,DoubleCodex)))
-(Position1D(StringValue(sd)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
-(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(0.348873899490999,DoubleCodex)))
-(Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
+Cell(Position1D(StringValue(mean)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(4.0,DoubleCodex)))
+Cell(Position1D(StringValue(sd)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
+Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(0.348873899490999,DoubleCodex)))
+Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
 ```
 
 For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/Event.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/MutualInformation.scala) or [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/DerivedData.scala).

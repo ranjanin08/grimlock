@@ -34,7 +34,7 @@ trait Persist[T] extends BasePersist[T] {
    *
    * @return A Scalding `TypedPipe[T]` which is this object's data.
    */
-  def persist(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
+  def save(file: String, separator: String = "|", descriptive: Boolean = false)(implicit flow: FlowDef,
     mode: Mode): TypedPipe[T] = {
     data
       .map { case t => toString(t, separator, descriptive) }

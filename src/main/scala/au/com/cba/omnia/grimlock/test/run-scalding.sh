@@ -39,29 +39,31 @@ then
   then
     if [ ${DO_CLEANUP} = "true" ]
     then
-      rm -rf demo/*
+      rm -rf demo.scalding/*
     fi
 
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.BasicOperations --local
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.BasicOperations --local
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DataSciencePipelineWithFiltering --local
+      hadoop jar $JAR \
+        com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.DataSciencePipelineWithFiltering --local
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.Scoring --local
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.Scoring --local
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DataQualityAndAnalysis --local
+      hadoop jar $JAR \
+        com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.DataQualityAndAnalysis --local
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.LabelWeighting --local
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.LabelWeighting --local
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.InstanceCentricTfIdf --local
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.InstanceCentricTfIdf --local
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.MutualInformation --local
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.MutualInformation --local
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DerivedData --local
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.DerivedData --local
 
     if [ -d "demo.old" ]
     then
-      diff -r demo demo.old
+      diff -r demo.scalding demo.old
     fi
   fi
 
@@ -69,12 +71,12 @@ then
   then
     if [ ${DO_CLEANUP} = "true" ]
     then
-      hadoop fs -rm -r -f 'demo/*'
+      hadoop fs -rm -r -f 'demo.scalding/*'
     fi
 
     if [ ${DO_INIT} = "true" ]
     then
-      hadoop fs -mkdir -p demo
+      hadoop fs -mkdir -p demo.scalding
       hadoop fs -put exampleInput.txt
       hadoop fs -put exampleWeights.txt
       hadoop fs -put exampleLabels.txt
@@ -85,21 +87,23 @@ then
     fi
 
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.BasicOperations --hdfs
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.BasicOperations --hdfs
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DataSciencePipelineWithFiltering --hdfs
+      hadoop jar $JAR \
+        com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.DataSciencePipelineWithFiltering --hdfs
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.Scoring --hdfs
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.Scoring --hdfs
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DataQualityAndAnalysis --hdfs
+      hadoop jar $JAR \
+        com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.DataQualityAndAnalysis --hdfs
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.LabelWeighting --hdfs
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.LabelWeighting --hdfs
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.InstanceCentricTfIdf --hdfs
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.InstanceCentricTfIdf --hdfs
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.MutualInformation --hdfs
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.MutualInformation --hdfs
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.examples.DerivedData --hdfs
+      hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.scalding.examples.DerivedData --hdfs
   fi
 fi
 
@@ -109,18 +113,19 @@ then
   then
     if [ ${DO_CLEANUP} = "true" ]
     then
-      rm -rf tmp/*
+      rm -rf tmp.scalding/*
     fi
 
     for i in $(seq 1 ${NUM_TEST})
     do
       export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-        hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.test.Test${i} --local --input "someInputfile3.txt"
+        hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.test.TestScalding${i} --local \
+          --input "someInputfile3.txt"
     done
 
     if [ -d "tmp.old" ]
     then
-      diff -r tmp tmp.old
+      diff -r tmp.scalding tmp.old
     fi
   fi
 
@@ -128,12 +133,12 @@ then
   then
     if [ ${DO_CLEANUP} = "true" ]
     then
-      hadoop fs -rm -r -f 'tmp/*'
+      hadoop fs -rm -r -f 'tmp.scalding/*'
     fi
 
     if [ ${DO_INIT} = "true" ]
     then
-      hadoop fs -mkdir -p tmp
+      hadoop fs -mkdir -p tmp.scalding
       hadoop fs -put algebraInputfile1.txt
       hadoop fs -put algebraInputfile2.txt
       hadoop fs -put cumMovAvgInputfile.txt
@@ -153,11 +158,13 @@ then
     for i in $(seq 1 ${NUM_TEST})
     do
       export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-        hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.test.Test${i} --hdfs --input "someInputfile3.txt"
+        hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.test.TestScalding${i} --hdfs \
+          --input "someInputfile3.txt"
 
       # --tool.graph
-      #dot -Tps2 au.com.cba.omnia.grimlock.Test${i}0.dot -o graph_${1}.ps
-      #dot -Tps2  au.com.cba.omnia.grimlock.Test${i}0_steps.dot -o graph_${i}_steps.ps
+      #dot -Tps2 au.com.cba.omnia.grimlock.test.TestScalding${i}0.dot -o graph_${1}.ps
+      #dot -Tps2 au.com.cba.omnia.grimlock.test.TestScalding${i}0_steps.dot -o graph_${i}_steps.ps
     done
   fi
 fi
+

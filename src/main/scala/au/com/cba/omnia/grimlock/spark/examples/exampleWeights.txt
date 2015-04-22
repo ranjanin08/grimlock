@@ -1,0 +1,11 @@
+fid:A|continuous|double|1
+fid:A.ind|continuous|double|1
+fid:D.ind|continuous|double|1
+fid:D=D|continuous|double|1
+fid:D=F|continuous|double|1
+fid:E|continuous|double|1
+fid:E.ind|continuous|double|1
+fid:H.ind|continuous|double|1
+fid:H=B|continuous|double|1
+fid:H=C|continuous|double|1
+fid:H=E|continuous|double|1
