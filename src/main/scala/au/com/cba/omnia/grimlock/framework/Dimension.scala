@@ -32,7 +32,7 @@ case object Fourth extends Dimension { val index = 3 }
 case object Fifth extends Dimension { val index = 4 }
 
 /** Trait for capturing the dependency between a position and a dimension. */
-trait PosDimDep[A, B]
+trait PosDimDep[A, B] extends java.io.Serializable
 
 /**
  * Companion object of `Dimension` trait. This defines the (implicit) permitted dependencies between position and

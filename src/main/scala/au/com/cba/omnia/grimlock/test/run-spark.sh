@@ -44,18 +44,18 @@ then
 
     $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
       --master local --class au.com.cba.omnia.grimlock.spark.examples.BasicOperations $JAR local
-#    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-#      --master local --class au.com.cba.omnia.grimlock.spark.examples.DataSciencePipelineWithFiltering $JAR local
-#    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-#      --master local --class au.com.cba.omnia.grimlock.spark.examples.Scoring $JAR local
+    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
+      --master local --class au.com.cba.omnia.grimlock.spark.examples.DataSciencePipelineWithFiltering $JAR local
+    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
+      --master local --class au.com.cba.omnia.grimlock.spark.examples.Scoring $JAR local
     $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
       --master local --class au.com.cba.omnia.grimlock.spark.examples.DataQualityAndAnalysis $JAR local
     $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
       --master local --class au.com.cba.omnia.grimlock.spark.examples.LabelWeighting $JAR local
     $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
       --master local --class au.com.cba.omnia.grimlock.spark.examples.InstanceCentricTfIdf $JAR local
-#    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-#      --master local --class au.com.cba.omnia.grimlock.spark.examples.MutualInformation $JAR local
+    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
+      --master local --class au.com.cba.omnia.grimlock.spark.examples.MutualInformation $JAR local
 #    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
 #      --master local --class au.com.cba.omnia.grimlock.spark.examples.DerivedData $JAR local
 

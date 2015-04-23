@@ -838,7 +838,7 @@ object Histogram extends DefaultReducerValues {
   val DefaultFrequency: Boolean = true
 
   /** Trait for computing statistics on a histogram */
-  trait Statistic {
+  trait Statistic extends java.io.Serializable {
     /**
      * Compute statistics on histogram.
      *

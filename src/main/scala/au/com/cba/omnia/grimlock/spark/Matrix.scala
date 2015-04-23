@@ -764,41 +764,40 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
   def saveAsCSVWithNames[T, D <: Dimension](slice: Slice[Position2D, D], file: String, names: T,
     separator: String = "|", escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header",
     writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: BaseNameable[T, Position2D, slice.S, D, RDD],
-      ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S]): RDD[Cell[Position2D]] = ??? /*{
+      ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S]): RDD[Cell[Position2D]] = {
     // Note: Usage of .toShortString should be safe as data is written as string anyways. It does assume that all
     //       indices have unique short string representations.
     val columns = ev1.convert(this, slice, names)
-      .map { List(_) }
-      .sum
-      .map { _.sortBy(_._2).map { case (p, i) => escapee.escape(p.toShortString(""), separator) } }
+      .map { case (p, i) => (0, List((escapee.escape(p.toShortString(""), separator), i))) }
+      .reduceByKey(_ ++ _)
+      .map { case (_, l) => l.sortBy(_._2).map(_._1) }
 
     if (writeHeader) {
       columns
         .map {
           case lst => (if (writeRowId) escapee.escape(rowId, separator) + separator else "") + lst.mkString(separator)
         }
-        .write(TypedSink(TextLine(header.format(file))))
+        .saveAsTextFile(header.format(file))
     }
 
-    data
-      .groupBy { case c => slice.remainder(c.position).toShortString("") }
-      .mapValues {
-        case Cell(p, c) => Map(escapee.escape(slice.selected(p).toShortString(""), separator) ->
-          escapee.escape(c.value.toShortString, separator))
-      }
-      .sum
-      .flatMapWithValue(columns) {
-        case ((key, values), optCols) => optCols.map {
-          case cols => (key, cols.map { case c => values.getOrElse(c, "") })
-        }
-      }
-      .map {
-        case (i, lst) => (if (writeRowId) escapee.escape(i, separator) + separator else "") + lst.mkString(separator)
-      }
-      .write(TypedSink(TextLine(file)))
+    val cols = columns
+      .first
 
     data
-  }*/
+      .map {
+        case Cell(p, c) => (slice.remainder(p).toShortString(""),
+          Map(escapee.escape(slice.selected(p).toShortString(""), separator) ->
+            escapee.escape(c.value.toShortString, separator)))
+      }
+      .reduceByKey(_ ++ _)
+      .map {
+        case (key, values) => (if (writeRowId) escapee.escape(key, separator) + separator else "") +
+          cols.map { case c => values.getOrElse(c, "") }.mkString(separator)
+      }
+      .saveAsTextFile(file)
+
+    data
+  }
 
   /**
    * Persist a `Matrix2D` as sparse matrix file (index, index, value).
