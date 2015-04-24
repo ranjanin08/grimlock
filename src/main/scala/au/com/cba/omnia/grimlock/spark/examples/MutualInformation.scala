@@ -51,12 +51,15 @@ object MutualInformation {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
+    // Path to data files
+    val path = if (args.length > 1) args(1) else "../../data"
+
     // Read the data.
     // 1/ Read the data using the supplied dictionary. This returns a 3D matrix (instance x feature x date).
     // 2/ Squash the 3rd dimension, keeping values with minimum (earlier) coordinates. The result is a 2D matrix
     //    (instance x feature).
     // 3/ Bucket all continuous variables by rounding them.
-    val data = read3DWithDictionary("exampleMutual.txt", Dictionary.read("exampleDictionary.txt"))
+    val data = read3DWithDictionary(path + "/exampleMutual.txt", Dictionary.read(path + "/exampleDictionary.txt"))
       .squash(Third, PreservingMinPosition())
       .transform(CeilingBucketing())
 

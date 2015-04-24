@@ -62,14 +62,18 @@ case class Gradient(dim: Dimension) extends Deriver with Initialise {
   }
 }
 
-class DerivedData(args : Args) extends Job(args) {
+class DerivedData(args: Args) extends Job(args) {
+
+  // Path to data files
+  val path = args.getOrElse("path", "../../data")
+
   // Generate gradient features:
   // 1/ Read the data as 3D matrix (instance x feature x date).
   // 2/ Compute gradients along the date axis. The result is a 3D matrix (instance x feature x gradient).
   // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
   //    feature.from.gradient)
   // 4/ Persist 2D gradient features.
-  read3D("exampleDerived.txt", third=DateCodex)
+  read3D(path + "/exampleDerived.txt", third=DateCodex)
     .derive(Along(Third), Gradient(First))
     .melt(Third, Second, ".from.")
     .save("./demo.scalding/gradient.out")

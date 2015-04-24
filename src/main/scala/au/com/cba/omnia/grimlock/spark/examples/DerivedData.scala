@@ -68,13 +68,16 @@ object DerivedData {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
+    // Path to data files
+    val path = if (args.length > 1) args(1) else "../../data"
+
     // Generate gradient features:
     // 1/ Read the data as 3D matrix (instance x feature x date).
     // 2/ Compute gradients along the date axis. The result is a 3D matrix (instance x feature x gradient).
     // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
     //    feature.from.gradient)
     // 4/ Persist 2D gradient features.
-    read3D("exampleDerived.txt", third=DateCodex)
+    read3D(path + "/exampleDerived.txt", third=DateCodex)
       .derive(Along(Third), Gradient(First))
       .melt(Third, Second, ".from.")
       .save("./demo.spark/gradient.out")

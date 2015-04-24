@@ -29,6 +29,7 @@ BASE_DIR="../../../../../../../../.."
 
 if [ ${DO_BUILD} = "true" ]
 then
+  rm -f ${JAR}
   cd ${BASE_DIR}; ./sbt clean assembly; cd -
   cp ${BASE_DIR}/target/scala-2.10/grimlock*.jar ${JAR}
 fi
@@ -37,32 +38,33 @@ if [ ${DO_DEMO} = "true" ]
 then
   if [ ${DO_LOCAL} = "true" ]
   then
+    if [ ${DO_INIT} = "true" ]
+    then
+      mkdir -p demo.spark
+    fi
+
     if [ ${DO_CLEANUP} = "true" ]
     then
       rm -rf demo.spark/*
     fi
 
-    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-      --master local --class au.com.cba.omnia.grimlock.spark.examples.BasicOperations $JAR local
-    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-      --master local --class au.com.cba.omnia.grimlock.spark.examples.DataSciencePipelineWithFiltering $JAR local
-    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-      --master local --class au.com.cba.omnia.grimlock.spark.examples.Scoring $JAR local
-    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-      --master local --class au.com.cba.omnia.grimlock.spark.examples.DataQualityAndAnalysis $JAR local
-    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-      --master local --class au.com.cba.omnia.grimlock.spark.examples.LabelWeighting $JAR local
-    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-      --master local --class au.com.cba.omnia.grimlock.spark.examples.InstanceCentricTfIdf $JAR local
-    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-      --master local --class au.com.cba.omnia.grimlock.spark.examples.MutualInformation $JAR local
-#    $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-#      --master local --class au.com.cba.omnia.grimlock.spark.examples.DerivedData $JAR local
-
-    if [ -d "demo.old" ]
-    then
-      diff -r demo.spark demo.old
-    fi
+    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+      --class au.com.cba.omnia.grimlock.spark.examples.BasicOperations $JAR local ../data
+    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+      --class au.com.cba.omnia.grimlock.spark.examples.DataSciencePipelineWithFiltering $JAR local ../data
+    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+      --class au.com.cba.omnia.grimlock.spark.examples.Scoring $JAR local ../data
+    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+      --class au.com.cba.omnia.grimlock.spark.examples.DataQualityAndAnalysis $JAR local ../data
+    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+      --class au.com.cba.omnia.grimlock.spark.examples.LabelWeighting $JAR local ../data
+    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+      --class au.com.cba.omnia.grimlock.spark.examples.InstanceCentricTfIdf $JAR local ../data
+    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+      --class au.com.cba.omnia.grimlock.spark.examples.MutualInformation $JAR local ../data
+# Doesn't run yet (missing scanLeft)
+#    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+#      --class au.com.cba.omnia.grimlock.spark.examples.DerivedData $JAR local ../data
   fi
 fi
 
@@ -70,6 +72,11 @@ if [ ${DO_TEST} = "true" ]
 then
   if [ ${DO_LOCAL} = "true" ]
   then
+    if [ ${DO_INIT} = "true" ]
+    then
+      mkdir -p tmp.spark
+    fi
+
     if [ ${DO_CLEANUP} = "true" ]
     then
       rm -rf tmp.spark/*
@@ -77,14 +84,9 @@ then
 
     for i in $(seq 1 ${NUM_TEST})
     do
-      $BASE_DIR/../spark-1.3.0-bin-hadoop2.4/bin/spark-submit \
-        --master local --class au.com.cba.omnia.grimlock.test.TestSpark2 $JAR local "someInputfile3.txt"
+      $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+        --class au.com.cba.omnia.grimlock.test.TestSpark${i} $JAR local "someInputfile3.txt"
     done
-
-    if [ -d "tmp.old" ]
-    then
-      diff -r tmp.spark tmp.old
-    fi
   fi
 fi
 

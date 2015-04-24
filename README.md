@@ -89,7 +89,7 @@ The basic data format used by Grimlock (though others are supported) is a row-or
 In the example below the first field is a coordinate identifying an instance, the second field is a coordinate identifying a feature. The third and fourth columns are the variable type and codex respectively. The last column has the actual value.
 
 ```
-> head src/main/scala/au/com/cba/omnia/grimlock/examples/exampleInput.txt
+> head <path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt
 iid:0064402|fid:B|nominal|string|H
 iid:0064402|fid:E|continuous|long|219
 iid:0064402|fid:H|nominal|string|C
@@ -132,7 +132,7 @@ fid:H|string|nominal
 ...
 ```
 
-Usage
+Usage - Scalding
 -----
 
 ### Setting up REPL
@@ -188,7 +188,7 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 The next step is to read in data (be sure to change <path to> to the correct path to the Grimlock repo):
 
 ```
-scala> val data = read2D("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/examples/exampleInput.txt")
+scala> val data = read2D("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt")
 ```
 
 The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used in the REPL, use the matrix `save` API for writing to disk:
@@ -253,7 +253,134 @@ Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),D
 Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
 ```
 
-For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/Event.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/MutualInformation.scala) or [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/examples/DerivedData.scala).
+For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Event.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/MutualInformation.scala) or [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DerivedData.scala).
+
+Usage - Spark
+-----
+
+### Setting up REPL
+
+The examples below are executed in the Spark REPL. To use Grimlock in the REPL follow the following steps:
+
+1. Download the latest release for Spark from [here](http://spark.apache.org/downloads.html).
+2. Start REPL; ./bin/spark-shell --master local --jars <path to>/grimlock.jar
+3. You can, optionally, surpress much of the console INFO output. Follow [these](http://stackoverflow.com/questions/28189408/how-to-reduce-the-verbosity-of-sparks-runtime-output) instructions.
+
+After the last command, the console should appear as follows:
+
+```
+> ./bin/spark-shell --master local --jars <path to>/grimlock.jar
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version 1.3.1
+      /_/
+
+Using Scala version 2.10.4 (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_75)
+Type in expressions to have them evaluated.
+Type :help for more information.
+Spark context available as sc.
+SQL context available as sqlContext.
+
+scala>
+```
+
+Note, for readability, the REPL info is supressed from now on.
+
+### Getting started
+
+When at the Spark REPL console, the first step is to import Grimlock's functionality (be sure to press ctrl-D after the last import statement):
+
+```
+> scala> :paste
+// Entering paste mode (ctrl-D to finish)
+
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.reduce._
+import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.spark._
+import au.com.cba.omnia.grimlock.spark.Matrix._
+
+```
+
+Next, for convenience, set up the SparkContext as an implicit:
+
+```
+scala> implicit val context = sc
+```
+
+The next step is to read in data (be sure to change <path to> to the correct path to the Grimlock repo):
+
+```
+scala> val data = read2D("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt")
+```
+
+The returned `data` is a 2 dimensional matrix. To investigate it's content Spark's `foreach` command can be used in the REPL, use the matrix `save` API for writing to disk:
+
+```
+scala> data.foreach(println)
+Cell(Position2D(StringValue(iid:0064402),StringValue(fid:B)),Content(NominalSchema[StringCodex](),StringValue(H)))
+Cell(Position2D(StringValue(iid:0064402),StringValue(fid:E)),Content(ContinuousSchema[LongCodex](),LongValue(219)))
+Cell(Position2D(StringValue(iid:0064402),StringValue(fid:H)),Content(NominalSchema[StringCodex](),StringValue(C)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:A)),Content(ContinuousSchema[LongCodex](),LongValue(371)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:B)),Content(NominalSchema[StringCodex](),StringValue(H)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:C)),Content(ContinuousSchema[LongCodex](),LongValue(259)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:D)),Content(NominalSchema[StringCodex](),StringValue(F)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:E)),Content(ContinuousSchema[LongCodex](),LongValue(830)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:F)),Content(NominalSchema[StringCodex](),StringValue(G)))
+Cell(Position2D(StringValue(iid:0066848),StringValue(fid:H)),Content(NominalSchema[StringCodex](),StringValue(B)))
+...
+```
+
+The following shows a number of basic operations (get number of rows, get type of features, perform simple query):
+
+```
+scala> data.size(First).foreach(println)
+Cell(Position1D(StringValue(First)),Content(DiscreteSchema[LongCodex](),LongValue(9)))
+
+scala> data.types(Over(Second)).foreach(println)
+(Position1D(StringValue(fid:A)),Numerical)
+(Position1D(StringValue(fid:B)),Categorical)
+(Position1D(StringValue(fid:C)),Numerical)
+(Position1D(StringValue(fid:D)),Categorical)
+(Position1D(StringValue(fid:E)),Numerical)
+(Position1D(StringValue(fid:F)),Categorical)
+(Position1D(StringValue(fid:G)),Numerical)
+(Position1D(StringValue(fid:H)),Categorical)
+
+scala> data.which((cell: Cell[Position2D]) => (cell.content.value gtr 995) || (cell.content.value equ "F")).foreach(println)
+Position2D(StringValue(iid:0066848),StringValue(fid:D))
+Position2D(StringValue(iid:0216406),StringValue(fid:E))
+Position2D(StringValue(iid:0444510),StringValue(fid:D))
+```
+
+Now for something a little more intersting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts (note, ```new Matrix2D``` is needed to ensure Grimlock's reduce function is called):
+
+```
+scala> val counts = new Matrix2D(data).reduce(Over(First), Count())
+
+scala> counts.foreach(println)
+Cell(Position1D(StringValue(iid:0064402)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
+Cell(Position1D(StringValue(iid:0066848)),Content(DiscreteSchema[LongCodex](),LongValue(7)))
+Cell(Position1D(StringValue(iid:0216406)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
+Cell(Position1D(StringValue(iid:0221707)),Content(DiscreteSchema[LongCodex](),LongValue(4)))
+Cell(Position1D(StringValue(iid:0262443)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
+Cell(Position1D(StringValue(iid:0364354)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
+Cell(Position1D(StringValue(iid:0375226)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
+Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
+Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
+
+scala> counts.reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis")).foreach(println)
+Cell(Position1D(StringValue(mean)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(4.0,DoubleCodex)))
+Cell(Position1D(StringValue(sd)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
+Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(0.348873899490999,DoubleCodex)))
+Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
+```
+
+For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Event.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/MutualInformation.scala) or [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DerivedData.scala).
 
 Documentation
 -------------

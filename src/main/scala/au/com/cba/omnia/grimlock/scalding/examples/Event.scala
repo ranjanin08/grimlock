@@ -134,9 +134,13 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
 }
 
 // Simple tf-idf example (input data is same as tf-idf example here: http://en.wikipedia.org/wiki/Tf%E2%80%93idf).
-class InstanceCentricTfIdf(args : Args) extends Job(args) {
+class InstanceCentricTfIdf(args: Args) extends Job(args) {
+
+  // Path to data files
+  val path = args.getOrElse("path", "../../data")
+
   // Read event data, then de-normalises the events and return a 2D matrix (event id x instance id).
-  val data = ExampleEvent.read("exampleEvents.txt")
+  val data = ExampleEvent.read(path + "/exampleEvents.txt")
     .transformAndExpand(Denormalise())
 
   // For each event, append the word counts to the 3D matrix. The result is a 3D matrix (event id x instance id x word

@@ -44,8 +44,11 @@ object BasicOperations {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
+    // Path to data files
+    val path = if (args.length > 1) args(1) else "../../data"
+
     // Read the data. This returns a 2D matrix (instance x feature).
-    val data = read2D("exampleInput.txt")
+    val data = read2D(path + "/exampleInput.txt")
 
     // Get the number of rows.
     data
@@ -99,8 +102,11 @@ object DataSciencePipelineWithFiltering {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
+    // Path to data files
+    val path = if (args.length > 1) args(1) else "../../data"
+
     // Read the data. This returns a 2D matrix (instance x feature).
-    val data = read2D("exampleInput.txt")
+    val data = read2D(path + "/exampleInput.txt")
 
     // Define a custom partition. If the instance is 'iid:0364354' or 'iid:0216406' then assign it to the right (test)
     // partition. In all other cases assing it to the left (train) partition.
@@ -199,12 +205,15 @@ object Scoring {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
+    // Path to data files
+    val path = if (args.length > 1) args(1) else "../../data"
+
     // Read the data. This returns a 2D matrix (instance x feature).
-    val data = read2D("exampleInput.txt")
+    val data = read2D(path + "/exampleInput.txt")
     // Read the statistics from the above example.
     val stats = read2D("./demo.spark/stats.out").toMap(Over(First))
     // Read externally learned weights.
-    val weights = read1D("exampleWeights.txt").toMap(Over(First))
+    val weights = read1D(path + "/exampleWeights.txt").toMap(Over(First))
 
     // For the data do:
     //  1/ Create indicators, binarise categorical, and clamp & standardise numerical features;
@@ -228,8 +237,11 @@ object DataQualityAndAnalysis {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
+    // Path to data files
+    val path = if (args.length > 1) args(1) else "../../data"
+
     // Read the data. This returns a 2D matrix (instance x feature).
-    val data: Matrix2D = read2D("exampleInput.txt")
+    val data: Matrix2D = read2D(path + "/exampleInput.txt")
 
     // For the instances:
     //  1/ Compute the number of features for each instance;
@@ -261,8 +273,11 @@ object LabelWeighting {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
+    // Path to data files
+    val path = if (args.length > 1) args(1) else "../../data"
+
     // Read labels and melt the date into the instance id to generate a 1D matrix.
-    val labels = read2DWithSchema("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+    val labels = read2DWithSchema(path + "/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
       .melt(Second, First, ":")
 
     // Compute histogram over the label values.
@@ -300,7 +315,7 @@ object LabelWeighting {
     }
 
     // Re-read labels and add the computed weight.
-    read2DWithSchema("exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+    read2DWithSchema(path + "/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
       .transformAndExpandWithValue(AddWeight(), weights)
       .save("./demo.spark/weighted.out")
   }

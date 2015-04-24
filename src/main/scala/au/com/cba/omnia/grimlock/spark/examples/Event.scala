@@ -139,8 +139,11 @@ object InstanceCentricTfIdf {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
+    // Path to data files
+    val path = if (args.length > 1) args(1) else "../../data"
+
     // Read event data, then de-normalises the events and return a 2D matrix (event id x instance id).
-    val data = ExampleEvent.read("exampleEvents.txt")
+    val data = ExampleEvent.read(path + "/exampleEvents.txt")
       .transformAndExpand(Denormalise())
 
     // For each event, append the word counts to the 3D matrix. The result is a 3D matrix (event id x instance id x word
