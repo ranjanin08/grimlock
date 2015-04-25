@@ -46,7 +46,7 @@ import au.com.cba.omnia.grimlock.scalding.Types._
 import cascading.flow.FlowDef
 import com.twitter.scalding.{ Args, Job, Mode, TypedPsv }
 import com.twitter.scalding.TDsl.sourceToTypedPipe
-import com.twitter.scalding.typed.{ IterablePipe, TypedPipe }
+import com.twitter.scalding.typed.{ IterablePipe, TypedPipe, ValuePipe }
 
 object TestScaldingReader {
   def read4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
@@ -747,5 +747,55 @@ class TestScalding28(args: Args) extends Job(args) {
   data
     .transformWithValue(Cut(Second, "%s.break"), CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
     .save("./tmp.scalding/cut7.out")
+}
+
+class TestScalding29(args: Args) extends Job(args) {
+
+  val schema = DiscreteSchema[Codex.LongCodex]()
+  val data = List(("mod:123", "iid:A", Content(schema, 1)),
+    ("mod:123", "iid:B", Content(schema, 1)),
+    ("mod:123", "iid:C", Content(schema, 0)),
+    ("mod:123", "iid:D", Content(schema, 1)),
+    ("mod:123", "iid:E", Content(schema, 1)),
+    ("mod:123", "iid:G", Content(schema, 0)),
+    ("mod:123", "iid:H", Content(schema, 1)),
+    ("mod:456", "iid:A", Content(schema, 1)),
+    ("mod:456", "iid:B", Content(schema, 1)),
+    ("mod:456", "iid:C", Content(schema, 1)),
+    ("mod:456", "iid:E", Content(schema, 1)),
+    ("mod:456", "iid:F", Content(schema, 0)),
+    ("mod:456", "iid:G", Content(schema, 1)),
+    ("mod:456", "iid:H", Content(schema, 0)))
+
+  def isPositive(d: Double) = d > 0
+
+  val pos = data
+    .transform(Compare(isPositive(_)))
+    .reduce(Over(First), Sum())
+    .toMap(Over(First))
+
+  val neg = data
+    .transform(Compare(!isPositive(_)))
+    .reduce(Over(First), Sum())
+    .toMap(Over(First))
+
+  val tpr = data
+    .transform(Compare(isPositive(_)))
+    .derive(Over(First), CumulativeSum())
+    .transformWithValue(Fraction(First), pos)
+    .derive(Over(First), Sliding((l: Double, r: Double) => r + l, name="%2$s.%1$s"))
+
+  val fpr = data
+    .transform(Compare(!isPositive(_)))
+    .derive(Over(First), CumulativeSum())
+    .transformWithValue(Fraction(First), neg)
+    .derive(Over(First), Sliding((l: Double, r: Double) => r - l, name="%2$s.%1$s"))
+
+  tpr
+    .pairwiseBetween(Along(First), fpr, Times(comparer=Diagonal))
+    .reduceAndExpand(Along(First), Sum("gini"))
+    .transformWithValue(Subtract(First, Position1D("one"), true),
+      ValuePipe(Map(Position1D("one") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1))))
+    .save("./tmp.scalding/gini.out")
 }
 

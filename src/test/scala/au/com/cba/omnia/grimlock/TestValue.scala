@@ -534,11 +534,13 @@ class TestBooleanValue extends TestGrimlock {
   }
 
   it should "not return a double" in {
-    dvpos.asDouble shouldBe None
+    dvpos.asDouble shouldBe Some(1.0)
+    dvneg.asDouble shouldBe Some(0.0)
   }
 
   it should "not return a long" in {
-    dvpos.asLong shouldBe None
+    dvpos.asLong shouldBe Some(1)
+    dvneg.asLong shouldBe Some(0)
   }
 
   it should "return a boolean" in {

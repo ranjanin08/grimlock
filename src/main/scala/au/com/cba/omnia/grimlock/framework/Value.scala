@@ -185,6 +185,8 @@ case class LongValue(value: Long) extends Value {
  */
 case class BooleanValue(value: Boolean) extends Value {
   val codex = BooleanCodex
+  override def asDouble = Some(if (value) 1 else 0)
+  override def asLong = Some(if (value) 1 else 0)
   override def asBoolean = Some(value)
 }
 

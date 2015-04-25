@@ -109,6 +109,16 @@ object Content {
   }
 
   /**
+   * Construct a content using a nominal schema and boolean value.
+   *
+   * @param schema Schema of the variable value.
+   * @param value  Boolean value of the variable.
+   */
+  def apply(schema: NominalSchema[Codex.BooleanCodex], value: Boolean): Content = {
+    ContentImpl(schema, BooleanValue(value))
+  }
+
+  /**
    * Construct a content using a ordinal schema and value.
    *
    * @param schema Schema of the variable value.

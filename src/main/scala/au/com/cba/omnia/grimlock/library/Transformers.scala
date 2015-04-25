@@ -1290,3 +1290,11 @@ trait CutRules {
   private def log2(x: Double): Double = math.log(x) / math.log(2)
 }
 
+// TODO: test, document and add appropriate constructors
+case class Compare(f: (Double) => Boolean) extends Transformer with Present {
+  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
+    Collection(cell.position,
+      Content(NominalSchema[Codex.BooleanCodex](), cell.content.value.asDouble.map { f(_) }.getOrElse(false)))
+  }
+}
+

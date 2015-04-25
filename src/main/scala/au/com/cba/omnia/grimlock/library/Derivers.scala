@@ -497,3 +497,61 @@ object ExponentialMovingAverage {
   }
 }
 
+// TODO: test, document and add appropriate constructors
+case class CumulativeSum(separator: String = "|") extends Deriver with Initialise {
+  type T = (Option[Double], Option[String])
+
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
+    (cell.content.value.asDouble, Some(rem.toShortString(separator)))
+  }
+
+  def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
+    t: T): (T, Collection[Cell[slice.S#M]]) = {
+    val coord = rem.toShortString(separator)
+    val schema = ContinuousSchema[Codex.DoubleCodex]()
+
+    (t, cell.content.value.asDouble) match {
+      case ((None, _), None) =>
+        ((None, None), Collection())
+      case ((None, _), Some(d)) =>
+        ((Some(d), None), Collection(cell.position.append(coord), Content(schema, d)))
+      case ((Some(p), None), None) =>
+        ((Some(p), None), Collection())
+      case ((Some(p), None), Some(d)) =>
+        ((Some(p + d), None), Collection(cell.position.append(coord), Content(schema, p + d)))
+      case ((Some(p), Some(c)), None) =>
+        ((Some(p), None), Collection(cell.position.append(c), Content(schema, p)))
+      case ((Some(p), Some(c)), Some(d)) =>
+        ((Some(p + d), None), Collection(List(Cell[slice.S#M](cell.position.append(c), Content(schema, p)),
+          Cell[slice.S#M](cell.position.append(coord), Content(schema, p + d)))))
+    }
+  }
+}
+
+// TODO: test, document and add appropriate constructors
+case class Sliding(f: (Double, Double) => Double, name: String = "f(%1$s, %2$s)",
+  separator: String = "|") extends Deriver with Initialise {
+  type T = (Option[Double], String)
+
+  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
+    (cell.content.value.asDouble, rem.toShortString(separator))
+  }
+
+  def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
+    t: T): (T, Collection[Cell[slice.S#M]]) = {
+    val coord = rem.toShortString(separator)
+    val schema = ContinuousSchema[Codex.DoubleCodex]()
+
+    (t, cell.content.value.asDouble) match {
+      case ((None, _), None) =>
+        ((None, coord), Collection())
+      case ((None, _), Some(d)) =>
+        ((Some(d), coord), Collection())
+      case ((Some(p), _), None) =>
+        ((None, coord), Collection())
+      case ((Some(p), c), Some(d)) =>
+        ((Some(d), coord), Collection(cell.position.append(name.format(c, coord)), Content(schema, f(p, d))))
+    }
+  }
+}
+
