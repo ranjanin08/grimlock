@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.test
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.derive._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
@@ -25,13 +24,14 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.sample._
 import au.com.cba.omnia.grimlock.framework.Type._
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.window._
 
-import au.com.cba.omnia.grimlock.library.derive._
+import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.pairwise._
 import au.com.cba.omnia.grimlock.library.partition._
-import au.com.cba.omnia.grimlock.library.reduce._
 import au.com.cba.omnia.grimlock.library.squash._
 import au.com.cba.omnia.grimlock.library.transform._
+import au.com.cba.omnia.grimlock.library.window._
 
 import au.com.cba.omnia.grimlock.scalding.content.Contents._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
@@ -86,7 +86,7 @@ class TestScalding1(args : Args) extends Job(args) {
     .slice(Over(First), "iid:1548763", true)
     .save("./tmp.scalding/dat2.out", descriptive=true)
 
-  read3D("smallInputfile.txt")
+  load3D("smallInputfile.txt")
     .save("./tmp.scalding/dat3.out", descriptive=true)
 }
 
@@ -209,7 +209,7 @@ class TestScalding6(args : Args) extends Job(args) {
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
-    .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
+    .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
     .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
                               ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
     .save("./tmp.scalding/whc5.out", descriptive=true)
@@ -239,7 +239,7 @@ class TestScalding8(args : Args) extends Job(args) {
     .unique
     .save("./tmp.scalding/uniq.out", descriptive=true)
 
-  read2D("mutualInputfile.txt")
+  load2D("mutualInputfile.txt")
     .unique(Over(Second))
     .save("./tmp.scalding/uni2.out")
 
@@ -324,21 +324,21 @@ class TestScalding10(args : Args) extends Job(args) {
   val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   data
-    .reduceAndExpand(Over(Second), Mean("mean", strict=true, nan=true))
+    .summariseAndExpand(Over(Second), Mean("mean", strict=true, nan=true))
     .saveAsCSV(Over(Second), "./tmp.scalding/agg1.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition())
-    .reduceAndExpand(Along(Second), Count("count"))
+    .summariseAndExpand(Along(Second), Count("count"))
     .saveAsCSV(Over(Second), "./tmp.scalding/agg2.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition())
-    .reduceAndExpand(Along(First), List(Count("count"), Moments("mean", "sd", "skewness", "kurtosis"), Min("min"),
+    .summariseAndExpand(Along(First), List(Count("count"), Moments("mean", "sd", "skewness", "kurtosis"), Min("min"),
       Max("max"), MaxAbs("max.abs")))
     .saveAsCSV(Over(Second), "./tmp.scalding/agg3.csv")
 }
@@ -369,11 +369,11 @@ class TestScalding12(args : Args) extends Job(args) {
 
   data
     .squash(Third, PreservingMaxPosition())
-    .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
     .saveAsCSV(Over(Second), "./tmp.scalding/fll1.out")
 
   data
-    .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
     .save("./tmp.scalding/fll3.out", descriptive=true)
 }
 
@@ -388,15 +388,15 @@ class TestScalding13(args : Args) extends Job(args) {
 
   val inds = data
     .transform(Indicator(Second, name="%1$s.ind"))
-    .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
 
   data
     .join(Over(First), inds)
-    .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
     .saveAsCSV(Over(Second), "./tmp.scalding/fll2.out")
 
   data
-    .fillHetrogenous(Over(Second), all.reduce(Over(Second), Mean(strict=true, nan=true)))
+    .fill(Over(Second), all.summarise(Over(Second), Mean(strict=true, nan=true)))
     .join(Over(First), inds)
     .saveAsCSV(Over(Second), "./tmp.scalding/fll4.out")
 }
@@ -419,7 +419,7 @@ class TestScalding15(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .reduceAndExpand(Along(Third), Sum("sum"))
+    .summariseAndExpand(Along(Third), Sum("sum"))
     .melt(Third, Second)
     .saveAsCSV(Over(Second), "./tmp.scalding/rsh1.out")
 
@@ -445,7 +445,7 @@ class TestScalding16(args : Args) extends Job(args) {
   val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
 
   case class HashSample() extends Sampler with Select {
-    def select[P <: Position](pos: P): Boolean = (pos(First).toString.hashCode % 25) == 0
+    def select[P <: Position](cell: Cell[P]): Boolean = (cell.position(First).toString.hashCode % 25) == 0
   }
 
   data
@@ -462,27 +462,35 @@ class TestScalding17(args : Args) extends Job(args) {
     .squash(Third, PreservingMaxPosition())
 
   val stats = data
-    .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
+    .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
     .toMap(Over(First))
 
   data
     .transformWithValue(Normalise(Second, key="max.abs"), stats)
     .saveAsCSV(Over(Second), "./tmp.scalding/trn6.csv")
 
+  case class Sample500() extends Sampler with Select {
+    def select[P <: Position](cell: Cell[P]): Boolean = cell.content.value gtr 500
+  }
+
   data
-    .refine((c: Cell[Position2D]) => c.content.value gtr 500)
+    .sample(Sample500())
     .saveAsCSV(Over(Second), "./tmp.scalding/flt1.csv")
 
-  def removeGreaterThanMean(c: Cell[Position2D], ext: Map[Position1D, Map[Position1D, Content]]): Boolean = {
-    if (c.content.schema.kind.isSpecialisationOf(Numerical)) {
-      c.content.value leq ext(Position1D(c.position(Second)))(Position1D("mean")).value
-    } else {
-      true
+  case class RemoveGreaterThanMean(dim: Dimension) extends Sampler with SelectWithValue {
+    type V = Map[Position1D, Map[Position1D, Content]]
+
+    def select[P <: Position](cell: Cell[P], ext: V): Boolean = {
+      if (cell.content.schema.kind.isSpecialisationOf(Numerical)) {
+        cell.content.value leq ext(Position1D(cell.position(dim)))(Position1D("mean")).value
+      } else {
+        true
+      }
     }
   }
 
   data
-    .refineWithValue(removeGreaterThanMean, stats)
+    .sampleWithValue(RemoveGreaterThanMean(Second), stats)
     .saveAsCSV(Over(Second), "./tmp.scalding/flt2.csv")
 }
 
@@ -495,7 +503,7 @@ class TestScalding18(args : Args) extends Job(args) {
     .squash(Third, PreservingMaxPosition())
 
   val stats = data
-    .reduceAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
+    .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
 
   val rem = stats
     .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2)
@@ -532,7 +540,7 @@ class TestScalding19(args : Args) extends Job(args) {
 
   val stats = parts
     .get("train")
-    .reduceAndExpand(Along(First), List(Count("count"), MaxAbs("max.abs")))
+    .summariseAndExpand(Along(First), List(Count("count"), MaxAbs("max.abs")))
 
   val rem = stats
     .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
@@ -543,7 +551,7 @@ class TestScalding19(args : Args) extends Job(args) {
       .slice(Over(Second), rem, false)
       .transformWithValue(List(Indicator(Second, name="%1$s.ind"), Binarise(Second), Normalise(Second, key="max.abs")),
         stats.toMap(Over(First)))
-      .fillHomogenous(Content(ContinuousSchema[Codex.LongCodex](), 0))
+      .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
       .saveAsCSV(Over(Second), "./tmp.scalding/pln_" + key + ".csv")
   }
 
@@ -553,7 +561,7 @@ class TestScalding19(args : Args) extends Job(args) {
 
 class TestScalding20(args : Args) extends Job(args) {
 
-  read3DWithDictionary("./ivoryInputfile1.txt", Dictionary.read("./dict.txt"))
+  load3DWithDictionary("./ivoryInputfile1.txt", Dictionary.read("./dict.txt"))
     .save("./tmp.scalding/ivr1.out")
 }
 
@@ -580,9 +588,9 @@ class TestScalding21(args : Args) extends Job(args) {
 
 class TestScalding22(args : Args) extends Job(args) {
 
-  val data = read2D("numericInputfile.txt")
+  val data = load2D("numericInputfile.txt")
 
-  case class Diff() extends Deriver with Initialise {
+  case class Diff() extends Windower with Initialise {
     type T = Cell[Position]
 
     def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
@@ -600,18 +608,18 @@ class TestScalding22(args : Args) extends Job(args) {
   }
 
   data
-    .derive(Over(First), Diff())
+    .window(Over(First), Diff())
     .save("./tmp.scalding/dif1.out")
 
   data
-    .derive(Over(Second), Diff())
+    .window(Over(Second), Diff())
     .permute(Second, First)
     .save("./tmp.scalding/dif2.out")
 }
 
 class TestScalding23(args : Args) extends Job(args) {
 
-  val data = read2D("somePairwise.txt")
+  val data = load2D("somePairwise.txt")
 
   case class DiffSquared() extends Operator with Compute {
     def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
@@ -658,15 +666,15 @@ class TestScalding24(args: Args) extends Job(args) {
 
 class TestScalding25(args: Args) extends Job(args) {
 
-  read2D("mutualInputfile.txt")
+  load2D("mutualInputfile.txt")
     .mutualInformation(Over(Second))
     .save("./tmp.scalding/mi.out")
 }
 
 class TestScalding26(args: Args) extends Job(args) {
 
-  val left = read2D("algebraInputfile1.txt")
-  val right = read2D("algebraInputfile2.txt")
+  val left = load2D("algebraInputfile1.txt")
+  val right = load2D("algebraInputfile2.txt")
 
   left
     .pairwiseBetween(Over(First), right, Times(comparer=All))
@@ -676,34 +684,34 @@ class TestScalding26(args: Args) extends Job(args) {
 class TestScalding27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
-  read2D("simMovAvgInputfile.txt", first=LongCodex)
-    .derive(Over(Second), SimpleMovingAverage(5))
+  load2D("simMovAvgInputfile.txt", first=LongCodex)
+    .window(Over(Second), SimpleMovingAverage(5))
     .save("./tmp.scalding/sma1.out")
 
-  read2D("simMovAvgInputfile.txt", first=LongCodex)
-    .derive(Over(Second), SimpleMovingAverage(5, all=true))
+  load2D("simMovAvgInputfile.txt", first=LongCodex)
+    .window(Over(Second), SimpleMovingAverage(5, all=true))
     .save("./tmp.scalding/sma2.out")
 
-  read2D("simMovAvgInputfile.txt", first=LongCodex)
-    .derive(Over(Second), CenteredMovingAverage(2))
+  load2D("simMovAvgInputfile.txt", first=LongCodex)
+    .window(Over(Second), CenteredMovingAverage(2))
     .save("./tmp.scalding/tma.out")
 
-  read2D("simMovAvgInputfile.txt", first=LongCodex)
-    .derive(Over(Second), WeightedMovingAverage(5))
+  load2D("simMovAvgInputfile.txt", first=LongCodex)
+    .window(Over(Second), WeightedMovingAverage(5))
     .save("./tmp.scalding/wma1.out")
 
-  read2D("simMovAvgInputfile.txt", first=LongCodex)
-    .derive(Over(Second), WeightedMovingAverage(5, all=true))
+  load2D("simMovAvgInputfile.txt", first=LongCodex)
+    .window(Over(Second), WeightedMovingAverage(5, all=true))
     .save("./tmp.scalding/wma2.out")
 
   // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
-  read1D("cumMovAvgInputfile.txt")
-    .derive(Along(First), CumulativeMovingAverage())
+  load1D("cumMovAvgInputfile.txt")
+    .window(Along(First), CumulativeMovingAverage())
     .save("./tmp.scalding/cma.out")
 
   // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
-  read1D("expMovAvgInputfile.txt")
-    .derive(Along(First), ExponentialMovingAverage(0.33))
+  load1D("expMovAvgInputfile.txt")
+    .window(Along(First), ExponentialMovingAverage(0.33))
     .save("./tmp.scalding/ema.out")
 }
 
@@ -715,7 +723,7 @@ class TestScalding28(args: Args) extends Job(args) {
                               ("iid:" + i, "fid:B", Content(NominalSchema[Codex.StringCodex](), i.toString))) }
 
   val stats = data
-    .reduceAndExpand(Along(First), List(Count("count"), Min("min"), Max("max"), Moments("mean", "sd", "skewness")))
+    .summariseAndExpand(Along(First), List(Count("count"), Min("min"), Max("max"), Moments("mean", "sd", "skewness")))
     .toMap(Over(First))
 
   data
@@ -771,29 +779,29 @@ class TestScalding29(args: Args) extends Job(args) {
 
   val pos = data
     .transform(Compare(isPositive(_)))
-    .reduce(Over(First), Sum())
+    .summarise(Over(First), Sum())
     .toMap(Over(First))
 
   val neg = data
     .transform(Compare(!isPositive(_)))
-    .reduce(Over(First), Sum())
+    .summarise(Over(First), Sum())
     .toMap(Over(First))
 
   val tpr = data
     .transform(Compare(isPositive(_)))
-    .derive(Over(First), CumulativeSum())
+    .window(Over(First), CumulativeSum())
     .transformWithValue(Fraction(First), pos)
-    .derive(Over(First), Sliding((l: Double, r: Double) => r + l, name="%2$s.%1$s"))
+    .window(Over(First), Sliding((l: Double, r: Double) => r + l, name="%2$s.%1$s"))
 
   val fpr = data
     .transform(Compare(!isPositive(_)))
-    .derive(Over(First), CumulativeSum())
+    .window(Over(First), CumulativeSum())
     .transformWithValue(Fraction(First), neg)
-    .derive(Over(First), Sliding((l: Double, r: Double) => r - l, name="%2$s.%1$s"))
+    .window(Over(First), Sliding((l: Double, r: Double) => r - l, name="%2$s.%1$s"))
 
   tpr
     .pairwiseBetween(Along(First), fpr, Times(comparer=Diagonal))
-    .reduceAndExpand(Along(First), Sum("gini"))
+    .summariseAndExpand(Along(First), Sum("gini"))
     .transformWithValue(Subtract(First, Position1D("one"), true),
       ValuePipe(Map(Position1D("one") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1))))
     .save("./tmp.scalding/gini.out")

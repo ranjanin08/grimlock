@@ -23,8 +23,8 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 
+import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.pairwise._
-import au.com.cba.omnia.grimlock.library.reduce._
 import au.com.cba.omnia.grimlock.library.squash._
 
 import au.com.cba.omnia.grimlock.scalding.Matrix._
@@ -46,15 +46,16 @@ case class CeilingBucketing() extends Transformer with Present {
 
 class MutualInformation(args: Args) extends Job(args) {
 
-  // Path to data files
+  // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")
+  val output = "scalding"
 
   // Read the data.
   // 1/ Read the data using the supplied dictionary. This returns a 3D matrix (instance x feature x date).
   // 2/ Squash the 3rd dimension, keeping values with minimum (earlier) coordinates. The result is a 2D matrix
   //    (instance x feature).
   // 3/ Bucket all continuous variables by rounding them.
-  val data = read3DWithDictionary(path + "/exampleMutual.txt", Dictionary.read(path + "/exampleDictionary.txt"))
+  val data = load3DWithDictionary(s"${path}/exampleMutual.txt", Dictionary.read(s"${path}/exampleDictionary.txt"))
     .squash(Third, PreservingMinPosition())
     .transform(CeilingBucketing())
 
@@ -62,7 +63,7 @@ class MutualInformation(args: Args) extends Job(args) {
   // 1/ Compute the marginal entropy over the features (second dimension).
   // 2/ Compute pairwise sum of marginal entropies for all upper triangular values.
   val marginal = data
-    .reduceAndExpand(Over(Second), Entropy("marginal"))
+    .summariseAndExpand(Over(Second), Entropy("marginal"))
     .pairwise(Over(First), Plus(name="%s,%s", comparer=Upper))
 
   // Compute joint entropy
@@ -70,13 +71,13 @@ class MutualInformation(args: Args) extends Job(args) {
   // 2/ Compute entropy over pairwise values. Negate the result for easy reduction below.
   val joint = data
     .pairwise(Over(Second), Concatenate(name="%s,%s", comparer=Upper))
-    .reduceAndExpand(Over(First), Entropy("joint", strict=true, nan=true, all=false, negate=true))
+    .summariseAndExpand(Over(First), Entropy("joint", strict=true, nan=true, all=false, negate=true))
 
   // Generate mutual information
   // 1/ Sum marginal and negated joint entropy
   // 2/ Persist mutual information.
   (marginal ++ joint)
-    .reduce(Over(First), Sum())
-    .save("./demo.scalding/mi.out")
+    .summarise(Over(First), Sum())
+    .save(s"./demo.${output}/mi.out")
 }
 

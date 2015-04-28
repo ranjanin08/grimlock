@@ -14,6 +14,7 @@
 
 package au.com.cba.omnia.grimlock.library.sample
 
+import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.sample._
@@ -29,7 +30,7 @@ import scala.util.Random
  * @note This randomly samples ignoring the position.
  */
 case class RandomSample(ratio: Double, rnd: Random = new Random()) extends Sampler with Select {
-  def select[P <: Position](pos: P): Boolean = rnd.nextDouble() < ratio
+  def select[P <: Position](cell: Cell[P]): Boolean = rnd.nextDouble() < ratio
 }
 
 /**
@@ -40,7 +41,7 @@ case class RandomSample(ratio: Double, rnd: Random = new Random()) extends Sampl
  * @param base  The base of the sampling ratio.
  */
 case class HashSample(dim: Dimension, ratio: Int, base: Int) extends Sampler with Select {
-  def select[P <: Position](pos: P): Boolean = math.abs(pos(dim).hashCode % base) < ratio
+  def select[P <: Position](cell: Cell[P]): Boolean = math.abs(cell.position(dim).hashCode % base) < ratio
 }
 
 /**
@@ -52,9 +53,9 @@ case class HashSample(dim: Dimension, ratio: Int, base: Int) extends Sampler wit
 case class HashSampleToSize(dim: Dimension, size: Long) extends Sampler with SelectWithValue {
   type V = Map[Position1D, Content]
 
-  def select[P <: Position](pos: P, ext: V): Boolean = {
+  def select[P <: Position](cell: Cell[P], ext: V): Boolean = {
     ext(Position1D(dim.toString)).value.asDouble match {
-      case Some(s) => math.abs(pos(dim).hashCode % s) < size
+      case Some(s) => math.abs(cell.position(dim).hashCode % s) < size
       case _ => false
     }
   }

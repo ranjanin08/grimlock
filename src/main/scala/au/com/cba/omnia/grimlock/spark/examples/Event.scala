@@ -23,7 +23,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
 import au.com.cba.omnia.grimlock.spark._
@@ -44,7 +44,7 @@ case class ExampleEvent(
 
 object ExampleEvent {
   // Function to read a file with event data.
-  def read(file: String)(implicit sc: SparkContext): RDD[Cell[Position1D]] = {
+  def load(file: String)(implicit sc: SparkContext): RDD[Cell[Position1D]] = {
     val es = EventSchema[ExampleEventCodex]()
     sc.textFile(file)
       .flatMap { case s => es.decode(s).map { case e => Cell(Position1D(es.codex.fromValue(e.value).eventId), e) } }
@@ -139,19 +139,20 @@ object InstanceCentricTfIdf {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
-    // Path to data files
+    // Path to data files, output folder
     val path = if (args.length > 1) args(1) else "../../data"
+    val output = "spark"
 
     // Read event data, then de-normalises the events and return a 2D matrix (event id x instance id).
-    val data = ExampleEvent.read(path + "/exampleEvents.txt")
+    val data = ExampleEvent.load(s"${path}/exampleEvents.txt")
       .transformAndExpand(Denormalise())
 
     // For each event, append the word counts to the 3D matrix. The result is a 3D matrix (event id x instance id x word
-    // count). Then reduce (aggregate) out the event id. The result is a 2D matrix (instance x word count) where the
-    // counts are the sums over all events.
-    val tf: Matrix2D = new Matrix3D(data
-      .transformAndExpand(WordCounts(stopwords=List())))
-      .reduce(Along(First), Sum())
+    // count). Then aggregate out the event id. The result is a 2D matrix (instance x word count) where the counts are
+    // the sums over all events.
+    val tf = data
+      .transformAndExpand(WordCounts(stopwords=List()))
+      .summarise(Along(First), Sum())
 
     // Get the number of instances (i.e. documents)
     val n = tf
@@ -163,7 +164,7 @@ object InstanceCentricTfIdf {
     //  2/ Apply Idf transformation (using document count);
     //  3/ Save as Map for use in Tf-Idf below.
     val idf = tf
-      .reduce(Along(First), Count())
+      .summarise(Along(First), Count())
       .transformWithValue(Idf(First, key=First.toString, idf=Idf.Transform(math.log10, 0)), n)
       .toMap(Over(First))
 
@@ -173,9 +174,9 @@ object InstanceCentricTfIdf {
     val tfIdf = tf
       //.transform(BooleanTf(Second))
       //.transform(LogarithmicTf(Second))
-      //.transformWithValue(AugmentedTf(First), tf.reduce(Along(Second), Max()).toMap(Over(First)))
+      //.transformWithValue(AugmentedTf(First), tf.summarise(Along(Second), Max()).toMap(Over(First)))
       .transformWithValue(TfIdf(Second), idf)
-      .save("./demo.spark/tfidf_entity.out")
+      .save(s"./demo.${output}/tfidf_entity.out")
   }
 }
 

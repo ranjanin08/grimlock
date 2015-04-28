@@ -14,6 +14,7 @@
 
 package au.com.cba.omnia.grimlock.framework.sample
 
+import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for sampling. */
@@ -23,14 +24,14 @@ trait Sampler
 trait Select extends SelectWithValue { self: Sampler =>
   type V = Any
 
-  def select[P <: Position](pos: P, ext: V): Boolean = select(pos)
+  def select[P <: Position](cell: Cell[P], ext: V): Boolean = select(cell)
 
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param pos The position of the cell.
+   * @param cell The cell.
    */
-  def select[P <: Position](pos: P): Boolean
+  def select[P <: Position](cell: Cell[P]): Boolean
 
   /**
    * Operator for chaining sampling.
@@ -50,10 +51,10 @@ trait SelectWithValue { self: Sampler =>
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param pos The position of the cell.
-   * @param ext The user define the value.
+   * @param cell The cell.
+   * @param ext  The user define the value.
    */
-  def select[P <: Position](pos: P, ext: V): Boolean
+  def select[P <: Position](cell: Cell[P], ext: V): Boolean
 
   /**
    * Operator for chaining sampling.
@@ -76,7 +77,7 @@ trait SelectWithValue { self: Sampler =>
  * @note This need not be called in an application. The `andThen` method will create it.
  */
 case class AndThenSampler(first: Sampler with Select, second: Sampler with Select) extends Sampler with Select {
-  def select[P <: Position](pos: P): Boolean = first.select(pos) && second.select(pos)
+  def select[P <: Position](cell: Cell[P]): Boolean = first.select(cell) && second.select(cell)
 }
 
 /**
@@ -90,6 +91,94 @@ case class AndThenSampler(first: Sampler with Select, second: Sampler with Selec
 case class AndThenSamplerWithValue[W](first: Sampler with SelectWithValue { type V >: W },
   second: Sampler with SelectWithValue { type V >: W }) extends Sampler with SelectWithValue {
   type V = W
-  def select[P <: Position](pos: P, ext: V): Boolean = first.select(pos, ext) && second.select(pos, ext)
+  def select[P <: Position](cell: Cell[P], ext: V): Boolean = first.select(cell, ext) && second.select(cell, ext)
+}
+
+/**
+ * Sampler that is a combination of one or more samplers with `Select`.
+ *
+ * @param singles `List` of samplers that are combined together.
+ *
+ * @note This need not be called in an application. The `Sampleable` type class will convert any `List[Sampler]`
+ *       automatically to one of these.
+ */
+// TODO: Test this
+case class CombinationSampler[T <: Sampler with Select](singles: List[T]) extends Sampler with Select {
+  def select[P <: Position](cell: Cell[P]): Boolean = singles.map { case s => s.select(cell) }.reduce(_ || _)
+}
+
+/**
+ * Sampler that is a combination of one or more samplers with `SelectWithValue`.
+ *
+ * @param singles `List` of samplers that are combined together.
+ *
+ * @note This need not be called in an application. The `SampleableWithValue` type class will convert any
+ *       `List[Sampler]` automatically to one of these.
+ */
+// TODO: Test this
+case class CombinationSamplerWithValue[T <: Sampler with SelectWithValue { type V >: W }, W](singles: List[T])
+  extends Sampler with SelectWithValue {
+  type V = W
+  def select[P <: Position](cell: Cell[P], ext: V): Boolean = {
+    singles.map { case s => s.select(cell, ext) }.reduce(_ || _)
+  }
+}
+
+/** Type class for transforming a type `T` to a `Sampler with Select`. */
+trait Sampleable[T] {
+  /**
+   * Returns a `Sampler with Select` for type `T`.
+   *
+   * @param t Object that can be converted to a `Sampler with Select`.
+   */
+  def convert(t: T): Sampler with Select
+}
+
+/** Companion object for the `Sampleable` type class. */
+object Sampleable {
+  /**
+   * Converts a `List[Sampler with Select]` to a single `Sampler with Select` using `CombinationSampler`.
+   */
+  implicit def LT2T[T <: Sampler with Select]: Sampleable[List[T]] = {
+    new Sampleable[List[T]] { def convert(t: List[T]): Sampler with Select = CombinationSampler(t) }
+  }
+
+  /** Converts a `Sampler with Select` to a `Sampler with Select`; that is, it is a pass through. */
+  implicit def T2T[T <: Sampler with Select]: Sampleable[T] = {
+    new Sampleable[T] { def convert(t: T): Sampler with Select = t }
+  }
+}
+
+/** Type class for transforming a type `T` to a `Sampler with SelectWithValue`. */
+trait SampleableWithValue[T, W] {
+  /**
+   * Returns a `Sampler with SelectWithValue` for type `T`.
+   *
+   * @param t Object that can be converted to a `Sampler with SelectWithValue`.
+   */
+  def convert(t: T): Sampler with SelectWithValue { type V >: W }
+}
+
+/** Companion object for the `SampleableWithValue` type class. */
+object SampleableWithValue {
+  /**
+   * Converts a `List[Sampler with SelectWithValue]` to a single `Sampler with SelectWithValue` using
+   * `CombinationSamplerWithValue`.
+   */
+  implicit def LT2TWV[T <: Sampler with SelectWithValue { type V >: W }, W]: SampleableWithValue[List[T], W] = {
+    new SampleableWithValue[List[T], W] {
+      def convert(t: List[T]): Sampler with SelectWithValue { type V >: W } = {
+        CombinationSamplerWithValue[T, W](t)
+      }
+    }
+  }
+
+  /**
+   * Converts a `Sampler with SelectWithValue` to a `Sampler with SelectWithValue`; that is, it is a pass
+   * through.
+   */
+  implicit def T2TWV[T <: Sampler with SelectWithValue { type V >: W }, W]: SampleableWithValue[T, W] = {
+    new SampleableWithValue[T, W] { def convert(t: T): Sampler with SelectWithValue { type V >: W } = t }
+  }
 }
 

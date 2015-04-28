@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.framework.derive
+package au.com.cba.omnia.grimlock.framework.window
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
@@ -20,22 +20,22 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
 /**
- * Base trait for generating derived data.
+ * Base trait for generating windowed data.
  *
- * Derived data is derived from two or more values, for example deltas or gradients. To generate this, the process is
+ * Windowed data is derived from two or more values, for example deltas or gradients. To generate this, the process is
  * as follows. First the matrix is grouped according to a slice. The data in each group is then sorted by the remaining
- * coordinates. The first cell of each group is passed to the prepare method. This allows a deriver to initialise it's
+ * coordinates. The first cell of each group is passed to the prepare method. This allows a windower to initialise it's
  * running state. All subsequent cells are passed to the present method (together with the running state). The present
  * method can update the running state, and optionally return one or more cells with derived data. Note that the
  * running state can be used to create derived features of different window sizes.
  */
-trait Deriver {
+trait Windower {
   /** Type of the state. */
   type T
 }
 
-/** Base trait for initialising a deriver. */
-trait Initialise extends InitialiseWithValue { self: Deriver =>
+/** Base trait for initialising a windower. */
+trait Initialise extends InitialiseWithValue { self: Windower =>
   type V = Any
 
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T = {
@@ -70,8 +70,8 @@ trait Initialise extends InitialiseWithValue { self: Deriver =>
     t: T): (T, Collection[Cell[slice.S#M]])
 }
 
-/** Base trait for initialising a deriver with a user supplied value. */
-trait InitialiseWithValue { self: Deriver =>
+/** Base trait for initialising a windower with a user supplied value. */
+trait InitialiseWithValue { self: Windower =>
   /** Type of the external value. */
   type V
 
@@ -103,106 +103,106 @@ trait InitialiseWithValue { self: Deriver =>
 }
 
 /**
- * Deriver that is a combination of one or more derivers with `Initialise`.
+ * Windower that is a combination of one or more windowers with `Initialise`.
  *
- * @param singles `List` of derivers that are combined together.
+ * @param singles `List` of windowers that are combined together.
  *
- * @note This need not be called in an application. The `Derivable` type class will convert any `List[Deriver]`
+ * @note This need not be called in an application. The `Windowable` type class will convert any `List[Windower]`
  *       automatically to one of these.
  */
-case class CombinationDeriver[T <: Deriver with Initialise](singles: List[T]) extends Deriver with Initialise {
+case class CombinationWindower[T <: Windower with Initialise](singles: List[T]) extends Windower with Initialise {
   type T = List[Any]
 
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
-    singles.map { case deriver => deriver.initialise(slice)(cell, rem) }
+    singles.map { case windower => windower.initialise(slice)(cell, rem) }
   }
 
   def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
     t: T): (T, Collection[Cell[slice.S#M]]) = {
     val state = (singles, t)
       .zipped
-      .map { case (deriver, s) => deriver.present(slice)(cell, rem, s.asInstanceOf[deriver.T]) }
+      .map { case (windower, s) => windower.present(slice)(cell, rem, s.asInstanceOf[windower.T]) }
 
     (state.map { case (t, c) => t }, Collection(state.flatMap { case (t, c) => c.toList }))
   }
 }
 
 /**
- * Deriver that is a combination of one or more derivers with `InitialiseWithValue`.
+ * Windower that is a combination of one or more windowers with `InitialiseWithValue`.
  *
- * @param singles `List` of derivers that are combined together.
+ * @param singles `List` of windowers that are combined together.
  *
- * @note This need not be called in an application. The `DerivableWithValue` type class will convert any
- *       `List[Deriver]` automatically to one of these.
+ * @note This need not be called in an application. The `WindowableWithValue` type class will convert any
+ *       `List[Windower]` automatically to one of these.
  */
-case class CombinationDeriverWithValue[T <: Deriver with InitialiseWithValue { type V >: W }, W](singles: List[T])
-  extends Deriver with InitialiseWithValue {
+case class CombinationWindowerWithValue[T <: Windower with InitialiseWithValue { type V >: W }, W](singles: List[T])
+  extends Windower with InitialiseWithValue {
   type T = List[Any]
   type V = W
 
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T = {
-    singles.map { case deriver => deriver.initialise(slice, ext)(cell, rem) }
+    singles.map { case windower => windower.initialise(slice, ext)(cell, rem) }
   }
 
   def present[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R,
     t: T): (T, Collection[Cell[slice.S#M]]) = {
     val state = (singles, t)
       .zipped
-      .map { case (deriver, s) => deriver.present(slice, ext)(cell, rem, s.asInstanceOf[deriver.T]) }
+      .map { case (windower, s) => windower.present(slice, ext)(cell, rem, s.asInstanceOf[windower.T]) }
 
     (state.map { case (t, c) => t }, Collection(state.flatMap { case (t, c) => c.toList }))
   }
 }
 
-/** Type class for transforming a type `T` to a `Deriver with Initialise`. */
-trait Derivable[T] {
+/** Type class for transforming a type `T` to a `Windower with Initialise`. */
+trait Windowable[T] {
   /**
-   * Returns a `Deriver with Initialise` for type `T`.
+   * Returns a `Windower with Initialise` for type `T`.
    *
-   * @param t Object that can be converted to a `Deriver with Initialise`.
+   * @param t Object that can be converted to a `Windower with Initialise`.
    */
-  def convert(t: T): Deriver with Initialise
+  def convert(t: T): Windower with Initialise
 }
 
-/** Companion object for the `Derivable` type class. */
-object Derivable {
-  /** Converts a `List[Deriver with Initialise]` to a single `Deriver with Initialise` using `CombinationDeriver`. */
-  implicit def LD2D[T <: Deriver with Initialise]: Derivable[List[T]] = {
-    new Derivable[List[T]] { def convert(t: List[T]): Deriver with Initialise = CombinationDeriver(t) }
+/** Companion object for the `Windowable` type class. */
+object Windowable {
+  /** Converts a `List[Windower with Initialise]` to a single `Windower with Initialise` using `CombinationWindower`. */
+  implicit def LD2D[T <: Windower with Initialise]: Windowable[List[T]] = {
+    new Windowable[List[T]] { def convert(t: List[T]): Windower with Initialise = CombinationWindower(t) }
   }
-  /** Converts a `Deriver with Initialise` to a `Deriver with Initialise`; that is, it is a pass through. */
-  implicit def D2D[T <: Deriver with Initialise]: Derivable[T] = {
-    new Derivable[T] { def convert(t: T): Deriver with Initialise = t }
+  /** Converts a `Windower with Initialise` to a `Windower with Initialise`; that is, it is a pass through. */
+  implicit def D2D[T <: Windower with Initialise]: Windowable[T] = {
+    new Windowable[T] { def convert(t: T): Windower with Initialise = t }
   }
 }
 
-/** Type class for transforming a type `T` to a `Deriver with InitialiseWithValue`. */
-trait DerivableWithValue[T, W] {
+/** Type class for transforming a type `T` to a `Windower with InitialiseWithValue`. */
+trait WindowableWithValue[T, W] {
   /**
-   * Returns a `Deriver with InitialiseWithValue` for type `T`.
+   * Returns a `Windower with InitialiseWithValue` for type `T`.
    *
-   * @param t Object that can be converted to a `Deriver with InitialiseWithValue`.
+   * @param t Object that can be converted to a `Windower with InitialiseWithValue`.
    */
-  def convert(t: T): Deriver with InitialiseWithValue { type V >: W }
+  def convert(t: T): Windower with InitialiseWithValue { type V >: W }
 }
 
-/** Companion object for the `DerivableWithValue` type class. */
-object DerivableWithValue {
+/** Companion object for the `WindowableWithValue` type class. */
+object WindowableWithValue {
   /**
-   * Converts a `List[Deriver with InitialiseWithValue]` to a single `Deriver with InitialiseWithValue` using
-   * `CombinationDeriverWithValue`.
+   * Converts a `List[Windower with InitialiseWithValue]` to a single `Windower with InitialiseWithValue` using
+   * `CombinationWindowerWithValue`.
    */
-  implicit def DT2DWV[T <: Deriver with InitialiseWithValue { type V >: W }, W]: DerivableWithValue[List[T], W] = {
-    new DerivableWithValue[List[T], W] {
-      def convert(t: List[T]): Deriver with InitialiseWithValue { type V >: W } = CombinationDeriverWithValue[T, W](t)
+  implicit def DT2DWV[T <: Windower with InitialiseWithValue { type V >: W }, W]: WindowableWithValue[List[T], W] = {
+    new WindowableWithValue[List[T], W] {
+      def convert(t: List[T]): Windower with InitialiseWithValue { type V >: W } = CombinationWindowerWithValue[T, W](t)
     }
   }
   /**
-   * Converts a `Deriver with InitialiseWithValue` to a `Deriver with InitialiseWithValue`; that is, it is a pass
+   * Converts a `Windower with InitialiseWithValue` to a `Windower with InitialiseWithValue`; that is, it is a pass
    * through.
    */
-  implicit def D2DWV[T <: Deriver with InitialiseWithValue { type V >: W }, W]: DerivableWithValue[T, W] = {
-    new DerivableWithValue[T, W] { def convert(t: T): Deriver with InitialiseWithValue { type V >: W } = t }
+  implicit def D2DWV[T <: Windower with InitialiseWithValue { type V >: W }, W]: WindowableWithValue[T, W] = {
+    new WindowableWithValue[T, W] { def convert(t: T): Windower with InitialiseWithValue { type V >: W } = t }
   }
 }
 

@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.test
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.derive._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
@@ -25,13 +24,14 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.sample._
 import au.com.cba.omnia.grimlock.framework.Type._
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.window._
 
-import au.com.cba.omnia.grimlock.library.derive._
+import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.pairwise._
 import au.com.cba.omnia.grimlock.library.partition._
-import au.com.cba.omnia.grimlock.library.reduce._
 import au.com.cba.omnia.grimlock.library.squash._
 import au.com.cba.omnia.grimlock.library.transform._
+import au.com.cba.omnia.grimlock.library.window._
 
 import au.com.cba.omnia.grimlock.spark.content.Contents._
 import au.com.cba.omnia.grimlock.spark.Matrix._
@@ -89,7 +89,7 @@ object TestSpark1 {
       .slice(Over(First), "iid:1548763", true)
       .save("./tmp.spark/dat2.out", descriptive=true)
 
-    read3D("smallInputfile.txt")
+    load3D("smallInputfile.txt")
       .save("./tmp.spark/dat3.out", descriptive=true)
   }
 }
@@ -138,13 +138,17 @@ object TestSpark {
     if (args.length == 2 && args(0) == "spark") doTest(args(1))
   }
 
+  case class Sample500() extends Sampler with Select {
+    def select[P <: Position](cell: Cell[P]): Boolean = cell.content.value gtr 500
+  }
+
   def doTest(master: String) = {
     val spark = new SparkContext(master, "Test Spark", new SparkConf())
 
-    val data = read2D("exampleInput.txt")(spark)
+    val data = load2D("exampleInput.txt")(spark)
 
     data
-      .refine((c: Cell[Position2D]) => c.content.value gtr 500)
+      .sample(Sample500())
       .save("./tmp.spark/flt1.txt")
 
     data

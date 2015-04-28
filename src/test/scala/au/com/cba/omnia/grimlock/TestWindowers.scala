@@ -17,12 +17,12 @@ package au.com.cba.omnia.grimlock
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.derive._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.window._
 
-import au.com.cba.omnia.grimlock.library.derive._
+import au.com.cba.omnia.grimlock.library.window._
 
 trait TestBatchMovingAverage extends TestGrimlock {
   // test initilise
@@ -292,12 +292,12 @@ class TestExponentialMovingAverage extends TestOnlineMovingAverage {
   }
 }
 
-class TestCombinationDeriver extends TestGrimlock {
+class TestCombinationWindower extends TestGrimlock {
 
-  "A CombinationDeriver" should "present correctly" in {
+  "A CombinationWindower" should "present correctly" in {
     val slice = Over[Position2D, Second.type](Second)
     val sel = Position1D("sales")
-    val obj = CombinationDeriver(List(
+    val obj = CombinationWindower(List(
       SimpleMovingAverage(5, First, false, "%1$s.simple"),
       WeightedMovingAverage(5, First, false, "%1$s.weighted")))
 

@@ -14,18 +14,18 @@
 
 package au.com.cba.omnia.grimlock.framework
 
+import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.derive._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.reduce._
 import au.com.cba.omnia.grimlock.framework.sample._
 import au.com.cba.omnia.grimlock.framework.squash._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.window._
 
 import java.util.regex.Pattern
 
@@ -305,25 +305,25 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Create window based derived data.
    *
-   * @param slice    Encapsulates the dimension(s) to derive over.
-   * @param derivers The derivers to apply to the content.
+   * @param slice     Encapsulates the dimension(s) to derive over.
+   * @param windowers The windowers to apply to the content.
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def derive[D <: Dimension, T](slice: Slice[P, D], derivers: T)(implicit ev1: PosDimDep[P, D], ev2: Derivable[T],
+  def window[D <: Dimension, T](slice: Slice[P, D], windowers: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
     ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S]): U[Cell[slice.S#M]]
 
   /**
    * Create window based derived data with a user supplied value.
    *
-   * @param slice    Encapsulates the dimension(s) to derive over.
-   * @param derivers The derivers to apply to the content.
-   * @param value    A `E` holding a user supplied value.
+   * @param slice     Encapsulates the dimension(s) to derive over.
+   * @param windowers The windowers to apply to the content.
+   * @param value    .A `E` holding a user supplied value.
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def deriveWithValue[D <: Dimension, T, W](slice: Slice[P, D], derivers: T, value: E[W])(implicit ev1: PosDimDep[P, D],
-    ev2: DerivableWithValue[T, W], ev3: slice.R =!= Position0D): U[Cell[slice.S#M]]
+  def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windowers: T, value: E[W])(
+    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D): U[Cell[slice.S#M]]
 
   /** Return all possible positions of a matrix. */
   def domain(): U[P]
@@ -435,26 +435,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     value: E[W]): U[(S, Cell[P])]
 
   /**
-   * Reduce a matrix and return the reductions with an expanded position.
+   * Summarise a matrix and return the aggregates with an expanded position.
    *
-   * @param slice    Encapsulates the dimension(s) along which to reduce.
-   * @param reducers The reducer(s) to apply to the data.
-   *
-   * @return A `U[Cell[slice.S#M]]` with the aggregates.
-   *
-   * @note If the `slice` is an `Over` then the returned position will be a `Position2D` since `Slice.S` for `Over` is
-   *       a `Position1D` and that expands to `Position2D`. Analogously, if the `slice` is an `Along` then the returned
-   *       position will be equal to `P`.
-   */
-  def reduceAndExpand[T, D <: Dimension](slice: Slice[P, D], reducers: T)(implicit ev1: PosDimDep[P, D],
-    ev2: ReducibleMultiple[T], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]]
-
-  /**
-   * Reduce a matrix, using a user supplied value, and return the reductions with an expanded position.
-   *
-   * @param slice    Encapsulates the dimension(s) along which to reduce.
-   * @param reducers The reducer(s) to apply to the data.
-   * @param value    A `E` holding a user supplied value.
+   * @param slice       Encapsulates the dimension(s) along which to aggregate.
+   * @param aggregators The aggregator(s) to apply to the data.
    *
    * @return A `U[Cell[slice.S#M]]` with the aggregates.
    *
@@ -462,28 +446,24 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *       a `Position1D` and that expands to `Position2D`. Analogously, if the `slice` is an `Along` then the returned
    *       position will be equal to `P`.
    */
-  def reduceAndExpandWithValue[T, D <: Dimension, V](slice: Slice[P, D], reducers: T, value: E[V])(
-    implicit ev1: PosDimDep[P, D], ev2: ReducibleMultipleWithValue[T, V], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]]
+  def summariseAndExpand[T, D <: Dimension](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
+    ev2: AggregatableMultiple[T], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]]
 
   /**
-   * Refine (filter) a matrix according to some function `f`. It keeps only those cells for which `f` returns true.
+   * Summarise a matrix, using a user supplied value, and return the aggregates with an expanded position.
    *
-   * @param f Filtering function.
+   * @param slice       Encapsulates the dimension(s) along which to aggregate.
+   * @param aggregators The aggregator(s) to apply to the data.
+   * @param value       A `E` holding a user supplied value.
    *
-   * @return A `U[Cell[P]]` with the filtered cells.
+   * @return A `U[Cell[slice.S#M]]` with the aggregates.
+   *
+   * @note If the `slice` is an `Over` then the returned position will be a `Position2D` since `Slice.S` for `Over` is
+   *       a `Position1D` and that expands to `Position2D`. Analogously, if the `slice` is an `Along` then the returned
+   *       position will be equal to `P`.
    */
-  def refine(f: Cell[P] => Boolean): U[Cell[P]]
-
-  /**
-   * Refine (filter) a matrix according to some function `f` using a user supplied value. It keeps only those cells for
-   * which `f` returns true.
-   *
-   * @param f     Filtering function.
-   * @param value A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[P]]` with the filtered cells.
-   */
-  def refineWithValue[V](f: (Cell[P], V) => Boolean, value: E[V]): U[Cell[P]]
+  def summariseAndExpandWithValue[T, D <: Dimension, V](slice: Slice[P, D], aggregators: T, value: E[V])(
+    implicit ev1: PosDimDep[P, D], ev2: AggregatableMultipleWithValue[T, V], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]]
 
   /**
    * Rename the coordinates of a dimension.
@@ -510,22 +490,22 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
    *
-   * @param sampler Sampling function.
+   * @param samplers Sampling function(s).
    *
    * @return A `U[Cell[P]]` with the sampled cells.
    */
-  def sample(sampler: Sampler with Select): U[Cell[P]]
+  def sample[T](samplers: T)(implicit ev: Sampleable[T]): U[Cell[P]]
 
   /**
    * Sample a matrix according to some `sampler` using a user supplied value. It keeps only those cells for which
    * `sampler` returns true.
    *
-   * @param sampler Sampling function.
-   * @param value   A `E` holding a user supplied value.
+   * @param samplers Sampling function(s).
+   * @param value    A `E` holding a user supplied value.
    *
    * @return A `U[Cell[P]]` with the sampled cells.
    */
-  def sampleWithValue[W](sampler: Sampler with SelectWithValue { type V >: W }, value: E[W]): U[Cell[P]]
+  def sampleWithValue[T, V](samplers: T, value: E[V])(implicit ev: SampleableWithValue[T, V]): U[Cell[P]]
 
   /**
    * Set `value` as the content for all `positions` in a matrix.
@@ -695,8 +675,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @note This joins `values` onto this matrix, as such it can be used for imputing missing values.
    */
-  def fillHetrogenous[D <: Dimension, Q <: Position](slice: Slice[P, D], values: U[Cell[Q]])(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q): U[Cell[P]]
+  def fill[D <: Dimension, Q <: Position](slice: Slice[P, D], values: U[Cell[Q]])(implicit ev1: PosDimDep[P, D],
+    ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q): U[Cell[P]]
 
   /**
    * Fill a matrix with `value`.
@@ -705,7 +685,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P]]` where all missing values have been filled in.
    */
-  def fillHomogenous(value: Content)(implicit ev: ClassTag[P]): U[Cell[P]]
+  def fill(value: Content)(implicit ev: ClassTag[P]): U[Cell[P]]
 
   /**
    * Melt one dimension of a matrix into another.
@@ -723,27 +703,27 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
     ev2: PosDimDep[P, E], ne: D =!= E): U[Cell[P#L]]
 
   /**
-   * Reduce a matrix.
+   * Summarise a matrix.
    *
-   * @param slice   Encapsulates the dimension(s) along which to reduce.
-   * @param reducer The reducer to apply to the data.
+   * @param slice      Encapsulates the dimension(s) along which to aggregate.
+   * @param aggregator The aggregator to apply to the data.
    *
    * @return A `U[Cell[slice.S]]` with the aggregates.
    */
-  def reduce[D <: Dimension](slice: Slice[P, D], reducer: Reducer with Prepare with PresentSingle)(
+  def summarise[D <: Dimension](slice: Slice[P, D], aggregator: Aggregator with Prepare with PresentSingle)(
     implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): U[Cell[slice.S]]
 
   /**
-   * Reduce a matrix, using a user supplied value.
+   * Summarise a matrix, using a user supplied value.
    *
-   * @param slice   Encapsulates the dimension(s) along which to reduce.
-   * @param reducer The reducer to apply to the data.
-   * @param value   A `E` holding a user supplied value.
+   * @param slice      Encapsulates the dimension(s) along which to aggregate.
+   * @param aggregator The aggregator to apply to the data.
+   * @param value      A `E` holding a user supplied value.
    *
    * @return A `U[Cell[slice.S]]` with the aggregates.
    */
-  def reduceWithValue[D <: Dimension, W](slice: Slice[P, D],
-    reducer: Reducer with PrepareWithValue with PresentSingle { type V >: W }, value: E[W])(
+  def summariseWithValue[D <: Dimension, W](slice: Slice[P, D],
+    aggregator: Aggregator with PrepareWithValue with PresentSingle { type V >: W }, value: E[W])(
       implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): U[Cell[slice.S]]
 
   /**

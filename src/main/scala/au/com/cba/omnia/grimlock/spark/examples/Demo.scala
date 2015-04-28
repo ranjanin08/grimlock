@@ -23,7 +23,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
 import au.com.cba.omnia.grimlock.spark._
@@ -44,36 +44,37 @@ object BasicOperations {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
-    // Path to data files
+    // Path to data files, output folder
     val path = if (args.length > 1) args(1) else "../../data"
+    val output = "spark"
 
     // Read the data. This returns a 2D matrix (instance x feature).
-    val data = read2D(path + "/exampleInput.txt")
+    val data = load2D(s"${path}/exampleInput.txt")
 
     // Get the number of rows.
     data
       .size(First)
-      .save("./demo.spark/row_size.out")
+      .save(s"./demo.${output}/row_size.out")
 
     // Get all dimensions of the matrix.
     data
       .shape()
-      .save("./demo.spark/matrix_shape.out")
+      .save(s"./demo.${output}/matrix_shape.out")
 
     // Get the column names.
     data
       .names(Over(Second))
-      .save("./demo.spark/column_names.out")
+      .save(s"./demo.${output}/column_names.out")
 
     // Get the type of variables of each column.
     data
       .types(Over(Second), true)
-      .save("./demo.spark/column_types.txt")
+      .save(s"./demo.${output}/column_types.txt")
 
     // Transpose the matrix.
     data
       .permute(Second, First)
-      .save("./demo.spark/transposed.out")
+      .save(s"./demo.${output}/transposed.out")
 
     // Construct a simple query
     def simpleQuery(cell: Cell[Position2D]) = (cell.content.value gtr 995) || (cell.content.value equ "F")
@@ -81,18 +82,18 @@ object BasicOperations {
     // Find all co-ordinates that match the above simple query.
     val coords = data
       .which(simpleQuery)
-      .save("./demo.spark/query.txt")
+      .save(s"./demo.${output}/query.txt")
 
     // Get the data for the above coordinates.
     data
       .get(coords)
-      .save("./demo.spark/values.txt")
+      .save(s"./demo.${output}/values.txt")
 
     // Keep columns A and B, and remove row 0221707
     data
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), "iid:0221707", false)
-      .save("./demo.spark/sliced.txt")
+      .save(s"./demo.${output}/sliced.txt")
   }
 }
 
@@ -102,11 +103,12 @@ object DataSciencePipelineWithFiltering {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
-    // Path to data files
+    // Path to data files, output folder
     val path = if (args.length > 1) args(1) else "../../data"
+    val output = "spark"
 
     // Read the data. This returns a 2D matrix (instance x feature).
-    val data = read2D(path + "/exampleInput.txt")
+    val data = load2D(s"${path}/exampleInput.txt")
 
     // Define a custom partition. If the instance is 'iid:0364354' or 'iid:0216406' then assign it to the right (test)
     // partition. In all other cases assing it to the left (train) partition.
@@ -139,8 +141,8 @@ object DataSciencePipelineWithFiltering {
 
     val stats = parts
       .get("train")
-      .reduceAndExpand(Along(First), statistics)
-      .save("./demo.spark/stats.out")
+      .summariseAndExpand(Along(First), statistics)
+      .save(s"./demo.${output}/stats.out")
 
     // Determine which features to filter based on statistics. In this case remove all features that occur for 2 or
     // fewer instances. These are removed first to prevent indicator features from being created.
@@ -189,8 +191,8 @@ object DataSciencePipelineWithFiltering {
         .slice(Over(Second), rem3, false)
 
       (ind ++ csb)
-        //.fillHomogenous(Content(ContinuousSchema[Codex.DoubleCodex], 0))
-        .saveAsCSV(Over(Second), "./demo.spark/" + key + ".csv")
+        //.fill(Content(ContinuousSchema[Codex.DoubleCodex], 0))
+        .saveAsCSV(Over(Second), s"./demo.${output}/${key}.csv")
     }
 
     // Prepare each partition.
@@ -205,15 +207,16 @@ object Scoring {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
-    // Path to data files
+    // Path to data files, output folder
     val path = if (args.length > 1) args(1) else "../../data"
+    val output = "spark"
 
     // Read the data. This returns a 2D matrix (instance x feature).
-    val data = read2D(path + "/exampleInput.txt")
+    val data = load2D(s"${path}/exampleInput.txt")
     // Read the statistics from the above example.
-    val stats = read2D("./demo.spark/stats.out").toMap(Over(First))
+    val stats = load2D(s"./demo.${output}/stats.out").toMap(Over(First))
     // Read externally learned weights.
-    val weights = read1D(path + "/exampleWeights.txt").toMap(Over(First))
+    val weights = load1D(s"${path}/exampleWeights.txt").toMap(Over(First))
 
     // For the data do:
     //  1/ Create indicators, binarise categorical, and clamp & standardise numerical features;
@@ -226,8 +229,8 @@ object Scoring {
 
     data
       .transformWithValue(transforms, stats)
-      .reduceWithValue(Over(First), WeightedSum(Second), weights)
-      .save("./demo.spark/scores.out")
+      .summariseWithValue(Over(First), WeightedSum(Second), weights)
+      .save(s"./demo.${output}/scores.out")
   }
 }
 
@@ -237,11 +240,12 @@ object DataQualityAndAnalysis {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
-    // Path to data files
+    // Path to data files, output folder
     val path = if (args.length > 1) args(1) else "../../data"
+    val output = "spark"
 
     // Read the data. This returns a 2D matrix (instance x feature).
-    val data: Matrix2D = read2D(path + "/exampleInput.txt")
+    val data = load2D(s"${path}/exampleInput.txt")
 
     // For the instances:
     //  1/ Compute the number of features for each instance;
@@ -249,10 +253,10 @@ object DataQualityAndAnalysis {
     //  3/ Compute the moments of the counts;
     //  4/ Save the moments.
     data
-      .reduce(Over(First), Count())
-      .save("./demo.spark/feature_count.out")
-      .reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
-      .save("./demo.spark/feature_density.out")
+      .summarise(Over(First), Count())
+      .save(s"./demo.${output}/feature_count.out")
+      .summariseAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
+      .save(s"./demo.${output}/feature_density.out")
 
     // For the features:
     //  1/ Compute the number of instance that have a value for each features;
@@ -260,10 +264,10 @@ object DataQualityAndAnalysis {
     //  3/ Compute the moments of the counts;
     //  4/ Save the moments.
     data
-      .reduce(Over(Second), Count())
-      .save("./demo.spark/instance_count.out")
-      .reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
-      .save("./demo.spark/instance_density.out")
+      .summarise(Over(Second), Count())
+      .save(s"./demo.${output}/instance_count.out")
+      .summariseAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
+      .save(s"./demo.${output}/instance_density.out")
   }
 }
 
@@ -273,16 +277,17 @@ object LabelWeighting {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
-    // Path to data files
+    // Path to data files, output folder
     val path = if (args.length > 1) args(1) else "../../data"
+    val output = "spark"
 
     // Read labels and melt the date into the instance id to generate a 1D matrix.
-    val labels = read2DWithSchema(path + "/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+    val labels = load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
       .melt(Second, First, ":")
 
     // Compute histogram over the label values.
     val histogram = labels
-      .reduceAndExpand(Along(First), Histogram("%2$s", strict=true, all=true, frequency=true))
+      .summariseAndExpand(Along(First), Histogram("%2$s", strict=true, all=true, frequency=true))
 
     // Compute the total number of labels and store result in a Map.
     val sum = labels
@@ -295,7 +300,7 @@ object LabelWeighting {
 
     // Find the minimum ratio, and store the result as a Map.
     val min = ratio
-      .reduceAndExpand(Along(First), Min("min"))
+      .summariseAndExpand(Along(First), Min("min"))
       .toMap(Over(First))
 
     // Divide the ratio by the minimum ratio, and store the result as a Map.
@@ -315,9 +320,9 @@ object LabelWeighting {
     }
 
     // Re-read labels and add the computed weight.
-    read2DWithSchema(path + "/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+    load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
       .transformAndExpandWithValue(AddWeight(), weights)
-      .save("./demo.spark/weighted.out")
+      .save(s"./demo.${output}/weighted.out")
   }
 }
 

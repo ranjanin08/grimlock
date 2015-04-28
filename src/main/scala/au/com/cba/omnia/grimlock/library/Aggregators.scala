@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.library.reduce
+package au.com.cba.omnia.grimlock.library.aggregate
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.reduce._
 import au.com.cba.omnia.grimlock.framework.Type._
 import au.com.cba.omnia.grimlock.framework.utility._
 
 import scala.reflect.ClassTag
 
-/** Trait for reducers that can be lenient or strict when it comes to invalid (or unexpected) values. */
-trait StrictReduce { self: Reducer =>
+/** Trait for aggregators that can be lenient or strict when it comes to invalid (or unexpected) values. */
+trait StrictAggregate { self: Aggregator =>
   /**
    * Indicates if strict data handling is required. If so then any invalid value fails the reduction. If not, then
    * invalid values are silently ignored.
@@ -51,8 +51,8 @@ trait StrictReduce { self: Reducer =>
   protected def reduction(lt: T, rt: T): T
 }
 
-/** Trait with default values for various reducer arguments. */
-trait DefaultReducerValues {
+/** Trait with default values for various aggregator arguments. */
+trait DefaultAggregatorValues {
   /** Default indicator for strict handling or invalid values. */
   val DefaultStrict: Boolean = true
 
@@ -65,7 +65,7 @@ trait DefaultReducerValues {
  *
  * @param name Optional coordinate name for the count value. Name must be provided when presenting `PresentMultiple`.
  */
-case class Count private (name: Option[Value]) extends Reducer with Prepare with PresentSingleAndMultiple {
+case class Count private (name: Option[Value]) extends Aggregator with Prepare with PresentSingleAndMultiple {
   type T = Long
 
   val ct = ClassTag[Long](Long.getClass)
@@ -77,17 +77,17 @@ case class Count private (name: Option[Value]) extends Reducer with Prepare with
   protected def content(t: T): Option[Content] = Some(Content(DiscreteSchema[Codex.LongCodex](), t))
 }
 
-/** Companion object to `Count` reducer class. */
+/** Companion object to `Count` aggregator class. */
 object Count {
   /** Count reductions. */
-  def apply(): Reducer with Prepare with PresentSingle = Count(None)
+  def apply(): Aggregator with Prepare with PresentSingle = Count(None)
 
   /**
    * Count reductions.
    *
    * @param name Coordinate name for the count values.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Count(Some(ev.convert(name)))
   }
 }
@@ -103,7 +103,7 @@ case object Mean extends Moment {
   val index = 1
 
   /** Mean of a distribution. */
-  def apply(): Reducer with Prepare with PresentSingle = Moments(Mean)
+  def apply(): Aggregator with Prepare with PresentSingle = Moments(Mean)
 
   /**
    * Mean of a distribution.
@@ -113,14 +113,14 @@ case object Mean extends Moment {
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
    */
-  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare with PresentSingle = Moments(Mean, strict, nan)
+  def apply(strict: Boolean, nan: Boolean): Aggregator with Prepare with PresentSingle = Moments(Mean, strict, nan)
 
   /**
    * Mean of a distribution.
    *
    * @param name Coordinate name of the computed mean.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = Moments((Mean, name))
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = Moments((Mean, name))
 
   /**
    * Mean of a distribution.
@@ -132,7 +132,7 @@ case object Mean extends Moment {
    *               data).
    */
   def apply[V](name: V, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = Moments((Mean, name), strict, nan)
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = Moments((Mean, name), strict, nan)
 }
 
 /** Object for computing the standard deviation. */
@@ -140,7 +140,7 @@ object StandardDeviation extends Moment {
   val index = 2
 
   /** Standard deviation of a distribution. */
-  def apply(): Reducer with Prepare with PresentSingle = Moments(StandardDeviation)
+  def apply(): Aggregator with Prepare with PresentSingle = Moments(StandardDeviation)
 
   /**
    * Standard deviation of a distribution.
@@ -150,7 +150,7 @@ object StandardDeviation extends Moment {
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
    */
-  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare with PresentSingle = {
+  def apply(strict: Boolean, nan: Boolean): Aggregator with Prepare with PresentSingle = {
     Moments(StandardDeviation, strict, nan)
   }
 
@@ -159,7 +159,7 @@ object StandardDeviation extends Moment {
    *
    * @param name Coordinate name of the computed standard deviation.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Moments((StandardDeviation, name))
   }
 
@@ -173,7 +173,7 @@ object StandardDeviation extends Moment {
    *               data).
    */
   def apply[V](name: V, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Moments((StandardDeviation, name), strict, nan)
   }
 }
@@ -183,7 +183,7 @@ object Skewness extends Moment {
   val index = 3
 
   /** Skewness of a distribution. */
-  def apply(): Reducer with Prepare with PresentSingle = Moments(Skewness)
+  def apply(): Aggregator with Prepare with PresentSingle = Moments(Skewness)
 
   /**
    * Skewness of a distribution.
@@ -193,14 +193,14 @@ object Skewness extends Moment {
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
    */
-  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare with PresentSingle = Moments(Skewness, strict, nan)
+  def apply(strict: Boolean, nan: Boolean): Aggregator with Prepare with PresentSingle = Moments(Skewness, strict, nan)
 
   /**
    * Skewness of a distribution.
    *
    * @param name Coordinate name of the computed skewness.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Moments((Skewness, name))
   }
 
@@ -214,7 +214,7 @@ object Skewness extends Moment {
    *               data).
    */
   def apply[V](name: V, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = Moments((Skewness, name), strict, nan)
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = Moments((Skewness, name), strict, nan)
 }
 
 /** Object for computing the kurtosis. */
@@ -222,7 +222,7 @@ object Kurtosis extends Moment {
   val index = 4
 
   /** Kurtosis of a distribution. */
-  def apply(): Reducer with Prepare with PresentSingle = Moments(Kurtosis)
+  def apply(): Aggregator with Prepare with PresentSingle = Moments(Kurtosis)
 
   /**
    * Kurtosis of a distribution.
@@ -232,14 +232,14 @@ object Kurtosis extends Moment {
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
    */
-  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare with PresentSingle = Moments(Kurtosis, strict, nan)
+  def apply(strict: Boolean, nan: Boolean): Aggregator with Prepare with PresentSingle = Moments(Kurtosis, strict, nan)
 
   /**
    * Kurtosis of a distribution.
    *
    * @param name Coordinate name of the computed kurtosis.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Moments((Kurtosis, name))
   }
 
@@ -253,7 +253,7 @@ object Kurtosis extends Moment {
    *               data).
    */
   def apply[V](name: V, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = Moments((Kurtosis, name), strict, nan)
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = Moments((Kurtosis, name), strict, nan)
 }
 
 /**
@@ -266,8 +266,8 @@ object Kurtosis extends Moment {
  * @param moments Subset of moments (1 to 4) to compute together with coordinate name. Names must be provided when
  *                presenting `PresentMultiple`.
  */
-case class Moments private (strict: Boolean, nan: Boolean, moments: List[(Int, Option[Value])]) extends Reducer
-  with Prepare with PresentSingle with PresentMultiple with StrictReduce {
+case class Moments private (strict: Boolean, nan: Boolean, moments: List[(Int, Option[Value])]) extends Aggregator
+  with Prepare with PresentSingle with PresentMultiple with StrictAggregate {
   type T = com.twitter.algebird.Moments
 
   val ct = ClassTag[com.twitter.algebird.Moments](com.twitter.algebird.Moments.getClass)
@@ -308,14 +308,14 @@ case class Moments private (strict: Boolean, nan: Boolean, moments: List[(Int, O
   }
 }
 
-/** Companion object to `Moments` reducer class. */
-object Moments extends DefaultReducerValues {
+/** Companion object to `Moments` aggregator class. */
+object Moments extends DefaultAggregatorValues {
   /**
    * Moment of a distribution.
    *
    * @param moment Moment to compute.
    */
-  def apply(moment: Moment): Reducer with Prepare with PresentSingle = {
+  def apply(moment: Moment): Aggregator with Prepare with PresentSingle = {
     Moments(DefaultStrict, DefaultNaN, List((moment.index, None)))
   }
 
@@ -328,7 +328,7 @@ object Moments extends DefaultReducerValues {
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
    */
-  def apply(moment: Moment, strict: Boolean, nan: Boolean): Reducer with Prepare with PresentSingle = {
+  def apply(moment: Moment, strict: Boolean, nan: Boolean): Aggregator with Prepare with PresentSingle = {
     Moments(strict, nan, List((moment.index, None)))
   }
 
@@ -337,7 +337,8 @@ object Moments extends DefaultReducerValues {
    *
    * @param moment1 Tuple of moment to compute togeter with the name of the coordinate.
    */
-  def apply[M <: Moment, T](moment1: (M, T))(implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
+  def apply[M <: Moment, T](moment1: (M, T))(
+    implicit ev1: Valueable[T]): Aggregator with Prepare with PresentMultiple = {
     Moments(DefaultStrict, DefaultNaN, List((moment1._1.index, Some(ev1.convert(moment1._2)))))
   }
 
@@ -348,7 +349,7 @@ object Moments extends DefaultReducerValues {
    * @param moment2 Second tuple of moment to compute togeter with the name of the coordinate.
    */
   def apply[M <: Moment, N <: Moment, T, U](moment1: (M, T), moment2: (N, U))(implicit ev1: Valueable[T],
-    ev2: Valueable[U], ne1: M =!= N): Reducer with Prepare with PresentMultiple = {
+    ev2: Valueable[U], ne1: M =!= N): Aggregator with Prepare with PresentMultiple = {
     Moments(DefaultStrict, DefaultNaN, List((moment1._1.index, Some(ev1.convert(moment1._2))),
       (moment2._1.index, Some(ev2.convert(moment2._2)))))
   }
@@ -362,7 +363,7 @@ object Moments extends DefaultReducerValues {
    */
   def apply[M <: Moment, N <: Moment, O <: Moment, T, U, V](moment1: (M, T), moment2: (N, U), moment3: (O, V))(
     implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V], ne1: M =!= N, ne2: M =!= O,
-    ne3: N =!= O): Reducer with Prepare with PresentMultiple = {
+      ne3: N =!= O): Aggregator with Prepare with PresentMultiple = {
     Moments(DefaultStrict, DefaultNaN, List((moment1._1.index, Some(ev1.convert(moment1._2))),
       (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2)))))
   }
@@ -377,8 +378,8 @@ object Moments extends DefaultReducerValues {
    */
   def apply[M <: Moment, N <: Moment, O <: Moment, P <: Moment, T, U, V, S](moment1: (M, T), moment2: (N, U),
     moment3: (O, V), moment4: (P, S))(implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V],
-      ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
-      ne6: O =!= P): Reducer with Prepare with PresentMultiple = {
+    ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
+      ne6: O =!= P): Aggregator with Prepare with PresentMultiple = {
     Moments(DefaultStrict, DefaultNaN, List((moment1._1.index, Some(ev1.convert(moment1._2))),
       (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2))),
       (moment4._1.index, Some(ev4.convert(moment4._2)))))
@@ -394,7 +395,7 @@ object Moments extends DefaultReducerValues {
    *                data).
    */
   def apply[M <: Moment, T](moment1: (M, T), strict: Boolean, nan: Boolean)(
-    implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
+    implicit ev1: Valueable[T]): Aggregator with Prepare with PresentMultiple = {
     Moments(strict, nan, List((moment1._1.index, Some(ev1.convert(moment1._2)))))
   }
 
@@ -409,7 +410,7 @@ object Moments extends DefaultReducerValues {
    *                data).
    */
   def apply[M <: Moment, N <: Moment, T, U](moment1: (M, T), moment2: (N, U), strict: Boolean, nan: Boolean)(
-    implicit ev1: Valueable[T], ev2: Valueable[U], ne1: M =!= N): Reducer with Prepare with PresentMultiple = {
+    implicit ev1: Valueable[T], ev2: Valueable[U], ne1: M =!= N): Aggregator with Prepare with PresentMultiple = {
     Moments(strict, nan, List((moment1._1.index, Some(ev1.convert(moment1._2))),
       (moment2._1.index, Some(ev2.convert(moment2._2)))))
   }
@@ -427,7 +428,7 @@ object Moments extends DefaultReducerValues {
    */
   def apply[M <: Moment, N <: Moment, O <: Moment, T, U, V](moment1: (M, T), moment2: (N, U), moment3: (O, V),
     strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V], ne1: M =!= N,
-      ne2: M =!= O, ne3: N =!= O): Reducer with Prepare with PresentMultiple = {
+      ne2: M =!= O, ne3: N =!= O): Aggregator with Prepare with PresentMultiple = {
     Moments(strict, nan, List((moment1._1.index, Some(ev1.convert(moment1._2))),
       (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2)))))
   }
@@ -446,8 +447,8 @@ object Moments extends DefaultReducerValues {
    */
   def apply[M <: Moment, N <: Moment, O <: Moment, P <: Moment, T, U, V, S](moment1: (M, T), moment2: (N, U),
     moment3: (O, V), moment4: (P, S), strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T], ev2: Valueable[U],
-      ev3: Valueable[V], ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
-      ne6: O =!= P): Reducer with Prepare with PresentMultiple = {
+    ev3: Valueable[V], ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
+      ne6: O =!= P): Aggregator with Prepare with PresentMultiple = {
     Moments(strict, nan, List((moment1._1.index, Some(ev1.convert(moment1._2))),
       (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2))),
       (moment4._1.index, Some(ev4.convert(moment4._2)))))
@@ -458,7 +459,7 @@ object Moments extends DefaultReducerValues {
    *
    * @param mean Name of the coordinate of the mean.
    */
-  def apply[T](mean: T)(implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
+  def apply[T](mean: T)(implicit ev1: Valueable[T]): Aggregator with Prepare with PresentMultiple = {
     Moments(DefaultStrict, DefaultNaN, List((Mean.index, Some(ev1.convert(mean)))))
   }
 
@@ -469,7 +470,7 @@ object Moments extends DefaultReducerValues {
    * @param sd   Name of the coordinate of the standard deviation.
    */
   def apply[T, U](mean: T, sd: U)(implicit ev1: Valueable[T],
-    ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
+    ev2: Valueable[U]): Aggregator with Prepare with PresentMultiple = {
     Moments(DefaultStrict, DefaultNaN, List((Mean.index, Some(ev1.convert(mean))),
       (StandardDeviation.index, Some(ev2.convert(sd)))))
   }
@@ -482,7 +483,7 @@ object Moments extends DefaultReducerValues {
    * @param skewness Name of the coordinate of the skewness.
    */
   def apply[T, U, V](mean: T, sd: U, skewness: V)(implicit ev1: Valueable[T], ev2: Valueable[U],
-    ev3: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    ev3: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Moments(DefaultStrict, DefaultNaN, List((Mean.index, Some(ev1.convert(mean))),
       (StandardDeviation.index, Some(ev2.convert(sd))), (Skewness.index, Some(ev3.convert(skewness)))))
   }
@@ -496,7 +497,7 @@ object Moments extends DefaultReducerValues {
    * @param kurtosis Name of the coordinate of the kurtosis.
    */
   def apply[T, U, V, W](mean: T, sd: U, skewness: V, kurtosis: W)(implicit ev1: Valueable[T], ev2: Valueable[U],
-    ev3: Valueable[V], ev4: Valueable[W]): Reducer with Prepare with PresentMultiple = {
+    ev3: Valueable[V], ev4: Valueable[W]): Aggregator with Prepare with PresentMultiple = {
     Moments(DefaultStrict, DefaultNaN, List((Mean.index, Some(ev1.convert(mean))),
       (StandardDeviation.index, Some(ev2.convert(sd))), (Skewness.index, Some(ev3.convert(skewness))),
       (Kurtosis.index, Some(ev4.convert(kurtosis)))))
@@ -512,7 +513,7 @@ object Moments extends DefaultReducerValues {
    *               data).
    */
   def apply[T](mean: T, strict: Boolean, nan: Boolean)(
-    implicit ev1: Valueable[T]): Reducer with Prepare with PresentMultiple = {
+    implicit ev1: Valueable[T]): Aggregator with Prepare with PresentMultiple = {
     Moments(strict, nan, List((Mean.index, Some(ev1.convert(mean)))))
   }
 
@@ -527,7 +528,7 @@ object Moments extends DefaultReducerValues {
    *               data).
    */
   def apply[T, U](mean: T, sd: U, strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T],
-    ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
+    ev2: Valueable[U]): Aggregator with Prepare with PresentMultiple = {
     Moments(strict, nan, List((Mean.index, Some(ev1.convert(mean))), (StandardDeviation.index, Some(ev2.convert(sd)))))
   }
 
@@ -543,7 +544,7 @@ object Moments extends DefaultReducerValues {
    *                 data).
    */
   def apply[T, U, V](mean: T, sd: U, skewness: V, strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T],
-    ev2: Valueable[U], ev3: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    ev2: Valueable[U], ev3: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Moments(strict, nan, List((Mean.index, Some(ev1.convert(mean))), (StandardDeviation.index, Some(ev2.convert(sd))),
       (Skewness.index, Some(ev3.convert(skewness)))))
   }
@@ -562,14 +563,14 @@ object Moments extends DefaultReducerValues {
    */
   def apply[T, U, V, W](mean: T, sd: U, skewness: V, kurtosis: W, strict: Boolean, nan: Boolean)(
     implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V],
-    ev4: Valueable[W]): Reducer with Prepare with PresentMultiple = {
+    ev4: Valueable[W]): Aggregator with Prepare with PresentMultiple = {
     Moments(strict, nan, List((Mean.index, Some(ev1.convert(mean))), (StandardDeviation.index, Some(ev2.convert(sd))),
       (Skewness.index, Some(ev3.convert(skewness))), (Kurtosis.index, Some(ev4.convert(kurtosis)))))
   }
 }
 
-/** Base trait for reducers that return a `Double` value. */
-trait DoubleReducer extends Reducer with Prepare with PresentSingleAndMultiple with StrictReduce {
+/** Base trait for aggregator that return a `Double` value. */
+trait DoubleAggregator extends Aggregator with Prepare with PresentSingleAndMultiple with StrictAggregate {
   type T = Double
 
   val ct = ClassTag[Double](Double.getClass)
@@ -589,14 +590,14 @@ trait DoubleReducer extends Reducer with Prepare with PresentSingleAndMultiple w
 }
 
 /** Minimum value reduction. */
-case class Min private (strict: Boolean, nan: Boolean, name: Option[Value]) extends DoubleReducer {
+case class Min private (strict: Boolean, nan: Boolean, name: Option[Value]) extends DoubleAggregator {
   protected def reduction(lt: T, rt: T): T = math.min(lt, rt)
 }
 
-/** Companion object to `Min` reducer class. */
-object Min extends DefaultReducerValues {
+/** Companion object to `Min` aggregator class. */
+object Min extends DefaultAggregatorValues {
   /** Minimum value reduction. */
-  def apply(): Reducer with Prepare with PresentSingle = Min(DefaultStrict, DefaultNaN, None)
+  def apply(): Aggregator with Prepare with PresentSingle = Min(DefaultStrict, DefaultNaN, None)
 
   /**
    * Minimum value reduction.
@@ -606,14 +607,14 @@ object Min extends DefaultReducerValues {
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
    */
-  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare with PresentSingle = Min(strict, nan, None)
+  def apply(strict: Boolean, nan: Boolean): Aggregator with Prepare with PresentSingle = Min(strict, nan, None)
 
   /**
    * Minimum value reduction.
    *
    * @param name Coordinate name of the computed minimum.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Min(DefaultStrict, DefaultNaN, Some(ev.convert(name)))
   }
 
@@ -627,18 +628,18 @@ object Min extends DefaultReducerValues {
    *               data).
    */
   def apply[V](name: V, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = Min(strict, nan, Some(ev.convert(name)))
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = Min(strict, nan, Some(ev.convert(name)))
 }
 
 /** Maximum value reduction. */
-case class Max private (strict: Boolean, nan: Boolean, name: Option[Value]) extends DoubleReducer {
+case class Max private (strict: Boolean, nan: Boolean, name: Option[Value]) extends DoubleAggregator {
   protected def reduction(lt: T, rt: T): T = math.max(lt, rt)
 }
 
-/** Companion object to `Max` reducer class. */
-object Max extends DefaultReducerValues {
+/** Companion object to `Max` aggregator class. */
+object Max extends DefaultAggregatorValues {
   /** Maximum value reduction. */
-  def apply(): Reducer with Prepare with PresentSingle = Max(DefaultStrict, DefaultNaN, None)
+  def apply(): Aggregator with Prepare with PresentSingle = Max(DefaultStrict, DefaultNaN, None)
 
   /**
    * Maximum value reduction.
@@ -648,14 +649,14 @@ object Max extends DefaultReducerValues {
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
    */
-  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare with PresentSingle = Max(strict, nan, None)
+  def apply(strict: Boolean, nan: Boolean): Aggregator with Prepare with PresentSingle = Max(strict, nan, None)
 
   /**
    * Maximum value reduction.
    *
    * @param name Coordinate name of the computed maximum.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Max(DefaultStrict, DefaultNaN, Some(ev.convert(name)))
   }
 
@@ -669,18 +670,18 @@ object Max extends DefaultReducerValues {
    *               data).
    */
   def apply[V](name: V, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = Max(strict, nan, Some(ev.convert(name)))
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = Max(strict, nan, Some(ev.convert(name)))
 }
 
 /** Maximum absolute value reduction. */
-case class MaxAbs private (strict: Boolean, nan: Boolean, name: Option[Value]) extends DoubleReducer {
+case class MaxAbs private (strict: Boolean, nan: Boolean, name: Option[Value]) extends DoubleAggregator {
   protected def reduction(lt: T, rt: T): T = math.max(math.abs(lt), math.abs(rt))
 }
 
-/** Companion object to `MaxAbs` reducer class. */
-object MaxAbs extends DefaultReducerValues {
+/** Companion object to `MaxAbs` aggregator class. */
+object MaxAbs extends DefaultAggregatorValues {
   /** Maximum absolute value reduction. */
-  def apply(): Reducer with Prepare with PresentSingle = MaxAbs(DefaultStrict, DefaultNaN, None)
+  def apply(): Aggregator with Prepare with PresentSingle = MaxAbs(DefaultStrict, DefaultNaN, None)
 
   /**
    * Maximum absolute value reduction.
@@ -690,14 +691,14 @@ object MaxAbs extends DefaultReducerValues {
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
    */
-  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare with PresentSingle = MaxAbs(strict, nan, None)
+  def apply(strict: Boolean, nan: Boolean): Aggregator with Prepare with PresentSingle = MaxAbs(strict, nan, None)
 
   /**
    * Maximum absolute value reduction.
    *
    * @param name Coordinate name of the computed absolute maximum.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     MaxAbs(DefaultStrict, DefaultNaN, Some(ev.convert(name)))
   }
 
@@ -711,18 +712,20 @@ object MaxAbs extends DefaultReducerValues {
    *               data).
    */
   def apply[V](name: V, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = MaxAbs(strict, nan, Some(ev.convert(name)))
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
+    MaxAbs(strict, nan, Some(ev.convert(name)))
+  }
 }
 
 /** Sum value reduction. */
-case class Sum private (strict: Boolean, nan: Boolean, name: Option[Value]) extends DoubleReducer {
+case class Sum private (strict: Boolean, nan: Boolean, name: Option[Value]) extends DoubleAggregator {
   protected def reduction(lt: T, rt: T): T = lt + rt
 }
 
-/** Companion object to `Sum` reducer class. */
-object Sum extends DefaultReducerValues {
+/** Companion object to `Sum` aggregator class. */
+object Sum extends DefaultAggregatorValues {
   /** Sum value reduction. */
-  def apply(): Reducer with Prepare with PresentSingle = Sum(DefaultStrict, DefaultNaN, None)
+  def apply(): Aggregator with Prepare with PresentSingle = Sum(DefaultStrict, DefaultNaN, None)
 
   /**
    * Sum value reduction.
@@ -732,14 +735,14 @@ object Sum extends DefaultReducerValues {
    * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
    *               data).
    */
-  def apply(strict: Boolean, nan: Boolean): Reducer with Prepare with PresentSingle = Sum(strict, nan, None)
+  def apply(strict: Boolean, nan: Boolean): Aggregator with Prepare with PresentSingle = Sum(strict, nan, None)
 
   /**
    * Sum value reduction.
    *
    * @param name Coordinate name of the computed sum.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Sum(DefaultStrict, DefaultNaN, Some(ev.convert(name)))
   }
 
@@ -753,12 +756,12 @@ object Sum extends DefaultReducerValues {
    *               data).
    */
   def apply[V](name: V, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = Sum(strict, nan, Some(ev.convert(name)))
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = Sum(strict, nan, Some(ev.convert(name)))
 }
 
-/** Trait for reducers that require counts of all unique elements. */
-trait ElementCounts { self: Reducer with Prepare with StrictReduce =>
-  /** Type of the state being reduced (aggregated). */
+/** Trait for aggregators that require counts of all unique elements. */
+trait ElementCounts { self: Aggregator with Prepare with StrictAggregate =>
+  /** Type of the state being aggregated. */
   type T = Option[Map[String, Long]]
 
   /** Serialisation ClassTag for state `T`. */
@@ -770,8 +773,8 @@ trait ElementCounts { self: Reducer with Prepare with StrictReduce =>
   /**
    * Prepare for reduction.
    *
-   * @param slice Encapsulates the dimension(s) over with to reduce.
-   * @param cell  Cell which is to be reduced. Note that its position is prior to `slice.selected` being applied.
+   * @param slice Encapsulates the dimension(s) over with to aggregate.
+   * @param cell  Cell which is to be aggregated. Note that its position is prior to `slice.selected` being applied.
    *
    * @return State to reduce.
    */
@@ -806,8 +809,8 @@ trait ElementCounts { self: Reducer with Prepare with StrictReduce =>
  */
 // TODO: Add option to limit maximum number of categories
 case class Histogram private (strict: Boolean, all: Option[Type], frequency: Boolean,
-  statistics: List[Histogram.Statistic], name: String, separator: String) extends Reducer with Prepare
-  with PresentMultiple with StrictReduce with ElementCounts {
+  statistics: List[Histogram.Statistic], name: String, separator: String) extends Aggregator with Prepare
+  with PresentMultiple with StrictAggregate with ElementCounts {
   def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
     Collection(t.map {
       case m =>
@@ -826,8 +829,8 @@ case class Histogram private (strict: Boolean, all: Option[Type], frequency: Boo
   }
 }
 
-/** Companion object to `Histogram` reducer class. */
-object Histogram extends DefaultReducerValues {
+/** Companion object to `Histogram` aggregator class. */
+object Histogram extends DefaultAggregatorValues {
   /** Default value for the variable type the content must adhere to. */
   val DefaultAll: Option[Type] = Some(Categorical)
 
@@ -856,7 +859,7 @@ object Histogram extends DefaultReducerValues {
    * @param name Name pattern for the histogram bin names. Use `%[12]$``s` for the string representations of the
    *             position, and the content.
    */
-  def apply(name: String): Reducer with Prepare with PresentMultiple = {
+  def apply(name: String): Aggregator with Prepare with PresentMultiple = {
     Histogram(DefaultStrict, DefaultAll, DefaultFrequency, List(), name, DefaultSeparator)
   }
 
@@ -867,7 +870,7 @@ object Histogram extends DefaultReducerValues {
    *                  position, and the content.
    * @param separator The separator used in `pos.toShortString`.
    */
-  def apply(name: String, separator: String): Reducer with Prepare with PresentMultiple = {
+  def apply(name: String, separator: String): Aggregator with Prepare with PresentMultiple = {
     Histogram(DefaultStrict, DefaultAll, DefaultFrequency, List(), name, separator)
   }
 
@@ -882,7 +885,7 @@ object Histogram extends DefaultReducerValues {
    * @param frequency Indicator if categories should be returned as frequency or as distribution.
    */
   def apply(name: String, strict: Boolean, all: Boolean,
-    frequency: Boolean): Reducer with Prepare with PresentMultiple = {
+    frequency: Boolean): Aggregator with Prepare with PresentMultiple = {
     Histogram(strict, if (all) None else DefaultAll, frequency, List(), name, DefaultSeparator)
   }
 
@@ -898,7 +901,7 @@ object Histogram extends DefaultReducerValues {
    * @param separator The separator used in `pos.toShortString`.
    */
   def apply(name: String, strict: Boolean, all: Boolean, frequency: Boolean,
-    separator: String): Reducer with Prepare with PresentMultiple = {
+    separator: String): Aggregator with Prepare with PresentMultiple = {
     Histogram(strict, if (all) None else DefaultAll, frequency, List(), name, separator)
   }
 
@@ -909,7 +912,7 @@ object Histogram extends DefaultReducerValues {
    *                   position, and the content.
    * @param statistics List of statistics to compute on the histogram.
    */
-  def apply(name: String, statistics: List[Statistic]): Reducer with Prepare with PresentMultiple = {
+  def apply(name: String, statistics: List[Statistic]): Aggregator with Prepare with PresentMultiple = {
     Histogram(DefaultStrict, DefaultAll, DefaultFrequency, statistics, name, DefaultSeparator)
   }
 
@@ -921,7 +924,8 @@ object Histogram extends DefaultReducerValues {
    * @param statistics List of statistics to compute on the histogram.
    * @param separator  The separator used in `pos.toShortString`.
    */
-  def apply(name: String, statistics: List[Statistic], separator: String): Reducer with Prepare with PresentMultiple = {
+  def apply(name: String, statistics: List[Statistic],
+    separator: String): Aggregator with Prepare with PresentMultiple = {
     Histogram(DefaultStrict, DefaultAll, DefaultFrequency, statistics, name, separator)
   }
 
@@ -937,7 +941,7 @@ object Histogram extends DefaultReducerValues {
    * @param frequency  Indicator if categories should be returned as frequency or as distribution.
    */
   def apply(name: String, statistics: List[Statistic], strict: Boolean, all: Boolean,
-    frequency: Boolean): Reducer with Prepare with PresentMultiple = {
+    frequency: Boolean): Aggregator with Prepare with PresentMultiple = {
     Histogram(strict, if (all) None else DefaultAll, frequency, statistics, name, DefaultSeparator)
   }
 
@@ -954,7 +958,7 @@ object Histogram extends DefaultReducerValues {
    * @param separator  The separator used in `pos.toShortString`.
    */
   def apply(name: String, statistics: List[Statistic], strict: Boolean, all: Boolean, frequency: Boolean,
-    separator: String): Reducer with Prepare with PresentMultiple = {
+    separator: String): Aggregator with Prepare with PresentMultiple = {
     Histogram(strict, if (all) None else DefaultAll, frequency, statistics, name, separator)
   }
 
@@ -1025,7 +1029,7 @@ object Histogram extends DefaultReducerValues {
  * @param names     Coordinate names of the counts. Names must be provided when presenting `PresentMultiple`.
  */
 case class ThresholdCount private (strict: Boolean, nan: Boolean, threshold: Double, names: List[Value])
-  extends Reducer with Prepare with PresentMultiple with StrictReduce {
+  extends Aggregator with Prepare with PresentMultiple with StrictAggregate {
   type T = (Long, Long) // (leq, gtr)
 
   val ct = ClassTag[(Long, Long)]((Long, Long).getClass)
@@ -1055,8 +1059,8 @@ case class ThresholdCount private (strict: Boolean, nan: Boolean, threshold: Dou
   }
 }
 
-/** Companion object to `ThresholdCount` reducer class. */
-object ThresholdCount extends DefaultReducerValues {
+/** Companion object to `ThresholdCount` aggregator class. */
+object ThresholdCount extends DefaultAggregatorValues {
   /** Default threshold value. */
   val DefaultThreshold: Double = 0
 
@@ -1067,7 +1071,7 @@ object ThresholdCount extends DefaultReducerValues {
    * @param gtr Name for the coordinate of the greater-than value.
    */
   def apply[T, U](leq: T, gtr: U)(implicit ev1: Valueable[T],
-    ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
+    ev2: Valueable[U]): Aggregator with Prepare with PresentMultiple = {
     ThresholdCount(DefaultStrict, DefaultNaN, DefaultThreshold, List(ev1.convert(leq), ev2.convert(gtr)))
   }
 
@@ -1082,7 +1086,7 @@ object ThresholdCount extends DefaultReducerValues {
    *               data).
    */
   def apply[T, U](leq: T, gtr: U, strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T],
-    ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
+    ev2: Valueable[U]): Aggregator with Prepare with PresentMultiple = {
     ThresholdCount(strict, nan, DefaultThreshold, List(ev1.convert(leq), ev2.convert(gtr)))
   }
 
@@ -1094,7 +1098,7 @@ object ThresholdCount extends DefaultReducerValues {
    * @param threshold The threshold value.
    */
   def apply[T, U](leq: T, gtr: U, threshold: Double)(implicit ev1: Valueable[T],
-    ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
+    ev2: Valueable[U]): Aggregator with Prepare with PresentMultiple = {
     ThresholdCount(DefaultStrict, DefaultNaN, threshold, List(ev1.convert(leq), ev2.convert(gtr)))
   }
 
@@ -1110,7 +1114,7 @@ object ThresholdCount extends DefaultReducerValues {
    * @param threshold The threshold value.
    */
   def apply[T, U](leq: T, gtr: U, strict: Boolean, nan: Boolean, threshold: Double)(implicit ev1: Valueable[T],
-    ev2: Valueable[U]): Reducer with Prepare with PresentMultiple = {
+    ev2: Valueable[U]): Aggregator with Prepare with PresentMultiple = {
     ThresholdCount(strict, nan, threshold, List(ev1.convert(leq), ev2.convert(gtr)))
   }
 }
@@ -1130,8 +1134,8 @@ object ThresholdCount extends DefaultReducerValues {
  * @note The `Position1D` in the `type V` must all be `StringValue` if a format is used.
  */
 case class WeightedSum private (dim: Dimension, strict: Boolean, nan: Boolean, format: Option[String],
-  name: Option[Value]) extends Reducer
-  with PrepareWithValue with PresentSingleAndMultiple with StrictReduce {
+  name: Option[Value]) extends Aggregator
+  with PrepareWithValue with PresentSingleAndMultiple with StrictAggregate {
   type T = Double
 
   val ct = ClassTag[Double](Double.getClass)
@@ -1162,14 +1166,14 @@ case class WeightedSum private (dim: Dimension, strict: Boolean, nan: Boolean, f
   }
 }
 
-/** Companion object to `WeightedSum` reducer class. */
-object WeightedSum extends DefaultReducerValues {
+/** Companion object to `WeightedSum` aggregator class. */
+object WeightedSum extends DefaultAggregatorValues {
   /**
    * Weighted sum reduction. This is particularly useful for scoring linear models.
    *
    * @param dim Dimension for for which to create weigthed variables.
    */
-  def apply(dim: Dimension): Reducer with PrepareWithValue with PresentSingle { type V = WeightedSum#V } = {
+  def apply(dim: Dimension): Aggregator with PrepareWithValue with PresentSingle { type V = WeightedSum#V } = {
     WeightedSum(dim, DefaultStrict, DefaultNaN, None, None)
   }
 
@@ -1183,7 +1187,7 @@ object WeightedSum extends DefaultReducerValues {
    *               data).
    */
   def apply(dim: Dimension, strict: Boolean,
-    nan: Boolean): Reducer with PrepareWithValue with PresentSingle { type V = WeightedSum#V } = {
+    nan: Boolean): Aggregator with PrepareWithValue with PresentSingle { type V = WeightedSum#V } = {
     WeightedSum(dim, strict, nan, None, None)
   }
 
@@ -1194,7 +1198,7 @@ object WeightedSum extends DefaultReducerValues {
    * @param name Coordinate name of the computed weighted sum.
    */
   def apply[V](dim: Dimension, name: V)(
-    implicit ev: Valueable[V]): Reducer with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
     WeightedSum(dim, DefaultStrict, DefaultNaN, None, Some(ev.convert(name)))
   }
 
@@ -1209,7 +1213,7 @@ object WeightedSum extends DefaultReducerValues {
    *               data).
    */
   def apply[V](dim: Dimension, name: V, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Reducer with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
     WeightedSum(dim, strict, nan, None, Some(ev.convert(name)))
   }
 
@@ -1224,7 +1228,7 @@ object WeightedSum extends DefaultReducerValues {
    * @note The `Position1D` in the `type V` must all be `StringValue`.
    */
   def apply[V](dim: Dimension, name: V, format: String)(
-    implicit ev: Valueable[V]): Reducer with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
     WeightedSum(dim, DefaultStrict, DefaultNaN, Some(format), Some(ev.convert(name)))
   }
 
@@ -1243,7 +1247,7 @@ object WeightedSum extends DefaultReducerValues {
    * @note The `Position1D` in the `type V` must all be `StringValue`.
    */
   def apply[V](dim: Dimension, name: V, format: String, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Reducer with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
     WeightedSum(dim, strict, nan, Some(format), Some(ev.convert(name)))
   }
 }
@@ -1253,7 +1257,7 @@ object WeightedSum extends DefaultReducerValues {
  *
  * @param name Optional coordinate name for the count value. Name must be provided when presenting `PresentMultiple`.
  */
-case class DistinctCount private (name: Option[Value]) extends Reducer with Prepare with PresentSingleAndMultiple {
+case class DistinctCount private (name: Option[Value]) extends Aggregator with Prepare with PresentSingleAndMultiple {
   type T = Set[Value]
 
   val ct = ClassTag[Set[Value]](Set.getClass)
@@ -1265,17 +1269,17 @@ case class DistinctCount private (name: Option[Value]) extends Reducer with Prep
   protected def content(t: T): Option[Content] = Some(Content(DiscreteSchema[Codex.LongCodex](), t.size))
 }
 
-/** Companion object to `DistinctCount` reducer class. */
+/** Companion object to `DistinctCount` aggregator class. */
 object DistinctCount {
   /** Distinct count reductions. */
-  def apply(): Reducer with Prepare with PresentSingle = DistinctCount(None)
+  def apply(): Aggregator with Prepare with PresentSingle = DistinctCount(None)
 
   /**
    * Distinct count reductions.
    *
    * @param name Coordinate name for the count values.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     DistinctCount(Some(ev.convert(name)))
   }
 }
@@ -1289,8 +1293,8 @@ object DistinctCount {
  * @param name      Name format for the quantiles. Usage of a `%1$``d` in the name will be substituded with percentile
  *                  index, while `%2$``f` will be substituted by the percentage.
  */
-case class Quantiles(quantiles: Int, strict: Boolean = true, name: String = "quantile.%1$d=%2$2.3f") extends Reducer
-  with Prepare with PresentMultiple with StrictReduce {
+case class Quantiles(quantiles: Int, strict: Boolean = true, name: String = "quantile.%1$d=%2$2.3f") extends Aggregator
+  with Prepare with PresentMultiple with StrictAggregate {
   type T = Option[Map[Double, Long]]
 
   val ct = ClassTag[Option[Map[Double, Long]]](Option.getClass)
@@ -1345,7 +1349,7 @@ case class Quantiles(quantiles: Int, strict: Boolean = true, name: String = "qua
  * @param log        The log function to use.
  */
 case class Entropy private (strict: Boolean, nan: Boolean, all: Option[Type], negate: Boolean, name: Option[Value],
-  log: (Double) => Double) extends Reducer with Prepare with PresentSingleAndMultiple with StrictReduce
+  log: (Double) => Double) extends Aggregator with Prepare with PresentSingleAndMultiple with StrictAggregate
   with ElementCounts {
 
   protected def content(t: T): Option[Content] = {
@@ -1359,8 +1363,8 @@ case class Entropy private (strict: Boolean, nan: Boolean, all: Option[Type], ne
   }
 }
 
-/** Companion object to `Entropy` reducer class. */
-object Entropy extends DefaultReducerValues {
+/** Companion object to `Entropy` aggregator class. */
+object Entropy extends DefaultAggregatorValues {
   /** Default value for negative entropy. */
   val DefaultNegate: Boolean = false
 
@@ -1395,7 +1399,7 @@ object Entropy extends DefaultReducerValues {
   }
 
   /** Compute entropy. */
-  def apply(): Reducer with Prepare with PresentSingle = {
+  def apply(): Aggregator with Prepare with PresentSingle = {
     Entropy(DefaultStrict, DefaultNaN, DefaultAll, DefaultNegate, None, DefaultLog())
   }
 
@@ -1409,7 +1413,8 @@ object Entropy extends DefaultReducerValues {
    * @param all    Indicator if histogram should apply to all data, or only to categorical variables.
    * @param negate Indicator if negative entropy should be returned.
    */
-  def apply(strict: Boolean, nan: Boolean, all: Boolean, negate: Boolean): Reducer with Prepare with PresentSingle = {
+  def apply(strict: Boolean, nan: Boolean, all: Boolean,
+    negate: Boolean): Aggregator with Prepare with PresentSingle = {
     Entropy(strict, nan, if (all) None else DefaultAll, negate, None, DefaultLog())
   }
 
@@ -1418,7 +1423,7 @@ object Entropy extends DefaultReducerValues {
    *
    * @param log The log function to use.
    */
-  def apply(log: (Double) => Double): Reducer with Prepare with PresentSingle = {
+  def apply(log: (Double) => Double): Aggregator with Prepare with PresentSingle = {
     Entropy(DefaultStrict, DefaultNaN, DefaultAll, DefaultNegate, None, log)
   }
 
@@ -1434,7 +1439,7 @@ object Entropy extends DefaultReducerValues {
    * @param log    The log function to use.
    */
   def apply(strict: Boolean, nan: Boolean, all: Boolean, negate: Boolean,
-    log: (Double) => Double): Reducer with Prepare with PresentSingle = {
+    log: (Double) => Double): Aggregator with Prepare with PresentSingle = {
     Entropy(strict, nan, if (all) None else DefaultAll, negate, None, log)
   }
 
@@ -1443,7 +1448,7 @@ object Entropy extends DefaultReducerValues {
    *
    * @param name Coordinate name for the entropy value. Name must be provided when presenting `PresentMultiple`.
    */
-  def apply[V](name: V)(implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+  def apply[V](name: V)(implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Entropy(DefaultStrict, DefaultNaN, DefaultAll, DefaultNegate, Some(ev.convert(name)), DefaultLog)
   }
 
@@ -1459,7 +1464,7 @@ object Entropy extends DefaultReducerValues {
    * @param negate Indicator if negative entropy should be returned.
    */
   def apply[V](name: V, strict: Boolean, nan: Boolean, all: Boolean, negate: Boolean)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Entropy(strict, nan, if (all) None else DefaultAll, negate, Some(ev.convert(name)), DefaultLog)
   }
 
@@ -1470,7 +1475,7 @@ object Entropy extends DefaultReducerValues {
    * @param log  The log function to use.
    */
   def apply[V](name: V, log: (Double) => Double)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Entropy(DefaultStrict, DefaultNaN, DefaultAll, DefaultNegate, Some(ev.convert(name)), log)
   }
 
@@ -1487,7 +1492,7 @@ object Entropy extends DefaultReducerValues {
    * @param log    The log function to use.
    */
   def apply[V](name: V, strict: Boolean, nan: Boolean, all: Boolean, negate: Boolean, log: (Double) => Double)(
-    implicit ev: Valueable[V]): Reducer with Prepare with PresentMultiple = {
+    implicit ev: Valueable[V]): Aggregator with Prepare with PresentMultiple = {
     Entropy(strict, nan, if (all) None else DefaultAll, negate, Some(ev.convert(name)), log)
   }
 }

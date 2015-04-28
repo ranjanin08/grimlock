@@ -17,17 +17,17 @@ package au.com.cba.omnia.grimlock.spark.examples
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.derive._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.window._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
 
 import org.apache.spark.{ SparkConf, SparkContext }
 
 // Simple gradient feature genertor
-case class Gradient(dim: Dimension) extends Deriver with Initialise {
+case class Gradient(dim: Dimension) extends Windower with Initialise {
   type T = Cell[Position]
 
   // Initialise state to the remainder coordinates (contains the date) and the content.
@@ -68,8 +68,9 @@ object DerivedData {
     // Define implicit context for reading.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
-    // Path to data files
+    // Path to data files, output folder
     val path = if (args.length > 1) args(1) else "../../data"
+    val output = "spark"
 
     // Generate gradient features:
     // 1/ Read the data as 3D matrix (instance x feature x date).
@@ -77,10 +78,10 @@ object DerivedData {
     // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
     //    feature.from.gradient)
     // 4/ Persist 2D gradient features.
-    read3D(path + "/exampleDerived.txt", third=DateCodex)
-      .derive(Along(Third), Gradient(First))
+    load3D(s"${path}/exampleDerived.txt", third=DateCodex)
+      .window(Along(Third), Gradient(First))
       .melt(Third, Second, ".from.")
-      .save("./demo.spark/gradient.out")
+      .save(s"./demo.${output}/gradient.out")
   }
 }
 

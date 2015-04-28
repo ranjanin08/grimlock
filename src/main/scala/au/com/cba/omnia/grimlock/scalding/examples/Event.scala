@@ -23,7 +23,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
 import au.com.cba.omnia.grimlock.scalding.Matrix._
@@ -45,7 +45,7 @@ case class ExampleEvent(
 
 object ExampleEvent {
   // Function to read a file with event data.
-  def read(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
+  def load(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
     val es = EventSchema[ExampleEventCodex]()
     TextLine(file)
       .flatMap { case s => es.decode(s).map { case e => Cell(Position1D(es.codex.fromValue(e.value).eventId), e) } }
@@ -136,19 +136,20 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
 // Simple tf-idf example (input data is same as tf-idf example here: http://en.wikipedia.org/wiki/Tf%E2%80%93idf).
 class InstanceCentricTfIdf(args: Args) extends Job(args) {
 
-  // Path to data files
+  // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")
+  val output = "scalding"
 
   // Read event data, then de-normalises the events and return a 2D matrix (event id x instance id).
-  val data = ExampleEvent.read(path + "/exampleEvents.txt")
+  val data = ExampleEvent.load(s"${path}/exampleEvents.txt")
     .transformAndExpand(Denormalise())
 
   // For each event, append the word counts to the 3D matrix. The result is a 3D matrix (event id x instance id x word
-  // count). Then reduce (aggregate) out the event id. The result is a 2D matrix (instance x word count) where the
-  // counts are the sums over all events.
+  // count). Then aggregate out the event id. The result is a 2D matrix (instance x word count) where the counts are
+  // the sums over all events.
   val tf = data
     .transformAndExpand(WordCounts(stopwords=List()))
-    .reduce(Along(First), Sum())
+    .summarise(Along(First), Sum())
 
   // Get the number of instances (i.e. documents)
   val n = tf
@@ -160,7 +161,7 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
   //  2/ Apply Idf transformation (using document count);
   //  3/ Save as Map for use in Tf-Idf below.
   val idf = tf
-    .reduce(Along(First), Count())
+    .summarise(Along(First), Count())
     .transformWithValue(Idf(First, key=First.toString, idf=Idf.Transform(math.log10, 0)), n)
     .toMap(Over(First))
 
@@ -170,8 +171,8 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
   val tfIdf = tf
     //.transform(BooleanTf(Second))
     //.transform(LogarithmicTf(Second))
-    //.transformWithValue(AugmentedTf(First), tf.reduce(Along(Second), Max()).toMap(Over(First)))
+    //.transformWithValue(AugmentedTf(First), tf.summarise(Along(Second), Max()).toMap(Over(First)))
     .transformWithValue(TfIdf(Second), idf)
-    .save("./demo.scalding/tfidf_entity.out")
+    .save(s"./demo.${output}/tfidf_entity.out")
 }
 

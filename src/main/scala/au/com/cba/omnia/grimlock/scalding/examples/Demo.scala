@@ -23,7 +23,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
 import au.com.cba.omnia.grimlock.scalding.Matrix._
@@ -39,36 +39,37 @@ import com.twitter.scalding.typed.TypedPipe
 
 class BasicOperations(args: Args) extends Job(args) {
 
-  // Path to data files
+  // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")
+  val output = "scalding"
 
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = read2D(path + "/exampleInput.txt")
+  val data = load2D(s"${path}/exampleInput.txt")
 
   // Get the number of rows.
   data
     .size(First)
-    .save("./demo.scalding/row_size.out")
+    .save(s"./demo.${output}/row_size.out")
 
   // Get all dimensions of the matrix.
   data
     .shape()
-    .save("./demo.scalding/matrix_shape.out")
+    .save(s"./demo.${output}/matrix_shape.out")
 
   // Get the column names.
   data
     .names(Over(Second))
-    .save("./demo.scalding/column_names.out")
+    .save(s"./demo.${output}/column_names.out")
 
   // Get the type of variables of each column.
   data
     .types(Over(Second), true)
-    .save("./demo.scalding/column_types.txt")
+    .save(s"./demo.${output}/column_types.txt")
 
   // Transpose the matrix.
   data
     .permute(Second, First)
-    .save("./demo.scalding/transposed.out")
+    .save(s"./demo.${output}/transposed.out")
 
   // Construct a simple query
   def simpleQuery(cell: Cell[Position2D]) = (cell.content.value gtr 995) || (cell.content.value equ "F")
@@ -76,27 +77,28 @@ class BasicOperations(args: Args) extends Job(args) {
   // Find all co-ordinates that match the above simple query.
   val coords = data
     .which(simpleQuery)
-    .save("./demo.scalding/query.txt")
+    .save(s"./demo.${output}/query.txt")
 
   // Get the data for the above coordinates.
   data
     .get(coords)
-    .save("./demo.scalding/values.txt")
+    .save(s"./demo.${output}/values.txt")
 
   // Keep columns A and B, and remove row 0221707
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", false)
-    .save("./demo.scalding/sliced.txt")
+    .save(s"./demo.${output}/sliced.txt")
 }
 
 class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
 
-  // Path to data files
+  // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")
+  val output = "scalding"
 
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = read2D(path + "/exampleInput.txt")
+  val data = load2D(s"${path}/exampleInput.txt")
 
   // Define a custom partition. If the instance is 'iid:0364354' or 'iid:0216406' then assign it to the right (test)
   // partition. In all other cases assing it to the left (train) partition.
@@ -129,8 +131,8 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
 
   val stats = parts
     .get("train")
-    .reduceAndExpand(Along(First), statistics)
-    .save("./demo.scalding/stats.out")
+    .summariseAndExpand(Along(First), statistics)
+    .save(s"./demo.${output}/stats.out")
 
   // Determine which features to filter based on statistics. In this case remove all features that occur for 2 or
   // fewer instances. These are removed first to prevent indicator features from being created.
@@ -179,8 +181,8 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
-      //.fillHomogenous(Content(ContinuousSchema[Codex.DoubleCodex], 0))
-      .saveAsCSV(Over(Second), "./demo.scalding/" + key + ".csv")
+      //.fill(Content(ContinuousSchema[Codex.DoubleCodex], 0))
+      .saveAsCSV(Over(Second), s"./demo.${output}/${key}.csv")
   }
 
   // Prepare each partition.
@@ -190,15 +192,16 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
 
 class Scoring(args: Args) extends Job(args) {
 
-  // Path to data files
+  // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")
+  val output = "scalding"
 
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = read2D(path + "/exampleInput.txt")
+  val data = load2D(s"${path}/exampleInput.txt")
   // Read the statistics from the above example.
-  val stats = read2D("./demo.scalding/stats.out").toMap(Over(First))
+  val stats = load2D(s"./demo.${output}/stats.out").toMap(Over(First))
   // Read externally learned weights.
-  val weights = read1D(path + "/exampleWeights.txt").toMap(Over(First))
+  val weights = load1D(s"${path}/exampleWeights.txt").toMap(Over(First))
 
   // For the data do:
   //  1/ Create indicators, binarise categorical, and clamp & standardise numerical features;
@@ -211,17 +214,18 @@ class Scoring(args: Args) extends Job(args) {
 
   data
     .transformWithValue(transforms, stats)
-    .reduceWithValue(Over(First), WeightedSum(Second), weights)
-    .save("./demo.scalding/scores.out")
+    .summariseWithValue(Over(First), WeightedSum(Second), weights)
+    .save(s"./demo.${output}/scores.out")
 }
 
 class DataQualityAndAnalysis(args: Args) extends Job(args) {
 
-  // Path to data files
+  // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")
+  val output = "scalding"
 
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = read2D(path + "/exampleInput.txt")
+  val data = load2D(s"${path}/exampleInput.txt")
 
   // For the instances:
   //  1/ Compute the number of features for each instance;
@@ -229,10 +233,10 @@ class DataQualityAndAnalysis(args: Args) extends Job(args) {
   //  3/ Compute the moments of the counts;
   //  4/ Save the moments.
   data
-    .reduce(Over(First), Count())
-    .save("./demo.scalding/feature_count.out")
-    .reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
-    .save("./demo.scalding/feature_density.out")
+    .summarise(Over(First), Count())
+    .save(s"./demo.${output}/feature_count.out")
+    .summariseAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
+    .save(s"./demo.${output}/feature_density.out")
 
   // For the features:
   //  1/ Compute the number of instance that have a value for each features;
@@ -240,24 +244,25 @@ class DataQualityAndAnalysis(args: Args) extends Job(args) {
   //  3/ Compute the moments of the counts;
   //  4/ Save the moments.
   data
-    .reduce(Over(Second), Count())
-    .save("./demo.scalding/instance_count.out")
-    .reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
-    .save("./demo.scalding/instance_density.out")
+    .summarise(Over(Second), Count())
+    .save(s"./demo.${output}/instance_count.out")
+    .summariseAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
+    .save(s"./demo.${output}/instance_density.out")
 }
 
 class LabelWeighting(args: Args) extends Job(args) {
 
-  // Path to data files
+  // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")
+  val output = "scalding"
 
   // Read labels and melt the date into the instance id to generate a 1D matrix.
-  val labels = read2DWithSchema(path + "/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+  val labels = load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
     .melt(Second, First, ":")
 
   // Compute histogram over the label values.
   val histogram = labels
-    .reduceAndExpand(Along(First), Histogram("%2$s", strict=true, all=true, frequency=true))
+    .summariseAndExpand(Along(First), Histogram("%2$s", strict=true, all=true, frequency=true))
 
   // Compute the total number of labels and store result in a Map.
   val sum = labels
@@ -270,7 +275,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Find the minimum ratio, and store the result as a Map.
   val min = ratio
-    .reduceAndExpand(Along(First), Min("min"))
+    .summariseAndExpand(Along(First), Min("min"))
     .toMap(Over(First))
 
   // Divide the ratio by the minimum ratio, and store the result as a Map.
@@ -290,8 +295,8 @@ class LabelWeighting(args: Args) extends Job(args) {
   }
 
   // Re-read labels and add the computed weight.
-  read2DWithSchema(path + "/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+  load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
     .transformAndExpandWithValue(AddWeight(), weights)
-    .save("./demo.scalding/weighted.out")
+    .save(s"./demo.${output}/weighted.out")
 }
 

@@ -17,17 +17,17 @@ package au.com.cba.omnia.grimlock.scalding.examples
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.derive._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.window._
 
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 
 import com.twitter.scalding.{ Args, Job }
 
 // Simple gradient feature genertor
-case class Gradient(dim: Dimension) extends Deriver with Initialise {
+case class Gradient(dim: Dimension) extends Windower with Initialise {
   type T = Cell[Position]
 
   // Initialise state to the remainder coordinates (contains the date) and the content.
@@ -64,8 +64,9 @@ case class Gradient(dim: Dimension) extends Deriver with Initialise {
 
 class DerivedData(args: Args) extends Job(args) {
 
-  // Path to data files
+  // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")
+  val output = "scalding"
 
   // Generate gradient features:
   // 1/ Read the data as 3D matrix (instance x feature x date).
@@ -73,9 +74,9 @@ class DerivedData(args: Args) extends Job(args) {
   // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
   //    feature.from.gradient)
   // 4/ Persist 2D gradient features.
-  read3D(path + "/exampleDerived.txt", third=DateCodex)
-    .derive(Along(Third), Gradient(First))
+  load3D(s"${path}/exampleDerived.txt", third=DateCodex)
+    .window(Along(Third), Gradient(First))
     .melt(Third, Second, ".from.")
-    .save("./demo.scalding/gradient.out")
+    .save(s"./demo.${output}/gradient.out")
 }
 

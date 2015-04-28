@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.library.derive
+package au.com.cba.omnia.grimlock.library.window
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.derive._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.window._
 
 /** Base trait for computing a moving average. */
-trait MovingAverage { self: Deriver =>
+trait MovingAverage { self: Windower =>
   /** Name pattern for renaming `rem` coordinate. */
   val name: Option[String]
 
@@ -49,7 +49,7 @@ trait MovingAverage { self: Deriver =>
  * Trait for computing moving average in batch mode; that is, keep the last N values and compute the moving average
  * from it.
  */
-trait BatchMovingAverage extends Deriver with Initialise with MovingAverage {
+trait BatchMovingAverage extends Windower with Initialise with MovingAverage {
   type T = (List[(Value, Double)], Option[(Value, Double)])
 
   /** Size of the window. */
@@ -373,7 +373,7 @@ object WeightedMovingAverage {
 }
 
 /** Trait for computing moving average in online mode. */
-trait OnlineMovingAverage extends Deriver with Initialise with MovingAverage {
+trait OnlineMovingAverage extends Windower with Initialise with MovingAverage {
   type T = (Double, Long, Option[(Value, Double)])
 
   /** The dimension in `rem` from which to get the coordinate to append to `sel`. */
@@ -498,7 +498,7 @@ object ExponentialMovingAverage {
 }
 
 // TODO: test, document and add appropriate constructors
-case class CumulativeSum(separator: String = "|") extends Deriver with Initialise {
+case class CumulativeSum(separator: String = "|") extends Windower with Initialise {
   type T = (Option[Double], Option[String])
 
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
@@ -530,7 +530,7 @@ case class CumulativeSum(separator: String = "|") extends Deriver with Initialis
 
 // TODO: test, document and add appropriate constructors
 case class Sliding(f: (Double, Double) => Double, name: String = "f(%1$s, %2$s)",
-  separator: String = "|") extends Deriver with Initialise {
+  separator: String = "|") extends Windower with Initialise {
   type T = (Option[Double], String)
 
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {

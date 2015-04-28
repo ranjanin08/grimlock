@@ -25,7 +25,7 @@ Grimlock has default implementations for many of the above tasks. It also has a 
 * Is easily extensible;
 * Can operate in multiple dimensions (currently up to 5);
 * Supports hetrogeneous data;
-* Can be used in the Scalding REPL (with simple symlink);
+* Can be used in the Scalding/Spark REPL;
 * Supports basic as well as structured data types.
 
 Concepts
@@ -43,7 +43,7 @@ The basic data structure in Grimlock is a N-dimensional sparse __Matrix__ (N=1..
   (Position, Content)
 ```
 
-The position is, essentialy, a list of N coordinates (__Value__). The content consists of a __Schema__ together with a __Value__. The value contains the actual value of the cell, while the schema defines what type of variable is in the cell, and what it's legal values are.
+The position is, essentialy, a list of N coordinates (__Value__). The content consists of a __Schema__ together with a __Value__. The value contains the actual value of the cell, while the schema defines what type of variable is in the cell, and (optionally) what it's legal values are.
 
 ```
    Position              Content
@@ -84,7 +84,7 @@ Grimlock supports performing operations along all directions of the matrix.  Thi
 
 ### Data Format
 
-The basic data format used by Grimlock (though others are supported) is a row-oriented pipe separated file (each row is a single cell). The first N fields are the coordinates, optionally followed by the variable type and codex (again pipe separated). If the variable type and codex are omitted from the data then they have to be provided by a __Dictionary__. The last field of each row is the value.
+The basic data format used by Grimlock (though others are supported) is a column-oriented pipe separated file (each row is a single cell). The first N fields are the coordinates, optionally followed by the variable type and codex (again pipe separated). If the variable type and codex are omitted from the data then they have to be provided by a __Dictionary__. The last field of each row is the value.
 
 In the example below the first field is a coordinate identifying an instance, the second field is a coordinate identifying a feature. The third and fourth columns are the variable type and codex respectively. The last column has the actual value.
 
@@ -177,10 +177,10 @@ When at the Scalding REPL console, the first step is to import Grimlock's functi
 // Entering paste mode (ctrl-D to finish)
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.reduce._
-import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 
 ```
@@ -188,10 +188,10 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 The next step is to read in data (be sure to change <path to> to the correct path to the Grimlock repo):
 
 ```
-scala> val data = read2D("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt")
+scala> val data = load2D("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt")
 ```
 
-The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used in the REPL, use the matrix `save` API for writing to disk:
+The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used in the REPL, use Grimlock's `save` API for writing to disk:
 
 ```
 scala> data.dump
@@ -233,7 +233,7 @@ Position2D(StringValue(iid:0444510),StringValue(fid:D))
 Now for something a little more intersting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
 
 ```
-scala> val counts = data.reduce(Over(First), Count())
+scala> val counts = data.summarise(Over(First), Count())
 
 scala> counts.dump
 Cell(Position1D(StringValue(iid:0064402)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
@@ -246,7 +246,7 @@ Cell(Position1D(StringValue(iid:0375226)),Content(DiscreteSchema[LongCodex](),Lo
 Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
 Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
 
-scala> counts.reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis")).dump
+scala> counts.summariseAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis")).dump
 Cell(Position1D(StringValue(mean)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(4.0,DoubleCodex)))
 Cell(Position1D(StringValue(sd)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
 Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(0.348873899490999,DoubleCodex)))
@@ -297,11 +297,10 @@ When at the Spark REPL console, the first step is to import Grimlock's functiona
 // Entering paste mode (ctrl-D to finish)
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.reduce._
-import au.com.cba.omnia.grimlock.library.reduce._
-import au.com.cba.omnia.grimlock.spark._
+import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 
 ```
@@ -315,10 +314,10 @@ scala> implicit val context = sc
 The next step is to read in data (be sure to change <path to> to the correct path to the Grimlock repo):
 
 ```
-scala> val data = read2D("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt")
+scala> val data = load2D("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt")
 ```
 
-The returned `data` is a 2 dimensional matrix. To investigate it's content Spark's `foreach` command can be used in the REPL, use the matrix `save` API for writing to disk:
+The returned `data` is a 2 dimensional matrix. To investigate it's content Spark's `foreach` command can be used in the REPL, use the Grimlock's `save` API for writing to disk:
 
 ```
 scala> data.foreach(println)
@@ -357,10 +356,10 @@ Position2D(StringValue(iid:0216406),StringValue(fid:E))
 Position2D(StringValue(iid:0444510),StringValue(fid:D))
 ```
 
-Now for something a little more intersting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts (note, ```new Matrix2D``` is needed to ensure Grimlock's reduce function is called):
+Now for something a little more intersting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
 
 ```
-scala> val counts = new Matrix2D(data).reduce(Over(First), Count())
+scala> val counts = data.summarise(Over(First), Count())
 
 scala> counts.foreach(println)
 Cell(Position1D(StringValue(iid:0064402)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
@@ -373,7 +372,7 @@ Cell(Position1D(StringValue(iid:0375226)),Content(DiscreteSchema[LongCodex](),Lo
 Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
 Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
 
-scala> counts.reduceAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis")).foreach(println)
+scala> counts.summariseAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis")).foreach(println)
 Cell(Position1D(StringValue(mean)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(4.0,DoubleCodex)))
 Cell(Position1D(StringValue(sd)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
 Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(0.348873899490999,DoubleCodex)))

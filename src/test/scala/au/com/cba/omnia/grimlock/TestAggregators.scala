@@ -15,24 +15,24 @@
 package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.reduce._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-import au.com.cba.omnia.grimlock.library.reduce._
+import au.com.cba.omnia.grimlock.library.aggregate._
 
 import scala.collection.immutable.TreeMap
 
-trait TestReducers extends TestGrimlock {
+trait TestAggregators extends TestGrimlock {
   def getLongContent(value: Long): Content = Content(DiscreteSchema[Codex.LongCodex](), value)
   def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Codex.DoubleCodex](), value)
   def getStringContent(value: String): Content = Content(NominalSchema[Codex.StringCodex](), value)
 }
 
-class TestCount extends TestReducers {
+class TestCount extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(2))
@@ -71,7 +71,7 @@ class TestCount extends TestReducers {
   }
 }
 
-class TestMean extends TestReducers {
+class TestMean extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(2))
@@ -289,7 +289,7 @@ class TestMean extends TestReducers {
   }
 }
 
-class TestStandardDeviation extends TestReducers {
+class TestStandardDeviation extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(2))
@@ -507,7 +507,7 @@ class TestStandardDeviation extends TestReducers {
   }
 }
 
-class TestSkewness extends TestReducers {
+class TestSkewness extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(2))
@@ -725,7 +725,7 @@ class TestSkewness extends TestReducers {
   }
 }
 
-class TestKurtosis extends TestReducers {
+class TestKurtosis extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(2))
@@ -943,7 +943,7 @@ class TestKurtosis extends TestReducers {
   }
 }
 
-class TestMoments extends TestReducers {
+class TestMoments extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(2))
@@ -1433,7 +1433,7 @@ class TestMoments extends TestReducers {
   }
 }
 
-class TestMin extends TestReducers {
+class TestMin extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(2))
@@ -1651,7 +1651,7 @@ class TestMin extends TestReducers {
   }
 }
 
-class TestMax extends TestReducers {
+class TestMax extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(2))
@@ -1869,7 +1869,7 @@ class TestMax extends TestReducers {
   }
 }
 
-class TestMaxAbs extends TestReducers {
+class TestMaxAbs extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(-2))
@@ -2087,7 +2087,7 @@ class TestMaxAbs extends TestReducers {
   }
 }
 
-class TestSum extends TestReducers {
+class TestSum extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(2))
@@ -2305,7 +2305,7 @@ class TestSum extends TestReducers {
   }
 }
 
-class TestHistogram extends TestReducers {
+class TestHistogram extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", 1), getStringContent("abc"))
   val cell2 = Cell(Position2D("foo", 2), getStringContent("xyz"))
@@ -3015,7 +3015,7 @@ class TestHistogram extends TestReducers {
   }
 }
 
-class TestThresholdCount extends TestReducers {
+class TestThresholdCount extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(-1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(0))
@@ -3300,7 +3300,7 @@ class TestThresholdCount extends TestReducers {
   }
 }
 
-class TestWeightedSum extends TestReducers {
+class TestWeightedSum extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", 1), getDoubleContent(-1))
   val cell2 = Cell(Position2D("bar", 2), getDoubleContent(1))
@@ -3674,7 +3674,7 @@ class TestWeightedSum extends TestReducers {
   }
 }
 
-class TestDistinctCount extends TestReducers {
+class TestDistinctCount extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", 1), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", 2), getDoubleContent(1))
@@ -3765,7 +3765,7 @@ class TestDistinctCount extends TestReducers {
   }
 }
 
-class TestQuantiles extends TestReducers {
+class TestQuantiles extends TestAggregators {
 
   val cell1 = Cell(Position1D("foo"), getDoubleContent(3))
   val cell2 = Cell(Position1D("foo"), getDoubleContent(7))
@@ -3914,7 +3914,7 @@ class TestQuantiles extends TestReducers {
   }
 }
 
-class TestEntropy extends TestReducers {
+class TestEntropy extends TestAggregators {
 
   val cell1 = Cell(Position1D("foo"), getStringContent("abc"))
   val cell2 = Cell(Position1D("foo"), getStringContent("xyz"))
@@ -5884,14 +5884,14 @@ class TestEntropy extends TestReducers {
   }
 }
 
-class TestCombinationReducerMultiple extends TestReducers {
+class TestCombinationAggregatorMultiple extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(2))
   val slice = Over[Position2D, First.type](First)
 
-  "A CombinationReducerMultiple" should "prepare, reduce and present" in {
-    val obj = CombinationReducerMultiple(List(Min("min"), Max("max")))
+  "A CombinationAggregatorMultiple" should "prepare, reduce and present" in {
+    val obj = CombinationAggregatorMultiple(List(Min("min"), Max("max")))
 
     val t1 = obj.prepare(slice, cell1)
     t1 shouldBe List(1, 1)
@@ -5908,7 +5908,7 @@ class TestCombinationReducerMultiple extends TestReducers {
   }
 }
 
-class TestCombinationReducerMultipleWithValue extends TestReducers {
+class TestCombinationAggregatorMultipleWithValue extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", 1), getDoubleContent(-1))
   val cell2 = Cell(Position2D("bar", 2), getDoubleContent(1))
@@ -5916,10 +5916,10 @@ class TestCombinationReducerMultipleWithValue extends TestReducers {
   val ext = Map(Position1D("foo.model1") -> getDoubleContent(3.14), Position1D("bar.model1") -> getDoubleContent(6.28),
     Position1D("bar.model2") -> getDoubleContent(-3.14))
 
-  type R = Reducer with PrepareWithValue with PresentMultiple { type V >: ext.type }
+  type R = Aggregator with PrepareWithValue with PresentMultiple { type V >: ext.type }
 
-  "A CombinationReducerMultipleWithValue" should "prepare, reduce and present" in {
-    val obj = CombinationReducerMultipleWithValue[R, ext.type](List(WeightedSum(First, "result1", "%1$s.model1"),
+  "A CombinationAggregatorMultipleWithValue" should "prepare, reduce and present" in {
+    val obj = CombinationAggregatorMultipleWithValue[R, ext.type](List(WeightedSum(First, "result1", "%1$s.model1"),
       WeightedSum(First, "result2", "%1$s.model2")))
 
     val t1 = obj.prepare(slice, cell1, ext)
