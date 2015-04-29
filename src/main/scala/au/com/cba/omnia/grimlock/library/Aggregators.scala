@@ -1134,15 +1134,14 @@ object ThresholdCount extends DefaultAggregatorValues {
  * @note The `Position1D` in the `type V` must all be `StringValue` if a format is used.
  */
 case class WeightedSum private (dim: Dimension, strict: Boolean, nan: Boolean, format: Option[String],
-  name: Option[Value]) extends Aggregator
-  with PrepareWithValue with PresentSingleAndMultiple with StrictAggregate {
+  name: Option[Value]) extends Aggregator with PresentSingleAndMultipleWithValue with StrictAggregate {
   type T = Double
 
   val ct = ClassTag[Double](Double.getClass)
 
   type V = Map[Position1D, Content]
 
-  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
+  def prepareWithValue[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
     val key = format match {
       case Some(fmt) => Position1D(fmt.format(cell.position(dim).toShortString))
       case None => Position1D(cell.position(dim))
@@ -1173,7 +1172,7 @@ object WeightedSum extends DefaultAggregatorValues {
    *
    * @param dim Dimension for for which to create weigthed variables.
    */
-  def apply(dim: Dimension): Aggregator with PrepareWithValue with PresentSingle { type V = WeightedSum#V } = {
+  def apply(dim: Dimension): Aggregator with PrepareWithValue with PresentSingleWithValue { type V = WeightedSum#V } = {
     WeightedSum(dim, DefaultStrict, DefaultNaN, None, None)
   }
 
@@ -1187,7 +1186,7 @@ object WeightedSum extends DefaultAggregatorValues {
    *               data).
    */
   def apply(dim: Dimension, strict: Boolean,
-    nan: Boolean): Aggregator with PrepareWithValue with PresentSingle { type V = WeightedSum#V } = {
+    nan: Boolean): Aggregator with PrepareWithValue with PresentSingleWithValue { type V = WeightedSum#V } = {
     WeightedSum(dim, strict, nan, None, None)
   }
 
@@ -1198,7 +1197,7 @@ object WeightedSum extends DefaultAggregatorValues {
    * @param name Coordinate name of the computed weighted sum.
    */
   def apply[V](dim: Dimension, name: V)(
-    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultipleWithValue { type V = WeightedSum#V } = {
     WeightedSum(dim, DefaultStrict, DefaultNaN, None, Some(ev.convert(name)))
   }
 
@@ -1213,7 +1212,7 @@ object WeightedSum extends DefaultAggregatorValues {
    *               data).
    */
   def apply[V](dim: Dimension, name: V, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultipleWithValue { type V = WeightedSum#V } = {
     WeightedSum(dim, strict, nan, None, Some(ev.convert(name)))
   }
 
@@ -1228,7 +1227,7 @@ object WeightedSum extends DefaultAggregatorValues {
    * @note The `Position1D` in the `type V` must all be `StringValue`.
    */
   def apply[V](dim: Dimension, name: V, format: String)(
-    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultipleWithValue { type V = WeightedSum#V } = {
     WeightedSum(dim, DefaultStrict, DefaultNaN, Some(format), Some(ev.convert(name)))
   }
 
@@ -1247,7 +1246,7 @@ object WeightedSum extends DefaultAggregatorValues {
    * @note The `Position1D` in the `type V` must all be `StringValue`.
    */
   def apply[V](dim: Dimension, name: V, format: String, strict: Boolean, nan: Boolean)(
-    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultiple { type V = WeightedSum#V } = {
+    implicit ev: Valueable[V]): Aggregator with PrepareWithValue with PresentMultipleWithValue { type V = WeightedSum#V } = {
     WeightedSum(dim, strict, nan, Some(format), Some(ev.convert(name)))
   }
 }

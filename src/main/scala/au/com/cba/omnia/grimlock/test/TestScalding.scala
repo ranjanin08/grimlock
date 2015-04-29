@@ -802,7 +802,7 @@ class TestScalding29(args: Args) extends Job(args) {
   tpr
     .pairwiseBetween(Along(First), fpr, Times(comparer=Diagonal))
     .summariseAndExpand(Along(First), Sum("gini"))
-    .transformWithValue(Subtract(First, Position1D("one"), true),
+    .transformWithValue(Subtract("one", true),
       ValuePipe(Map(Position1D("one") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1))))
     .save("./tmp.scalding/gini.out")
 }

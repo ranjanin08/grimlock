@@ -30,6 +30,9 @@ trait Aggregator {
   /** Serialisation ClassTag for state `T`. */
   val ct: ClassTag[T]
 
+  /** Type of the external value. */
+  type V
+
   /**
    * Standard reduce method.
    *
@@ -45,7 +48,9 @@ trait Aggregator {
 trait Prepare extends PrepareWithValue { self: Aggregator =>
   type V = Any
 
-  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = prepare(slice, cell)
+  def prepareWithValue[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
+    prepare(slice, cell)
+  }
 
   /**
    * Prepare for reduction.
@@ -60,9 +65,6 @@ trait Prepare extends PrepareWithValue { self: Aggregator =>
 
 /** Base trait for reduction preparation with a user supplied value. */
 trait PrepareWithValue { self: Aggregator =>
-  /** Type of the external value. */
-  type V
-
   /**
    * Prepare for reduction.
    *
@@ -72,11 +74,13 @@ trait PrepareWithValue { self: Aggregator =>
    *
    * @return State to reduce.
    */
-  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T
+  def prepareWithValue[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T
 }
 
 /** Base trait for reductions that return a single value. */
-trait PresentSingle { self: Aggregator =>
+trait PresentSingle extends PresentSingleWithValue { self: Aggregator with Prepare =>
+  def presentSingleWithValue[P <: Position](pos: P, t: T, ext: V): Option[Cell[P]] = presentSingle(pos, t)
+
   /**
    * Present the reduced content.
    *
@@ -93,8 +97,31 @@ trait PresentSingle { self: Aggregator =>
   def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]]
 }
 
+/** Base trait for reductions that return a single value using user supplied data. */
+trait PresentSingleWithValue { self: Aggregator with PrepareWithValue =>
+  /**
+   * Present the reduced content.
+   *
+   * @param pos The reduced position. That is, the position returned by `Slice.selected`.
+   * @param t   The reduced state.
+   * @param ext User provided data required for presentation.
+   *
+   * @return Optional cell where the position is `pos` and the content is derived from `t`.
+   *
+   * @note An `Option` is used in the return type to allow aggregators to be selective in what content they apply to.
+   *       For example, computing the mean is undefined for categorical variables. The aggregator now has the option to
+   *       return `None`. This in turn permits an external API, for simple cases, where the user need not know about
+   *       the types of variables of their data.
+   */
+  def presentSingleWithValue[P <: Position](pos: P, t: T, ext: V): Option[Cell[P]]
+}
+
 /** Base trait for reductions that return multiple values. */
-trait PresentMultiple { self: Aggregator =>
+trait PresentMultiple { self: Aggregator with Prepare =>
+  def presentMultipleWithValue[P <: Position with ExpandablePosition](pos: P, t: T, ext: V): Collection[Cell[P#M]] = {
+    presentMultiple(pos, t)
+  }
+
   /**
    * Present the reduced content(s).
    *
@@ -112,12 +139,57 @@ trait PresentMultiple { self: Aggregator =>
   def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]]
 }
 
+/** Base trait for reductions that return multiple values using user supplied data. */
+trait PresentMultipleWithValue { self: Aggregator with PrepareWithValue =>
+  /**
+   * Present the reduced content(s).
+   *
+   * @param pos The reduced position. That is, the position returned by `Slice.selected`.
+   * @param t   The reduced state.
+   * @param ext User provided data required for presentation.
+   *
+   * @return Optional cell tuple where the position is creating by appending to `pos` (`append` method) and the
+   *         content(s) is derived from `t`.
+   *
+   * @note An `Option` is used in the return type to allow aggregators to be selective in what content they apply to.
+   *       For example, computing the mean is undefined for categorical variables. The aggregator now has the option to
+   *       return `None`. This in turn permits an external API, for simple cases, where the user need not know about
+   *       the types of variables of their data.
+   */
+  def presentMultipleWithValue[P <: Position with ExpandablePosition](pos: P, t: T, ext: V): Collection[Cell[P#M]]
+}
+
 /** Convenience trait for aggregators that present a value both as `PresentSingle` and `PresentMultiple`. */
-trait PresentSingleAndMultiple extends PresentSingle with PresentMultiple { self: Aggregator =>
+trait PresentSingleAndMultiple extends Prepare with PresentSingle with PresentMultiple { self: Aggregator =>
 
   def presentSingle[P <: Position](pos: P, t: T): Option[Cell[P]] = content(t).map { case c => Cell(pos, c) }
 
   def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
+    name match {
+      case Some(n) => Collection(content(t).map { case con => Left(Cell[P#M](pos.append(n), con)) })
+      case None => Collection[Cell[P#M]]()
+    }
+  }
+
+  /** Name of the coordinate when presenting as multiple. */
+  val name: Option[Value]
+
+  protected def content(t: T): Option[Content]
+}
+
+/**
+ * Convenience trait for aggregators that present a value both as `PresentSingleWithValue` and
+ * `PresentMultipleWithValue`.
+ *
+ * @note This ignores the user provided value.
+ */
+trait PresentSingleAndMultipleWithValue extends PrepareWithValue with PresentSingleWithValue with PresentMultipleWithValue { self: Aggregator =>
+
+  def presentSingleWithValue[P <: Position](pos: P, t: T, ext: V): Option[Cell[P]] = {
+    content(t).map { case c => Cell(pos, c) }
+  }
+
+  def presentMultipleWithValue[P <: Position with ExpandablePosition](pos: P, t: T, ext: V): Collection[Cell[P#M]] = {
     name match {
       case Some(n) => Collection(content(t).map { case con => Left(Cell[P#M](pos.append(n), con)) })
       case None => Collection[Cell[P#M]]()
@@ -169,15 +241,15 @@ case class CombinationAggregatorMultiple[R <: Aggregator with Prepare with Prese
  * @note This need not be called in an application. The `AggregatableMultipleWithValue` type class will convert any
  *       `List[Aggregator]` automatically to one of these.
  */
-case class CombinationAggregatorMultipleWithValue[R <: Aggregator with PrepareWithValue with PresentMultiple { type V >: W }, W](
-  aggregators: List[R]) extends Aggregator with PrepareWithValue with PresentMultiple {
+case class CombinationAggregatorMultipleWithValue[R <: Aggregator with PrepareWithValue with PresentMultipleWithValue { type V >: W }, W](
+  aggregators: List[R]) extends Aggregator with PrepareWithValue with PresentMultipleWithValue {
   type T = List[Any]
   type V = W
 
   val ct = ClassTag[List[Any]](List.getClass)
 
-  def prepare[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
-    aggregators.map { case aggregator => aggregator.prepare(slice, cell, ext) }
+  def prepareWithValue[P <: Position, D <: Dimension](slice: Slice[P, D], cell: Cell[P], ext: V): T = {
+    aggregators.map { case aggregator => aggregator.prepareWithValue(slice, cell, ext) }
   }
 
   def reduce(lt: T, rt: T): T = {
@@ -186,9 +258,9 @@ case class CombinationAggregatorMultipleWithValue[R <: Aggregator with PrepareWi
     }
   }
 
-  def presentMultiple[P <: Position with ExpandablePosition](pos: P, t: T): Collection[Cell[P#M]] = {
+  def presentMultipleWithValue[P <: Position with ExpandablePosition](pos: P, t: T, ext: V): Collection[Cell[P#M]] = {
     Collection((aggregators, t).zipped.flatMap {
-      case (aggregator, s) => aggregator.presentMultiple(pos, s.asInstanceOf[aggregator.T]).toList
+      case (aggregator, s) => aggregator.presentMultipleWithValue(pos, s.asInstanceOf[aggregator.T], ext).toList
     })
   }
 }
@@ -223,36 +295,36 @@ object AggregatableMultiple {
   }
 }
 
-/** Type class for transforming a type `T` to an aggregator with `PrepareWithValue` with `PresentMultiple`. */
+/** Type class for transforming a type `T` to an 'Aggregator with PrepareWithValue with PresentMultipleWithValue`. */
 trait AggregatableMultipleWithValue[T, W] {
   /**
-   * Returns an aggregator with `PrepareWithValue` with `PresentMultiple` for type `T`.
+   * Returns an `Aggregator with PrepareWithValue with PresentMultipleWithValue` for type `T`.
    *
-   * @param t Object that can be converted to an aggregator with `PrepareWithValue` with `PresentMultiple`.
+   * @param t Object that can be converted to an `Aggregator with PrepareWithValue with PresentMultipleWithValue`.
    */
-  def convert(t: T): Aggregator with PrepareWithValue with PresentMultiple { type V >: W }
+  def convert(t: T): Aggregator with PrepareWithValue with PresentMultipleWithValue { type V >: W }
 }
 
 /** Companion object for the `AggregatableMultipleWithValue` type class. */
 object AggregatableMultipleWithValue {
   /**
-   * Converts a `List[Aggregator with PrepareWithValue with PresentMultiple]` to a single `Aggregator with
-   * PrepareWithValue with PresentMultiple` using 'CombinationAggregatorMultipleWithValue`.
+   * Converts a `List[Aggregator with PrepareWithValue with PresentMultipleWithValue]` to a single `Aggregator with
+   * PrepareWithValue with PresentMultipleWithValue` using 'CombinationAggregatorMultipleWithValue`.
    */
-  implicit def LR2RMWV[T <: Aggregator with PrepareWithValue with PresentMultiple { type V >: W }, W]: AggregatableMultipleWithValue[List[T], W] = {
+  implicit def LR2RMWV[T <: Aggregator with PrepareWithValue with PresentMultipleWithValue { type V >: W }, W]: AggregatableMultipleWithValue[List[T], W] = {
     new AggregatableMultipleWithValue[List[T], W] {
-      def convert(t: List[T]): Aggregator with PrepareWithValue with PresentMultiple { type V >: W } = {
+      def convert(t: List[T]): Aggregator with PrepareWithValue with PresentMultipleWithValue { type V >: W } = {
         CombinationAggregatorMultipleWithValue[T, W](t)
       }
     }
   }
   /**
-   * Converts a `Aggregator with PrepareWithValue with PresentMultiple` to a `Aggregator with PrepareWithValue with
-   * PresentMultiple`; that is, it is a pass through.
+   * Converts a `Aggregator with PrepareWithValue with PresentMultipleWithValue` to a `Aggregator with
+   * PrepareWithValue with PresentMultipleWithValue`; that is, it is a pass through.
    */
-  implicit def R2RMWV[T <: Aggregator with PrepareWithValue with PresentMultiple { type V >: W }, W]: AggregatableMultipleWithValue[T, W] = {
+  implicit def R2RMWV[T <: Aggregator with PrepareWithValue with PresentMultipleWithValue { type V >: W }, W]: AggregatableMultipleWithValue[T, W] = {
     new AggregatableMultipleWithValue[T, W] {
-      def convert(t: T): Aggregator with PrepareWithValue with PresentMultiple { type V >: W } = t
+      def convert(t: T): Aggregator with PrepareWithValue with PresentMultipleWithValue { type V >: W } = t
     }
   }
 }

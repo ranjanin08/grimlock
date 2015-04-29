@@ -723,7 +723,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    * @return A `U[Cell[slice.S]]` with the aggregates.
    */
   def summariseWithValue[D <: Dimension, W](slice: Slice[P, D],
-    aggregator: Aggregator with PrepareWithValue with PresentSingle { type V >: W }, value: E[W])(
+    aggregator: Aggregator with PrepareWithValue with PresentSingleWithValue { type V >: W }, value: E[W])(
       implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): U[Cell[slice.S]]
 
   /**

@@ -3313,45 +3313,45 @@ class TestWeightedSum extends TestAggregators {
   "A WeightedSum" should "prepare, reduce and present single on the first dimension" in {
     val obj = WeightedSum(First)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
     val r1 = obj.reduce(t1, t2)
     r1 shouldBe 3.14
 
-    val c = obj.presentSingle(Position1D("foo"), r1)
+    val c = obj.presentSingleWithValue(Position1D("foo"), r1, ext)
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3.14)))
   }
 
   it should "prepare, reduce and present single on the second dimension" in {
     val obj = WeightedSum(Second)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe 0
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 3.14
 
     val r1 = obj.reduce(t1, t2)
     r1 shouldBe 3.14
 
-    val c = obj.presentSingle(Position1D("foo"), r1)
+    val c = obj.presentSingleWithValue(Position1D("foo"), r1, ext)
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3.14)))
   }
 
   it should "prepare, reduce and present single with strict and nan" in {
     val obj = WeightedSum(First, true, true)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3360,7 +3360,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentSingle(Position1D("foo"), r2)
+    val c = obj.presentSingleWithValue(Position1D("foo"), r2, ext)
     c.get.position shouldBe Position1D("foo")
     c.get.content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
@@ -3368,13 +3368,13 @@ class TestWeightedSum extends TestAggregators {
   it should "prepare, reduce and present single with strict and non-nan" in {
     val obj = WeightedSum(First, true, false)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3383,20 +3383,20 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentSingle(Position1D("foo"), r2)
+    val c = obj.presentSingleWithValue(Position1D("foo"), r2, ext)
     c shouldBe None
   }
 
   it should "prepare, reduce and present single with non-strict and nan" in {
     val obj = WeightedSum(First, false, true)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3405,20 +3405,20 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2 shouldBe 3.14
 
-    val c = obj.presentSingle(Position1D("foo"), r2)
+    val c = obj.presentSingleWithValue(Position1D("foo"), r2, ext)
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3.14)))
   }
 
   it should "prepare, reduce and present single with non-strict and non-nan" in {
     val obj = WeightedSum(First, false, false)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3427,52 +3427,52 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2 shouldBe 3.14
 
-    val c = obj.presentSingle(Position1D("foo"), r2)
+    val c = obj.presentSingleWithValue(Position1D("foo"), r2, ext)
     c shouldBe Some(Cell(Position1D("foo"), getDoubleContent(3.14)))
   }
 
   it should "prepare, reduce and present multiple on the first dimension" in {
     val obj = WeightedSum(First, "result")
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
     val r1 = obj.reduce(t1, t2)
     r1 shouldBe 3.14
 
-    val c = obj.presentMultiple(Position1D("foo"), r1)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r1, ext)
     c shouldBe Collection(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
   it should "prepare, reduce and present multiple on the second dimension" in {
     val obj = WeightedSum(Second, "result")
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe 0
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 3.14
 
     val r1 = obj.reduce(t1, t2)
     r1 shouldBe 3.14
 
-    val c = obj.presentMultiple(Position1D("foo"), r1)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r1, ext)
     c shouldBe Collection(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
   it should "prepare, reduce and present multiple with strict and nan" in {
     val obj = WeightedSum(First, "result", true, true)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3481,7 +3481,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentMultiple(Position1D("foo"), r2)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r2, ext)
     c.toList()(0).position shouldBe Position2D("foo", "result")
     c.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
@@ -3489,13 +3489,13 @@ class TestWeightedSum extends TestAggregators {
   it should "prepare, reduce and present multiple with strict and non-nan" in {
     val obj = WeightedSum(First, "result", true, false)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3504,20 +3504,20 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentMultiple(Position1D("foo"), r2)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r2, ext)
     c shouldBe Collection()
   }
 
   it should "prepare, reduce and present multiple with non-strict and nan" in {
     val obj = WeightedSum(First, "result", false, true)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3526,20 +3526,20 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2 shouldBe 3.14
 
-    val c = obj.presentMultiple(Position1D("foo"), r2)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r2, ext)
     c shouldBe Collection(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
   it should "prepare, reduce and present multiple with non-strict and non-nan" in {
     val obj = WeightedSum(First, "result", false, false)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3548,52 +3548,52 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2 shouldBe 3.14
 
-    val c = obj.presentMultiple(Position1D("foo"), r2)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r2, ext)
     c shouldBe Collection(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
   it should "prepare, reduce and present multiple on the first dimension with format" in {
     val obj = WeightedSum(First, "result", "%1$s.model1")
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
     val r1 = obj.reduce(t1, t2)
     r1 shouldBe 3.14
 
-    val c = obj.presentMultiple(Position1D("foo"), r1)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r1, ext)
     c shouldBe Collection(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
   it should "prepare, reduce and present multiple on the second dimension with format" in {
     val obj = WeightedSum(Second, "result", "%1$s.model2")
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe 0
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe -3.14
 
     val r1 = obj.reduce(t1, t2)
     r1 shouldBe -3.14
 
-    val c = obj.presentMultiple(Position1D("foo"), r1)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r1, ext)
     c shouldBe Collection(Cell(Position2D("foo", "result"), getDoubleContent(-3.14)))
   }
 
   it should "prepare, reduce and present multiple with strict and nan with format" in {
     val obj = WeightedSum(First, "result", "%1$s.model1", true, true)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3602,7 +3602,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentMultiple(Position1D("foo"), r2)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r2, ext)
     c.toList()(0).position shouldBe Position2D("foo", "result")
     c.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
   }
@@ -3610,13 +3610,13 @@ class TestWeightedSum extends TestAggregators {
   it should "prepare, reduce and present multiple with strict and non-nan with format" in {
     val obj = WeightedSum(First, "result", "%1$s.model1", true, false)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3625,20 +3625,20 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
-    val c = obj.presentMultiple(Position1D("foo"), r2)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r2, ext)
     c shouldBe Collection()
   }
 
   it should "prepare, reduce and present multiple with non-strict and nan with format" in {
     val obj = WeightedSum(First, "result", "%1$s.model1", false, true)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3647,20 +3647,20 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2 shouldBe 3.14
 
-    val c = obj.presentMultiple(Position1D("foo"), r2)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r2, ext)
     c shouldBe Collection(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 
   it should "prepare, reduce and present multiple with non-strict and non-nan with format" in {
     val obj = WeightedSum(First, "result", "%1$s.model1", false, false)
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe -3.14
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe 6.28
 
-    val t3 = obj.prepare(slice, cell3, ext)
+    val t3 = obj.prepareWithValue(slice, cell3, ext)
     t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val r1 = obj.reduce(t1, t2)
@@ -3669,7 +3669,7 @@ class TestWeightedSum extends TestAggregators {
     val r2 = obj.reduce(r1, t3)
     r2 shouldBe 3.14
 
-    val c = obj.presentMultiple(Position1D("foo"), r2)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r2, ext)
     c shouldBe Collection(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
   }
 }
@@ -5916,22 +5916,22 @@ class TestCombinationAggregatorMultipleWithValue extends TestAggregators {
   val ext = Map(Position1D("foo.model1") -> getDoubleContent(3.14), Position1D("bar.model1") -> getDoubleContent(6.28),
     Position1D("bar.model2") -> getDoubleContent(-3.14))
 
-  type R = Aggregator with PrepareWithValue with PresentMultiple { type V >: ext.type }
+  type R = Aggregator with PrepareWithValue with PresentMultipleWithValue { type V >: ext.type }
 
   "A CombinationAggregatorMultipleWithValue" should "prepare, reduce and present" in {
     val obj = CombinationAggregatorMultipleWithValue[R, ext.type](List(WeightedSum(First, "result1", "%1$s.model1"),
       WeightedSum(First, "result2", "%1$s.model2")))
 
-    val t1 = obj.prepare(slice, cell1, ext)
+    val t1 = obj.prepareWithValue(slice, cell1, ext)
     t1 shouldBe List(-3.14, 0)
 
-    val t2 = obj.prepare(slice, cell2, ext)
+    val t2 = obj.prepareWithValue(slice, cell2, ext)
     t2 shouldBe List(6.28, -3.14)
 
     val r1 = obj.reduce(t1, t2)
     r1 shouldBe List(3.14, -3.14)
 
-    val c = obj.presentMultiple(Position1D("foo"), r1)
+    val c = obj.presentMultipleWithValue(Position1D("foo"), r1, ext)
     c shouldBe Collection(List(Cell(Position2D("foo", "result1"), getDoubleContent(3.14)),
       Cell(Position2D("foo", "result2"), getDoubleContent(-3.14))))
   }

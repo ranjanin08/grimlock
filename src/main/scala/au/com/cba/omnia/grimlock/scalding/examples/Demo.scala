@@ -271,7 +271,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Compute the ratio of (total number of labels) / (count for each label).
   val ratio = histogram
-    .transformWithValue(Fraction(First, key=First.toString, inverse=true), sum)
+    .transformWithValue(Fraction(First.toString, true), sum)
 
   // Find the minimum ratio, and store the result as a Map.
   val min = ratio
@@ -280,7 +280,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Divide the ratio by the minimum ratio, and store the result as a Map.
   val weights = ratio
-    .transformWithValue(Fraction(First, key="min"), min)
+    .transformWithValue(Fraction("min"), min)
     .toMap(Over(First))
 
   case class AddWeight() extends Transformer with PresentExpandedWithValue {

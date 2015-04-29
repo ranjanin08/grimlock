@@ -162,7 +162,7 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
   //  3/ Save as Map for use in Tf-Idf below.
   val idf = tf
     .summarise(Along(First), Count())
-    .transformWithValue(Idf(First, key=First.toString, idf=Idf.Transform(math.log10, 0)), n)
+    .transformWithValue(Idf(First.toString, Idf.Transform(math.log10, 0)), n)
     .toMap(Over(First))
 
   // Apply TfIdf to the term frequency matrix with the Idf values, then save the results to file.

@@ -87,8 +87,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val w = ev2.convert(windowers)
 
     data
-      .leftCross(value)
-      .map { case (Cell(p, c), vo) => (Cell(slice.selected(p), c), slice.remainder(p), vo.get) }
+      .mapWithValue(value) { case (Cell(p, c), vo) => (Cell(slice.selected(p), c), slice.remainder(p), vo.get) }
       .groupBy { case (c, r, v) => c.position }
       .sortBy { case (c, r, v) => r }
       .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
@@ -189,11 +188,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val a = ev2.convert(aggregators)
 
     data
-      .leftCross(value)
-      .map { case (c, vo) => (slice.selected(c.position), a.prepare(slice, c, vo.get)) }
+      .mapWithValue(value) { case (c, vo) => (slice.selected(c.position), a.prepareWithValue(slice, c, vo.get)) }
       .groupBy { case (p, t) => p }
       .reduce[(slice.S, a.T)] { case ((lp, lt), (rp, rt)) => (lp, a.reduce(lt, rt)) }
-      .flatMap { case (_, (p, t)) => a.presentMultiple(p, t).toList }
+      .flatMapWithValue(value) { case ((_, (p, t)), vo) => a.presentMultipleWithValue(p, t, vo.get).toList }
   }
 
   def rename[D <: Dimension](dim: D, renamer: (Dimension, Cell[P]) => P)( implicit ev: PosDimDep[P, D]): U[Cell[P]] = {
@@ -439,14 +437,15 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
   }
 
   def summariseWithValue[D <: Dimension, W](slice: Slice[P, D],
-    aggregator: Aggregator with PrepareWithValue with PresentSingle { type V >: W }, value: E[W])(
+    aggregator: Aggregator with PrepareWithValue with PresentSingleWithValue { type V >: W }, value: E[W])(
       implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): U[Cell[slice.S]] = {
     data
-      .leftCross(value)
-      .map { case (c, vo) => (slice.selected(c.position), aggregator.prepare(slice, c, vo.get)) }
+      .mapWithValue(value) {
+        case (c, vo) => (slice.selected(c.position), aggregator.prepareWithValue(slice, c, vo.get))
+      }
       .groupBy { case (p, t) => p }
       .reduce[(slice.S, aggregator.T)] { case ((lp, lt), (rp, rt)) => (lp, aggregator.reduce(lt, rt)) }
-      .flatMap { case (_, (p, t)) => aggregator.presentSingle(p, t) }
+      .flatMapWithValue(value) { case ((_, (p, t)), vo) => aggregator.presentSingleWithValue(p, t, vo.get) }
   }
 
   def squash[D <: Dimension](dim: D, squasher: Squasher with Reduce)(implicit ev: PosDimDep[P, D]): U[Cell[P#L]] = {
@@ -742,10 +741,10 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
       .transformWithValue(Subtract(slice.dimension), mean)
 
     val denom = centered
-      .transform(Power(slice.dimension, 2))
+      .transform(Power(2))
       .summarise(slice, Sum())
       .pairwise(Over(First), Times())
-      .transform(SquareRoot(First))
+      .transform(SquareRoot())
       .toMap(Over(First))
 
     centered

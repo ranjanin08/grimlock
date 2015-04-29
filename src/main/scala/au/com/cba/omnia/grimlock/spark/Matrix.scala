@@ -187,9 +187,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     implicit val ct = a.ct
 
     data
-      .map { case c => (slice.selected(c.position), a.prepare(slice, c, value)) }
+      .map { case c => (slice.selected(c.position), a.prepareWithValue(slice, c, value)) }
       .reduceByKey { case (lt, rt) => a.reduce(lt, rt) }
-      .flatMap { case (p, t) => a.presentMultiple(p, t).toList }
+      .flatMap { case (p, t) => a.presentMultipleWithValue(p, t, value).toList }
   }
 
   def rename[D <: Dimension](dim: D, renamer: (Dimension, Cell[P]) => P)(implicit ev: PosDimDep[P, D]): U[Cell[P]] = {
@@ -422,14 +422,14 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
   }
 
   def summariseWithValue[D <: Dimension, W](slice: Slice[P, D],
-    aggregator: Aggregator with PrepareWithValue with PresentSingle { type V >: W }, value: E[W])(
+    aggregator: Aggregator with PrepareWithValue with PresentSingleWithValue { type V >: W }, value: E[W])(
       implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): U[Cell[slice.S]] = {
     implicit val ct = aggregator.ct
 
     data
-      .map { case c => (slice.selected(c.position), aggregator.prepare(slice, c, value)) }
+      .map { case c => (slice.selected(c.position), aggregator.prepareWithValue(slice, c, value)) }
       .reduceByKey { case (lt, rt) => aggregator.reduce(lt, rt) }
-      .flatMap { case (p, t) => aggregator.presentSingle(p, t) }
+      .flatMap { case (p, t) => aggregator.presentSingleWithValue(p, t, value) }
   }
 
   def squash[D <: Dimension](dim: D, squasher: Squasher with Reduce)(implicit ev: PosDimDep[P, D]): U[Cell[P#L]] = {

@@ -35,8 +35,7 @@ class TestIndicator extends TestTransformers {
   val cell = Cell(Position2D("foo", "bar"), getDoubleContent(3.1415))
 
   "An Indicator" should "present" in {
-    Indicator(First).present(cell) shouldBe Collection(Position2D("foo", "bar"), getLongContent(1))
-    Indicator(Second).present(cell) shouldBe Collection(Position2D("foo", "bar"), getLongContent(1))
+    Indicator().present(cell) shouldBe Collection(Position2D("foo", "bar"), getLongContent(1))
   }
 
   it should "present with name" in {
@@ -227,12 +226,12 @@ class TestIdf extends TestTransformers {
   }
 
   it should "present with name" in {
-    Idf(First, name="%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.idf"),
+    Idf(First, "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.idf"),
       getDoubleContent(0))
   }
 
   it should "present with key" in {
-    Idf(First, key="bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0))
+    Idf("bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0))
   }
 
   it should "present with function" in {
@@ -246,12 +245,12 @@ class TestIdf extends TestTransformers {
   }
 
   it should "present with name and function" in {
-    Idf(First, name="%1$s-%2$s.idf", Idf.Transform(math.log10, 0)).present(cell, ext) shouldBe
+    Idf(First, "%1$s-%2$s.idf", Idf.Transform(math.log10, 0)).present(cell, ext) shouldBe
       Collection(Position1D("foo-1.idf"), getDoubleContent(math.log10(2)))
   }
 
   it should "present with key and function" in {
-    Idf(First, key="bar", Idf.Transform(math.log10, 0)).present(cell, ext) shouldBe Collection(Position1D("foo"),
+    Idf("bar", Idf.Transform(math.log10, 0)).present(cell, ext) shouldBe Collection(Position1D("foo"),
       getDoubleContent(math.log10(2)))
   }
 
@@ -261,7 +260,7 @@ class TestIdf extends TestTransformers {
   }
 
   it should "not present with missing key" in {
-    Idf(First, key="not.there").present(cell, ext) shouldBe Collection()
+    Idf("not.there").present(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
@@ -278,8 +277,7 @@ class TestBooleanTf extends TestTransformers {
   val cell = Cell(Position2D("foo", "bar"), getLongContent(3))
 
   "A BooleanTf" should "present" in {
-    BooleanTf(First).present(cell) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(1))
-    BooleanTf(Second).present(cell) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(1))
+    BooleanTf().present(cell) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(1))
   }
 
   it should "present with name" in {
@@ -290,7 +288,7 @@ class TestBooleanTf extends TestTransformers {
   }
 
   it should "not present with a categorical" in {
-    BooleanTf(First).present(Cell(Position2D("foo", "bar"), getStringContent("baz"))) shouldBe Collection()
+    BooleanTf().present(Cell(Position2D("foo", "bar"), getStringContent("baz"))) shouldBe Collection()
   }
 }
 
@@ -299,8 +297,7 @@ class TestLogarithmicTf extends TestTransformers {
   val cell = Cell(Position2D("foo", "bar"), getLongContent(3))
 
   "A LogarithmicTf" should "present" in {
-    LogarithmicTf(First).present(cell) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(1 + math.log(3)))
-    LogarithmicTf(Second).present(cell) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(1 + math.log(3)))
+    LogarithmicTf().present(cell) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(1 + math.log(3)))
   }
 
   it should "present with name" in {
@@ -311,9 +308,7 @@ class TestLogarithmicTf extends TestTransformers {
   }
 
   it should "present with log" in {
-    LogarithmicTf(First, math.log10 _).present(cell) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent(1 + math.log10(3)))
-    LogarithmicTf(Second, math.log10 _).present(cell) shouldBe Collection(Position2D("foo", "bar"),
+    LogarithmicTf(math.log10 _).present(cell) shouldBe Collection(Position2D("foo", "bar"),
       getDoubleContent(1 + math.log10(3)))
   }
 
@@ -325,7 +320,7 @@ class TestLogarithmicTf extends TestTransformers {
   }
 
   it should "not present with a categorical" in {
-    LogarithmicTf(First).present(Cell(Position2D("foo", "bar"), getStringContent("baz"))) shouldBe Collection()
+    LogarithmicTf().present(Cell(Position2D("foo", "bar"), getStringContent("baz"))) shouldBe Collection()
   }
 }
 
@@ -369,15 +364,14 @@ class TestTfIdf extends TestTransformers {
   }
 
   it should "present with name" in {
-    TfIdf(First, name="%1$s-%2$s.tfidf").present(cell, ext) shouldBe Collection(Position2D("foo-1.5.tfidf", "bar"),
+    TfIdf(First, "%1$s-%2$s.tfidf").present(cell, ext) shouldBe Collection(Position2D("foo-1.5.tfidf", "bar"),
       getDoubleContent(3))
-    TfIdf(Second, name="%1$s-%2$s.tfidf").present(cell, ext) shouldBe Collection(Position2D("foo", "bar-1.5.tfidf"),
+    TfIdf(Second, "%1$s-%2$s.tfidf").present(cell, ext) shouldBe Collection(Position2D("foo", "bar-1.5.tfidf"),
       getDoubleContent(3))
   }
 
   it should "present with key" in {
-    TfIdf(First, key="baz").present(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(3))
-    TfIdf(Second, key="baz").present(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(3))
+    TfIdf("baz").present(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(3))
   }
 
   it should "present with name and key" in {
@@ -388,7 +382,7 @@ class TestTfIdf extends TestTransformers {
   }
 
   it should "not present with missing key" in {
-    TfIdf(First, key="not.there").present(cell, ext) shouldBe Collection()
+    TfIdf("not.there").present(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
@@ -410,12 +404,12 @@ class TestAdd extends TestTransformers {
   }
 
   it should "present with name" in {
-    Add(First, name="%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
+    Add(First, "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
       getDoubleContent(3))
   }
 
   it should "present with key" in {
-    Add(First, key="bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(3))
+    Add("bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(3))
   }
 
   it should "present with name and key" in {
@@ -424,7 +418,7 @@ class TestAdd extends TestTransformers {
   }
 
   it should "not present with missing key" in {
-    Add(First, key="not.there").present(cell, ext) shouldBe Collection()
+    Add("not.there").present(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
@@ -446,12 +440,12 @@ class TestSubtract extends TestTransformers {
   }
 
   it should "present with name" in {
-    Subtract(First, name="%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
+    Subtract(First, "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
       getDoubleContent(-1))
   }
 
   it should "present with key" in {
-    Subtract(First, key="bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(-1))
+    Subtract("bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(-1))
   }
 
   it should "present with inverse" in {
@@ -464,12 +458,12 @@ class TestSubtract extends TestTransformers {
   }
 
   it should "present with name and inverse" in {
-    Subtract(First, name="%1$s-%2$s.idf", true).present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
+    Subtract(First, "%1$s-%2$s.idf", true).present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
       getDoubleContent(1))
   }
 
   it should "present with key and inverse" in {
-    Subtract(First, key="bar", true).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(1))
+    Subtract("bar", true).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(1))
   }
 
   it should "present with name, key and inverse" in {
@@ -478,7 +472,7 @@ class TestSubtract extends TestTransformers {
   }
 
   it should "not present with missing key" in {
-    Subtract(First, key="not.there").present(cell, ext) shouldBe Collection()
+    Subtract("not.there").present(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
@@ -500,12 +494,12 @@ class TestMultiply extends TestTransformers {
   }
 
   it should "present with name" in {
-    Multiply(First, name="%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
+    Multiply(First, "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
       getDoubleContent(2))
   }
 
   it should "present with key" in {
-    Multiply(First, key="bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
+    Multiply("bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
   }
 
   it should "present with name and key" in {
@@ -514,7 +508,7 @@ class TestMultiply extends TestTransformers {
   }
 
   it should "not present with missing key" in {
-    Multiply(First, key="not.there").present(cell, ext) shouldBe Collection()
+    Multiply("not.there").present(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
@@ -536,12 +530,12 @@ class TestFraction extends TestTransformers {
   }
 
   it should "present with name" in {
-    Fraction(First, name="%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
+    Fraction(First, "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
       getDoubleContent(0.5))
   }
 
   it should "present with key" in {
-    Fraction(First, key="bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0.5))
+    Fraction("bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0.5))
   }
 
   it should "present with inverse" in {
@@ -554,12 +548,12 @@ class TestFraction extends TestTransformers {
   }
 
   it should "present with name and inverse" in {
-    Fraction(First, name="%1$s-%2$s.idf", true).present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
+    Fraction(First, "%1$s-%2$s.idf", true).present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
       getDoubleContent(2))
   }
 
   it should "present with key and inverse" in {
-    Fraction(First, key="bar", true).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
+    Fraction("bar", true).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
   }
 
   it should "present with name, key and inverse" in {
@@ -568,7 +562,7 @@ class TestFraction extends TestTransformers {
   }
 
   it should "not present with missing key" in {
-    Fraction(First, key="not.there").present(cell, ext) shouldBe Collection()
+    Fraction("not.there").present(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
@@ -585,7 +579,7 @@ class TestPower extends TestTransformers {
   val cell = Cell(Position1D("foo"), getDoubleContent(3.1415))
 
   "A Power" should "present" in {
-    Power(First, 2).present(cell) shouldBe Collection(Position1D("foo"), getDoubleContent(3.1415 * 3.1415))
+    Power(2).present(cell) shouldBe Collection(Position1D("foo"), getDoubleContent(3.1415 * 3.1415))
   }
 
   it should "present with name" in {
@@ -599,7 +593,7 @@ class TestSquareRoot extends TestTransformers {
   val cell = Cell(Position1D("foo"), getDoubleContent(3.1415))
 
   "A SquareRoot" should "present" in {
-    SquareRoot(First).present(cell) shouldBe Collection(Position1D("foo"), getDoubleContent(math.sqrt(3.1415)))
+    SquareRoot().present(cell) shouldBe Collection(Position1D("foo"), getDoubleContent(math.sqrt(3.1415)))
   }
 
   it should "present with name" in {
