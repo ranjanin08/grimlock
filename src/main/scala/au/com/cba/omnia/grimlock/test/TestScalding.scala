@@ -775,35 +775,13 @@ class TestScalding29(args: Args) extends Job(args) {
     ("mod:456", "iid:G", Content(schema, 1)),
     ("mod:456", "iid:H", Content(schema, 0)))
 
-  def isPositive(d: Double) = d > 0
-
-  val pos = data
-    .transform(Compare(isPositive(_)))
-    .summarise(Over(First), Sum())
-    .toMap(Over(First))
-
-  val neg = data
-    .transform(Compare(!isPositive(_)))
-    .summarise(Over(First), Sum())
-    .toMap(Over(First))
-
-  val tpr = data
-    .transform(Compare(isPositive(_)))
-    .window(Over(First), CumulativeSum())
-    .transformWithValue(Fraction(First), pos)
-    .window(Over(First), Sliding((l: Double, r: Double) => r + l, name="%2$s.%1$s"))
-
-  val fpr = data
-    .transform(Compare(!isPositive(_)))
-    .window(Over(First), CumulativeSum())
-    .transformWithValue(Fraction(First), neg)
-    .window(Over(First), Sliding((l: Double, r: Double) => r - l, name="%2$s.%1$s"))
-
-  tpr
-    .pairwiseBetween(Along(First), fpr, Times(comparer=Diagonal))
-    .summariseAndExpand(Along(First), Sum("gini"))
-    .transformWithValue(Subtract("one", true),
-      ValuePipe(Map(Position1D("one") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1))))
+  data
+    .gini(Over(First))
     .save("./tmp.scalding/gini.out")
+
+  data
+    .map { case (a, b, c) => (b, a, c) }
+    .gini(Along(First))
+    .save("./tmp.scalding/inig.out")
 }
 

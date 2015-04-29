@@ -471,6 +471,93 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpand
   }
 }
 
+// TODO: Make this work on more than 2D matrices and share with Scalding
+trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D] =>
+
+  import au.com.cba.omnia.grimlock.library.aggregate._
+  import au.com.cba.omnia.grimlock.library.pairwise._
+  import au.com.cba.omnia.grimlock.library.transform._
+  import au.com.cba.omnia.grimlock.library.window._
+
+  def correlation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
+    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
+    implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
+    implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+
+    val mean = data
+      .summarise(slice, Mean())
+      .toMap(Over(First))
+
+    val centered = data
+      .transformWithValue(Subtract(slice.dimension), mean)
+
+    val denom = centered
+      .transform(Power(2))
+      .summarise(slice, Sum())
+      .pairwise(Over(First), Times())
+      .transform(SquareRoot())
+      .toMap(Over(First))
+
+    centered
+      .pairwise(slice, Times())
+      .summarise(Over(First), Sum())
+      .transformWithValue(Fraction(First), denom)
+  }
+
+  def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
+    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
+    implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+    implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+
+    val marginal = data
+      .summariseAndExpand(slice, Entropy("marginal"))
+      .pairwise(Over(First), Plus(name = "%s,%s", comparer = Upper))
+
+    val joint = data
+      .pairwise(slice, Concatenate(name = "%s,%s", comparer = Upper))
+      .summariseAndExpand(Over(First), Entropy("joint", strict = true, nan = true, all = false, negate = true))
+
+    (marginal ++ joint)
+      .summarise(Over(First), Sum())
+  }
+
+  def gini[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
+    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
+    implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
+    implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+
+    def isPositive(d: Double) = d > 0
+
+    val pos = data
+      .transform(Compare(isPositive(_)))
+      .summarise(slice, Sum())
+      .toMap(Over(First))
+
+    val neg = data
+      .transform(Compare(!isPositive(_)))
+      .summarise(slice, Sum())
+      .toMap(Over(First))
+
+    val tpr = data
+      .transform(Compare(isPositive(_)))
+      .window(slice, CumulativeSum())
+      .transformWithValue(Fraction(First), pos)
+      .window(Over(First), Sliding((l: Double, r: Double) => r + l, name="%2$s.%1$s"))
+
+    val fpr = data
+      .transform(Compare(!isPositive(_)))
+      .window(slice, CumulativeSum())
+      .transformWithValue(Fraction(First), neg)
+      .window(Over(First), Sliding((l: Double, r: Double) => r - l, name="%2$s.%1$s"))
+
+    tpr
+      .pairwiseBetween(Along(First), fpr, Times(comparer=Diagonal))
+      .summarise(Along(First), Sum())
+      .transformWithValue(Subtract("one", true),
+        Map(Position1D("one") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1)))
+  }
+}
+
 object Matrix {
   /**
    * Read column oriented, pipe separated matrix data into a `RDD[Cell[Position1D]]`.
@@ -705,7 +792,7 @@ class Matrix1D(val data: RDD[Cell[Position1D]]) extends Matrix[Position1D] with 
  * @param data `RDD[Cell[Position2D]]`.
  */
 class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
-  with ExpandableMatrix[Position2D] {
+  with ExpandableMatrix[Position2D] with MatrixDistance {
   def domain(): U[Position2D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
