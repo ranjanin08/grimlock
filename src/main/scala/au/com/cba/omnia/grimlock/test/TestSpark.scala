@@ -142,7 +142,7 @@ object TestSpark3 {
   }
 }
 
-class TestSpark4 {
+object TestSpark4 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -164,7 +164,7 @@ class TestSpark4 {
   }
 }
 
-class TestSpark5 {
+object TestSpark5 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -194,7 +194,7 @@ class TestSpark5 {
   }
 }
 
-class TestSpark6 {
+object TestSpark6 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -228,7 +228,7 @@ class TestSpark6 {
   }
 }
 
-class TestSpark7 {
+object TestSpark7 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -244,7 +244,7 @@ class TestSpark7 {
   }
 }
 
-class TestSpark8 {
+object TestSpark8 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -281,7 +281,7 @@ class TestSpark8 {
   }
 }
 
-class TestSpark9 {
+object TestSpark9 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -338,7 +338,7 @@ class TestSpark9 {
   }
 }
 
-class TestSpark10 {
+object TestSpark10 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -364,7 +364,7 @@ class TestSpark10 {
   }
 }
 
-class TestSpark11 {
+object TestSpark11 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -384,7 +384,7 @@ class TestSpark11 {
   }
 }
 
-class TestSpark12 {
+object TestSpark12 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -402,7 +402,7 @@ class TestSpark12 {
   }
 }
 
-class TestSpark13 {
+object TestSpark13 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val all = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -428,7 +428,7 @@ class TestSpark13 {
   }
 }
 
-class TestSpark14 {
+object TestSpark14 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -441,7 +441,7 @@ class TestSpark14 {
   }
 }
 
-class TestSpark15 {
+object TestSpark15 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -471,7 +471,7 @@ class TestSpark15 {
   }
 }
 
-class TestSpark16 {
+object TestSpark16 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -486,7 +486,7 @@ class TestSpark16 {
   }
 }
 
-class TestSpark17 {
+object TestSpark17 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -529,7 +529,7 @@ class TestSpark17 {
   }
 }
 
-class TestSpark18 {
+object TestSpark18 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -551,7 +551,7 @@ class TestSpark18 {
   }
 }
 
-class TestSpark19 {
+object TestSpark19 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val raw = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -598,7 +598,7 @@ class TestSpark19 {
   }
 }
 
-class TestSpark20 {
+object TestSpark20 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
@@ -607,7 +607,7 @@ class TestSpark20 {
   }
 }
 
-class TestSpark21 {
+object TestSpark21 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.read4TupleDataAddDate(args(1))
@@ -630,7 +630,7 @@ class TestSpark21 {
   }
 }
 
-class TestSpark22 {
+object TestSpark22 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = load2D("numericInputfile.txt")
@@ -663,7 +663,7 @@ class TestSpark22 {
   }
 }
 
-class TestSpark23 {
+object TestSpark23 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = load2D("somePairwise.txt")
@@ -689,7 +689,7 @@ class TestSpark23 {
   }
 }
 
-class TestSpark24 {
+object TestSpark24 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
@@ -715,7 +715,7 @@ class TestSpark24 {
   }
 }
 
-class TestSpark25 {
+object TestSpark25 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
@@ -725,7 +725,7 @@ class TestSpark25 {
   }
 }
 
-class TestSpark26 {
+object TestSpark26 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val left = load2D("algebraInputfile1.txt")
@@ -737,7 +737,7 @@ class TestSpark26 {
   }
 }
 
-class TestSpark27 {
+object TestSpark27 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
@@ -774,7 +774,7 @@ class TestSpark27 {
   }
 }
 
-class TestSpark28 {
+object TestSpark28 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = List
@@ -817,7 +817,7 @@ class TestSpark28 {
   }
 }
 
-class TestSpark29 {
+object TestSpark29 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val schema = DiscreteSchema[Codex.LongCodex]()

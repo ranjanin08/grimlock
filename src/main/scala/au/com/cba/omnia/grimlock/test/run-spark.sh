@@ -65,6 +65,22 @@ then
 # Doesn't run yet (missing scanLeft)
 #    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
 #      --class au.com.cba.omnia.grimlock.spark.examples.DerivedData $JAR local ../data
+
+    if [ -d "demo.old" ]
+    then
+      set +x
+      for f in $(ls demo.spark demo.old | sed '/:$/d' |sort | uniq)
+      do
+        echo $f
+        cat demo.old/$f | sort | while read line; do
+          echo $line | tr '|' '\n' | sort | awk '{line=line "|" $0} END {print line}'; done > demo.x
+        cat demo.spark/$f/part* | sort | while read line; do
+          echo $line | tr '|' '\n' | sort | awk '{line=line "|" $0} END {print line}'; done > demo.y
+        diff demo.x demo.y
+      done
+      rm demo.x demo.y
+      set -x
+    fi
   fi
 fi
 
@@ -87,6 +103,22 @@ then
       $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
         --class au.com.cba.omnia.grimlock.test.TestSpark${i} $JAR local "someInputfile3.txt"
     done
+
+    if [ -d "tmp.old" ]
+    then
+      set +x
+      for f in $(ls tmp.spark tmp.old | sed '/:$/d' |sort | uniq)
+      do
+        echo $f
+        cat tmp.old/$f | sort | while read line; do
+          echo $line | tr '|' '\n' | sort | awk '{line=line "|" $0} END {print line}'; done > tmp.x
+        cat tmp.spark/$f/part* | sort | while read line; do
+          echo $line | tr '|' '\n' | sort | awk '{line=line "|" $0} END {print line}'; done > tmp.y
+        diff tmp.x tmp.y
+      done
+      rm tmp.x tmp.y
+      set -x
+    fi
   fi
 fi
 
