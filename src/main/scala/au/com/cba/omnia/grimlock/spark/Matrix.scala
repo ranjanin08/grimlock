@@ -169,29 +169,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMap { case c => partitioner.assign(c.position, value).toList(c) }
   }
 
-  def summariseAndExpand[T, D <: Dimension](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
-    ev2: AggregatableMultiple[T], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
-    val a = ev2.convert(aggregators)
-    implicit val ct = a.ct
-
-    data
-      .map { case c => (slice.selected(c.position), a.prepare(slice, c)) }
-      .reduceByKey { case (lt, rt) => a.reduce(lt, rt) }
-      .flatMap { case (p, t) => a.presentMultiple(p, t).toList }
-  }
-
-  def summariseAndExpandWithValue[T, D <: Dimension, W](slice: Slice[P, D], aggregators: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: AggregatableMultipleWithValue[T, W],
-      ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
-    val a = ev2.convert(aggregators)
-    implicit val ct = a.ct
-
-    data
-      .map { case c => (slice.selected(c.position), a.prepareWithValue(slice, c, value)) }
-      .reduceByKey { case (lt, rt) => a.reduce(lt, rt) }
-      .flatMap { case (p, t) => a.presentMultipleWithValue(p, t, value).toList }
-  }
-
   def rename[D <: Dimension](dim: D, renamer: (Dimension, Cell[P]) => P)(implicit ev: PosDimDep[P, D]): U[Cell[P]] = {
     data.map { case c => Cell(renamer(dim, c), c.content) }
   }
@@ -261,6 +238,37 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .keyBy { case c => slice.selected(c.position) }
       .join(wanted.keyBy { case (p, i) => p })
       .map { case (_, (c, _)) => c }
+  }
+
+  def stream[Q <: Position](command: String, script: String, separator: String,
+    parser: String => Option[Cell[Q]]): U[Cell[Q]] = {
+    data
+      .map(_.toString(separator, false))
+      .pipe(command + " " + script)
+      .flatMap(parser(_))
+  }
+
+  def summariseAndExpand[T, D <: Dimension](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
+    ev2: AggregatableMultiple[T], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
+    val a = ev2.convert(aggregators)
+    implicit val ct = a.ct
+
+    data
+      .map { case c => (slice.selected(c.position), a.prepare(slice, c)) }
+      .reduceByKey { case (lt, rt) => a.reduce(lt, rt) }
+      .flatMap { case (p, t) => a.presentMultiple(p, t).toList }
+  }
+
+  def summariseAndExpandWithValue[T, D <: Dimension, W](slice: Slice[P, D], aggregators: T, value: E[W])(
+    implicit ev1: PosDimDep[P, D], ev2: AggregatableMultipleWithValue[T, W],
+      ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
+    val a = ev2.convert(aggregators)
+    implicit val ct = a.ct
+
+    data
+      .map { case c => (slice.selected(c.position), a.prepareWithValue(slice, c, value)) }
+      .reduceByKey { case (lt, rt) => a.reduce(lt, rt) }
+      .flatMap { case (p, t) => a.presentMultipleWithValue(p, t, value).toList }
   }
 
   def toMap[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
@@ -568,7 +576,7 @@ object Matrix {
    */
   def load1D(file: String, separator: String = "|", first: Codex = StringCodex)(
     implicit sc: SparkContext): RDD[Cell[Position1D]] = {
-    sc.textFile(file).flatMap { Cell.parse1D(_, separator, first) }
+    sc.textFile(file).flatMap { Cell.parse1D(separator, first)(_) }
   }
 
   /**
@@ -581,7 +589,7 @@ object Matrix {
    */
   def load1DWithDictionary(file: String, dict: Map[String, Schema], separator: String = "|",
     first: Codex = StringCodex)(implicit sc: SparkContext): RDD[Cell[Position1D]] = {
-    sc.textFile(file).flatMap { Cell.parse1DWithDictionary(_, dict, separator, first) }
+    sc.textFile(file).flatMap { Cell.parse1DWithDictionary(dict, separator, first)(_) }
   }
 
   /**
@@ -594,7 +602,7 @@ object Matrix {
    */
   def load1DWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex)(
     implicit sc: SparkContext): RDD[Cell[Position1D]] = {
-    sc.textFile(file).flatMap { Cell.parse1DWithSchema(_, schema, separator, first) }
+    sc.textFile(file).flatMap { Cell.parse1DWithSchema(schema, separator, first)(_) }
   }
 
   /**
@@ -607,7 +615,7 @@ object Matrix {
    */
   def load2D(file: String, separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex)(
     implicit sc: SparkContext): RDD[Cell[Position2D]] = {
-    sc.textFile(file).flatMap { Cell.parse2D(_, separator, first, second) }
+    sc.textFile(file).flatMap { Cell.parse2D(separator, first, second)(_) }
   }
 
   /**
@@ -623,7 +631,7 @@ object Matrix {
   def load2DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
     separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex)(
       implicit ev: PosDimDep[Position2D, D], sc: SparkContext): RDD[Cell[Position2D]] = {
-    sc.textFile(file).flatMap { Cell.parse2DWithDictionary(_, dict, dim, separator, first, second) }
+    sc.textFile(file).flatMap { Cell.parse2DWithDictionary(dict, dim, separator, first, second)(_) }
   }
 
   /**
@@ -637,7 +645,7 @@ object Matrix {
    */
   def load2DWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex)(implicit sc: SparkContext): RDD[Cell[Position2D]] = {
-    sc.textFile(file).flatMap { Cell.parse2DWithSchema(_, schema, separator, first, second) }
+    sc.textFile(file).flatMap { Cell.parse2DWithSchema(schema, separator, first, second)(_) }
   }
 
   /**
@@ -651,7 +659,7 @@ object Matrix {
    */
   def load3D(file: String, separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
     third: Codex = StringCodex)(implicit sc: SparkContext): RDD[Cell[Position3D]] = {
-    sc.textFile(file).flatMap { Cell.parse3D(_, separator, first, second, third) }
+    sc.textFile(file).flatMap { Cell.parse3D(separator, first, second, third)(_) }
   }
 
   /**
@@ -668,7 +676,7 @@ object Matrix {
   def load3DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
     separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = DateCodex)(
       implicit ev: PosDimDep[Position3D, D], sc: SparkContext): RDD[Cell[Position3D]] = {
-    sc.textFile(file).flatMap { Cell.parse3DWithDictionary(_, dict, dim, separator, first, second, third) }
+    sc.textFile(file).flatMap { Cell.parse3DWithDictionary(dict, dim, separator, first, second, third)(_) }
   }
 
   /**
@@ -683,7 +691,7 @@ object Matrix {
    */
   def load3DWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex, third: Codex = DateCodex)(implicit sc: SparkContext): RDD[Cell[Position3D]] = {
-    sc.textFile(file).flatMap { Cell.parse3DWithSchema(_, schema, separator, first, second, third) }
+    sc.textFile(file).flatMap { Cell.parse3DWithSchema(schema, separator, first, second, third)(_) }
   }
 
   /**
@@ -699,7 +707,7 @@ object Matrix {
    */
   def readTable(table: String, columns: List[(String, Schema)], pkeyIndex: Int = 0, separator: String = "\01")(
     implicit sc: SparkContext): RDD[Cell[Position2D]] = {
-    sc.textFile(table).flatMap { Cell.parseTable(_, columns, pkeyIndex, separator) }
+    sc.textFile(table).flatMap { Cell.parseTable(columns, pkeyIndex, separator)(_) }
   }
 
   /** Conversion from `RDD[Cell[Position1D]]` to a Spark `Matrix1D`. */

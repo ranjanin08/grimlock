@@ -17,7 +17,7 @@
 set -vx
 
 JAR=grimlock.jar
-NUM_TEST=29
+NUM_TEST=30
 DO_BUILD=true
 DO_CLEANUP=true
 DO_INIT=false

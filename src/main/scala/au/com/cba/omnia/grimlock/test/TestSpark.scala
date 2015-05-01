@@ -847,3 +847,22 @@ object TestSpark29 {
   }
 }
 
+object TestSpark30 {
+  def main(args: Array[String]) {
+    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    val schema = DiscreteSchema[Codex.LongCodex]()
+    val data = List(("iid:A", Content(schema, 0)),
+      ("iid:B", Content(schema, 1)),
+      ("iid:C", Content(schema, 2)),
+      ("iid:D", Content(schema, 3)),
+      ("iid:E", Content(schema, 4)),
+      ("iid:F", Content(schema, 5)),
+      ("iid:G", Content(schema, 6)),
+      ("iid:H", Content(schema, 7)))
+
+    data
+      .stream("Rscript", "double.R", "|", Cell.parse2D("#", StringCodex, LongCodex))
+      .save("./tmp.spark/strm.out")
+  }
+}
+

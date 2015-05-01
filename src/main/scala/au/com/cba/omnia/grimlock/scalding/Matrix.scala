@@ -43,6 +43,10 @@ import cascading.flow.FlowDef
 import com.twitter.scalding.{ Mode, TextLine }
 import com.twitter.scalding.typed.{ IterablePipe, Grouped, TypedPipe, TypedSink, ValuePipe }
 
+import java.io.{ File, PrintWriter }
+import java.lang.{ ProcessBuilder, Thread }
+
+import scala.io.Source
 import scala.reflect.ClassTag
 
 /** Base trait for matrix operations using a `TypedPipe[Cell[P]]`. */
@@ -171,29 +175,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMapWithValue(value) { case (c, vo) => partitioner.assign(c.position, vo.get).toList(c) }
   }
 
-  def summariseAndExpand[T, D <: Dimension](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
-    ev2: AggregatableMultiple[T], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
-    val a = ev2.convert(aggregators)
-
-    data
-      .map { case c => (slice.selected(c.position), a.prepare(slice, c)) }
-      .groupBy { case (p, t) => p }
-      .reduce[(slice.S, a.T)] { case ((lp, lt), (rp, rt)) => (lp, a.reduce(lt, rt)) }
-      .flatMap { case (_, (p, t)) => a.presentMultiple(p, t).toList }
-  }
-
-  def summariseAndExpandWithValue[T, D <: Dimension, W](slice: Slice[P, D], aggregators: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: AggregatableMultipleWithValue[T, W],
-      ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
-    val a = ev2.convert(aggregators)
-
-    data
-      .mapWithValue(value) { case (c, vo) => (slice.selected(c.position), a.prepareWithValue(slice, c, vo.get)) }
-      .groupBy { case (p, t) => p }
-      .reduce[(slice.S, a.T)] { case ((lp, lt), (rp, rt)) => (lp, a.reduce(lt, rt)) }
-      .flatMapWithValue(value) { case ((_, (p, t)), vo) => a.presentMultipleWithValue(p, t, vo.get).toList }
-  }
-
   def rename[D <: Dimension](dim: D, renamer: (Dimension, Cell[P]) => P)( implicit ev: PosDimDep[P, D]): U[Cell[P]] = {
     data.map { case c => Cell(renamer(dim, c), c.content) }
   }
@@ -269,6 +250,81 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .groupBy { case c => slice.selected(c.position) }
       .join(wanted.groupBy { case (p, i) => p })
       .map { case (_, (c, _)) => c }
+  }
+
+  def stream[Q <: Position](command: String, script: String, separator: String,
+    parser: String => Option[Cell[Q]]): U[Cell[Q]] = {
+    val lines = Source.fromFile(script).getLines.toList
+    val smfn = (k: Unit, itr: Iterator[String]) => {
+      val tmp = File.createTempFile(script + ".", ".grimlock")
+      val name = tmp.getAbsolutePath
+      tmp.deleteOnExit()
+
+      val writer = new PrintWriter(name, "UTF-8")
+      for (line <- lines) {
+        writer.println(line)
+      }
+      writer.close()
+
+      val process = new ProcessBuilder(command, name).start()
+
+      new Thread() {
+        override def run() {
+          val out = new PrintWriter(process.getOutputStream)
+          for (cell <- itr) {
+            out.println(cell)
+          }
+          out.close()
+        }
+      }.start()
+
+      val result = Source.fromInputStream(process.getInputStream).getLines()
+
+      new Iterator[String] {
+        def next(): String = result.next()
+        def hasNext: Boolean = {
+          if (result.hasNext) {
+            true
+          } else {
+            val status = process.waitFor()
+            if (status != 0) {
+              throw new Exception(s"Subprocess '${command} ${script}' exited with status ${status}")
+            }
+            false
+          }
+        }
+      }
+    }
+
+    data
+      .map(_.toString(separator, false))
+      .groupAll
+      .mapGroup(smfn)
+      .values
+      .flatMap(parser(_))
+  }
+
+  def summariseAndExpand[T, D <: Dimension](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
+    ev2: AggregatableMultiple[T], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
+    val a = ev2.convert(aggregators)
+
+    data
+      .map { case c => (slice.selected(c.position), a.prepare(slice, c)) }
+      .groupBy { case (p, t) => p }
+      .reduce[(slice.S, a.T)] { case ((lp, lt), (rp, rt)) => (lp, a.reduce(lt, rt)) }
+      .flatMap { case (_, (p, t)) => a.presentMultiple(p, t).toList }
+  }
+
+  def summariseAndExpandWithValue[T, D <: Dimension, W](slice: Slice[P, D], aggregators: T, value: E[W])(
+    implicit ev1: PosDimDep[P, D], ev2: AggregatableMultipleWithValue[T, W],
+      ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
+    val a = ev2.convert(aggregators)
+
+    data
+      .mapWithValue(value) { case (c, vo) => (slice.selected(c.position), a.prepareWithValue(slice, c, vo.get)) }
+      .groupBy { case (p, t) => p }
+      .reduce[(slice.S, a.T)] { case ((lp, lt), (rp, rt)) => (lp, a.reduce(lt, rt)) }
+      .flatMapWithValue(value) { case ((_, (p, t)), vo) => a.presentMultipleWithValue(p, t, vo.get).toList }
   }
 
   def toMap[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
@@ -584,7 +640,7 @@ object Matrix {
    * @param first     The codex for decoding the first dimension.
    */
   def load1D(file: String, separator: String = "|", first: Codex = StringCodex): TypedPipe[Cell[Position1D]] = {
-    TypedPipe.from(TextLine(file)).flatMap { Cell.parse1D(_, separator, first) }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse1D(separator, first)(_) }
   }
 
   /**
@@ -597,7 +653,7 @@ object Matrix {
    */
   def load1DWithDictionary(file: String, dict: Map[String, Schema], separator: String = "|",
     first: Codex = StringCodex): TypedPipe[Cell[Position1D]] = {
-    TypedPipe.from(TextLine(file)).flatMap { Cell.parse1DWithDictionary(_, dict, separator, first) }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse1DWithDictionary(dict, separator, first)(_) }
   }
 
   /**
@@ -610,7 +666,7 @@ object Matrix {
    */
   def load1DWithSchema(file: String, schema: Schema, separator: String = "|",
     first: Codex = StringCodex): TypedPipe[Cell[Position1D]] = {
-    TypedPipe.from(TextLine(file)).flatMap { Cell.parse1DWithSchema(_, schema, separator, first) }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse1DWithSchema(schema, separator, first)(_) }
   }
 
   /**
@@ -623,7 +679,7 @@ object Matrix {
    */
   def load2D(file: String, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex): TypedPipe[Cell[Position2D]] = {
-    TypedPipe.from(TextLine(file)).flatMap { Cell.parse2D(_, separator, first, second) }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse2D(separator, first, second)(_) }
   }
 
   /**
@@ -639,7 +695,7 @@ object Matrix {
   def load2DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
     separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex)(
       implicit ev: PosDimDep[Position2D, D]): TypedPipe[Cell[Position2D]] = {
-    TypedPipe.from(TextLine(file)).flatMap { Cell.parse2DWithDictionary(_, dict, dim, separator, first, second) }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse2DWithDictionary(dict, dim, separator, first, second)(_) }
   }
 
   /**
@@ -653,7 +709,7 @@ object Matrix {
    */
   def load2DWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex): TypedPipe[Cell[Position2D]] = {
-    TypedPipe.from(TextLine(file)).flatMap { Cell.parse2DWithSchema(_, schema, separator, first, second) }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse2DWithSchema(schema, separator, first, second)(_) }
   }
 
   /**
@@ -667,7 +723,7 @@ object Matrix {
    */
   def load3D(file: String, separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
     third: Codex = StringCodex): TypedPipe[Cell[Position3D]] = {
-    TypedPipe.from(TextLine(file)).flatMap { Cell.parse3D(_, separator, first, second, third) }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse3D(separator, first, second, third)(_) }
   }
 
   /**
@@ -684,7 +740,7 @@ object Matrix {
   def load3DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
     separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = DateCodex)(
       implicit ev: PosDimDep[Position3D, D]): TypedPipe[Cell[Position3D]] = {
-    TypedPipe.from(TextLine(file)).flatMap { Cell.parse3DWithDictionary(_, dict, dim, separator, first, second, third) }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse3DWithDictionary(dict, dim, separator, first, second, third)(_) }
   }
 
   /**
@@ -699,7 +755,7 @@ object Matrix {
    */
   def load3DWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex, third: Codex = DateCodex): TypedPipe[Cell[Position3D]] = {
-    TypedPipe.from(TextLine(file)).flatMap { Cell.parse3DWithSchema(_, schema, separator, first, second, third) }
+    TypedPipe.from(TextLine(file)).flatMap { Cell.parse3DWithSchema(schema, separator, first, second, third)(_) }
   }
 
   /**
@@ -715,7 +771,7 @@ object Matrix {
    */
   def readTable(table: String, columns: List[(String, Schema)], pkeyIndex: Int = 0,
     separator: String = "\01"): TypedPipe[Cell[Position2D]] = {
-    TypedPipe.from(TextLine(table)).flatMap { Cell.parseTable(_, columns, pkeyIndex, separator) }
+    TypedPipe.from(TextLine(table)).flatMap { Cell.parseTable(columns, pkeyIndex, separator)(_) }
   }
 
   /** Conversion from `TypedPipe[Cell[Position1D]]` to a Scalding `Matrix1D`. */
