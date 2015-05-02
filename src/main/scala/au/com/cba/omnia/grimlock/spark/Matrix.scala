@@ -63,43 +63,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def window[D <: Dimension, T](slice: Slice[P, D], windowers: T)(implicit ev1: PosDimDep[P, D],
-    ev2: Windowable[T], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S]): U[Cell[slice.S#M]] = ??? /*{
-    val w = ev2.convert(windowers)
-
-    data
-      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
-      .groupBy { case (c, r) => c.position }
-      .sortBy { case (c, r) => r }
-      .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
-        case (None, (c, r)) => Some((w.initialise(slice)(c, r), Collection[Cell[slice.S#M]]()))
-        case (Some((t, _)), (c, r)) => Some(w.present(slice)(c, r, t))
-      }
-      .flatMap {
-        case (p, Some((t, c))) => c.toList
-        case _ => List()
-      }
-  }*/
-
-  def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windowers: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D): U[Cell[slice.S#M]] = ??? /*{
-    val w = ev2.convert(windowers)
-
-    data
-      .leftCross(value)
-      .map { case (Cell(p, c), vo) => (Cell(slice.selected(p), c), slice.remainder(p), vo.get) }
-      .groupBy { case (c, r, v) => c.position }
-      .sortBy { case (c, r, v) => r }
-      .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
-        case (None, (c, r, v)) => Some((w.initialise(slice, v)(c, r), Collection[Cell[slice.S#M]]()))
-        case (Some((t, _)), (c, r, v)) => Some(w.present(slice, v)(c, r, t))
-      }
-      .flatMap {
-        case (p, Some((t, c))) => c.toList
-        case _ => List()
-      }
-  }*/
-
   def get[T](positions: T)(implicit ev1: PositionDistributable[T, P, RDD], ev2: ClassTag[P]): U[Cell[P]] = {
     data
       .keyBy { case c => c.position }
@@ -331,6 +294,49 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .keyBy { case c => slice.selected(c.position) }
       .join(pipe.keyBy { case (p, pred) => p })
       .collect { case (_, (c, (_, predicate))) if predicate(c) => c.position }
+  }
+
+  def window[D <: Dimension, T](slice: Slice[P, D], windowers: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
+    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
+    val w = ev2.convert(windowers)
+
+    data
+      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
+      .sortBy { case (c, r) => (c.position, r) }
+      .groupBy { case (c, r) => c.position }
+      .flatMap {
+        case (_, itr) => itr
+          .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
+            case (None, (c, r)) => Some((w.initialise(slice)(c, r), Collection[Cell[slice.S#M]]()))
+            case (Some((t, _)), (c, r)) => Some(w.present(slice)(c, r, t))
+          }
+          .flatMap {
+            case Some((t, c)) => c.toList
+            case _ => List()
+          }
+      }
+  }
+
+  def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windowers: T, value: E[W])(
+    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
+      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
+    val w = ev2.convert(windowers)
+
+    data
+      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
+      .sortBy { case (c, r) => (c.position, r) }
+      .groupBy { case (c, r) => c.position }
+      .flatMap {
+        case (_, itr) => itr
+          .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
+            case (None, (c, r)) => Some((w.initialise(slice, value)(c, r), Collection[Cell[slice.S#M]]()))
+            case (Some((t, _)), (c, r)) => Some(w.present(slice, value)(c, r, t))
+          }
+          .flatMap {
+            case Some((t, c)) => c.toList
+            case _ => List()
+          }
+      }
   }
 
   val data: U[Cell[P]]

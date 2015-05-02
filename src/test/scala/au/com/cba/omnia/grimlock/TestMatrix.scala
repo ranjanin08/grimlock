@@ -7960,7 +7960,7 @@ class TestScaldingMatrixWindow extends TestMatrixWindow with TBddDsl {
     }
   }
 }
-/* Doesn't compile yet (missing scanLeft)
+
 class TestSparkMatrixWindow extends TestMatrixWindow {
 
   "A Matrix.window" should "return its first along derived data in 1D" in {
@@ -8096,7 +8096,7 @@ class TestSparkMatrixWindow extends TestMatrixWindow {
       .toList.sortBy(_.position) shouldBe result22
   }
 }
-*/
+
 trait TestMatrixFill extends TestMatrix {
 
   val result1 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),

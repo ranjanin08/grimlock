@@ -62,9 +62,8 @@ then
       --class au.com.cba.omnia.grimlock.spark.examples.InstanceCentricTfIdf $JAR local ../data
     $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.MutualInformation $JAR local ../data
-# Doesn't run yet (missing scanLeft)
-#    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
-#      --class au.com.cba.omnia.grimlock.spark.examples.DerivedData $JAR local ../data
+    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+      --class au.com.cba.omnia.grimlock.spark.examples.DerivedData $JAR local ../data
 
     if [ -d "demo.old" ]
     then

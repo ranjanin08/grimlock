@@ -302,29 +302,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   def change[T, D <: Dimension](slice: Slice[P, D], positions: T, schema: Schema)(implicit ev1: PosDimDep[P, D],
     ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
 
-  /**
-   * Create window based derived data.
-   *
-   * @param slice     Encapsulates the dimension(s) to derive over.
-   * @param windowers The windowers to apply to the content.
-   *
-   * @return A `U[Cell[slice.S#M]]` with the derived data.
-   */
-  def window[D <: Dimension, T](slice: Slice[P, D], windowers: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
-    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S]): U[Cell[slice.S#M]]
-
-  /**
-   * Create window based derived data with a user supplied value.
-   *
-   * @param slice     Encapsulates the dimension(s) to derive over.
-   * @param windowers The windowers to apply to the content.
-   * @param value    .A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[slice.S#M]]` with the derived data.
-   */
-  def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windowers: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D): U[Cell[slice.S#M]]
-
   /** Return all possible positions of a matrix. */
   def domain(): U[P]
 
@@ -664,6 +641,30 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def which[T, D <: Dimension](slice: Slice[P, D], pospred: List[(T, Predicate)])(implicit ev1: PosDimDep[P, D],
     ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P]): U[P]
+
+  /**
+   * Create window based derived data.
+   *
+   * @param slice     Encapsulates the dimension(s) to derive over.
+   * @param windowers The windowers to apply to the content.
+   *
+   * @return A `U[Cell[slice.S#M]]` with the derived data.
+   */
+  def window[D <: Dimension, T](slice: Slice[P, D], windowers: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
+    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
+
+  /**
+   * Create window based derived data with a user supplied value.
+   *
+   * @param slice     Encapsulates the dimension(s) to derive over.
+   * @param windowers The windowers to apply to the content.
+   * @param value    .A `E` holding a user supplied value.
+   *
+   * @return A `U[Cell[slice.S#M]]` with the derived data.
+   */
+  def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windowers: T, value: E[W])(
+    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
+      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
 
   protected def toString(t: Cell[P], separator: String, descriptive: Boolean): String = {
     t.toString(separator, descriptive)
