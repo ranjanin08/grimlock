@@ -9319,34 +9319,21 @@ trait TestMatrixExpand extends TestMatrix {
     Cell(Position2D("foo", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
     Cell(Position2D("qux", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
 
-  val result2 = List(Cell(Position3D("bar", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
-    Cell(Position3D("bar", 2, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
-    Cell(Position3D("bar", 3, "abc"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
-    Cell(Position3D("baz", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
-    Cell(Position3D("baz", 2, "abc"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
-    Cell(Position3D("foo", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
-    Cell(Position3D("foo", 2, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
-    Cell(Position3D("foo", 3, "abc"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
-    Cell(Position3D("foo", 4, "abc"), Content(DateSchema[Codex.DateTimeCodex](),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+  val result2 = List(Cell(Position3D("bar", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position3D("baz", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position3D("foo", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position3D("qux", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
 
-  val result3 = List(Cell(Position4D("bar", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
-    Cell(Position4D("bar", 2, "xyz", "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
-    Cell(Position4D("bar", 3, "xyz", "abc"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
-    Cell(Position4D("baz", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
-    Cell(Position4D("baz", 2, "xyz", "abc"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
-    Cell(Position4D("foo", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
-    Cell(Position4D("foo", 2, "xyz", "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
-    Cell(Position4D("foo", 3, "xyz", "abc"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
-    Cell(Position4D("foo", 4, "xyz", "abc"), Content(DateSchema[Codex.DateTimeCodex](),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position4D("qux", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+  val result3 = List(Cell(Position4D("bar", "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position4D("baz", "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position4D("foo", "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position4D("qux", "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
 
-  val result4 = List(Cell(Position2D("bar", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
-    Cell(Position2D("baz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
-    Cell(Position2D("foo", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
-    Cell(Position2D("qux", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+  val result4 = List(
+    Cell(Position5D("bar", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position5D("baz", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position5D("foo", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position5D("qux", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
 
   val result5 = List(Cell(Position3D("bar", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
     Cell(Position3D("bar", 2, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
@@ -9360,7 +9347,32 @@ trait TestMatrixExpand extends TestMatrix {
       (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
     Cell(Position3D("qux", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
 
-  val result6 = List(Cell(Position4D("bar", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+  val result6 = List(Cell(Position4D("bar", 1, "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position4D("bar", 2, "abc", "def"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+    Cell(Position4D("bar", 3, "abc", "def"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+    Cell(Position4D("baz", 1, "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position4D("baz", 2, "abc", "def"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+    Cell(Position4D("foo", 1, "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position4D("foo", 2, "abc", "def"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+    Cell(Position4D("foo", 3, "abc", "def"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position4D("foo", 4, "abc", "def"), Content(DateSchema[Codex.DateTimeCodex](),
+      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+    Cell(Position4D("qux", 1, "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result7 = List(
+    Cell(Position5D("bar", 1, "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position5D("bar", 2, "abc", "def", "ghi"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+    Cell(Position5D("bar", 3, "abc", "def", "ghi"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+    Cell(Position5D("baz", 1, "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position5D("baz", 2, "abc", "def", "ghi"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+    Cell(Position5D("foo", 1, "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position5D("foo", 2, "abc", "def", "ghi"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+    Cell(Position5D("foo", 3, "abc", "def", "ghi"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position5D("foo", 4, "abc", "def", "ghi"), Content(DateSchema[Codex.DateTimeCodex](),
+      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+    Cell(Position5D("qux", 1, "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result8 = List(Cell(Position4D("bar", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
     Cell(Position4D("bar", 2, "xyz", "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
     Cell(Position4D("bar", 3, "xyz", "abc"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
     Cell(Position4D("baz", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
@@ -9371,122 +9383,461 @@ trait TestMatrixExpand extends TestMatrix {
     Cell(Position4D("foo", 4, "xyz", "abc"), Content(DateSchema[Codex.DateTimeCodex](),
       (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
     Cell(Position4D("qux", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result9 = List(
+    Cell(Position5D("bar", 1, "xyz", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position5D("bar", 2, "xyz", "abc", "def"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+    Cell(Position5D("bar", 3, "xyz", "abc", "def"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+    Cell(Position5D("baz", 1, "xyz", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position5D("baz", 2, "xyz", "abc", "def"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+    Cell(Position5D("foo", 1, "xyz", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position5D("foo", 2, "xyz", "abc", "def"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+    Cell(Position5D("foo", 3, "xyz", "abc", "def"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position5D("foo", 4, "xyz", "abc", "def"), Content(DateSchema[Codex.DateTimeCodex](),
+      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+    Cell(Position5D("qux", 1, "xyz", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result10 = List(Cell(Position2D("bar", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position2D("baz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position2D("foo", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position2D("qux", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result11 = List(Cell(Position3D("bar", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position3D("baz", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position3D("foo", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position3D("qux", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result12 = List(Cell(Position4D("bar", "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position4D("baz", "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position4D("foo", "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position4D("qux", "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result13 = List(
+    Cell(Position5D("bar", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position5D("baz", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position5D("foo", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position5D("qux", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result14 = List(Cell(Position3D("bar", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position3D("bar", 2, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+    Cell(Position3D("bar", 3, "abc"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+    Cell(Position3D("baz", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position3D("baz", 2, "abc"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+    Cell(Position3D("foo", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position3D("foo", 2, "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+    Cell(Position3D("foo", 3, "abc"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position3D("foo", 4, "abc"), Content(DateSchema[Codex.DateTimeCodex](),
+      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+    Cell(Position3D("qux", 1, "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result15 = List(Cell(Position4D("bar", 1, "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position4D("bar", 2, "abc", "def"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+    Cell(Position4D("bar", 3, "abc", "def"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+    Cell(Position4D("baz", 1, "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position4D("baz", 2, "abc", "def"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+    Cell(Position4D("foo", 1, "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position4D("foo", 2, "abc", "def"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+    Cell(Position4D("foo", 3, "abc", "def"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position4D("foo", 4, "abc", "def"), Content(DateSchema[Codex.DateTimeCodex](),
+      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+    Cell(Position4D("qux", 1, "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result16 = List(
+    Cell(Position5D("bar", 1, "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position5D("bar", 2, "abc", "def", "ghi"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+    Cell(Position5D("bar", 3, "abc", "def", "ghi"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+    Cell(Position5D("baz", 1, "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position5D("baz", 2, "abc", "def", "ghi"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+    Cell(Position5D("foo", 1, "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position5D("foo", 2, "abc", "def", "ghi"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+    Cell(Position5D("foo", 3, "abc", "def", "ghi"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position5D("foo", 4, "abc", "def", "ghi"), Content(DateSchema[Codex.DateTimeCodex](),
+      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+    Cell(Position5D("qux", 1, "abc", "def", "ghi"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result17 = List(Cell(Position4D("bar", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position4D("bar", 2, "xyz", "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+    Cell(Position4D("bar", 3, "xyz", "abc"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+    Cell(Position4D("baz", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position4D("baz", 2, "xyz", "abc"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+    Cell(Position4D("foo", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position4D("foo", 2, "xyz", "abc"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+    Cell(Position4D("foo", 3, "xyz", "abc"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position4D("foo", 4, "xyz", "abc"), Content(DateSchema[Codex.DateTimeCodex](),
+      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+    Cell(Position4D("qux", 1, "xyz", "abc"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
+
+  val result18 = List(
+    Cell(Position5D("bar", 1, "xyz", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "6.28")),
+    Cell(Position5D("bar", 2, "xyz", "abc", "def"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+    Cell(Position5D("bar", 3, "xyz", "abc", "def"), Content(OrdinalSchema[Codex.LongCodex](), 19)),
+    Cell(Position5D("baz", 1, "xyz", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position5D("baz", 2, "xyz", "abc", "def"), Content(DiscreteSchema[Codex.LongCodex](), 19)),
+    Cell(Position5D("foo", 1, "xyz", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "3.14")),
+    Cell(Position5D("foo", 2, "xyz", "abc", "def"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
+    Cell(Position5D("foo", 3, "xyz", "abc", "def"), Content(NominalSchema[Codex.StringCodex](), "9.42")),
+    Cell(Position5D("foo", 4, "xyz", "abc", "def"), Content(DateSchema[Codex.DateTimeCodex](),
+      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+    Cell(Position5D("qux", 1, "xyz", "abc", "def"), Content(OrdinalSchema[Codex.StringCodex](), "12.56")))
 }
 
 object TestMatrixExpand {
 
-  def expander[P <: Position with ExpandablePosition](cell: Cell[P]): P#M = cell.position.append("abc")
+  type PwE = Position with ExpandablePosition
 
-  def expanderWithValue[P <: Position with ExpandablePosition](cell: Cell[P], ext: String): P#M = {
-    cell.position.append(ext)
+  def expander1D[P <: PwE](cell: Cell[P]): P#M = cell.position.append("abc")
+  def expander2D[P <: PwE, Q <: PwE](cell: Cell[P])(implicit ev: P#M =:= Q): Q#M = {
+    cell.position.append("abc").append("def")
   }
+  def expander3D[P <: PwE, Q <: PwE, R <: PwE](cell: Cell[P])(implicit ev1: P#M =:= Q, ev2: Q#M =:= R): R#M = {
+    cell.position.append("abc").append("def").append("ghi")
+  }
+  def expander4D[P <: PwE, Q <: PwE, R <: PwE, S <: PwE](cell: Cell[P])(implicit ev1: P#M =:= Q, ev2: Q#M =:= R,
+    ev3: R#M =:= S): S#M = cell.position.append("abc").append("def").append("ghi").append("jkl")
+
+  val expand1D2D = expander1D[Position1D] _
+  val expand1D3D = expander2D[Position1D, Position2D] _
+  val expand1D4D = expander3D[Position1D, Position2D, Position3D] _
+  val expand1D5D = expander4D[Position1D, Position2D, Position3D, Position4D] _
+
+  val expand2D3D = expander1D[Position2D] _
+  val expand2D4D = expander2D[Position2D, Position3D] _
+  val expand2D5D = expander3D[Position2D, Position3D, Position4D] _
+
+  val expand3D4D = expander1D[Position3D] _
+  val expand3D5D = expander2D[Position3D, Position4D] _
+
+  def expander1DWithValue[P <: PwE](cell: Cell[P], ext: String): P#M = cell.position.append(ext)
+  def expander2DWithValue[P <: PwE, Q <: PwE](cell: Cell[P], ext: String)(implicit ev: P#M =:= Q): Q#M = {
+    cell.position.append(ext).append("def")
+  }
+  def expander3DWithValue[P <: PwE, Q <: PwE, R <: PwE](cell: Cell[P], ext: String)(implicit ev1: P#M =:= Q,
+    ev2: Q#M =:= R): R#M = cell.position.append(ext).append("def").append("ghi")
+  def expander4DWithValue[P <: PwE, Q <: PwE, R <: PwE, S <: PwE](cell: Cell[P], ext: String)(implicit ev1: P#M =:= Q,
+    ev2: Q#M =:= R, ev3: R#M =:= S): S#M = cell.position.append(ext).append("def").append("ghi").append("jkl")
+
+  val expand1D2DWithValue = expander1DWithValue[Position1D] _
+  val expand1D3DWithValue = expander2DWithValue[Position1D, Position2D] _
+  val expand1D4DWithValue = expander3DWithValue[Position1D, Position2D, Position3D] _
+  val expand1D5DWithValue = expander4DWithValue[Position1D, Position2D, Position3D, Position4D] _
+
+  val expand2D3DWithValue = expander1DWithValue[Position2D] _
+  val expand2D4DWithValue = expander2DWithValue[Position2D, Position3D] _
+  val expand2D5DWithValue = expander3DWithValue[Position2D, Position3D, Position4D] _
+
+  val expand3D4DWithValue = expander1DWithValue[Position3D] _
+  val expand3D5DWithValue = expander2DWithValue[Position3D, Position4D] _
 }
 
 class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
 
-  "A Matrix.expand" should "return its expanded data in 1D" in {
+  "A Matrix.expand" should "return its 1D expanded data in 1D" in {
     Given {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand(TestMatrixExpand.expander)
+        cells.expand1D(TestMatrixExpand.expand1D2D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
   }
 
-  it should "return its expanded data in 2D" in {
+  it should "return its 2D expanded data in 1D" in {
     Given {
-      data2
+      data1
     } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.expand(TestMatrixExpand.expander)
+      cells: TypedPipe[Cell[Position1D]] =>
+        cells.expand2D(TestMatrixExpand.expand1D3D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
   }
 
-  it should "return its expanded data in 3D" in {
+  it should "return its 3D expanded data in 1D" in {
     Given {
-      data3
+      data1
     } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.expand(TestMatrixExpand.expander)
+      cells: TypedPipe[Cell[Position1D]] =>
+        cells.expand3D(TestMatrixExpand.expand1D4D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
   }
 
-  "A Matrix.expandWithValue" should "return its expanded data in 1D" in {
+  it should "return its 4D expanded data in 1D" in {
     Given {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.expandWithValue(TestMatrixExpand.expanderWithValue, ValuePipe(ext))
+        cells.expand4D(TestMatrixExpand.expand1D5D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
   }
 
-  it should "return its expanded data in 2D" in {
+  it should "return its 1D expanded data in 2D" in {
     Given {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.expandWithValue(TestMatrixExpand.expanderWithValue, ValuePipe(ext))
+        cells.expand1D(TestMatrixExpand.expand2D3D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
   }
 
-  it should "return its expanded data in 3D" in {
+  it should "return its 2D expanded data in 2D" in {
+    Given {
+      data2
+    } When {
+      cells: TypedPipe[Cell[Position2D]] =>
+        cells.expand2D(TestMatrixExpand.expand2D4D)
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result6
+    }
+  }
+
+  it should "return its 3D expanded data in 2D" in {
+    Given {
+      data2
+    } When {
+      cells: TypedPipe[Cell[Position2D]] =>
+        cells.expand3D(TestMatrixExpand.expand2D5D)
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result7
+    }
+  }
+
+  it should "return its 1D expanded data in 3D" in {
     Given {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.expandWithValue(TestMatrixExpand.expanderWithValue, ValuePipe(ext))
+        cells.expand1D(TestMatrixExpand.expand3D4D)
     } Then {
-      _.toList.sortBy(_.position) shouldBe result6
+      _.toList.sortBy(_.position) shouldBe result8
+    }
+  }
+
+  it should "return its 2D expanded data in 3D" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.expand2D(TestMatrixExpand.expand3D5D)
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result9
+    }
+  }
+
+  "A Matrix.expandWithValue" should "return its 1D expanded data in 1D" in {
+    Given {
+      data1
+    } When {
+      cells: TypedPipe[Cell[Position1D]] =>
+        cells.expand1DWithValue(TestMatrixExpand.expand1D2DWithValue, ValuePipe(ext))
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result10
+    }
+  }
+
+  it should "return its 2D expanded data in 1D" in {
+    Given {
+      data1
+    } When {
+      cells: TypedPipe[Cell[Position1D]] =>
+        cells.expand2DWithValue(TestMatrixExpand.expand1D3DWithValue, ValuePipe(ext))
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result11
+    }
+  }
+
+  it should "return its 3D expanded data in 1D" in {
+    Given {
+      data1
+    } When {
+      cells: TypedPipe[Cell[Position1D]] =>
+        cells.expand3DWithValue(TestMatrixExpand.expand1D4DWithValue, ValuePipe(ext))
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result12
+    }
+  }
+
+  it should "return its 4D expanded data in 1D" in {
+    Given {
+      data1
+    } When {
+      cells: TypedPipe[Cell[Position1D]] =>
+        cells.expand4DWithValue(TestMatrixExpand.expand1D5DWithValue, ValuePipe(ext))
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result13
+    }
+  }
+
+  it should "return its 1D expanded data in 2D" in {
+    Given {
+      data2
+    } When {
+      cells: TypedPipe[Cell[Position2D]] =>
+        cells.expand1DWithValue(TestMatrixExpand.expand2D3DWithValue, ValuePipe(ext))
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result14
+    }
+  }
+
+  it should "return its 2D expanded data in 2D" in {
+    Given {
+      data2
+    } When {
+      cells: TypedPipe[Cell[Position2D]] =>
+        cells.expand2DWithValue(TestMatrixExpand.expand2D4DWithValue, ValuePipe(ext))
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result15
+    }
+  }
+
+  it should "return its 3D expanded data in 2D" in {
+    Given {
+      data2
+    } When {
+      cells: TypedPipe[Cell[Position2D]] =>
+        cells.expand3DWithValue(TestMatrixExpand.expand2D5DWithValue, ValuePipe(ext))
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result16
+    }
+  }
+
+  it should "return its 1D expanded data in 3D" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.expand1DWithValue(TestMatrixExpand.expand3D4DWithValue, ValuePipe(ext))
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result17
+    }
+  }
+
+  it should "return its 2D expanded data in 3D" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.expand2DWithValue(TestMatrixExpand.expand3D5DWithValue, ValuePipe(ext))
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result18
     }
   }
 }
 
 class TestSparkMatrixExpand extends TestMatrixExpand {
 
-  "A Matrix.expand" should "return its expanded data in 1D" in {
+  "A Matrix.expand" should "return its 1D expanded data in 1D" in {
     toRDD(data1)
-      .expand(TestMatrixExpand.expander)
+      .expand1D(TestMatrixExpand.expand1D2D)
       .toList.sortBy(_.position) shouldBe result1
   }
 
-  it should "return its expanded data in 2D" in {
-    toRDD(data2)
-      .expand(TestMatrixExpand.expander)
+  it should "return its 2D expanded data in 1D" in {
+    toRDD(data1)
+      .expand2D(TestMatrixExpand.expand1D3D)
       .toList.sortBy(_.position) shouldBe result2
   }
 
-  it should "return its expanded data in 3D" in {
-    toRDD(data3)
-      .expand(TestMatrixExpand.expander)
+  it should "return its 3D expanded data in 1D" in {
+    toRDD(data1)
+      .expand3D(TestMatrixExpand.expand1D4D)
       .toList.sortBy(_.position) shouldBe result3
   }
 
-  "A Matrix.expandWithValue" should "return its expanded data in 1D" in {
+  it should "return its 4D expanded data in 1D" in {
     toRDD(data1)
-      .expandWithValue(TestMatrixExpand.expanderWithValue, ext)
+      .expand4D(TestMatrixExpand.expand1D5D)
       .toList.sortBy(_.position) shouldBe result4
   }
 
-  it should "return its expanded data in 2D" in {
+  it should "return its expanded 1D data in 2D" in {
     toRDD(data2)
-      .expandWithValue(TestMatrixExpand.expanderWithValue, ext)
+      .expand1D(TestMatrixExpand.expand2D3D)
       .toList.sortBy(_.position) shouldBe result5
   }
 
-  it should "return its expanded data in 3D" in {
-    toRDD(data3)
-      .expandWithValue(TestMatrixExpand.expanderWithValue, ext)
+  it should "return its expanded 2D data in 2D" in {
+    toRDD(data2)
+      .expand2D(TestMatrixExpand.expand2D4D)
       .toList.sortBy(_.position) shouldBe result6
+  }
+
+  it should "return its expanded 3D data in 2D" in {
+    toRDD(data2)
+      .expand3D(TestMatrixExpand.expand2D5D)
+      .toList.sortBy(_.position) shouldBe result7
+  }
+
+  it should "return its expanded 1D data in 3D" in {
+    toRDD(data3)
+      .expand1D(TestMatrixExpand.expand3D4D)
+      .toList.sortBy(_.position) shouldBe result8
+  }
+
+  it should "return its expanded 2D data in 3D" in {
+    toRDD(data3)
+      .expand2D(TestMatrixExpand.expand3D5D)
+      .toList.sortBy(_.position) shouldBe result9
+  }
+
+  "A Matrix.expandWithValue" should "return its 1D expanded data in 1D" in {
+    toRDD(data1)
+      .expand1DWithValue(TestMatrixExpand.expand1D2DWithValue, ext)
+      .toList.sortBy(_.position) shouldBe result10
+  }
+
+  it should "return its 2D expanded data in 1D" in {
+    toRDD(data1)
+      .expand2DWithValue(TestMatrixExpand.expand1D3DWithValue, ext)
+      .toList.sortBy(_.position) shouldBe result11
+  }
+
+  it should "return its 3D expanded data in 1D" in {
+    toRDD(data1)
+      .expand3DWithValue(TestMatrixExpand.expand1D4DWithValue, ext)
+      .toList.sortBy(_.position) shouldBe result12
+  }
+
+  it should "return its 4D expanded data in 1D" in {
+    toRDD(data1)
+      .expand4DWithValue(TestMatrixExpand.expand1D5DWithValue, ext)
+      .toList.sortBy(_.position) shouldBe result13
+  }
+
+  it should "return its 1D expanded data in 2D" in {
+    toRDD(data2)
+      .expand1DWithValue(TestMatrixExpand.expand2D3DWithValue, ext)
+      .toList.sortBy(_.position) shouldBe result14
+  }
+
+  it should "return its 2D expanded data in 2D" in {
+    toRDD(data2)
+      .expand2DWithValue(TestMatrixExpand.expand2D4DWithValue, ext)
+      .toList.sortBy(_.position) shouldBe result15
+  }
+
+  it should "return its 3D expanded data in 2D" in {
+    toRDD(data2)
+      .expand3DWithValue(TestMatrixExpand.expand2D5DWithValue, ext)
+      .toList.sortBy(_.position) shouldBe result16
+  }
+
+  it should "return its 1D expanded data in 3D" in {
+    toRDD(data3)
+      .expand1DWithValue(TestMatrixExpand.expand3D4DWithValue, ext)
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its 2D expanded data in 3D" in {
+    toRDD(data3)
+      .expand2DWithValue(TestMatrixExpand.expand3D5DWithValue, ext)
+      .toList.sortBy(_.position) shouldBe result18
   }
 }
 

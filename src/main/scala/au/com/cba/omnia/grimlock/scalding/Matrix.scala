@@ -15,7 +15,10 @@
 package au.com.cba.omnia.grimlock.scalding
 
 import au.com.cba.omnia.grimlock.framework.{
-  ExpandableMatrix => BaseExpandableMatrix,
+  Expandable1DMatrix => BaseExpandable1DMatrix,
+  Expandable2DMatrix => BaseExpandable2DMatrix,
+  Expandable3DMatrix => BaseExpandable3DMatrix,
+  Expandable4DMatrix => BaseExpandable4DMatrix,
   Matrix => BaseMatrix,
   Matrixable => BaseMatrixable,
   Nameable => BaseNameable,
@@ -522,12 +525,12 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
   }
 }
 
-/** Base trait for methods that expand the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
-trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
+/** Base trait for methods that expand by 1 the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
+trait Expandable1DMatrix[P <: Position with ExpandablePosition] extends BaseExpandable1DMatrix[P] { self: Matrix[P] =>
 
-  def expand(expander: Cell[P] => P#M): TypedPipe[Cell[P#M]] = data.map { case c => Cell(expander(c), c.content) }
+  def expand1D(expander: Cell[P] => P#M): TypedPipe[Cell[P#M]] = data.map { case c => Cell(expander(c), c.content) }
 
-  def expandWithValue[W](expander: (Cell[P], W) => P#M, value: ValuePipe[W]): TypedPipe[Cell[P#M]] = {
+  def expand1DWithValue[W](expander: (Cell[P], W) => P#M, value: ValuePipe[W]): TypedPipe[Cell[P#M]] = {
     data.mapWithValue(value) { case (c, vo) => Cell(expander(c, vo.get), c.content) }
   }
 
@@ -542,6 +545,39 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpand
     val t = ev.convert(transformers)
 
     data.flatMapWithValue(value) { case (c, vo) => t.present(c, vo.get).toList }
+  }
+}
+
+/** Base trait for methods that expand by 2 the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
+trait Expandable2DMatrix[P <: Position with ExpandablePosition, Q <: Position] extends BaseExpandable2DMatrix[P, Q] {
+  self: Matrix[P] =>
+
+  def expand2D(expander: Cell[P] => Q): TypedPipe[Cell[Q]] = data.map { case c => Cell(expander(c), c.content) }
+
+  def expand2DWithValue[W](expander: (Cell[P], W) => Q, value: ValuePipe[W]): TypedPipe[Cell[Q]] = {
+    data.mapWithValue(value) { case (c, vo) => Cell(expander(c, vo.get), c.content) }
+  }
+}
+
+/** Base trait for methods that expand by 3 the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
+trait Expandable3DMatrix[P <: Position with ExpandablePosition, Q <: Position] extends BaseExpandable3DMatrix[P, Q] {
+  self: Matrix[P] =>
+
+  def expand3D(expander: Cell[P] => Q): TypedPipe[Cell[Q]] = data.map { case c => Cell(expander(c), c.content) }
+
+  def expand3DWithValue[W](expander: (Cell[P], W) => Q, value: ValuePipe[W]): TypedPipe[Cell[Q]] = {
+    data.mapWithValue(value) { case (c, vo) => Cell(expander(c, vo.get), c.content) }
+  }
+}
+
+/** Base trait for methods that expand by 4 the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
+trait Expandable4DMatrix[P <: Position with ExpandablePosition, Q <: Position] extends BaseExpandable4DMatrix[P, Q] {
+  self: Matrix[P] =>
+
+  def expand4D(expander: Cell[P] => Q): TypedPipe[Cell[Q]] = data.map { case c => Cell(expander(c), c.content) }
+
+  def expand4DWithValue[W](expander: (Cell[P], W) => Q, value: ValuePipe[W]): TypedPipe[Cell[Q]] = {
+    data.mapWithValue(value) { case (c, vo) => Cell(expander(c, vo.get), c.content) }
   }
 }
 
@@ -818,7 +854,9 @@ object Matrix {
  *
  * @param data `TypedPipe[Cell[Position1D]]`.
  */
-class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D] with ExpandableMatrix[Position1D] {
+class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D] with Expandable1DMatrix[Position1D]
+  with Expandable2DMatrix[Position1D, Position3D] with Expandable3DMatrix[Position1D, Position4D]
+  with Expandable4DMatrix[Position1D, Position5D] {
   def domain(): U[Position1D] = names(Over(First)).map { case (p, i) => p }
 
   /**
@@ -865,7 +903,8 @@ class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D]
  * @param data `TypedPipe[Cell[Position2D]]`.
  */
 class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
-  with ExpandableMatrix[Position2D] with MatrixDistance {
+  with Expandable1DMatrix[Position2D] with Expandable2DMatrix[Position2D, Position4D]
+  with Expandable3DMatrix[Position2D, Position5D] with MatrixDistance {
   def domain(): U[Position2D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -1108,7 +1147,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
  * @param data `TypedPipe[Cell[Position3D]]`.
  */
 class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
-  with ExpandableMatrix[Position3D] {
+  with Expandable1DMatrix[Position3D] with Expandable2DMatrix[Position3D, Position5D] {
   def domain(): U[Position3D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -1183,7 +1222,7 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
  * @param data `TypedPipe[Cell[Position4D]]`.
  */
 class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D] with ReduceableMatrix[Position4D]
-  with ExpandableMatrix[Position4D] {
+  with Expandable1DMatrix[Position4D] {
   def domain(): U[Position4D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }

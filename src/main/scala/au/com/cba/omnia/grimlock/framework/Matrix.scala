@@ -766,8 +766,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
     value: E[W])(implicit ev: PosDimDep[P, D]): U[Cell[P#L]]
 }
 
-/** Base trait for methods that expand the number of dimension of a matrix. */
-trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] =>
+/** Base trait for methods that expands by 1 the number of dimension of a matrix. */
+trait Expandable1DMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] =>
   /**
    * Expand a matrix with an extra dimension.
    *
@@ -775,7 +775,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#M]]` with a dimension added.
    */
-  def expand(expander: Cell[P] => P#M): U[Cell[P#M]]
+  def expand1D(expander: Cell[P] => P#M): U[Cell[P#M]]
 
   /**
    * Expand a matrix with an extra dimension using a user supplied value.
@@ -785,7 +785,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#M]]` with a dimension added.
    */
-  def expandWithValue[V](expander: (Cell[P], V) => P#M, value: E[V]): U[Cell[P#M]]
+  def expand1DWithValue[V](expander: (Cell[P], V) => P#M, value: E[V]): U[Cell[P#M]]
 
   /**
    * Transform the content of a matrix and return the transformations with an expanded position.
@@ -807,6 +807,72 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    */
   def transformAndExpandWithValue[T, V](transformers: T, value: E[V])(
     implicit ev: TransformableExpandedWithValue[T, V]): U[Cell[P#M]]
+}
+
+/** Base trait for methods that expands by 2 the number of dimension of a matrix. */
+trait Expandable2DMatrix[P <: Position with ExpandablePosition, Q <: Position] { self: Matrix[P] =>
+  /**
+   * Expand a matrix with two extra dimensions.
+   *
+   * @param expander A function that expands each position with 2 dimensions.
+   *
+   * @return A `U[Cell[Q]]` with two dimensions added.
+   */
+  def expand2D(expander: Cell[P] => Q): U[Cell[Q]]
+
+  /**
+   * Expand a matrix with two extra dimensions using a user supplied value.
+   *
+   * @param expander A function that expands each position with 2 dimension.
+   * @param value    A `E` holding a user supplied value.
+   *
+   * @return A `U[Cell[Q]]` with two dimensions added.
+   */
+  def expand2DWithValue[V](expander: (Cell[P], V) => Q, value: E[V]): U[Cell[Q]]
+}
+
+/** Base trait for methods that expands by 3 the number of dimension of a matrix. */
+trait Expandable3DMatrix[P <: Position with ExpandablePosition, Q <: Position] { self: Matrix[P] =>
+  /**
+   * Expand a matrix with three extra dimensions.
+   *
+   * @param expander A function that expands each position with 3 dimensions.
+   *
+   * @return A `U[Cell[Q]]` with three dimensions added.
+   */
+  def expand3D(expander: Cell[P] => Q): U[Cell[Q]]
+
+  /**
+   * Expand a matrix with three extra dimensions using a user supplied value.
+   *
+   * @param expander A function that expands each position with 3 dimension.
+   * @param value    A `E` holding a user supplied value.
+   *
+   * @return A `U[Cell[Q]]` with three dimensions added.
+   */
+  def expand3DWithValue[V](expander: (Cell[P], V) => Q, value: E[V]): U[Cell[Q]]
+}
+
+/** Base trait for methods that expands by 4 the number of dimension of a matrix. */
+trait Expandable4DMatrix[P <: Position with ExpandablePosition, Q <: Position] { self: Matrix[P] =>
+  /**
+   * Expand a matrix with four extra dimensions.
+   *
+   * @param expander A function that expands each position with 4 dimensions.
+   *
+   * @return A `U[Cell[Q]]` with four dimensions added.
+   */
+  def expand4D(expander: Cell[P] => Q): U[Cell[Q]]
+
+  /**
+   * Expand a matrix with four extra dimensions using a user supplied value.
+   *
+   * @param expander A function that expands each position with 4 dimension.
+   * @param value    A `E` holding a user supplied value.
+   *
+   * @return A `U[Cell[Q]]` with four dimensions added.
+   */
+  def expand4DWithValue[V](expander: (Cell[P], V) => Q, value: E[V]): U[Cell[Q]]
 }
 
 /** Type class for transforming a type `T` into a `U[Cell[P]]`. */
