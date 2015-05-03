@@ -100,7 +100,7 @@ then
     for i in $(seq 1 ${NUM_TEST})
     do
       $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
-        --class au.com.cba.omnia.grimlock.test.TestSpark${i} $JAR local "someInputfile3.txt"
+        --class au.com.cba.omnia.grimlock.test.TestSpark${i} $JAR local .
     done
 
     if [ -d "tmp.old" ]

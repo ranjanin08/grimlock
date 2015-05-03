@@ -773,7 +773,7 @@ object Matrix {
    * @note The returned `Position2D` consists of 2 string values. The first string value is the contents of the primary
    *       key column. The second string value is the name of the column.
    */
-  def readTable(table: String, columns: List[(String, Schema)], pkeyIndex: Int = 0,
+  def loadTable(table: String, columns: List[(String, Schema)], pkeyIndex: Int = 0,
     separator: String = "\01"): TypedPipe[Cell[Position2D]] = {
     TypedPipe.from(TextLine(table)).flatMap { Cell.parseTable(columns, pkeyIndex, separator)(_) }
   }

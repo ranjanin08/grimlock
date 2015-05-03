@@ -60,7 +60,7 @@ object MutualInformation {
     // 2/ Squash the 3rd dimension, keeping values with minimum (earlier) coordinates. The result is a 2D matrix
     //    (instance x feature).
     // 3/ Bucket all continuous variables by rounding them.
-    val data = load3DWithDictionary(s"${path}/exampleMutual.txt", Dictionary.read(s"${path}/exampleDictionary.txt"))
+    val data = load3DWithDictionary(s"${path}/exampleMutual.txt", Dictionary.load(s"${path}/exampleDictionary.txt"))
       .squash(Third, PreservingMinPosition())
       .transform(CeilingBucketing())
 

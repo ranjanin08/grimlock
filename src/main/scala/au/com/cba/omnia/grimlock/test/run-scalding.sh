@@ -75,11 +75,13 @@ then
   then
     if [ ${DO_INIT} = "true" ]
     then
+      hadoop fs -mkdir -p data
       hadoop fs -mkdir -p demo.scalding
 
       for f in $(ls ../data/*.txt)
       do
-        hadoop fs -put $f
+        g=$(echo $f | sed 's/^\.//')
+        hadoop fs -put $f $g
       done
     fi
 
@@ -89,21 +91,21 @@ then
     fi
 
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-      au.com.cba.omnia.grimlock.scalding.examples.BasicOperations --hdfs --path .
+      au.com.cba.omnia.grimlock.scalding.examples.BasicOperations --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-      au.com.cba.omnia.grimlock.scalding.examples.DataSciencePipelineWithFiltering --hdfs --path .
+      au.com.cba.omnia.grimlock.scalding.examples.DataSciencePipelineWithFiltering --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-      au.com.cba.omnia.grimlock.scalding.examples.Scoring --hdfs --path .
+      au.com.cba.omnia.grimlock.scalding.examples.Scoring --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-      au.com.cba.omnia.grimlock.scalding.examples.DataQualityAndAnalysis --hdfs --path .
+      au.com.cba.omnia.grimlock.scalding.examples.DataQualityAndAnalysis --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-      au.com.cba.omnia.grimlock.scalding.examples.LabelWeighting --hdfs --path .
+      au.com.cba.omnia.grimlock.scalding.examples.LabelWeighting --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-      au.com.cba.omnia.grimlock.scalding.examples.InstanceCentricTfIdf --hdfs --path .
+      au.com.cba.omnia.grimlock.scalding.examples.InstanceCentricTfIdf --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-      au.com.cba.omnia.grimlock.scalding.examples.MutualInformation --hdfs --path .
+      au.com.cba.omnia.grimlock.scalding.examples.MutualInformation --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-      au.com.cba.omnia.grimlock.scalding.examples.DerivedData --hdfs --path .
+      au.com.cba.omnia.grimlock.scalding.examples.DerivedData --hdfs --path ./data
   fi
 fi
 
@@ -124,7 +126,7 @@ then
     for i in $(seq 1 ${NUM_TEST})
     do
       export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-        au.com.cba.omnia.grimlock.test.TestScalding${i} --local --input "someInputfile3.txt"
+        au.com.cba.omnia.grimlock.test.TestScalding${i} --local --path .
     done
 
     if [ -d "tmp.old" ]
@@ -137,11 +139,13 @@ then
   then
     if [ ${DO_INIT} = "true" ]
     then
+      hadoop fs -mkdir -p data
       hadoop fs -mkdir -p tmp.scalding
 
       for f in $(ls *.txt)
       do
-        hadoop fs -put $f
+        g="./data/$f"
+        hadoop fs -put $f $g
       done
     fi
 
@@ -152,9 +156,8 @@ then
 
     for i in $(seq 1 ${NUM_TEST})
     do
-      export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; \
-        hadoop jar $JAR com.twitter.scalding.Tool au.com.cba.omnia.grimlock.test.TestScalding${i} --hdfs \
-          --input "someInputfile3.txt"
+      export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
+        au.com.cba.omnia.grimlock.test.TestScalding${i} --hdfs --path ./data
 
       # --tool.graph
       #dot -Tps2 au.com.cba.omnia.grimlock.test.TestScalding${i}0.dot -o graph_${1}.ps

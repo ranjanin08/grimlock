@@ -47,7 +47,7 @@ import org.apache.spark.{ SparkContext, SparkConf }
 import org.apache.spark.rdd.RDD
 
 object TestSparkReader {
-  def read4TupleDataAddDate(file: String)(implicit sc: SparkContext): RDD[Cell[Position3D]] = {
+  def load4TupleDataAddDate(file: String)(implicit sc: SparkContext): RDD[Cell[Position3D]] = {
     def hashDate(v: String) = {
       val cal = java.util.Calendar.getInstance()
       cal.setTime(DateCodex.fromValue(DateCodex.decode("2014-05-14").get))
@@ -77,7 +77,7 @@ object TestSparkReader {
 object TestSpark1 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
       .save("./tmp.spark/dat1.out", descriptive=true)
@@ -88,7 +88,7 @@ object TestSpark1 {
       .slice(Over(First), "iid:1548763", true)
       .save("./tmp.spark/dat2.out", descriptive=true)
 
-    load3D("smallInputfile.txt")
+    load3D(args(1) + "/smallInputfile.txt")
       .save("./tmp.spark/dat3.out", descriptive=true)
   }
 }
@@ -96,7 +96,7 @@ object TestSpark1 {
 object TestSpark2 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     (data.names(Over(First)) ++ data.names(Over(Second)) ++ data.names(Over(Third)))
       .renumber
@@ -132,7 +132,7 @@ object TestSpark2 {
 object TestSpark3 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     (data.types(Over(First)) ++ data.types(Over(Second)) ++ data.types(Over(Third)))
       .save("./tmp.spark/typ1.out", descriptive=true)
@@ -145,7 +145,7 @@ object TestSpark3 {
 object TestSpark4 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
       .slice(Over(Second), "fid:B", true)
@@ -167,7 +167,7 @@ object TestSpark4 {
 object TestSpark5 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
       .slice(Over(Second), List("fid:A", "fid:B"), true)
@@ -197,7 +197,7 @@ object TestSpark5 {
 object TestSpark6 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
       .which((c: Cell[Position3D]) => c.content.schema.kind.isSpecialisationOf(Numerical))
@@ -216,7 +216,7 @@ object TestSpark6 {
       .which((c: Cell[Position3D]) => c.content.value.isInstanceOf[LongValue])
       .save("./tmp.spark/whc4.out", descriptive=true)
 
-    TestSparkReader.read4TupleDataAddDate(args(1))
+    TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -231,7 +231,7 @@ object TestSpark6 {
 object TestSpark7 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
       .get(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get))
@@ -247,7 +247,7 @@ object TestSpark7 {
 object TestSpark8 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
       .slice(Over(Second), "fid:B", true)
@@ -255,7 +255,7 @@ object TestSpark8 {
       .unique
       .save("./tmp.spark/uniq.out", descriptive=true)
 
-    load2D("mutualInputfile.txt")
+    load2D(args(1) + "/mutualInputfile.txt")
       .unique(Over(Second))
       .save("./tmp.spark/uni2.out")
 
@@ -284,7 +284,7 @@ object TestSpark8 {
 object TestSpark9 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     case class StringPartitioner(dim: Dimension) extends Partitioner with Assign {
       type T = String
@@ -341,7 +341,7 @@ object TestSpark9 {
 object TestSpark10 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
       .summariseAndExpand(Over(Second), Mean("mean", strict=true, nan=true))
@@ -367,7 +367,7 @@ object TestSpark10 {
 object TestSpark11 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
@@ -387,7 +387,7 @@ object TestSpark11 {
 object TestSpark12 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
@@ -405,7 +405,7 @@ object TestSpark12 {
 object TestSpark13 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val all = TestSparkReader.read4TupleDataAddDate(args(1))
+    val all = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
     val data = all
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
@@ -431,7 +431,7 @@ object TestSpark13 {
 object TestSpark14 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
@@ -444,7 +444,7 @@ object TestSpark14 {
 object TestSpark15 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
       .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
@@ -474,7 +474,7 @@ object TestSpark15 {
 object TestSpark16 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     case class HashSample() extends Sampler with Select {
       def select[P <: Position](cell: Cell[P]): Boolean = (cell.position(First).toString.hashCode % 25) == 0
@@ -489,7 +489,7 @@ object TestSpark16 {
 object TestSpark17 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -532,7 +532,7 @@ object TestSpark17 {
 object TestSpark18 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -554,7 +554,7 @@ object TestSpark18 {
 object TestSpark19 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val raw = TestSparkReader.read4TupleDataAddDate(args(1))
+    val raw = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -602,7 +602,7 @@ object TestSpark20 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
-    load3DWithDictionary("./ivoryInputfile1.txt", Dictionary.read("./dict.txt"))
+    load3DWithDictionary(args(1) + "/ivoryInputfile1.txt", Dictionary.load(args(1) + "/dict.txt"))
       .save("./tmp.spark/ivr1.out")
   }
 }
@@ -610,7 +610,7 @@ object TestSpark20 {
 object TestSpark21 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = TestSparkReader.read4TupleDataAddDate(args(1))
+    val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
       .shape()
@@ -633,7 +633,7 @@ object TestSpark21 {
 object TestSpark22 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = load2D("numericInputfile.txt")
+    val data = load2D(args(1) + "/numericInputfile.txt")
 
     case class Diff() extends Windower with Initialise {
       type T = Cell[Position]
@@ -666,7 +666,7 @@ object TestSpark22 {
 object TestSpark23 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = load2D("somePairwise.txt")
+    val data = load2D(args(1) + "/somePairwise.txt")
 
     case class DiffSquared() extends Operator with Compute {
       def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
@@ -697,7 +697,7 @@ object TestSpark24 {
     val schema = List(("day", NominalSchema[Codex.StringCodex]()),
                       ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
                       ("sales", DiscreteSchema[Codex.LongCodex]()))
-    val data = readTable("somePairwise2.txt", schema, separator="|")
+    val data = loadTable("somePairwise2.txt", schema, separator="|")
 
     data
       .correlation(Over(Second))
@@ -707,7 +707,7 @@ object TestSpark24 {
                        ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
                        ("sales", DiscreteSchema[Codex.LongCodex]()),
                        ("neg.sales", DiscreteSchema[Codex.LongCodex]()))
-    val data2 = readTable("somePairwise3.txt", schema2, separator="|")
+    val data2 = loadTable("somePairwise3.txt", schema2, separator="|")
 
     data2
       .correlation(Over(Second))
@@ -719,7 +719,7 @@ object TestSpark25 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
-    load2D("mutualInputfile.txt")
+    load2D(args(1) + "/mutualInputfile.txt")
       .mutualInformation(Over(Second))
       .save("./tmp.spark/mi.out")
   }
@@ -728,8 +728,8 @@ object TestSpark25 {
 object TestSpark26 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val left = load2D("algebraInputfile1.txt")
-    val right = load2D("algebraInputfile2.txt")
+    val left = load2D(args(1) + "/algebraInputfile1.txt")
+    val right = load2D(args(1) + "/algebraInputfile2.txt")
 
     left
       .pairwiseBetween(Over(First), right, Times(comparer=All))
@@ -742,33 +742,33 @@ object TestSpark27 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
     // http://www.statisticshowto.com/moving-average/
-    load2D("simMovAvgInputfile.txt", first=LongCodex)
+    load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
       .window(Over(Second), SimpleMovingAverage(5))
       .save("./tmp.spark/sma1.out")
 
-    load2D("simMovAvgInputfile.txt", first=LongCodex)
+    load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
       .window(Over(Second), SimpleMovingAverage(5, all=true))
       .save("./tmp.spark/sma2.out")
 
-    load2D("simMovAvgInputfile.txt", first=LongCodex)
+    load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
       .window(Over(Second), CenteredMovingAverage(2))
       .save("./tmp.spark/tma.out")
 
-    load2D("simMovAvgInputfile.txt", first=LongCodex)
+    load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
       .window(Over(Second), WeightedMovingAverage(5))
       .save("./tmp.spark/wma1.out")
 
-    load2D("simMovAvgInputfile.txt", first=LongCodex)
+    load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
       .window(Over(Second), WeightedMovingAverage(5, all=true))
       .save("./tmp.spark/wma2.out")
 
     // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
-    load1D("cumMovAvgInputfile.txt")
+    load1D(args(1) + "/cumMovAvgInputfile.txt")
       .window(Along(First), CumulativeMovingAverage())
       .save("./tmp.spark/cma.out")
 
     // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
-    load1D("expMovAvgInputfile.txt")
+    load1D(args(1) + "/expMovAvgInputfile.txt")
       .window(Along(First), ExponentialMovingAverage(0.33))
       .save("./tmp.spark/ema.out")
   }

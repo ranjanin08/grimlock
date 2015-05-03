@@ -49,7 +49,7 @@ import com.twitter.scalding.TDsl.sourceToTypedPipe
 import com.twitter.scalding.typed.{ IterablePipe, TypedPipe, ValuePipe }
 
 object TestScaldingReader {
-  def read4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
+  def load4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
     def hashDate(v: String) = {
       val cal = java.util.Calendar.getInstance()
       cal.setTime(DateCodex.fromValue(DateCodex.decode("2014-05-14").get))
@@ -75,7 +75,7 @@ object TestScaldingReader {
 
 class TestScalding1(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
     .save("./tmp.scalding/dat1.out", descriptive=true)
@@ -86,13 +86,13 @@ class TestScalding1(args : Args) extends Job(args) {
     .slice(Over(First), "iid:1548763", true)
     .save("./tmp.scalding/dat2.out", descriptive=true)
 
-  load3D("smallInputfile.txt")
+  load3D(args("path") + "/smallInputfile.txt")
     .save("./tmp.scalding/dat3.out", descriptive=true)
 }
 
 class TestScalding2(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   (data.names(Over(First)) ++ data.names(Over(Second)) ++ data.names(Over(Third)))
     .renumber
@@ -126,7 +126,7 @@ class TestScalding2(args : Args) extends Job(args) {
 
 class TestScalding3(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   (data.types(Over(First)) ++ data.types(Over(Second)) ++ data.types(Over(Third)))
     .save("./tmp.scalding/typ1.out", descriptive=true)
@@ -137,7 +137,7 @@ class TestScalding3(args : Args) extends Job(args) {
 
 class TestScalding4(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
     .slice(Over(Second), "fid:B", true)
@@ -157,7 +157,7 @@ class TestScalding4(args : Args) extends Job(args) {
 
 class TestScalding5(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
@@ -185,7 +185,7 @@ class TestScalding5(args : Args) extends Job(args) {
 
 class TestScalding6(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
     .which((c: Cell[Position3D]) => c.content.schema.kind.isSpecialisationOf(Numerical))
@@ -204,7 +204,7 @@ class TestScalding6(args : Args) extends Job(args) {
     .which((c: Cell[Position3D]) => c.content.value.isInstanceOf[LongValue])
     .save("./tmp.scalding/whc4.out", descriptive=true)
 
-  TestScaldingReader.read4TupleDataAddDate(args("input"))
+  TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -217,7 +217,7 @@ class TestScalding6(args : Args) extends Job(args) {
 
 class TestScalding7(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
     .get(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get))
@@ -231,7 +231,7 @@ class TestScalding7(args : Args) extends Job(args) {
 
 class TestScalding8(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
     .slice(Over(Second), "fid:B", true)
@@ -239,7 +239,7 @@ class TestScalding8(args : Args) extends Job(args) {
     .unique
     .save("./tmp.scalding/uniq.out", descriptive=true)
 
-  load2D("mutualInputfile.txt")
+  load2D(args("path") + "/mutualInputfile.txt")
     .unique(Over(Second))
     .save("./tmp.scalding/uni2.out")
 
@@ -266,7 +266,7 @@ class TestScalding8(args : Args) extends Job(args) {
 
 class TestScalding9(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   case class StringPartitioner(dim: Dimension) extends Partitioner with Assign {
     type T = String
@@ -321,7 +321,7 @@ class TestScalding9(args : Args) extends Job(args) {
 
 class TestScalding10(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
     .summariseAndExpand(Over(Second), Mean("mean", strict=true, nan=true))
@@ -345,7 +345,7 @@ class TestScalding10(args : Args) extends Job(args) {
 
 class TestScalding11(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
@@ -363,7 +363,7 @@ class TestScalding11(args : Args) extends Job(args) {
 
 class TestScalding12(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
@@ -379,7 +379,7 @@ class TestScalding12(args : Args) extends Job(args) {
 
 class TestScalding13(args : Args) extends Job(args) {
 
-  val all = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val all = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
   val data = all
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
@@ -403,7 +403,7 @@ class TestScalding13(args : Args) extends Job(args) {
 
 class TestScalding14(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
@@ -414,7 +414,7 @@ class TestScalding14(args : Args) extends Job(args) {
 
 class TestScalding15(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
     .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
@@ -442,7 +442,7 @@ class TestScalding15(args : Args) extends Job(args) {
 
 class TestScalding16(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   case class HashSample() extends Sampler with Select {
     def select[P <: Position](cell: Cell[P]): Boolean = (cell.position(First).toString.hashCode % 25) == 0
@@ -455,7 +455,7 @@ class TestScalding16(args : Args) extends Job(args) {
 
 class TestScalding17(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -496,7 +496,7 @@ class TestScalding17(args : Args) extends Job(args) {
 
 class TestScalding18(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -516,7 +516,7 @@ class TestScalding18(args : Args) extends Job(args) {
 
 class TestScalding19(args : Args) extends Job(args) {
 
-  val raw = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val raw = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
@@ -561,13 +561,13 @@ class TestScalding19(args : Args) extends Job(args) {
 
 class TestScalding20(args : Args) extends Job(args) {
 
-  load3DWithDictionary("./ivoryInputfile1.txt", Dictionary.read("./dict.txt"))
+  load3DWithDictionary(args("path") + "/ivoryInputfile1.txt", Dictionary.load(args("path") + "/dict.txt"))
     .save("./tmp.scalding/ivr1.out")
 }
 
 class TestScalding21(args : Args) extends Job(args) {
 
-  val data = TestScaldingReader.read4TupleDataAddDate(args("input"))
+  val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
     .shape()
@@ -588,7 +588,7 @@ class TestScalding21(args : Args) extends Job(args) {
 
 class TestScalding22(args : Args) extends Job(args) {
 
-  val data = load2D("numericInputfile.txt")
+  val data = load2D(args("path") + "/numericInputfile.txt")
 
   case class Diff() extends Windower with Initialise {
     type T = Cell[Position]
@@ -619,7 +619,7 @@ class TestScalding22(args : Args) extends Job(args) {
 
 class TestScalding23(args : Args) extends Job(args) {
 
-  val data = load2D("somePairwise.txt")
+  val data = load2D(args("path") + "/somePairwise.txt")
 
   case class DiffSquared() extends Operator with Compute {
     def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
@@ -647,7 +647,7 @@ class TestScalding24(args: Args) extends Job(args) {
   val schema = List(("day", NominalSchema[Codex.StringCodex]()),
                     ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
                     ("sales", DiscreteSchema[Codex.LongCodex]()))
-  val data = readTable("somePairwise2.txt", schema, separator="|")
+  val data = loadTable("somePairwise2.txt", schema, separator="|")
 
   data
     .correlation(Over(Second))
@@ -657,7 +657,7 @@ class TestScalding24(args: Args) extends Job(args) {
                      ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
                      ("sales", DiscreteSchema[Codex.LongCodex]()),
                      ("neg.sales", DiscreteSchema[Codex.LongCodex]()))
-  val data2 = readTable("somePairwise3.txt", schema2, separator="|")
+  val data2 = loadTable("somePairwise3.txt", schema2, separator="|")
 
   data2
     .correlation(Over(Second))
@@ -666,15 +666,15 @@ class TestScalding24(args: Args) extends Job(args) {
 
 class TestScalding25(args: Args) extends Job(args) {
 
-  load2D("mutualInputfile.txt")
+  load2D(args("path") + "/mutualInputfile.txt")
     .mutualInformation(Over(Second))
     .save("./tmp.scalding/mi.out")
 }
 
 class TestScalding26(args: Args) extends Job(args) {
 
-  val left = load2D("algebraInputfile1.txt")
-  val right = load2D("algebraInputfile2.txt")
+  val left = load2D(args("path") + "/algebraInputfile1.txt")
+  val right = load2D(args("path") + "/algebraInputfile2.txt")
 
   left
     .pairwiseBetween(Over(First), right, Times(comparer=All))
@@ -684,33 +684,33 @@ class TestScalding26(args: Args) extends Job(args) {
 class TestScalding27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
-  load2D("simMovAvgInputfile.txt", first=LongCodex)
+  load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
     .window(Over(Second), SimpleMovingAverage(5))
     .save("./tmp.scalding/sma1.out")
 
-  load2D("simMovAvgInputfile.txt", first=LongCodex)
+  load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
     .window(Over(Second), SimpleMovingAverage(5, all=true))
     .save("./tmp.scalding/sma2.out")
 
-  load2D("simMovAvgInputfile.txt", first=LongCodex)
+  load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
     .window(Over(Second), CenteredMovingAverage(2))
     .save("./tmp.scalding/tma.out")
 
-  load2D("simMovAvgInputfile.txt", first=LongCodex)
+  load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
     .window(Over(Second), WeightedMovingAverage(5))
     .save("./tmp.scalding/wma1.out")
 
-  load2D("simMovAvgInputfile.txt", first=LongCodex)
+  load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
     .window(Over(Second), WeightedMovingAverage(5, all=true))
     .save("./tmp.scalding/wma2.out")
 
   // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
-  load1D("cumMovAvgInputfile.txt")
+  load1D(args("path") + "/cumMovAvgInputfile.txt")
     .window(Along(First), CumulativeMovingAverage())
     .save("./tmp.scalding/cma.out")
 
   // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
-  load1D("expMovAvgInputfile.txt")
+  load1D(args("path") + "/expMovAvgInputfile.txt")
     .window(Along(First), ExponentialMovingAverage(0.33))
     .save("./tmp.scalding/ema.out")
 }
