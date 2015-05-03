@@ -19,6 +19,7 @@ import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.Matrix._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
@@ -9536,7 +9537,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand1D(TestMatrixExpand.expand1D2D)
+        cells.expand(TestMatrixExpand.expand1D2D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -9547,7 +9548,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand2D(TestMatrixExpand.expand1D3D)
+        cells.expand(TestMatrixExpand.expand1D3D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -9558,7 +9559,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand3D(TestMatrixExpand.expand1D4D)
+        cells.expand(TestMatrixExpand.expand1D4D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -9569,7 +9570,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand4D(TestMatrixExpand.expand1D5D)
+        cells.expand(TestMatrixExpand.expand1D5D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -9580,7 +9581,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.expand1D(TestMatrixExpand.expand2D3D)
+        cells.expand(TestMatrixExpand.expand2D3D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -9591,7 +9592,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.expand2D(TestMatrixExpand.expand2D4D)
+        cells.expand(TestMatrixExpand.expand2D4D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -9602,7 +9603,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.expand3D(TestMatrixExpand.expand2D5D)
+        cells.expand(TestMatrixExpand.expand2D5D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -9613,7 +9614,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.expand1D(TestMatrixExpand.expand3D4D)
+        cells.expand(TestMatrixExpand.expand3D4D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -9624,7 +9625,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.expand2D(TestMatrixExpand.expand3D5D)
+        cells.expand(TestMatrixExpand.expand3D5D)
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -9635,7 +9636,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand1DWithValue(TestMatrixExpand.expand1D2DWithValue, ValuePipe(ext))
+        cells.expandWithValue(TestMatrixExpand.expand1D2DWithValue, ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -9646,7 +9647,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand2DWithValue(TestMatrixExpand.expand1D3DWithValue, ValuePipe(ext))
+        cells.expandWithValue(TestMatrixExpand.expand1D3DWithValue, ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -9657,7 +9658,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand3DWithValue(TestMatrixExpand.expand1D4DWithValue, ValuePipe(ext))
+        cells.expandWithValue(TestMatrixExpand.expand1D4DWithValue, ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
     }
@@ -9668,7 +9669,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand4DWithValue(TestMatrixExpand.expand1D5DWithValue, ValuePipe(ext))
+        cells.expandWithValue(TestMatrixExpand.expand1D5DWithValue, ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result13
     }
@@ -9679,7 +9680,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.expand1DWithValue(TestMatrixExpand.expand2D3DWithValue, ValuePipe(ext))
+        cells.expandWithValue(TestMatrixExpand.expand2D3DWithValue, ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result14
     }
@@ -9690,7 +9691,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.expand2DWithValue(TestMatrixExpand.expand2D4DWithValue, ValuePipe(ext))
+        cells.expandWithValue(TestMatrixExpand.expand2D4DWithValue, ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result15
     }
@@ -9701,7 +9702,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.expand3DWithValue(TestMatrixExpand.expand2D5DWithValue, ValuePipe(ext))
+        cells.expandWithValue(TestMatrixExpand.expand2D5DWithValue, ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result16
     }
@@ -9712,7 +9713,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.expand1DWithValue(TestMatrixExpand.expand3D4DWithValue, ValuePipe(ext))
+        cells.expandWithValue(TestMatrixExpand.expand3D4DWithValue, ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result17
     }
@@ -9723,7 +9724,7 @@ class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.expand2DWithValue(TestMatrixExpand.expand3D5DWithValue, ValuePipe(ext))
+        cells.expandWithValue(TestMatrixExpand.expand3D5DWithValue, ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result18
     }
@@ -9734,109 +9735,109 @@ class TestSparkMatrixExpand extends TestMatrixExpand {
 
   "A Matrix.expand" should "return its 1D expanded data in 1D" in {
     toRDD(data1)
-      .expand1D(TestMatrixExpand.expand1D2D)
+      .expand(TestMatrixExpand.expand1D2D)
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its 2D expanded data in 1D" in {
     toRDD(data1)
-      .expand2D(TestMatrixExpand.expand1D3D)
+      .expand(TestMatrixExpand.expand1D3D)
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its 3D expanded data in 1D" in {
     toRDD(data1)
-      .expand3D(TestMatrixExpand.expand1D4D)
+      .expand(TestMatrixExpand.expand1D4D)
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its 4D expanded data in 1D" in {
     toRDD(data1)
-      .expand4D(TestMatrixExpand.expand1D5D)
+      .expand(TestMatrixExpand.expand1D5D)
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its expanded 1D data in 2D" in {
     toRDD(data2)
-      .expand1D(TestMatrixExpand.expand2D3D)
+      .expand(TestMatrixExpand.expand2D3D)
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its expanded 2D data in 2D" in {
     toRDD(data2)
-      .expand2D(TestMatrixExpand.expand2D4D)
+      .expand(TestMatrixExpand.expand2D4D)
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its expanded 3D data in 2D" in {
     toRDD(data2)
-      .expand3D(TestMatrixExpand.expand2D5D)
+      .expand(TestMatrixExpand.expand2D5D)
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its expanded 1D data in 3D" in {
     toRDD(data3)
-      .expand1D(TestMatrixExpand.expand3D4D)
+      .expand(TestMatrixExpand.expand3D4D)
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its expanded 2D data in 3D" in {
     toRDD(data3)
-      .expand2D(TestMatrixExpand.expand3D5D)
+      .expand(TestMatrixExpand.expand3D5D)
       .toList.sortBy(_.position) shouldBe result9
   }
 
   "A Matrix.expandWithValue" should "return its 1D expanded data in 1D" in {
     toRDD(data1)
-      .expand1DWithValue(TestMatrixExpand.expand1D2DWithValue, ext)
+      .expandWithValue(TestMatrixExpand.expand1D2DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its 2D expanded data in 1D" in {
     toRDD(data1)
-      .expand2DWithValue(TestMatrixExpand.expand1D3DWithValue, ext)
+      .expandWithValue(TestMatrixExpand.expand1D3DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its 3D expanded data in 1D" in {
     toRDD(data1)
-      .expand3DWithValue(TestMatrixExpand.expand1D4DWithValue, ext)
+      .expandWithValue(TestMatrixExpand.expand1D4DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its 4D expanded data in 1D" in {
     toRDD(data1)
-      .expand4DWithValue(TestMatrixExpand.expand1D5DWithValue, ext)
+      .expandWithValue(TestMatrixExpand.expand1D5DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its 1D expanded data in 2D" in {
     toRDD(data2)
-      .expand1DWithValue(TestMatrixExpand.expand2D3DWithValue, ext)
+      .expandWithValue(TestMatrixExpand.expand2D3DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its 2D expanded data in 2D" in {
     toRDD(data2)
-      .expand2DWithValue(TestMatrixExpand.expand2D4DWithValue, ext)
+      .expandWithValue(TestMatrixExpand.expand2D4DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its 3D expanded data in 2D" in {
     toRDD(data2)
-      .expand3DWithValue(TestMatrixExpand.expand2D5DWithValue, ext)
+      .expandWithValue(TestMatrixExpand.expand2D5DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its 1D expanded data in 3D" in {
     toRDD(data3)
-      .expand1DWithValue(TestMatrixExpand.expand3D4DWithValue, ext)
+      .expandWithValue(TestMatrixExpand.expand3D4DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its 2D expanded data in 3D" in {
     toRDD(data3)
-      .expand2DWithValue(TestMatrixExpand.expand3D5DWithValue, ext)
+      .expandWithValue(TestMatrixExpand.expand3D5DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result18
   }
 }

@@ -766,26 +766,27 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
     value: E[W])(implicit ev: PosDimDep[P, D]): U[Cell[P#L]]
 }
 
-/** Base trait for methods that expands by 1 the number of dimension of a matrix. */
-trait Expandable1DMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] =>
+/** Base trait for methods that expands the number of dimension of a matrix. */
+trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] =>
   /**
-   * Expand a matrix with an extra dimension.
+   * Expand a matrix with extra dimension(s).
    *
-   * @param expander A function that expands each position with 1 dimension.
+   * @param expander A function that expands each position with extra dimension(s).
    *
-   * @return A `U[Cell[P#M]]` with a dimension added.
+   * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
-  def expand1D(expander: Cell[P] => P#M): U[Cell[P#M]]
+  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: ExpPosDep[P, Q]): U[Cell[Q]]
 
   /**
-   * Expand a matrix with an extra dimension using a user supplied value.
+   * Expand a matrix with extra dimension(s) using a user supplied value.
    *
-   * @param expander A function that expands each position with 1 dimension.
+   * @param expander A function that expands each position with extra dimension(s).
    * @param value    A `E` holding a user supplied value.
    *
-   * @return A `U[Cell[P#M]]` with a dimension added.
+   * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
-  def expand1DWithValue[V](expander: (Cell[P], V) => P#M, value: E[V]): U[Cell[P#M]]
+  def expandWithValue[Q <: Position, V](expander: (Cell[P], V) => Q, value: E[V])(
+    implicit ev: ExpPosDep[P, Q]): U[Cell[Q]]
 
   /**
    * Transform the content of a matrix and return the transformations with an expanded position.
@@ -809,70 +810,30 @@ trait Expandable1DMatrix[P <: Position with ExpandablePosition] { self: Matrix[P
     implicit ev: TransformableExpandedWithValue[T, V]): U[Cell[P#M]]
 }
 
-/** Base trait for methods that expands by 2 the number of dimension of a matrix. */
-trait Expandable2DMatrix[P <: Position with ExpandablePosition, Q <: Position] { self: Matrix[P] =>
-  /**
-   * Expand a matrix with two extra dimensions.
-   *
-   * @param expander A function that expands each position with 2 dimensions.
-   *
-   * @return A `U[Cell[Q]]` with two dimensions added.
-   */
-  def expand2D(expander: Cell[P] => Q): U[Cell[Q]]
+/** Trait for capturing the dependency between an expansion and a position. */
+trait ExpPosDep[A, B] extends java.io.Serializable
 
-  /**
-   * Expand a matrix with two extra dimensions using a user supplied value.
-   *
-   * @param expander A function that expands each position with 2 dimension.
-   * @param value    A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[Q]]` with two dimensions added.
-   */
-  def expand2DWithValue[V](expander: (Cell[P], V) => Q, value: E[V]): U[Cell[Q]]
-}
-
-/** Base trait for methods that expands by 3 the number of dimension of a matrix. */
-trait Expandable3DMatrix[P <: Position with ExpandablePosition, Q <: Position] { self: Matrix[P] =>
-  /**
-   * Expand a matrix with three extra dimensions.
-   *
-   * @param expander A function that expands each position with 3 dimensions.
-   *
-   * @return A `U[Cell[Q]]` with three dimensions added.
-   */
-  def expand3D(expander: Cell[P] => Q): U[Cell[Q]]
-
-  /**
-   * Expand a matrix with three extra dimensions using a user supplied value.
-   *
-   * @param expander A function that expands each position with 3 dimension.
-   * @param value    A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[Q]]` with three dimensions added.
-   */
-  def expand3DWithValue[V](expander: (Cell[P], V) => Q, value: E[V]): U[Cell[Q]]
-}
-
-/** Base trait for methods that expands by 4 the number of dimension of a matrix. */
-trait Expandable4DMatrix[P <: Position with ExpandablePosition, Q <: Position] { self: Matrix[P] =>
-  /**
-   * Expand a matrix with four extra dimensions.
-   *
-   * @param expander A function that expands each position with 4 dimensions.
-   *
-   * @return A `U[Cell[Q]]` with four dimensions added.
-   */
-  def expand4D(expander: Cell[P] => Q): U[Cell[Q]]
-
-  /**
-   * Expand a matrix with four extra dimensions using a user supplied value.
-   *
-   * @param expander A function that expands each position with 4 dimension.
-   * @param value    A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[Q]]` with four dimensions added.
-   */
-  def expand4DWithValue[V](expander: (Cell[P], V) => Q, value: E[V]): U[Cell[Q]]
+object Matrix {
+  /** Define dependency between expansion from `Position1D` to `Position2D`. */
+  implicit object P1P2 extends ExpPosDep[Position1D, Position2D]
+  /** Define dependency between expansion from `Position1D` to `Position3D`. */
+  implicit object P1P3 extends ExpPosDep[Position1D, Position3D]
+  /** Define dependency between expansion from `Position1D` to `Position4D`. */
+  implicit object P1P4 extends ExpPosDep[Position1D, Position4D]
+  /** Define dependency between expansion from `Position1D` to `Position5D`. */
+  implicit object P1P5 extends ExpPosDep[Position1D, Position5D]
+  /** Define dependency between expansion from `Position2D` to `Position3D`. */
+  implicit object P2P3 extends ExpPosDep[Position2D, Position3D]
+  /** Define dependency between expansion from `Position2D` to `Position4D`. */
+  implicit object P2P4 extends ExpPosDep[Position2D, Position4D]
+  /** Define dependency between expansion from `Position2D` to `Position5D`. */
+  implicit object P2P5 extends ExpPosDep[Position2D, Position5D]
+  /** Define dependency between expansion from `Position3D` to `Position4D`. */
+  implicit object P3P4 extends ExpPosDep[Position3D, Position4D]
+  /** Define dependency between expansion from `Position3D` to `Position5D`. */
+  implicit object P3P5 extends ExpPosDep[Position3D, Position5D]
+  /** Define dependency between expansion from `Position4D` to `Position5D`. */
+  implicit object P4P5 extends ExpPosDep[Position4D, Position5D]
 }
 
 /** Type class for transforming a type `T` into a `U[Cell[P]]`. */
