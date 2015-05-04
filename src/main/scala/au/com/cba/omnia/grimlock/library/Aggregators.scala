@@ -363,7 +363,7 @@ object Moments extends DefaultAggregatorValues {
    */
   def apply[M <: Moment, N <: Moment, O <: Moment, T, U, V](moment1: (M, T), moment2: (N, U), moment3: (O, V))(
     implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V], ne1: M =!= N, ne2: M =!= O,
-      ne3: N =!= O): Aggregator with Prepare with PresentMultiple = {
+    ne3: N =!= O): Aggregator with Prepare with PresentMultiple = {
     Moments(DefaultStrict, DefaultNaN, List((moment1._1.index, Some(ev1.convert(moment1._2))),
       (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2)))))
   }
@@ -378,7 +378,7 @@ object Moments extends DefaultAggregatorValues {
    */
   def apply[M <: Moment, N <: Moment, O <: Moment, P <: Moment, T, U, V, S](moment1: (M, T), moment2: (N, U),
     moment3: (O, V), moment4: (P, S))(implicit ev1: Valueable[T], ev2: Valueable[U], ev3: Valueable[V],
-    ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
+      ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
       ne6: O =!= P): Aggregator with Prepare with PresentMultiple = {
     Moments(DefaultStrict, DefaultNaN, List((moment1._1.index, Some(ev1.convert(moment1._2))),
       (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2))),
@@ -447,7 +447,7 @@ object Moments extends DefaultAggregatorValues {
    */
   def apply[M <: Moment, N <: Moment, O <: Moment, P <: Moment, T, U, V, S](moment1: (M, T), moment2: (N, U),
     moment3: (O, V), moment4: (P, S), strict: Boolean, nan: Boolean)(implicit ev1: Valueable[T], ev2: Valueable[U],
-    ev3: Valueable[V], ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
+      ev3: Valueable[V], ev4: Valueable[S], ne1: M =!= N, ne2: M =!= O, ne3: M =!= P, ne4: N =!= O, ne5: N =!= P,
       ne6: O =!= P): Aggregator with Prepare with PresentMultiple = {
     Moments(strict, nan, List((moment1._1.index, Some(ev1.convert(moment1._2))),
       (moment2._1.index, Some(ev2.convert(moment2._2))), (moment3._1.index, Some(ev3.convert(moment3._2))),

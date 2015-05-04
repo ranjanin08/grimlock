@@ -664,7 +664,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windowers: T, value: E[W])(
     implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
-      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
 
   protected def toString(t: Cell[P], separator: String, descriptive: Boolean): String = {
     t.toString(separator, descriptive)

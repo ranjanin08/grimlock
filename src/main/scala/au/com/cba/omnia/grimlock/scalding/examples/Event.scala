@@ -148,7 +148,7 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
   // count). Then aggregate out the event id. The result is a 2D matrix (instance x word count) where the counts are
   // the sums over all events.
   val tf = data
-    .transformAndExpand(WordCounts(stopwords=List()))
+    .transformAndExpand(WordCounts(stopwords = List()))
     .summarise(Along(First), Sum())
 
   // Get the number of instances (i.e. documents)

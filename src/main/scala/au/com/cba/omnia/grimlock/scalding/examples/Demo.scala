@@ -126,8 +126,8 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
     Max("max"),
     MaxAbs("max.abs"),
     Histogram("%1$s=%2$s", List(Histogram.numberOfCategories("num.cat"),
-                                Histogram.entropy("entropy"),
-                                Histogram.frequencyRatio("freq.ratio"))))
+      Histogram.entropy("entropy"),
+      Histogram.frequencyRatio("freq.ratio"))))
 
   val stats = parts
     .get("train")
@@ -145,7 +145,7 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
   val rem2 = stats
     .which((cell: Cell[Position2D]) =>
       ((cell.position(Second) equ "sd") && (cell.content.value equ 0)) ||
-      ((cell.position(Second) equ "num.cat") && (cell.content.value equ 1)))
+        ((cell.position(Second) equ "num.cat") && (cell.content.value equ 1)))
     .names(Over(First))
 
   // Finally remove categoricals for which an individual category has only 1 value. These are removed after binarized
@@ -156,7 +156,7 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
 
   // List of transformations to apply to each partition.
   val transforms = List(
-    Clamp(Second, lower="min", upper="max") andThen Standardise(Second, mean="mean", sd="sd"),
+    Clamp(Second, lower = "min", upper = "max") andThen Standardise(Second, mean = "mean", sd = "sd"),
     Binarise(Second))
 
   // For each partition:
@@ -173,7 +173,7 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
       .slice(Over(Second), rem1, false)
 
     val ind = d
-      .transform(Indicator(Second, name="%1$s.ind"))
+      .transform(Indicator(Second, name = "%1$s.ind"))
 
     val csb = d
       .slice(Over(Second), rem2, false)
@@ -208,9 +208,9 @@ class Scoring(args: Args) extends Job(args) {
   //  2/ Compute the scored (as a weighted sum);
   //  3/ Save the results.
   val transforms = List(
-    Indicator(Second, name="%1$s.ind"),
+    Indicator(Second, name = "%1$s.ind"),
     Binarise(Second),
-    Clamp(Second, lower="min", upper="max") andThen Standardise(Second, mean="mean", sd="sd"))
+    Clamp(Second, lower = "min", upper = "max") andThen Standardise(Second, mean = "mean", sd = "sd"))
 
   data
     .transformWithValue(transforms, stats)
@@ -262,7 +262,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Compute histogram over the label values.
   val histogram = labels
-    .summariseAndExpand(Along(First), Histogram("%2$s", strict=true, all=true, frequency=true))
+    .summariseAndExpand(Along(First), Histogram("%2$s", strict = true, all = true, frequency = true))
 
   // Compute the total number of labels and store result in a Map.
   val sum = labels

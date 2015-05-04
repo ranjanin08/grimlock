@@ -51,7 +51,7 @@ trait PresentCell[T] {
 
   protected def present[P <: Position](dim: Dimension, cell: Cell[P], ext: Map[Position1D, Map[Position1D, Content]],
     key1: Position1D, key2: Position1D, name: Option[String], typ: Option[Type],
-      f: (T, T, T) => T): Collection[Cell[P]] = {
+    f: (T, T, T) => T): Collection[Cell[P]] = {
     (checkContent(cell.content, typ), getValue(cell.content),
       getValue(getKey(Some(dim), cell.position, None), key1, ext),
       getValue(getKey(Some(dim), cell.position, None), key2, ext)) match {

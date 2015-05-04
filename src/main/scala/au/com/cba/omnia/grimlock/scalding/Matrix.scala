@@ -106,7 +106,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   def pairwiseWithValue[D <: Dimension, T, W](slice: Slice[P, D], operators: T, value: E[W])(
     implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-      ev5: ClassTag[slice.R]): U[Cell[slice.R#M]] = {
+    ev5: ClassTag[slice.R]): U[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
 
     pairwise(slice)
@@ -115,7 +115,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   def pairwiseBetween[D <: Dimension, T](slice: Slice[P, D], that: S, operators: T)(implicit ev1: PosDimDep[P, D],
     ev2: Operable[T], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-      ev5: ClassTag[slice.R]): U[Cell[slice.R#M]] = {
+    ev5: ClassTag[slice.R]): U[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
 
     pairwiseBetween(slice, that).flatMap { case (lc, rc, r) => o.compute(slice)(lc, rc, r).toList }
@@ -123,7 +123,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   def pairwiseBetweenWithValue[D <: Dimension, T, W](slice: Slice[P, D], that: S, operators: T, value: E[W])(
     implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-      ev5: ClassTag[slice.R]): U[Cell[slice.R#M]] = {
+    ev5: ClassTag[slice.R]): U[Cell[slice.R#M]] = {
     val o = ev2.convert(operators)
 
     pairwiseBetween(slice, that)
@@ -139,7 +139,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMapWithValue(value) { case (c, vo) => partitioner.assign(c.position, vo.get).toList(c) }
   }
 
-  def rename[D <: Dimension](dim: D, renamer: (Dimension, Cell[P]) => P)( implicit ev: PosDimDep[P, D]): U[Cell[P]] = {
+  def rename[D <: Dimension](dim: D, renamer: (Dimension, Cell[P]) => P)(implicit ev: PosDimDep[P, D]): U[Cell[P]] = {
     data.map { case c => Cell(renamer(dim, c), c.content) }
   }
 
@@ -281,7 +281,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   def summariseAndExpandWithValue[T, D <: Dimension, W](slice: Slice[P, D], aggregators: T, value: E[W])(
     implicit ev1: PosDimDep[P, D], ev2: AggregatableMultipleWithValue[T, W],
-      ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
+    ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
     val a = ev2.convert(aggregators)
 
     data
@@ -380,7 +380,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windowers: T, value: E[W])(
     implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
-      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
     val w = ev2.convert(windowers)
 
     data
@@ -619,16 +619,16 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
       .transform(Compare(isPositive(_)))
       .window(slice, CumulativeSum())
       .transformWithValue(Fraction(First), pos)
-      .window(Over(First), Sliding((l: Double, r: Double) => r + l, name="%2$s.%1$s"))
+      .window(Over(First), Sliding((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
 
     val fpr = data
       .transform(Compare(!isPositive(_)))
       .window(slice, CumulativeSum())
       .transformWithValue(Fraction(First), neg)
-      .window(Over(First), Sliding((l: Double, r: Double) => r - l, name="%2$s.%1$s"))
+      .window(Over(First), Sliding((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
 
     tpr
-      .pairwiseBetween(Along(First), fpr, Times(comparer=Diagonal))
+      .pairwiseBetween(Along(First), fpr, Times(comparer = Diagonal))
       .summarise(Along(First), Sum())
       .transformWithValue(Subtract("one", true),
         ValuePipe(Map(Position1D("one") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1))))
@@ -1129,7 +1129,7 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
    */
   def permute[D <: Dimension, E <: Dimension, F <: Dimension](first: D, second: E, third: F)(
     implicit ev1: PosDimDep[Position3D, D], ev2: PosDimDep[Position3D, E], ev3: PosDimDep[Position3D, F], ne1: D =!= E,
-      ne2: D =!= F, ne3: E =!= F): U[Cell[Position3D]] = {
+    ne2: D =!= F, ne3: E =!= F): U[Cell[Position3D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third)), c) }
   }
 
@@ -1206,7 +1206,7 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
    */
   def permute[D <: Dimension, E <: Dimension, F <: Dimension, G <: Dimension](first: D, second: E, third: F,
     fourth: G)(implicit ev1: PosDimDep[Position4D, D], ev2: PosDimDep[Position4D, E], ev3: PosDimDep[Position4D, F],
-    ev4: PosDimDep[Position4D, G], ne1: D =!= E, ne2: D =!= F, ne3: D =!= G, ne4: E =!= F, ne5: E =!= G,
+      ev4: PosDimDep[Position4D, G], ne1: D =!= E, ne2: D =!= F, ne3: D =!= G, ne4: E =!= F, ne5: E =!= G,
       ne6: F =!= G): U[Cell[Position4D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth)), c) }
   }
@@ -1243,7 +1243,7 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
    */
   def saveAsIVWithNames(file: String, namesI: U[(Position1D, Long)], namesJ: U[(Position1D, Long)],
     namesK: U[(Position1D, Long)], namesL: U[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d",
-      separator: String = "|")(implicit flow: FlowDef, mode: Mode): U[Cell[Position4D]] = {
+    separator: String = "|")(implicit flow: FlowDef, mode: Mode): U[Cell[Position4D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(namesI, file, dictionary, separator, First))
@@ -1293,8 +1293,8 @@ class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D]
    */
   def permute[D <: Dimension, E <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension](first: D, second: E,
     third: F, fourth: G, fifth: H)(implicit ev1: PosDimDep[Position5D, D], ev2: PosDimDep[Position5D, E],
-    ev3: PosDimDep[Position5D, F], ev4: PosDimDep[Position5D, G], ev5: PosDimDep[Position5D, H], ne1: D =!= E,
-    ne2: D =!= F, ne3: D =!= G, ne4: D =!= H, ne5: E =!= F, ne6: E =!= G, ne7: E =!= H, ne8: F =!= G, ne9: F =!= H,
+      ev3: PosDimDep[Position5D, F], ev4: PosDimDep[Position5D, G], ev5: PosDimDep[Position5D, H], ne1: D =!= E,
+      ne2: D =!= F, ne3: D =!= G, ne4: D =!= H, ne5: E =!= F, ne6: E =!= G, ne7: E =!= H, ne8: F =!= G, ne9: F =!= H,
       ne10: G =!= H): U[Cell[Position5D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth)), c) }
   }
