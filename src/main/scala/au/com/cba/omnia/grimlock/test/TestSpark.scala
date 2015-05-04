@@ -697,7 +697,7 @@ object TestSpark24 {
     val schema = List(("day", NominalSchema[Codex.StringCodex]()),
                       ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
                       ("sales", DiscreteSchema[Codex.LongCodex]()))
-    val data = loadTable("somePairwise2.txt", schema, separator="|")
+    val data = loadTable(args(1) + "/somePairwise2.txt", schema, separator="|")
 
     data
       .correlation(Over(Second))
@@ -707,7 +707,7 @@ object TestSpark24 {
                        ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
                        ("sales", DiscreteSchema[Codex.LongCodex]()),
                        ("neg.sales", DiscreteSchema[Codex.LongCodex]()))
-    val data2 = loadTable("somePairwise3.txt", schema2, separator="|")
+    val data2 = loadTable(args(1) + "/somePairwise3.txt", schema2, separator="|")
 
     data2
       .correlation(Over(Second))
