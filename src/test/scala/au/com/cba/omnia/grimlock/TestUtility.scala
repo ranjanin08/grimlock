@@ -14,103 +14,102 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.position._
-import au.com.cba.omnia.grimlock.utility._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.utility._
 
-import org.scalatest._
-
-class TestCollection extends FlatSpec with Matchers {
+class TestCollection extends TestGrimlock {
 
   "A Collection" should "create an empty collection" in {
-    Collection[String]() should be (Collection[String](None))
-    Collection.empty[String] should be (Collection[String](None))
+    Collection[String]() shouldBe Collection[String](None)
+    Collection.empty[String] shouldBe Collection[String](None)
   }
 
   it should "create a collection with a single entry" in {
-    Collection("foo") should be (Collection(Some(Left("foo"))))
+    Collection("foo") shouldBe Collection(Some(Left("foo")))
   }
 
   it should "create a collection with a multiple entries" in {
-    Collection(List("foo", "bar")) should be (Collection(Some(Right(List("foo", "bar")))))
+    Collection(List("foo", "bar")) shouldBe Collection(Some(Right(List("foo", "bar"))))
   }
 
   it should "create a collection with a cell" in {
-    Collection(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "bar")) should be
-      (Collection(Some(Left(Cell(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "bar"))))))
+    Collection(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "bar")) shouldBe
+      Collection(Some(Left(Cell(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "bar")))))
   }
 
   it should "identify an empty collection" in {
-    Collection[String]().isEmpty should be (true)
+    Collection[String]().isEmpty shouldBe true
   }
 
   it should "identify a non-empty collection" in {
-    Collection("foo").isEmpty should be (false)
-    Collection(List("foo", "bar")).isEmpty should be (false)
+    Collection("foo").isEmpty shouldBe false
+    Collection(List("foo", "bar")).isEmpty shouldBe false
   }
 
   it should "return an empty list" in {
-    Collection[String]().toList should be (List())
+    Collection[String]().toList shouldBe List()
   }
 
   it should "return a single entry list" in {
-    Collection("foo").toList should be (List("foo"))
+    Collection("foo").toList shouldBe List("foo")
   }
 
   it should "return a multi entry list" in {
-    Collection(List("foo", "bar")).toList should be (List("foo", "bar"))
+    Collection(List("foo", "bar")).toList shouldBe List("foo", "bar")
   }
 
   it should "return an empty list with value" in {
-    Collection[String]().toList(3.14) should be (List())
+    Collection[String]().toList(3.14) shouldBe List()
   }
 
   it should "return a single entry list with value" in {
-    Collection("foo").toList(3.14) should be (List(("foo", 3.14)))
+    Collection("foo").toList(3.14) shouldBe List(("foo", 3.14))
   }
 
   it should "return a multi entry list with value" in {
-    Collection(List("foo", "bar")).toList(3.14) should be (List(("foo", 3.14), ("bar", 3.14)))
+    Collection(List("foo", "bar")).toList(3.14) shouldBe List(("foo", 3.14), ("bar", 3.14))
   }
 }
 
-class TestQuote extends FlatSpec with Matchers {
+class TestQuote extends TestGrimlock {
 
   "A Quote" should "escape a special character" in {
-    Quote().escape("foo,bar,baz", ",") should be ("\"foo,bar,baz\"")
+    Quote().escape("foo,bar,baz", ",") shouldBe "\"foo,bar,baz\""
   }
 
   it should "not escape regular characters" in {
-    Quote().escape("foo;bar;baz", ",") should be ("foo;bar;baz")
+    Quote().escape("foo;bar;baz", ",") shouldBe "foo;bar;baz"
   }
 
   it should "always escape a special character" in {
-    Quote(true).escape("foo,bar,baz", ",") should be ("\"foo,bar,baz\"")
+    Quote(true).escape("foo,bar,baz", ",") shouldBe "\"foo,bar,baz\""
   }
 
   it should "always escape regular characters" in {
-    Quote(true).escape("foo;bar;baz", ",") should be ("\"foo;bar;baz\"")
+    Quote(true).escape("foo;bar;baz", ",") shouldBe "\"foo;bar;baz\""
   }
 }
 
-class TestReplace extends FlatSpec with Matchers {
+class TestReplace extends TestGrimlock {
 
   "A Replace" should "escape a special character" in {
-    Replace().escape("foo,bar,baz", ",") should be ("foo\\,bar\\,baz")
+    Replace().escape("foo,bar,baz", ",") shouldBe "foo\\,bar\\,baz"
   }
 
   it should "not escape regular characters" in {
-    Replace().escape("foo;bar;baz", ",") should be ("foo;bar;baz")
+    Replace().escape("foo;bar;baz", ",") shouldBe "foo;bar;baz"
   }
 
   it should "substitute a special character" in {
-    Replace("|").escape("foo,bar,baz", ",") should be ("foo|bar|baz")
+    Replace("|").escape("foo,bar,baz", ",") shouldBe "foo|bar|baz"
   }
 
   it should "not substitute regular characters" in {
-    Replace("|").escape("foo;bar;baz", ",") should be ("foo;bar;baz")
+    Replace("|").escape("foo;bar;baz", ",") shouldBe "foo;bar;baz"
   }
 }
 

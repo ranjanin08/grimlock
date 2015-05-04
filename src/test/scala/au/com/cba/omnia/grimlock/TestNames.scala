@@ -14,160 +14,246 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock._
-import au.com.cba.omnia.grimlock.encoding._
-import au.com.cba.omnia.grimlock.position._
+import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.position._
+
+import au.com.cba.omnia.grimlock.scalding.Names._
+
+import au.com.cba.omnia.grimlock.spark.Names._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._
 
-import org.scalatest._
+trait TestNames extends TestGrimlock {
 
-import scala.collection.mutable
+  val data = List((Position1D("fid:A"), 0L), (Position1D("fid:AA"), 1L), (Position1D("fid:B"), 2L),
+    (Position1D("fid:C"), 3L), (Position1D("fid:D"), 4L), (Position1D("fid:E"), 5L))
 
-class TypedNames extends WordSpec with Matchers with TBddDsl {
+  val result1 = data
 
-  val data = List((Position1D("fid:A"), 0L),
-    (Position1D("fid:AA"), 1L),
-    (Position1D("fid:B"), 2L),
-    (Position1D("fid:C"), 3L),
-    (Position1D("fid:D"), 4L),
-    (Position1D("fid:E"), 5L))
+  val result2 = List((Position1D("fid:A"), 0), (Position1D("fid:AA"), 1))
 
-  "A Names" should {
-    "renumber" in {
-      Given {
-        data.map { case (p, i) => (p, i + 5) }
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).renumber()
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe data
-      }
+  val result3 = List()
+
+  val result4 = List((Position1D("fid:B"), 0L), (Position1D("fid:C"), 1L), (Position1D("fid:D"), 2L),
+    (Position1D("fid:E"), 3L))
+
+  val result5 = data
+
+  val result6 = List((Position1D("fid:AA"), 0))
+
+  val result7 = List((Position1D("fid:AA"), 0), (Position1D("fid:B"), 1))
+
+  val result8 = data.map {
+    case (p @ Position1D(StringValue("fid:C")), _) => (p, 123)
+    case x => x
+  }
+
+  val result9 = data.map {
+    case (p @ Position1D(StringValue("fid:C")), _) => (p, 123)
+    case (p @ Position1D(StringValue("fid:D")), _) => (p, 456)
+    case x => x
+  }
+
+  val result10 = List((Position1D("fid:A"), 1L), (Position1D("fid:AA"), 2L), (Position1D("fid:B"), 3L),
+    (Position1D("fid:C"), 0L), (Position1D("fid:D"), 4L), (Position1D("fid:E"), 5L))
+
+  val result11 = List((Position1D("fid:A"), 0L), (Position1D("fid:AA"), 1L), (Position1D("fid:B"), 2L),
+    (Position1D("fid:C"), 5L), (Position1D("fid:D"), 3L), (Position1D("fid:E"), 4L))
+}
+
+class TypedScaldingNames extends TestNames with TBddDsl {
+
+  "A Names" should "renumber" in {
+    Given {
+      data.map { case (p, i) => (p, i + 5) }
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.renumber()
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result1
     }
-    "slice and keep by regular expression" in {
-      Given {
-        data
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice("fid:A.*".r, true, "|")
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe List((Position1D("fid:A"), 0), (Position1D("fid:AA"), 1))
-      }
+  }
+
+  it should "slice and keep by regular expression" in {
+    Given {
+      data
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.slice("fid:A.*".r, true, "|")
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result2
     }
-    "slice and keep nothing by regular expression" in {
-      Given {
-        data
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice("not.there.*".r, true, "|")
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe List()
-      }
+  }
+
+  it should "slice and keep nothing by regular expression" in {
+    Given {
+      data
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.slice("not.there.*".r, true, "|")
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result3
     }
-    "slice and remove by regular expression" in {
-      Given {
-        data
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice("fid:A.*".r, false, "|")
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe List((Position1D("fid:B"), 0L), (Position1D("fid:C"), 1L),
-            (Position1D("fid:D"), 2L), (Position1D("fid:E"), 3L))
-      }
+  }
+
+  it should "slice and remove by regular expression" in {
+    Given {
+      data
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.slice("fid:A.*".r, false, "|")
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result4
     }
-    "slice and remove nothing by regular expression" in {
-      Given {
-        data
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice("not.there.*".r, false, "|")
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe data
-      }
+  }
+
+  it should "slice and remove nothing by regular expression" in {
+    Given {
+      data
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.slice("not.there.*".r, false, "|")
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result5
     }
-    "slice and keep by single name" in {
-      Given {
-        data
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice("fid:AA", true)
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe List((Position1D("fid:AA"), 0))
-      }
+  }
+
+  it should "slice and keep by single name" in {
+    Given {
+      data
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.slice("fid:AA", true)
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result6
     }
-    "slice and keep by multiple names" in {
-      Given {
-        data
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).slice(List("fid:AA", "fid:B", "not.there"), true)
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe List((Position1D("fid:AA"), 0), (Position1D("fid:B"), 1))
-      }
+  }
+
+  it should "slice and keep by multiple names" in {
+    Given {
+      data
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.slice(List("fid:AA", "fid:B", "not.there"), true)
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result7
     }
-    "set a single name" in {
-      Given {
-        data
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).set("fid:C", 123)
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe data.map {
-            case (p @ Position1D(StringValue("fid:C")), _) => (p, 123)
-            case x => x
-          }
-      }
+  }
+
+  it should "set a single name" in {
+    Given {
+      data
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.set("fid:C", 123)
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result8
     }
-    "set multiple names" in {
-      Given {
-        data
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).set(Map("fid:C" -> 123, "fid:D" -> 456, "not.there" -> 789))
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe data.map {
-            case (p @ Position1D(StringValue("fid:C")), _) => (p, 123)
-            case (p @ Position1D(StringValue("fid:D")), _) => (p, 456)
-            case x => x
-          }
-      }
+  }
+
+  it should "set multiple names" in {
+    Given {
+      data
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.set(Map("fid:C" -> 123, "fid:D" -> 456, "not.there" -> 789))
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result9
     }
-    "move a name to front" in {
-      Given {
-        data
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).moveToFront("fid:C")
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe List((Position1D("fid:A"), 1L), (Position1D("fid:AA"), 2L),
-            (Position1D("fid:B"), 3L), (Position1D("fid:C"), 0L), (Position1D("fid:D"), 4L),
-            (Position1D("fid:E"), 5L))
-      }
+  }
+
+  it should "move a name to front" in {
+    Given {
+      data
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.moveToFront("fid:C")
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result10
     }
-    "move a name to back" in {
-      Given {
-        data
-      } When {
-        names: TypedPipe[(Position1D, Long)] =>
-          new Names(names).moveToBack("fid:C")
-      } Then {
-        buffer: mutable.Buffer[(Position1D, Long)] =>
-          buffer.toList shouldBe List((Position1D("fid:A"), 0L), (Position1D("fid:AA"), 1L),
-            (Position1D("fid:B"), 2L), (Position1D("fid:C"), 5L), (Position1D("fid:D"), 3L),
-            (Position1D("fid:E"), 4L))
-      }
+  }
+
+  it should "move a name to back" in {
+    Given {
+      data
+    } When {
+      names: TypedPipe[(Position1D, Long)] =>
+        names.moveToBack("fid:C")
+    } Then {
+      _.toList.sortBy(_._1) shouldBe result11
     }
+  }
+}
+
+class TestSparkNames extends TestNames {
+
+  "A Names" should "renumber" in {
+    toRDD(data)
+      .map { case (p, i) =>  (p, i + 5) }
+      .renumber()
+      .toList.sortBy(_._1) shouldBe result1
+  }
+
+  it should "slice and keep by regular expression" in {
+    toRDD(data)
+      .slice("fid:A.*".r, true, "|")
+      .toList.sortBy(_._1) shouldBe result2
+  }
+
+  it should "slice and keep nothing by regular expression" in {
+    toRDD(data)
+      .slice("not.there.*".r, true, "|")
+      .toList.sortBy(_._1) shouldBe result3
+  }
+
+  it should "slice and remove by regular expression" in {
+    toRDD(data)
+      .slice("fid:A.*".r, false, "|")
+      .toList.sortBy(_._1) shouldBe result4
+  }
+
+  it should "slice and remove nothing by regular expression" in {
+    toRDD(data)
+      .slice("not.there.*".r, false, "|")
+      .toList.sortBy(_._1) shouldBe result5
+  }
+
+  it should "slice and keep by single name" in {
+    toRDD(data)
+      .slice("fid:AA", true)
+      .toList.sortBy(_._1) shouldBe result6
+  }
+
+  it should "slice and keep by multiple names" in {
+    toRDD(data)
+      .slice(List("fid:AA", "fid:B", "not.there"), true)
+      .toList.sortBy(_._1) shouldBe result7
+  }
+
+  it should "set a single name" in {
+    toRDD(data)
+      .set("fid:C", 123)
+      .toList.sortBy(_._1) shouldBe result8
+  }
+
+  it should "set multiple names" in {
+    toRDD(data)
+      .set(Map("fid:C" -> 123, "fid:D" -> 456, "not.there" -> 789))
+      .toList.sortBy(_._1) shouldBe result9
+  }
+
+  it should "move a name to front" in {
+    toRDD(data)
+      .moveToFront("fid:C")
+      .toList.sortBy(_._1) shouldBe result10
+  }
+
+  it should "move a name to back" in {
+    toRDD(data)
+      .moveToBack("fid:C")
+      .toList.sortBy(_._1) shouldBe result11
   }
 }
 

@@ -14,26 +14,24 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.content._
-import au.com.cba.omnia.grimlock.content.metadata._
-import au.com.cba.omnia.grimlock.encoding._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
 
-import org.scalatest._
-
-class TestDateCodex extends FlatSpec with Matchers {
+class TestDateCodex extends TestGrimlock {
 
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
 
   "A DateCodex" should "have a name" in {
-    DateCodex.name should be ("date")
+    DateCodex.name shouldBe "date"
   }
 
   it should "box a correct Value" in {
-    DateCodex.toValue(dfmt.parse("2001-01-01")) should be (DateValue(dfmt.parse("2001-01-01"), DateCodex))
+    DateCodex.toValue(dfmt.parse("2001-01-01")) shouldBe DateValue(dfmt.parse("2001-01-01"), DateCodex)
   }
 
   it should "unbox a correct value" in {
-    DateCodex.fromValue(DateValue(dfmt.parse("2001-01-01"), DateCodex)) should be (dfmt.parse("2001-01-01"))
+    DateCodex.fromValue(DateValue(dfmt.parse("2001-01-01"), DateCodex)) shouldBe dfmt.parse("2001-01-01")
   }
 
   it should "throw an exception for an invalid unbox" in {
@@ -43,16 +41,16 @@ class TestDateCodex extends FlatSpec with Matchers {
   }
 
   it should "decode a correct value" in {
-    DateCodex.decode("2001-01-01") should be (Some(DateValue(dfmt.parse("2001-01-01"), DateCodex)))
+    DateCodex.decode("2001-01-01") shouldBe Some(DateValue(dfmt.parse("2001-01-01"), DateCodex))
   }
 
   it should "not decode an incorrect value" in {
-    DateCodex.decode("a") should be (None)
-    DateCodex.decode("1") should be (None)
+    DateCodex.decode("a") shouldBe None
+    DateCodex.decode("1") shouldBe None
   }
 
   it should "encode a correct value" in {
-    DateCodex.encode(DateValue(dfmt.parse("2001-01-01"), DateCodex)) should be ("2001-01-01")
+    DateCodex.encode(DateValue(dfmt.parse("2001-01-01"), DateCodex)) shouldBe "2001-01-01"
   }
 
   it should "not encode an incorrect value" in {
@@ -63,35 +61,35 @@ class TestDateCodex extends FlatSpec with Matchers {
 
   it should "compare a correct value" in {
     DateCodex.compare(DateValue(dfmt.parse("2001-01-01"), DateCodex),
-      DateValue(dfmt.parse("2002-01-01"), DateCodex)) should be (Some(-1))
+      DateValue(dfmt.parse("2002-01-01"), DateCodex)) shouldBe Some(-1)
     DateCodex.compare(DateValue(dfmt.parse("2001-01-01"), DateCodex),
-      DateValue(dfmt.parse("2001-01-01"), DateCodex)) should be (Some(0))
+      DateValue(dfmt.parse("2001-01-01"), DateCodex)) shouldBe Some(0)
     DateCodex.compare(DateValue(dfmt.parse("2002-01-01"), DateCodex),
-      DateValue(dfmt.parse("2001-01-01"), DateCodex)) should be (Some(1))
+      DateValue(dfmt.parse("2001-01-01"), DateCodex)) shouldBe Some(1)
   }
 
   it should "not compare an incorrect value" in {
-    DateCodex.compare(DateValue(dfmt.parse("2001-01-01"), DateCodex), LongValue(1)) should be (None)
-    DateCodex.compare(LongValue(1), DateValue(dfmt.parse("2001-01-01"), DateCodex)) should be (None)
+    DateCodex.compare(DateValue(dfmt.parse("2001-01-01"), DateCodex), LongValue(1)) shouldBe None
+    DateCodex.compare(LongValue(1), DateValue(dfmt.parse("2001-01-01"), DateCodex)) shouldBe None
   }
 }
 
-class TestDateTimeCodex extends FlatSpec with Matchers {
+class TestDateTimeCodex extends TestGrimlock {
 
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd hh:ss:mm")
 
   "A DateTimeCodex" should "have a name" in {
-    DateTimeCodex.name should be ("date.time")
+    DateTimeCodex.name shouldBe "date.time"
   }
 
   it should "box a correct Value" in {
-    DateTimeCodex.toValue(dfmt.parse("2001-01-01 01:01:01")) should
-      be (DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex))
+    DateTimeCodex.toValue(dfmt.parse("2001-01-01 01:01:01")) shouldBe
+      DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)
   }
 
   it should "unbox a correct value" in {
-    DateTimeCodex.fromValue(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex)) should
-      be (dfmt.parse("2001-01-01 01:01:01"))
+    DateTimeCodex.fromValue(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex)) shouldBe
+      dfmt.parse("2001-01-01 01:01:01")
   }
 
   it should "throw an exception for an invalid unbox" in {
@@ -101,17 +99,17 @@ class TestDateTimeCodex extends FlatSpec with Matchers {
   }
 
   it should "decode a correct value" in {
-    DateTimeCodex.decode("2001-01-01 01:01:01") should
-      be (Some(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)))
+    DateTimeCodex.decode("2001-01-01 01:01:01") shouldBe
+      Some(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex))
   }
 
   it should "not decode an incorrect value" in {
-    DateTimeCodex.decode("a") should be (None)
-    DateTimeCodex.decode("1") should be (None)
+    DateTimeCodex.decode("a") shouldBe None
+    DateTimeCodex.decode("1") shouldBe None
   }
 
   it should "encode a correct value" in {
-    DateTimeCodex.encode(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex)) should be ("2001-01-01 01:01:01")
+    DateTimeCodex.encode(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex)) shouldBe "2001-01-01 01:01:01"
   }
 
   it should "not encode an incorrect value" in {
@@ -122,31 +120,31 @@ class TestDateTimeCodex extends FlatSpec with Matchers {
 
   it should "compare a correct value" in {
     DateTimeCodex.compare(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex),
-      DateValue(dfmt.parse("2002-01-01 01:01:01"), DateTimeCodex)) should be (Some(-1))
+      DateValue(dfmt.parse("2002-01-01 01:01:01"), DateTimeCodex)) shouldBe Some(-1)
     DateTimeCodex.compare(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex),
-      DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)) should be (Some(0))
+      DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)) shouldBe Some(0)
     DateTimeCodex.compare(DateValue(dfmt.parse("2002-01-01 01:01:01"), DateTimeCodex),
-      DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)) should be (Some(1))
+      DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)) shouldBe Some(1)
   }
 
   it should "not compare an incorrect value" in {
-    DateTimeCodex.compare(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex), LongValue(1)) should be (None)
-    DateTimeCodex.compare(LongValue(1), DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)) should be (None)
+    DateTimeCodex.compare(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex), LongValue(1)) shouldBe None
+    DateTimeCodex.compare(LongValue(1), DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)) shouldBe None
   }
 }
 
-class TestStringCodex extends FlatSpec with Matchers {
+class TestStringCodex extends TestGrimlock {
 
   "A StringCodex" should "have a name" in {
-    StringCodex.name should be ("string")
+    StringCodex.name shouldBe "string"
   }
 
   it should "box a correct Value" in {
-    StringCodex.toValue("abc") should be (StringValue("abc"))
+    StringCodex.toValue("abc") shouldBe StringValue("abc")
   }
 
   it should "unbox a correct value" in {
-    StringCodex.fromValue(StringValue("abc")) should be ("abc")
+    StringCodex.fromValue(StringValue("abc")) shouldBe "abc"
   }
 
   it should "throw an exception for an invalid unbox" in {
@@ -156,11 +154,11 @@ class TestStringCodex extends FlatSpec with Matchers {
   }
 
   it should "decode a correct value" in {
-    StringCodex.decode("abc") should be (Some(StringValue("abc")))
+    StringCodex.decode("abc") shouldBe Some(StringValue("abc"))
   }
 
   it should "encode a correct value" in {
-    StringCodex.encode(StringValue("abc")) should be ("abc")
+    StringCodex.encode(StringValue("abc")) shouldBe "abc"
   }
 
   it should "not encode an incorrect value" in {
@@ -170,29 +168,29 @@ class TestStringCodex extends FlatSpec with Matchers {
   }
 
   it should "compare a correct value" in {
-    StringCodex.compare(StringValue("abc"), StringValue("bbc")) should be (Some(-1))
-    StringCodex.compare(StringValue("abc"), StringValue("abc")) should be (Some(0))
-    StringCodex.compare(StringValue("bbc"), StringValue("abc")) should be (Some(1))
+    StringCodex.compare(StringValue("abc"), StringValue("bbc")) shouldBe Some(-1)
+    StringCodex.compare(StringValue("abc"), StringValue("abc")) shouldBe Some(0)
+    StringCodex.compare(StringValue("bbc"), StringValue("abc")) shouldBe Some(1)
   }
 
   it should "not compare an incorrect value" in {
-    StringCodex.compare(StringValue("abc"), LongValue(1)) should be (None)
-    StringCodex.compare(LongValue(1), StringValue("abc")) should be (None)
+    StringCodex.compare(StringValue("abc"), LongValue(1)) shouldBe None
+    StringCodex.compare(LongValue(1), StringValue("abc")) shouldBe None
   }
 }
 
-class TestDoubleCodex extends FlatSpec with Matchers {
+class TestDoubleCodex extends TestGrimlock {
 
   "A DoubleCodex" should "have a name" in {
-    DoubleCodex.name should be ("double")
+    DoubleCodex.name shouldBe "double"
   }
 
   it should "box a correct Value" in {
-    DoubleCodex.toValue(3.14) should be (DoubleValue(3.14))
+    DoubleCodex.toValue(3.14) shouldBe DoubleValue(3.14)
   }
 
   it should "unbox a correct value" in {
-    DoubleCodex.fromValue(DoubleValue(3.14)) should be (3.14)
+    DoubleCodex.fromValue(DoubleValue(3.14)) shouldBe 3.14
   }
 
   it should "throw an exception for an invalid unbox" in {
@@ -202,16 +200,16 @@ class TestDoubleCodex extends FlatSpec with Matchers {
   }
 
   it should "decode a correct value" in {
-    DoubleCodex.decode("3.14") should be (Some(DoubleValue(3.14)))
+    DoubleCodex.decode("3.14") shouldBe Some(DoubleValue(3.14))
   }
 
   it should "not decode an incorrect value" in {
-    DoubleCodex.decode("a") should be (None)
-    DoubleCodex.decode("2001-01-01") should be (None)
+    DoubleCodex.decode("a") shouldBe None
+    DoubleCodex.decode("2001-01-01") shouldBe None
   }
 
   it should "encode a correct value" in {
-    DoubleCodex.encode(DoubleValue(3.14)) should be ("3.14")
+    DoubleCodex.encode(DoubleValue(3.14)) shouldBe "3.14"
   }
 
   it should "not encode an incorrect value" in {
@@ -221,41 +219,41 @@ class TestDoubleCodex extends FlatSpec with Matchers {
   }
 
   it should "compare a correct value" in {
-    DoubleCodex.compare(DoubleValue(3.14), DoubleValue(4.14)) should be (Some(-1))
-    DoubleCodex.compare(DoubleValue(3.14), DoubleValue(3.14)) should be (Some(0))
-    DoubleCodex.compare(DoubleValue(4.14), DoubleValue(3.14)) should be (Some(1))
+    DoubleCodex.compare(DoubleValue(3.14), DoubleValue(4.14)) shouldBe Some(-1)
+    DoubleCodex.compare(DoubleValue(3.14), DoubleValue(3.14)) shouldBe Some(0)
+    DoubleCodex.compare(DoubleValue(4.14), DoubleValue(3.14)) shouldBe Some(1)
 
-    DoubleCodex.compare(DoubleValue(3), LongValue(4)) should be (Some(-1))
-    DoubleCodex.compare(DoubleValue(3), LongValue(3)) should be (Some(0))
-    DoubleCodex.compare(DoubleValue(4), LongValue(3)) should be (Some(1))
+    DoubleCodex.compare(DoubleValue(3), LongValue(4)) shouldBe Some(-1)
+    DoubleCodex.compare(DoubleValue(3), LongValue(3)) shouldBe Some(0)
+    DoubleCodex.compare(DoubleValue(4), LongValue(3)) shouldBe Some(1)
 
-    DoubleCodex.compare(LongValue(3), DoubleValue(4)) should be (Some(-1))
-    DoubleCodex.compare(LongValue(3), DoubleValue(3)) should be (Some(0))
-    DoubleCodex.compare(LongValue(4), DoubleValue(3)) should be (Some(1))
+    DoubleCodex.compare(LongValue(3), DoubleValue(4)) shouldBe Some(-1)
+    DoubleCodex.compare(LongValue(3), DoubleValue(3)) shouldBe Some(0)
+    DoubleCodex.compare(LongValue(4), DoubleValue(3)) shouldBe Some(1)
 
-    DoubleCodex.compare(LongValue(3), LongValue(4)) should be (Some(-1))
-    DoubleCodex.compare(LongValue(3), LongValue(3)) should be (Some(0))
-    DoubleCodex.compare(LongValue(4), LongValue(3)) should be (Some(1))
+    DoubleCodex.compare(LongValue(3), LongValue(4)) shouldBe Some(-1)
+    DoubleCodex.compare(LongValue(3), LongValue(3)) shouldBe Some(0)
+    DoubleCodex.compare(LongValue(4), LongValue(3)) shouldBe Some(1)
   }
 
   it should "not compare an incorrect value" in {
-    DoubleCodex.compare(DoubleValue(3.14), StringValue("abc")) should be (None)
-    DoubleCodex.compare(StringValue("abc"), DoubleValue(3.14)) should be (None)
+    DoubleCodex.compare(DoubleValue(3.14), StringValue("abc")) shouldBe None
+    DoubleCodex.compare(StringValue("abc"), DoubleValue(3.14)) shouldBe None
   }
 }
 
-class TestLongCodex extends FlatSpec with Matchers {
+class TestLongCodex extends TestGrimlock {
 
   "A LongCodex" should "have a name" in {
-    LongCodex.name should be ("long")
+    LongCodex.name shouldBe "long"
   }
 
   it should "box a correct Value" in {
-    LongCodex.toValue(42) should be (LongValue(42))
+    LongCodex.toValue(42) shouldBe LongValue(42)
   }
 
   it should "unbox a correct value" in {
-    LongCodex.fromValue(LongValue(42)) should be (42)
+    LongCodex.fromValue(LongValue(42)) shouldBe 42
   }
 
   it should "throw an exception for an invalid unbox" in {
@@ -265,16 +263,16 @@ class TestLongCodex extends FlatSpec with Matchers {
   }
 
   it should "decode a correct value" in {
-    LongCodex.decode("42") should be (Some(LongValue(42)))
+    LongCodex.decode("42") shouldBe Some(LongValue(42))
   }
 
   it should "not decode an incorrect value" in {
-    LongCodex.decode("a") should be (None)
-    LongCodex.decode("2001-01-01") should be (None)
+    LongCodex.decode("a") shouldBe None
+    LongCodex.decode("2001-01-01") shouldBe None
   }
 
   it should "encode a correct value" in {
-    LongCodex.encode(LongValue(42)) should be ("42")
+    LongCodex.encode(LongValue(42)) shouldBe "42"
   }
 
   it should "not encode an incorrect value" in {
@@ -284,41 +282,41 @@ class TestLongCodex extends FlatSpec with Matchers {
   }
 
   it should "compare a correct value" in {
-    LongCodex.compare(DoubleValue(42), DoubleValue(43)) should be (Some(-1))
-    LongCodex.compare(DoubleValue(42), DoubleValue(42)) should be (Some(0))
-    LongCodex.compare(DoubleValue(43), DoubleValue(42)) should be (Some(1))
+    LongCodex.compare(DoubleValue(42), DoubleValue(43)) shouldBe Some(-1)
+    LongCodex.compare(DoubleValue(42), DoubleValue(42)) shouldBe Some(0)
+    LongCodex.compare(DoubleValue(43), DoubleValue(42)) shouldBe Some(1)
 
-    LongCodex.compare(DoubleValue(3), LongValue(4)) should be (Some(-1))
-    LongCodex.compare(DoubleValue(3), LongValue(3)) should be (Some(0))
-    LongCodex.compare(DoubleValue(4), LongValue(3)) should be (Some(1))
+    LongCodex.compare(DoubleValue(3), LongValue(4)) shouldBe Some(-1)
+    LongCodex.compare(DoubleValue(3), LongValue(3)) shouldBe Some(0)
+    LongCodex.compare(DoubleValue(4), LongValue(3)) shouldBe Some(1)
 
-    LongCodex.compare(LongValue(3), DoubleValue(4)) should be (Some(-1))
-    LongCodex.compare(LongValue(3), DoubleValue(3)) should be (Some(0))
-    LongCodex.compare(LongValue(4), DoubleValue(3)) should be (Some(1))
+    LongCodex.compare(LongValue(3), DoubleValue(4)) shouldBe Some(-1)
+    LongCodex.compare(LongValue(3), DoubleValue(3)) shouldBe Some(0)
+    LongCodex.compare(LongValue(4), DoubleValue(3)) shouldBe Some(1)
 
-    LongCodex.compare(LongValue(3), LongValue(4)) should be (Some(-1))
-    LongCodex.compare(LongValue(3), LongValue(3)) should be (Some(0))
-    LongCodex.compare(LongValue(4), LongValue(3)) should be (Some(1))
+    LongCodex.compare(LongValue(3), LongValue(4)) shouldBe Some(-1)
+    LongCodex.compare(LongValue(3), LongValue(3)) shouldBe Some(0)
+    LongCodex.compare(LongValue(4), LongValue(3)) shouldBe Some(1)
   }
 
   it should "not compare an incorrect value" in {
-    LongCodex.compare(LongValue(42), StringValue("abc")) should be (None)
-    LongCodex.compare(StringValue("abc"), LongValue(42)) should be (None)
+    LongCodex.compare(LongValue(42), StringValue("abc")) shouldBe None
+    LongCodex.compare(StringValue("abc"), LongValue(42)) shouldBe None
   }
 }
 
-class TestBooleanCodex extends FlatSpec with Matchers {
+class TestBooleanCodex extends TestGrimlock {
 
   "A BooleanCodex" should "have a name" in {
-    BooleanCodex.name should be ("boolean")
+    BooleanCodex.name shouldBe "boolean"
   }
 
   it should "box a correct Value" in {
-    BooleanCodex.toValue(true) should be (BooleanValue(true))
+    BooleanCodex.toValue(true) shouldBe BooleanValue(true)
   }
 
   it should "unbox a correct value" in {
-    BooleanCodex.fromValue(BooleanValue(true)) should be (true)
+    BooleanCodex.fromValue(BooleanValue(true)) shouldBe true
   }
 
   it should "throw an exception for an invalid unbox" in {
@@ -328,17 +326,17 @@ class TestBooleanCodex extends FlatSpec with Matchers {
   }
 
   it should "decode a correct value" in {
-    BooleanCodex.decode("true") should be (Some(BooleanValue(true)))
-    BooleanCodex.decode("false") should be (Some(BooleanValue(false)))
+    BooleanCodex.decode("true") shouldBe Some(BooleanValue(true))
+    BooleanCodex.decode("false") shouldBe Some(BooleanValue(false))
   }
 
   it should "not decode an incorrect value" in {
-    BooleanCodex.decode("a") should be (None)
-    BooleanCodex.decode("2001-01-01") should be (None)
+    BooleanCodex.decode("a") shouldBe None
+    BooleanCodex.decode("2001-01-01") shouldBe None
   }
 
   it should "encode a correct value" in {
-    BooleanCodex.encode(BooleanValue(true)) should be ("true")
+    BooleanCodex.encode(BooleanValue(true)) shouldBe "true"
   }
 
   it should "not encode an incorrect value" in {
@@ -348,14 +346,14 @@ class TestBooleanCodex extends FlatSpec with Matchers {
   }
 
   it should "compare a correct value" in {
-    BooleanCodex.compare(BooleanValue(false), BooleanValue(true)) should be (Some(-1))
-    BooleanCodex.compare(BooleanValue(false), BooleanValue(false)) should be (Some(0))
-    BooleanCodex.compare(BooleanValue(true), BooleanValue(false)) should be (Some(1))
+    BooleanCodex.compare(BooleanValue(false), BooleanValue(true)) shouldBe Some(-1)
+    BooleanCodex.compare(BooleanValue(false), BooleanValue(false)) shouldBe Some(0)
+    BooleanCodex.compare(BooleanValue(true), BooleanValue(false)) shouldBe Some(1)
   }
 
   it should "not compare an incorrect value" in {
-    BooleanCodex.compare(BooleanValue(true), StringValue("abc")) should be (None)
-    BooleanCodex.compare(StringValue("abc"), BooleanValue(true)) should be (None)
+    BooleanCodex.compare(BooleanValue(true), StringValue("abc")) shouldBe None
+    BooleanCodex.compare(StringValue("abc"), BooleanValue(true)) shouldBe None
   }
 }
 
