@@ -27,7 +27,7 @@ import au.com.cba.omnia.grimlock.spark.Matrix._
 import org.apache.spark.{ SparkConf, SparkContext }
 
 // Simple gradient feature genertor
-case class Gradient(dim: Dimension) extends Windower with Initialise {
+case class Gradient(dim: Dimension) extends Windowed with Initialise {
   type T = Cell[Position]
 
   // Initialise state to the remainder coordinates (contains the date) and the content.

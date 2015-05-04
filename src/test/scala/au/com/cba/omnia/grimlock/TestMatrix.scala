@@ -7674,7 +7674,7 @@ trait TestMatrixWindow extends TestMatrix {
 
 object TestMatrixWindow {
 
-  case class Delta(times: Int) extends Windower with Initialise {
+  case class Delta(times: Int) extends Windowed with Initialise {
     type T = Cell[Position]
 
     def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
@@ -7694,7 +7694,7 @@ object TestMatrixWindow {
     }
   }
 
-  case class DeltaWithValue(key: String) extends Windower with InitialiseWithValue {
+  case class DeltaWithValue(key: String) extends Windowed with InitialiseWithValue {
     type T = Cell[Position]
     type V = Map[String, Int]
 

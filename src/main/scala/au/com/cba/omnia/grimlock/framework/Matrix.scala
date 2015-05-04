@@ -645,24 +645,24 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Create window based derived data.
    *
-   * @param slice     Encapsulates the dimension(s) to derive over.
-   * @param windowers The windowers to apply to the content.
+   * @param slice   Encapsulates the dimension(s) to derive over.
+   * @param windows The windowed functions to apply to the content.
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def window[D <: Dimension, T](slice: Slice[P, D], windowers: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
+  def window[D <: Dimension, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
     ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
 
   /**
    * Create window based derived data with a user supplied value.
    *
-   * @param slice     Encapsulates the dimension(s) to derive over.
-   * @param windowers The windowers to apply to the content.
-   * @param value    .A `E` holding a user supplied value.
+   * @param slice   Encapsulates the dimension(s) to derive over.
+   * @param windows The windowed functions to apply to the content.
+   * @param value   A `E` holding a user supplied value.
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windowers: T, value: E[W])(
+  def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windows: T, value: E[W])(
     implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
     ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
 

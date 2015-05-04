@@ -590,7 +590,7 @@ class TestScalding22(args : Args) extends Job(args) {
 
   val data = load2D(args("path") + "/numericInputfile.txt")
 
-  case class Diff() extends Windower with Initialise {
+  case class Diff() extends Windowed with Initialise {
     type T = Cell[Position]
 
     def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {

@@ -635,7 +635,7 @@ object TestSpark22 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = load2D(args(1) + "/numericInputfile.txt")
 
-    case class Diff() extends Windower with Initialise {
+    case class Diff() extends Windowed with Initialise {
       type T = Cell[Position]
 
       def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {

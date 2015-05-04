@@ -292,12 +292,12 @@ class TestExponentialMovingAverage extends TestOnlineMovingAverage {
   }
 }
 
-class TestCombinationWindower extends TestGrimlock {
+class TestCombinationWindowed extends TestGrimlock {
 
-  "A CombinationWindower" should "present correctly" in {
+  "A CombinationWindowed" should "present correctly" in {
     val slice = Over[Position2D, Second.type](Second)
     val sel = Position1D("sales")
-    val obj = CombinationWindower(List(
+    val obj = CombinationWindowed(List(
       SimpleMovingAverage(5, First, false, "%1$s.simple"),
       WeightedMovingAverage(5, First, false, "%1$s.weighted")))
 
