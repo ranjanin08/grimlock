@@ -19,308 +19,298 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
 /** Base trait for transformations. */
-trait Transformer
+trait Transformer[P <: Position, Q <: Position]
 
-/** Base trait for transformers that do not modify the number of dimensions. */
-trait Present extends PresentWithValue { self: Transformer =>
-  type V = Any
+object Transformer {
+  def rename[P <: Position](dim: Dimension, name: String): (Cell[P]) => P = {
+    (cell: Cell[P]) => cell.position.update(dim,
+      name.format(cell.position(dim).toShortString, cell.content.value.toShortString))
+  }
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = present(cell)
-
-  /**
-   * Present the transformed content(s).
-   *
-   * @param pos The position of the cell.
-   * @param con The content to transform.
-   *
-   * @return Optional of either a cell or a `List` of cells where the position is creating by modifiying `pos` and the
-   *         content is derived from `con`.
-   */
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]]
-
-  /**
-   * Operator for chaining transformations.
-   *
-   * @param that The transformation to perform after `this`.
-   *
-   * @return A transformer that runs `this` and then `that`.
-   */
-  def andThen(that: Transformer with Present): AndThenTransformer = AndThenTransformer(this, that)
-}
-
-/** Base trait for transformers that use a user supplied value but do not modify the number of dimensions. */
-trait PresentWithValue { self: Transformer =>
-  /** Type of the external value. */
-  type V
-
-  /**
-   * Present the transformed content(s).
-   *
-   * @param pos The position of the cell.
-   * @param con The content to transform.
-   * @param ext The external value.
-   *
-   * @return Optional of either a cell or a `List` of cells where the position is creating by modifiying `pos` and the
-   *         content is derived from `con`.
-   */
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]]
-
-  /**
-   * Operator for chaining transformations.
-   *
-   * @param that The transformation to perform after `this`.
-   *
-   * @return A transformer that runs `this` and then `that`.
-   */
-  def andThen[W <: V](that: Transformer with PresentWithValue { type V = W }): AndThenTransformerWithValue[W] = {
-    AndThenTransformerWithValue[W](this, that)
+  def renameWithValue[P <: Position, V](dim: Dimension, name: String): (Cell[P], V) => P = {
+    (cell: Cell[P], V) => cell.position.update(dim,
+      name.format(cell.position(dim).toShortString, cell.content.value.toShortString))
   }
 }
 
-/** Base trait for transformers that expand the position by appending a dimension. */
-trait PresentExpanded extends PresentExpandedWithValue { self: Transformer =>
+/** Base trait for transformations from `P` to `Q`. */
+trait Present[P <: Position, Q <: Position] extends PresentWithValue[P, Q] { self: Transformer[P, Q] =>
   type V = Any
 
-  def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: V): Collection[Cell[P#M]] = present(cell)
+  def present(cell: Cell[P], ext: V): Collection[Cell[Q]] = present(cell)
 
   /**
    * Present the transformed content(s).
    *
-   * @param pos The position of the cell.
-   * @param con The content to transform.
+   * @param cell The cell to transform.
    *
-   * @return Optional of either a cell or a `List` of cells where the position is creating by appending to `pos` and
-   *         the content is derived from `con`.
+   * @return A `Collection` of transformed cells.
    */
-  def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]]
+  def present(cell: Cell[P]): Collection[Cell[Q]]
+
+  /**
+   * Operator for chaining transformations.
+   *
+   * @param that The transformation to perform after `this`.
+   *
+   * @return A transformer that runs `this` and then `that`.
+   */
+  def andThen[R <: Position](that: Transformer[Q, R] with Present[Q, R]) = AndThenTransformer(this, that)
+
+  /**
+   * Operator for transforming and then renaming dimensions.
+   *
+   * @param rename The rename to apply after the transformation.
+   *
+   * @return A transformer that runs `this` and then renames the resulting dimension(s).
+   */
+  def andThenRename(rename: (Cell[Q]) => Q): Transformer[P, Q] with Present[P, Q] = {
+    new Transformer[P, Q] with Present[P, Q] {
+      def present(cell: Cell[P]): Collection[Cell[Q]] = {
+        Collection(Present.this.present(cell).toList.map { case c => Cell(rename(c), c.content) })
+      }
+    }
+  }
+
+  /**
+   * Operator for transforming and then expanding dimensions.
+   *
+   * @param expand The expansion to apply after the transformation.
+   *
+   * @return A transformer that runs `this` and then expands the resulting dimensions.
+   */
+  def andThenExpand[R <: Position](expand: (Cell[Q]) => R)(
+    implicit ev: ExpPosDep[Q, R]): Transformer[P, R] with Present[P, R] = {
+    new Transformer[P, R] with Present[P, R] {
+      def present(cell: Cell[P]): Collection[Cell[R]] = {
+        Collection(Present.this.present(cell).toList.map { case c => Cell(expand(c), c.content) })
+      }
+    }
+  }
 }
 
-/** Base trait for transformers that use a user supplied value and expand the position by appending a dimension. */
-trait PresentExpandedWithValue { self: Transformer =>
+/** Base trait for transformations from `P` to `Q` that use a user supplied value. */
+trait PresentWithValue[P <: Position, Q <: Position] { self: Transformer[P, Q] =>
   /** Type of the external value. */
   type V
 
   /**
    * Present the transformed content(s).
    *
-   * @param pos The position of the cell.
-   * @param con The content to transform.
-   * @param ext The external value.
+   * @param cell The cell to transform.
+   * @param ext  Externally provided data needed for the transformation.
    *
-   * @return Optional of either a cell or a `List` of cells where the position is creating by appending to `pos` and
-   *         the content is derived from `con`.
+   * @return A `Collection` of transformed cells.
    */
-  def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: V): Collection[Cell[P#M]]
+  def present(cell: Cell[P], ext: V): Collection[Cell[Q]]
+
+  /**
+   * Operator for chaining transformations.
+   *
+   * @param that The transformation to perform after `this`.
+   *
+   * @return A transformer that runs `this` and then `that`.
+   */
+  def andThen[R <: Position](
+    that: Transformer[Q, R] with PresentWithValue[Q, R] { type V >: self.V }): Transformer[P, R] = {
+    new Transformer[P, R] with PresentWithValue[P, R] {
+      type V = self.V
+
+      def present(cell: Cell[P], ext: V): Collection[Cell[R]] = {
+        Collection(self.present(cell, ext).toList.flatMap { case c => that.present(c, ext).toList })
+      }
+    }
+  }
+
+  /**
+   * Operator for transforming and then renaming dimensions.
+   *
+   * @param rename The rename to apply after the transformation.
+   *
+   * @return A transformer that runs `this` and then renames the resulting dimension(s).
+   */
+  def andThenRenameWithValue(rename: (Cell[Q], V) => Q) = AndThenRenameWithValue(this, rename)
+  /*: Transformer[P, Q] with PresentWithValue[P, Q] = {
+    new Transformer[P, Q] with PresentWithValue[P, Q] {
+      type V = self.V
+
+      def present(cell: Cell[P], ext: V): Collection[Cell[Q]] = {
+        Collection(self.present(cell, ext).toList.map { case c => Cell(rename(c, ext), c.content) })
+      }
+    }
+  }*/
+
+  /**
+   * Operator for transforming and then expanding dimensions.
+   *
+   * @param expand The expansion to apply after the transformation.
+   *
+   * @return A transformer that runs `this` and then expands the resulting dimensions.
+   */
+  def andThenExpandWithValue[R <: Position](expand: (Cell[Q], V) => R)(
+    implicit ev: ExpPosDep[Q, R]): Transformer[P, R] with PresentWithValue[P, R] = {
+    new Transformer[P, R] with PresentWithValue[P, R] {
+      type V = self.V
+
+      def present(cell: Cell[P], ext: V): Collection[Cell[R]] = {
+        Collection(self.present(cell, ext).toList.map { case c => Cell(expand(c, ext), c.content) })
+      }
+    }
+  }
 }
 
 /**
- * Transformer that is a composition of two transformers with `Present`.
+ * Transformer that is a composition of two transformers.
  *
  * @param first  The first transformation to appy.
  * @param second The second transformation to appy.
  *
  * @note This need not be called in an application. The `andThen` method will create it.
  */
-case class AndThenTransformer(first: Transformer with Present, second: Transformer with Present) extends Transformer
-  with Present {
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
+case class AndThenTransformer[P <: Position, Q <: Position, R <: Position](first: Transformer[P, Q] with Present[P, Q],
+  second: Transformer[Q, R] with Present[Q, R]) extends Transformer[P, R] with Present[P, R] {
+  def present(cell: Cell[P]): Collection[Cell[R]] = {
     Collection(first.present(cell).toList.flatMap { case c => second.present(c).toList })
   }
 }
 
-/**
- * Transformer that is a composition of two transformers with `PresentWithValue`.
- *
- * @param first  The first transformation to appy.
- * @param second The second transformation to appy.
- *
- * @note This need not be called in an application. The `andThen` method will create it.
- */
-case class AndThenTransformerWithValue[W](first: Transformer with PresentWithValue { type V >: W },
-  second: Transformer with PresentWithValue { type V >: W }) extends Transformer with PresentWithValue {
+case class AndThenRenameWithValue[P <: Position, Q <: Position, W](
+  first: Transformer[P, Q] with PresentWithValue[P, Q] { type V = W },
+  rename: (Cell[Q], W) => Q) extends Transformer[P, Q] with PresentWithValue[P, Q] {
   type V = W
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    Collection(first.present(cell, ext).toList.flatMap { case c => second.present(c, ext).toList })
+
+  def present(cell: Cell[P], ext: V): Collection[Cell[Q]] = {
+    Collection(first.present(cell, ext).toList.map { case c => Cell(rename(c, ext), c.content) })
   }
 }
 
-/**
- * Transformer that is a combination of one or more transformers with `Present`.
- *
- * @param singles `List` of transformers that are combined together.
- *
- * @note This need not be called in an application. The `Transformable` type class will convert any `List[Transformer]`
- *       automatically to one of these.
- */
-case class CombinationTransformer[T <: Transformer with Present](singles: List[T]) extends Transformer with Present {
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
-    Collection(singles.flatMap { case s => s.present(cell).toList })
-  }
-}
-
-/**
- * Transformer that is a combination of one or more transformers with `PresentWithValue`.
- *
- * @param singles `List` of transformers that are combined together.
- *
- * @note This need not be called in an application. The `TransformableWithValue` type class will convert any
- *       `List[Transformer]` automatically to one of these.
- */
-case class CombinationTransformerWithValue[T <: Transformer with PresentWithValue { type V >: W }, W](singles: List[T])
-  extends Transformer with PresentWithValue {
-  type V = W
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    Collection(singles.flatMap { case s => s.present(cell, ext).toList })
-  }
-}
-
-/**
- * Transformer that is a combination of one or more transformers with `PresentExpanded`.
- *
- * @param singles `List` of transformers that are combined together.
- *
- * @note This need not be called in an application. The `TransformableExpanded` type class will convert any
- *       `List[Transformer]` automatically to one of these.
- */
-case class CombinationTransformerExpanded[T <: Transformer with PresentExpanded](singles: List[T]) extends Transformer
-  with PresentExpanded {
-  def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]] = {
-    Collection(singles.flatMap { case s => s.present(cell).toList })
-  }
-}
-
-/**
- * Transformer that is a combination of one or more transformers with `PresentExpandedWithValue`.
- *
- * @param singles `List` of transformers that are combined together.
- *
- * @note This need not be called in an application. The `TransformableExpandedWithValue` type class will convert any
- *       `List[Transformer]` automatically to one of these.
- */
-case class CombinationTransformerExpandedWithValue[T <: Transformer with PresentExpandedWithValue { type V >: W }, W](
-  singles: List[T]) extends Transformer with PresentExpandedWithValue {
-  type V = W
-  def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: W): Collection[Cell[P#M]] = {
-    Collection(singles.flatMap { case s => s.present(cell, ext).toList })
-  }
-}
-
-/** Type class for transforming a type `T` to a `Transformer with Present`. */
-trait Transformable[T] {
+/** Type class for transforming a type `T` to a `Transformer`. */
+trait Transformable[P <: Position, Q <: Position, T] {
   /**
-   * Returns a `Transformer with Present` for type `T`.
+   * Returns a `Transformer` for type `T`.
    *
-   * @param t Object that can be converted to a `Transformer with Present`.
+   * @param t Object that can be converted to a `Transformer`.
    */
-  def convert(t: T): Transformer with Present
+  def convert(t: T): Transformer[P, Q] with Present[P, Q]
 }
 
 /** Companion object for the `Transformable` type class. */
 object Transformable {
-  /**
-   * Converts a `List[Transformer with Present]` to a single `Transformer with Present` using `CombinationTransformer`.
-   */
-  implicit def LT2T[T <: Transformer with Present]: Transformable[List[T]] = {
-    new Transformable[List[T]] { def convert(t: List[T]): Transformer with Present = CombinationTransformer(t) }
+  /** Converts a function `Cell[P] => Cell[Q]` to a `Transformer`. */
+  implicit def C2T[P <: Position, Q <: Position]: Transformable[P, Q, Cell[P] => Cell[Q]] = {
+    new Transformable[P, Q, Cell[P] => Cell[Q]] {
+      def convert(t: (Cell[P]) => Cell[Q]): Transformer[P, Q] with Present[P, Q] = {
+        new Transformer[P, Q] with Present[P, Q] {
+          def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t(cell))
+        }
+      }
+    }
   }
-  /** Converts a `Transformer with Present` to a `Transformer with Present`; that is, it is a pass through. */
-  implicit def T2T[T <: Transformer with Present]: Transformable[T] = {
-    new Transformable[T] { def convert(t: T): Transformer with Present = t }
+
+  /** Converts a function `Cell[P] => List[Cell[Q]]` to a `Transformer`. */
+  implicit def LC2T[P <: Position, Q <: Position]: Transformable[P, Q, Cell[P] => List[Cell[Q]]] = {
+    new Transformable[P, Q, Cell[P] => List[Cell[Q]]] {
+      def convert(t: (Cell[P]) => List[Cell[Q]]): Transformer[P, Q] with Present[P, Q] = {
+        new Transformer[P, Q] with Present[P, Q] {
+          def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t(cell))
+        }
+      }
+    }
+  }
+
+  /** Converts a function `Cell[P] => Collection[Cell[Q]]` to a `Transformer`. */
+  implicit def CC2T[P <: Position, Q <: Position]: Transformable[P, Q, Cell[P] => Collection[Cell[Q]]] = {
+    new Transformable[P, Q, Cell[P] => Collection[Cell[Q]]] {
+      def convert(t: (Cell[P]) => Collection[Cell[Q]]): Transformer[P, Q] with Present[P, Q] = {
+        new Transformer[P, Q] with Present[P, Q] { def present(cell: Cell[P]): Collection[Cell[Q]] = t(cell) }
+      }
+    }
+  }
+
+  /** Converts a `Transformer` to a `Transformer`; that is, it is a pass through. */
+  implicit def T2T[P <: Position, Q <: Position, T <: Transformer[P, Q] with Present[P, Q]]: Transformable[P, Q, T] = {
+    new Transformable[P, Q, T] { def convert(t: T): Transformer[P, Q] with Present[P, Q] = t }
+  }
+
+  /** Converts a `List[Transformer]` to a `Transformer`. */
+  implicit def LT2T[P <: Position, Q <: Position, T <: Transformer[P, Q] with Present[P, Q]]: Transformable[P, Q, List[T]] = {
+    new Transformable[P, Q, List[T]] {
+      def convert(t: List[T]): Transformer[P, Q] with Present[P, Q] = {
+        new Transformer[P, Q] with Present[P, Q] {
+          def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t.flatMap { case s => s.present(cell).toList })
+        }
+      }
+    }
   }
 }
 
-/** Type class for transforming a type `T` to a `Transformer with PresentWithValue`. */
-trait TransformableWithValue[T, W] {
+/** Type class for transforming a type `T` to a `Transformer`. */
+trait TransformableWithValue[P <: Position, Q <: Position, T, W] {
   /**
-   * Returns a `Transformer with PresentWithValue` for type `T`.
+   * Returns a `Transformer` for type `T`.
    *
-   * @param t Object that can be converted to a `Transformer with PresentWithValue`.
+   * @param t Object that can be converted to a `Transformer`.
    */
-  def convert(t: T): Transformer with PresentWithValue { type V >: W }
+  def convert(t: T): Transformer[P, Q] with PresentWithValue[P, Q] { type V >: W }
 }
 
 /** Companion object for the `TransformableWithValue` type class. */
 object TransformableWithValue {
-  /**
-   * Converts a `List[Transformer with PresentWithValue]` to a single `Transformer with PresentWithValue` using
-   * `CombinationTransformerWithValue`.
-   */
-  implicit def LT2TWV[T <: Transformer with PresentWithValue { type V >: W }, W]: TransformableWithValue[List[T], W] = {
-    new TransformableWithValue[List[T], W] {
-      def convert(t: List[T]): Transformer with PresentWithValue { type V >: W } = {
-        CombinationTransformerWithValue[T, W](t)
+  /** Converts a function `Cell[P] => Cell[Q]` to a `Transformer`. */
+  implicit def C2TWV[P <: Position, Q <: Position, W]: TransformableWithValue[P, Q, (Cell[P], W) => Cell[Q], W] = {
+    new TransformableWithValue[P, Q, (Cell[P], W) => Cell[Q], W] {
+      def convert(t: (Cell[P], W) => Cell[Q]): Transformer[P, Q] with PresentWithValue[P, Q] { type V >: W } = {
+        new Transformer[P, Q] with PresentWithValue[P, Q] {
+          type V = W
+          def present(cell: Cell[P], ext: W): Collection[Cell[Q]] = Collection(t(cell, ext))
+        }
       }
     }
   }
-  /**
-   * Converts a `Transformer with PresentWithValue` to a `Transformer with PresentWithValue`; that is, it is a pass
-   * through.
-   */
-  implicit def T2TWV[T <: Transformer with PresentWithValue { type V >: W }, W]: TransformableWithValue[T, W] = {
-    new TransformableWithValue[T, W] { def convert(t: T): Transformer with PresentWithValue { type V >: W } = t }
-  }
-}
 
-/** Type class for transforming a type `T` to a `Transformer with PresentExpanded`. */
-trait TransformableExpanded[T] {
-  /**
-   * Returns a `Transformer with PresentExpanded` for type `T`.
-   *
-   * @param t Object that can be converted to a `Transformer with PresentExpanded`.
-   */
-  def convert(t: T): Transformer with PresentExpanded
-}
-
-/** Companion object for the `TransformableExpanded` type class. */
-object TransformableExpanded {
-  /**
-   * Converts a `List[Transformer with PresentExpanded]` to a single `Transformer with PresentExpanded` using
-   * `CombinationTransformerExpanded`.
-   */
-  implicit def LT2TE[T <: Transformer with PresentExpanded]: TransformableExpanded[List[T]] = {
-    new TransformableExpanded[List[T]] {
-      def convert(t: List[T]): Transformer with PresentExpanded = CombinationTransformerExpanded(t)
-    }
-  }
-  /**
-   * Converts a `Transformer with PresentExpanded` to a `Transformer with PresentExpanded`; that is, it is a pass
-   * through.
-   */
-  implicit def T2TE[T <: Transformer with PresentExpanded]: TransformableExpanded[T] = {
-    new TransformableExpanded[T] { def convert(t: T): Transformer with PresentExpanded = t }
-  }
-}
-
-/** Type class for transforming a type `T` to a `Transformer with PresentExpandedWithValue`. */
-trait TransformableExpandedWithValue[T, W] {
-  /**
-   * Returns a `Transformer with PresentExpandedWithValue` for type `T`.
-   *
-   * @param t Object that can be converted to a `Transformer with PresentExpandedWithValue`.
-   */
-  def convert(t: T): Transformer with PresentExpandedWithValue { type V >: W }
-}
-
-/** Companion object for the `TransformableExpandedWithValue` type class. */
-object TransformableExpandedWithValue {
-  /**
-   * Converts a `List[Transformer with PresentExpandedWithValue]` to a single `Transformer with
-   * PresentExpandedWithValue` using `CombinationTransformerExpandedWithValue`.
-   */
-  implicit def LT2TEWV[T <: Transformer with PresentExpandedWithValue { type V >: W }, W]: TransformableExpandedWithValue[List[T], W] = {
-    new TransformableExpandedWithValue[List[T], W] {
-      def convert(t: List[T]): Transformer with PresentExpandedWithValue { type V >: W } = {
-        CombinationTransformerExpandedWithValue[T, W](t)
+  /** Converts a function `Cell[P] => List[Cell[Q]]` to a `Transformer`. */
+  implicit def LC2TWV[P <: Position, Q <: Position, W]: TransformableWithValue[P, Q, (Cell[P], W) => List[Cell[Q]], W] = {
+    new TransformableWithValue[P, Q, (Cell[P], W) => List[Cell[Q]], W] {
+      def convert(t: (Cell[P], W) => List[Cell[Q]]): Transformer[P, Q] with PresentWithValue[P, Q] { type V >: W } = {
+        new Transformer[P, Q] with PresentWithValue[P, Q] {
+          type V = W
+          def present(cell: Cell[P], ext: W): Collection[Cell[Q]] = Collection(t(cell, ext))
+        }
       }
     }
   }
-  /**
-   * Converts a `Transformer with PresentExpandedWithValue` to a `Transformer with PresentExpandedWithValue`; that is,
-   * it is a pass through.
-   */
-  implicit def T2TEWV[T <: Transformer with PresentExpandedWithValue { type V >: W }, W]: TransformableExpandedWithValue[T, W] = {
-    new TransformableExpandedWithValue[T, W] {
-      def convert(t: T): Transformer with PresentExpandedWithValue { type V >: W } = t
+
+  /** Converts a function `Cell[P] => Collection[Cell[Q]]` to a `Transformer`. */
+  implicit def CC2TWV[P <: Position, Q <: Position, W]: TransformableWithValue[P, Q, (Cell[P], W) => Collection[Cell[Q]], W] = {
+    new TransformableWithValue[P, Q, (Cell[P], W) => Collection[Cell[Q]], W] {
+      def convert(
+        t: (Cell[P], W) => Collection[Cell[Q]]): Transformer[P, Q] with PresentWithValue[P, Q] { type V >: W } = {
+        new Transformer[P, Q] with PresentWithValue[P, Q] {
+          type V = W
+          def present(cell: Cell[P], ext: W): Collection[Cell[Q]] = t(cell, ext)
+        }
+      }
+    }
+  }
+
+  /** Converts a `Transformer` to a `Transformer`; that is, it is a pass through. */
+  implicit def T2TWV[P <: Position, Q <: Position, T <: Transformer[P, Q] with Present[P, Q] { type V >: W }, W]: TransformableWithValue[P, Q, T, W] = {
+    new TransformableWithValue[P, Q, T, W] {
+      def convert(t: T): Transformer[P, Q] with Present[P, Q] { type V >: W } = t
+    }
+  }
+
+  /** Converts a `List[Transformer]` to a `Transformer`. */
+  implicit def LT2TWV[P <: Position, Q <: Position, T <: Transformer[P, Q] with PresentWithValue[P, Q] { type V >: W}, W]: TransformableWithValue[P, Q, List[T], W] = {
+    new TransformableWithValue[P, Q, List[T], W] {
+      def convert(t: List[T]): Transformer[P, Q] with PresentWithValue[P, Q] { type V >: W } = {
+        new Transformer[P, Q] with PresentWithValue[P, Q] {
+          type V = W
+          def present(cell: Cell[P], ext: V): Collection[Cell[Q]] = {
+            Collection(t.flatMap { case s => s.present(cell, ext).toList })
+          }
+        }
+      }
     }
   }
 }

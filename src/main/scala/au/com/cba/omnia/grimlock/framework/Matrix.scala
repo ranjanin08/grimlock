@@ -565,9 +565,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @param transformers The transformer(s) to apply to the content.
    *
-   * @return A `U[Cell[P]]` with the transformed cells.
+   * @return A `U[Cell[Q]]` with the transformed cells.
    */
-  def transform[T](transformers: T)(implicit ev: Transformable[T]): U[Cell[P]]
+  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[P, Q, T]): U[Cell[Q]]
 
   /**
    * Transform the content of a matrix using a user supplied value.
@@ -577,7 +577,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]` with the transformed cells.
    */
-  def transformWithValue[T, V](transformers: T, value: E[V])(implicit ev: TransformableWithValue[T, V]): U[Cell[P]]
+  def transformWithValue[Q <: Position, T, V](transformers: T, value: E[V])(
+    implicit ev: TransformableWithValue[P, Q, T, V]): U[Cell[Q]]
 
   /**
    * Returns the variable type of the content(s) for a given `slice`.
@@ -784,27 +785,6 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    */
   def expandWithValue[Q <: Position, V](expander: (Cell[P], V) => Q, value: E[V])(
     implicit ev: ExpPosDep[P, Q]): U[Cell[Q]]
-
-  /**
-   * Transform the content of a matrix and return the transformations with an expanded position.
-   *
-   * @param transformers The transformer(s) to apply to the content.
-   *
-   * @return A `U[Cell[P#M]]` with the transformed cells.
-   */
-  def transformAndExpand[T](transformers: T)(implicit ev: TransformableExpanded[T]): U[Cell[P#M]]
-
-  /**
-   * Transform the content of a matrix using a user supplied value, and return the transformations with an expanded
-   * position.
-   *
-   * @param transformers The transformer(s) to apply to the content.
-   * @param value        A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[P#M]]` with the transformed cells.
-   */
-  def transformAndExpandWithValue[T, V](transformers: T, value: E[V])(
-    implicit ev: TransformableExpandedWithValue[T, V]): U[Cell[P#M]]
 }
 
 /** Trait for capturing the dependency between an expansion and a position. */

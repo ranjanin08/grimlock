@@ -16,8 +16,18 @@ package au.com.cba.omnia.grimlock.framework
 
 import au.com.cba.omnia.grimlock.framework.position._
 
+/** Parameter independent type identifier for Slice[P, D]. */
+sealed trait SliceType
+/**  Parameter independent type identifier for Over[P, D]. */
+trait OverType extends SliceType
+/**  Parameter independent type identifier for Along[P, D]. */
+trait AlongType extends SliceType
+
 /** Base trait that encapsulates dimension on which to operate. */
 sealed trait Slice[P <: Position, D <: Dimension] {
+  /** Parameter independent type identifier for this slice. */
+  type T <: SliceType
+
   /**
    * Return type of the `selected` method; a position of dimension less than `P`.
    *
@@ -62,6 +72,7 @@ trait Mapable[P <: Position with ReduceablePosition, D <: Dimension] { self: Sli
  */
 case class Over[P <: Position with ReduceablePosition with MapOverPosition, D <: Dimension](
   dimension: D) extends Slice[P, D] with Mapable[P, D] {
+  type T = OverType
   type S = Position1D
   type R = P#L
   type C = P#O
@@ -88,6 +99,7 @@ case class Over[P <: Position with ReduceablePosition with MapOverPosition, D <:
  */
 case class Along[P <: Position with ReduceablePosition with MapAlongPosition, D <: Dimension](
   dimension: D) extends Slice[P, D] with Mapable[P, D] {
+  type T = AlongType
   type S = P#L
   type R = Position1D
   type C = P#A

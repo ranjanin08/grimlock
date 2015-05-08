@@ -22,6 +22,7 @@ import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.sample._
+import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.Type._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.window._
@@ -811,8 +812,14 @@ object TestSpark28 {
         CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
       .save("./tmp.spark/cut6.out")
 
+    val a = Cut(Second)
+    val b = Transformer.renameWithValue(Second, "%s.break")
+    val c = a.andThenRenameWithValue(b)
+
     data
-      .transformWithValue(Cut(Second, "%s.break"), CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
+      .transformWithValue(
+        Cut(Second).andThenRenameWithValue(Transformer.renameWithValue(Second, "%s.break")),
+        CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
       .save("./tmp.spark/cut7.out")
   }
 }
