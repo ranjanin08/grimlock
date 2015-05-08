@@ -244,13 +244,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .reduce { case (lm, rm) => lm ++ rm }
   }
 
-  def transform[T](transformers: T)(implicit ev: Transformable[T]): U[Cell[P]] = {
+  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[P, Q, T]): U[Cell[Q]] = {
     val t = ev.convert(transformers)
 
     data.flatMap { case c => t.present(c).toList }
   }
 
-  def transformWithValue[T, W](transformers: T, value: E[W])(implicit ev: TransformableWithValue[T, W]): U[Cell[P]] = {
+  def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
+    implicit ev: TransformableWithValue[P, Q, T, W]): U[Cell[Q]] = {
     val t = ev.convert(transformers)
 
     data.flatMap { case c => t.present(c, value).toList }
@@ -471,40 +472,198 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpand
 
   def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => Q, value: W)(
     implicit ev: ExpPosDep[P, Q]): RDD[Cell[Q]] = data.map { case c => Cell(expander(c, value), c.content) }
+}
 
-  def transformAndExpand[T](transformers: T)(implicit ev: TransformableExpanded[T]): U[Cell[P#M]] = {
-    val t = ev.convert(transformers)
+trait SliceDep[A, P <: Position with ReduceablePosition, U[_]] extends java.io.Serializable {
+  type S <: Position with ExpandablePosition with ReduceablePosition with MapOverPosition with MapAlongPosition
+  type R <: Position with ExpandablePosition with ReduceablePosition with MapOverPosition with MapAlongPosition
+  type SM <: Position with ExpandablePosition with ReduceablePosition with MapOverPosition with MapAlongPosition
+  type RM <: Position with ExpandablePosition with ReduceablePosition with MapOverPosition with MapAlongPosition
 
-    data.flatMap { case c => t.present(c).toList }
+  implicit val ctSL: ClassTag[S#L]
+  implicit val ctRL: ClassTag[R#L]
+  implicit val ctSML: ClassTag[SM#L]
+  implicit val ctRML: ClassTag[RM#L]
+
+  implicit val S1: PosDimDep[S, First.type]
+  implicit val R1: PosDimDep[R, First.type]
+  implicit val SM1: PosDimDep[SM, First.type]
+  implicit val RM1: PosDimDep[RM, First.type]
+
+  implicit val SL: PosDimDep[S, Last.type]
+  implicit val RL: PosDimDep[R, Last.type]
+  implicit val SML: PosDimDep[SM, Last.type]
+  implicit val RML: PosDimDep[RM, Last.type]
+
+  def t(data: U[Cell[P]]): Matrix[P] with ReduceableMatrix[P]
+
+  def s[D <: Dimension](a: Slice[P, D])(data: U[Cell[a.S]]): Matrix[S]
+  def r[D <: Dimension](a: Slice[P, D])(data: U[Cell[a.R]]): Matrix[R]
+  def sm[D <: Dimension](a: Slice[P, D])(data: U[Cell[a.S#M]]): Matrix[SM] with ReduceableMatrix[SM]
+  def rm[D <: Dimension](a: Slice[P, D])(data: U[Cell[a.R#M]]): Matrix[RM] with ReduceableMatrix[RM]
+}
+
+trait SliceOverDep[P <: Position with ReduceablePosition, U[_]] extends SliceDep[OverType, P, U] {
+  type S = Position1D
+  type SM = Position2D
+
+  implicit val ctSL = ClassTag[S#L](Position0D.getClass)
+  implicit val ctSML = ClassTag[SM#L](Position1D.getClass)
+
+  implicit val S1 = new PosDimDep[S, First.type] { }
+  implicit val SM1 = new PosDimDep[SM, First.type] { }
+
+  implicit val SL = new PosDimDep[S, Last.type] { }
+  implicit val SML = new PosDimDep[SM, Last.type] { }
+
+  def s[D <: Dimension](a: Slice[P, D])(data: RDD[Cell[a.S]]): Matrix[S] = {
+    new Matrix1D(data.asInstanceOf[RDD[Cell[S]]])
   }
+  def sm[D <: Dimension](a: Slice[P, D])(data: RDD[Cell[a.S#M]]): Matrix[SM] with ReduceableMatrix[SM] = {
+    new Matrix2D(data.asInstanceOf[RDD[Cell[SM]]])
+  }
+}
 
-  def transformAndExpandWithValue[T, W](transformers: T, value: E[W])(
-    implicit ev: TransformableExpandedWithValue[T, W]): U[Cell[P#M]] = {
-    val t = ev.convert(transformers)
+trait SliceAlongDep[P <: Position with ReduceablePosition, U[_]] extends SliceDep[AlongType, P, U] {
+  type R = Position1D
+  type RM = Position2D
 
-    data.flatMap { case c => t.present(c, value).toList }
+  implicit val ctRL = ClassTag[R#L](Position0D.getClass)
+  implicit val ctRML = ClassTag[RM#L](Position1D.getClass)
+
+  implicit val R1 = new PosDimDep[R, First.type] { }
+  implicit val RM1 = new PosDimDep[RM, First.type] { }
+
+  implicit val RL = new PosDimDep[R, Last.type] { }
+  implicit val RML = new PosDimDep[RM, Last.type] { }
+
+  def r[D <: Dimension](a: Slice[P, D])(data: RDD[Cell[a.R]]): Matrix[R] = {
+    new Matrix1D(data.asInstanceOf[RDD[Cell[R]]])
+  }
+  def rm[D <: Dimension](a: Slice[P, D])(data: RDD[Cell[a.R#M]]): Matrix[RM] with ReduceableMatrix[RM] = {
+    new Matrix2D(data.asInstanceOf[RDD[Cell[RM]]])
+  }
+}
+
+object SliceDep {
+  implicit object SparkOver2D extends SliceOverDep[Position2D, RDD] {
+    type R = Position1D
+    type RM = Position2D
+
+    implicit val ctRL = ClassTag[R#L](Position0D.getClass)
+    implicit val ctRML = ClassTag[RM#L](Position1D.getClass)
+
+    implicit val R1 = new PosDimDep[R, First.type] { }
+    implicit val RM1 = new PosDimDep[RM, First.type] { }
+
+    implicit val RL = new PosDimDep[R, Last.type] { }
+    implicit val RML = new PosDimDep[RM, Last.type] { }
+
+    def t(data: RDD[Cell[Position2D]]): Matrix2D = new Matrix2D(data)
+
+    def r[D <: Dimension](a: Slice[Position2D, D])(data: RDD[Cell[a.R]]): Matrix[R] = {
+      new Matrix1D(data.asInstanceOf[RDD[Cell[R]]])
+    }
+    def rm[D <: Dimension](a: Slice[Position2D, D])(data: RDD[Cell[a.R#M]]): Matrix[RM]with ReduceableMatrix[RM]  = {
+      new Matrix2D(data.asInstanceOf[RDD[Cell[RM]]])
+    }
+  }
+  implicit object SparkAlong2D extends SliceAlongDep[Position2D, RDD] {
+    type S = Position1D
+    type SM = Position2D
+
+    implicit val ctSL = ClassTag[S#L](Position0D.getClass)
+    implicit val ctSML = ClassTag[SM#L](Position1D.getClass)
+
+    implicit val S1 = new PosDimDep[S, First.type] { }
+    implicit val SM1 = new PosDimDep[SM, First.type] { }
+
+    implicit val SL = new PosDimDep[S, Last.type] { }
+    implicit val SML = new PosDimDep[SM, Last.type] { }
+
+    def t(data: RDD[Cell[Position2D]]): Matrix2D = new Matrix2D(data)
+
+    def s[D <: Dimension](a: Slice[Position2D, D])(data: RDD[Cell[a.S]]): Matrix[S] = {
+      new Matrix1D(data.asInstanceOf[RDD[Cell[S]]])
+    }
+    def sm[D <: Dimension](a: Slice[Position2D, D])(data: RDD[Cell[a.S#M]]): Matrix[SM] with ReduceableMatrix[SM] = {
+      new Matrix2D(data.asInstanceOf[RDD[Cell[SM]]])
+    }
+  }
+  implicit object SparkOver3D extends SliceOverDep[Position3D, RDD] {
+    type R = Position2D
+    type RM = Position3D
+
+    implicit val ctRL = ClassTag[R#L](Position1D.getClass)
+    implicit val ctRML = ClassTag[RM#L](Position2D.getClass)
+
+    implicit val R1 = new PosDimDep[R, First.type] { }
+    implicit val RM1 = new PosDimDep[RM, First.type] { }
+
+    implicit val RL = new PosDimDep[R, Last.type] { }
+    implicit val RML = new PosDimDep[RM, Last.type] { }
+
+    def t(data: RDD[Cell[Position3D]]): Matrix3D = new Matrix3D(data)
+
+    def r[D <: Dimension](a: Slice[Position3D, D])(data: RDD[Cell[a.R]]): Matrix[R] = {
+      new Matrix2D(data.asInstanceOf[RDD[Cell[R]]])
+    }
+    def rm[D <: Dimension](a: Slice[Position3D, D])(data: RDD[Cell[a.R#M]]): Matrix[RM]with ReduceableMatrix[RM]  = {
+      new Matrix3D(data.asInstanceOf[RDD[Cell[RM]]])
+    }
+  }
+  implicit object SparkAlong3D extends SliceAlongDep[Position3D, RDD] {
+    type S = Position2D
+    type SM = Position3D
+
+    implicit val ctSL = ClassTag[S#L](Position1D.getClass)
+    implicit val ctSML = ClassTag[SM#L](Position2D.getClass)
+
+    implicit val S1 = new PosDimDep[S, First.type] { }
+    implicit val SM1 = new PosDimDep[SM, First.type] { }
+
+    implicit val SL = new PosDimDep[S, Last.type] { }
+    implicit val SML = new PosDimDep[SM, Last.type] { }
+
+    def t(data: RDD[Cell[Position3D]]): Matrix3D = new Matrix3D(data)
+
+    def s[D <: Dimension](a: Slice[Position3D, D])(data: RDD[Cell[a.S]]): Matrix[S] = {
+      new Matrix2D(data.asInstanceOf[RDD[Cell[S]]])
+    }
+    def sm[D <: Dimension](a: Slice[Position3D, D])(data: RDD[Cell[a.S#M]]): Matrix[SM] with ReduceableMatrix[SM] = {
+      new Matrix3D(data.asInstanceOf[RDD[Cell[SM]]])
+    }
   }
 }
 
 // TODO: Make this work on more than 2D matrices and share with Scalding
-trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D] =>
+trait MatrixDistance[P <: Position with ReduceablePosition] { self: Matrix[P] with ReduceableMatrix[P] =>
 
   import au.com.cba.omnia.grimlock.library.aggregate._
   import au.com.cba.omnia.grimlock.library.pairwise._
   import au.com.cba.omnia.grimlock.library.transform._
   import au.com.cba.omnia.grimlock.library.window._
 
-  def correlation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
-    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
-    implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
-    implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+  def correlation[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S],
+    ev3: ClassTag[slice.R], ev4: SliceDep[slice.T, P, U]): U[Cell[Position1D]] = ??? /*{
+
+    type T = Transformer with PresentWithValue { type V >: Map[Position1D, ev4.S#O] }
+
+    implicit def A(data: U[Cell[slice.S]]): Matrix[ev4.S] = ev4.s(slice)(data)
+    implicit def B(data: U[Cell[slice.S#M]]): Matrix[ev4.SM] with ReduceableMatrix[ev4.SM] = ev4.sm(slice)(data)
+    implicit def C(data: U[Cell[slice.R#M]]): Matrix[ev4.RM] with ReduceableMatrix[ev4.RM] = ev4.rm(slice)(data)
+    implicit def D(data: U[Cell[ev4.S#L#M]]): Matrix[ev4.S] = ev4.s(slice)(data.asInstanceOf[U[Cell[slice.S]]])
+    implicit def E(data: U[Cell[ev4.S]]): Matrix[ev4.S] = ev4.s(slice)(data.asInstanceOf[U[Cell[slice.S]]])
+    implicit def F(data: U[Cell[P]]): Matrix[P] with ReduceableMatrix[P] = ev4.t(data)
+
+    import ev4._
 
     val mean = data
       .summarise(slice, Mean())
       .toMap(Over(First))
 
     val centered = data
-      .transformWithValue(Subtract(slice.dimension), mean)
+      .transformWithValue(Subtract(slice.dimension).asInstanceOf[T], mean)
 
     val denom = centered
       .transform(Power(2))
@@ -516,30 +675,43 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     centered
       .pairwise(slice, Times())
       .summarise(Over(First), Sum())
-      .transformWithValue(Fraction(First), denom)
-  }
+      .transformWithValue(Fraction(First).asInstanceOf[T], denom)
+  }*/
 
-  def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
-    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
-    implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
-    implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+  def mutualInformation[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S],
+    ev3: ClassTag[slice.R], ev4: SliceDep[slice.T, P, U]): U[Cell[Position1D]] = {
+
+    implicit def A(data: U[Cell[slice.S#M]]): Matrix[ev4.SM] with ReduceableMatrix[ev4.SM] = ev4.sm(slice)(data)
+    implicit def B(data: U[Cell[slice.R#M]]): Matrix[ev4.RM] with ReduceableMatrix[ev4.RM] = ev4.rm(slice)(data)
+    implicit def C(data: U[Cell[P]]): Matrix[P] with ReduceableMatrix[P] = ev4.t(data)
+
+    import ev4._
 
     val marginal = data
       .summariseAndExpand(slice, Entropy("marginal"))
       .pairwise(Over(First), Plus(name = "%s,%s", comparer = Upper))
+      .asInstanceOf[U[Cell[Position2D]]]
 
     val joint = data
       .pairwise(slice, Concatenate(name = "%s,%s", comparer = Upper))
       .summariseAndExpand(Over(First), Entropy("joint", strict = true, nan = true, all = false, negate = true))
+      .asInstanceOf[U[Cell[Position2D]]]
 
     (marginal ++ joint)
       .summarise(Over(First), Sum())
   }
 
-  def gini[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
-    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
-    implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
-    implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+  def gini[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S],
+    ev3: ClassTag[slice.R], ev4: SliceDep[slice.T, P, U]): U[Cell[Position1D]] = ??? /*{
+
+    type T = Transformer with PresentWithValue { type V >: Map[Position1D, ev4.S#O] }
+
+    implicit def A(data: U[Cell[slice.S]]): Matrix[ev4.S] = ev4.s(slice)(data)
+    implicit def B(data: U[Cell[slice.S#M]]): Matrix[ev4.SM] with ReduceableMatrix[ev4.SM] = ev4.sm(slice)(data)
+    implicit def C(data: U[Cell[ev4.SM]]): Matrix[ev4.SM] = ev4.sm(slice)(data.asInstanceOf[U[Cell[slice.S#M]]])
+    implicit def D(data: U[Cell[P]]): Matrix[P] with ReduceableMatrix[P] = ev4.t(data)
+
+    import ev4._
 
     def isPositive(d: Double) = d > 0
 
@@ -556,13 +728,13 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val tpr = data
       .transform(Compare(isPositive(_)))
       .window(slice, CumulativeSum())
-      .transformWithValue(Fraction(First), pos)
+      .transformWithValue(Fraction(First).asInstanceOf[T], pos)
       .window(Over(First), Sliding((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
 
     val fpr = data
       .transform(Compare(!isPositive(_)))
       .window(slice, CumulativeSum())
-      .transformWithValue(Fraction(First), neg)
+      .transformWithValue(Fraction(First).asInstanceOf[T], neg)
       .window(Over(First), Sliding((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
 
     tpr
@@ -570,7 +742,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
       .summarise(Along(First), Sum())
       .transformWithValue(Subtract("one", true),
         Map(Position1D("one") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1)))
-  }
+  }*/
 }
 
 object Matrix {
@@ -807,7 +979,8 @@ class Matrix1D(val data: RDD[Cell[Position1D]]) extends Matrix[Position1D] with 
  * @param data `RDD[Cell[Position2D]]`.
  */
 class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
-  with ExpandableMatrix[Position2D] with MatrixDistance {
+  with ExpandableMatrix[Position2D] with MatrixDistance[Position2D] {
+
   def domain(): U[Position2D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -1047,7 +1220,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
  * @param data `RDD[Cell[Position3D]]`.
  */
 class Matrix3D(val data: RDD[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
-  with ExpandableMatrix[Position3D] {
+  with ExpandableMatrix[Position3D] with MatrixDistance[Position3D] {
   def domain(): U[Position3D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }

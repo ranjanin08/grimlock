@@ -30,6 +30,8 @@ case object Third extends Dimension { val index = 2 }
 case object Fourth extends Dimension { val index = 3 }
 /** Type for fifth dimension. */
 case object Fifth extends Dimension { val index = 4 }
+/** Type for last dimension. */
+case object Last extends Dimension { val index = -1 }
 
 /** Trait for capturing the dependency between a position and a dimension. */
 trait PosDimDep[A, B] extends java.io.Serializable
@@ -44,16 +46,22 @@ object Dimension {
 
   /** Define dependency between `Position1D` and `First`. */
   implicit object P1D1 extends PosDimDep[Position1D, First.type]
+  /** Define dependency between `Position1D` and `Last`. */
+  implicit object P1DL extends PosDimDep[Position1D, Last.type]
   /** Define dependency between `Position2D` and `First`. */
   implicit object P2D1 extends PosDimDep[Position2D, First.type]
   /** Define dependency between `Position2D` and `Second`. */
   implicit object P2D2 extends PosDimDep[Position2D, Second.type]
+  /** Define dependency between `Position2D` and `Last`. */
+  implicit object P2DL extends PosDimDep[Position2D, Last.type]
   /** Define dependency between `Position3D` and `First`. */
   implicit object P3D1 extends PosDimDep[Position3D, First.type]
   /** Define dependency between `Position3D` and `Second`. */
   implicit object P3D2 extends PosDimDep[Position3D, Second.type]
   /** Define dependency between `Position3D` and `Third`. */
   implicit object P3D3 extends PosDimDep[Position3D, Third.type]
+  /** Define dependency between `Position3D` and `Last`. */
+  implicit object P3DL extends PosDimDep[Position3D, Last.type]
   /** Define dependency between `Position4D` and `First`. */
   implicit object P4D1 extends PosDimDep[Position4D, First.type]
   /** Define dependency between `Position4D` and `Second`. */
@@ -62,6 +70,8 @@ object Dimension {
   implicit object P4D3 extends PosDimDep[Position4D, Third.type]
   /** Define dependency between `Position4D` and `Fourth`. */
   implicit object P4D4 extends PosDimDep[Position4D, Fourth.type]
+  /** Define dependency between `Position4D` and `Last`. */
+  implicit object P4DL extends PosDimDep[Position4D, Last.type]
   /** Define dependency between `Position5D` and `First`. */
   implicit object P5D1 extends PosDimDep[Position5D, First.type]
   /** Define dependency between `Position5D` and `Second`. */
@@ -72,5 +82,7 @@ object Dimension {
   implicit object P5D4 extends PosDimDep[Position5D, Fourth.type]
   /** Define dependency between `Position5D` and `Fifth`. */
   implicit object P5D5 extends PosDimDep[Position5D, Fifth.type]
+  /** Define dependency between `Position5D` and `Last`. */
+  implicit object P5DL extends PosDimDep[Position5D, Last.type]
 }
 

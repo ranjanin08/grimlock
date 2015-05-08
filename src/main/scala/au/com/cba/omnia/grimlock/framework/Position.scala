@@ -31,7 +31,7 @@ trait Position {
    *
    * @param dim Dimension of the coordinate to get.
    */
-  def apply(dim: Dimension): Value = coordinates(dim.index)
+  def apply(dim: Dimension): Value = coordinates(getIndex(dim))
 
   /**
    * Update the coordinate at `dim` with `t`.
@@ -42,7 +42,7 @@ trait Position {
    * @return A position of the same size as `this` but with `t` set at index `dim`.
    */
   def update[T](dim: Dimension, t: T)(implicit ev: Valueable[T]): this.type = {
-    same(coordinates.updated(dim.index, ev.convert(t))).asInstanceOf[this.type]
+    same(coordinates.updated(getIndex(dim), ev.convert(t))).asInstanceOf[this.type]
   }
 
   /**
@@ -81,6 +81,8 @@ trait Position {
   protected type S <: Position
 
   protected def same(cl: List[Value]): S
+
+  protected def getIndex(dim: Dimension): Int = if (dim.index < 0) coordinates.length - 1 else dim.index
 }
 
 object Position {
@@ -104,7 +106,7 @@ trait ReduceablePosition { self: Position =>
    * @return A new position with dimension `dim` removed.
    */
   def remove(dim: Dimension): L = {
-    val (h, t) = coordinates.splitAt(dim.index)
+    val (h, t) = coordinates.splitAt(getIndex(dim))
 
     less(h ++ t.tail)
   }
@@ -122,11 +124,13 @@ trait ReduceablePosition { self: Position =>
    * @note `dim` and `into` must not be the same.
    */
   def melt(dim: Dimension, into: Dimension, separator: String): L = {
+    val iidx = getIndex(into)
+    val didx = getIndex(dim)
+
     less(coordinates
-      .updated(into.index,
-        StringValue(coordinates(into.index).toShortString + separator + coordinates(dim.index).toShortString))
+      .updated(iidx, StringValue(coordinates(iidx).toShortString + separator + coordinates(didx).toShortString))
       .zipWithIndex
-      .filter(_._2 != dim.index)
+      .filter(_._2 != didx)
       .map(_._1))
   }
 
@@ -171,7 +175,7 @@ trait PermutablePosition { self: Position =>
    * @note The ordering must contain each dimension exactly once.
    */
   def permute(order: List[Dimension]): this.type = {
-    same(order.map { case d => coordinates(d.index) }).asInstanceOf[this.type]
+    same(order.map { case d => coordinates(getIndex(d)) }).asInstanceOf[this.type]
   }
 }
 
