@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[(T, Cell[P])]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/c57470eda4d08c085222acbf14ecd65ae86e7cb7//src/main/scala/au/com/cba/omnia/grimlock/scalding/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4d22299783ce2bb990ab4dda6e7f23ac1814de68//src/main/scala/au/com/cba/omnia/grimlock/scalding/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])], <a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])], <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">framework.partition.Partitions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -185,15 +185,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions#add" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="add(id:T,partition:com.twitter.scalding.typed.TypedPipe[au.com.cba.omnia.grimlock.framework.Cell[P]]):com.twitter.scalding.typed.TypedPipe[(T,au.com.cba.omnia.grimlock.framework.Cell[P])]"></a>
-      <a id="add(T,TypedPipe[Cell[P]]):TypedPipe[(T,Cell[P])]"></a>
+      <a id="add(id:T,partition:Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]):Partitions.this.U[(T,au.com.cba.omnia.grimlock.framework.Cell[P])]"></a>
+      <a id="add(T,U[Cell[P]]):U[(T,Cell[P])]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">add</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span></span>, <span name="partition">partition: <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>]]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])]</span>
+        <span class="name">add</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span></span>, <span name="partition">partition: <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>]]</span>)</span><span class="result">: <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Add a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Add a partition.
@@ -292,15 +292,15 @@
               
         </dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions#forEach" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="forEach[Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](ids:List[T],fn:(T,com.twitter.scalding.typed.TypedPipe[au.com.cba.omnia.grimlock.framework.Cell[P]])=&gt;com.twitter.scalding.typed.TypedPipe[au.com.cba.omnia.grimlock.framework.Cell[Q]]):com.twitter.scalding.typed.TypedPipe[(T,au.com.cba.omnia.grimlock.framework.Cell[Q])]"></a>
-      <a id="forEach[Q&lt;:Position](List[T],(T,TypedPipe[Cell[P]])⇒TypedPipe[Cell[Q]]):TypedPipe[(T,Cell[Q])]"></a>
+      <a id="forEach[Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](ids:List[T],fn:(T,Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]])=&gt;Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[Q]]):Partitions.this.U[(T,au.com.cba.omnia.grimlock.framework.Cell[Q])]"></a>
+      <a id="forEach[Q&lt;:Position](List[T],(T,U[Cell[P]])⇒U[Cell[Q]]):U[(T,Cell[Q])]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">forEach</span><span class="tparams">[<span name="Q">Q &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="ids">ids: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>, <span name="fn">fn: (<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>]]) ⇒ <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.forEach.Q">Q</span>]]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.forEach.Q">Q</span>])]</span>
+        <span class="name">forEach</span><span class="tparams">[<span name="Q">Q &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="ids">ids: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>, <span name="fn">fn: (<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>]]) ⇒ <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.forEach.Q">Q</span>]]</span>)</span><span class="result">: <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.forEach.Q">Q</span>])]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Apply function <code>fn</code> to each partition in <code>ids</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Apply function <code>fn</code> to each partition in <code>ids</code>.
@@ -308,15 +308,15 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(T, Cell[Q])]</code> containing the paritions in <code>ids</code> with <code>fn</code> applied to them.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions">Partitions</a> → <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">Partitions</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions#get" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="get(id:T):com.twitter.scalding.typed.TypedPipe[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
-      <a id="get(T):TypedPipe[Cell[P]]"></a>
+      <a id="get(id:T):Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
+      <a id="get(T):U[Cell[P]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">get</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>]]</span>
+        <span class="name">get</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span></span>)</span><span class="result">: <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Return the data for the partition <code>id</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return the data for the partition <code>id</code>.
@@ -350,15 +350,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions#ids" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ids()(implicitev:scala.reflect.ClassTag[T]):com.twitter.scalding.typed.TypedPipe[T]"></a>
-      <a id="ids()(ClassTag[T]):TypedPipe[T]"></a>
+      <a id="ids()(implicitev:scala.reflect.ClassTag[T]):Partitions.this.U[T]"></a>
+      <a id="ids()(ClassTag[T]):U[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ids</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>
+        <span class="name">ids</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>)</span><span class="result">: <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Return the partition identifiers.</p><div class="fullcomment"><div class="comment cmt"><p>Return the partition identifiers.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions">Partitions</a> → <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">Partitions</a></dd></dl></div>
@@ -375,6 +375,22 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions#merge" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="merge(ids:List[T]):Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
+      <a id="merge(List[T]):U[Cell[P]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">merge</span><span class="params">(<span name="ids">ids: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>)</span><span class="result">: <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>]]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Merge partitions into a single matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Merge partitions into a single matrix.
+</p></div><dl class="paramcmts block"><dt class="param">ids</dt><dd class="cmt"><p>List of partition keys to merge.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[Cell[P]]</code> containing the merge partitions.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions">Partitions</a> → <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">Partitions</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -415,15 +431,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions#remove" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="remove(id:T):com.twitter.scalding.typed.TypedPipe[(T,au.com.cba.omnia.grimlock.framework.Cell[P])]"></a>
-      <a id="remove(T):TypedPipe[(T,Cell[P])]"></a>
+      <a id="remove(id:T):Partitions.this.U[(T,au.com.cba.omnia.grimlock.framework.Cell[P])]"></a>
+      <a id="remove(T):U[(T,Cell[P])]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">remove</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span></span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])]</span>
+        <span class="name">remove</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span></span>)</span><span class="result">: <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Remove a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Remove a partition.

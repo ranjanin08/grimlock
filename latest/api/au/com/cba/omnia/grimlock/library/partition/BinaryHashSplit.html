@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Binary partition based on the hash code of a coordinate.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ratio</dt><dd class="cmt"><p>The binary split ratio (relative to <code>base</code>).</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.</p></dd><dt class="param">base</dt><dd class="cmt"><p>The base for the ratio.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/c57470eda4d08c085222acbf14ecd65ae86e7cb7//src/main/scala/au/com/cba/omnia/grimlock/library/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the ratio. While the position is assigned to the left
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/4d22299783ce2bb990ab4dda6e7f23ac1814de68//src/main/scala/au/com/cba/omnia/grimlock/library/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the ratio. While the position is assigned to the left
       partition if it is less or equal to the <code>ratio</code> value.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
