@@ -132,12 +132,11 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMap { case c => partitioner.assign(c.position, value).toList(c) }
   }
 
-  def rename[D <: Dimension](dim: D, renamer: (Dimension, Cell[P]) => P)(implicit ev: PosDimDep[P, D]): U[Cell[P]] = {
-    data.map { case c => Cell(renamer(dim, c), c.content) }
-  }
+  def rename(renamer: (Cell[P]) => P): U[Cell[P]] = data.map { case c => Cell(renamer(c), c.content) }
 
-  def renameWithValue[D <: Dimension, W](dim: D, renamer: (Dimension, Cell[P], W) => P, value: E[W])(
-    implicit ev: PosDimDep[P, D]): U[Cell[P]] = data.map { case c => Cell(renamer(dim, c, value), c.content) }
+  def renameWithValue[W](renamer: (Cell[P], W) => P, value: E[W]): U[Cell[P]] = {
+    data.map { case c => Cell(renamer(c, value), c.content) }
+  }
 
   def sample[T](samplers: T)(implicit ev: Sampleable[T]): U[Cell[P]] = {
     val sampler = ev.convert(samplers)

@@ -414,24 +414,21 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Rename the coordinates of a dimension.
    *
-   * @param dim     The dimension to rename.
    * @param renamer Function that renames coordinates.
    *
-   * @return A `U[Cell[P]]` where the dimension `dim` has been renamed.
+   * @return A `U[Cell[P]]` where the position has been renamed.
    */
-  def rename[D <: Dimension](dim: D, renamer: (Dimension, Cell[P]) => P)(implicit ev: PosDimDep[P, D]): U[Cell[P]]
+  def rename(renamer: (Cell[P]) => P): U[Cell[P]]
 
   /**
    * Rename the coordinates of a dimension using user a suplied value.
    *
-   * @param dim     The dimension to rename.
    * @param renamer Function that renames coordinates.
    * @param value   A `E` holding a user supplied value.
    *
-   * @return A `U[Cell[P]]` where the dimension `dim` has been renamed.
+   * @return A `U[Cell[P]]` where the position has been renamed.
    */
-  def renameWithValue[D <: Dimension, V](dim: D, renamer: (Dimension, Cell[P], V) => P, value: E[V])(
-    implicit ev: PosDimDep[P, D]): U[Cell[P]]
+  def renameWithValue[V](renamer: (Cell[P], V) => P, value: E[V]): U[Cell[P]]
 
   /**
    * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.

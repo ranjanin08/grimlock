@@ -8672,11 +8672,11 @@ trait TestMatrixRename extends TestMatrix {
 
 object TestMatrixRename {
 
-  def renamer[P <: Position](dim: Dimension, cell: Cell[P]): P = {
+  def renamer[P <: Position](dim: Dimension)(cell: Cell[P]): P = {
     cell.position.update(dim, cell.position(dim).toShortString + ".new")
   }
 
-  def renamerWithValue[P <: Position](dim: Dimension, cell: Cell[P], ext: String): P = {
+  def renamerWithValue[P <: Position](dim: Dimension)(cell: Cell[P], ext: String): P = {
     cell.position.update(dim, cell.position(dim).toShortString + ext)
   }
 }
@@ -8688,7 +8688,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.rename(First, TestMatrixRename.renamer)
+        cells.rename(TestMatrixRename.renamer(First))
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -8699,7 +8699,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.rename(First, TestMatrixRename.renamer)
+        cells.rename(TestMatrixRename.renamer(First))
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -8710,7 +8710,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.rename(Second, TestMatrixRename.renamer)
+        cells.rename(TestMatrixRename.renamer(Second))
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -8721,7 +8721,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.rename(First, TestMatrixRename.renamer)
+        cells.rename(TestMatrixRename.renamer(First))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -8732,7 +8732,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.rename(Second, TestMatrixRename.renamer)
+        cells.rename(TestMatrixRename.renamer(Second))
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -8743,7 +8743,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.rename(Third, TestMatrixRename.renamer)
+        cells.rename(TestMatrixRename.renamer(Third))
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -8754,7 +8754,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.renameWithValue(First, TestMatrixRename.renamerWithValue, ValuePipe(ext))
+        cells.renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -8765,7 +8765,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.renameWithValue(First, TestMatrixRename.renamerWithValue, ValuePipe(ext))
+        cells.renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -8776,7 +8776,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.renameWithValue(Second, TestMatrixRename.renamerWithValue, ValuePipe(ext))
+        cells.renameWithValue(TestMatrixRename.renamerWithValue(Second), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -8787,7 +8787,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.renameWithValue(First, TestMatrixRename.renamerWithValue, ValuePipe(ext))
+        cells.renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -8798,7 +8798,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.renameWithValue(Second, TestMatrixRename.renamerWithValue, ValuePipe(ext))
+        cells.renameWithValue(TestMatrixRename.renamerWithValue(Second), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -8809,7 +8809,7 @@ class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.renameWithValue(Third, TestMatrixRename.renamerWithValue, ValuePipe(ext))
+        cells.renameWithValue(TestMatrixRename.renamerWithValue(Third), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
     }
@@ -8820,73 +8820,73 @@ class TestSparkMatrixRename extends TestMatrixRename {
 
   "A Matrix.rename" should "return its first renamed data in 1D" in {
     toRDD(data1)
-      .rename(First, TestMatrixRename.renamer)
+      .rename(TestMatrixRename.renamer(First))
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first renamed data in 2D" in {
     toRDD(data2)
-      .rename(First, TestMatrixRename.renamer)
+      .rename(TestMatrixRename.renamer(First))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its second renamed data in 2D" in {
     toRDD(data2)
-      .rename(Second, TestMatrixRename.renamer)
+      .rename(TestMatrixRename.renamer(Second))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its first renamed data in 3D" in {
     toRDD(data3)
-      .rename(First, TestMatrixRename.renamer)
+      .rename(TestMatrixRename.renamer(First))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second renamed data in 3D" in {
     toRDD(data3)
-      .rename(Second, TestMatrixRename.renamer)
+      .rename(TestMatrixRename.renamer(Second))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its third renamed data in 3D" in {
     toRDD(data3)
-      .rename(Third, TestMatrixRename.renamer)
+      .rename(TestMatrixRename.renamer(Third))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   "A Matrix.renameWithValue" should "return its first renamed data in 1D" in {
     toRDD(data1)
-      .renameWithValue(First, TestMatrixRename.renamerWithValue, ext)
+      .renameWithValue(TestMatrixRename.renamerWithValue(First), ext)
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its first renamed data in 2D" in {
     toRDD(data2)
-      .renameWithValue(First, TestMatrixRename.renamerWithValue, ext)
+      .renameWithValue(TestMatrixRename.renamerWithValue(First), ext)
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second renamed data in 2D" in {
     toRDD(data2)
-      .renameWithValue(Second, TestMatrixRename.renamerWithValue, ext)
+      .renameWithValue(TestMatrixRename.renamerWithValue(Second), ext)
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its first renamed data in 3D" in {
     toRDD(data3)
-      .renameWithValue(First, TestMatrixRename.renamerWithValue, ext)
+      .renameWithValue(TestMatrixRename.renamerWithValue(First), ext)
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its second renamed data in 3D" in {
     toRDD(data3)
-      .renameWithValue(Second, TestMatrixRename.renamerWithValue, ext)
+      .renameWithValue(TestMatrixRename.renamerWithValue(Second), ext)
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its third renamed data in 3D" in {
     toRDD(data3)
-      .renameWithValue(Third, TestMatrixRename.renamerWithValue, ext)
+      .renameWithValue(TestMatrixRename.renamerWithValue(Third), ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 }

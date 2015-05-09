@@ -97,6 +97,15 @@ trait Partitions[T, P <: Position] {
   def ids()(implicit ev: ClassTag[T]): U[T]
 
   /**
+   * Merge partitions into a single matrix.
+   *
+   * @param ids List of partition keys to merge.
+   *
+   * @return A `U[Cell[P]]` containing the merge partitions.
+   */
+  def merge(ids: List[T]): U[Cell[P]]
+
+  /**
    * Remove a partition.
    *
    * @param id The identifier for the partition to remove.

@@ -45,6 +45,7 @@ import com.twitter.scalding.typed.{ IterablePipe, Grouped, TypedPipe, TypedSink,
 
 import java.io.{ File, PrintWriter }
 import java.lang.{ ProcessBuilder, Thread }
+import java.nio.file.Paths
 
 import scala.io.Source
 import scala.reflect.ClassTag
@@ -139,13 +140,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMapWithValue(value) { case (c, vo) => partitioner.assign(c.position, vo.get).toList(c) }
   }
 
-  def rename[D <: Dimension](dim: D, renamer: (Dimension, Cell[P]) => P)(implicit ev: PosDimDep[P, D]): U[Cell[P]] = {
-    data.map { case c => Cell(renamer(dim, c), c.content) }
-  }
+  def rename(renamer: (Cell[P]) => P): U[Cell[P]] = data.map { case c => Cell(renamer(c), c.content) }
 
-  def renameWithValue[D <: Dimension, W](dim: D, renamer: (Dimension, Cell[P], W) => P, value: E[W])(
-    implicit ev: PosDimDep[P, D]): U[Cell[P]] = {
-    data.mapWithValue(value) { case (c, vo) => Cell(renamer(dim, c, vo.get), c.content) }
+  def renameWithValue[W](renamer: (Cell[P], W) => P, value: E[W]): U[Cell[P]] = {
+    data.mapWithValue(value) { case (c, vo) => Cell(renamer(c, vo.get), c.content) }
   }
 
   def sample[T](samplers: T)(implicit ev: Sampleable[T]): U[Cell[P]] = {
@@ -220,7 +218,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     parser: String => Option[Cell[Q]]): U[Cell[Q]] = {
     val lines = Source.fromFile(script).getLines.toList
     val smfn = (k: Unit, itr: Iterator[String]) => {
-      val tmp = File.createTempFile(script + ".", ".grimlock")
+      val tmp = File.createTempFile("grimlock-", "-" + Paths.get(script).getFileName().toString())
       val name = tmp.getAbsolutePath
       tmp.deleteOnExit()
 

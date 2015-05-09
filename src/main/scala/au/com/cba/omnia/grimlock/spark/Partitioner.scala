@@ -33,22 +33,24 @@ class Partitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) extend
   with Persist[(T, Cell[P])] {
   type U[A] = RDD[A]
 
-  def add(id: T, partition: RDD[Cell[P]]): RDD[(T, Cell[P])] = data ++ (partition.map { case c => (id, c) })
+  def add(id: T, partition: U[Cell[P]]): U[(T, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  def forEach[Q <: Position](ids: List[T], fn: (T, RDD[Cell[P]]) => RDD[Cell[Q]]): RDD[(T, Cell[Q])] = {
+  def forEach[Q <: Position](ids: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])] = {
     import Partitions._
 
     // TODO: This reads the data ids.length times. Is there a way to read it only once?
     ids
       .map { case k => fn(k, data.get(k)).map { case c => (k, c) } }
-      .reduce[RDD[(T, Cell[Q])]]((x, y) => x ++ y)
+      .reduce[U[(T, Cell[Q])]]((x, y) => x ++ y)
   }
 
-  def get(id: T): RDD[Cell[P]] = data.collect { case (t, pc) if (id == t) => pc }
+  def get(id: T): U[Cell[P]] = data.collect { case (t, pc) if (id == t) => pc }
 
-  def ids()(implicit ev: ClassTag[T]): RDD[T] = data.keys.distinct
+  def ids()(implicit ev: ClassTag[T]): U[T] = data.keys.distinct
 
-  def remove(id: T): RDD[(T, Cell[P])] = data.filter { case (t, c) => t != id }
+  def merge(ids: List[T]): U[Cell[P]] = data.collect { case (t, c) if (ids.contains(t)) => c }
+
+  def remove(id: T): U[(T, Cell[P])] = data.filter { case (t, c) => t != id }
 }
 
 /** Companion object for the Spark `Partitions` class. */

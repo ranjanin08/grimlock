@@ -33,26 +33,25 @@ class Partitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cell[P])]) 
   with Persist[(T, Cell[P])] {
   type U[A] = TypedPipe[A]
 
-  def add(id: T, partition: TypedPipe[Cell[P]]): TypedPipe[(T, Cell[P])] = {
-    data ++ (partition.map { case c => (id, c) })
-  }
+  def add(id: T, partition: U[Cell[P]]): U[(T, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  def forEach[Q <: Position](ids: List[T],
-    fn: (T, TypedPipe[Cell[P]]) => TypedPipe[Cell[Q]]): TypedPipe[(T, Cell[Q])] = {
+  def forEach[Q <: Position](ids: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])] = {
     import Partitions._
 
     // TODO: This reads the data ids.length times. Is there a way to read it only once?
     //       Perhaps with Grouped.mapGroup and Execution[T]?
     ids
       .map { case k => fn(k, data.get(k)).map { case c => (k, c) } }
-      .reduce[TypedPipe[(T, Cell[Q])]]((x, y) => x ++ y)
+      .reduce[U[(T, Cell[Q])]]((x, y) => x ++ y)
   }
 
-  def get(id: T): TypedPipe[Cell[P]] = data.collect { case (t, pc) if (id == t) => pc }
+  def get(id: T): U[Cell[P]] = data.collect { case (t, pc) if (id == t) => pc }
 
-  def ids()(implicit ev: ClassTag[T]): TypedPipe[T] = Grouped(data).keys.distinct
+  def ids()(implicit ev: ClassTag[T]): U[T] = Grouped(data).keys.distinct
 
-  def remove(id: T): TypedPipe[(T, Cell[P])] = data.filter { case (t, c) => t != id }
+  def merge(ids: List[T]): U[Cell[P]] = data.collect { case (t, c) if (ids.contains(t)) => c }
+
+  def remove(id: T): U[(T, Cell[P])] = data.filter { case (t, c) => t != id }
 }
 
 /** Companion object for the Scalding `Partitions` class. */

@@ -64,6 +64,8 @@ then
       au.com.cba.omnia.grimlock.scalding.examples.MutualInformation --local --path ../data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.DerivedData --local --path ../data
+    export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
+      au.com.cba.omnia.grimlock.scalding.examples.Ensemble --local --path ../data
 
     if [ -d "demo.old" ]
     then
@@ -106,6 +108,8 @@ then
       au.com.cba.omnia.grimlock.scalding.examples.MutualInformation --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.DerivedData --hdfs --path ./data
+    export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
+      au.com.cba.omnia.grimlock.scalding.examples.Ensemble --hdfs --path ./data
   fi
 fi
 
