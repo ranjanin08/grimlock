@@ -566,22 +566,22 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Transform the content of a matrix.
    *
-   * @param transformers The transformer(s) to apply to the content.
+   * @param transformer The transformer to apply to the content.
    *
    * @return A `U[Cell[Q]]` with the transformed cells.
    */
-  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[P, Q, T]): U[Cell[Q]]
+  def transform[Q <: Position](transformer: Transformer[P, Q]): U[Cell[Q]]
 
   /**
    * Transform the content of a matrix using a user supplied value.
    *
-   * @param transformers The transformer(s) to apply to the content.
-   * @param value        A `E` holding a user supplied value.
+   * @param transformer The transformer to apply to the content.
+   * @param value       A `E` holding a user supplied value.
    *
    * @return A `U[Cell[P]]` with the transformed cells.
    */
-  def transformWithValue[Q <: Position, T, V](transformers: T, value: E[V])(
-    implicit ev: TransformableWithValue[P, Q, T, V]): U[Cell[Q]]
+  def transformWithValue[Q <: Position, W](transformer: TransformerWithValue[P, Q] { type V >: W },
+    value: E[W]): U[Cell[Q]]
 
   /**
    * Returns the variable type of the content(s) for a given `slice`.

@@ -33,8 +33,8 @@ import com.twitter.scalding.{ Args, Job }
 
 // Simple bucketing implementation. For numerical values it generates categorical values that are the rounded up
 // value. All other values are passed through.
-case class CeilingBucketing() extends Transformer with Present {
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
+case class CeilingBucketing() extends Transformer[Position2D, Position2D] {
+  def present(cell: Cell[Position2D]): Collection[Cell[Position2D]] = {
     val con = (cell.content.schema.kind.isSpecialisationOf(Type.Numerical), cell.content.value.asDouble) match {
       case (true, Some(d)) => Content(NominalSchema[Codex.LongCodex](), math.ceil(d).toLong)
       case _ => cell.content

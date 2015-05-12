@@ -373,7 +373,7 @@ object TestSpark11 {
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .transform(Indicator(Second, "%1$s.ind"))
+      .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
       .save("./tmp.spark/trn2.out", descriptive=true)
 
     data
@@ -414,7 +414,7 @@ object TestSpark13 {
       .squash(Third, PreservingMaxPosition())
 
     val inds = data
-      .transform(Indicator(Second, "%1$s.ind"))
+      .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
 
     data
@@ -459,7 +459,7 @@ object TestSpark15 {
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition())
-      .transform(Indicator(Second, "%1$s.ind"))
+      .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
       .saveAsCSV(Over(Second), "./tmp.spark/trn1.csv")
 
     data
@@ -585,11 +585,15 @@ object TestSpark19 {
       .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
       .names(Over(First))
 
+    val transforms: TransformerWithValue[Position2D, Position2D] { type V >: Normalise[Position2D, String]#V } = List(
+      Indicator[Position2D]() andThenRename Transformer.rename(Second, "%1$s.ind"),
+      Binarise[Position2D](Second),
+      Normalise[Position2D, String](Second, "max.abs"))
+
     def cb(key: String, pipe: RDD[Cell[Position2D]]): RDD[Cell[Position2D]] = {
       pipe
         .slice(Over(Second), rem, false)
-        .transformWithValue(List(Indicator(Second, "%1$s.ind"), Binarise(Second), Normalise(Second, "max.abs")),
-          stats.toMap(Over(First)))
+        .transformWithValue(transforms, stats.toMap(Over(First)))
         .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
         .saveAsCSV(Over(Second), "./tmp.spark/pln_" + key + ".csv")
     }
@@ -792,33 +796,32 @@ object TestSpark28 {
       .save("./tmp.spark/cut1.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.square"), CutRules.squareRootChoice(stats, "count", "min", "max"))
+      .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.square"),
+        CutRules.squareRootChoice(stats, "count", "min", "max"))
       .save("./tmp.spark/cut2.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.sturges"), CutRules.sturgesFormula(stats, "count", "min", "max"))
+      .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.sturges"),
+        CutRules.sturgesFormula(stats, "count", "min", "max"))
       .save("./tmp.spark/cut3.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.rice"), CutRules.riceRule(stats, "count", "min", "max"))
+      .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.rice"),
+        CutRules.riceRule(stats, "count", "min", "max"))
       .save("./tmp.spark/cut4.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.doane"), CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
+      .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.doane"),
+        CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
       .save("./tmp.spark/cut5.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.scott"),
+      .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.scott"),
         CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
       .save("./tmp.spark/cut6.out")
 
-    val a = Cut(Second)
-    val b = Transformer.renameWithValue(Second, "%s.break")
-    val c = a.andThenRenameWithValue(b)
-
     data
-      .transformWithValue(
-        Cut(Second).andThenRenameWithValue(Transformer.renameWithValue(Second, "%s.break")),
+      .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.break"),
         CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
       .save("./tmp.spark/cut7.out")
   }

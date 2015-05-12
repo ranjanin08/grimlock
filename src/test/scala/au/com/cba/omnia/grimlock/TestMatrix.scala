@@ -7255,41 +7255,6 @@ trait TestMatrixTransform extends TestMatrix {
     Cell(Position4D("qux.n", 1, "xyz", "nrm"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 12.56)))
 }
 
-object TestMatrixTransform {
-
-  case class IndicatorX(dim: Dimension, name: String) extends transform.Transformer with PresentExpanded {
-    val indicator = Indicator(dim, name)
-    def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]] = {
-      Collection(indicator.present(cell).toList.map { case c => Cell[P#M](c.position.append("ind"), c.content) })
-    }
-  }
-
-  case class BinariseX(dim: Dimension) extends transform.Transformer with PresentExpanded {
-    val binarise = Binarise(dim)
-    def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]] = {
-      Collection(binarise.present(cell).toList.map { case c => Cell[P#M](c.position.append("bin"), c.content) })
-    }
-  }
-
-  case class NormaliseX(dim: Dimension, key: String, name: String) extends transform.Transformer
-    with PresentExpandedWithValue {
-    type V = Normalise#V
-    val normalise = Normalise(dim, key, name)
-    def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: V): Collection[Cell[P#M]] = {
-      Collection(normalise.present(cell, ext).toList.map { case c => Cell[P#M](c.position.append("nrm"), c.content) })
-    }
-  }
-
-  case class StandardiseX(dim: Dimension, mean: String, sd: String, name: String) extends transform.Transformer
-    with PresentExpandedWithValue {
-    type V = Standardise#V
-    val standardise = Standardise(dim, mean, sd, name)
-    def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: V): Collection[Cell[P#M]] = {
-      Collection(standardise.present(cell, ext).toList.map { case c => Cell[P#M](c.position.append("std"), c.content) })
-    }
-  }
-}
-
 class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
 
   "A Matrix.transform" should "return its transformed data in 1D" in {
@@ -7297,7 +7262,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.transform(Indicator(First, "%1$s.ind"))
+        cells.transform(Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -7308,7 +7273,9 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.transform(List(Indicator(First, "%1$s.ind"), Binarise(First)))
+        cells.transform[Position2D](List(
+          Indicator[Position2D]().andThenRename(Transformer.rename(First, "%1$s.ind")),
+          Binarise[Position2D](First)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -7319,7 +7286,9 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.transform(List(Indicator(First, "%1$s.ind"), Binarise(First)))
+        cells.transform[Position3D](List(
+          Indicator[Position3D]().andThenRename(Transformer.rename(First, "%1$s.ind")),
+          Binarise[Position3D](First)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -7330,8 +7299,12 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.transformWithValue(List(Normalise(First, "max.abs", "%1$s.n"),
-          Standardise(First, "mean", "sd", "%1$s.s")), ValuePipe(ext))
+        cells.transformWithValue[Position1D, Map[Position1D, Map[Position1D, Content]]](List(
+          Normalise[Position1D, String](First, "max.abs")
+            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")),
+          Standardise[Position1D, String](First, "mean", "sd")
+            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.s"))),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -7342,7 +7315,9 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.transformWithValue(Normalise(First, "max.abs", "%1$s.n"), ValuePipe(ext))
+        cells.transformWithValue(
+          Normalise(First, "max.abs").andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -7353,7 +7328,9 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.transformWithValue(Normalise(First, "max.abs", "%1$s.n"), ValuePipe(ext))
+        cells.transformWithValue(
+          Normalise(First, "max.abs").andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -7364,7 +7341,9 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.transformAndExpand(TestMatrixTransform.IndicatorX(First, "%1$s.ind"))
+        cells.transform(Indicator()
+          .andThenRename(Transformer.rename(First, "%1$s.ind"))
+          .andThenExpand(Transformer.expand("ind")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -7375,8 +7354,12 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.transformAndExpand(List(TestMatrixTransform.IndicatorX(First, "%1$s.ind"),
-          TestMatrixTransform.BinariseX(First)))
+        cells.transform[Position3D](List(
+          Indicator[Position2D]()
+            .andThenRename(Transformer.rename(First, "%1$s.ind"))
+            .andThenExpand(Transformer.expand("ind")),
+          Binarise[Position2D](First)
+            .andThenExpand(Transformer.expand("bin"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -7387,8 +7370,12 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.transformAndExpand(List(TestMatrixTransform.IndicatorX(First, "%1$s.ind"),
-          TestMatrixTransform.BinariseX(First)))
+        cells.transform[Position4D](List(
+          Indicator[Position3D]()
+            .andThenRename(Transformer.rename(First, "%1$s.ind"))
+            .andThenExpand(Transformer.expand("ind")),
+          Binarise[Position3D](First)
+            .andThenExpand(Transformer.expand("bin"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -7399,8 +7386,13 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.transformAndExpandWithValue(List(TestMatrixTransform.NormaliseX(First, "max.abs", "%1$s.n"),
-          TestMatrixTransform.StandardiseX(First, "mean", "sd", "%1$s.s")), ValuePipe(ext))
+        cells.transformWithValue[Position2D, Map[Position1D, Map[Position1D, Content]]](List(
+          Normalise[Position1D, String](First, "max.abs")
+            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
+            .andThenExpandWithValue(TransformerWithValue.expand("nrm")),
+          Standardise[Position1D, String](First, "mean", "sd")
+            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.s"))
+            .andThenExpandWithValue(TransformerWithValue.expand("std"))), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -7411,7 +7403,10 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.transformAndExpandWithValue(TestMatrixTransform.NormaliseX(First, "max.abs", "%1$s.n"), ValuePipe(ext))
+        cells.transformWithValue(
+          Normalise(First, "max.abs")
+            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
+            .andThenExpandWithValue(TransformerWithValue.expand("nrm")), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -7422,7 +7417,10 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.transformAndExpandWithValue(TestMatrixTransform.NormaliseX(First, "max.abs", "%1$s.n"), ValuePipe(ext))
+        cells.transformWithValue(
+          Normalise(First, "max.abs")
+            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
+            .andThenExpandWithValue(TransformerWithValue.expand("nrm")), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
     }
@@ -7433,76 +7431,105 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
 
   "A Matrix.transform" should "return its transformed data in 1D" in {
     toRDD(data1)
-      .transform(Indicator(First, "%1$s.ind"))
+      .transform(Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")))
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its transformed data in 2D" in {
     toRDD(data2)
-      .transform(List(Indicator(First, "%1$s.ind"), Binarise(First)))
+      .transform[Position2D](List(
+        Indicator[Position2D]().andThenRename(Transformer.rename(First, "%1$s.ind")),
+        Binarise[Position2D](First)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its transformed data in 3D" in {
     toRDD(data3)
-      .transform(List(Indicator(First, "%1$s.ind"), Binarise(First)))
+      .transform[Position3D](List(
+        Indicator[Position3D]().andThenRename(Transformer.rename(First, "%1$s.ind")),
+        Binarise[Position3D](First)))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   "A Matrix.transformWithValue" should "return its transformed data in 1D" in {
     toRDD(num1)
-      .transformWithValue(List(Normalise(First, "max.abs", "%1$s.n"), Standardise(First, "mean", "sd", "%1$s.s")), ext)
+      .transformWithValue[Position1D, Map[Position1D, Map[Position1D, Content]]](List(
+        Normalise[Position1D, String](First, "max.abs")
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")),
+        Standardise[Position1D, String](First, "mean", "sd")
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.s"))), ext)
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its transformed data in 2D" in {
     toRDD(num2)
-      .transformWithValue(Normalise(First, "max.abs", "%1$s.n"), ext)
+      .transformWithValue(
+        Normalise(First, "max.abs").andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")), ext)
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its transformed data in 3D" in {
     toRDD(num3)
-      .transformWithValue(Normalise(First, "max.abs", "%1$s.n"), ext)
+      .transformWithValue(
+        Normalise(First, "max.abs").andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")), ext)
       .toList.sortBy(_.position) shouldBe result6
   }
 
   "A Matrix.transformAndExpand" should "return its transformed data in 1D" in {
     toRDD(data1)
-      .transformAndExpand(TestMatrixTransform.IndicatorX(First, "%1$s.ind"))
+      .transform(Indicator()
+        .andThenRename(Transformer.rename(First, "%1$s.ind"))
+        .andThenExpand(Transformer.expand("ind")))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its transformed data in 2D" in {
     toRDD(data2)
-      .transformAndExpand(List(TestMatrixTransform.IndicatorX(First, "%1$s.ind"),
-        TestMatrixTransform.BinariseX(First)))
+      .transform[Position3D](List(
+        Indicator[Position2D]()
+          .andThenRename(Transformer.rename(First, "%1$s.ind"))
+          .andThenExpand(Transformer.expand("ind")),
+        Binarise[Position2D](First)
+          .andThenExpand(Transformer.expand("bin"))))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its transformed data in 3D" in {
     toRDD(data3)
-      .transformAndExpand(List(TestMatrixTransform.IndicatorX(First, "%1$s.ind"),
-        TestMatrixTransform.BinariseX(First)))
+      .transform[Position4D](List(
+        Indicator[Position3D]()
+          .andThenRename(Transformer.rename(First, "%1$s.ind"))
+          .andThenExpand(Transformer.expand("ind")),
+        Binarise[Position3D](First)
+          .andThenExpand(Transformer.expand("bin"))))
       .toList.sortBy(_.position) shouldBe result9
   }
 
   "A Matrix.transformAndExpandWithValue" should "return its transformed data in 1D" in {
     toRDD(num1)
-      .transformAndExpandWithValue(List(TestMatrixTransform.NormaliseX(First, "max.abs", "%1$s.n"),
-        TestMatrixTransform.StandardiseX(First, "mean", "sd", "%1$s.s")), ext)
+      .transformWithValue[Position2D, Map[Position1D, Map[Position1D, Content]]](List(
+        Normalise[Position1D, String](First, "max.abs")
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
+          .andThenExpandWithValue(TransformerWithValue.expand("nrm")),
+        Standardise[Position1D, String](First, "mean", "sd")
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.s"))
+          .andThenExpandWithValue(TransformerWithValue.expand("std"))), ext)
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its transformed data in 2D" in {
     toRDD(num2)
-      .transformAndExpandWithValue(TestMatrixTransform.NormaliseX(First, "max.abs", "%1$s.n"), ext)
+      .transformWithValue(Normalise(First, "max.abs")
+        .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
+        .andThenExpandWithValue(TransformerWithValue.expand("nrm")), ext)
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its transformed data in 3D" in {
     toRDD(num3)
-      .transformAndExpandWithValue(TestMatrixTransform.NormaliseX(First, "max.abs", "%1$s.n"), ext)
+      .transformWithValue(Normalise(First, "max.abs")
+        .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
+        .andThenExpandWithValue(TransformerWithValue.expand("nrm")), ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 }
