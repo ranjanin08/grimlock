@@ -247,18 +247,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .reduce { case (lm, rm) => lm ++ rm }
   }
 
-  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[P, Q, T]): U[Cell[Q]] = {
-    val t = ev.convert(transformers)
-
-    data.flatMap { case c => t.present(c).toList }
+  def transform[Q <: Position](transformer: Transformer[P, Q]): U[Cell[Q]] = {
+    data.flatMap { case c => transformer.present(c).toList }
   }
 
-  def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
-    implicit ev: TransformableWithValue[P, Q, T, W]): U[Cell[Q]] = {
-    val t = ev.convert(transformers)
-
-    data.flatMap { case c => t.present(c, value).toList }
-  }
+  def transformWithValue[Q <: Position, W](transformer: TransformerWithValue[P, Q] { type V >: W },
+    value: E[W]): U[Cell[Q]] = data.flatMap { case c => transformer.presentWithValue(c, value).toList }
 
   def types[D <: Dimension](slice: Slice[P, D], specific: Boolean = false)(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S]): U[(slice.S, Type)] = {

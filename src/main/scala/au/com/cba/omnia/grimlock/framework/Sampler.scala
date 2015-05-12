@@ -139,12 +139,12 @@ object Sampleable {
   /**
    * Converts a `List[Sampler with Select]` to a single `Sampler with Select` using `CombinationSampler`.
    */
-  implicit def LT2T[T <: Sampler with Select]: Sampleable[List[T]] = {
+  implicit def LS2S[T <: Sampler with Select]: Sampleable[List[T]] = {
     new Sampleable[List[T]] { def convert(t: List[T]): Sampler with Select = CombinationSampler(t) }
   }
 
   /** Converts a `Sampler with Select` to a `Sampler with Select`; that is, it is a pass through. */
-  implicit def T2T[T <: Sampler with Select]: Sampleable[T] = {
+  implicit def S2S[T <: Sampler with Select]: Sampleable[T] = {
     new Sampleable[T] { def convert(t: T): Sampler with Select = t }
   }
 }
@@ -165,7 +165,7 @@ object SampleableWithValue {
    * Converts a `List[Sampler with SelectWithValue]` to a single `Sampler with SelectWithValue` using
    * `CombinationSamplerWithValue`.
    */
-  implicit def LT2TWV[T <: Sampler with SelectWithValue { type V >: W }, W]: SampleableWithValue[List[T], W] = {
+  implicit def LS2SWV[T <: Sampler with SelectWithValue { type V >: W }, W]: SampleableWithValue[List[T], W] = {
     new SampleableWithValue[List[T], W] {
       def convert(t: List[T]): Sampler with SelectWithValue { type V >: W } = {
         CombinationSamplerWithValue[T, W](t)
@@ -177,7 +177,7 @@ object SampleableWithValue {
    * Converts a `Sampler with SelectWithValue` to a `Sampler with SelectWithValue`; that is, it is a pass
    * through.
    */
-  implicit def T2TWV[T <: Sampler with SelectWithValue { type V >: W }, W]: SampleableWithValue[T, W] = {
+  implicit def S2SWV[T <: Sampler with SelectWithValue { type V >: W }, W]: SampleableWithValue[T, W] = {
     new SampleableWithValue[T, W] { def convert(t: T): Sampler with SelectWithValue { type V >: W } = t }
   }
 }

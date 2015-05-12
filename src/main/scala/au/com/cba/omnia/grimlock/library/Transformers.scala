@@ -115,7 +115,7 @@ trait PresentDouble extends PresentCell[Double] {
 }
 
 /** Create indicator variables. */
-case class Indicator[P <: Position]() extends Transformer[P, P] with Present[P, P] {
+case class Indicator[P <: Position]() extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
     Collection(cell.position, Content(DiscreteSchema[Codex.LongCodex](), 1))
   }
@@ -131,7 +131,7 @@ case class Indicator[P <: Position]() extends Transformer[P, P] with Present[P, 
  * @note Binarisation is only applied to categorical variables.
  */
 case class Binarise[P <: Position](dim: Dimension,
-  name: String = "%1$s=%2$s") extends Transformer[P, P] with Present[P, P] {
+  name: String = "%1$s=%2$s") extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
     if (cell.content.schema.kind.isSpecialisationOf(Categorical)) {
       Collection(cell.position.update(dim, name.format(cell.position(dim).toShortString,
@@ -151,12 +151,12 @@ case class Binarise[P <: Position](dim: Dimension,
  * @note Normalisation scales a variable in the range [-1, 1]. It is only applied to numerical variables.
  */
 case class Normalise[P <: Position, T](dim: Dimension, key: T)(
-  implicit ev: Positionable[T, Position1D]) extends Transformer[P, P] with PresentWithValue[P, P] {
+  implicit ev: Positionable[T, Position1D]) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, Map[Position1D, Content]]
 
   val key2 = ev.convert(key)
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     val key1 = Position1D(cell.position(dim))
 
     (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble,
@@ -180,13 +180,13 @@ case class Normalise[P <: Position, T](dim: Dimension, key: T)(
  *       variables.
  */
 case class Standardise[P <: Position, T](dim: Dimension, mean: T, sd: T, threshold: Double = 1e-4, n: Int = 1)(
-  implicit ev: Positionable[T, Position1D]) extends Transformer[P, P] with PresentWithValue[P, P] {
+  implicit ev: Positionable[T, Position1D]) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, Map[Position1D, Content]]
 
   val key2m = ev.convert(mean)
   val key2s = ev.convert(sd)
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     val key1 = Position1D(cell.position(dim))
 
     (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble,
@@ -210,13 +210,13 @@ case class Standardise[P <: Position, T](dim: Dimension, mean: T, sd: T, thresho
  *       numerical variables.
  */
 case class Clamp[P <: Position, T](dim: Dimension, lower: T, upper: T)(
-  implicit ev: Positionable[T, Position1D]) extends Transformer[P, P] with PresentWithValue[P, P] {
+  implicit ev: Positionable[T, Position1D]) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, Map[Position1D, Content]]
 
   val key2l = ev.convert(lower)
   val key2u = ev.convert(upper)
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     val key1 = Position1D(cell.position(dim))
 
     (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble,
@@ -239,10 +239,10 @@ case class Clamp[P <: Position, T](dim: Dimension, lower: T, upper: T)(
  * @note Idf is only applied to numerical variables.
  */
 case class Idf[P <: Position] private (dim: Option[Dimension], key: Option[Position1D],
-  idf: (Double, Double) => Double) extends Transformer[P, P] with PresentWithValue[P, P] {
+  idf: (Double, Double) => Double) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, Content]
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     val k = (dim, key) match {
       case (_, Some(k)) => k
       case (Some(d), None) => Position1D(cell.position(d))
@@ -312,7 +312,7 @@ object Idf {
  *
  * @note Boolean tf is only applied to numerical variables.
  */
-case class BooleanTf[P <: Position]() extends Transformer[P, P] with Present[P, P] {
+case class BooleanTf[P <: Position]() extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
     (cell.content.schema.kind.isSpecialisationOf(Numerical)) match {
       case true => Collection(cell.position, Content(ContinuousSchema[Codex.DoubleCodex](), 1))
@@ -329,7 +329,7 @@ case class BooleanTf[P <: Position]() extends Transformer[P, P] with Present[P, 
  * @note Logarithmic tf is only applied to numerical variables.
  */
 case class LogarithmicTf[P <: Position](
-  log: (Double) => Double = math.log) extends Transformer[P, P] with Present[P, P] {
+  log: (Double) => Double = math.log) extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
     (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble) match {
       case (true, Some(tf)) => Collection(cell.position, Content(ContinuousSchema[Codex.DoubleCodex](), 1 + log(tf)))
@@ -345,10 +345,10 @@ case class LogarithmicTf[P <: Position](
  *
  * @note Augmented tf is only applied to numerical variables.
  */
-case class AugmentedTf[P <: Position](dim: Dimension) extends Transformer[P, P] with PresentWithValue[P, P] {
+case class AugmentedTf[P <: Position](dim: Dimension) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, Content]
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble,
       ext.get(Position1D(cell.position(dim))).flatMap(_.value.asDouble)) match {
       case (true, Some(tf), Some(m)) => Collection(cell.position,
@@ -367,10 +367,10 @@ case class AugmentedTf[P <: Position](dim: Dimension) extends Transformer[P, P] 
  * @note Tf-idf is only applied to numerical variables.
  */
 case class TfIdf[P <: Position] private (dim: Option[Dimension],
-  key: Option[Position1D]) extends Transformer[P, P] with PresentWithValue[P, P] {
+  key: Option[Position1D]) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, Content]
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     val k = (dim, key) match {
       case (_, Some(k)) => k
       case (Some(d), None) => Position1D(cell.position(d))
@@ -414,10 +414,10 @@ object TfIdf {
  * @note Add is only applied to numerical variables.
  */
 case class Add[P <: Position] private (dim: Option[Dimension],
-  key: Option[Position1D]) extends Transformer[P, P] with PresentWithValue[P, P] {
+  key: Option[Position1D]) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, Content]
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     val k = (dim, key) match {
       case (_, Some(k)) => k
       case (Some(d), None) => Position1D(cell.position(d))
@@ -461,10 +461,10 @@ object Add {
  * @note Subtract is only applied to numerical variables.
  */
 case class Subtract[P <: Position] private (dim: Option[Dimension], key: Option[Position1D],
-  inverse: Boolean) extends Transformer[P, P] with PresentWithValue[P, P] {
+  inverse: Boolean) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, Content]
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     val k = (dim, key) match {
       case (_, Some(k)) => k
       case (Some(d), None) => Position1D(cell.position(d))
@@ -526,10 +526,10 @@ object Subtract {
  * @note Multiply is only applied to numerical variables.
  */
 case class Multiply[P <: Position] private (dim: Option[Dimension], 
-  key: Option[Position1D]) extends Transformer[P, P] with PresentWithValue[P, P] {
+  key: Option[Position1D]) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, Content]
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     val k = (dim, key) match {
       case (_, Some(k)) => k
       case (Some(d), None) => Position1D(cell.position(d))
@@ -573,10 +573,10 @@ object Multiply {
  * @note Fraction is only applied to numerical variables.
  */
 case class Fraction[P <: Position] private (dim: Option[Dimension], key: Option[Position1D],
-  inverse: Boolean) extends Transformer[P, P] with PresentWithValue[P, P] {
+  inverse: Boolean) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, Content]
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     val k = (dim, key) match {
       case (_, Some(k)) => k
       case (Some(d), None) => Position1D(cell.position(d))
@@ -636,7 +636,7 @@ object Fraction {
  *
  * @note Power is only applied to numerical variables.
  */
-case class Power[P <: Position](power: Double) extends Transformer[P, P] with Present[P, P] {
+case class Power[P <: Position](power: Double) extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
     (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble) match {
       case (true, Some(d)) => Collection(cell.position,
@@ -651,7 +651,7 @@ case class Power[P <: Position](power: Double) extends Transformer[P, P] with Pr
  *
  * @note SquareRoot is only applied to numerical variables.
  */
-case class SquareRoot[P <: Position]() extends Transformer[P, P] with Present[P, P] {
+case class SquareRoot[P <: Position]() extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
     (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble) match {
       case (true, Some(d)) => Collection(cell.position, Content(ContinuousSchema[Codex.DoubleCodex](), math.sqrt(d)))
@@ -667,10 +667,10 @@ case class SquareRoot[P <: Position]() extends Transformer[P, P] with Present[P,
  *
  * @note Cut is only applied to numerical variables.
  */
-case class Cut[P <: Position](dim: Dimension) extends Transformer[P, P] with PresentWithValue[P, P] {
+case class Cut[P <: Position](dim: Dimension) extends TransformerWithValue[P, P] {
   type V = Map[Position1D, List[Double]]
 
-  def present(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
     (cell.content.schema.kind.isSpecialisationOf(Numerical), cell.content.value.asDouble,
       ext.get(Position1D(cell.position(dim)))) match {
       case (true, Some(v), Some(r)) =>

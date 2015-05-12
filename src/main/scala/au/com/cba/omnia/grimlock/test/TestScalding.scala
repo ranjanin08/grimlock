@@ -22,6 +22,7 @@ import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.sample._
+import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.Type._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.window._
@@ -350,7 +351,7 @@ class TestScalding11(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .transform(Indicator(Second, name="%1$s.ind"))
+    .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
     .save("./tmp.scalding/trn2.out", descriptive=true)
 
   data
@@ -387,7 +388,7 @@ class TestScalding13(args : Args) extends Job(args) {
     .squash(Third, PreservingMaxPosition())
 
   val inds = data
-    .transform(Indicator(Second, name="%1$s.ind"))
+    .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
     .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
 
   data
@@ -428,7 +429,7 @@ class TestScalding15(args : Args) extends Job(args) {
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition())
-    .transform(Indicator(Second, name="%1$s.ind"))
+    .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
     .saveAsCSV(Over(Second), "./tmp.scalding/trn1.csv")
 
   data
@@ -466,7 +467,7 @@ class TestScalding17(args : Args) extends Job(args) {
     .toMap(Over(First))
 
   data
-    .transformWithValue(Normalise(Second, key="max.abs"), stats)
+    .transformWithValue(Normalise(Second, "max.abs"), stats)
     .saveAsCSV(Over(Second), "./tmp.scalding/trn6.csv")
 
   case class Sample500() extends Sampler with Select {
@@ -546,11 +547,15 @@ class TestScalding19(args : Args) extends Job(args) {
     .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
     .names(Over(First))
 
+  val transforms: TransformerWithValue[Position2D, Position2D] { type V >: Normalise[Position2D, String]#V } = List(
+    Indicator[Position2D]() andThenRename Transformer.rename(Second, "%1$s.ind"),
+    Binarise[Position2D](Second),
+    Normalise[Position2D, String](Second, "max.abs"))
+
   def cb(key: String, pipe: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {
     pipe
       .slice(Over(Second), rem, false)
-      .transformWithValue(List(Indicator(Second, name="%1$s.ind"), Binarise(Second), Normalise(Second, key="max.abs")),
-        stats.toMap(Over(First)))
+      .transformWithValue(transforms, stats.toMap(Over(First)))
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
       .saveAsCSV(Over(Second), "./tmp.scalding/pln_" + key + ".csv")
   }
@@ -731,29 +736,33 @@ class TestScalding28(args: Args) extends Job(args) {
     .save("./tmp.scalding/cut1.out")
 
   data
-    .transformWithValue(Cut(Second, "%s.square"), CutRules.squareRootChoice(stats, "count", "min", "max"))
+    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.square"),
+      CutRules.squareRootChoice(stats, "count", "min", "max"))
     .save("./tmp.scalding/cut2.out")
 
   data
-    .transformWithValue(Cut(Second, "%s.sturges"), CutRules.sturgesFormula(stats, "count", "min", "max"))
+    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.sturges"),
+      CutRules.sturgesFormula(stats, "count", "min", "max"))
     .save("./tmp.scalding/cut3.out")
 
   data
-    .transformWithValue(Cut(Second, "%s.rice"), CutRules.riceRule(stats, "count", "min", "max"))
+    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.rice"),
+      CutRules.riceRule(stats, "count", "min", "max"))
     .save("./tmp.scalding/cut4.out")
 
   data
-    .transformWithValue(Cut(Second, "%s.doane"),
+    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.doane"),
       CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
     .save("./tmp.scalding/cut5.out")
 
   data
-    .transformWithValue(Cut(Second, "%s.scott"),
+    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.scott"),
       CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
     .save("./tmp.scalding/cut6.out")
 
   data
-    .transformWithValue(Cut(Second, "%s.break"), CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
+    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.break"),
+      CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
     .save("./tmp.scalding/cut7.out")
 }
 

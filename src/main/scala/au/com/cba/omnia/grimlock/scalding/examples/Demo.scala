@@ -155,9 +155,9 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
     .names(Over(Second))
 
   // List of transformations to apply to each partition.
-  val transforms = List(
-    Clamp(Second, lower = "min", upper = "max") andThen Standardise(Second, mean = "mean", sd = "sd"),
-    Binarise(Second))
+  val transforms: TransformerWithValue[Position2D, Position2D] { type V >: Clamp[Position2D, String]#V } = List(
+    Clamp[Position2D, String](Second, "min", "max") andThenWithValue Standardise(Second, "mean", "sd"),
+    Binarise[Position2D](Second))
 
   // For each partition:
   //  1/  Remove sparse features;
@@ -173,7 +173,7 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
       .slice(Over(Second), rem1, false)
 
     val ind = d
-      .transform(Indicator(Second, name = "%1$s.ind"))
+      .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
 
     val csb = d
       .slice(Over(Second), rem2, false)
@@ -207,10 +207,10 @@ class Scoring(args: Args) extends Job(args) {
   //  1/ Create indicators, binarise categorical, and clamp & standardise numerical features;
   //  2/ Compute the scored (as a weighted sum);
   //  3/ Save the results.
-  val transforms = List(
-    Indicator(Second, name = "%1$s.ind"),
-    Binarise(Second),
-    Clamp(Second, lower = "min", upper = "max") andThen Standardise(Second, mean = "mean", sd = "sd"))
+  val transforms: TransformerWithValue[Position2D, Position2D] { type V >: Clamp[Position2D, String]#V } = List(
+    Indicator[Position2D]() andThenRename Transformer.rename(Second, "%1$s.ind"),
+    Binarise[Position2D](Second),
+    Clamp[Position2D, String](Second, "min", "max") andThenWithValue Standardise(Second, "mean", "sd"))
 
   data
     .transformWithValue(transforms, stats)
@@ -283,20 +283,20 @@ class LabelWeighting(args: Args) extends Job(args) {
     .transformWithValue(Fraction("min"), min)
     .toMap(Over(First))
 
-  case class AddWeight() extends Transformer with PresentExpandedWithValue {
+  case class AddWeight() extends TransformerWithValue[Position2D, Position3D] {
     type V = Map[Position1D, Content]
 
     // Adding the weight is a straight forward lookup by the value of the content. Also return this cell
     // (cell.position.append("label"), cell.content) so no additional join is needed with the original label data.
-    def present[P <: Position with ExpandablePosition](cell: Cell[P], ext: V): Collection[Cell[P#M]] = {
-      Collection(List(Cell[P#M](cell.position.append("label"), cell.content),
-        Cell[P#M](cell.position.append("weight"), ext(Position1D(cell.content.value.toShortString)))))
+    def presentWithValue(cell: Cell[Position2D], ext: V): Collection[Cell[Position3D]] = {
+      Collection(List(Cell(cell.position.append("label"), cell.content),
+        Cell(cell.position.append("weight"), ext(Position1D(cell.content.value.toShortString)))))
     }
   }
 
   // Re-read labels and add the computed weight.
   load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
-    .transformAndExpandWithValue(AddWeight(), weights)
+    .transformWithValue(AddWeight(), weights)
     .save(s"./demo.${output}/weighted.out")
 }
 
