@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.scalding
 
-import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist, _ }
+import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist }
 
 import cascading.flow.FlowDef
 import com.twitter.scalding.{ Mode, TextLine }

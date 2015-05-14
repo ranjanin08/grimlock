@@ -14,7 +14,6 @@
 
 package au.com.cba.omnia.grimlock.framework
 
-import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait that encapsulates dimension on which to operate. */

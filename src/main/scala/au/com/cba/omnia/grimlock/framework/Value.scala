@@ -18,6 +18,14 @@ import java.util.Date
 
 import scala.util.matching.Regex
 
+/** Hetrogeneous comparison results. */
+private[encoding] trait CompareResult
+private[encoding] case object GreaterEqual extends CompareResult
+private[encoding] case object Greater extends CompareResult
+private[encoding] case object Equal extends CompareResult
+private[encoding] case object Less extends CompareResult
+private[encoding] case object LessEqual extends CompareResult
+
 /** Base trait for representing events. */
 trait Event
 
@@ -104,14 +112,6 @@ trait Value {
 
   /** Return a consise (terse) string representation of a value. */
   def toShortString: String = codex.encode(this)
-
-  /** Hetrogeneous comparison results. */
-  private trait CompareResult
-  private case object GreaterEqual extends CompareResult
-  private case object Greater extends CompareResult
-  private case object Equal extends CompareResult
-  private case object Less extends CompareResult
-  private case object LessEqual extends CompareResult
 
   private def evaluate[T: Valueable](that: T, op: CompareResult): Boolean = {
     codex.compare(this, implicitly[Valueable[T]].convert(that)) match {

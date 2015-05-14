@@ -26,7 +26,6 @@ import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
-import au.com.cba.omnia.grimlock.spark._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 
 import org.apache.spark.{ SparkConf, SparkContext }

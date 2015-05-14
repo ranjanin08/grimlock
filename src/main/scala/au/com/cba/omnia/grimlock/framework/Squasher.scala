@@ -15,7 +15,6 @@
 package au.com.cba.omnia.grimlock.framework.squash
 
 import au.com.cba.omnia.grimlock.framework._
-import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for squashing. */

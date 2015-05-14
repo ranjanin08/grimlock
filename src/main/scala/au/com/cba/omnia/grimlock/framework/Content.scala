@@ -14,7 +14,6 @@
 
 package au.com.cba.omnia.grimlock.framework.content
 
-import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 
@@ -172,9 +171,9 @@ object Content {
    */
   // TODO: Is is possible to enforce that both codex have to be the same?
   def apply(schema: Schema, value: Value): Content = ContentImpl(schema, value)
-
-  private case class ContentImpl(schema: Schema, value: Value) extends Content
 }
+
+private[content] case class ContentImpl(schema: Schema, value: Value) extends Content
 
 /** Base trait that represents the contents of a matrix. */
 trait Contents {

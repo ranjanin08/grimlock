@@ -15,13 +15,17 @@
 package au.com.cba.omnia.grimlock.spark
 
 import au.com.cba.omnia.grimlock.framework.{
+  Along,
+  Cell,
   ExpandableMatrix => BaseExpandableMatrix,
+  ExpPosDep,
   Matrix => BaseMatrix,
   Matrixable => BaseMatrixable,
   Nameable => BaseNameable,
-  Persist => BasePersist,
+  Over,
   ReduceableMatrix => BaseReduceableMatrix,
-  _
+  Slice,
+  Type
 }
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
@@ -123,12 +127,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     pairwiseBetween(slice, that).flatMap { case (lc, rc, r) => o.compute(slice, value)(lc, rc, r).toList }
   }
 
-  def partition[S: Ordering](partitioner: Partitioner with Assign { type T = S }): U[(S, Cell[P])] = {
+  def partition[I: Ordering](partitioner: Partitioner with Assign { type T = I }): U[(I, Cell[P])] = {
     data.flatMap { case c => partitioner.assign(c.position).toList(c) }
   }
 
-  def partitionWithValue[S: Ordering, W](partitioner: Partitioner with AssignWithValue { type V >: W; type T = S },
-    value: E[W]): U[(S, Cell[P])] = {
+  def partitionWithValue[I: Ordering, W](partitioner: Partitioner with AssignWithValue { type V >: W; type T = I },
+    value: E[W]): U[(I, Cell[P])] = {
     data.flatMap { case c => partitioner.assign(c.position, value).toList(c) }
   }
 
@@ -419,8 +423,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
       .map { case (p, (_, co)) => co.getOrElse(Cell(p, value)) }
   }
 
-  def melt[D <: Dimension, E <: Dimension](dim: D, into: E, separator: String = ".")(implicit ev1: PosDimDep[P, D],
-    ev2: PosDimDep[P, E], ne: D =!= E): U[Cell[P#L]] = {
+  def melt[D <: Dimension, F <: Dimension](dim: D, into: F, separator: String = ".")(implicit ev1: PosDimDep[P, D],
+    ev2: PosDimDep[P, F], ne: D =!= F): U[Cell[P#L]] = {
     data.map { case Cell(p, c) => Cell(p.melt(dim, into, separator), c) }
   }
 
@@ -711,7 +715,7 @@ object Matrix {
    * @note The returned `Position2D` consists of 2 string values. The first string value is the contents of the primary
    *       key column. The second string value is the name of the column.
    */
-  def loadTable(table: String, columns: List[(String, Schema)], pkeyIndex: Int = 0, separator: String = "\01")(
+  def loadTable(table: String, columns: List[(String, Schema)], pkeyIndex: Int = 0, separator: String = "\u0001")(
     implicit sc: SparkContext): RDD[Cell[Position2D]] = {
     sc.textFile(table).flatMap { Cell.parseTable(columns, pkeyIndex, separator)(_) }
   }
@@ -820,8 +824,8 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @param first  Dimension used for the first coordinate.
    * @param second Dimension used for the second coordinate.
    */
-  def permute[D <: Dimension, E <: Dimension](first: D, second: E)(implicit ev1: PosDimDep[Position2D, D],
-    ev2: PosDimDep[Position2D, E], ne: D =!= E): U[Cell[Position2D]] = {
+  def permute[D <: Dimension, F <: Dimension](first: D, second: F)(implicit ev1: PosDimDep[Position2D, D],
+    ev2: PosDimDep[Position2D, F], ne: D =!= F): U[Cell[Position2D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(first, second)), c) }
   }
 
@@ -1062,9 +1066,9 @@ class Matrix3D(val data: RDD[Cell[Position3D]]) extends Matrix[Position3D] with 
    * @param second Dimension used for the second coordinate.
    * @param third  Dimension used for the third coordinate.
    */
-  def permute[D <: Dimension, E <: Dimension, F <: Dimension](first: D, second: E, third: F)(
-    implicit ev1: PosDimDep[Position3D, D], ev2: PosDimDep[Position3D, E], ev3: PosDimDep[Position3D, F], ne1: D =!= E,
-    ne2: D =!= F, ne3: E =!= F): U[Cell[Position3D]] = {
+  def permute[D <: Dimension, F <: Dimension, G <: Dimension](first: D, second: F, third: G)(
+    implicit ev1: PosDimDep[Position3D, D], ev2: PosDimDep[Position3D, F], ev3: PosDimDep[Position3D, G], ne1: D =!= F,
+    ne2: D =!= G, ne3: F =!= G): U[Cell[Position3D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third)), c) }
   }
 
@@ -1138,10 +1142,10 @@ class Matrix4D(val data: RDD[Cell[Position4D]]) extends Matrix[Position4D] with 
    * @param third  Dimension used for the third coordinate.
    * @param fourth Dimension used for the fourth coordinate.
    */
-  def permute[D <: Dimension, E <: Dimension, F <: Dimension, G <: Dimension](first: D, second: E, third: F,
-    fourth: G)(implicit ev1: PosDimDep[Position4D, D], ev2: PosDimDep[Position4D, E], ev3: PosDimDep[Position4D, F],
-      ev4: PosDimDep[Position4D, G], ne1: D =!= E, ne2: D =!= F, ne3: D =!= G, ne4: E =!= F, ne5: E =!= G,
-      ne6: F =!= G): U[Cell[Position4D]] = {
+  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension](first: D, second: F, third: G,
+    fourth: H)(implicit ev1: PosDimDep[Position4D, D], ev2: PosDimDep[Position4D, F], ev3: PosDimDep[Position4D, G],
+      ev4: PosDimDep[Position4D, H], ne1: D =!= F, ne2: D =!= G, ne3: D =!= H, ne4: F =!= G, ne5: F =!= H,
+      ne6: G =!= H): U[Cell[Position4D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth)), c) }
   }
 
@@ -1224,11 +1228,11 @@ class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with 
    * @param fourth Dimension used for the fourth coordinate.
    * @param fifth  Dimension used for the fifth coordinate.
    */
-  def permute[D <: Dimension, E <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension](first: D, second: E,
-    third: F, fourth: G, fifth: H)(implicit ev1: PosDimDep[Position5D, D], ev2: PosDimDep[Position5D, E],
-      ev3: PosDimDep[Position5D, F], ev4: PosDimDep[Position5D, G], ev5: PosDimDep[Position5D, H], ne1: D =!= E,
-      ne2: D =!= F, ne3: D =!= G, ne4: D =!= H, ne5: E =!= F, ne6: E =!= G, ne7: E =!= H, ne8: F =!= G, ne9: F =!= H,
-      ne10: G =!= H): U[Cell[Position5D]] = {
+  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension](first: D, second: F,
+    third: G, fourth: H, fifth: I)(implicit ev1: PosDimDep[Position5D, D], ev2: PosDimDep[Position5D, F],
+      ev3: PosDimDep[Position5D, G], ev4: PosDimDep[Position5D, H], ev5: PosDimDep[Position5D, I], ne1: D =!= F,
+      ne2: D =!= G, ne3: D =!= H, ne4: D =!= I, ne5: F =!= G, ne6: F =!= H, ne7: F =!= I, ne8: G =!= H, ne9: G =!= I,
+      ne10: H =!= I): U[Cell[Position5D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth)), c) }
   }
 

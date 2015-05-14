@@ -396,9 +396,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @param partitioner Assigns each position to zero, one or more partitions.
    *
-   * @return A `U[(S, Cell[P])]` where `T` is the partition for the corresponding tuple.
+   * @return A `U[(I, Cell[P])]` where `T` is the partition for the corresponding tuple.
    */
-  def partition[S: Ordering](partitioner: Partitioner with Assign { type T = S }): U[(S, Cell[P])]
+  def partition[I: Ordering](partitioner: Partitioner with Assign { type T = I }): U[(I, Cell[P])]
 
   /**
    * Partition a matrix according to `partitioner` using a user supplied value.
@@ -406,10 +406,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param partitioner Assigns each position to zero, one or more partitions.
    * @param value       A `ValuePipe` holding a user supplied value.
    *
-   * @return A `U[(S, Cell[P])]` where `T` is the partition for the corresponding tuple.
+   * @return A `U[(I, Cell[P])]` where `T` is the partition for the corresponding tuple.
    */
-  def partitionWithValue[S: Ordering, W](partitioner: Partitioner with AssignWithValue { type V >: W; type T = S },
-    value: E[W]): U[(S, Cell[P])]
+  def partitionWithValue[I: Ordering, W](partitioner: Partitioner with AssignWithValue { type V >: W; type T = I },
+    value: E[W]): U[(I, Cell[P])]
 
   /**
    * Rename the coordinates of a dimension.
@@ -713,8 +713,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    * @note A melt coordinate is always a string value constructed from the string representation of the `dim` and
    *       `into` coordinates.
    */
-  def melt[D <: Dimension, E <: Dimension](dim: D, into: E, separator: String = ".")(implicit ev1: PosDimDep[P, D],
-    ev2: PosDimDep[P, E], ne: D =!= E): U[Cell[P#L]]
+  def melt[D <: Dimension, F <: Dimension](dim: D, into: F, separator: String = ".")(implicit ev1: PosDimDep[P, D],
+    ev2: PosDimDep[P, F], ne: D =!= F): U[Cell[P#L]]
 
   /**
    * Summarise a matrix.

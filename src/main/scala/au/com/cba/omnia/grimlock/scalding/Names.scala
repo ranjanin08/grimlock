@@ -18,8 +18,7 @@ import au.com.cba.omnia.grimlock.framework.{
   Matrix => BaseMatrix,
   Names => BaseNames,
   Nameable => BaseNameable,
-  Persist => BasePersist,
-  _
+  Slice
 }
 import au.com.cba.omnia.grimlock.framework.position._
 

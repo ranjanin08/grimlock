@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.spark
 
-import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist, _ }
+import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist }
 
 import org.apache.spark.rdd.RDD
 

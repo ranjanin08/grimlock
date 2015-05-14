@@ -15,7 +15,6 @@
 package au.com.cba.omnia.grimlock.framework.transform
 
 import au.com.cba.omnia.grimlock.framework._
-import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 

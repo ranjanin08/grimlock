@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.scalding
 
-import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist, Types => BaseTypes, _ }
+import au.com.cba.omnia.grimlock.framework.{ Type, Types => BaseTypes }
 import au.com.cba.omnia.grimlock.framework.position._
 
 import com.twitter.scalding.typed.TypedPipe

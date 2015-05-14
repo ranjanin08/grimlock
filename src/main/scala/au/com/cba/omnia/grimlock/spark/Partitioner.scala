@@ -14,8 +14,8 @@
 
 package au.com.cba.omnia.grimlock.spark.partition
 
-import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist, _ }
-import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => BasePartitions, _ }
+import au.com.cba.omnia.grimlock.framework.Cell
+import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => BasePartitions }
 import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.spark._
