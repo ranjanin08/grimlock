@@ -165,7 +165,8 @@ object InstanceCentricTfIdf {
     //  3/ Save as Map for use in Tf-Idf below.
     val idf = tf
       .summarise(Along(First), Count())
-      .transformWithValue(Idf(First.toString, Idf.Transform(math.log10, 0)), n)
+      .transformWithValue(Idf(ExtractWithKey[Position1D, Content](First.toString).andThenPresent(_.value.asDouble),
+        (df: Double, n: Double) => math.log10(n / df)), n)
       .toMap(Over(First))
 
     // Apply TfIdf to the term frequency matrix with the Idf values, then save the results to file.
@@ -175,7 +176,8 @@ object InstanceCentricTfIdf {
       //.transform(BooleanTf())
       //.transform(LogarithmicTf())
       //.transformWithValue(AugmentedTf(First), tf.summarise(Along(Second), Max()).toMap(Over(First)))
-      .transformWithValue(TfIdf(Second), idf)
+      .transformWithValue(TfIdf(
+        ExtractWithDimension[Dimension.Second, Position2D, Content](Second).andThenPresent(_.value.asDouble)), idf)
       .save(s"./demo.${output}/tfidf_entity.out")
   }
 }
