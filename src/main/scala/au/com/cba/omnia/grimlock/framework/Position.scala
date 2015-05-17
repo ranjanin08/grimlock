@@ -88,6 +88,16 @@ trait Position {
 object Position {
   /** Define an ordering between 2 position. Only use with position of the same type coordinates. */
   def Ordering[T <: Position]: Ordering[T] = new Ordering[T] { def compare(x: T, y: T): Int = x.compare(y) }
+
+  /** `MapablePosition` object for `PositionND` (N > 1) with `Along`. */
+  case object MapAlong extends MapMapablePosition[Position1D] {}
+
+  implicit def S2P(value: String): Position1D = new Position1D(StringValue(value))
+  implicit def D2P(value: Double): Position1D = new Position1D(DoubleValue(value))
+  implicit def L2P(value: Long): Position1D = new Position1D(LongValue(value))
+  implicit def I2P(value: Int): Position1D = new Position1D(LongValue(value))
+  implicit def B2P(value: Boolean): Position1D = new Position1D(BooleanValue(value))
+  implicit def V2P(value: Value): Position1D = new Position1D(value)
 }
 
 /** Trait for operations that reduce a position by one dimension. */

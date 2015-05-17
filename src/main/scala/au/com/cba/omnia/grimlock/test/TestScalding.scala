@@ -467,7 +467,9 @@ class TestScalding17(args : Args) extends Job(args) {
     .toMap(Over(First))
 
   data
-    .transformWithValue(Normalise(Second, "max.abs"), stats)
+    .transformWithValue(Normalise(
+      ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, "max.abs")
+        .andThenPresent(_.value.asDouble)), stats)
     .saveAsCSV(Over(Second), "./tmp.scalding/trn6.csv")
 
   case class Sample500() extends Sampler with Select {
@@ -547,10 +549,11 @@ class TestScalding19(args : Args) extends Job(args) {
     .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
     .names(Over(First))
 
-  val transforms: TransformerWithValue[Position2D, Position2D] { type V >: Normalise[Position2D, String]#V } = List(
+  val transforms: TransformerWithValue[Position2D, Position2D] { type V >: Map[Position1D, Map[Position1D, Content]] } = List(
     Indicator[Position2D]() andThenRename Transformer.rename(Second, "%1$s.ind"),
     Binarise[Position2D](Second),
-    Normalise[Position2D, String](Second, "max.abs"))
+    Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, "max.abs")
+      .andThenPresent(_.value.asDouble)))
 
   def cb(key: String, pipe: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {
     pipe
@@ -731,37 +734,39 @@ class TestScalding28(args: Args) extends Job(args) {
     .summariseAndExpand(Along(First), List(Count("count"), Min("min"), Max("max"), Moments("mean", "sd", "skewness")))
     .toMap(Over(First))
 
+  val extractor = ExtractWithDimension[Dimension.Second, Position2D, List[Double]](Second)
+
   data
-    .transformWithValue(Cut(Second), CutRules.fixed(stats, "min", "max", 4))
+    .transformWithValue(Cut(extractor), CutRules.fixed(stats, "min", "max", 4))
     .save("./tmp.scalding/cut1.out")
 
   data
-    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.square"),
+    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.square"),
       CutRules.squareRootChoice(stats, "count", "min", "max"))
     .save("./tmp.scalding/cut2.out")
 
   data
-    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.sturges"),
+    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.sturges"),
       CutRules.sturgesFormula(stats, "count", "min", "max"))
     .save("./tmp.scalding/cut3.out")
 
   data
-    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.rice"),
+    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.rice"),
       CutRules.riceRule(stats, "count", "min", "max"))
     .save("./tmp.scalding/cut4.out")
 
   data
-    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.doane"),
+    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.doane"),
       CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
     .save("./tmp.scalding/cut5.out")
 
   data
-    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.scott"),
+    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.scott"),
       CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
     .save("./tmp.scalding/cut6.out")
 
   data
-    .transformWithValue(Cut(Second) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.break"),
+    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.break"),
       CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
     .save("./tmp.scalding/cut7.out")
 }
