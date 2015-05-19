@@ -554,6 +554,15 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Convert a matrix to an in-memory `Map`.
    *
+   * @return A `E[Map[P, Content]]` containing the Map representation of this matrix.
+   *
+   * @note Avoid using this for very large matrices.
+   */
+  def toMap()(implicit ev: ClassTag[P]): E[Map[P, Content]]
+
+  /**
+   * Convert a matrix to an in-memory `Map`.
+   *
    * @param slice Encapsulates the dimension(s) along which to convert.
    *
    * @return A `E[Map[Slice.S, Slice.C]]` containing the Map representation of this matrix.

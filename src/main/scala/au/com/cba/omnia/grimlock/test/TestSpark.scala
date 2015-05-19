@@ -720,6 +720,10 @@ object TestSpark24 {
     data2
       .correlation(Over(Second))
       .save("./tmp.spark/pws3.out")
+
+    load3D(args(1) + "/somePairwise4.txt")
+      .correlation(Along(Third))
+      .save("./tmp.spark/pws4.out")
   }
 }
 
