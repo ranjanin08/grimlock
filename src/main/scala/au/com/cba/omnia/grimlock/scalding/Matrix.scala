@@ -293,6 +293,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .flatMapWithValue(value) { case ((_, (p, t)), vo) => a.presentMultipleWithValue(p, t, vo.get).toList }
   }
 
+  def toMap()(implicit ev: ClassTag[P]): E[Map[P, Content]] = {
+    data
+      .map { case c => Map(c.position -> c.content) }
+      .sum(new com.twitter.algebird.Semigroup[Map[P, Content]] {
+        def plus(l: Map[P, Content], r: Map[P, Content]): Map[P, Content] = l ++ r
+      })
+  }
+
   def toMap[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
     ev3: ClassTag[slice.S]): E[Map[slice.S, slice.C]] = {
     data
