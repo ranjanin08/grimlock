@@ -385,11 +385,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
     val w = ev2.convert(windows)
 
-    Grouped(data
-      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
-      .groupBy { case (c, r) => c.position }
-      .sortBy { case (c, r) => r }
-      .mapWithValue(value) { case ((k, (c, r)), vo) => (k, (c, r, vo.get)) })
+    data
+      .mapWithValue(value) { case (Cell(p, c), vo) => (Cell(slice.selected(p), c), slice.remainder(p), vo.get) }
+      .groupBy { case (c, r, v) => c.position }
+      .sortBy { case (c, r, v) => r }
       .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
         case (None, (c, r, v)) => Some((w.initialise(slice, v)(c, r), Collection[Cell[slice.S#M]]()))
         case (Some((t, _)), (c, r, v)) => Some(w.present(slice, v)(c, r, t))
