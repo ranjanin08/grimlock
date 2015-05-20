@@ -16,15 +16,19 @@ package au.com.cba.omnia.grimlock.spark
 
 import au.com.cba.omnia.grimlock.framework.{
   Along,
+  AlongType,
   Cell,
   ExpandableMatrix => BaseExpandableMatrix,
   ExpPosDep,
+  Extract,
   Matrix => BaseMatrix,
   Matrixable => BaseMatrixable,
   Nameable => BaseNameable,
   Over,
+  OverType,
   ReduceableMatrix => BaseReduceableMatrix,
   Slice,
+  SliceType,
   Type
 }
 import au.com.cba.omnia.grimlock.framework.aggregate._
