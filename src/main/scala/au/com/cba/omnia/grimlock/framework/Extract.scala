@@ -16,6 +16,8 @@ package au.com.cba.omnia.grimlock.framework
 
 import au.com.cba.omnia.grimlock.framework.position._
 
+// TODO: Document and test these
+
 trait Extract[P <: Position, V, R] extends java.io.Serializable { self =>
   def extract(cell: Cell[P], ext: V): Option[R]
 
@@ -50,6 +52,11 @@ case class ExtractWithDimensionAndKey[D <: Dimension, P <: Position, R](dim: D, 
   def extract(cell: Cell[P], ext: Map[Position1D, Map[Position1D, R]]): Option[R] = {
     ext.get(Position1D(cell.position(dim))).flatMap(_.get(key))
   }
+}
+
+case class ExtractWithSelected[D <: Dimension, P <: Position, S <: Slice[P, D], R](
+  slice: S) extends Extract[P, Map[S#S, R], R] {
+  def extract(cell: Cell[P], ext: Map[S#S, R]): Option[R] = ext.get(slice.selected(cell.position))
 }
 
 case class ExtractWithSlice[D <: Dimension, P <: Position, S <: Slice[P, D], R](

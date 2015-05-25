@@ -57,10 +57,10 @@ case class EnsembleSplit(gbm: String, rf: String, lr: String) extends Partitione
 }
 
 // Sample/Filter a cell if its instance id exists in the map `ext`.
-case class SampleByScore() extends Sampler with SelectWithValue {
+case class SampleByScore() extends SamplerWithValue[Position2D] {
   type V = Map[Position1D, Content]
 
-  def select[P <: Position](cell: Cell[P], ext: V): Boolean = ext.contains(Position1D(cell.position(First)))
+  def selectWithValue(cell: Cell[Position2D], ext: V): Boolean = ext.contains(Position1D(cell.position(First)))
 }
 
 // Simple ensemble(-like) model learning

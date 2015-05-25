@@ -163,24 +163,24 @@ class TestScalding5(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .save("./tmp.scalding/sqs1.out", descriptive=true)
 
   data
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .save("./tmp.scalding/sqs2.out", descriptive=true)
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .saveAsCSV(Over(First), "./tmp.scalding/sqs3.out")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .saveAsCSV(Over(First), "./tmp.scalding/sqs4.out")
 }
 
@@ -209,7 +209,7 @@ class TestScalding6(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
     .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
                               ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
@@ -236,7 +236,7 @@ class TestScalding8(args : Args) extends Job(args) {
 
   data
     .slice(Over(Second), "fid:B", true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .unique
     .save("./tmp.scalding/uniq.out", descriptive=true)
 
@@ -247,21 +247,21 @@ class TestScalding8(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .saveAsCSV(Over(Second), "./tmp.scalding/test.csv")
     .saveAsCSV(Over(First), "./tmp.scalding/tset.csv", writeHeader=false, separator=",")
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .permute(Second, First)
     .save("./tmp.scalding/trs1.out", descriptive=true)
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .save("./tmp.scalding/data.txt")
 }
 
@@ -283,7 +283,7 @@ class TestScalding9(args : Args) extends Job(args) {
   val prt1 = data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .partition(StringPartitioner(Second))
 
   prt1
@@ -303,7 +303,7 @@ class TestScalding9(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .partition(IntTuplePartitioner(Second))
     .save("./tmp.scalding/prt2.out", descriptive=true)
 
@@ -331,14 +331,14 @@ class TestScalding10(args : Args) extends Job(args) {
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .summariseAndExpand(Along(Second), Count("count"))
     .saveAsCSV(Over(Second), "./tmp.scalding/agg2.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .summariseAndExpand(Along(First), List(Count("count"), Moments("mean", "sd", "skewness", "kurtosis"), Min("min"),
       Max("max"), MaxAbs("max.abs")))
     .saveAsCSV(Over(Second), "./tmp.scalding/agg3.csv")
@@ -351,14 +351,15 @@ class TestScalding11(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
+    .transform[Position3D, Transformer[Position3D, Position3D]](
+      Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
     .save("./tmp.scalding/trn2.out", descriptive=true)
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .squash(Third, PreservingMaxPosition())
-    .transform(Binarise(Second))
+    .squash(Third, PreservingMaxPosition[Position3D]())
+    .transform[Position2D, Binarise[Position2D]](Binarise(Second))
     .saveAsCSV(Over(Second), "./tmp.scalding/trn3.out")
 }
 
@@ -369,7 +370,7 @@ class TestScalding12(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
   data
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
     .saveAsCSV(Over(Second), "./tmp.scalding/fll1.out")
 
@@ -385,10 +386,11 @@ class TestScalding13(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
 
   val inds = data
-    .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
+    .transform[Position2D, Transformer[Position2D, Position2D]](
+      Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
     .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
 
   data
@@ -428,15 +430,16 @@ class TestScalding15(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, PreservingMaxPosition())
-    .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
+    .squash(Third, PreservingMaxPosition[Position3D]())
+    .transform[Position2D, Transformer[Position2D, Position2D]](
+      Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
     .saveAsCSV(Over(Second), "./tmp.scalding/trn1.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
     .join(Over(First), inds)
     .saveAsCSV(Over(Second), "./tmp.scalding/jn1.csv")
 }
@@ -445,8 +448,8 @@ class TestScalding16(args : Args) extends Job(args) {
 
   val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
-  case class HashSample() extends Sampler with Select {
-    def select[P <: Position](cell: Cell[P]): Boolean = (cell.position(First).toString.hashCode % 25) == 0
+  case class HashSample() extends Sampler[Position3D] {
+    def select(cell: Cell[Position3D]): Boolean = (cell.position(First).toString.hashCode % 25) == 0
   }
 
   data
@@ -460,30 +463,32 @@ class TestScalding17(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
 
   val stats = data
     .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
     .toMap(Over(First))
 
+  type W = Map[Position1D, Map[Position1D, Content]]
+
   data
-    .transformWithValue(Normalise(
+    .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](Normalise(
       ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, "max.abs")
         .andThenPresent(_.value.asDouble)), stats)
     .saveAsCSV(Over(Second), "./tmp.scalding/trn6.csv")
 
-  case class Sample500() extends Sampler with Select {
-    def select[P <: Position](cell: Cell[P]): Boolean = cell.content.value gtr 500
+  case class Sample500() extends Sampler[Position2D] {
+    def select(cell: Cell[Position2D]): Boolean = cell.content.value gtr 500
   }
 
   data
     .sample(Sample500())
     .saveAsCSV(Over(Second), "./tmp.scalding/flt1.csv")
 
-  case class RemoveGreaterThanMean(dim: Dimension) extends Sampler with SelectWithValue {
+  case class RemoveGreaterThanMean(dim: Dimension) extends SamplerWithValue[Position2D] {
     type V = Map[Position1D, Map[Position1D, Content]]
 
-    def select[P <: Position](cell: Cell[P], ext: V): Boolean = {
+    def selectWithValue(cell: Cell[Position2D], ext: V): Boolean = {
       if (cell.content.schema.kind.isSpecialisationOf(Numerical)) {
         cell.content.value leq ext(Position1D(cell.position(dim)))(Position1D("mean")).value
       } else {
@@ -503,7 +508,7 @@ class TestScalding18(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
 
   val stats = data
     .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
@@ -523,7 +528,7 @@ class TestScalding19(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-    .squash(Third, PreservingMaxPosition())
+    .squash(Third, PreservingMaxPosition[Position3D]())
 
   case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S) extends Partitioner with Assign {
     type T = S
@@ -549,7 +554,9 @@ class TestScalding19(args : Args) extends Job(args) {
     .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
     .names(Over(First))
 
-  val transforms: TransformerWithValue[Position2D, Position2D] { type V >: Map[Position1D, Map[Position1D, Content]] } = List(
+  type W = Map[Position1D, Map[Position1D, Content]]
+
+  val transforms = List(
     Indicator[Position2D]() andThenRename Transformer.rename(Second, "%1$s.ind"),
     Binarise[Position2D](Second),
     Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, "max.abs")
@@ -558,7 +565,8 @@ class TestScalding19(args : Args) extends Job(args) {
   def cb(key: String, pipe: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {
     pipe
       .slice(Over(Second), rem, false)
-      .transformWithValue(transforms, stats.toMap(Over(First)))
+      .transformWithValue[Position2D, List[TransformerWithValue[Position2D, Position2D] { type V >: W }], W](
+        transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
       .saveAsCSV(Over(Second), "./tmp.scalding/pln_" + key + ".csv")
   }
@@ -734,40 +742,49 @@ class TestScalding28(args: Args) extends Job(args) {
     .summariseAndExpand(Along(First), List(Count("count"), Min("min"), Max("max"), Moments("mean", "sd", "skewness")))
     .toMap(Over(First))
 
+  type W = Map[Position1D, List[Double]]
+
   val extractor = ExtractWithDimension[Dimension.Second, Position2D, List[Double]](Second)
 
   data
-    .transformWithValue(Cut(extractor), CutRules.fixed(stats, "min", "max", 4))
+    .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+      Cut(extractor), CutRules.fixed(stats, "min", "max", 4))
     .save("./tmp.scalding/cut1.out")
 
   data
-    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.square"),
-      CutRules.squareRootChoice(stats, "count", "min", "max"))
+    .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+      Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.square"),
+        CutRules.squareRootChoice(stats, "count", "min", "max"))
     .save("./tmp.scalding/cut2.out")
 
   data
-    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.sturges"),
-      CutRules.sturgesFormula(stats, "count", "min", "max"))
+    .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+      Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.sturges"),
+        CutRules.sturgesFormula(stats, "count", "min", "max"))
     .save("./tmp.scalding/cut3.out")
 
   data
-    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.rice"),
-      CutRules.riceRule(stats, "count", "min", "max"))
+    .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+      Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.rice"),
+        CutRules.riceRule(stats, "count", "min", "max"))
     .save("./tmp.scalding/cut4.out")
 
   data
-    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.doane"),
-      CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
+    .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+      Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.doane"),
+        CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
     .save("./tmp.scalding/cut5.out")
 
   data
-    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.scott"),
-      CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
+    .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+      Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.scott"),
+        CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
     .save("./tmp.scalding/cut6.out")
 
   data
-    .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.break"),
-      CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
+    .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+      Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.break"),
+        CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
     .save("./tmp.scalding/cut7.out")
 }
 

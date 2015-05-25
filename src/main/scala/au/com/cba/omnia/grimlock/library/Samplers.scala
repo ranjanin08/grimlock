@@ -29,8 +29,8 @@ import scala.util.Random
  *
  * @note This randomly samples ignoring the position.
  */
-case class RandomSample(ratio: Double, rnd: Random = new Random()) extends Sampler with Select {
-  def select[P <: Position](cell: Cell[P]): Boolean = rnd.nextDouble() < ratio
+case class RandomSample[P <: Position](ratio: Double, rnd: Random = new Random()) extends Sampler[P] {
+  def select(cell: Cell[P]): Boolean = rnd.nextDouble() < ratio
 }
 
 /**
@@ -40,23 +40,25 @@ case class RandomSample(ratio: Double, rnd: Random = new Random()) extends Sampl
  * @param ratio The sample ratio (relative to `base`).
  * @param base  The base of the sampling ratio.
  */
-case class HashSample(dim: Dimension, ratio: Int, base: Int) extends Sampler with Select {
-  def select[P <: Position](cell: Cell[P]): Boolean = math.abs(cell.position(dim).hashCode % base) < ratio
+case class HashSample[P <: Position](dim: Dimension, ratio: Int, base: Int) extends Sampler[P] {
+  def select(cell: Cell[P]): Boolean = math.abs(cell.position(dim).hashCode % base) < ratio
 }
 
 /**
  * Sample to a defined size based on the hash code of a dimension.
  *
- * @param dim  The dimension to sample from.
- * @param size The size to sample to.
+ * @param dim   The dimension to sample from.
+ * @param count Object that will extract, for `cell`, its corresponding number of values.
+ * @param size  The size to sample to.
  */
-case class HashSampleToSize(dim: Dimension, size: Long) extends Sampler with SelectWithValue {
-  type V = Map[Position1D, Content]
+case class HashSampleToSize[P <: Position, W](dim: Dimension, count: Extract[P, W, Double],
+  size: Long) extends SamplerWithValue[P] {
+  type V = W
 
-  def select[P <: Position](cell: Cell[P], ext: V): Boolean = {
-    ext(Position1D(dim.toString)).value.asDouble match {
-      case Some(s) => math.abs(cell.position(dim).hashCode % s) < size
-      case _ => false
+  def selectWithValue(cell: Cell[P], ext: V): Boolean = {
+    count.extract(cell, ext) match {
+      case Some(cnt) => math.abs(cell.position(dim).hashCode % cnt) < size
+      case None => false
     }
   }
 }

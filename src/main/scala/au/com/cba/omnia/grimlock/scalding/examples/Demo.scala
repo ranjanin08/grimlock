@@ -155,15 +155,15 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
     .names(Over(Second))
 
   // Define type of statistics map.
-  type T = Map[Position1D, Map[Position1D, Content]]
+  type W = Map[Position1D, Map[Position1D, Content]]
 
   // Define extract object to get data out of statistics map.
-  def extractor(key: String): Extract[Position2D, T, Double] = {
+  def extractor(key: String): Extract[Position2D, W, Double] = {
     ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, key).andThenPresent(_.value.asDouble)
   }
 
   // List of transformations to apply to each partition.
-  val transforms: TransformerWithValue[Position2D, Position2D] { type V >: T } = List(
+  val transforms = List(
     Clamp(extractor("min"), extractor("max")).andThenWithValue(Standardise(extractor("mean"), extractor("sd"))),
     Binarise[Position2D](Second))
 
@@ -181,11 +181,13 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
       .slice(Over(Second), rem1, false)
 
     val ind = d
-      .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
+      .transform[Position2D, Transformer[Position2D, Position2D]](
+        Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
 
     val csb = d
       .slice(Over(Second), rem2, false)
-      .transformWithValue(transforms, stats.toMap(Over(First)))
+      .transformWithValue[Position2D, List[TransformerWithValue[Position2D, Position2D] { type V >: W }], W](
+        transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
@@ -212,10 +214,10 @@ class Scoring(args: Args) extends Job(args) {
   val weights = load1D(s"${path}/exampleWeights.txt").toMap(Over(First))
 
   // Define type of statistics map.
-  type T = Map[Position1D, Map[Position1D, Content]]
+  type W = Map[Position1D, Map[Position1D, Content]]
 
   // Define extract object to get data out of statistics map.
-  def extractor(key: String): Extract[Position2D, T, Double] = {
+  def extractor(key: String): Extract[Position2D, W, Double] = {
     ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, key).andThenPresent(_.value.asDouble)
   }
 
@@ -223,13 +225,14 @@ class Scoring(args: Args) extends Job(args) {
   //  1/ Create indicators, binarise categorical, and clamp & standardise numerical features;
   //  2/ Compute the scored (as a weighted sum);
   //  3/ Save the results.
-  val transforms: TransformerWithValue[Position2D, Position2D] { type V >: T } = List(
+  val transforms = List(
     Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")),
     Binarise[Position2D](Second),
     Clamp(extractor("min"), extractor("max")).andThenWithValue(Standardise(extractor("mean"), extractor("sd"))))
 
   data
-    .transformWithValue(transforms, stats)
+    .transformWithValue[Position2D, List[TransformerWithValue[Position2D, Position2D] { type V >: W }], W](
+      transforms, stats)
     .summariseWithValue(Over(First), WeightedSum(Second), weights)
     .save(s"./demo.${output}/scores.out")
 }
@@ -290,9 +293,12 @@ class LabelWeighting(args: Args) extends Job(args) {
     ExtractWithKey[Position1D, Content](key).andThenPresent(_.value.asDouble)
   }
 
+  // Type of value
+  type V = Map[Position1D, Content]
+
   // Compute the ratio of (total number of labels) / (count for each label).
   val ratio = histogram
-    .transformWithValue(Fraction(extractor(First.toString), true), sum)
+    .transformWithValue[Position1D, Fraction[Position1D, V], V](Fraction(extractor(First.toString), true), sum)
 
   // Find the minimum ratio, and store the result as a Map.
   val min = ratio
@@ -301,7 +307,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Divide the ratio by the minimum ratio, and store the result as a Map.
   val weights = ratio
-    .transformWithValue(Fraction(extractor("min")), min)
+    .transformWithValue[Position1D, Fraction[Position1D, V], V](Fraction(extractor("min")), min)
     .toMap(Over(First))
 
   case class AddWeight() extends TransformerWithValue[Position2D, Position3D] {
@@ -317,7 +323,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Re-read labels and add the computed weight.
   load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
-    .transformWithValue(AddWeight(), weights)
+    .transformWithValue[Position3D, AddWeight, AddWeight#V](AddWeight(), weights)
     .save(s"./demo.${output}/weighted.out")
 }
 

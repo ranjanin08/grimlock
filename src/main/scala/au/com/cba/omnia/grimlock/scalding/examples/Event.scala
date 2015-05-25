@@ -142,13 +142,13 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
 
   // Read event data, then de-normalises the events and return a 2D matrix (event id x instance id).
   val data = ExampleEvent.load(s"${path}/exampleEvents.txt")
-    .transform(Denormalise())
+    .transform[Position2D, Denormalise](Denormalise())
 
   // For each event, append the word counts to the 3D matrix. The result is a 3D matrix (event id x instance id x word
   // count). Then aggregate out the event id. The result is a 2D matrix (instance x word count) where the counts are
   // the sums over all events.
   val tf = data
-    .transform(WordCounts(stopwords = List()))
+    .transform[Position3D, WordCounts](WordCounts(stopwords = List()))
     .summarise(Along(First), Sum())
 
   // Get the number of instances (i.e. documents)
@@ -156,24 +156,34 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
     .size(First)
     .toMap(Over(First))
 
+  // Type of `n`
+  type N = Map[Position1D, Content]
+
   // Using the number of documents, compute Idf:
   //  1/ Compute document frequency;
   //  2/ Apply Idf transformation (using document count);
   //  3/ Save as Map for use in Tf-Idf below.
   val idf = tf
     .summarise(Along(First), Count())
-    .transformWithValue(Idf(ExtractWithKey[Position1D, Content](First.toString).andThenPresent(_.value.asDouble),
-      (df: Double, n: Double) => math.log10(n / df)), n)
+    .transformWithValue[Position1D, Idf[Position1D, N], N](
+      Idf(ExtractWithKey[Position1D, Content](First.toString).andThenPresent(_.value.asDouble),
+        (df: Double, n: Double) => math.log10(n / df)), n)
     .toMap(Over(First))
+
+  // Type of `idf`
+  type I = Map[Position1D, Content]
 
   // Apply TfIdf to the term frequency matrix with the Idf values, then save the results to file.
   //
   // Uncomment one of the 3 lines below to try different tf-idf versions.
   val tfIdf = tf
-    //.transform(BooleanTf())
-    //.transform(LogarithmicTf())
-    //.transformWithValue(AugmentedTf(First), tf.summarise(Along(Second), Max()).toMap(Over(First)))
-    .transformWithValue(TfIdf(
+    //.transform[Position2D, BooleanTf[Position2D]](BooleanTf())
+    //.transform[Position2D, LogarithmicTf[Position2D]](LogarithmicTf())
+    //.transformWithValue[Position2D, AugmentedTf[Position2D, Map[Position1D, Content]], Map[Position1D, Content]](
+    //  AugmentedTf(ExtractWithDimension[Dimension.First, Position2D, Content](First)
+    //    .andThenPresent(_.value.asDouble)),
+    //  tf.summarise(Along(Second), Max()).toMap(Over[Position1D, Dimension.First](First)))
+    .transformWithValue[Position2D, TfIdf[Position2D, I], I](TfIdf(
       ExtractWithDimension[Dimension.Second, Position2D, Content](Second).andThenPresent(_.value.asDouble)), idf)
     .save(s"./demo.${output}/tfidf_entity.out")
 }

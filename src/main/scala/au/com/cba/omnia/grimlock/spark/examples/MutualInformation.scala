@@ -60,8 +60,8 @@ object MutualInformation {
     //    (instance x feature).
     // 3/ Bucket all continuous variables by rounding them.
     val data = load3DWithDictionary(s"${path}/exampleMutual.txt", Dictionary.load(s"${path}/exampleDictionary.txt"))
-      .squash(Third, PreservingMinPosition())
-      .transform(CeilingBucketing())
+      .squash(Third, PreservingMinPosition[Position3D]())
+      .transform[Position2D, CeilingBucketing](CeilingBucketing())
 
     // Compute sum of marginal entropy
     // 1/ Compute the marginal entropy over the features (second dimension).

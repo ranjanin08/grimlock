@@ -19,6 +19,8 @@ import au.com.cba.omnia.grimlock.framework.{
   Cell,
   ExpandableMatrix => BaseExpandableMatrix,
   ExpPosDep,
+  ExtractWithDimension,
+  ExtractWithKey,
   Matrix => BaseMatrix,
   Matrixable => BaseMatrixable,
   Nameable => BaseNameable,
@@ -150,16 +152,16 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.mapWithValue(value) { case (c, vo) => Cell(renamer(c, vo.get), c.content) }
   }
 
-  def sample[T](samplers: T)(implicit ev: Sampleable[T]): U[Cell[P]] = {
+  def sample[T](samplers: T)(implicit ev: Sampleable[T, P]): U[Cell[P]] = {
     val sampler = ev.convert(samplers)
 
     data.filter { case c => sampler.select(c) }
   }
 
-  def sampleWithValue[T, W](samplers: T, value: E[W])(implicit ev: SampleableWithValue[T, W]): U[Cell[P]] = {
+  def sampleWithValue[T, W](samplers: T, value: E[W])(implicit ev: SampleableWithValue[T, P, W]): U[Cell[P]] = {
     val sampler = ev.convert(samplers)
 
-    data.filterWithValue(value) { case (c, vo) => sampler.select(c, vo.get) }
+    data.filterWithValue(value) { case (c, vo) => sampler.selectWithValue(c, vo.get) }
   }
 
   def set[T](positions: T, value: Content)(implicit ev1: PositionDistributable[T, P, TypedPipe],
@@ -313,12 +315,16 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       })
   }
 
-  def transform[Q <: Position](transformer: Transformer[P, Q]): U[Cell[Q]] = {
+  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[T, P, Q]): U[Cell[Q]] = {
+    val transformer = ev.convert(transformers)
+
     data.flatMap { case c => transformer.present(c).toList }
   }
 
-  def transformWithValue[Q <: Position, W](transformer: TransformerWithValue[P, Q] { type V >: W },
-    value: E[W]): U[Cell[Q]] = {
+  def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
+    implicit ev: TransformableWithValue[T, P, Q, W]): U[Cell[Q]] = {
+    val transformer = ev.convert(transformers)
+
     data.flatMapWithValue(value) { case (c, vo) => transformer.presentWithValue(c, vo.get).toList }
   }
 
@@ -512,19 +518,24 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
       .flatMapWithValue(value) { case ((_, (p, t)), vo) => aggregator.presentSingleWithValue(p, t, vo.get) }
   }
 
-  def squash[D <: Dimension](dim: D, squasher: Squasher with Reduce)(implicit ev: PosDimDep[P, D]): U[Cell[P#L]] = {
+  def squash[D <: Dimension, T](dim: D, squasher: T)(implicit ev1: PosDimDep[P, D],
+    ev2: Squashable[T, P]): U[Cell[P#L]] = {
+    val squash = ev2.convert(squasher)
+
     data
       .groupBy { case c => c.position.remove(dim) }
-      .reduce[Cell[P]] { case (x, y) => squasher.reduce(dim, x, y) }
+      .reduce[Cell[P]] { case (x, y) => squash.reduce(dim, x, y) }
       .map { case (p, c) => Cell(p, c.content) }
   }
 
-  def squashWithValue[D <: Dimension, W](dim: D, squasher: Squasher with ReduceWithValue { type V >: W }, value: E[W])(
-    implicit ev: PosDimDep[P, D]): U[Cell[P#L]] = {
+  def squashWithValue[D <: Dimension, T, W](dim: D, squasher: T, value: E[W])(implicit ev1: PosDimDep[P, D],
+    ev2: SquashableWithValue[T, P, W]): U[Cell[P#L]] = {
+    val squash = ev2.convert(squasher)
+
     data
       .leftCross(value)
       .groupBy { case (c, vo) => c.position.remove(dim) }
-      .reduce[(Cell[P], Option[W])] { case ((x, xvo), (y, yvo)) => (squasher.reduce(dim, x, y, xvo.get), xvo) }
+      .reduce[(Cell[P], Option[W])] { case ((x, xvo), (y, yvo)) => (squash.reduceWithValue(dim, x, y, xvo.get), xvo) }
       .map { case (p, (c, _)) => Cell(p, c.content) }
   }
 }
@@ -551,29 +562,33 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   import au.com.cba.omnia.grimlock.library.window._
 
   def correlation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
-    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = ??? /*{
+    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+
+    type V = Map[Position1D, Content]
 
     val mean = data
       .summarise(slice, Mean())
       .toMap(Over(First))
 
     val centered = data
-      .transform(Subtract(slice.dimension, mean))
+      .transformWithValue[Position2D, Subtract[Position2D, V], V](Subtract(
+        ExtractWithDimension(slice.dimension).andThenPresent((con: Content) => con.value.asDouble)), mean)
 
     val denom = centered
-      .transform(Power(2))
+      .transform[Position2D, Power[Position2D]](Power(2))
       .summarise(slice, Sum())
       .pairwise(Over(First), Times())
-      .transform(SquareRoot())
+      .transform[Position1D, SquareRoot[Position1D]](SquareRoot())
       .toMap(Over(First))
 
     centered
       .pairwise(slice, Times())
       .summarise(Over(First), Sum())
-      .transform(Fraction(First, denom))
-  }*/
+      .transformWithValue(Fraction(
+        ExtractWithDimension[Dimension.First, Position1D, Content](First).andThenPresent(_.value.asDouble)), denom)
+  }
 
   def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
     ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
@@ -593,40 +608,44 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   }
 
   def gini[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
-    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = ??? /*{
+    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
+    type V = Map[Position1D, Content]
+
     def isPositive(d: Double) = d > 0
 
+    val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First).andThenPresent(_.value.asDouble)
+
     val pos = data
-      .transform(Compare(isPositive(_)))
+      .transform[Position2D, Compare[Position2D]](Compare(isPositive(_)))
       .summarise(slice, Sum())
       .toMap(Over(First))
 
     val neg = data
-      .transform(Compare(!isPositive(_)))
+      .transform[Position2D, Compare[Position2D]](Compare(!isPositive(_)))
       .summarise(slice, Sum())
       .toMap(Over(First))
 
     val tpr = data
-      .transform(Compare(isPositive(_)))
+      .transform[Position2D, Compare[Position2D]](Compare(isPositive(_)))
       .window(slice, CumulativeSum())
-      .transform(Fraction(First, pos))
+      .transformWithValue[Position2D, Fraction[Position2D, V], V](Fraction(extractor), pos)
       .window(Over(First), Sliding((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
 
     val fpr = data
-      .transform(Compare(!isPositive(_)))
+      .transform[Position2D, Compare[Position2D]](Compare(!isPositive(_)))
       .window(slice, CumulativeSum())
-      .transform(Fraction(First, neg))
+      .transformWithValue[Position2D, Fraction[Position2D, V], V](Fraction(extractor), neg)
       .window(Over(First), Sliding((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
 
     tpr
       .pairwiseBetween(Along(First), fpr, Times(comparer = Diagonal))
       .summarise(Along(First), Sum())
-      .transform(Subtract("one",
-        ValuePipe(Map(Position1D("one") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1))), true))
-  }*/
+      .transformWithValue[Position1D, Subtract[Position1D, Map[Position1D, Double]], Map[Position1D, Double]](
+        Subtract(ExtractWithKey("one"), true), ValuePipe(Map(Position1D("one") -> 1.0)))
+  }
 }
 
 object Matrix {

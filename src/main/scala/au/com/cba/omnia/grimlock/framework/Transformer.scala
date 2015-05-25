@@ -96,24 +96,6 @@ object Transformer {
     (before: Cell[P], after: Cell[Q]) => after.position.append(name.format(after.position(dim).toShortString,
       before.content.value.toShortString))
   }
-
-  implicit def C2T[P <: Position, Q <: Position](t: (Cell[P]) => Cell[Q]) = {
-    new Transformer[P, Q] { def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t(cell)) }
-  }
-
-  implicit def LC2T[P <: Position, Q <: Position](t: (Cell[P]) => List[Cell[Q]]) = {
-    new Transformer[P, Q] { def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t(cell)) }
-  }
-
-  implicit def CC2T[P <: Position, Q <: Position](t: (Cell[P]) => Collection[Cell[Q]]) = {
-    new Transformer[P, Q] { def present(cell: Cell[P]): Collection[Cell[Q]] = t(cell) }
-  }
-
-  implicit def LT2T[P <: Position, Q <: Position, T <: Transformer[P, Q]](t: List[T]) = {
-    new Transformer[P, Q] {
-      def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t.flatMap { case s => s.present(cell).toList })
-    }
-  }
 }
 
 /** Base trait for transformations from `P` to `Q` that use a user supplied value. */
@@ -199,37 +181,137 @@ object TransformerWithValue {
     (before: Cell[P], after: Cell[Q], ext: V) => after.position.append(name.format(after.position(dim).toShortString,
       before.content.value.toShortString))
   }
+}
 
-  implicit def C2TWV[P <: Position, Q <: Position, W](t: (Cell[P], W) => Cell[Q]) = {
-    new TransformerWithValue[P, Q] {
-      type V = W
+/** Type class for transforming a type `T` to a `Transformer[P, Q]`. */
+trait Transformable[T, P <: Position, Q <: Position] {
+  /**
+   * Returns a `Transformer[P, Q]` for type `T`.
+   *
+   * @param t Object that can be converted to a `Transformer[P, Q]`.
+   */
+  def convert(t: T): Transformer[P, Q]
+}
 
-      def presentWithValue(cell: Cell[P], ext: W): Collection[Cell[Q]] = Collection(t(cell, ext))
+/** Companion object for the `Transformable` type class. */
+object Transformable {
+  /** Converts a `(Cell[P]) => Cell[Q]` to a `Transformer[P, Q]`. */
+  implicit def C2T[P <: Position, Q <: Position]: Transformable[(Cell[P]) => Cell[Q], P, Q] = {
+    new Transformable[(Cell[P]) => Cell[Q], P, Q] {
+      def convert(t: (Cell[P]) => Cell[Q]): Transformer[P, Q] = {
+        new Transformer[P, Q] { def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t(cell)) }
+      }
     }
   }
 
-  implicit def LC2TWV[P <: Position, Q <: Position, W](t: (Cell[P], W) => List[Cell[Q]]) = {
-    new TransformerWithValue[P, Q] {
-      type V = W
-
-      def presentWithValue(cell: Cell[P], ext: W): Collection[Cell[Q]] = Collection(t(cell, ext))
+  /** Converts a `(Cell[P]) => List[Cell[Q]]` to a `Transformer[P, Q]`. */
+  implicit def LC2T[P <: Position, Q <: Position]: Transformable[(Cell[P]) => List[Cell[Q]], P, Q] = {
+    new Transformable[(Cell[P]) => List[Cell[Q]], P, Q] {
+      def convert(t: (Cell[P]) => List[Cell[Q]]): Transformer[P, Q] = {
+        new Transformer[P, Q] { def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t(cell)) }
+      }
     }
   }
 
-  implicit def CC2TWV[P <: Position, Q <: Position, W](t: (Cell[P], W) => Collection[Cell[Q]]) = {
-    new TransformerWithValue[P, Q] {
-      type V = W
-
-      def presentWithValue(cell: Cell[P], ext: W): Collection[Cell[Q]] = t(cell, ext)
+  /** Converts a `(Cell[P]) => Collection[Cell[Q]]` to a `Transformer[P, Q]`. */
+  implicit def CC2T[P <: Position, Q <: Position]: Transformable[(Cell[P]) => Collection[Cell[Q]], P, Q] = {
+    new Transformable[(Cell[P]) => Collection[Cell[Q]], P, Q] {
+      def convert(t: (Cell[P]) => Collection[Cell[Q]]): Transformer[P, Q] = {
+        new Transformer[P, Q] { def present(cell: Cell[P]): Collection[Cell[Q]] = t(cell) }
+      }
     }
   }
 
-  implicit def LT2TWV[P <: Position, Q <: Position, T <: TransformerWithValue[P, Q] { type V >: W}, W](t: List[T]) = {
-    new TransformerWithValue[P, Q] {
-      type V = W
+  /** Converts a `Transformer[P, Q]` to a `Transformer[P, Q]`; that is, it is a pass through. */
+  implicit def T2T[P <: Position, Q <: Position, T <: Transformer[P, Q]]: Transformable[T, P, Q] = {
+    new Transformable[T, P, Q] { def convert(t: T): Transformer[P, Q] = t }
+  }
 
-      def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[Q]] = {
-        Collection(t.flatMap { case s => s.presentWithValue(cell, ext).toList })
+  /** Converts a `List[Transformer[P, Q]]` to a single `Transformer[P, Q]`. */
+  implicit def LT2T[P <: Position, Q <: Position, T <: Transformer[P, Q]]: Transformable[List[T], P, Q] = {
+    new Transformable[List[T], P, Q] {
+      def convert(t: List[T]): Transformer[P, Q] = {
+        new Transformer[P, Q] {
+          def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t.flatMap { case s => s.present(cell).toList })
+        }
+      }
+    }
+  }
+}
+
+/** Type class for transforming a type `T` to a `TransformerWithValue[P, Q]`. */
+trait TransformableWithValue[T, P <: Position, Q <: Position, W] {
+  /**
+   * Returns a `TransformerWithValue[P, Q]` for type `T`.
+   *
+   * @param t Object that can be converted to a `TransformerWithValue[P, Q]`.
+   */
+  def convert(t: T): TransformerWithValue[P, Q] { type V >: W }
+}
+
+/** Companion object for the `TransformableWithValue` type class. */
+object TransformableWithValue {
+  /** Converts a `(Cell[P], W) => Cell[Q]` to a `TransformerWithValue[P, Q] { type V >: W }`. */
+  implicit def CWC2TWV[P <: Position, Q <: Position, W]: TransformableWithValue[(Cell[P], W) => Cell[Q], P, Q, W] = {
+    new TransformableWithValue[(Cell[P], W) => Cell[Q], P, Q, W] {
+      def convert(t: (Cell[P], W) => Cell[Q]): TransformerWithValue[P, Q] { type V >: W } = {
+        new TransformerWithValue[P, Q] {
+          type V = W
+
+          def presentWithValue(cell: Cell[P], ext: W): Collection[Cell[Q]] = Collection(t(cell, ext))
+        }
+      }
+    }
+  }
+
+  /** Converts a `(Cell[P], W) => List[Cell[Q]]` to a `TransformerWithValue[P, Q] { type V >: W }`. */
+  implicit def CWLC2TWV[P <: Position, Q <: Position, W]: TransformableWithValue[(Cell[P], W) => List[Cell[Q]], P, Q, W] = {
+    new TransformableWithValue[(Cell[P], W) => List[Cell[Q]], P, Q, W] {
+      def convert(t: (Cell[P], W) => List[Cell[Q]]): TransformerWithValue[P, Q] { type V >: W } = {
+        new TransformerWithValue[P, Q] {
+          type V = W
+
+          def presentWithValue(cell: Cell[P], ext: W): Collection[Cell[Q]] = Collection(t(cell, ext))
+        }
+      }
+    }
+  }
+
+  /** Converts a `(Cell[P], W) => Collection[Cell[Q]]` to a `TransformerWithValue[P, Q] { type V >: W }`. */
+  implicit def CWCC2TWV[P <: Position, Q <: Position, W]: TransformableWithValue[(Cell[P], W) => Collection[Cell[Q]], P, Q, W] = {
+    new TransformableWithValue[(Cell[P], W) => Collection[Cell[Q]], P, Q, W] {
+      def convert(t: (Cell[P], W) => Collection[Cell[Q]]): TransformerWithValue[P, Q] { type V >: W } = {
+        new TransformerWithValue[P, Q] {
+          type V = W
+
+          def presentWithValue(cell: Cell[P], ext: W): Collection[Cell[Q]] = t(cell, ext)
+        }
+      }
+    }
+  }
+
+  /**
+   * Converts a `TransformerWithValue[P, Q] { type V >: W }` to a `TransformerWithValue[P, Q] { type V >: W }`;
+   * that is, it is a pass through.
+   */
+  implicit def T2TWV[P <: Position, Q <: Position, T <: TransformerWithValue[P, Q] { type V >: W }, W]: TransformableWithValue[T, P, Q, W] = {
+    new TransformableWithValue[T, P, Q, W] { def convert(t: T): TransformerWithValue[P, Q] { type V >: W } = t }
+  }
+
+  /**
+   * Converts a `List[TransformerWithValue[P, Q] { type V >: W }]` to a single
+   * `TransformerWithValue[P, Q] { type V >: W }`.
+   */
+  implicit def LT2TWV[P <: Position, Q <: Position, T <: TransformerWithValue[P, Q] { type V >: W }, W]: TransformableWithValue[List[T], P, Q, W] = {
+    new TransformableWithValue[List[T], P, Q, W] {
+      def convert(t: List[T]): TransformerWithValue[P, Q] { type V >: W } = {
+        new TransformerWithValue[P, Q] {
+          type V = W
+
+          def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[Q]] = {
+            Collection(t.flatMap { case s => s.presentWithValue(cell, ext).toList })
+          }
+        }
       }
     }
   }

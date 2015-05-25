@@ -173,24 +173,24 @@ object TestSpark5 {
     data
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), "iid:0221707", true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .save("./tmp.spark/sqs1.out", descriptive=true)
 
     data
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .save("./tmp.spark/sqs2.out", descriptive=true)
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .saveAsCSV(Over(First), "./tmp.spark/sqs3.out")
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .saveAsCSV(Over(First), "./tmp.spark/sqs4.out")
   }
 }
@@ -221,7 +221,7 @@ object TestSpark6 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
       .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
                                 ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
@@ -252,7 +252,7 @@ object TestSpark8 {
 
     data
       .slice(Over(Second), "fid:B", true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .unique
       .save("./tmp.spark/uniq.out", descriptive=true)
 
@@ -263,21 +263,21 @@ object TestSpark8 {
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .saveAsCSV(Over(Second), "./tmp.spark/test.csv")
       .saveAsCSV(Over(First), "./tmp.spark/tset.csv", writeHeader=false, separator=",")
 
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .permute(Second, First)
       .save("./tmp.spark/trs1.out", descriptive=true)
 
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .save("./tmp.spark/data.txt")
   }
 }
@@ -301,7 +301,7 @@ object TestSpark9 {
     val prt1 = data
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .partition(StringPartitioner(Second))
 
     prt1
@@ -321,7 +321,7 @@ object TestSpark9 {
     data
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .partition(IntTuplePartitioner(Second))
       .save("./tmp.spark/prt2.out", descriptive=true)
 
@@ -351,14 +351,14 @@ object TestSpark10 {
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .summariseAndExpand(Along(Second), Count("count"))
       .saveAsCSV(Over(Second), "./tmp.spark/agg2.csv")
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .summariseAndExpand(Along(First), List(Count("count"), Moments("mean", "sd", "skewness", "kurtosis"), Min("min"),
         Max("max"), MaxAbs("max.abs")))
       .saveAsCSV(Over(Second), "./tmp.spark/agg3.csv")
@@ -373,14 +373,15 @@ object TestSpark11 {
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
+      .transform[Position3D, Transformer[Position3D, Position3D]](
+        Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
       .save("./tmp.spark/trn2.out", descriptive=true)
 
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
-      .transform(Binarise(Second))
+      .squash(Third, PreservingMaxPosition[Position3D]())
+      .transform[Position2D, Binarise[Position2D]](Binarise(Second))
       .saveAsCSV(Over(Second), "./tmp.spark/trn3.out")
   }
 }
@@ -393,7 +394,7 @@ object TestSpark12 {
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
     data
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
       .saveAsCSV(Over(Second), "./tmp.spark/fll1.out")
 
@@ -411,10 +412,11 @@ object TestSpark13 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
 
     val inds = data
-      .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
+      .transform[Position2D, Transformer[Position2D, Position2D]](
+        Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
 
     data
@@ -458,15 +460,16 @@ object TestSpark15 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
-      .transform(Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
+      .squash(Third, PreservingMaxPosition[Position3D]())
+      .transform[Position2D, Transformer[Position2D, Position2D]](
+        Indicator() andThenRename Transformer.rename(Second, "%1$s.ind"))
       .saveAsCSV(Over(Second), "./tmp.spark/trn1.csv")
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .join(Over(First), inds)
       .saveAsCSV(Over(Second), "./tmp.spark/jn1.csv")
   }
@@ -477,8 +480,8 @@ object TestSpark16 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
-    case class HashSample() extends Sampler with Select {
-      def select[P <: Position](cell: Cell[P]): Boolean = (cell.position(First).toString.hashCode % 25) == 0
+    case class HashSample() extends Sampler[Position3D] {
+      def select(cell: Cell[Position3D]): Boolean = (cell.position(First).toString.hashCode % 25) == 0
     }
 
     data
@@ -494,30 +497,32 @@ object TestSpark17 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
 
     val stats = data
       .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
       .toMap(Over(First))
 
+    type W = Map[Position1D, Map[Position1D, Content]]
+
     data
-      .transformWithValue(Normalise(
+      .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](Normalise(
         ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, "max.abs")
           .andThenPresent(_.value.asDouble)), stats)
       .saveAsCSV(Over(Second), "./tmp.spark/trn6.csv")
 
-    case class Sample500() extends Sampler with Select {
-      def select[P <: Position](cell: Cell[P]): Boolean = cell.content.value gtr 500
+    case class Sample500() extends Sampler[Position2D] {
+      def select(cell: Cell[Position2D]): Boolean = cell.content.value gtr 500
     }
 
     data
       .sample(Sample500())
       .saveAsCSV(Over(Second), "./tmp.spark/flt1.csv")
 
-    case class RemoveGreaterThanMean(dim: Dimension) extends Sampler with SelectWithValue {
+    case class RemoveGreaterThanMean(dim: Dimension) extends SamplerWithValue[Position2D] {
       type V = Map[Position1D, Map[Position1D, Content]]
 
-      def select[P <: Position](cell: Cell[P], ext: V): Boolean = {
+      def selectWithValue(cell: Cell[Position2D], ext: V): Boolean = {
         if (cell.content.schema.kind.isSpecialisationOf(Numerical)) {
           cell.content.value leq ext(Position1D(cell.position(dim)))(Position1D("mean")).value
         } else {
@@ -539,7 +544,7 @@ object TestSpark18 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
 
     val stats = data
       .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
@@ -561,7 +566,7 @@ object TestSpark19 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
 
     case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S) extends Partitioner with Assign {
       type T = S
@@ -587,7 +592,9 @@ object TestSpark19 {
       .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
       .names(Over(First))
 
-    val transforms: TransformerWithValue[Position2D, Position2D] { type V >: Map[Position1D, Map[Position1D, Content]] } = List(
+    type W = Map[Position1D, Map[Position1D, Content]]
+
+    val transforms = List(
       Indicator[Position2D]() andThenRename Transformer.rename(Second, "%1$s.ind"),
       Binarise[Position2D](Second),
       Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, "max.abs")
@@ -596,7 +603,8 @@ object TestSpark19 {
     def cb(key: String, pipe: RDD[Cell[Position2D]]): RDD[Cell[Position2D]] = {
       pipe
         .slice(Over(Second), rem, false)
-        .transformWithValue(transforms, stats.toMap(Over(First)))
+        .transformWithValue[Position2D, List[TransformerWithValue[Position2D, Position2D] { type V >: W }], W](
+          transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
         .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
         .saveAsCSV(Over(Second), "./tmp.spark/pln_" + key + ".csv")
     }
@@ -720,10 +728,6 @@ object TestSpark24 {
     data2
       .correlation(Over(Second))
       .save("./tmp.spark/pws3.out")
-
-    load3D(args(1) + "/somePairwise4.txt")
-      .correlation(Along(Third))
-      .save("./tmp.spark/pws4.out")
   }
 }
 
@@ -798,40 +802,49 @@ object TestSpark28 {
       .summariseAndExpand(Along(First), List(Count("count"), Min("min"), Max("max"), Moments("mean", "sd", "skewness")))
       .toMap(Over(First))
 
+    type W = Map[Position1D, List[Double]]
+
     val extractor = ExtractWithDimension[Dimension.Second, Position2D, List[Double]](Second)
 
     data
-      .transformWithValue(Cut(extractor), CutRules.fixed(stats, "min", "max", 4))
+      .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+        Cut(extractor), CutRules.fixed(stats, "min", "max", 4))
       .save("./tmp.spark/cut1.out")
 
     data
-      .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.square"),
-        CutRules.squareRootChoice(stats, "count", "min", "max"))
+      .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+        Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.square"),
+          CutRules.squareRootChoice(stats, "count", "min", "max"))
       .save("./tmp.spark/cut2.out")
 
     data
-      .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.sturges"),
-        CutRules.sturgesFormula(stats, "count", "min", "max"))
+      .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+        Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.sturges"),
+          CutRules.sturgesFormula(stats, "count", "min", "max"))
       .save("./tmp.spark/cut3.out")
 
     data
-      .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.rice"),
-        CutRules.riceRule(stats, "count", "min", "max"))
+      .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+        Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.rice"),
+          CutRules.riceRule(stats, "count", "min", "max"))
       .save("./tmp.spark/cut4.out")
 
     data
-      .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.doane"),
-        CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
+      .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+        Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.doane"),
+          CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
       .save("./tmp.spark/cut5.out")
 
     data
-      .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.scott"),
-        CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
+      .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+        Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.scott"),
+          CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
       .save("./tmp.spark/cut6.out")
 
     data
-      .transformWithValue(Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.break"),
-        CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
+      .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+        Cut(extractor) andThenRenameWithValue TransformerWithValue.rename(Second, "%s.break"),
+          CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
       .save("./tmp.spark/cut7.out")
   }
 }

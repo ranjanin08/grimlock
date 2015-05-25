@@ -433,22 +433,22 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
    *
-   * @param samplers Sampling function(s).
+   * @param sampler Sampling function(s).
    *
    * @return A `U[Cell[P]]` with the sampled cells.
    */
-  def sample[T](samplers: T)(implicit ev: Sampleable[T]): U[Cell[P]]
+  def sample[T](samplers: T)(implicit ev: Sampleable[T, P]): U[Cell[P]]
 
   /**
    * Sample a matrix according to some `sampler` using a user supplied value. It keeps only those cells for which
    * `sampler` returns true.
    *
-   * @param samplers Sampling function(s).
-   * @param value    A `E` holding a user supplied value.
+   * @param sampler Sampling function(s).
+   * @param value   A `E` holding a user supplied value.
    *
    * @return A `U[Cell[P]]` with the sampled cells.
    */
-  def sampleWithValue[T, V](samplers: T, value: E[V])(implicit ev: SampleableWithValue[T, V]): U[Cell[P]]
+  def sampleWithValue[T, W](samplers: T, value: E[W])(implicit ev: SampleableWithValue[T, P, W]): U[Cell[P]]
 
   /**
    * Set `value` as the content for all `positions` in a matrix.
@@ -572,22 +572,22 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Transform the content of a matrix.
    *
-   * @param transformer The transformer to apply to the content.
+   * @param transformers The transformer(s) to apply to the content.
    *
    * @return A `U[Cell[Q]]` with the transformed cells.
    */
-  def transform[Q <: Position](transformer: Transformer[P, Q]): U[Cell[Q]]
+  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[T, P, Q]): U[Cell[Q]]
 
   /**
    * Transform the content of a matrix using a user supplied value.
    *
-   * @param transformer The transformer to apply to the content.
-   * @param value       A `E` holding a user supplied value.
+   * @param transformers The transformer(s) to apply to the content.
+   * @param value        A `E` holding a user supplied value.
    *
    * @return A `U[Cell[P]]` with the transformed cells.
    */
-  def transformWithValue[Q <: Position, W](transformer: TransformerWithValue[P, Q] { type V >: W },
-    value: E[W]): U[Cell[Q]]
+  def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
+    implicit ev: TransformableWithValue[T, P, Q, W]): U[Cell[Q]]
 
   /**
    * Returns the variable type of the content(s) for a given `slice`.
@@ -758,7 +758,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squash[D <: Dimension](dim: D, squasher: Squasher with Reduce)(implicit ev: PosDimDep[P, D]): U[Cell[P#L]]
+  def squash[D <: Dimension, T](dim: D, squasher: T)(implicit ev1: PosDimDep[P, D], ev2: Squashable[T, P]): U[Cell[P#L]]
 
   /**
    * Squash a dimension of a matrix with a user supplied value.
@@ -769,8 +769,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squashWithValue[D <: Dimension, W](dim: D, squasher: Squasher with ReduceWithValue { type V >: W },
-    value: E[W])(implicit ev: PosDimDep[P, D]): U[Cell[P#L]]
+  def squashWithValue[D <: Dimension, T, W](dim: D, squasher: T, value: E[W])(implicit ev1: PosDimDep[P, D],
+    ev2: SquashableWithValue[T, P, W]): U[Cell[P#L]]
 }
 
 /** Base trait for methods that expands the number of dimension of a matrix. */

@@ -20,16 +20,22 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.squash._
 
 /** Reduce two cells preserving the cell with maximal value for the coordinate of the dimension being squashed. */
-case class PreservingMaxPosition() extends Squasher with Reduce {
-  def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
+case class PreservingMaxPosition[P <: Position]() extends Squasher[P] {
+  def reduce(dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
     if (Value.Ordering.compare(x.position(dim), y.position(dim)) > 0) { x } else { y }
   }
 }
 
 /** Reduce two cells preserving the cell with minimal value for the coordinate of the dimension being squashed. */
-case class PreservingMinPosition() extends Squasher with Reduce {
-  def reduce[P <: Position](dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
+case class PreservingMinPosition[P <: Position]() extends Squasher[P] {
+  def reduce(dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
     if (Value.Ordering.compare(x.position(dim), y.position(dim)) < 0) { x } else { y }
   }
+}
+
+/** Reduce two cells preserving the cell whose coordinate matches `keep`. */
+// TODO: Test this
+case class KeepSlice[P <: Position](keep: Value) extends Squasher[P] {
+  def reduce(dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = if (x.position(dim) equ keep) { x } else { y }
 }
 
