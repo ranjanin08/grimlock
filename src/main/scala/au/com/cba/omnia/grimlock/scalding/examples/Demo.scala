@@ -102,11 +102,9 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
 
   // Define a custom partition. If the instance is 'iid:0364354' or 'iid:0216406' then assign it to the right (test)
   // partition. In all other cases assing it to the left (train) partition.
-  case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S) extends Partitioner with Assign {
-    type T = S
-
-    def assign[P <: Position](pos: P): Collection[T] = {
-      if (pos(dim).toShortString == "iid:0364354" || pos(dim).toShortString == "iid:0216406") {
+  case class CustomPartition(dim: Dimension, left: String, right: String) extends Partitioner[Position2D, String] {
+    def assign(cell: Cell[Position2D]): Collection[String] = {
+      if (cell.position(dim).toShortString == "iid:0364354" || cell.position(dim).toShortString == "iid:0216406") {
         Collection(right)
       } else {
         Collection(left)
@@ -116,7 +114,7 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
 
   // Perform a split of the data into a training and test set.
   val parts = data
-    .partition(CustomPartition(First, "train", "test"))
+    .split[String, CustomPartition](CustomPartition(First, "train", "test"))
 
   // Compute statistics on the training data. The results are written to file.
   val statistics = List(

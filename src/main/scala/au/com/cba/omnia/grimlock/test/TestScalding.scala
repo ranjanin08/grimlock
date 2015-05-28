@@ -269,11 +269,9 @@ class TestScalding9(args : Args) extends Job(args) {
 
   val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
-  case class StringPartitioner(dim: Dimension) extends Partitioner with Assign {
-    type T = String
-
-    def assign[P <: Position](pos: P): Collection[T] = {
-      Collection(List(pos(dim) match {
+  case class StringPartitioner(dim: Dimension) extends Partitioner[Position2D, String] {
+    def assign(cell: Cell[Position2D]): Collection[String] = {
+      Collection(List(cell.position(dim) match {
         case StringValue("fid:A") => "training"
         case StringValue("fid:B") => "testing"
       }, "scoring"))
@@ -284,16 +282,14 @@ class TestScalding9(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .partition(StringPartitioner(Second))
+    .split[String, StringPartitioner](StringPartitioner(Second))
 
   prt1
     .save("./tmp.scalding/prt1.out", descriptive=true)
 
-  case class IntTuplePartitioner(dim: Dimension) extends Partitioner with Assign {
-    type T = (Int, Int, Int)
-
-    def assign[P <: Position](pos: P): Collection[T] = {
-      Collection(List(pos(dim) match {
+  case class IntTuplePartitioner(dim: Dimension) extends Partitioner[Position2D, (Int, Int, Int)] {
+    def assign(cell: Cell[Position2D]): Collection[(Int, Int, Int)] = {
+      Collection(List(cell.position(dim) match {
         case StringValue("fid:A") => (1, 0, 0)
         case StringValue("fid:B") => (0, 1, 0)
       }, (0, 0, 1)))
@@ -304,7 +300,7 @@ class TestScalding9(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .partition(IntTuplePartitioner(Second))
+    .split[(Int, Int, Int), IntTuplePartitioner](IntTuplePartitioner(Second))
     .save("./tmp.scalding/prt2.out", descriptive=true)
 
   prt1
@@ -530,21 +526,20 @@ class TestScalding19(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
 
-  case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S) extends Partitioner with Assign {
-    type T = S
+  case class CustomPartition(dim: Dimension, left: String, right: String) extends Partitioner[Position2D, String] {
+    val bhs = BinaryHashSplit[Position2D, String](dim, 7, left, right, base=10)
 
-    val bhs = BinaryHashSplit(dim, 7, left, right, base=10)
-    def assign[P <: Position](pos: P): Collection[T] = {
-      if (pos(dim).toShortString == "iid:0364354") {
+    def assign(cell: Cell[Position2D]): Collection[String] = {
+      if (cell.position(dim).toShortString == "iid:0364354") {
         Collection(right)
       } else {
-        bhs.assign(pos)
+        bhs.assign(cell)
       }
     }
   }
 
   val parts = raw
-    .partition(CustomPartition(First, "train", "test"))
+    .split[String, CustomPartition](CustomPartition(First, "train", "test"))
 
   val stats = parts
     .get("train")
@@ -606,7 +601,7 @@ class TestScalding22(args : Args) extends Job(args) {
 
   val data = load2D(args("path") + "/numericInputfile.txt")
 
-  case class Diff() extends Windowed with Initialise {
+  case class Diff() extends Window with Initialise {
     type T = Cell[Position]
 
     def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
@@ -624,11 +619,11 @@ class TestScalding22(args : Args) extends Job(args) {
   }
 
   data
-    .window(Over(First), Diff())
+    .slide(Over(First), Diff())
     .save("./tmp.scalding/dif1.out")
 
   data
-    .window(Over(Second), Diff())
+    .slide(Over(Second), Diff())
     .permute(Second, First)
     .save("./tmp.scalding/dif2.out")
 }
@@ -701,33 +696,33 @@ class TestScalding27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .window(Over(Second), SimpleMovingAverage(5))
+    .slide(Over(Second), SimpleMovingAverage(5))
     .save("./tmp.scalding/sma1.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .window(Over(Second), SimpleMovingAverage(5, all=true))
+    .slide(Over(Second), SimpleMovingAverage(5, all=true))
     .save("./tmp.scalding/sma2.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .window(Over(Second), CenteredMovingAverage(2))
+    .slide(Over(Second), CenteredMovingAverage(2))
     .save("./tmp.scalding/tma.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .window(Over(Second), WeightedMovingAverage(5))
+    .slide(Over(Second), WeightedMovingAverage(5))
     .save("./tmp.scalding/wma1.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .window(Over(Second), WeightedMovingAverage(5, all=true))
+    .slide(Over(Second), WeightedMovingAverage(5, all=true))
     .save("./tmp.scalding/wma2.out")
 
   // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
   load1D(args("path") + "/cumMovAvgInputfile.txt")
-    .window(Along(First), CumulativeMovingAverage())
+    .slide(Along(First), CumulativeMovingAverage())
     .save("./tmp.scalding/cma.out")
 
   // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
   load1D(args("path") + "/expMovAvgInputfile.txt")
-    .window(Along(First), ExponentialMovingAverage(0.33))
+    .slide(Along(First), ExponentialMovingAverage(0.33))
     .save("./tmp.scalding/ema.out")
 }
 

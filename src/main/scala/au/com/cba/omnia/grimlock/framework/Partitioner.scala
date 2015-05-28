@@ -20,42 +20,36 @@ import au.com.cba.omnia.grimlock.framework.utility._
 
 import scala.reflect.ClassTag
 
-/** Base trait for partitioning operations. */
-trait Partitioner {
-  /** Type of the partition assignments. */
-  type T
-}
-
 /** Base trait for partitioners. */
-trait Assign extends AssignWithValue { self: Partitioner =>
+trait Partitioner[P <: Position, T] extends PartitionerWithValue[P, T] {
   type V = Any
 
-  def assign[P <: Position](pos: P, ext: V): Collection[T] = assign(pos)
+  def assignWithValue(cell: Cell[P], ext: V): Collection[T] = assign(cell)
 
   /**
    * Assign the cell to a partition.
    *
-   * @param pos The position of the content.
+   * @param cell The cell to assign to a partition.
    *
    * @return Optional of either a `T` or a `List[T]`, where the instances of `T` identify the partitions.
    */
-  def assign[P <: Position](pos: P): Collection[T]
+  def assign(cell: Cell[P]): Collection[T]
 }
 
 /** Base trait for partitioners that use a user supplied value. */
-trait AssignWithValue { self: Partitioner =>
+trait PartitionerWithValue[P <: Position, T] {
   /** Type of the external value. */
   type V
 
   /**
    * Assign the cell to a partition using a user supplied value.
    *
-   * @param pos The position of the content.
+   * @param cell The cell to assign to a partition.
    * @param ext The user supplied value.
    *
    * @return Optional of either a `T` or a `List[T]`, where the instances of `T` identify the partitions.
    */
-  def assign[P <: Position](pos: P, ext: V): Collection[T]
+  def assignWithValue(cell: Cell[P], ext: V): Collection[T]
 }
 
 /** Base trait that represents the partitions of matrices */
@@ -115,6 +109,140 @@ trait Partitions[T, P <: Position] {
 
   protected def toString(t: (T, Cell[P]), separator: String, descriptive: Boolean): String = {
     t._1.toString + separator + t._2.toString(separator, descriptive)
+  }
+}
+
+/** Type class for transforming a type `T` to a `Partitioner[P, S]`. */
+trait Partitionable[T, P <: Position, S] {
+  /**
+   * Returns a `Partitioner[P, S]` for type `T`.
+   *
+   * @param t Object that can be converted to a `Partitioner[P, S]`.
+   */
+  def convert(t: T): Partitioner[P, S]
+}
+
+/** Companion object for the `Partitionable` type class. */
+object Partitionable {
+  /** Converts a `(Cell[P]) => S` to a `Partitioner[P, S]`. */
+  implicit def C2P[P <: Position, S]: Partitionable[(Cell[P]) => S, P, S] = {
+    new Partitionable[(Cell[P]) => S, P, S] {
+      def convert(t: (Cell[P]) => S): Partitioner[P, S] = {
+        new Partitioner[P, S] { def assign(cell: Cell[P]): Collection[S] = Collection(t(cell)) }
+      }
+    }
+  }
+
+  /** Converts a `(Cell[P]) => List[S]` to a `Partitioner[P, S]`. */
+  implicit def LC2P[P <: Position, S]: Partitionable[(Cell[P]) => List[S], P, S] = {
+    new Partitionable[(Cell[P]) => List[S], P, S] {
+      def convert(t: (Cell[P]) => List[S]): Partitioner[P, S] = {
+        new Partitioner[P, S] { def assign(cell: Cell[P]): Collection[S] = Collection(t(cell)) }
+      }
+    }
+  }
+
+  /** Converts a `(Cell[P]) => Collection[S]` to a `Partitioner[P, S]`. */
+  implicit def CC2P[P <: Position, S]: Partitionable[(Cell[P]) => Collection[S], P, S] = {
+    new Partitionable[(Cell[P]) => Collection[S], P, S] {
+      def convert(t: (Cell[P]) => Collection[S]): Partitioner[P, S] = {
+        new Partitioner[P, S] { def assign(cell: Cell[P]): Collection[S] = t(cell) }
+      }
+    }
+  }
+
+  /** Converts a `Partitioner[P, S]` to a `Partitioner[P, S]`; that is, it is a pass through. */
+  implicit def P2P[P <: Position, S, T <: Partitioner[P, S]]: Partitionable[T, P, S] = {
+    new Partitionable[T, P, S] { def convert(t: T): Partitioner[P, S] = t }
+  }
+
+  /** Converts a `List[Partitioner[P, S]]` to a single `Partitioner[P, S]`. */
+  implicit def LP2P[P <: Position, S, T <: Partitioner[P, S]]: Partitionable[List[T], P, S] = {
+    new Partitionable[List[T], P, S] {
+      def convert(t: List[T]): Partitioner[P, S] = {
+        new Partitioner[P, S] {
+          def assign(cell: Cell[P]): Collection[S] = Collection(t.flatMap { case s => s.assign(cell).toList })
+        }
+      }
+    }
+  }
+}
+
+/** Type class for transforming a type `T` to a `PartitionerWithValue[P, S]`. */
+trait PartitionableWithValue[T, P <: Position, S, W] {
+  /**
+   * Returns a `PartitionerWithValue[P, S]` for type `T`.
+   *
+   * @param t Object that can be converted to a `PartitionerWithValue[P, S]`.
+   */
+  def convert(t: T): PartitionerWithValue[P, S] { type V >: W }
+}
+
+/** Companion object for the `PartitionableWithValue` type class. */
+object PartitionableWithValue {
+  /** Converts a `(Cell[P], W) => S` to a `PartitionerWithValue[P, S] { type V >: W }`. */
+  implicit def CWS2PWV[P <: Position, S, W]: PartitionableWithValue[(Cell[P], W) => S, P, S, W] = {
+    new PartitionableWithValue[(Cell[P], W) => S, P, S, W] {
+      def convert(t: (Cell[P], W) => S): PartitionerWithValue[P, S] { type V >: W } = {
+        new PartitionerWithValue[P, S] {
+          type V = W
+
+          def assignWithValue(cell: Cell[P], ext: W): Collection[S] = Collection(t(cell, ext))
+        }
+      }
+    }
+  }
+
+  /** Converts a `(Cell[P], W) => List[S]` to a `PartitionerWithValue[P, S] { type V >: W }`. */
+  implicit def CWLS2PWV[P <: Position, S, W]: PartitionableWithValue[(Cell[P], W) => List[S], P, S, W] = {
+    new PartitionableWithValue[(Cell[P], W) => List[S], P, S, W] {
+      def convert(t: (Cell[P], W) => List[S]): PartitionerWithValue[P, S] { type V >: W } = {
+        new PartitionerWithValue[P, S] {
+          type V = W
+
+          def assignWithValue(cell: Cell[P], ext: W): Collection[S] = Collection(t(cell, ext))
+        }
+      }
+    }
+  }
+
+  /** Converts a `(Cell[P], W) => Collection[S]` to a `PartitionerWithValue[P, S] { type V >: W }`. */
+  implicit def CWCS2PWV[P <: Position, S, W]: PartitionableWithValue[(Cell[P], W) => Collection[S], P, S, W] = {
+    new PartitionableWithValue[(Cell[P], W) => Collection[S], P, S, W] {
+      def convert(t: (Cell[P], W) => Collection[S]): PartitionerWithValue[P, S] { type V >: W } = {
+        new PartitionerWithValue[P, S] {
+          type V = W
+
+          def assignWithValue(cell: Cell[P], ext: W): Collection[S] = t(cell, ext)
+        }
+      }
+    }
+  }
+
+  /**
+   * Converts a `PartitionerWithValue[P, S] { type V >: W }` to a `PartitionerWithValue[P, S] { type V >: W }`;
+   * that is, it is a pass through.
+   */
+  implicit def PW2PWV[P <: Position, S, T <: PartitionerWithValue[P, S] { type V >: W }, W]: PartitionableWithValue[T, P, S, W] = {
+    new PartitionableWithValue[T, P, S, W] { def convert(t: T): PartitionerWithValue[P, S] { type V >: W } = t }
+  }
+
+  /**
+   * Converts a `List[PartitionerWithValue[P, S] { type V >: W }]` to a single
+   * `PartitionerWithValue[P, S] { type V >: W }`.
+   */
+  implicit def LPW2PWV[P <: Position, S, T <: PartitionerWithValue[P, S] { type V >: W }, W]: PartitionableWithValue[List[T], P, S, W] = {
+    new PartitionableWithValue[List[T], P, S, W] {
+      def convert(t: List[T]): PartitionerWithValue[P, S] { type V >: W } = {
+        new PartitionerWithValue[P, S] {
+          type V = W
+
+          def assignWithValue(cell: Cell[P], ext: V): Collection[S] = {
+            Collection(t.flatMap { case s => s.assignWithValue(cell, ext).toList })
+          }
+        }
+      }
+    }
   }
 }
 

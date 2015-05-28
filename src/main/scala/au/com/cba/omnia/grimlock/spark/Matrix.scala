@@ -129,15 +129,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     pairwiseBetween(slice, that).flatMap { case (lc, rc, r) => o.compute(slice, value)(lc, rc, r).toList }
   }
 
-  def partition[I: Ordering](partitioner: Partitioner with Assign { type T = I }): U[(I, Cell[P])] = {
-    data.flatMap { case c => partitioner.assign(c.position).toList(c) }
-  }
-
-  def partitionWithValue[I: Ordering, W](partitioner: Partitioner with AssignWithValue { type V >: W; type T = I },
-    value: E[W]): U[(I, Cell[P])] = {
-    data.flatMap { case c => partitioner.assign(c.position, value).toList(c) }
-  }
-
   def rename(renamer: (Cell[P]) => P): U[Cell[P]] = data.map { case c => Cell(renamer(c), c.content) }
 
   def renameWithValue[W](renamer: (Cell[P], W) => P, value: E[W]): U[Cell[P]] = {
@@ -206,6 +197,62 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .keyBy { case c => slice.selected(c.position) }
       .join(wanted.keyBy { case (p, i) => p })
       .map { case (_, (c, _)) => c }
+  }
+
+  def slide[D <: Dimension, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
+    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
+    val w = ev2.convert(windows)
+
+    data
+      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
+      .sortBy { case (c, r) => (c.position, r) }
+      .groupBy { case (c, r) => c.position }
+      .flatMap {
+        case (_, itr) => itr
+          .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
+            case (None, (c, r)) => Some((w.initialise(slice)(c, r), Collection[Cell[slice.S#M]]()))
+            case (Some((t, _)), (c, r)) => Some(w.present(slice)(c, r, t))
+          }
+          .flatMap {
+            case Some((t, c)) => c.toList
+            case _ => List()
+          }
+      }
+  }
+
+  def slideWithValue[D <: Dimension, T, W](slice: Slice[P, D], windows: T, value: E[W])(
+    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
+    val w = ev2.convert(windows)
+
+    data
+      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
+      .sortBy { case (c, r) => (c.position, r) }
+      .groupBy { case (c, r) => c.position }
+      .flatMap {
+        case (_, itr) => itr
+          .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
+            case (None, (c, r)) => Some((w.initialise(slice, value)(c, r), Collection[Cell[slice.S#M]]()))
+            case (Some((t, _)), (c, r)) => Some(w.present(slice, value)(c, r, t))
+          }
+          .flatMap {
+            case Some((t, c)) => c.toList
+            case _ => List()
+          }
+      }
+  }
+
+  def split[I, T](partitioners: T)(implicit ev: Partitionable[T, P, I]): U[(I, Cell[P])] = {
+    val partitioner = ev.convert(partitioners)
+
+    data.flatMap { case c => partitioner.assign(c).toList(c) }
+  }
+
+  def splitWithValue[I: Ordering, T, W](partitioners: T, value: E[W])(
+    implicit ev: PartitionableWithValue[T, P, I, W]): U[(I, Cell[P])] = {
+    val partitioner = ev.convert(partitioners)
+
+    data.flatMap { case c => partitioner.assignWithValue(c, value).toList(c) }
   }
 
   def stream[Q <: Position](command: String, script: String, separator: String,
@@ -307,49 +354,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .keyBy { case c => slice.selected(c.position) }
       .join(pipe.keyBy { case (p, pred) => p })
       .collect { case (_, (c, (_, predicate))) if predicate(c) => c.position }
-  }
-
-  def window[D <: Dimension, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
-    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
-    val w = ev2.convert(windows)
-
-    data
-      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
-      .sortBy { case (c, r) => (c.position, r) }
-      .groupBy { case (c, r) => c.position }
-      .flatMap {
-        case (_, itr) => itr
-          .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
-            case (None, (c, r)) => Some((w.initialise(slice)(c, r), Collection[Cell[slice.S#M]]()))
-            case (Some((t, _)), (c, r)) => Some(w.present(slice)(c, r, t))
-          }
-          .flatMap {
-            case Some((t, c)) => c.toList
-            case _ => List()
-          }
-      }
-  }
-
-  def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windows: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
-    val w = ev2.convert(windows)
-
-    data
-      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
-      .sortBy { case (c, r) => (c.position, r) }
-      .groupBy { case (c, r) => c.position }
-      .flatMap {
-        case (_, itr) => itr
-          .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
-            case (None, (c, r)) => Some((w.initialise(slice, value)(c, r), Collection[Cell[slice.S#M]]()))
-            case (Some((t, _)), (c, r)) => Some(w.present(slice, value)(c, r, t))
-          }
-          .flatMap {
-            case Some((t, c)) => c.toList
-            case _ => List()
-          }
-      }
   }
 
   val data: U[Cell[P]]
@@ -568,15 +572,15 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val tpr = data
       .transform[Position2D, Compare[Position2D]](Compare(isPositive(_)))
-      .window(slice, CumulativeSum())
+      .slide(slice, CumulativeSum())
       .transformWithValue[Position2D, Fraction[Position2D, V], V](Fraction(extractor), pos)
-      .window(Over(First), Sliding((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
+      .slide(Over(First), Sliding((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
 
     val fpr = data
       .transform[Position2D, Compare[Position2D]](Compare(!isPositive(_)))
-      .window(slice, CumulativeSum())
+      .slide(slice, CumulativeSum())
       .transformWithValue[Position2D, Fraction[Position2D, V], V](Fraction(extractor), neg)
-      .window(Over(First), Sliding((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
+      .slide(Over(First), Sliding((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
 
     tpr
       .pairwiseBetween(Along(First), fpr, Times(comparer = Diagonal))

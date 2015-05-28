@@ -287,11 +287,9 @@ object TestSpark9 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
-    case class StringPartitioner(dim: Dimension) extends Partitioner with Assign {
-      type T = String
-
-      def assign[P <: Position](pos: P): Collection[T] = {
-        Collection(List(pos(dim) match {
+    case class StringPartitioner(dim: Dimension) extends Partitioner[Position2D, String] {
+      def assign(cell: Cell[Position2D]): Collection[String] = {
+        Collection(List(cell.position(dim) match {
           case StringValue("fid:A") => "training"
           case StringValue("fid:B") => "testing"
         }, "scoring"))
@@ -302,16 +300,14 @@ object TestSpark9 {
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .partition(StringPartitioner(Second))
+      .split[String, StringPartitioner](StringPartitioner(Second))
 
     prt1
       .save("./tmp.spark/prt1.out", descriptive=true)
 
-    case class IntTuplePartitioner(dim: Dimension) extends Partitioner with Assign {
-      type T = (Int, Int, Int)
-
-      def assign[P <: Position](pos: P): Collection[T] = {
-        Collection(List(pos(dim) match {
+    case class IntTuplePartitioner(dim: Dimension) extends Partitioner[Position2D, (Int, Int, Int)] {
+      def assign(cell: Cell[Position2D]): Collection[(Int, Int, Int)] = {
+        Collection(List(cell.position(dim) match {
           case StringValue("fid:A") => (1, 0, 0)
           case StringValue("fid:B") => (0, 1, 0)
         }, (0, 0, 1)))
@@ -322,7 +318,7 @@ object TestSpark9 {
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .partition(IntTuplePartitioner(Second))
+      .split[(Int, Int, Int), IntTuplePartitioner](IntTuplePartitioner(Second))
       .save("./tmp.spark/prt2.out", descriptive=true)
 
     prt1
@@ -568,21 +564,20 @@ object TestSpark19 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
 
-    case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S) extends Partitioner with Assign {
-      type T = S
+    case class CustomPartition(dim: Dimension, left: String, right: String) extends Partitioner[Position2D, String] {
+      val bhs = BinaryHashSplit[Position2D, String](dim, 7, left, right, base=10)
 
-      val bhs = BinaryHashSplit(dim, 7, left, right, base=10)
-      def assign[P <: Position](pos: P): Collection[T] = {
-        if (pos(dim).toShortString == "iid:0364354") {
+      def assign(cell: Cell[Position2D]): Collection[String] = {
+        if (cell.position(dim).toShortString == "iid:0364354") {
           Collection(right)
         } else {
-          bhs.assign(pos)
+          bhs.assign(cell)
         }
       }
     }
 
     val parts = raw
-      .partition(CustomPartition(First, "train", "test"))
+      .split[String, CustomPartition](CustomPartition(First, "train", "test"))
 
     val stats = parts
       .get("train")
@@ -651,7 +646,7 @@ object TestSpark22 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = load2D(args(1) + "/numericInputfile.txt")
 
-    case class Diff() extends Windowed with Initialise {
+    case class Diff() extends Window with Initialise {
       type T = Cell[Position]
 
       def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
@@ -669,11 +664,11 @@ object TestSpark22 {
     }
 
     data
-      .window(Over(First), Diff())
+      .slide(Over(First), Diff())
       .save("./tmp.spark/dif1.out")
 
     data
-      .window(Over(Second), Diff())
+      .slide(Over(Second), Diff())
       .permute(Second, First)
       .save("./tmp.spark/dif2.out")
   }
@@ -759,33 +754,33 @@ object TestSpark27 {
 
     // http://www.statisticshowto.com/moving-average/
     load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
-      .window(Over(Second), SimpleMovingAverage(5))
+      .slide(Over(Second), SimpleMovingAverage(5))
       .save("./tmp.spark/sma1.out")
 
     load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
-      .window(Over(Second), SimpleMovingAverage(5, all=true))
+      .slide(Over(Second), SimpleMovingAverage(5, all=true))
       .save("./tmp.spark/sma2.out")
 
     load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
-      .window(Over(Second), CenteredMovingAverage(2))
+      .slide(Over(Second), CenteredMovingAverage(2))
       .save("./tmp.spark/tma.out")
 
     load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
-      .window(Over(Second), WeightedMovingAverage(5))
+      .slide(Over(Second), WeightedMovingAverage(5))
       .save("./tmp.spark/wma1.out")
 
     load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
-      .window(Over(Second), WeightedMovingAverage(5, all=true))
+      .slide(Over(Second), WeightedMovingAverage(5, all=true))
       .save("./tmp.spark/wma2.out")
 
     // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
     load1D(args(1) + "/cumMovAvgInputfile.txt")
-      .window(Along(First), CumulativeMovingAverage())
+      .slide(Along(First), CumulativeMovingAverage())
       .save("./tmp.spark/cma.out")
 
     // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
     load1D(args(1) + "/expMovAvgInputfile.txt")
-      .window(Along(First), ExponentialMovingAverage(0.33))
+      .slide(Along(First), ExponentialMovingAverage(0.33))
       .save("./tmp.spark/ema.out")
   }
 }

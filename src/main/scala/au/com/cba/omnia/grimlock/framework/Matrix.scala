@@ -392,26 +392,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     ev5: ClassTag[slice.R]): U[Cell[slice.R#M]]
 
   /**
-   * Partition a matrix according to `partitioner`.
-   *
-   * @param partitioner Assigns each position to zero, one or more partitions.
-   *
-   * @return A `U[(I, Cell[P])]` where `T` is the partition for the corresponding tuple.
-   */
-  def partition[I: Ordering](partitioner: Partitioner with Assign { type T = I }): U[(I, Cell[P])]
-
-  /**
-   * Partition a matrix according to `partitioner` using a user supplied value.
-   *
-   * @param partitioner Assigns each position to zero, one or more partitions.
-   * @param value       A `ValuePipe` holding a user supplied value.
-   *
-   * @return A `U[(I, Cell[P])]` where `T` is the partition for the corresponding tuple.
-   */
-  def partitionWithValue[I: Ordering, W](partitioner: Partitioner with AssignWithValue { type V >: W; type T = I },
-    value: E[W]): U[(I, Cell[P])]
-
-  /**
    * Rename the coordinates of a dimension.
    *
    * @param renamer Function that renames coordinates.
@@ -433,7 +413,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
    *
-   * @param sampler Sampling function(s).
+   * @param samplers Sampling function(s).
    *
    * @return A `U[Cell[P]]` with the sampled cells.
    */
@@ -443,8 +423,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * Sample a matrix according to some `sampler` using a user supplied value. It keeps only those cells for which
    * `sampler` returns true.
    *
-   * @param sampler Sampling function(s).
-   * @param value   A `E` holding a user supplied value.
+   * @param samplers Sampling function(s).
+   * @param value    A `E` holding a user supplied value.
    *
    * @return A `U[Cell[P]]` with the sampled cells.
    */
@@ -500,6 +480,50 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def slice[T, D <: Dimension](slice: Slice[P, D], positions: T, keep: Boolean)(implicit ev1: PosDimDep[P, D],
     ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
+
+  /**
+   * Create window based derived data.
+   *
+   * @param slice   Encapsulates the dimension(s) to slide over.
+   * @param windows The window functions to apply to the content.
+   *
+   * @return A `U[Cell[slice.S#M]]` with the derived data.
+   */
+  def slide[D <: Dimension, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
+    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
+
+  /**
+   * Create window based derived data with a user supplied value.
+   *
+   * @param slice   Encapsulates the dimension(s) to slide over.
+   * @param windows The window functions to apply to the content.
+   * @param value   A `E` holding a user supplied value.
+   *
+   * @return A `U[Cell[slice.S#M]]` with the derived data.
+   */
+  def slideWithValue[D <: Dimension, T, W](slice: Slice[P, D], windows: T, value: E[W])(
+    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
+
+  /**
+   * Partition a matrix according to `partitioner`.
+   *
+   * @param partitioners Assigns each position to zero, one or more partition(s).
+   *
+   * @return A `U[(I, Cell[P])]` where `I` is the partition for the corresponding tuple.
+   */
+  def split[I, T](partitioners: T)(implicit ev: Partitionable[T, P, I]): U[(I, Cell[P])]
+
+  /**
+   * Partition a matrix according to `partitioner` using a user supplied value.
+   *
+   * @param partitioners Assigns each position to zero, one or more partition(s).
+   * @param value        A `ValuePipe` holding a user supplied value.
+   *
+   * @return A `U[(I, Cell[P])]` where `I` is the partition for the corresponding tuple.
+   */
+  def splitWithValue[I: Ordering, T, W](partitioners: T, value: E[W])(
+    implicit ev: PartitionableWithValue[T, P, I, W]): U[(I, Cell[P])]
 
   /**
    * Stream this matrix through `command` and apply `script`.
@@ -648,30 +672,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def which[T, D <: Dimension](slice: Slice[P, D], pospred: List[(T, Predicate)])(implicit ev1: PosDimDep[P, D],
     ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P]): U[P]
-
-  /**
-   * Create window based derived data.
-   *
-   * @param slice   Encapsulates the dimension(s) to derive over.
-   * @param windows The windowed functions to apply to the content.
-   *
-   * @return A `U[Cell[slice.S#M]]` with the derived data.
-   */
-  def window[D <: Dimension, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
-    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
-
-  /**
-   * Create window based derived data with a user supplied value.
-   *
-   * @param slice   Encapsulates the dimension(s) to derive over.
-   * @param windows The windowed functions to apply to the content.
-   * @param value   A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[slice.S#M]]` with the derived data.
-   */
-  def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windows: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
 
   protected def toString(t: Cell[P], separator: String, descriptive: Boolean): String = {
     t.toString(separator, descriptive)

@@ -27,7 +27,7 @@ import au.com.cba.omnia.grimlock.spark.Matrix._
 import org.apache.spark.{ SparkConf, SparkContext }
 
 // Simple gradient feature genertor
-case class Gradient(dim: Dimension) extends Windowed with Initialise {
+case class Gradient(dim: Dimension) extends Window with Initialise {
   type T = Cell[Position]
 
   // Initialise state to the remainder coordinates (contains the date) and the content.
@@ -79,7 +79,7 @@ object DerivedData {
     //    feature.from.gradient)
     // 4/ Persist 2D gradient features.
     load3D(s"${path}/exampleDerived.txt", third = DateCodex)
-      .window(Along(Third), Gradient(First))
+      .slide(Along(Third), Gradient(First))
       .melt(Third, Second, ".from.")
       .save(s"./demo.${output}/gradient.out")
   }

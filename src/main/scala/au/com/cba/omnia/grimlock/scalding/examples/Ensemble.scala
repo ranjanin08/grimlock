@@ -34,16 +34,14 @@ import com.twitter.scalding.{ Args, Job }
 import com.twitter.scalding.typed.{ TypedPipe, ValuePipe }
 
 // Assign cell to 1 or more partitions based on the hash-code in the 3rd dimension.
-case class EnsembleSplit(gbm: String, rf: String, lr: String) extends Partitioner with Assign {
-  type T = String
-
+case class EnsembleSplit(gbm: String, rf: String, lr: String) extends Partitioner[Position3D, String] {
   // Depending on the hash-code assign the cell to the appropriate partition:
   //   [0, 4) -> gbm
   //   [2, 6) -> rf
   //   [4, 8) -> lr
   //   [8, 9] -> all
-  def assign[P <: Position](pos: P): Collection[T] = {
-    val parts = pos(Third).asLong.map {
+  def assign(cell: Cell[Position3D]): Collection[String] = {
+    val parts = cell.position(Third).asLong.map {
       case hash => if (hash < 2) List(gbm)
         else if (hash < 4) List(gbm, rf)
         else if (hash < 6) List(rf, lr)
@@ -109,7 +107,7 @@ class Ensemble(args: Args) extends Job(args) {
   // 7/ Collect the scores in a Map so they can be used to compute the Gini index with.
   val scores = data
     .expand((cell: Cell[Position2D]) => cell.position.append(math.abs(cell.position(First).hashCode % 10)))
-    .partition(EnsembleSplit(scripts(0), scripts(1), scripts(2)))
+    .split[String, EnsembleSplit](EnsembleSplit(scripts(0), scripts(1), scripts(2)))
     .forEach(scripts, trainAndScore)
     .merge(scripts)
     .summariseWithValue(Over(First), WeightedSum(Second), weights)

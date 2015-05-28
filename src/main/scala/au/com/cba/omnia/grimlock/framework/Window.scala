@@ -28,13 +28,13 @@ import au.com.cba.omnia.grimlock.framework.utility._
  * method can update the running state, and optionally return one or more cells with derived data. Note that the
  * running state can be used to create derived features of different window sizes.
  */
-trait Windowed {
+trait Window {
   /** Type of the state. */
   type T
 }
 
 /** Base trait for initialising a windowed. */
-trait Initialise extends InitialiseWithValue { self: Windowed =>
+trait Initialise extends InitialiseWithValue { self: Window =>
   type V = Any
 
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T = {
@@ -70,7 +70,7 @@ trait Initialise extends InitialiseWithValue { self: Windowed =>
 }
 
 /** Base trait for initialising a windowed with a user supplied value. */
-trait InitialiseWithValue { self: Windowed =>
+trait InitialiseWithValue { self: Window =>
   /** Type of the external value. */
   type V
 
@@ -102,14 +102,14 @@ trait InitialiseWithValue { self: Windowed =>
 }
 
 /**
- * Windowed that is a combination of one or more `Windowed with Initialise`.
+ * Window that is a combination of one or more `Window with Initialise`.
  *
  * @param singles `List` of windowed that are combined together.
  *
- * @note This need not be called in an application. The `Windowable` type class will convert any `List[Windowed]`
+ * @note This need not be called in an application. The `Windowable` type class will convert any `List[Window]`
  *       automatically to one of these.
  */
-case class CombinationWindowed[T <: Windowed with Initialise](singles: List[T]) extends Windowed with Initialise {
+case class CombinationWindow[T <: Window with Initialise](singles: List[T]) extends Window with Initialise {
   type T = List[Any]
 
   def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
@@ -127,15 +127,15 @@ case class CombinationWindowed[T <: Windowed with Initialise](singles: List[T]) 
 }
 
 /**
- * Windowed that is a combination of one or more `Windowed with InitialiseWithValue`.
+ * Window that is a combination of one or more `Window with InitialiseWithValue`.
  *
  * @param singles `List` of windowed that are combined together.
  *
  * @note This need not be called in an application. The `WindowableWithValue` type class will convert any
- *       `List[Windowed]` automatically to one of these.
+ *       `List[Window]` automatically to one of these.
  */
-case class CombinationWindowedWithValue[T <: Windowed with InitialiseWithValue { type V >: W }, W](singles: List[T])
-  extends Windowed with InitialiseWithValue {
+case class CombinationWindowWithValue[T <: Window with InitialiseWithValue { type V >: W }, W](singles: List[T])
+  extends Window with InitialiseWithValue {
   type T = List[Any]
   type V = W
 
@@ -153,55 +153,55 @@ case class CombinationWindowedWithValue[T <: Windowed with InitialiseWithValue {
   }
 }
 
-/** Type class for transforming a type `T` to a `Windowed with Initialise`. */
+/** Type class for transforming a type `T` to a `Window with Initialise`. */
 trait Windowable[T] {
   /**
-   * Returns a `Windowed with Initialise` for type `T`.
+   * Returns a `Window with Initialise` for type `T`.
    *
-   * @param t Object that can be converted to a `Windowed with Initialise`.
+   * @param t Object that can be converted to a `Window with Initialise`.
    */
-  def convert(t: T): Windowed with Initialise
+  def convert(t: T): Window with Initialise
 }
 
 /** Companion object for the `Windowable` type class. */
 object Windowable {
-  /** Converts a `List[Windowed with Initialise]` to a single `Windowed with Initialise` using `CombinationWindowed`. */
-  implicit def LD2D[T <: Windowed with Initialise]: Windowable[List[T]] = {
-    new Windowable[List[T]] { def convert(t: List[T]): Windowed with Initialise = CombinationWindowed(t) }
+  /** Converts a `List[Window with Initialise]` to a single `Window with Initialise` using `CombinationWindow`. */
+  implicit def LD2D[T <: Window with Initialise]: Windowable[List[T]] = {
+    new Windowable[List[T]] { def convert(t: List[T]): Window with Initialise = CombinationWindow(t) }
   }
-  /** Converts a `Windowed with Initialise` to a `Windowed with Initialise`; that is, it is a pass through. */
-  implicit def D2D[T <: Windowed with Initialise]: Windowable[T] = {
-    new Windowable[T] { def convert(t: T): Windowed with Initialise = t }
+  /** Converts a `Window with Initialise` to a `Window with Initialise`; that is, it is a pass through. */
+  implicit def D2D[T <: Window with Initialise]: Windowable[T] = {
+    new Windowable[T] { def convert(t: T): Window with Initialise = t }
   }
 }
 
-/** Type class for transforming a type `T` to a `Windowed with InitialiseWithValue`. */
+/** Type class for transforming a type `T` to a `Window with InitialiseWithValue`. */
 trait WindowableWithValue[T, W] {
   /**
-   * Returns a `Windowed with InitialiseWithValue` for type `T`.
+   * Returns a `Window with InitialiseWithValue` for type `T`.
    *
-   * @param t Object that can be converted to a `Windowed with InitialiseWithValue`.
+   * @param t Object that can be converted to a `Window with InitialiseWithValue`.
    */
-  def convert(t: T): Windowed with InitialiseWithValue { type V >: W }
+  def convert(t: T): Window with InitialiseWithValue { type V >: W }
 }
 
 /** Companion object for the `WindowableWithValue` type class. */
 object WindowableWithValue {
   /**
-   * Converts a `List[Windowed with InitialiseWithValue]` to a single `Windowed with InitialiseWithValue` using
-   * `CombinationWindowedWithValue`.
+   * Converts a `List[Window with InitialiseWithValue]` to a single `Window with InitialiseWithValue` using
+   * `CombinationWindowWithValue`.
    */
-  implicit def DT2DWV[T <: Windowed with InitialiseWithValue { type V >: W }, W]: WindowableWithValue[List[T], W] = {
+  implicit def DT2DWV[T <: Window with InitialiseWithValue { type V >: W }, W]: WindowableWithValue[List[T], W] = {
     new WindowableWithValue[List[T], W] {
-      def convert(t: List[T]): Windowed with InitialiseWithValue { type V >: W } = CombinationWindowedWithValue[T, W](t)
+      def convert(t: List[T]): Window with InitialiseWithValue { type V >: W } = CombinationWindowWithValue[T, W](t)
     }
   }
   /**
-   * Converts a `Windowed with InitialiseWithValue` to a `Windowed with InitialiseWithValue`; that is, it is a pass
+   * Converts a `Window with InitialiseWithValue` to a `Window with InitialiseWithValue`; that is, it is a pass
    * through.
    */
-  implicit def D2DWV[T <: Windowed with InitialiseWithValue { type V >: W }, W]: WindowableWithValue[T, W] = {
-    new WindowableWithValue[T, W] { def convert(t: T): Windowed with InitialiseWithValue { type V >: W } = t }
+  implicit def D2DWV[T <: Window with InitialiseWithValue { type V >: W }, W]: WindowableWithValue[T, W] = {
+    new WindowableWithValue[T, W] { def convert(t: T): Window with InitialiseWithValue { type V >: W } = t }
   }
 }
 
