@@ -600,7 +600,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[Q]]` with the transformed cells.
    */
-  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[T, P, Q]): U[Cell[Q]]
+  def transform[Q <: Position, T](transformers: T)(implicit ev1: Transformable[T, P, Q],
+    ev2: ExpPosDep[P, Q]): U[Cell[Q]]
 
   /**
    * Transform the content of a matrix using a user supplied value.
@@ -611,7 +612,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[P]]` with the transformed cells.
    */
   def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
-    implicit ev: TransformableWithValue[T, P, Q, W]): U[Cell[Q]]
+    implicit ev1: TransformableWithValue[T, P, Q, W], ev2: ExpPosDep[P, Q]): U[Cell[Q]]
 
   /**
    * Returns the variable type of the content(s) for a given `slice`.
@@ -800,6 +801,8 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
 trait ExpPosDep[A, B] extends java.io.Serializable
 
 object Matrix {
+  /** Define dependency between expansion from `Position1D` to `Position1D`. */
+  implicit object P1P1 extends ExpPosDep[Position1D, Position1D]
   /** Define dependency between expansion from `Position1D` to `Position2D`. */
   implicit object P1P2 extends ExpPosDep[Position1D, Position2D]
   /** Define dependency between expansion from `Position1D` to `Position3D`. */
@@ -808,18 +811,26 @@ object Matrix {
   implicit object P1P4 extends ExpPosDep[Position1D, Position4D]
   /** Define dependency between expansion from `Position1D` to `Position5D`. */
   implicit object P1P5 extends ExpPosDep[Position1D, Position5D]
+  /** Define dependency between expansion from `Position2D` to `Position2D`. */
+  implicit object P2P2 extends ExpPosDep[Position2D, Position2D]
   /** Define dependency between expansion from `Position2D` to `Position3D`. */
   implicit object P2P3 extends ExpPosDep[Position2D, Position3D]
   /** Define dependency between expansion from `Position2D` to `Position4D`. */
   implicit object P2P4 extends ExpPosDep[Position2D, Position4D]
   /** Define dependency between expansion from `Position2D` to `Position5D`. */
   implicit object P2P5 extends ExpPosDep[Position2D, Position5D]
+  /** Define dependency between expansion from `Position3D` to `Position3D`. */
+  implicit object P3P3 extends ExpPosDep[Position3D, Position3D]
   /** Define dependency between expansion from `Position3D` to `Position4D`. */
   implicit object P3P4 extends ExpPosDep[Position3D, Position4D]
   /** Define dependency between expansion from `Position3D` to `Position5D`. */
   implicit object P3P5 extends ExpPosDep[Position3D, Position5D]
+  /** Define dependency between expansion from `Position4D` to `Position4D`. */
+  implicit object P4P4 extends ExpPosDep[Position4D, Position4D]
   /** Define dependency between expansion from `Position4D` to `Position5D`. */
   implicit object P4P5 extends ExpPosDep[Position4D, Position5D]
+  /** Define dependency between expansion from `Position5D` to `Position5D`. */
+  implicit object P5P5 extends ExpPosDep[Position5D, Position5D]
 }
 
 /** Type class for transforming a type `T` into a `U[Cell[P]]`. */

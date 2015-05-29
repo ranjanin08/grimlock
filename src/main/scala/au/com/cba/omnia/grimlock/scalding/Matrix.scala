@@ -356,15 +356,16 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       })
   }
 
-  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[T, P, Q]): U[Cell[Q]] = {
-    val transformer = ev.convert(transformers)
+  def transform[Q <: Position, T](transformers: T)(implicit ev1: Transformable[T, P, Q],
+    ev2: ExpPosDep[P, Q]): U[Cell[Q]] = {
+    val transformer = ev1.convert(transformers)
 
     data.flatMap { case c => transformer.present(c).toList }
   }
 
   def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
-    implicit ev: TransformableWithValue[T, P, Q, W]): U[Cell[Q]] = {
-    val transformer = ev.convert(transformers)
+    implicit ev1: TransformableWithValue[T, P, Q, W], ev2: ExpPosDep[P, Q]): U[Cell[Q]] = {
+    val transformer = ev1.convert(transformers)
 
     data.flatMapWithValue(value) { case (c, vo) => transformer.presentWithValue(c, vo.get).toList }
   }
@@ -560,6 +561,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpand
 // TODO: Make this work on more than 2D matrices and share with Spark
 trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D] =>
 
+  import au.com.cba.omnia.grimlock.framework.Matrix._
   import au.com.cba.omnia.grimlock.library.aggregate._
   import au.com.cba.omnia.grimlock.library.pairwise._
   import au.com.cba.omnia.grimlock.library.transform._
