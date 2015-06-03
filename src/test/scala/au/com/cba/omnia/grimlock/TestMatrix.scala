@@ -7569,6 +7569,10 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
 
 trait TestMatrixSlide extends TestMatrix {
 
+  type W = Map[String, Int]
+  type WwV[A <: Position with ExpandablePosition, B <: Position with ExpandablePosition, C <: Position] =
+    WindowWithValue[A, B, C] { type V >: W }
+
   val ext = Map("one" -> 1, "two" -> 2)
 
   val result1 = List(Cell(Position1D("1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
@@ -7734,18 +7738,16 @@ trait TestMatrixSlide extends TestMatrix {
 
 object TestMatrixSlide {
 
-  case class Delta(times: Int) extends Window with Initialise {
-    type T = Cell[Position]
+  case class Delta[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+    times: Int) extends Window[S, R, S#M] {
+    type T = Cell[R]
 
-    def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
-      Cell(rem, cell.content)
-    }
+    def initialise(cell: Cell[S], rem: R): T = Cell(rem, cell.content)
 
-    def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
-      t: T): (T, Collection[Cell[slice.S#M]]) = {
+    def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[S#M]]) = {
       val delta = cell.content.value.asDouble.flatMap {
         case dc => t.content.value.asDouble.map {
-          case dt => Left(Cell[slice.S#M](cell.position.append(times + "*(" + rem.toShortString("|") + "-" +
+          case dt => Left(Cell[S#M](cell.position.append(times + "*(" + rem.toShortString("|") + "-" +
             t.position.toShortString("|") + ")"), Content(ContinuousSchema[Codex.DoubleCodex](), times * (dc - dt))))
         }
       }
@@ -7754,19 +7756,17 @@ object TestMatrixSlide {
     }
   }
 
-  case class DeltaWithValue(key: String) extends Window with InitialiseWithValue {
-    type T = Cell[Position]
+  case class DeltaWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+    key: String) extends WindowWithValue[S, R, S#M] {
+    type T = Cell[R]
     type V = Map[String, Int]
 
-    def initialise[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R): T = {
-      Cell(rem, cell.content)
-    }
+    def initialiseWithValue(cell: Cell[S], rem: R, ext: V): T = Cell(rem, cell.content)
 
-    def present[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(cell: Cell[slice.S], rem: slice.R,
-      t: T): (T, Collection[Cell[slice.S#M]]) = {
+    def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[S#M]]) = {
       val delta = cell.content.value.asDouble.flatMap {
         case dc => t.content.value.asDouble.map {
-          case dt => Left(Cell[slice.S#M](cell.position.append(ext(key) + "*(" + rem.toShortString("|") + "-" +
+          case dt => Left(Cell[S#M](cell.position.append(ext(key) + "*(" + rem.toShortString("|") + "-" +
             t.position.toShortString("|") + ")"), Content(ContinuousSchema[Codex.DoubleCodex](), ext(key) * (dc - dt))))
         }
       }
@@ -7783,7 +7783,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.slide(Along(First), List(TestMatrixSlide.Delta(1), TestMatrixSlide.Delta(2)))
+        cells.slide[Dimension.First, Position1D, List[Window[Position0D, Position1D, Position1D]]](Along(First),
+          List(TestMatrixSlide.Delta[Position0D, Position1D](1), TestMatrixSlide.Delta[Position0D, Position1D](2)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -7794,7 +7795,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Over(First), TestMatrixSlide.Delta(1))
+        cells.slide[Dimension.First, Position2D, Window[Position1D, Position1D, Position2D]](Over(First),
+          TestMatrixSlide.Delta[Position1D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -7805,7 +7807,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Along(First), TestMatrixSlide.Delta(1))
+        cells.slide[Dimension.First, Position2D, Window[Position1D, Position1D, Position2D]](Along(First),
+          TestMatrixSlide.Delta[Position1D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -7816,7 +7819,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Over(Second), TestMatrixSlide.Delta(1))
+        cells.slide[Dimension.Second, Position2D, Window[Position1D, Position1D, Position2D]](Over(Second),
+          TestMatrixSlide.Delta[Position1D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -7827,7 +7831,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Along(Second), TestMatrixSlide.Delta(1))
+        cells.slide[Dimension.Second, Position2D, Window[Position1D, Position1D, Position2D]](Along(Second),
+          TestMatrixSlide.Delta[Position1D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -7838,7 +7843,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Over(First), TestMatrixSlide.Delta(1))
+        cells.slide[Dimension.First, Position2D, Window[Position1D, Position2D, Position2D]](Over(First),
+          TestMatrixSlide.Delta[Position1D, Position2D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -7849,7 +7855,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Along(First), TestMatrixSlide.Delta(1))
+        cells.slide[Dimension.First, Position3D, Window[Position2D, Position1D, Position3D]](Along(First),
+          TestMatrixSlide.Delta[Position2D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -7860,7 +7867,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Over(Second), TestMatrixSlide.Delta(1))
+        cells.slide[Dimension.Second, Position2D, Window[Position1D, Position2D, Position2D]](Over(Second),
+          TestMatrixSlide.Delta[Position1D, Position2D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -7871,7 +7879,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Along(Second), TestMatrixSlide.Delta(1))
+        cells.slide[Dimension.Second, Position3D, Window[Position2D, Position1D, Position3D]](Along(Second),
+          TestMatrixSlide.Delta[Position2D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -7882,7 +7891,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Over(Third), TestMatrixSlide.Delta(1))
+        cells.slide[Dimension.Third, Position2D, Window[Position1D, Position2D, Position2D]](Over(Third),
+          TestMatrixSlide.Delta[Position1D, Position2D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -7893,7 +7903,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Along(Third), TestMatrixSlide.Delta(1))
+        cells.slide[Dimension.Third, Position3D, Window[Position2D, Position1D, Position3D]](Along(Third),
+          TestMatrixSlide.Delta[Position2D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -7904,8 +7915,9 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.slideWithValue(Along(First),
-          List(TestMatrixSlide.DeltaWithValue("one"), TestMatrixSlide.DeltaWithValue("two")), ValuePipe(ext))
+        cells.slideWithValue[Dimension.First, Position1D, List[WwV[Position0D, Position1D, Position1D]], W](
+          Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
+            TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
     }
@@ -7916,7 +7928,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue("one"), ValuePipe(ext))
+        cells.slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position1D, Position2D], W](Over(First),
+          TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result13
     }
@@ -7927,7 +7940,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue("one"), ValuePipe(ext))
+        cells.slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position1D, Position2D], W](Along(First),
+          TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result14
     }
@@ -7938,7 +7952,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue("one"), ValuePipe(ext))
+        cells.slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position1D, Position2D], W](Over(Second),
+          TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result15
     }
@@ -7949,7 +7964,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue("one"), ValuePipe(ext))
+        cells.slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position1D, Position2D], W](Along(Second),
+          TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result16
     }
@@ -7960,7 +7976,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue("one"), ValuePipe(ext))
+        cells.slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(First),
+          TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result17
     }
@@ -7971,7 +7988,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue("one"), ValuePipe(ext))
+        cells.slideWithValue[Dimension.First, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(First),
+          TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result18
     }
@@ -7982,7 +8000,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue("one"), ValuePipe(ext))
+        cells.slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(Second),
+          TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result19
     }
@@ -7993,7 +8012,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue("one"), ValuePipe(ext))
+        cells.slideWithValue[Dimension.Second, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(Second),
+          TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result20
     }
@@ -8004,7 +8024,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue("one"), ValuePipe(ext))
+        cells.slideWithValue[Dimension.Third, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(Third),
+          TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result21
     }
@@ -8015,7 +8036,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue("one"), ValuePipe(ext))
+        cells.slideWithValue[Dimension.Third, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(Third),
+          TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result22
     }
@@ -8026,134 +8048,156 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   "A Matrix.slide" should "return its first along derived data in 1D" in {
     toRDD(num1)
-      .slide(Along(First), List(TestMatrixSlide.Delta(1), TestMatrixSlide.Delta(2)))
+      .slide[Dimension.First, Position1D, List[Window[Position0D, Position1D, Position1D]]](Along(First),
+        List(TestMatrixSlide.Delta[Position0D, Position1D](1), TestMatrixSlide.Delta[Position0D, Position1D](2)))
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slide(Over(First), TestMatrixSlide.Delta(1))
+      .slide[Dimension.First, Position2D, Window[Position1D, Position1D, Position2D]](Over(First),
+        TestMatrixSlide.Delta[Position1D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slide(Along(First), TestMatrixSlide.Delta(1))
+      .slide[Dimension.First, Position2D, Window[Position1D, Position1D, Position2D]](Along(First),
+        TestMatrixSlide.Delta[Position1D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slide(Over(Second), TestMatrixSlide.Delta(1))
+      .slide[Dimension.Second, Position2D, Window[Position1D, Position1D, Position2D]](Over(Second),
+        TestMatrixSlide.Delta[Position1D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
-      .slide(Along(Second), TestMatrixSlide.Delta(1))
+      .slide[Dimension.Second, Position2D, Window[Position1D, Position1D, Position2D]](Along(Second),
+        TestMatrixSlide.Delta[Position1D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(First), TestMatrixSlide.Delta(1))
+      .slide[Dimension.First, Position2D, Window[Position1D, Position2D, Position2D]](Over(First),
+        TestMatrixSlide.Delta[Position1D, Position2D](1))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(First), TestMatrixSlide.Delta(1))
+      .slide[Dimension.First, Position3D, Window[Position2D, Position1D, Position3D]](Along(First),
+        TestMatrixSlide.Delta[Position2D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(Second), TestMatrixSlide.Delta(1))
+      .slide[Dimension.Second, Position2D, Window[Position1D, Position2D, Position2D]](Over(Second),
+        TestMatrixSlide.Delta[Position1D, Position2D](1))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(Second), TestMatrixSlide.Delta(1))
+      .slide[Dimension.Second, Position3D, Window[Position2D, Position1D, Position3D]](Along(Second),
+        TestMatrixSlide.Delta[Position2D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(Third), TestMatrixSlide.Delta(1))
+      .slide[Dimension.Third, Position2D, Window[Position1D, Position2D, Position2D]](Over(Third),
+        TestMatrixSlide.Delta[Position1D, Position2D](1))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(Third), TestMatrixSlide.Delta(1))
+      .slide[Dimension.Third, Position3D, Window[Position2D, Position1D, Position3D]](Along(Third),
+        TestMatrixSlide.Delta[Position2D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.slideWithValue" should "return its first along derived data in 1D" in {
     toRDD(num1)
-      .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue("one"),
-        TestMatrixSlide.DeltaWithValue("two")), ext)
+      .slideWithValue[Dimension.First, Position1D, List[WwV[Position0D, Position1D, Position1D]], W](
+        Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
+          TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue("one"), ext)
+      .slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position1D, Position2D], W](Over(First),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue("one"), ext)
+      .slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position1D, Position2D], W](Along(First),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue("one"), ext)
+      .slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position1D, Position2D], W](Over(Second),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue("one"), ext)
+      .slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position1D, Position2D], W](Along(Second),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue("one"), ext)
+      .slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(First),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue("one"), ext)
+      .slideWithValue[Dimension.First, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(First),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue("one"), ext)
+      .slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(Second),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue("one"), ext)
+      .slideWithValue[Dimension.Second, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(Second),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue("one"), ext)
+      .slideWithValue[Dimension.Third, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(Third),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue("one"), ext)
+      .slideWithValue[Dimension.Third, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(Third),
+        TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result22
   }
 }

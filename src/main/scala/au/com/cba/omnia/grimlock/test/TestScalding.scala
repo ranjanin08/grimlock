@@ -602,29 +602,27 @@ class TestScalding22(args : Args) extends Job(args) {
 
   val data = load2D(args("path") + "/numericInputfile.txt")
 
-  case class Diff() extends Window with Initialise {
-    type T = Cell[Position]
+  case class Diff() extends Window[Position1D, Position1D, Position2D] {
+    type T = Cell[Position1D]
 
-    def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
-      Cell(rem, cell.content)
-    }
-    def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
-      t: T): (T, Collection[Cell[slice.S#M]]) = {
+    def initialise(cell: Cell[Position1D], rem: Position1D): T = Cell(rem, cell.content)
+
+    def present(cell: Cell[Position1D], rem: Position1D, t: T): (T, Collection[Cell[Position2D]]) = {
       (Cell(rem, cell.content), (cell.content.value.asDouble, t.content.value.asDouble) match {
         case (Some(c), Some(l)) =>
           Collection(cell.position.append(rem.toShortString("") + "-" + t.position.toShortString("")),
             Content(ContinuousSchema[Codex.DoubleCodex](), c - l))
-        case _ => Collection[Cell[slice.S#M]]()
+        case _ => Collection[Cell[Position2D]]()
       })
     }
   }
 
   data
-    .slide(Over(First), Diff())
+    .slide[Dimension.First, Position2D, Diff](Over(First), Diff())
     .save("./tmp.scalding/dif1.out")
 
   data
-    .slide(Over(Second), Diff())
+    .slide[Dimension.Second, Position2D, Diff](Over(Second), Diff())
     .permute(Second, First)
     .save("./tmp.scalding/dif2.out")
 }
@@ -697,33 +695,40 @@ class TestScalding27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide(Over(Second), SimpleMovingAverage(5))
+    .slide[Dimension.Second, Position2D, SimpleMovingAverage[Position1D, Position1D]](Over(Second),
+      SimpleMovingAverage(5))
     .save("./tmp.scalding/sma1.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide(Over(Second), SimpleMovingAverage(5, all=true))
+    .slide[Dimension.Second, Position2D, SimpleMovingAverage[Position1D, Position1D]](Over(Second),
+      SimpleMovingAverage(5, all=true))
     .save("./tmp.scalding/sma2.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide(Over(Second), CenteredMovingAverage(2))
+    .slide[Dimension.Second, Position2D, CenteredMovingAverage[Position1D, Position1D]](Over(Second),
+      CenteredMovingAverage(2))
     .save("./tmp.scalding/tma.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide(Over(Second), WeightedMovingAverage(5))
+    .slide[Dimension.Second, Position2D, WeightedMovingAverage[Position1D, Position1D]](Over(Second),
+      WeightedMovingAverage(5))
     .save("./tmp.scalding/wma1.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide(Over(Second), WeightedMovingAverage(5, all=true))
+    .slide[Dimension.Second, Position2D, WeightedMovingAverage[Position1D, Position1D]](Over(Second),
+      WeightedMovingAverage(5, all=true))
     .save("./tmp.scalding/wma2.out")
 
   // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
   load1D(args("path") + "/cumMovAvgInputfile.txt")
-    .slide(Along(First), CumulativeMovingAverage())
+    .slide[Dimension.First, Position1D, CumulativeMovingAverage[Position0D, Position1D]](Along(First),
+      CumulativeMovingAverage())
     .save("./tmp.scalding/cma.out")
 
   // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
   load1D(args("path") + "/expMovAvgInputfile.txt")
-    .slide(Along(First), ExponentialMovingAverage(0.33))
+    .slide[Dimension.First, Position1D, ExponentialMovingAverage[Position0D, Position1D]](Along(First),
+      ExponentialMovingAverage(0.33))
     .save("./tmp.scalding/ema.out")
 }
 

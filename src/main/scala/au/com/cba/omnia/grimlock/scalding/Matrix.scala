@@ -211,17 +211,18 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case (_, (c, _)) => c }
   }
 
-  def slide[D <: Dimension, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
-    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
+  def slide[D <: Dimension, Q <: Position, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D],
+    ev2: Windowable[T, slice.S, slice.R, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
+    ev5: ClassTag[slice.R]): U[Cell[Q]] = {
     val w = ev2.convert(windows)
 
     data
       .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
       .groupBy { case (c, r) => c.position }
       .sortBy { case (c, r) => r }
-      .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
-        case (None, (c, r)) => Some((w.initialise(slice)(c, r), Collection[Cell[slice.S#M]]()))
-        case (Some((t, _)), (c, r)) => Some(w.present(slice)(c, r, t))
+      .scanLeft(Option.empty[(w.T, Collection[Cell[Q]])]) {
+        case (None, (c, r)) => Some((w.initialise(c, r), Collection[Cell[Q]]()))
+        case (Some((t, _)), (c, r)) => Some(w.present(c, r, t))
       }
       .flatMap {
         case (p, Some((t, c))) => c.toList
@@ -229,18 +230,18 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def slideWithValue[D <: Dimension, T, W](slice: Slice[P, D], windows: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]] = {
+  def slideWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], windows: T, value: E[W])(
+    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
     val w = ev2.convert(windows)
 
     data
       .mapWithValue(value) { case (Cell(p, c), vo) => (Cell(slice.selected(p), c), slice.remainder(p), vo.get) }
       .groupBy { case (c, r, v) => c.position }
       .sortBy { case (c, r, v) => r }
-      .scanLeft(Option.empty[(w.T, Collection[Cell[slice.S#M]])]) {
-        case (None, (c, r, v)) => Some((w.initialise(slice, v)(c, r), Collection[Cell[slice.S#M]]()))
-        case (Some((t, _)), (c, r, v)) => Some(w.present(slice, v)(c, r, t))
+      .scanLeft(Option.empty[(w.T, Collection[Cell[Q]])]) {
+        case (None, (c, r, v)) => Some((w.initialiseWithValue(c, r, v), Collection[Cell[Q]]()))
+        case (Some((t, _)), (c, r, v)) => Some(w.presentWithValue(c, r, v, t))
       }
       .flatMap {
         case (p, Some((t, c))) => c.toList
@@ -636,15 +637,17 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val tpr = data
       .transform[Position2D, Compare[Position2D]](Compare(isPositive(_)))
-      .slide(slice, CumulativeSum())
+      .slide[D, slice.S#M, CumulativeSum[slice.S, slice.R]](slice, CumulativeSum())
       .transformWithValue[Position2D, Fraction[Position2D, V], V](Fraction(extractor), pos)
-      .slide(Over(First), Sliding((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
+      .slide[Dimension.First, Position2D, Sliding[Position1D, Position1D]](Over(First),
+        Sliding((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
 
     val fpr = data
       .transform[Position2D, Compare[Position2D]](Compare(!isPositive(_)))
-      .slide(slice, CumulativeSum())
+      .slide[D, slice.S#M, CumulativeSum[slice.S, slice.R]](slice, CumulativeSum())
       .transformWithValue[Position2D, Fraction[Position2D, V], V](Fraction(extractor), neg)
-      .slide(Over(First), Sliding((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
+      .slide[Dimension.First, Position2D, Sliding[Position1D, Position1D]](Over(First),
+        Sliding((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
 
     tpr
       .pairwiseBetween(Along(First), fpr, Times(comparer = Diagonal))
