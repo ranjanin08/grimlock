@@ -26,7 +26,6 @@ import au.com.cba.omnia.grimlock.library.pairwise._
 
 trait TestOperators extends TestGrimlock {
 
-   val slice = Along[Position3D, First.type](First)
    val left = Cell(Position2D("left 1", "left 2"), Content(ContinuousSchema[Codex.LongCodex](), 2))
    val right = Cell(Position2D("right 1", "right 2"), Content(ContinuousSchema[Codex.LongCodex](), 4))
    val rem = Position1D("rem")
@@ -50,51 +49,51 @@ class TestPlus extends TestOperators {
    val pattern = "(%1$s plus %2$s)"
 
   "A Plus" should "compute with all" in {
-    val obj = Plus(pattern, separator, All)
+    val obj = Plus[Position2D, Position1D](pattern, separator, All)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 + 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 + 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 + 2))
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 + 4))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 + 2))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 + 2))
   }
 
   it should "compute with lower" in {
-    val obj = Plus(pattern, separator, Lower)
+    val obj = Plus[Position2D, Position1D](pattern, separator, Lower)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 + 2))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 + 2))
   }
 
   it should "compute with lower diagonal" in {
-    val obj = Plus(pattern, separator, LowerDiagonal)
+    val obj = Plus[Position2D, Position1D](pattern, separator, LowerDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 + 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 + 2))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 + 2))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 + 2))
   }
 
   it should "compute with diagonal" in {
-    val obj = Plus(pattern, separator, Diagonal)
+    val obj = Plus[Position2D, Position1D](pattern, separator, Diagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 + 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 + 2))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute with upper diagonal" in {
-    val obj = Plus(pattern, separator, UpperDiagonal)
+    val obj = Plus[Position2D, Position1D](pattern, separator, UpperDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 + 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 + 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 + 4))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 + 2))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute with upper" in {
-    val obj = Plus(pattern, separator, Upper)
+    val obj = Plus[Position2D, Position1D](pattern, separator, Upper)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 + 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 + 4))
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 }
 
@@ -103,99 +102,99 @@ class TestMinus extends TestOperators {
    val pattern = "(%1$s minus %2$s)"
 
   "A Minus" should "compute with all" in {
-    val obj = Minus(pattern, separator, false, All)
+    val obj = Minus[Position2D, Position1D](pattern, separator, false, All)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 - 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 - 2))
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 - 4))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 - 2))
   }
 
   it should "compute with lower" in {
-    val obj = Minus(pattern, separator, false, Lower)
+    val obj = Minus[Position2D, Position1D](pattern, separator, false, Lower)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 - 2))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 - 2))
   }
 
   it should "compute with lower diagonal" in {
-    val obj = Minus(pattern, separator, false, LowerDiagonal)
+    val obj = Minus[Position2D, Position1D](pattern, separator, false, LowerDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 - 2))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 - 2))
   }
 
   it should "compute with diagonal" in {
-    val obj = Minus(pattern, separator, false, Diagonal)
+    val obj = Minus[Position2D, Position1D](pattern, separator, false, Diagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute with upper diagonal" in {
-    val obj = Minus(pattern, separator, false, UpperDiagonal)
+    val obj = Minus[Position2D, Position1D](pattern, separator, false, UpperDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 - 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 - 4))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute with upper" in {
-    val obj = Minus(pattern, separator, false, Upper)
+    val obj = Minus[Position2D, Position1D](pattern, separator, false, Upper)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 - 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 - 4))
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute inverse with all" in {
-    val obj = Minus(pattern, separator, true, All)
+    val obj = Minus[Position2D, Position1D](pattern, separator, true, All)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(4 - 2))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(2 - 4))
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(4 - 2))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(2 - 4))
   }
 
   it should "compute inverse with lower" in {
-    val obj = Minus(pattern, separator, true, Lower)
+    val obj = Minus[Position2D, Position1D](pattern, separator, true, Lower)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(2 - 4))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(2 - 4))
   }
 
   it should "compute inverse with lower diagonal" in {
-    val obj = Minus(pattern, separator, true, LowerDiagonal)
+    val obj = Minus[Position2D, Position1D](pattern, separator, true, LowerDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(2 - 4))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(2 - 4))
   }
 
   it should "compute inverse with diagonal" in {
-    val obj = Minus(pattern, separator, true, Diagonal)
+    val obj = Minus[Position2D, Position1D](pattern, separator, true, Diagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute inverse with upper diagonal" in {
-    val obj = Minus(pattern, separator, true, UpperDiagonal)
+    val obj = Minus[Position2D, Position1D](pattern, separator, true, UpperDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(4 - 2))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(4 - 2))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute inverse with upper" in {
-    val obj = Minus(pattern, separator, true, Upper)
+    val obj = Minus[Position2D, Position1D](pattern, separator, true, Upper)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(4 - 2))
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(4 - 2))
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 }
 
@@ -204,51 +203,51 @@ class TestTimes extends TestOperators {
    val pattern = "(%1$s times %2$s)"
 
   "A Times" should "compute with all" in {
-    val obj = Times(pattern, separator, All)
+    val obj = Times[Position2D, Position1D](pattern, separator, All)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 * 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 * 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 * 2))
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 * 4))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 * 2))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 * 2))
   }
 
   it should "compute with lower" in {
-    val obj = Times(pattern, separator, Lower)
+    val obj = Times[Position2D, Position1D](pattern, separator, Lower)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 * 2))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 * 2))
   }
 
   it should "compute with lower diagonal" in {
-    val obj = Times(pattern, separator, LowerDiagonal)
+    val obj = Times[Position2D, Position1D](pattern, separator, LowerDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 * 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 * 2))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 * 2))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 * 2))
   }
 
   it should "compute with diagonal" in {
-    val obj = Times(pattern, separator, Diagonal)
+    val obj = Times[Position2D, Position1D](pattern, separator, Diagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 * 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 * 2))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute with upper diagonal" in {
-    val obj = Times(pattern, separator, UpperDiagonal)
+    val obj = Times[Position2D, Position1D](pattern, separator, UpperDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 * 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 * 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 * 4))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 * 2))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute with upper" in {
-    val obj = Times(pattern, separator, Upper)
+    val obj = Times[Position2D, Position1D](pattern, separator, Upper)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 * 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 * 4))
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 }
 
@@ -257,99 +256,99 @@ class TestDivide extends TestOperators {
    val pattern = "(%1$s divide %2$s)"
 
   "A Divide" should "compute with all" in {
-    val obj = Divide(pattern, separator, false, All)
+    val obj = Divide[Position2D, Position1D](pattern, separator, false, All)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2.0 / 4.0))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4.0 / 2.0))
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2.0 / 4.0))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4.0 / 2.0))
   }
 
   it should "compute with lower" in {
-    val obj = Divide(pattern, separator, false, Lower)
+    val obj = Divide[Position2D, Position1D](pattern, separator, false, Lower)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4.0 / 2.0))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4.0 / 2.0))
   }
 
   it should "compute with lower diagonal" in {
-    val obj = Divide(pattern, separator, false, LowerDiagonal)
+    val obj = Divide[Position2D, Position1D](pattern, separator, false, LowerDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4.0 / 2.0))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4.0 / 2.0))
   }
 
   it should "compute with diagonal" in {
-    val obj = Divide(pattern, separator, false, Diagonal)
+    val obj = Divide[Position2D, Position1D](pattern, separator, false, Diagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute with upper diagonal" in {
-    val obj = Divide(pattern, separator, false, UpperDiagonal)
+    val obj = Divide[Position2D, Position1D](pattern, separator, false, UpperDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2.0 / 4.0))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2.0 / 4.0))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute with upper" in {
-    val obj = Divide(pattern, separator, false, Upper)
+    val obj = Divide[Position2D, Position1D](pattern, separator, false, Upper)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2.0 / 4.0))
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2.0 / 4.0))
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute inverse with all" in {
-    val obj = Divide(pattern, separator, true, All)
+    val obj = Divide[Position2D, Position1D](pattern, separator, true, All)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(4.0 / 2.0))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(2.0 / 4.0))
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(4.0 / 2.0))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(2.0 / 4.0))
   }
 
   it should "compute inverse with lower" in {
-    val obj = Divide(pattern, separator, true, Lower)
+    val obj = Divide[Position2D, Position1D](pattern, separator, true, Lower)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(2.0 / 4.0))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(2.0 / 4.0))
   }
 
   it should "compute inverse with lower diagonal" in {
-    val obj = Divide(pattern, separator, true, LowerDiagonal)
+    val obj = Divide[Position2D, Position1D](pattern, separator, true, LowerDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(2.0 / 4.0))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(2.0 / 4.0))
   }
 
   it should "compute inverse with diagonal" in {
-    val obj = Divide(pattern, separator, true, Diagonal)
+    val obj = Divide[Position2D, Position1D](pattern, separator, true, Diagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute inverse with upper diagonal" in {
-    val obj = Divide(pattern, separator, true, UpperDiagonal)
+    val obj = Divide[Position2D, Position1D](pattern, separator, true, UpperDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(4.0 / 2.0))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(4.0 / 2.0))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute inverse with upper" in {
-    val obj = Divide(pattern, separator, true, Upper)
+    val obj = Divide[Position2D, Position1D](pattern, separator, true, Upper)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(4.0 / 2.0))
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(4.0 / 2.0))
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 }
 
@@ -359,51 +358,51 @@ class TestConcatenate extends TestOperators {
    val format = "%1$s+%2$s"
 
   "A Concatenate" should "compute with all" in {
-    val obj = Concatenate(pattern, format, separator, All)
+    val obj = Concatenate[Position2D, Position1D](pattern, format, separator, All)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2, 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2, 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4, 2))
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2, 4))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2, 2))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4, 2))
   }
 
   it should "compute with lower" in {
-    val obj = Concatenate(pattern, format, separator, Lower)
+    val obj = Concatenate[Position2D, Position1D](pattern, format, separator, Lower)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4, 2))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4, 2))
   }
 
   it should "compute with lower diagonal" in {
-    val obj = Concatenate(pattern, format, separator, LowerDiagonal)
+    val obj = Concatenate[Position2D, Position1D](pattern, format, separator, LowerDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2, 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(getPosition(3), getContent(4, 2))
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2, 2))
+    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4, 2))
   }
 
   it should "compute with diagonal" in {
-    val obj = Concatenate(pattern, format, separator, Diagonal)
+    val obj = Concatenate[Position2D, Position1D](pattern, format, separator, Diagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection()
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2, 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection()
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2, 2))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute with upper diagonal" in {
-    val obj = Concatenate(pattern, format, separator, UpperDiagonal)
+    val obj = Concatenate[Position2D, Position1D](pattern, format, separator, UpperDiagonal)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2, 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection(getPosition(2), getContent(2, 2))
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2, 4))
+    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2, 2))
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   it should "compute with upper" in {
-    val obj = Concatenate(pattern, format, separator, Upper)
+    val obj = Concatenate[Position2D, Position1D](pattern, format, separator, Upper)
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(getPosition(1), getContent(2, 4))
-    obj.compute(slice)(left, left, rem) shouldBe Collection()
-    obj.compute(slice)(right, left, rem) shouldBe Collection()
+    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2, 4))
+    obj.compute(left, left, rem) shouldBe Collection()
+    obj.compute(right, left, rem) shouldBe Collection()
   }
 
   def getContent(left: Long, right: Long): Content = {
@@ -416,12 +415,13 @@ class TestCombinationOperator extends TestOperators {
   val pattern = "not.used"
 
   "A CombinationOperator" should "compute" in {
-    val obj = CombinationOperator(List(Plus(comparer=LowerDiagonal), Minus(comparer=LowerDiagonal)))
+    val obj = Operable.LO2O[Position2D, Position1D, Position2D, Operator[Position2D, Position1D, Position2D]].convert(
+      List(Plus[Position2D, Position1D](comparer=LowerDiagonal), Minus[Position2D, Position1D](comparer=LowerDiagonal)))
 
-    obj.compute(slice)(left, right, rem) shouldBe Collection(List())
-    obj.compute(slice)(left, left, rem) shouldBe Collection(List(
+    obj.compute(left, right, rem) shouldBe Collection(List())
+    obj.compute(left, left, rem) shouldBe Collection(List(
       Cell(getPosition(2, "(%1$s+%2$s)"), getContent(2 + 2)), Cell(getPosition(2, "(%1$s-%2$s)"), getContent(2 - 2))))
-    obj.compute(slice)(right, left, rem) shouldBe Collection(List(
+    obj.compute(right, left, rem) shouldBe Collection(List(
       Cell(getPosition(3, "(%1$s+%2$s)"), getContent(4 + 2)), Cell(getPosition(3, "(%1$s-%2$s)"), getContent(4 - 2))))
   }
 

@@ -23,7 +23,8 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
 /** Convenience trait for operators that apply to `Double` values. */
-trait DoubleOperator { self: Operator with Compute =>
+trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]
+  extends Operator[S, R, R#M] {
   /**
    * Pattern for the new name of the pairwise coordinate. Use `%[12]$``s` for the string representations of the
    * coordinate.
@@ -42,7 +43,6 @@ trait DoubleOperator { self: Operator with Compute =>
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param slice Encapsulates the dimension(s) along which to compute.
    * @param left  The selected left cell to compute with.
    * @param right The selected right cell to compute with.
    * @param rem   The remaining coordinates.
@@ -50,14 +50,13 @@ trait DoubleOperator { self: Operator with Compute =>
    * @note The return value is a `Collection` to allow, for example, upper or lower triangular matrices to be returned
    *       (this can be done by comparing the selected coordinates)
    */
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
-    rem: slice.R): Collection[Cell[slice.R#M]] = {
+  def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[R#M]] = {
     val coordinate = name.format(left.position.toShortString(separator), right.position.toShortString(separator))
 
     (comparer.check(left.position, right.position), left.content.value.asDouble, right.content.value.asDouble) match {
       case (true, Some(l), Some(r)) => Collection(rem.prepend(coordinate),
         Content(ContinuousSchema[Codex.DoubleCodex](), if (inverse) compute(r, l) else compute(l, r)))
-      case _ => Collection[Cell[slice.R#M]]()
+      case _ => Collection[Cell[R#M]]()
     }
   }
 
@@ -65,28 +64,30 @@ trait DoubleOperator { self: Operator with Compute =>
 }
 
 /** Add two values. */
-case class Plus(name: String = "(%1$s+%2$s)", separator: String = "|", comparer: Comparer = Lower) extends Operator
-  with Compute with DoubleOperator {
+case class Plus[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+  name: String = "(%1$s+%2$s)", separator: String = "|", comparer: Comparer = Lower) extends DoubleOperator[S, R] {
   val inverse: Boolean = false
   protected def compute(l: Double, r: Double) = l + r
 }
 
 /** Subtract two values. */
-case class Minus(name: String = "(%1$s-%2$s)", separator: String = "|", inverse: Boolean = false,
-  comparer: Comparer = Lower) extends Operator with Compute with DoubleOperator {
+case class Minus[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+  name: String = "(%1$s-%2$s)", separator: String = "|", inverse: Boolean = false,
+  comparer: Comparer = Lower) extends DoubleOperator[S, R] {
   protected def compute(l: Double, r: Double) = l - r
 }
 
 /** Multiply two values. */
-case class Times(name: String = "(%1$s*%2$s)", separator: String = "|", comparer: Comparer = Lower) extends Operator
-  with Compute with DoubleOperator {
+case class Times[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+  name: String = "(%1$s*%2$s)", separator: String = "|", comparer: Comparer = Lower) extends DoubleOperator[S, R] {
   val inverse: Boolean = false
   protected def compute(l: Double, r: Double) = l * r
 }
 
 /** Divide two values. */
-case class Divide(name: String = "(%1$s/%2$s)", separator: String = "|", inverse: Boolean = false,
-  comparer: Comparer = Lower) extends Operator with Compute with DoubleOperator {
+case class Divide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+  name: String = "(%1$s/%2$s)", separator: String = "|", inverse: Boolean = false,
+  comparer: Comparer = Lower) extends DoubleOperator[S, R] {
   protected def compute(l: Double, r: Double) = l / r
 }
 
@@ -100,17 +101,17 @@ case class Divide(name: String = "(%1$s/%2$s)", separator: String = "|", inverse
  * @param separator Separator to use when writing positions to string.
  * @param comparer  Comparer object defining which pairwise operations should be computed.
  */
-case class Concatenate(name: String = "(%1$s,%2$s)", value: String = "%1$s,%2$s", separator: String = "|",
-  comparer: Comparer = Lower) extends Operator with Compute {
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
-    rem: slice.R): Collection[Cell[slice.R#M]] = {
+case class Concatenate[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+  name: String = "(%1$s,%2$s)", value: String = "%1$s,%2$s", separator: String = "|",
+  comparer: Comparer = Lower) extends Operator[S, R, R#M] {
+  def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[R#M]] = {
     comparer.check(left.position, right.position) match {
       case true =>
         val coordinate = name.format(left.position.toShortString(separator), right.position.toShortString(separator))
         val content = value.format(left.content.value.toShortString, right.content.value.toShortString)
 
         Collection(rem.prepend(coordinate), Content(NominalSchema[Codex.StringCodex](), content))
-      case false => Collection[Cell[slice.R#M]]()
+      case false => Collection[Cell[R#M]]()
     }
   }
 }

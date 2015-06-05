@@ -69,13 +69,15 @@ object MutualInformation {
     // 2/ Compute pairwise sum of marginal entropies for all upper triangular values.
     val marginal = data
       .summariseAndExpand(Over(Second), Entropy("marginal"))
-      .pairwise(Over(First), Plus(name = "%s,%s", comparer = Upper))
+      .pairwise[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First),
+        Plus(name = "%s,%s", comparer = Upper))
 
     // Compute joint entropy
     // 1/ Generate pairwise values for all upper triangular values.
     // 2/ Compute entropy over pairwise values. Negate the result for easy reduction below.
     val joint = data
-      .pairwise(Over(Second), Concatenate(name = "%s,%s", comparer = Upper))
+      .pairwise[Dimension.Second, Position2D, Concatenate[Position1D, Position1D]](Over(Second),
+        Concatenate(name = "%s,%s", comparer = Upper))
       .summariseAndExpand(Over(First), Entropy("joint", strict = true, nan = true, all = false, negate = true))
 
     // Generate mutual information

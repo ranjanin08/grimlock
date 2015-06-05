@@ -47,20 +47,16 @@ case object Lower extends Comparer { def check(l: Position, r: Position): Boolea
 /** Case object for computing lower triangular or diagonal pairwise combinations (i.e. l >= r). */
 case object LowerDiagonal extends Comparer { def check(l: Position, r: Position): Boolean = l.compare(r) >= 0 }
 
-/** Base trait for pairwise operations. */
-trait Operator
-
 /** Base trait for computing pairwise values. */
-trait Compute extends ComputeWithValue { self: Operator =>
+trait Operator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
+  extends OperatorWithValue[S, R, Q] {
   type V = Any
 
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(left: Cell[slice.S], right: Cell[slice.S],
-    rem: slice.R): Collection[Cell[slice.R#M]] = compute(slice)(left, right, rem)
+  def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[Q]] = compute(left, right, rem)
 
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param slice Encapsulates the dimension(s) along which to compute.
    * @param left  The selected left cell to compute with.
    * @param right The selected right cell to compute with.
    * @param rem   The remaining coordinates.
@@ -68,112 +64,174 @@ trait Compute extends ComputeWithValue { self: Operator =>
    * @note The return value is a `Collection` to allow, for example, upper or lower triangular matrices to be returned
    *       (this can be done by comparing the selected coordinates)
    */
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
-    rem: slice.R): Collection[Cell[slice.R#M]]
+  def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]]
 }
 
 /** Base trait for computing pairwise values with a user provided value. */
-trait ComputeWithValue { self: Operator =>
+trait OperatorWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
+  extends java.io.Serializable {
   /** Type of the external value. */
   type V
 
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param slice Encapsulates the dimension(s) along which to compute.
-   * @param ext   The user define the value.
    * @param left  The selected left cell to compute with.
    * @param right The selected right cell to compute with.
    * @param rem   The remaining coordinates.
+   * @param ext   The user define the value.
    *
    * @note The return value is a `Collection` to allow, for example, upper or lower triangular matrices to be returned
    *       (this can be done by comparing the selected coordinates)
    */
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(left: Cell[slice.S], right: Cell[slice.S],
-    rem: slice.R): Collection[Cell[slice.R#M]]
+  def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[Q]]
 }
 
-/**
- * Operator that is a combination of one or more operators with `Compute`.
- *
- * @param singles `List` of operators that are combined together.
- *
- * @note This need not be called in an application. The `Operable` type class will convert any `List[Operator]`
- *       automatically to one of these.
- */
-case class CombinationOperator[T <: Operator with Compute](singles: List[T]) extends Operator with Compute {
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
-    rem: slice.R): Collection[Cell[slice.R#M]] = {
-    Collection(singles.flatMap { case operator => operator.compute(slice)(left, right, rem).toList })
-  }
-}
-
-/**
- * Operator that is a combination of one or more operators with `ComputeWithValue`.
- *
- * @param singles `List` of operators that are combined together.
- *
- * @note This need not be called in an application. The `OperableWithValue` type class will convert any
- *       `List[Operator]` automatically to one of these.
- */
-case class CombinationOperatorWithValue[T <: Operator with ComputeWithValue { type V >: W }, W](
-  singles: List[T]) extends Operator with ComputeWithValue {
-  type V = W
-
-  def compute[P <: Position, D <: Dimension](slice: Slice[P, D], ext: V)(left: Cell[slice.S], right: Cell[slice.S],
-    rem: slice.R): Collection[Cell[slice.R#M]] = {
-    Collection(singles.flatMap { case operator => operator.compute(slice, ext)(left, right, rem).toList })
-  }
-}
-
-/** Type class for transforming a type `T` to a `Operator with Compute`. */
-trait Operable[T] {
+/** Type class for transforming a type `T` to a `Operator[S, R, Q]`. */
+trait Operable[T, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] {
   /**
-   * Returns a `Operator with Compute` for type `T`.
+   * Returns a `Operator[S, R, Q]` for type `T`.
    *
-   * @param t Object that can be converted to a `Operator with Compute`.
+   * @param t Object that can be converted to a `Operator[S, R, Q]`.
    */
-  def convert(t: T): Operator with Compute
+  def convert(t: T): Operator[S, R, Q]
 }
 
 /** Companion object for the `Operable` type class. */
 object Operable {
-  /** Converts a `List[Operator with Compute]` to a single `Operator with Compute` using `CombinationOperator`. */
-  implicit def LO2O[T <: Operator with Compute]: Operable[List[T]] = {
-    new Operable[List[T]] { def convert(t: List[T]): Operator with Compute = CombinationOperator(t) }
+  /** Converts a `(Cell[S], Cell[S], R) => Cell[Q]` to a `Operator[S, R, Q]`. */
+  implicit def C2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition,  Q <: Position]: Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] = {
+    new Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] {
+      def convert(t: (Cell[S], Cell[S], R) => Cell[Q]): Operator[S, R, Q] = {
+        new Operator[S, R, Q] {
+          def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]] = Collection(t(left, right, rem))
+        }
+      }
+    }
   }
-  /** Converts a `Operator with Compute` to a `Operator with Compute`; that is, it is a pass through. */
-  implicit def O2O[T <: Operator with Compute]: Operable[T] = {
-    new Operable[T] { def convert(t: T): Operator with Compute = t }
+
+  /** Converts a `(Cell[S], Cell[S], R) => List[Cell[Q]]` to a `Operator[S, R, Q]`. */
+  implicit def LC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] = {
+    new Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] {
+      def convert(t: (Cell[S], Cell[S], R) => List[Cell[Q]]): Operator[S, R, Q] = {
+        new Operator[S, R, Q] {
+          def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]] = Collection(t(left, right, rem))
+        }
+      }
+    }
+  }
+
+  /** Converts a `(Cell[S], Cell[S], R) => Collection[Cell[Q]]` to a `Operator[S, R, Q]`. */
+  implicit def CC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] = {
+    new Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] {
+      def convert(t: (Cell[S], Cell[S], R) => Collection[Cell[Q]]): Operator[S, R, Q] = {
+        new Operator[S, R, Q] {
+          def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]] = t(left, right, rem)
+        }
+      }
+    }
+  }
+
+  /** Converts a `Operator[S, R, Q]` to a `Operator[S, R, Q]`; that is, it is a pass through. */
+  implicit def O2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Operator[S, R, Q]]: Operable[T, S, R, Q] = {
+    new Operable[T, S, R, Q] { def convert(t: T): Operator[S, R, Q] = t }
+  }
+
+  /** Converts a `List[Operator[S, R, Q]]` to a single `Operator[S, R, Q]`. */
+  implicit def LO2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Operator[S, R, Q]]: Operable[List[T], S, R, Q] = {
+    new Operable[List[T], S, R, Q] {
+      def convert(t: List[T]): Operator[S, R, Q] = {
+        new Operator[S, R, Q] {
+          def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]] = {
+            Collection(t.flatMap { case s => s.compute(left, right, rem).toList })
+          }
+        }
+      }
+    }
   }
 }
 
-/** Type class for transforming a type `T` to a `Operator with ComputeWithValue`. */
-trait OperableWithValue[T, W] {
+/** Type class for transforming a type `T` to a `OperatorWithValue`. */
+trait OperableWithValue[T, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W] {
   /**
-   * Returns a `Operator with ComputeWithValue` for type `T`.
+   * Returns a `OperatorWithValue[S, R, Q]` for type `T`.
    *
-   * @param t Object that can be converted to a `Operator with ComputeWithValue`.
+   * @param t Object that can be converted to a `OperatorWithValue[S, R, Q]`.
    */
-  def convert(t: T): Operator with ComputeWithValue { type V >: W }
+  def convert(t: T): OperatorWithValue[S, R, Q] { type V >: W }
 }
 
 /** Companion object for the `OperableWithValue` type class. */
 object OperableWithValue {
-  /**
-   * Converts a `List[Operator with ComputeWithValue]` to a single `Operator with ComputeWithValue` using
-   * `CombinationOperatorWithValue`.
-   */
-  implicit def OT2OWV[T <: Operator with ComputeWithValue { type V >: W }, W]: OperableWithValue[List[T], W] = {
-    new OperableWithValue[List[T], W] {
-      def convert(t: List[T]): Operator with ComputeWithValue { type V >: W } = CombinationOperatorWithValue[T, W](t)
+  /** Converts a `(Cell[S], Cell[S], R, W) => Cell[Q]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
+  implicit def CWC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[Q], S, R, Q, W] = {
+    new OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[Q], S, R, Q, W] {
+      def convert(t: (Cell[S], Cell[S], R, W) => Cell[Q]): OperatorWithValue[S, R, Q] { type V >: W } = {
+        new OperatorWithValue[S, R, Q] {
+          type V = W
+
+          def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: W): Collection[Cell[Q]] = {
+            Collection(t(left, right, rem, ext))
+          }
+        }
+      }
     }
   }
+
+  /** Converts a `(Cell[S], Cell[S], R, W) => List[Cell[Q]]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
+  implicit def CWLC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] = {
+    new OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] {
+      def convert(t: (Cell[S], Cell[S], R, W) => List[Cell[Q]]): OperatorWithValue[S, R, Q] { type V >: W } = {
+        new OperatorWithValue[S, R, Q] {
+          type V = W
+
+          def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: W): Collection[Cell[Q]] = {
+            Collection(t(left, right, rem, ext))
+          }
+        }
+      }
+    }
+  }
+
+  /** Converts a `(Cell[S], Cell[S], R, W) => Collection[Cell[Q]]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
+  implicit def CWCC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] = {
+    new OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] {
+      def convert(t: (Cell[S], Cell[S], R, W) => Collection[Cell[Q]]): OperatorWithValue[S, R, Q] { type V >: W } = {
+        new OperatorWithValue[S, R, Q] {
+          type V = W
+
+          def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: W): Collection[Cell[Q]] = {
+            t(left, right, rem, ext)
+          }
+        }
+      }
+    }
+  }
+
   /**
-   * Converts a `Operator with ComputeWithValue` to a `Operator with ComputeWithValue`; that is, it is a pass through.
+   * Converts a `OperatorWithValue[S, R, Q] { type V >: W }` to a `OperatorWithValue[S, R, Q] { type V >: W }`;
+   * that is, it is a pass through.
    */
-  implicit def O2OWV[T <: Operator with ComputeWithValue { type V >: W }, W]: OperableWithValue[T, W] = {
-    new OperableWithValue[T, W] { def convert(t: T): Operator with ComputeWithValue { type V >: W } = t }
+  implicit def O2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: OperatorWithValue[S, R, Q] { type V >: W }, W]: OperableWithValue[T, S, R, Q, W] = {
+    new OperableWithValue[T, S, R, Q, W] { def convert(t: T): OperatorWithValue[S, R, Q] { type V >: W } = t }
+  }
+
+  /**
+   * Converts a `List[OperatorWithValue[S, R, Q] { type V >: W }]` to a single
+   * `OperatorWithValue[S, R, Q] { type V >: W }`.
+   */
+  implicit def LO2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: OperatorWithValue[S, R, Q] { type V >: W }, W]: OperableWithValue[List[T], S, R, Q, W] = {
+    new OperableWithValue[List[T], S, R, Q, W] {
+      def convert(t: List[T]): OperatorWithValue[S, R, Q] { type V >: W } = {
+        new OperatorWithValue[S, R, Q] {
+          type V = W
+
+          def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[Q]] = {
+            Collection(t.flatMap { case s => s.computeWithValue(left, right, rem, ext).toList })
+          }
+        }
+      }
+    }
   }
 }
 

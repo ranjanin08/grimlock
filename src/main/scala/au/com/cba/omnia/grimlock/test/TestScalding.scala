@@ -631,22 +631,21 @@ class TestScalding23(args : Args) extends Job(args) {
 
   val data = load2D(args("path") + "/somePairwise.txt")
 
-  case class DiffSquared() extends Operator with Compute {
-    def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
-      rem: slice.R): Collection[Cell[slice.R#M]] = {
+  case class DiffSquared() extends Operator[Position1D, Position1D, Position2D] {
+    def compute(left: Cell[Position1D], right: Cell[Position1D], rem: Position1D): Collection[Cell[Position2D]] = {
       val xc = left.position.toShortString("")
       val yc = right.position.toShortString("")
 
       (xc < yc && xc != yc) match {
         case true => Collection(rem.append("(" + xc + "-" + yc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
           math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
-        case false => Collection[Cell[slice.R#M]]
+        case false => Collection[Cell[Position2D]]
       }
     }
   }
 
   data
-    .pairwise(Over(Second), DiffSquared())
+    .pairwise[Dimension.Second, Position2D, DiffSquared](Over(Second), DiffSquared())
     .save("./tmp.scalding/pws1.out")
 }
 
@@ -687,7 +686,8 @@ class TestScalding26(args: Args) extends Job(args) {
   val right = load2D(args("path") + "/algebraInputfile2.txt")
 
   left
-    .pairwiseBetween(Over(First), right, Times(comparer=All))
+    .pairwiseBetween[Dimension.First, Position2D, Times[Position1D, Position1D]](Over(First), right,
+      Times(comparer=All))
     .save("./tmp.scalding/alg.out")
 }
 

@@ -678,9 +678,8 @@ object TestSpark23 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = load2D(args(1) + "/somePairwise.txt")
 
-    case class DiffSquared() extends Operator with Compute {
-      def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
-        rem: slice.R): Collection[Cell[slice.R#M]] = {
+    case class DiffSquared() extends Operator[Position1D, Position1D, Position2D] {
+      def compute(left: Cell[Position1D], right: Cell[Position1D], rem: Position1D): Collection[Cell[Position2D]] = {
         val xc = left.position.toShortString("")
         val yc = right.position.toShortString("")
 
@@ -688,13 +687,13 @@ object TestSpark23 {
           case true => Collection(rem.append("(" + xc + "-" + yc + ")^2"),
             Content(ContinuousSchema[Codex.DoubleCodex](),
               math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
-          case false => Collection[Cell[slice.R#M]]
+          case false => Collection[Cell[Position2D]]
         }
       }
     }
 
     data
-      .pairwise(Over(Second), DiffSquared())
+      .pairwise[Dimension.Second, Position2D, DiffSquared](Over(Second), DiffSquared())
       .save("./tmp.spark/pws1.out")
   }
 }
@@ -742,7 +741,8 @@ object TestSpark26 {
     val right = load2D(args(1) + "/algebraInputfile2.txt")
 
     left
-      .pairwiseBetween(Over(First), right, Times(comparer=All))
+      .pairwiseBetween[Dimension.First, Position2D, Times[Position1D, Position1D]](Over(First), right,
+        Times(comparer=All))
       .save("./tmp.spark/alg.out")
   }
 }
