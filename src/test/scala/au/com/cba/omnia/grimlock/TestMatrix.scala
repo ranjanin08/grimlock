@@ -19,7 +19,6 @@ import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
-import au.com.cba.omnia.grimlock.framework.Matrix._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
@@ -7342,7 +7341,7 @@ trait TestMatrixTransform extends TestMatrix {
   type W = Map[Position1D, Map[Position1D, Content]]
 
   def extractor[D <: Dimension, P <: Position](dim: D, key: String)(implicit ev: PosDimDep[P, D]) = {
-    ExtractWithDimensionAndKey[D, P, Content](dim, key).andThenPresent(_.value.asDouble)
+    ExtractWithDimensionAndKey[D, P, String, Content](dim, key).andThenPresent(_.value.asDouble)
   }
 }
 
@@ -7815,7 +7814,7 @@ object TestMatrixSlide {
     times: Int) extends Window[S, R, S#M] {
     type T = Cell[R]
 
-    def initialise(cell: Cell[S], rem: R): T = Cell(rem, cell.content)
+    def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[S#M]]) = (Cell(rem, cell.content), Collection())
 
     def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[S#M]]) = {
       val delta = cell.content.value.asDouble.flatMap {
@@ -7834,7 +7833,9 @@ object TestMatrixSlide {
     type T = Cell[R]
     type V = Map[String, Int]
 
-    def initialiseWithValue(cell: Cell[S], rem: R, ext: V): T = Cell(rem, cell.content)
+    def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[S#M]]) = {
+      (Cell(rem, cell.content), Collection())
+    }
 
     def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[S#M]]) = {
       val delta = cell.content.value.asDouble.flatMap {

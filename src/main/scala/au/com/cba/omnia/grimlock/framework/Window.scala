@@ -29,10 +29,10 @@ import au.com.cba.omnia.grimlock.framework.utility._
  * running state can be used to create derived features of different window sizes.
  */
 trait Window[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends WindowWithValue[S, R, Q] {
+  extends WindowWithValue[S, R, Q] { self =>
   type V = Any
 
-  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): T = initialise(cell, rem)
+  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[Q]]) = initialise(cell, rem)
 
   def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[Q]]) = present(cell, rem, t)
 
@@ -44,7 +44,7 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
    *
    * @return The state for this object.
    */
-  def initialise(cell: Cell[S], rem: R): T
+  def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]])
 
   /**
    * Update state with the current cell and, optionally, output derived data.
@@ -56,6 +56,56 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
    * @return A tuple consisting of updated state together with optional derived data.
    */
   def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[Q]])
+
+  /**
+   * Operator for generating derived data and then renaming dimensions.
+   *
+   * @param rename The rename to apply after the derived data has been generated.
+   *
+   * @return A window that runs `this` and then renames the resulting dimension(s).
+   */
+  def andThenRename(rename: (Cell[S], R, Cell[Q]) => Q) = {
+    new Window[S, R, Q] {
+      type T = self.T
+
+      def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]]) = {
+        val state = self.initialise(cell, rem)
+
+        (state._1, Collection(state._2.toList.map { case c => Cell(rename(cell, rem, c), c.content) }))
+      }
+
+      def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[Q]]) = {
+        val state = self.present(cell, rem, t)
+
+        (state._1, Collection(state._2.toList.map { case c => Cell(rename(cell, rem, c), c.content) }))
+      }
+    }
+  }
+
+  /**
+   * Operator for generating derived data and then expanding dimensions.
+   *
+   * @param expand The expansion to apply after the derived data has been generated.
+   *
+   * @return A window that runs `this` and then expands the resulting dimensions.
+   */
+  def andThenExpand[U <: Position](expand: (Cell[S], R, Cell[Q]) => U)(implicit ev: ExpPosDep[Q, U]) = {
+    new Window[S, R, U] {
+      type T = self.T
+
+      def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[U]]) = {
+        val state = self.initialise(cell, rem)
+
+        (state._1, Collection(state._2.toList.map { case c => Cell(expand(cell, rem, c), c.content) }))
+      }
+
+      def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[U]]) = {
+        val state = self.present(cell, rem, t)
+
+        (state._1, Collection(state._2.toList.map { case c => Cell(expand(cell, rem, c), c.content) }))
+      }
+    }
+  }
 }
 
 /**
@@ -69,7 +119,7 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
  * running state can be used to create derived features of different window sizes.
  */
 trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends java.io.Serializable {
+  extends java.io.Serializable { self =>
   /** Type of the external value. */
   type V
 
@@ -85,7 +135,7 @@ trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with 
    *
    * @return The state for this object.
    */
-  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): T
+  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[Q]])
 
   /**
    * Update state with the current cell and, optionally, output derived data.
@@ -98,6 +148,58 @@ trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with 
    * @return A tuple consisting of updated state together with optional derived data.
    */
   def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[Q]])
+
+  /**
+   * Operator for generating derived data and then renaming dimensions.
+   *
+   * @param rename The rename to apply after the derived data has been generated.
+   *
+   * @return A window that runs `this` and then renames the resulting dimension(s).
+   */
+  def andThenRenameWithValue(rename: (Cell[S], R, V, Cell[Q]) => Q) = {
+    new WindowWithValue[S, R, Q] {
+      type V = self.V
+      type T = self.T
+
+      def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[Q]]) = {
+        val state = self.initialiseWithValue(cell, rem, ext)
+
+        (state._1, Collection(state._2.toList.map { case c => Cell(rename(cell, rem, ext, c), c.content) }))
+      }
+
+      def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[Q]]) = {
+        val state = self.presentWithValue(cell, rem, ext, t)
+
+        (state._1, Collection(state._2.toList.map { case c => Cell(rename(cell, rem, ext, c), c.content) }))
+      }
+    }
+  }
+
+  /**
+   * Operator for generating derived data and then expanding dimensions.
+   *
+   * @param expand The expansion to apply after the derived data has been generated.
+   *
+   * @return A window that runs `this` and then expands the resulting dimensions.
+   */
+  def andThenExpandWithValue[U <: Position](expand: (Cell[S], R, V, Cell[Q]) => U)(implicit ev: ExpPosDep[Q, U]) = {
+    new WindowWithValue[S, R, U] {
+      type V = self.V
+      type T = self.T
+
+      def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[U]]) = {
+        val state = self.initialiseWithValue(cell, rem, ext)
+
+        (state._1, Collection(state._2.toList.map { case c => Cell(expand(cell, rem, ext, c), c.content) }))
+      }
+
+      def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[U]]) = {
+        val state = self.presentWithValue(cell, rem, ext, t)
+
+        (state._1, Collection(state._2.toList.map { case c => Cell(expand(cell, rem, ext, c), c.content) }))
+      }
+    }
+  }
 }
 
 /** Type class for transforming a type `T` to a `Window[S, R, Q]`. */
@@ -124,7 +226,11 @@ object Windowable {
         new Window[S, R, Q] {
           type T = List[Any]
 
-          def initialise(cell: Cell[S], rem: R): T = windows.map { case window => window.initialise(cell, rem) }
+          def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]]) = {
+            val state = windows.map { case window => window.initialise(cell, rem) }
+
+            (state.map { case (t, c) => t }, Collection(state.flatMap { case (t, c) => c.toList }))
+          }
 
           def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[Q]]) = {
             val state = (windows, t)
@@ -164,8 +270,10 @@ object WindowableWithValue {
           type T = List[Any]
           type V = W
 
-          def initialiseWithValue(cell: Cell[S], rem: R, ext: V): T = {
-            windows.map { case window => window.initialiseWithValue(cell, rem, ext) }
+          def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[Q]]) = {
+            val state = windows.map { case window => window.initialiseWithValue(cell, rem, ext) }
+
+            (state.map { case (t, c) => t }, Collection(state.flatMap { case (t, c) => c.toList }))
           }
 
           def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[Q]]) = {

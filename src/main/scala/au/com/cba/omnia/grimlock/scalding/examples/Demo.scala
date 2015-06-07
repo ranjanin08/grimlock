@@ -18,7 +18,6 @@ import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
-import au.com.cba.omnia.grimlock.framework.Matrix._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
@@ -158,7 +157,8 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
 
   // Define extract object to get data out of statistics map.
   def extractor(key: String): Extract[Position2D, W, Double] = {
-    ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, key).andThenPresent(_.value.asDouble)
+    ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, key)
+      .andThenPresent(_.value.asDouble)
   }
 
   // List of transformations to apply to each partition.
@@ -217,7 +217,8 @@ class Scoring(args: Args) extends Job(args) {
 
   // Define extract object to get data out of statistics map.
   def extractor(key: String): Extract[Position2D, W, Double] = {
-    ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, key).andThenPresent(_.value.asDouble)
+    ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, key)
+      .andThenPresent(_.value.asDouble)
   }
 
   // For the data do:
@@ -289,7 +290,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Define extract object to get data out of sum/min map.
   def extractor(key: String): Extract[Position1D, Map[Position1D, Content], Double] = {
-    ExtractWithKey[Position1D, Content](key).andThenPresent(_.value.asDouble)
+    ExtractWithKey[Position1D, String, Content](key).andThenPresent(_.value.asDouble)
   }
 
   // Type of value

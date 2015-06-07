@@ -39,18 +39,20 @@ case class ExtractWithDimension[D <: Dimension, P <: Position, R](dim: D)(
   def extract(cell: Cell[P], ext: Map[Position1D, R]): Option[R] = ext.get(Position1D(cell.position(dim)))
 }
 
-case class ExtractWithKey[P <: Position, R](key: Position1D) extends Extract[P, Map[Position1D, R], R] {
-  def extract(cell: Cell[P], ext: Map[Position1D, R]): Option[R] = ext.get(key)
+case class ExtractWithKey[P <: Position, T, R](key: T)(implicit ev: Positionable[T, Position1D])
+  extends Extract[P, Map[Position1D, R], R] {
+  def extract(cell: Cell[P], ext: Map[Position1D, R]): Option[R] = ext.get(ev.convert(key))
 }
 
 case class ExtractWithPosition[P <: Position, R]() extends Extract[P, Map[P, R], R] {
   def extract(cell: Cell[P], ext: Map[P, R]): Option[R] = ext.get(cell.position)
 }
 
-case class ExtractWithDimensionAndKey[D <: Dimension, P <: Position, R](dim: D, key: Position1D)(
-  implicit ev1: PosDimDep[P, D]) extends Extract[P, Map[Position1D, Map[Position1D, R]], R] {
+case class ExtractWithDimensionAndKey[D <: Dimension, P <: Position, T, R](dim: D, key: T)(
+  implicit ev1: PosDimDep[P, D], ev2: Positionable[T, Position1D])
+  extends Extract[P, Map[Position1D, Map[Position1D, R]], R] {
   def extract(cell: Cell[P], ext: Map[Position1D, Map[Position1D, R]]): Option[R] = {
-    ext.get(Position1D(cell.position(dim))).flatMap(_.get(key))
+    ext.get(Position1D(cell.position(dim))).flatMap(_.get(ev2.convert(key)))
   }
 }
 
@@ -66,10 +68,10 @@ case class ExtractWithSlice[D <: Dimension, P <: Position, S <: Slice[P, D], R](
   }
 }
 
-case class ExtractWithSliceAndKey[D <: Dimension, P <: Position, S <: Slice[P, D], R](slice: S,
-  key: Position1D) extends Extract[P, Map[S#S, Map[Position1D, R]], R] {
+case class ExtractWithSliceAndKey[D <: Dimension, P <: Position, S <: Slice[P, D], T, R](slice: S,
+  key: T)(implicit ev: Positionable[T, Position1D]) extends Extract[P, Map[S#S, Map[Position1D, R]], R] {
   def extract(cell: Cell[P], ext: Map[S#S, Map[Position1D, R]]): Option[R] = {
-    ext.get(slice.selected(cell.position)).flatMap(_.get(key))
+    ext.get(slice.selected(cell.position)).flatMap(_.get(ev.convert(key)))
   }
 }
 

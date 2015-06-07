@@ -31,7 +31,9 @@ case class Gradient(dim: Dimension) extends Window[Position2D, Position1D, Posit
   type T = Cell[Position1D]
 
   // Initialise state to the remainder coordinates (contains the date) and the content.
-  def initialise(cell: Cell[Position2D], rem: Position1D): T = Cell(rem, cell.content)
+  def initialise(cell: Cell[Position2D], rem: Position1D): (T, Collection[Cell[Position3D]]) = {
+    (Cell(rem, cell.content), Collection[Cell[Position3D]])
+  }
 
   val DayInMillis = 1000 * 60 * 60 * 24
   val separator = ""

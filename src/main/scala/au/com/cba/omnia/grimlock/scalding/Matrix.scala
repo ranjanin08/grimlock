@@ -18,7 +18,6 @@ import au.com.cba.omnia.grimlock.framework.{
   Along,
   Cell,
   ExpandableMatrix => BaseExpandableMatrix,
-  ExpPosDep,
   ExtractWithDimension,
   ExtractWithKey,
   Matrix => BaseMatrix,
@@ -222,7 +221,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .groupBy { case (c, r) => c.position }
       .sortBy { case (c, r) => r }
       .scanLeft(Option.empty[(w.T, Collection[Cell[Q]])]) {
-        case (None, (c, r)) => Some((w.initialise(c, r), Collection[Cell[Q]]()))
+        case (None, (c, r)) => Some(w.initialise(c, r))
         case (Some((t, _)), (c, r)) => Some(w.present(c, r, t))
       }
       .flatMap {
@@ -241,7 +240,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .groupBy { case (c, r, v) => c.position }
       .sortBy { case (c, r, v) => r }
       .scanLeft(Option.empty[(w.T, Collection[Cell[Q]])]) {
-        case (None, (c, r, v)) => Some((w.initialiseWithValue(c, r, v), Collection[Cell[Q]]()))
+        case (None, (c, r, v)) => Some(w.initialiseWithValue(c, r, v))
         case (Some((t, _)), (c, r, v)) => Some(w.presentWithValue(c, r, v, t))
       }
       .flatMap {
@@ -563,7 +562,6 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpand
 // TODO: Make this work on more than 2D matrices and share with Spark
 trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D] =>
 
-  import au.com.cba.omnia.grimlock.framework.Matrix._
   import au.com.cba.omnia.grimlock.library.aggregate._
   import au.com.cba.omnia.grimlock.library.pairwise._
   import au.com.cba.omnia.grimlock.library.transform._

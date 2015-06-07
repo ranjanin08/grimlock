@@ -85,6 +85,9 @@ trait Position {
   protected def getIndex(dim: Dimension): Int = if (dim.index < 0) coordinates.length - 1 else dim.index
 }
 
+/** Trait for capturing the dependency between an expansion and a position. */
+trait ExpPosDep[A, B] extends java.io.Serializable
+
 object Position {
   /** Define an ordering between 2 position. Only use with position of the same type coordinates. */
   def Ordering[T <: Position]: Ordering[T] = new Ordering[T] { def compare(x: T, y: T): Int = x.compare(y) }
@@ -92,12 +95,36 @@ object Position {
   /** `MapablePosition` object for `PositionND` (N > 1) with `Along`. */
   case object MapAlong extends MapMapablePosition[Position1D] {}
 
-  implicit def S2P(value: String): Position1D = new Position1D(StringValue(value))
-  implicit def D2P(value: Double): Position1D = new Position1D(DoubleValue(value))
-  implicit def L2P(value: Long): Position1D = new Position1D(LongValue(value))
-  implicit def I2P(value: Int): Position1D = new Position1D(LongValue(value))
-  implicit def B2P(value: Boolean): Position1D = new Position1D(BooleanValue(value))
-  implicit def V2P(value: Value): Position1D = new Position1D(value)
+  /** Define dependency between expansion from `Position1D` to `Position1D`. */
+  implicit object P1P1 extends ExpPosDep[Position1D, Position1D]
+  /** Define dependency between expansion from `Position1D` to `Position2D`. */
+  implicit object P1P2 extends ExpPosDep[Position1D, Position2D]
+  /** Define dependency between expansion from `Position1D` to `Position3D`. */
+  implicit object P1P3 extends ExpPosDep[Position1D, Position3D]
+  /** Define dependency between expansion from `Position1D` to `Position4D`. */
+  implicit object P1P4 extends ExpPosDep[Position1D, Position4D]
+  /** Define dependency between expansion from `Position1D` to `Position5D`. */
+  implicit object P1P5 extends ExpPosDep[Position1D, Position5D]
+  /** Define dependency between expansion from `Position2D` to `Position2D`. */
+  implicit object P2P2 extends ExpPosDep[Position2D, Position2D]
+  /** Define dependency between expansion from `Position2D` to `Position3D`. */
+  implicit object P2P3 extends ExpPosDep[Position2D, Position3D]
+  /** Define dependency between expansion from `Position2D` to `Position4D`. */
+  implicit object P2P4 extends ExpPosDep[Position2D, Position4D]
+  /** Define dependency between expansion from `Position2D` to `Position5D`. */
+  implicit object P2P5 extends ExpPosDep[Position2D, Position5D]
+  /** Define dependency between expansion from `Position3D` to `Position3D`. */
+  implicit object P3P3 extends ExpPosDep[Position3D, Position3D]
+  /** Define dependency between expansion from `Position3D` to `Position4D`. */
+  implicit object P3P4 extends ExpPosDep[Position3D, Position4D]
+  /** Define dependency between expansion from `Position3D` to `Position5D`. */
+  implicit object P3P5 extends ExpPosDep[Position3D, Position5D]
+  /** Define dependency between expansion from `Position4D` to `Position4D`. */
+  implicit object P4P4 extends ExpPosDep[Position4D, Position4D]
+  /** Define dependency between expansion from `Position4D` to `Position5D`. */
+  implicit object P4P5 extends ExpPosDep[Position4D, Position5D]
+  /** Define dependency between expansion from `Position5D` to `Position5D`. */
+  implicit object P5P5 extends ExpPosDep[Position5D, Position5D]
 }
 
 /** Trait for operations that reduce a position by one dimension. */

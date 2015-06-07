@@ -18,7 +18,6 @@ import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
-import au.com.cba.omnia.grimlock.framework.Matrix._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
@@ -470,7 +469,7 @@ class TestScalding17(args : Args) extends Job(args) {
 
   data
     .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](Normalise(
-      ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, "max.abs")
+      ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, "max.abs")
         .andThenPresent(_.value.asDouble)), stats)
     .saveAsCSV(Over(Second), "./tmp.scalding/trn6.csv")
 
@@ -555,7 +554,7 @@ class TestScalding19(args : Args) extends Job(args) {
   val transforms = List(
     Indicator[Position2D]() andThenRename Transformer.rename(Second, "%1$s.ind"),
     Binarise[Position2D](Second),
-    Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, Content](Second, "max.abs")
+    Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, "max.abs")
       .andThenPresent(_.value.asDouble)))
 
   def cb(key: String, pipe: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {
@@ -605,7 +604,9 @@ class TestScalding22(args : Args) extends Job(args) {
   case class Diff() extends Window[Position1D, Position1D, Position2D] {
     type T = Cell[Position1D]
 
-    def initialise(cell: Cell[Position1D], rem: Position1D): T = Cell(rem, cell.content)
+    def initialise(cell: Cell[Position1D], rem: Position1D): (T, Collection[Cell[Position2D]]) = {
+      (Cell(rem, cell.content), Collection[Cell[Position2D]]())
+    }
 
     def present(cell: Cell[Position1D], rem: Position1D, t: T): (T, Collection[Cell[Position2D]]) = {
       (Cell(rem, cell.content), (cell.content.value.asDouble, t.content.value.asDouble) match {

@@ -18,7 +18,6 @@ import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
-import au.com.cba.omnia.grimlock.framework.Matrix._
 import au.com.cba.omnia.grimlock.framework.nlp._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
@@ -167,7 +166,7 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
   val idf = tf
     .summarise(Along(First), Count())
     .transformWithValue[Position1D, Idf[Position1D, N], N](
-      Idf(ExtractWithKey[Position1D, Content](First.toString).andThenPresent(_.value.asDouble),
+      Idf(ExtractWithKey[Position1D, String, Content](First.toString).andThenPresent(_.value.asDouble),
         (df: Double, n: Double) => math.log10(n / df)), n)
     .toMap(Over(First))
 
