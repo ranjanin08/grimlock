@@ -170,7 +170,7 @@ object Content {
    * @note The caller must ensure that `schema` and `value` both have the same codex.
    */
   // TODO: Is is possible to enforce that both codex have to be the same?
-  def apply(schema: Schema, value: Value): Content = ContentImpl(schema, value)
+  def apply[S <: Schema, V <: Value](schema: S, value: V): Content = ContentImpl(schema, value)
 }
 
 private[content] case class ContentImpl(schema: Schema, value: Value) extends Content

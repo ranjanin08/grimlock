@@ -18,38 +18,50 @@ import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-/** Base trait for comparing two positions to determine is pairwise operation is to be applied. */
+/** Base trait for comparing two positions to determine if pairwise operation is to be applied. */
 trait Comparer {
   /**
    * Check, based on left and right positions, if pairwise operation should be computed.
    *
-   * @param l Left position.
-   * @param r Right position.
+   * @param left  Left position.
+   * @param right Right position.
    */
-  def check(l: Position, r: Position): Boolean
+  def check[P <: Position](left: P, right: P): Boolean
 }
 
 /** Case object for computing all pairwise combinations. */
-case object All extends Comparer { def check(l: Position, r: Position): Boolean = true }
+case object All extends Comparer {
+  def check[P <: Position](left: P, right: P): Boolean = true
+}
 
-/** Case object for computing diagonal pairwise combinations (i.e. l == r). */
-case object Diagonal extends Comparer { def check(l: Position, r: Position): Boolean = l.compare(r) == 0 }
+/** Case object for computing diagonal pairwise combinations (i.e. left == right). */
+case object Diagonal extends Comparer {
+  def check[P <: Position](left: P, right: P): Boolean = left.compare(right) == 0
+}
 
-/** Case object for computing upper triangular pairwise combinations (i.e. r > l). */
-case object Upper extends Comparer { def check(l: Position, r: Position): Boolean = r.compare(l) > 0 }
+/** Case object for computing upper triangular pairwise combinations (i.e. right > left). */
+case object Upper extends Comparer {
+  def check[P <: Position](left: P, right: P): Boolean = right.compare(left) > 0
+}
 
-/** Case object for computing upper triangular or diagonal pairwise combinations (i.e. r >= l). */
-case object UpperDiagonal extends Comparer { def check(l: Position, r: Position): Boolean = r.compare(l) >= 0 }
+/** Case object for computing upper triangular or diagonal pairwise combinations (i.e. right >= left). */
+case object UpperDiagonal extends Comparer {
+  def check[P <: Position](left: P, right: P): Boolean = right.compare(left) >= 0
+}
 
-/** Case object for computing lower triangular pairwise combinations (i.e. l > r). */
-case object Lower extends Comparer { def check(l: Position, r: Position): Boolean = l.compare(r) > 0 }
+/** Case object for computing lower triangular pairwise combinations (i.e. left > right). */
+case object Lower extends Comparer {
+  def check[P <: Position](left: P, right: P): Boolean = left.compare(right) > 0
+}
 
-/** Case object for computing lower triangular or diagonal pairwise combinations (i.e. l >= r). */
-case object LowerDiagonal extends Comparer { def check(l: Position, r: Position): Boolean = l.compare(r) >= 0 }
+/** Case object for computing lower triangular or diagonal pairwise combinations (i.e. left >= right). */
+case object LowerDiagonal extends Comparer {
+  def check[P <: Position](left: P, right: P): Boolean = left.compare(right) >= 0
+}
 
 /** Base trait for computing pairwise values. */
 trait Operator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends OperatorWithValue[S, R, Q] {
+  extends OperatorWithValue[S, R, Q] { self =>
   type V = Any
 
   def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[Q]] = compute(left, right, rem)
@@ -65,11 +77,45 @@ trait Operator[S <: Position with ExpandablePosition, R <: Position with Expanda
    *       (this can be done by comparing the selected coordinates)
    */
   def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]]
+
+  /**
+   * Operator for pairwise operations and then renaming dimensions.
+   *
+   * @param rename The rename to apply after the operation.
+   *
+   * @return An operator that runs `this` and then renames the resulting dimension(s).
+   */
+  def andThenRename(rename: (Cell[S], Cell[S], R, Cell[Q]) => Q) = {
+    new Operator[S, R, Q] {
+      def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]] = {
+        Collection(self.compute(left, right, rem).toList.map {
+          case c => Cell(rename(left, right, rem, c), c.content)
+        })
+      }
+    }
+  }
+
+  /**
+   * Operator for pairwise operations and then expanding dimensions.
+   *
+   * @param expand The expansion to apply after the operation.
+   *
+   * @return An operator that runs `this` and then expands the resulting dimensions.
+   */
+  def andThenExpand[U <: Position](expand: (Cell[S], Cell[S], R, Cell[Q]) => U)(implicit ev: PosExpDep[Q, U]) = {
+    new Operator[S, R, U] {
+      def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[U]] = {
+        Collection(self.compute(left, right, rem).toList.map {
+          case c => Cell(expand(left, right, rem, c), c.content)
+        })
+      }
+    }
+  }
 }
 
 /** Base trait for computing pairwise values with a user provided value. */
 trait OperatorWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends java.io.Serializable {
+  extends java.io.Serializable { self =>
   /** Type of the external value. */
   type V
 
@@ -85,6 +131,45 @@ trait OperatorWithValue[S <: Position with ExpandablePosition, R <: Position wit
    *       (this can be done by comparing the selected coordinates)
    */
   def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[Q]]
+
+  /**
+   * Operator for pairwise operations and then renaming dimensions.
+   *
+   * @param rename The rename to apply after the operation.
+   *
+   * @return An operator that runs `this` and then renames the resulting dimension(s).
+   */
+  def andThenRenameWithValue(rename: (Cell[S], Cell[S], R, V, Cell[Q]) => Q) = {
+    new OperatorWithValue[S, R, Q] {
+      type V = self.V
+
+      def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[Q]] = {
+        Collection(self.computeWithValue(left, right, rem, ext).toList.map {
+          case c => Cell(rename(left, right, rem, ext, c), c.content)
+        })
+      }
+    }
+  }
+
+  /**
+   * Operator for pairwise operations and then expanding dimensions.
+   *
+   * @param expand The expansion to apply after the operation.
+   *
+   * @return An operator that runs `this` and then expands the resulting dimensions.
+   */
+  def andThenExpandWithValue[U <: Position](expand: (Cell[S], Cell[S], R, V, Cell[Q]) => U)(
+    implicit ev: PosExpDep[Q, U]) = {
+    new OperatorWithValue[S, R, U] {
+      type V = self.V
+
+      def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[U]] = {
+        Collection(self.computeWithValue(left, right, rem, ext).toList.map {
+          case c => Cell(expand(left, right, rem, ext, c), c.content)
+        })
+      }
+    }
+  }
 }
 
 /** Type class for transforming a type `T` to a `Operator[S, R, Q]`. */

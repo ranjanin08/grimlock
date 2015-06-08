@@ -89,7 +89,7 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
    *
    * @return A window that runs `this` and then expands the resulting dimensions.
    */
-  def andThenExpand[U <: Position](expand: (Cell[S], R, Cell[Q]) => U)(implicit ev: ExpPosDep[Q, U]) = {
+  def andThenExpand[U <: Position](expand: (Cell[S], R, Cell[Q]) => U)(implicit ev: PosExpDep[Q, U]) = {
     new Window[S, R, U] {
       type T = self.T
 
@@ -182,7 +182,7 @@ trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with 
    *
    * @return A window that runs `this` and then expands the resulting dimensions.
    */
-  def andThenExpandWithValue[U <: Position](expand: (Cell[S], R, V, Cell[Q]) => U)(implicit ev: ExpPosDep[Q, U]) = {
+  def andThenExpandWithValue[U <: Position](expand: (Cell[S], R, V, Cell[Q]) => U)(implicit ev: PosExpDep[Q, U]) = {
     new WindowWithValue[S, R, U] {
       type V = self.V
       type T = self.T

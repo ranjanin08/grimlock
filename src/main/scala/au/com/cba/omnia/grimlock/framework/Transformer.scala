@@ -71,7 +71,7 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
    *
    * @return A transformer that runs `this` and then expands the resulting dimensions.
    */
-  def andThenExpand[R <: Position](expand: (Cell[P], Cell[Q]) => R)(implicit ev: ExpPosDep[Q, R]) = {
+  def andThenExpand[R <: Position](expand: (Cell[P], Cell[Q]) => R)(implicit ev: PosExpDep[Q, R]) = {
     new Transformer[P, R] {
       def present(cell: Cell[P]): Collection[Cell[R]] = {
         Collection(self.present(cell).toList.map { case c => Cell(expand(cell, c), c.content) })
@@ -154,7 +154,7 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
    *
    * @return A transformer that runs `this` and then expands the resulting dimensions.
    */
-  def andThenExpandWithValue[R <: Position](expand: (Cell[P], Cell[Q], V) => R)(implicit ev: ExpPosDep[Q, R]) = {
+  def andThenExpandWithValue[R <: Position](expand: (Cell[P], Cell[Q], V) => R)(implicit ev: PosExpDep[Q, R]) = {
     new TransformerWithValue[P, R] {
       type V = self.V
 

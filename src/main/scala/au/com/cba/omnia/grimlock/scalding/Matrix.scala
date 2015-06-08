@@ -61,7 +61,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type E[B] = ValuePipe[B]
   type S = Matrix[P]
 
-  def change[T, D <: Dimension](slice: Slice[P, D], positions: T, schema: Schema)(implicit ev1: PosDimDep[P, D],
+  def change[D <: Dimension, T](slice: Slice[P, D], positions: T, schema: Schema)(implicit ev1: PosDimDep[P, D],
     ev2: BaseNameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S]): U[Cell[P]] = {
     data
       .groupBy { case c => slice.selected(c.position) }
@@ -104,34 +104,35 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], operators: T)(implicit ev1: PosDimDep[P, D],
-    ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-    ev5: ClassTag[slice.R]): U[Cell[Q]] = {
-    val o = ev2.convert(operators)
+    ev2: PosExpDep[slice.R#M, Q], ev3: Operable[T, slice.S, slice.R, Q], ev4: slice.S =!= Position0D,
+    ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
+    val o = ev3.convert(operators)
 
     pairwise(slice).flatMap { case (lc, rc, r) => o.compute(lc, rc, r).toList }
   }
 
   def pairwiseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], operators: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
-    val o = ev2.convert(operators)
+    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q], ev3: OperableWithValue[T, slice.S, slice.R, Q, W],
+    ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
+    val o = ev3.convert(operators)
 
     pairwise(slice)
       .flatMapWithValue(value) { case ((lc, rc, r), vo) => o.computeWithValue(lc, rc, r, vo.get).toList }
   }
 
   def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], that: S, operators: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
-    val o = ev2.convert(operators)
+    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q], ev3: Operable[T, slice.S, slice.R, Q],
+    ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
+    val o = ev3.convert(operators)
 
     pairwiseBetween(slice, that).flatMap { case (lc, rc, r) => o.compute(lc, rc, r).toList }
   }
 
   def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], that: S, operators: T,
-    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
-    ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
-    val o = ev2.convert(operators)
+    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q],
+    ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
+    ev6: ClassTag[slice.R]): U[Cell[Q]] = {
+    val o = ev3.convert(operators)
 
     pairwiseBetween(slice, that)
       .flatMapWithValue(value) { case ((lc, rc, r), vo) => o.computeWithValue(lc, rc, r, vo.get).toList }
@@ -188,7 +189,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case sum => Cell(Position1D(dim.toString), Content(DiscreteSchema[Codex.LongCodex](), sum)) }
   }
 
-  def slice[T, D <: Dimension](slice: Slice[P, D], positions: T, keep: Boolean)(implicit ev1: PosDimDep[P, D],
+  def slice[D <: Dimension, T](slice: Slice[P, D], positions: T, keep: Boolean)(implicit ev1: PosDimDep[P, D],
     ev2: BaseNameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S]): U[Cell[P]] = {
     val pos = ev2.convert(this, slice, positions)
     val wanted = keep match {
@@ -212,9 +213,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def slide[D <: Dimension, Q <: Position, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D],
-    ev2: Windowable[T, slice.S, slice.R, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
-    ev5: ClassTag[slice.R]): U[Cell[Q]] = {
-    val w = ev2.convert(windows)
+    ev2: PosExpDep[slice.S#M, Q], ev3: Windowable[T, slice.S, slice.R, Q], ev4: slice.R =!= Position0D,
+    ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
+    val w = ev3.convert(windows)
 
     data
       .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
@@ -231,9 +232,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def slideWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], windows: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
-    val w = ev2.convert(windows)
+    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S#M, Q], ev3: WindowableWithValue[T, slice.S, slice.R, Q, W],
+    ev4: slice.R =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
+    val w = ev3.convert(windows)
 
     data
       .mapWithValue(value) { case (Cell(p, c), vo) => (Cell(slice.selected(p), c), slice.remainder(p), vo.get) }
@@ -249,14 +250,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def split[I, T](partitioners: T)(implicit ev: Partitionable[T, P, I]): U[(I, Cell[P])] = {
+  def split[Q, T](partitioners: T)(implicit ev: Partitionable[T, P, Q]): U[(Q, Cell[P])] = {
     val partitioner = ev.convert(partitioners)
 
     data.flatMap { case c => partitioner.assign(c).toList(c) }
   }
 
-  def splitWithValue[I: Ordering, T, W](partitioners: T, value: E[W])(
-    implicit ev: PartitionableWithValue[T, P, I, W]): U[(I, Cell[P])] = {
+  def splitWithValue[Q, T, W](partitioners: T, value: E[W])(
+    implicit ev: PartitionableWithValue[T, P, Q, W]): U[(Q, Cell[P])] = {
     val partitioner = ev.convert(partitioners)
 
     data.flatMapWithValue(value) { case (c, vo) => partitioner.assignWithValue(c, vo.get).toList(c) }
@@ -314,7 +315,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .flatMap(parser(_))
   }
 
-  def summariseAndExpand[T, D <: Dimension](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
+  def summariseAndExpand[D <: Dimension, T](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
     ev2: AggregatableMultiple[T], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
     val a = ev2.convert(aggregators)
 
@@ -325,7 +326,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .flatMap { case (_, (p, t)) => a.presentMultiple(p, t).toList }
   }
 
-  def summariseAndExpandWithValue[T, D <: Dimension, W](slice: Slice[P, D], aggregators: T, value: E[W])(
+  def summariseAndExpandWithValue[D <: Dimension, T, W](slice: Slice[P, D], aggregators: T, value: E[W])(
     implicit ev1: PosDimDep[P, D], ev2: AggregatableMultipleWithValue[T, W],
     ev3: ClassTag[slice.S]): U[Cell[slice.S#M]] = {
     val a = ev2.convert(aggregators)
@@ -358,14 +359,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def transform[Q <: Position, T](transformers: T)(implicit ev1: Transformable[T, P, Q],
-    ev2: ExpPosDep[P, Q]): U[Cell[Q]] = {
+    ev2: PosExpDep[P, Q]): U[Cell[Q]] = {
     val transformer = ev1.convert(transformers)
 
     data.flatMap { case c => transformer.present(c).toList }
   }
 
   def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
-    implicit ev1: TransformableWithValue[T, P, Q, W], ev2: ExpPosDep[P, Q]): U[Cell[Q]] = {
+    implicit ev1: TransformableWithValue[T, P, Q, W], ev2: PosExpDep[P, Q]): U[Cell[Q]] = {
     val transformer = ev1.convert(transformers)
 
     data.flatMapWithValue(value) { case (c, vo) => transformer.presentWithValue(c, vo.get).toList }
@@ -400,12 +401,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.collect { case c if predicate(c) => c.position }
   }
 
-  def which[T, D <: Dimension](slice: Slice[P, D], positions: T, predicate: Predicate)(implicit ev1: PosDimDep[P, D],
+  def which[D <: Dimension, T](slice: Slice[P, D], positions: T, predicate: Predicate)(implicit ev1: PosDimDep[P, D],
     ev2: BaseNameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S], ev4: ClassTag[P]): U[P] = {
     which(slice, List((positions, predicate)))
   }
 
-  def which[T, D <: Dimension](slice: Slice[P, D], pospred: List[(T, Predicate)])(implicit ev1: PosDimDep[P, D],
+  def which[D <: Dimension, T](slice: Slice[P, D], pospred: List[(T, Predicate)])(implicit ev1: PosDimDep[P, D],
     ev2: BaseNameable[T, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S], ev4: ClassTag[P]): U[P] = {
     val nampred = pospred.map { case (pos, pred) => ev2.convert(this, slice, pos).map { case (p, i) => (p, pred) } }
     val pipe = nampred.tail.foldLeft(nampred.head)((b, a) => b ++ a)
@@ -549,12 +550,12 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 /** Base trait for methods that expand the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
 trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
 
-  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: ExpPosDep[P, Q]): TypedPipe[Cell[Q]] = {
+  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P, Q]): TypedPipe[Cell[Q]] = {
     data.map { case c => Cell(expander(c), c.content) }
   }
 
   def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => Q, value: ValuePipe[W])(
-    implicit ev: ExpPosDep[P, Q]): TypedPipe[Cell[Q]] = {
+    implicit ev: PosExpDep[P, Q]): TypedPipe[Cell[Q]] = {
     data.mapWithValue(value) { case (c, vo) => Cell(expander(c, vo.get), c.content) }
   }
 }
