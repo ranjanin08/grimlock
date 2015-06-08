@@ -132,9 +132,9 @@ case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper
   def assign(cell: Cell[P]): Collection[S] = {
     (codex.compare(cell.position(dim), codex.toValue(lower)),
       codex.compare(cell.position(dim), codex.toValue(upper))) match {
-      case (Some(l), Some(u)) => Collection(if (l <= 0) left else if (u <= 0) middle else right)
-      case _ => Collection[S]()
-    }
+        case (Some(l), Some(u)) => Collection(if (l <= 0) left else if (u <= 0) middle else right)
+        case _ => Collection[S]()
+      }
   }
 }
 
@@ -155,9 +155,9 @@ case class DateSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Date, Dat
       case (k, (lower, upper)) =>
         (codex.compare(cell.position(dim), codex.toValue(lower)),
           codex.compare(cell.position(dim), codex.toValue(upper))) match {
-          case (Some(l), Some(u)) if (l > 0 && u <= 0) => Some(k)
-          case _ => None
-        }
+            case (Some(l), Some(u)) if (l > 0 && u <= 0) => Some(k)
+            case _ => None
+          }
     }.toList
 
     parts.size match {

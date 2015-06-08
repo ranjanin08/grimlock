@@ -123,8 +123,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], that: S, operators: T,
     value: E[W])(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q],
-    ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
-    ev6: ClassTag[slice.R]): U[Cell[Q]] = {
+      ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
+      ev6: ClassTag[slice.R]): U[Cell[Q]] = {
     val o = ev3.convert(operators)
 
     pairwiseBetween(slice, that).flatMap { case (lc, rc, r) => o.computeWithValue(lc, rc, r, value).toList }

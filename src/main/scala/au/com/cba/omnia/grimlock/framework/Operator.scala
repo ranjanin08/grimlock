@@ -185,7 +185,7 @@ trait Operable[T, S <: Position with ExpandablePosition, R <: Position with Expa
 /** Companion object for the `Operable` type class. */
 object Operable {
   /** Converts a `(Cell[S], Cell[S], R) => Cell[Q]` to a `Operator[S, R, Q]`. */
-  implicit def C2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition,  Q <: Position]: Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] = {
+  implicit def C2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] = {
     new Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] {
       def convert(t: (Cell[S], Cell[S], R) => Cell[Q]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {

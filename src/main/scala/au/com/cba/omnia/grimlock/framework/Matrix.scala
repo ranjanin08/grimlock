@@ -391,8 +391,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], that: S, operators: T,
     value: E[W])(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q],
-    ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
-    ev6: ClassTag[slice.R]): U[Cell[Q]]
+      ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
+      ev6: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Rename the coordinates of a dimension.
@@ -682,7 +682,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     t.toString(separator, descriptive)
   }
 
-  protected implicit def PositionOrdering[T <: Position] = Position.Ordering[T]
+  protected implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
 
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations

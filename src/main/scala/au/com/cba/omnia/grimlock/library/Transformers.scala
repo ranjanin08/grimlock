@@ -46,10 +46,10 @@ private[transform] object Transform {
     second: Extract[P, V, Double], transform: (Double, Double, Double) => Double): Collection[Cell[P]] = {
     (checkType(cell, Numerical), cell.content.value.asDouble, first.extract(cell, ext),
       second.extract(cell, ext)) match {
-      case (true, Some(v), Some(f), Some(s)) => Collection(cell.position,
-        Content(ContinuousSchema[Codex.DoubleCodex](), transform(v, f, s)))
-      case _ => Collection()
-    }
+        case (true, Some(v), Some(f), Some(s)) => Collection(cell.position,
+          Content(ContinuousSchema[Codex.DoubleCodex](), transform(v, f, s)))
+        case _ => Collection()
+      }
   }
 }
 

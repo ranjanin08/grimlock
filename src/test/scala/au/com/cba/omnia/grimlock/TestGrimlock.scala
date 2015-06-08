@@ -29,7 +29,7 @@ trait TestGrimlock extends FlatSpec with Matchers {
 
   implicit def toList[T](rdd: RDD[T]): List[T] = rdd.toLocalIterator.toList
 
-  implicit def PositionOrdering[T <: Position] = Position.Ordering[T]
+  implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
 
   implicit val sc = TestGrimlock.spark
 }

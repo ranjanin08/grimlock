@@ -90,7 +90,9 @@ trait PosExpDep[A <: Position, B <: Position] extends java.io.Serializable
 
 object Position {
   /** Define an ordering between 2 position. Only use with position of the same type coordinates. */
-  def Ordering[T <: Position]: Ordering[T] = new Ordering[T] { def compare(x: T, y: T): Int = x.compare(y) }
+  def Ordering[T <: Position](ascending: Boolean = true): Ordering[T] = {
+    new Ordering[T] { def compare(x: T, y: T): Int = x.compare(y) * (if (ascending) { 1 } else { -1 }) }
+  }
 
   /** `MapablePosition` object for `PositionND` (N > 1) with `Along`. */
   case object MapAlong extends MapMapablePosition[Position1D] {}
@@ -128,9 +130,9 @@ object Position {
   /** Define dependency between expansion from `Position5D` to `Position5D`. */
   implicit object P5P5 extends PosExpDep[Position5D, Position5D]
   /** Define dependency between an expandable position and its expansion. */
-  implicit def PPM[P <: Position with ExpandablePosition] = new PosExpDep[P, P#M] { }
+  implicit def PPM[P <: Position with ExpandablePosition] = new PosExpDep[P, P#M] {}
   /** Define dependency between an expanded position and its expansion. */
-  implicit def PMPM[P <: Position with ExpandablePosition] = new PosExpDep[P#M, P#M] { }
+  implicit def PMPM[P <: Position with ExpandablePosition] = new PosExpDep[P#M, P#M] {}
 }
 
 /** Trait for operations that reduce a position by one dimension. */

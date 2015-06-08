@@ -82,8 +82,8 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
 
 object Transformer {
   def rename[P <: Position, Q <: Position](dim: Dimension, name: String): (Cell[P], Cell[Q]) => Q = {
-    (before: Cell[P], after: Cell[Q]) => after.position.update(dim,
-      name.format(after.position(dim).toShortString, before.content.value.toShortString))
+    (before: Cell[P], after: Cell[Q]) =>
+      after.position.update(dim, name.format(after.position(dim).toShortString, before.content.value.toShortString))
   }
 
   def expand[P <: Position, Q <: Position with ExpandablePosition, V](name: V)(
@@ -93,8 +93,8 @@ object Transformer {
 
   def expand[P <: Position, Q <: Position with ExpandablePosition](dim: Dimension,
     name: String): (Cell[P], Cell[Q]) => Q#M = {
-    (before: Cell[P], after: Cell[Q]) => after.position.append(name.format(after.position(dim).toShortString,
-      before.content.value.toShortString))
+    (before: Cell[P], after: Cell[Q]) =>
+      after.position.append(name.format(after.position(dim).toShortString, before.content.value.toShortString))
   }
 }
 
@@ -167,8 +167,8 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
 
 object TransformerWithValue {
   def rename[P <: Position, Q <: Position, V](dim: Dimension, name: String): (Cell[P], Cell[Q], V) => Q = {
-    (before: Cell[P], after: Cell[Q], V) => after.position.update(dim,
-      name.format(after.position(dim).toShortString, before.content.value.toShortString))
+    (before: Cell[P], after: Cell[Q], V) =>
+      after.position.update(dim, name.format(after.position(dim).toShortString, before.content.value.toShortString))
   }
 
   def expand[P <: Position, Q <: Position with ExpandablePosition, V, W](name: W)(
@@ -178,8 +178,8 @@ object TransformerWithValue {
 
   def expand[P <: Position, Q <: Position with ExpandablePosition, V](dim: Dimension,
     name: String): (Cell[P], Cell[Q], V) => Q#M = {
-    (before: Cell[P], after: Cell[Q], ext: V) => after.position.append(name.format(after.position(dim).toShortString,
-      before.content.value.toShortString))
+    (before: Cell[P], after: Cell[Q], ext: V) =>
+      after.position.append(name.format(after.position(dim).toShortString, before.content.value.toShortString))
   }
 }
 
