@@ -129,6 +129,8 @@ object Position {
   implicit object P4P5 extends PosExpDep[Position4D, Position5D]
   /** Define dependency between expansion from `Position5D` to `Position5D`. */
   implicit object P5P5 extends PosExpDep[Position5D, Position5D]
+  /** Define dependency between a position and itself. */
+  implicit def PP[P <: Position] = new PosExpDep[P, P] {}
   /** Define dependency between an expandable position and its expansion. */
   implicit def PPM[P <: Position with ExpandablePosition] = new PosExpDep[P, P#M] {}
   /** Define dependency between an expanded position and its expansion. */

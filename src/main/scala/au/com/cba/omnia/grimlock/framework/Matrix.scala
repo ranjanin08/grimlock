@@ -345,37 +345,41 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * Compute pairwise values between all pairs of values given a slice.
    *
    * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param comparer  Defines which element the pairwise operations should apply to.
    * @param operators The pairwise operators to apply.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], operators: T)(implicit ev1: PosDimDep[P, D],
-    ev2: PosExpDep[slice.R#M, Q], ev3: Operable[T, slice.S, slice.R, Q], ev4: slice.S =!= Position0D,
-    ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]]
+  def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, operators: T)(
+    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q], ev3: Operable[T, slice.S, slice.R, Q],
+    ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all pairs of values given a slice with a user supplied value.
    *
    * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param comparer  Defines which element the pairwise operations should apply to.
    * @param operators The pairwise operators to apply.
    * @param value     The user supplied value.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], operators: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q], ev3: OperableWithValue[T, slice.S, slice.R, Q, W],
-    ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]]
+  def pairwiseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, operators: T,
+    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q],
+      ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
+      ev6: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all values of this and that given a slice.
    *
    * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param comparer  Defines which element the pairwise operations should apply to.
    * @param that      Other matrix to compute pairwise values with.
    * @param operators The pairwise operators to apply.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], that: S, operators: T)(
+  def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, that: S, operators: T)(
     implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q], ev3: Operable[T, slice.S, slice.R, Q],
     ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]]
 
@@ -383,14 +387,15 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * Compute pairwise values between all values of this and that given a slice with a user supplied value.
    *
    * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param comparer  Defines which element the pairwise operations should apply to.
    * @param that      Other matrix to compute pairwise values with.
    * @param operators The pairwise operators to apply.
    * @param value     The user supplied value.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], that: S, operators: T,
-    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q],
+  def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, that: S,
+    operators: T, value: E[W])(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q],
       ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
       ev6: ClassTag[slice.R]): U[Cell[Q]]
 

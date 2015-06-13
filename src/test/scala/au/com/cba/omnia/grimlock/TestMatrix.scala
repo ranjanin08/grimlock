@@ -5729,7 +5729,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.pairwise[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), Plus())
+        cells.pairwise[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), Lower, Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -5740,7 +5740,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Plus())
+        cells.pairwise[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Lower, Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -5752,7 +5752,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.pairwise[Dimension.First, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Along(First),
-          List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+          Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -5764,7 +5764,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.pairwise[Dimension.Second, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Over(Second),
-          List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+          Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -5775,7 +5775,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), Plus())
+        cells.pairwise[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), Lower, Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -5786,7 +5786,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), Plus())
+        cells.pairwise[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), Lower, Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -5798,7 +5798,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwise[Dimension.First, Position2D, List[Operator[Position2D, Position1D, Position2D]]](Along(First),
-          List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+          Lower, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -5810,7 +5810,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwise[Dimension.Second, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Second),
-          List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+          Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -5821,7 +5821,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), Plus())
+        cells.pairwise[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), Lower, Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -5833,7 +5833,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwise[Dimension.Third, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Third),
-          List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+          Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -5844,7 +5844,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), Plus())
+        cells.pairwise[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), Lower, Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -5855,7 +5855,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.pairwiseWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First),
+        cells.pairwiseWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First), Lower,
           TestMatrixPairwise.PlusX[Position1D, Position0D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
@@ -5867,7 +5867,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First),
+        cells.pairwiseWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First), Lower,
           TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result13
@@ -5879,7 +5879,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position1D, Position1D]], W](Along(First),
+        cells.pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position1D, Position1D]], W](Along(First), Lower,
           List(TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
           ValuePipe(ext))
     } Then {
@@ -5892,7 +5892,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue[Dimension.Second, Position2D, List[OwV[Position1D, Position1D]], W](Over(Second),
+        cells.pairwiseWithValue[Dimension.Second, Position2D, List[OwV[Position1D, Position1D]], W](Over(Second), Lower,
           List(TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
           ValuePipe(ext))
     } Then {
@@ -5905,7 +5905,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue[Dimension.Second, Position2D, OwV[Position1D, Position1D], W](Along(Second),
+        cells.pairwiseWithValue[Dimension.Second, Position2D, OwV[Position1D, Position1D], W](Along(Second), Lower,
           TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result16
@@ -5917,7 +5917,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First),
+        cells.pairwiseWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First), Lower,
           TestMatrixPairwise.PlusX[Position1D, Position2D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result17
@@ -5929,7 +5929,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position2D, Position1D]], W](Along(First),
+        cells.pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position2D, Position1D]], W](Along(First), Lower,
           List(TestMatrixPairwise.PlusX[Position2D, Position1D](), TestMatrixPairwise.MinusX[Position2D, Position1D]()),
           ValuePipe(ext))
     } Then {
@@ -5942,7 +5942,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.Second, Position3D, List[OwV[Position1D, Position2D]], W](Over(Second),
+        cells.pairwiseWithValue[Dimension.Second, Position3D, List[OwV[Position1D, Position2D]], W](Over(Second), Lower,
           List(TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
           ValuePipe(ext))
     } Then {
@@ -5955,7 +5955,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.Second, Position2D, OwV[Position2D, Position1D], W](Along(Second),
+        cells.pairwiseWithValue[Dimension.Second, Position2D, OwV[Position2D, Position1D], W](Along(Second), Lower,
           TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result20
@@ -5967,7 +5967,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.Third, Position3D, List[OwV[Position1D, Position2D]], W](Over(Third),
+        cells.pairwiseWithValue[Dimension.Third, Position3D, List[OwV[Position1D, Position2D]], W](Over(Third), Lower,
           List(TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
           ValuePipe(ext))
     } Then {
@@ -5980,7 +5980,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third),
+        cells.pairwiseWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third), Lower,
           TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result22
@@ -5994,7 +5994,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataA
     } When {
       (cells: TypedPipe[Cell[Position1D]], that: TypedPipe[Cell[Position1D]]) =>
-        cells.pairwiseBetween[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), that, Plus())
+        cells.pairwiseBetween[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), Lower, that,
+          Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result23
     }
@@ -6007,7 +6008,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataB
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), that, Plus())
+        cells.pairwiseBetween[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Lower, that,
+          Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result24
     }
@@ -6021,7 +6023,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetween[Dimension.First, Position2D, List[Operator[Position1D, Position1D, Position2D]]](
-          Along(First), that, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+          Along(First), Lower, that, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result25
     }
@@ -6035,7 +6037,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetween[Dimension.Second, Position2D, List[Operator[Position1D, Position1D, Position2D]]](
-          Over(Second), that, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+          Over(Second), Lower, that, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result26
     }
@@ -6048,7 +6050,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataE
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), that, Plus())
+        cells.pairwiseBetween[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), Lower, that,
+          Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result27
     }
@@ -6061,7 +6064,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataF
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), that, Plus())
+        cells.pairwiseBetween[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), Lower, that,
+          Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result28
     }
@@ -6075,7 +6079,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetween[Dimension.First, Position2D, List[Operator[Position2D, Position1D, Position2D]]](
-          Along(First), that, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+          Along(First), Lower, that, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result29
     }
@@ -6089,7 +6093,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetween[Dimension.Second, Position3D, List[Operator[Position1D, Position2D, Position3D]]](
-          Over(Second), that, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+          Over(Second), Lower, that, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result30
     }
@@ -6102,7 +6106,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataI
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), that, Plus())
+        cells.pairwiseBetween[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), Lower, that,
+          Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result31
     }
@@ -6116,7 +6121,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetween[Dimension.Third, Position3D, List[Operator[Position1D, Position2D, Position3D]]](
-          Over(Third), that, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+          Over(Third), Lower, that, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result32
     }
@@ -6129,7 +6134,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataK
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), that, Plus())
+        cells.pairwiseBetween[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), Lower, that,
+          Plus())
     } Then {
       _.toList.sortBy(_.position) shouldBe result33
     }
@@ -6142,8 +6148,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataL
     } When {
       (cells: TypedPipe[Cell[Position1D]], that: TypedPipe[Cell[Position1D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First), that,
-          TestMatrixPairwise.PlusX[Position1D, Position0D](), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First), Lower,
+          that, TestMatrixPairwise.PlusX[Position1D, Position0D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result34
     }
@@ -6156,8 +6162,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataM
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First), that,
-          TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First), Lower,
+          that, TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result35
     }
@@ -6171,7 +6177,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetweenWithValue[Dimension.First, Position2D, List[OwV[Position1D, Position1D]], W](Along(First),
-          that, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
+          Lower, that, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
             TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result36
@@ -6186,7 +6192,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetweenWithValue[Dimension.Second, Position2D, List[OwV[Position1D, Position1D]], W](Over(Second),
-          that, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
+          Lower, that, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
             TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result37
@@ -6201,7 +6207,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetweenWithValue[Dimension.Second, Position2D, OwV[Position1D, Position1D], W](Along(Second),
-          that, TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
+          Lower, that, TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result38
     }
@@ -6214,8 +6220,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataQ
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First), that,
-          TestMatrixPairwise.PlusX[Position1D, Position2D](), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First), Lower,
+          that, TestMatrixPairwise.PlusX[Position1D, Position2D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result39
     }
@@ -6229,7 +6235,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetweenWithValue[Dimension.First, Position2D, List[OwV[Position2D, Position1D]], W](Along(First),
-          that, List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
+          Lower, that, List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
             TestMatrixPairwise.MinusX[Position2D, Position1D]()), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result40
@@ -6244,7 +6250,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetweenWithValue[Dimension.Second, Position3D, List[OwV[Position1D, Position2D]], W](Over(Second),
-          that, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
+          Lower, that, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
             TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result41
@@ -6259,7 +6265,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetweenWithValue[Dimension.Second, Position2D, OwV[Position2D, Position1D], W](Along(Second),
-          that, TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
+          Lower, that, TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result42
     }
@@ -6273,7 +6279,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetweenWithValue[Dimension.Third, Position3D, List[OwV[Position1D, Position2D]], W](Over(Third),
-          that, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
+          Lower, that, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
             TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result43
@@ -6287,8 +6293,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataV
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third), that,
-          TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third), Lower,
+          that, TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result44
     }
@@ -6299,92 +6305,92 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   "A Matrix.pairwise" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwise[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), Plus())
+      .pairwise[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), Lower, Plus())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwise[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Plus())
+      .pairwise[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Lower, Plus())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
       .pairwise[Dimension.First, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Along(First),
-        List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+        Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
       .pairwise[Dimension.Second, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Over(Second),
-        List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+        Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwise[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), Plus())
+      .pairwise[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), Lower, Plus())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwise[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), Plus())
+      .pairwise[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), Lower, Plus())
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
       .pairwise[Dimension.First, Position2D, List[Operator[Position2D, Position1D, Position2D]]](Along(First),
-        List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+        Lower, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
       .pairwise[Dimension.Second, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Second),
-        List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+        Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), Plus())
+      .pairwise[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), Lower, Plus())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
       .pairwise[Dimension.Third, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Third),
-        List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+        Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), Plus())
+      .pairwise[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), Lower, Plus())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.pairwiseWithValue" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwiseWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First),
+      .pairwiseWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First), Lower,
         TestMatrixPairwise.PlusX[Position1D, Position0D](), ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First),
+      .pairwiseWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First), Lower,
         TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position1D, Position1D]], W](Along(First),
+      .pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position1D, Position1D]], W](Along(First), Lower,
         List(TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
           ext)
       .toList.sortBy(_.position) shouldBe result14
@@ -6392,7 +6398,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue[Dimension.Second, Position2D, List[OwV[Position1D, Position1D]], W](Over(Second),
+      .pairwiseWithValue[Dimension.Second, Position2D, List[OwV[Position1D, Position1D]], W](Over(Second), Lower,
         List(TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
           ext)
       .toList.sortBy(_.position) shouldBe result15
@@ -6400,21 +6406,21 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue[Dimension.Second, Position2D, OwV[Position1D, Position1D], W](Along(Second),
+      .pairwiseWithValue[Dimension.Second, Position2D, OwV[Position1D, Position1D], W](Along(Second), Lower,
         TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First),
+      .pairwiseWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First), Lower,
         TestMatrixPairwise.PlusX[Position1D, Position2D](), ext)
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position2D, Position1D]], W](Along(First),
+      .pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position2D, Position1D]], W](Along(First), Lower,
         List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
           TestMatrixPairwise.MinusX[Position2D, Position1D]()), ext)
       .toList.sortBy(_.position) shouldBe result18
@@ -6422,7 +6428,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.Second, Position3D, List[OwV[Position1D, Position2D]], W](Over(Second),
+      .pairwiseWithValue[Dimension.Second, Position3D, List[OwV[Position1D, Position2D]], W](Over(Second), Lower,
         List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
           TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext)
       .toList.sortBy(_.position) shouldBe result19
@@ -6430,14 +6436,14 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.Second, Position2D, OwV[Position2D, Position1D], W](Along(Second),
+      .pairwiseWithValue[Dimension.Second, Position2D, OwV[Position2D, Position1D], W](Along(Second), Lower,
         TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.Third, Position3D, List[OwV[Position1D, Position2D]], W](Over(Third),
+      .pairwiseWithValue[Dimension.Third, Position3D, List[OwV[Position1D, Position2D]], W](Over(Third), Lower,
         List(TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
           ext)
       .toList.sortBy(_.position) shouldBe result21
@@ -6445,100 +6451,106 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third),
+      .pairwiseWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third), Lower,
         TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result22
   }
 
   "A Matrix.pairwiseBetween" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwiseBetween[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), toRDD(dataA), Plus())
+      .pairwiseBetween[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), Lower, toRDD(dataA),
+        Plus())
       .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), toRDD(dataB), Plus())
+      .pairwiseBetween[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Lower, toRDD(dataB),
+        Plus())
       .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetween[Dimension.First, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Along(First),
-        toRDD(dataC), List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+        Lower, toRDD(dataC), List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetween[Dimension.Second, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Over(Second),
-        toRDD(dataD), List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+        Lower, toRDD(dataD), List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), toRDD(dataE), Plus())
+      .pairwiseBetween[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), Lower, toRDD(dataE),
+        Plus())
       .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), toRDD(dataF), Plus())
+      .pairwiseBetween[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), Lower, toRDD(dataF),
+        Plus())
       .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetween[Dimension.First, Position2D, List[Operator[Position2D, Position1D, Position2D]]](Along(First),
-        toRDD(dataG), List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+        Lower, toRDD(dataG), List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetween[Dimension.Second, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Second),
-        toRDD(dataH), List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+        Lower, toRDD(dataH), List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), toRDD(dataI), Plus())
+      .pairwiseBetween[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), Lower, toRDD(dataI),
+        Plus())
       .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetween[Dimension.Third, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Third),
-        toRDD(dataJ), List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+        Lower, toRDD(dataJ), List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result32
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), toRDD(dataK), Plus())
+      .pairwiseBetween[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), Lower, toRDD(dataK),
+        Plus())
       .toList.sortBy(_.position) shouldBe result33
   }
 
   "A Matrix.pairwiseBetweenWithValue" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwiseBetweenWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First), toRDD(dataL),
-        TestMatrixPairwise.PlusX[Position1D, Position0D](), ext)
+      .pairwiseBetweenWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First), Lower,
+        toRDD(dataL), TestMatrixPairwise.PlusX[Position1D, Position0D](), ext)
       .toList.sortBy(_.position) shouldBe result34
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetweenWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First), toRDD(dataM),
-        TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
+      .pairwiseBetweenWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First), Lower,
+        toRDD(dataM), TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result35
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetweenWithValue[Dimension.First, Position2D, List[OwV[Position1D, Position1D]], W](Along(First),
-        toRDD(dataN), List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        Lower, toRDD(dataN), List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
           TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext)
       .toList.sortBy(_.position) shouldBe result36
   }
@@ -6546,7 +6558,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetweenWithValue[Dimension.Second, Position2D, List[OwV[Position1D, Position1D]], W](Over(Second),
-        toRDD(dataO), List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        Lower, toRDD(dataO), List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
           TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext)
       .toList.sortBy(_.position) shouldBe result37
   }
@@ -6554,21 +6566,21 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetweenWithValue[Dimension.Second, Position2D, OwV[Position1D, Position1D], W](Along(Second),
-        toRDD(dataP), TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
+        Lower, toRDD(dataP), TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result38
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetweenWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First), toRDD(dataQ),
-        TestMatrixPairwise.PlusX[Position1D, Position2D](), ext)
+      .pairwiseBetweenWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First), Lower,
+        toRDD(dataQ), TestMatrixPairwise.PlusX[Position1D, Position2D](), ext)
       .toList.sortBy(_.position) shouldBe result39
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue[Dimension.First, Position2D, List[OwV[Position2D, Position1D]], W](Along(First),
-        toRDD(dataR), List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
+        Lower, toRDD(dataR), List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
           TestMatrixPairwise.MinusX[Position2D, Position1D]()), ext)
       .toList.sortBy(_.position) shouldBe result40
   }
@@ -6576,7 +6588,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue[Dimension.Second, Position3D, List[OwV[Position1D, Position2D]], W](Over(Second),
-        toRDD(dataS), List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
+        Lower, toRDD(dataS), List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
           TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext)
       .toList.sortBy(_.position) shouldBe result41
   }
@@ -6584,14 +6596,14 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue[Dimension.Second, Position2D, OwV[Position2D, Position1D], W](Along(Second),
-        toRDD(dataT), TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
+        Lower, toRDD(dataT), TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result42
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue[Dimension.Third, Position3D, List[OwV[Position1D, Position2D]], W](Over(Third),
-        toRDD(dataU), List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
+        Lower, toRDD(dataU), List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
           TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext)
       .toList.sortBy(_.position) shouldBe result43
   }
@@ -6599,7 +6611,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third),
-        toRDD(dataV), TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
+        Lower, toRDD(dataV), TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result44
   }
 }

@@ -637,16 +637,13 @@ class TestScalding23(args : Args) extends Job(args) {
       val xc = left.position.toShortString("")
       val yc = right.position.toShortString("")
 
-      (xc < yc && xc != yc) match {
-        case true => Collection(rem.append("(" + xc + "-" + yc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
-          math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
-        case false => Collection[Cell[Position2D]]
-      }
+      Collection(rem.append("(" + xc + "-" + yc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
+        math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
     }
   }
 
   data
-    .pairwise[Dimension.Second, Position2D, DiffSquared](Over(Second), DiffSquared())
+    .pairwise[Dimension.Second, Position2D, DiffSquared](Over(Second), Upper, DiffSquared())
     .save("./tmp.scalding/pws1.out")
 }
 
@@ -687,8 +684,7 @@ class TestScalding26(args: Args) extends Job(args) {
   val right = load2D(args("path") + "/algebraInputfile2.txt")
 
   left
-    .pairwiseBetween[Dimension.First, Position2D, Times[Position1D, Position1D]](Over(First), right,
-      Times(comparer=All))
+    .pairwiseBetween[Dimension.First, Position2D, Times[Position1D, Position1D]](Over(First), All, right, Times())
     .save("./tmp.scalding/alg.out")
 }
 

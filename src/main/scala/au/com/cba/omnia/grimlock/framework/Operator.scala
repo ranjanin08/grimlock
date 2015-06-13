@@ -26,37 +26,37 @@ trait Comparer {
    * @param left  Left position.
    * @param right Right position.
    */
-  def check[P <: Position](left: P, right: P): Boolean
+  def keep[P <: Position](left: P, right: P): Boolean
 }
 
 /** Case object for computing all pairwise combinations. */
 case object All extends Comparer {
-  def check[P <: Position](left: P, right: P): Boolean = true
+  def keep[P <: Position](left: P, right: P): Boolean = true
 }
 
 /** Case object for computing diagonal pairwise combinations (i.e. left == right). */
 case object Diagonal extends Comparer {
-  def check[P <: Position](left: P, right: P): Boolean = left.compare(right) == 0
+  def keep[P <: Position](left: P, right: P): Boolean = left.compare(right) == 0
 }
 
 /** Case object for computing upper triangular pairwise combinations (i.e. right > left). */
 case object Upper extends Comparer {
-  def check[P <: Position](left: P, right: P): Boolean = right.compare(left) > 0
+  def keep[P <: Position](left: P, right: P): Boolean = right.compare(left) > 0
 }
 
 /** Case object for computing upper triangular or diagonal pairwise combinations (i.e. right >= left). */
 case object UpperDiagonal extends Comparer {
-  def check[P <: Position](left: P, right: P): Boolean = right.compare(left) >= 0
+  def keep[P <: Position](left: P, right: P): Boolean = right.compare(left) >= 0
 }
 
 /** Case object for computing lower triangular pairwise combinations (i.e. left > right). */
 case object Lower extends Comparer {
-  def check[P <: Position](left: P, right: P): Boolean = left.compare(right) > 0
+  def keep[P <: Position](left: P, right: P): Boolean = left.compare(right) > 0
 }
 
 /** Case object for computing lower triangular or diagonal pairwise combinations (i.e. left >= right). */
 case object LowerDiagonal extends Comparer {
-  def check[P <: Position](left: P, right: P): Boolean = left.compare(right) >= 0
+  def keep[P <: Position](left: P, right: P): Boolean = left.compare(right) >= 0
 }
 
 /** Base trait for computing pairwise values. */

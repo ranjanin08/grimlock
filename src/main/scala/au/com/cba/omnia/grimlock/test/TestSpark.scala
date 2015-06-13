@@ -684,17 +684,13 @@ object TestSpark23 {
         val xc = left.position.toShortString("")
         val yc = right.position.toShortString("")
 
-        (xc < yc && xc != yc) match {
-          case true => Collection(rem.append("(" + xc + "-" + yc + ")^2"),
-            Content(ContinuousSchema[Codex.DoubleCodex](),
-              math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
-          case false => Collection[Cell[Position2D]]
-        }
+        Collection(rem.append("(" + xc + "-" + yc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
+          math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
       }
     }
 
     data
-      .pairwise[Dimension.Second, Position2D, DiffSquared](Over(Second), DiffSquared())
+      .pairwise[Dimension.Second, Position2D, DiffSquared](Over(Second), Upper, DiffSquared())
       .save("./tmp.spark/pws1.out")
   }
 }
@@ -742,8 +738,7 @@ object TestSpark26 {
     val right = load2D(args(1) + "/algebraInputfile2.txt")
 
     left
-      .pairwiseBetween[Dimension.First, Position2D, Times[Position1D, Position1D]](Over(First), right,
-        Times(comparer=All))
+      .pairwiseBetween[Dimension.First, Position2D, Times[Position1D, Position1D]](Over(First), All, right, Times())
       .save("./tmp.spark/alg.out")
   }
 }
