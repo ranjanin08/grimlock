@@ -99,6 +99,23 @@ object Position {
 
   /** Define dependency between expansion from `Position0D` to `Position1D`. */
   implicit object P0P1 extends PosExpDep[Position0D, Position1D]
+  /** Define dependency between expansion from `Position0D` to `Position2D`. */
+  implicit object P0P2 extends PosExpDep[Position0D, Position2D]
+  /** Define dependency between expansion from `Position0D` to `Position3D`. */
+  implicit object P0P3 extends PosExpDep[Position0D, Position3D]
+  /** Define dependency between expansion from `Position0D` to `Position4D`. */
+  implicit object P0P4 extends PosExpDep[Position0D, Position4D]
+  /** Define dependency between expansion from `Position0D` to `Position5D`. */
+  implicit object P0P5 extends PosExpDep[Position0D, Position5D]
+  /** Define dependency between expansion from `Position0D` to `Position6D`. */
+  implicit object P0P6 extends PosExpDep[Position0D, Position6D]
+  /** Define dependency between expansion from `Position0D` to `Position7D`. */
+  implicit object P0P7 extends PosExpDep[Position0D, Position7D]
+  /** Define dependency between expansion from `Position0D` to `Position8D`. */
+  implicit object P0P8 extends PosExpDep[Position0D, Position8D]
+  /** Define dependency between expansion from `Position0D` to `Position9D`. */
+  implicit object P0P9 extends PosExpDep[Position0D, Position9D]
+
   /** Define dependency between expansion from `Position1D` to `Position1D`. */
   implicit object P1P1 extends PosExpDep[Position1D, Position1D]
   /** Define dependency between expansion from `Position1D` to `Position2D`. */
@@ -109,6 +126,15 @@ object Position {
   implicit object P1P4 extends PosExpDep[Position1D, Position4D]
   /** Define dependency between expansion from `Position1D` to `Position5D`. */
   implicit object P1P5 extends PosExpDep[Position1D, Position5D]
+  /** Define dependency between expansion from `Position1D` to `Position6D`. */
+  implicit object P1P6 extends PosExpDep[Position1D, Position6D]
+  /** Define dependency between expansion from `Position1D` to `Position7D`. */
+  implicit object P1P7 extends PosExpDep[Position1D, Position7D]
+  /** Define dependency between expansion from `Position1D` to `Position8D`. */
+  implicit object P1P8 extends PosExpDep[Position1D, Position8D]
+  /** Define dependency between expansion from `Position1D` to `Position9D`. */
+  implicit object P1P9 extends PosExpDep[Position1D, Position9D]
+
   /** Define dependency between expansion from `Position2D` to `Position2D`. */
   implicit object P2P2 extends PosExpDep[Position2D, Position2D]
   /** Define dependency between expansion from `Position2D` to `Position3D`. */
@@ -117,18 +143,78 @@ object Position {
   implicit object P2P4 extends PosExpDep[Position2D, Position4D]
   /** Define dependency between expansion from `Position2D` to `Position5D`. */
   implicit object P2P5 extends PosExpDep[Position2D, Position5D]
+  /** Define dependency between expansion from `Position2D` to `Position6D`. */
+  implicit object P2P6 extends PosExpDep[Position2D, Position6D]
+  /** Define dependency between expansion from `Position2D` to `Position7D`. */
+  implicit object P2P7 extends PosExpDep[Position2D, Position7D]
+  /** Define dependency between expansion from `Position2D` to `Position8D`. */
+  implicit object P2P8 extends PosExpDep[Position2D, Position8D]
+  /** Define dependency between expansion from `Position2D` to `Position9D`. */
+  implicit object P2P9 extends PosExpDep[Position2D, Position9D]
+
   /** Define dependency between expansion from `Position3D` to `Position3D`. */
   implicit object P3P3 extends PosExpDep[Position3D, Position3D]
   /** Define dependency between expansion from `Position3D` to `Position4D`. */
   implicit object P3P4 extends PosExpDep[Position3D, Position4D]
   /** Define dependency between expansion from `Position3D` to `Position5D`. */
   implicit object P3P5 extends PosExpDep[Position3D, Position5D]
+  /** Define dependency between expansion from `Position3D` to `Position6D`. */
+  implicit object P3P6 extends PosExpDep[Position3D, Position6D]
+  /** Define dependency between expansion from `Position3D` to `Position7D`. */
+  implicit object P3P7 extends PosExpDep[Position3D, Position7D]
+  /** Define dependency between expansion from `Position3D` to `Position8D`. */
+  implicit object P3P8 extends PosExpDep[Position3D, Position8D]
+  /** Define dependency between expansion from `Position3D` to `Position9D`. */
+  implicit object P3P9 extends PosExpDep[Position3D, Position9D]
+
   /** Define dependency between expansion from `Position4D` to `Position4D`. */
   implicit object P4P4 extends PosExpDep[Position4D, Position4D]
   /** Define dependency between expansion from `Position4D` to `Position5D`. */
   implicit object P4P5 extends PosExpDep[Position4D, Position5D]
+  /** Define dependency between expansion from `Position4D` to `Position6D`. */
+  implicit object P4P6 extends PosExpDep[Position4D, Position6D]
+  /** Define dependency between expansion from `Position4D` to `Position7D`. */
+  implicit object P4P7 extends PosExpDep[Position4D, Position7D]
+  /** Define dependency between expansion from `Position4D` to `Position8D`. */
+  implicit object P4P8 extends PosExpDep[Position4D, Position8D]
+  /** Define dependency between expansion from `Position4D` to `Position9D`. */
+  implicit object P4P9 extends PosExpDep[Position4D, Position9D]
+
   /** Define dependency between expansion from `Position5D` to `Position5D`. */
   implicit object P5P5 extends PosExpDep[Position5D, Position5D]
+  /** Define dependency between expansion from `Position5D` to `Position6D`. */
+  implicit object P5P6 extends PosExpDep[Position5D, Position6D]
+  /** Define dependency between expansion from `Position5D` to `Position7D`. */
+  implicit object P5P7 extends PosExpDep[Position5D, Position7D]
+  /** Define dependency between expansion from `Position5D` to `Position8D`. */
+  implicit object P5P8 extends PosExpDep[Position5D, Position8D]
+  /** Define dependency between expansion from `Position5D` to `Position9D`. */
+  implicit object P5P9 extends PosExpDep[Position5D, Position9D]
+
+  /** Define dependency between expansion from `Position6D` to `Position6D`. */
+  implicit object P6P6 extends PosExpDep[Position6D, Position6D]
+  /** Define dependency between expansion from `Position6D` to `Position7D`. */
+  implicit object P6P7 extends PosExpDep[Position6D, Position7D]
+  /** Define dependency between expansion from `Position6D` to `Position8D`. */
+  implicit object P6P8 extends PosExpDep[Position6D, Position8D]
+  /** Define dependency between expansion from `Position6D` to `Position9D`. */
+  implicit object P6P9 extends PosExpDep[Position6D, Position9D]
+
+  /** Define dependency between expansion from `Position7D` to `Position7D`. */
+  implicit object P7P7 extends PosExpDep[Position7D, Position7D]
+  /** Define dependency between expansion from `Position7D` to `Position8D`. */
+  implicit object P7P8 extends PosExpDep[Position7D, Position8D]
+  /** Define dependency between expansion from `Position7D` to `Position9D`. */
+  implicit object P7P9 extends PosExpDep[Position7D, Position9D]
+
+  /** Define dependency between expansion from `Position8D` to `Position8D`. */
+  implicit object P8P8 extends PosExpDep[Position8D, Position8D]
+  /** Define dependency between expansion from `Position8D` to `Position9D`. */
+  implicit object P8P9 extends PosExpDep[Position8D, Position9D]
+
+  /** Define dependency between expansion from `Position9D` to `Position9D`. */
+  implicit object P9P9 extends PosExpDep[Position9D, Position9D]
+
   /** Define dependency between a position and itself. */
   implicit def PP[P <: Position] = new PosExpDep[P, P] {}
   /** Define dependency between an expandable position and its expansion. */
@@ -287,6 +373,18 @@ private[position] case object P4MapOver extends MapMapablePosition[Position3D] {
 
 /** `MapablePosition` object for `Position5D` with `Over`. */
 private[position] case object P5MapOver extends MapMapablePosition[Position4D] {}
+
+/** `MapablePosition` object for `Position6D` with `Over`. */
+private[position] case object P6MapOver extends MapMapablePosition[Position5D] {}
+
+/** `MapablePosition` object for `Position7D` with `Over`. */
+private[position] case object P7MapOver extends MapMapablePosition[Position6D] {}
+
+/** `MapablePosition` object for `Position8D` with `Over`. */
+private[position] case object P8MapOver extends MapMapablePosition[Position7D] {}
+
+/** `MapablePosition` object for `Position9D` with `Over`. */
+private[position] case object P9MapOver extends MapMapablePosition[Position8D] {}
 
 /** `MapablePosition` object for `Position1D` with `Along`. */
 private[position] case object P1MapAlong extends MapablePosition[Position1D, Content] {
@@ -474,8 +572,9 @@ object Position4D {
  * @param fifth  Coordinate for the fifth dimension.
  */
 case class Position5D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value) extends Position
-  with ReduceablePosition with PermutablePosition with MapOverPosition with MapAlongPosition {
+  with ReduceablePosition with ExpandablePosition with PermutablePosition with MapOverPosition with MapAlongPosition {
   type L = Position4D
+  type M = Position6D
   type O = Map[Position4D, Content]
   type A = Map[Position1D, Content]
 
@@ -487,6 +586,7 @@ case class Position5D(first: Value, second: Value, third: Value, fourth: Value, 
 
   protected def less(cl: List[Value]): L = Position4D(cl(0), cl(1), cl(2), cl(3))
   protected def same(cl: List[Value]): S = Position5D(cl(0), cl(1), cl(2), cl(3), cl(4))
+  protected def more(cl: List[Value]): M = Position6D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5))
 }
 
 /** Companion object to `Position5D`. */
@@ -503,6 +603,211 @@ object Position5D {
   def apply[S, T, U, V, W](s: S, t: T, u: U, v: V, w: W)(implicit ev1: Valueable[S], ev2: Valueable[T],
     ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W]): Position5D = {
     Position5D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w))
+  }
+}
+
+/**
+ * Position for 6 dimensional data.
+ *
+ * @param first  Coordinate for the first dimension.
+ * @param second Coordinate for the second dimension.
+ * @param third  Coordinate for the third dimension.
+ * @param fourth Coordinate for the fourth dimension.
+ * @param fifth  Coordinate for the fifth dimension.
+ * @param sixth  Coordinate for the sixth dimension.
+ */
+case class Position6D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value,
+  sixth: Value) extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
+  with MapOverPosition with MapAlongPosition {
+  type L = Position5D
+  type M = Position7D
+  type O = Map[Position5D, Content]
+  type A = Map[Position1D, Content]
+
+  val over = P6MapOver
+  val along = PMapAlong
+  val coordinates = List(first, second, third, fourth, fifth, sixth)
+
+  protected type S = Position6D
+
+  protected def less(cl: List[Value]): L = Position5D(cl(0), cl(1), cl(2), cl(3), cl(4))
+  protected def same(cl: List[Value]): S = Position6D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5))
+  protected def more(cl: List[Value]): M = Position7D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6))
+}
+
+/** Companion object to `Position6D`. */
+object Position6D {
+  /**
+   * Construct a `Position6D` from types `S`, `T`, `U`, `V`, `W` and `X` for which there exist coordinates.
+   *
+   * @param s The first coordinate value from which to create a `Position6D`.
+   * @param t The second coordinate value from which to create a `Position6D`.
+   * @param u The third coordinate value from which to create a `Position6D`.
+   * @param v The fourth coordinate value from which to create a `Position6D`.
+   * @param w The fifth coordinate value from which to create a `Position6D`.
+   * @param x The sixth coordinate value from which to create a `Position6D`.
+   */
+  def apply[S, T, U, V, W, X](s: S, t: T, u: U, v: V, w: W, x: X)(implicit ev1: Valueable[S], ev2: Valueable[T],
+    ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W], ev6: Valueable[X]): Position6D = {
+    Position6D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w), ev6.convert(x))
+  }
+}
+
+/**
+ * Position for 7 dimensional data.
+ *
+ * @param first   Coordinate for the first dimension.
+ * @param second  Coordinate for the second dimension.
+ * @param third   Coordinate for the third dimension.
+ * @param fourth  Coordinate for the fourth dimension.
+ * @param fifth   Coordinate for the fifth dimension.
+ * @param sixth   Coordinate for the sixth dimension.
+ * @param seventh Coordinate for the seventh dimension.
+ */
+case class Position7D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value, sixth: Value,
+  seventh: Value) extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
+  with MapOverPosition with MapAlongPosition {
+  type L = Position6D
+  type M = Position8D
+  type O = Map[Position6D, Content]
+  type A = Map[Position1D, Content]
+
+  val over = P7MapOver
+  val along = PMapAlong
+  val coordinates = List(first, second, third, fourth, fifth, sixth, seventh)
+
+  protected type S = Position7D
+
+  protected def less(cl: List[Value]): L = Position6D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5))
+  protected def same(cl: List[Value]): S = Position7D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6))
+  protected def more(cl: List[Value]): M = Position8D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6), cl(7))
+}
+
+/** Companion object to `Position7D`. */
+object Position7D {
+  /**
+   * Construct a `Position7D` from types `S`, `T`, `U`, `V`, `W`, `X` and `Y` for which there exist coordinates.
+   *
+   * @param s The first coordinate value from which to create a `Position7D`.
+   * @param t The second coordinate value from which to create a `Position7D`.
+   * @param u The third coordinate value from which to create a `Position7D`.
+   * @param v The fourth coordinate value from which to create a `Position7D`.
+   * @param w The fifth coordinate value from which to create a `Position7D`.
+   * @param x The sixth coordinate value from which to create a `Position7D`.
+   * @param y The seventh coordinate value from which to create a `Position7D`.
+   */
+  def apply[S, T, U, V, W, X, Y](s: S, t: T, u: U, v: V, w: W, x: X, y: Y)(implicit ev1: Valueable[S],
+    ev2: Valueable[T], ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W], ev6: Valueable[X],
+    ev7: Valueable[Y]): Position7D = {
+    Position7D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w), ev6.convert(x),
+      ev7.convert(y))
+  }
+}
+
+/**
+ * Position for 8 dimensional data.
+ *
+ * @param first   Coordinate for the first dimension.
+ * @param second  Coordinate for the second dimension.
+ * @param third   Coordinate for the third dimension.
+ * @param fourth  Coordinate for the fourth dimension.
+ * @param fifth   Coordinate for the fifth dimension.
+ * @param sixth   Coordinate for the sixth dimension.
+ * @param seventh Coordinate for the seventh dimension.
+ * @param eighth  Coordinate for the eighth dimension.
+ */
+case class Position8D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value, sixth: Value,
+  seventh: Value, eighth: Value) extends Position with ReduceablePosition with ExpandablePosition
+  with PermutablePosition with MapOverPosition with MapAlongPosition {
+  type L = Position7D
+  type M = Position9D
+  type O = Map[Position7D, Content]
+  type A = Map[Position1D, Content]
+
+  val over = P8MapOver
+  val along = PMapAlong
+  val coordinates = List(first, second, third, fourth, fifth, sixth, seventh, eighth)
+
+  protected type S = Position8D
+
+  protected def less(cl: List[Value]): L = Position7D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6))
+  protected def same(cl: List[Value]): S = Position8D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6), cl(7))
+  protected def more(cl: List[Value]): M = Position9D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6), cl(7), cl(8))
+}
+
+/** Companion object to `Position8D`. */
+object Position8D {
+  /**
+   * Construct a `Position8D` from types `S`, `T`, `U`, `V`, `W`, `X`, `Y` and `Z` for which there exist coordinates.
+   *
+   * @param s The first coordinate value from which to create a `Position8D`.
+   * @param t The second coordinate value from which to create a `Position8D`.
+   * @param u The third coordinate value from which to create a `Position8D`.
+   * @param v The fourth coordinate value from which to create a `Position8D`.
+   * @param w The fifth coordinate value from which to create a `Position8D`.
+   * @param x The sixth coordinate value from which to create a `Position8D`.
+   * @param y The seventh coordinate value from which to create a `Position8D`.
+   * @param z The eighth coordinate value from which to create a `Position8D`.
+   */
+  def apply[S, T, U, V, W, X, Y, Z](s: S, t: T, u: U, v: V, w: W, x: X, y: Y, z: Z)(implicit ev1: Valueable[S],
+    ev2: Valueable[T], ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W], ev6: Valueable[X], ev7: Valueable[Y],
+    ev8: Valueable[Z]): Position8D = {
+    Position8D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w), ev6.convert(x),
+      ev7.convert(y), ev8.convert(z))
+  }
+}
+
+/**
+ * Position for 9 dimensional data.
+ *
+ * @param first   Coordinate for the first dimension.
+ * @param second  Coordinate for the second dimension.
+ * @param third   Coordinate for the third dimension.
+ * @param fourth  Coordinate for the fourth dimension.
+ * @param fifth   Coordinate for the fifth dimension.
+ * @param sixth   Coordinate for the sixth dimension.
+ * @param seventh Coordinate for the seventh dimension.
+ * @param eighth  Coordinate for the eighth dimension.
+ * @param ninth   Coordinate for the ninth dimension.
+ */
+case class Position9D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value, sixth: Value,
+  seventh: Value, eighth: Value, ninth: Value) extends Position with ReduceablePosition with PermutablePosition
+  with MapOverPosition with MapAlongPosition {
+  type L = Position8D
+  type O = Map[Position8D, Content]
+  type A = Map[Position1D, Content]
+
+  val over = P9MapOver
+  val along = PMapAlong
+  val coordinates = List(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)
+
+  protected type S = Position9D
+
+  protected def less(cl: List[Value]): L = Position8D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6), cl(7))
+  protected def same(cl: List[Value]): S = Position9D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6), cl(7), cl(8))
+}
+
+/** Companion object to `Position9D`. */
+object Position9D {
+  /**
+   * Construct a `Position9D` from types `S`, `T`, `U`, `V`, `W`, `X`, `Y`, `Z` and `A` for which there exist
+   * coordinates.
+   *
+   * @param s The first coordinate value from which to create a `Position9D`.
+   * @param t The second coordinate value from which to create a `Position9D`.
+   * @param u The third coordinate value from which to create a `Position9D`.
+   * @param v The fourth coordinate value from which to create a `Position9D`.
+   * @param w The fifth coordinate value from which to create a `Position9D`.
+   * @param x The sixth coordinate value from which to create a `Position9D`.
+   * @param y The seventh coordinate value from which to create a `Position9D`.
+   * @param z The eighth coordinate value from which to create a `Position9D`.
+   * @param a The ninth coordinate value from which to create a `Position9D`.
+   */
+  def apply[S, T, U, V, W, X, Y, Z, A](s: S, t: T, u: U, v: V, w: W, x: X, y: Y, z: Z, a: A)(implicit ev1: Valueable[S],
+    ev2: Valueable[T], ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W], ev6: Valueable[X], ev7: Valueable[Y],
+    ev8: Valueable[Z], ev9: Valueable[A]): Position9D = {
+    Position9D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w), ev6.convert(x),
+      ev7.convert(y), ev8.convert(z), ev9.convert(a))
   }
 }
 
