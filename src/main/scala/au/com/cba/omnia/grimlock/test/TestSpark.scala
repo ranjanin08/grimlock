@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.test
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
@@ -222,7 +223,12 @@ object TestSpark6 {
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
+        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
+          Mean().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
+          Min().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
+          Max().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
+          MaxAbs().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs"))))
       .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
                                 ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
       .save("./tmp.spark/whc5.out", descriptive=true)
@@ -341,22 +347,31 @@ object TestSpark10 {
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
-      .summariseAndExpand(Over(Second), Mean("mean", strict=true, nan=true))
+      .summarise[Dimension.Second, Position2D, Aggregator[Position3D, Position1D, Position2D]](Over(Second),
+        Mean(strict=true, nan=true).andThenExpand((c: Cell[Position1D]) => c.position.append("mean")))
       .saveAsCSV(Over(Second), "./tmp.spark/agg1.csv")
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .summariseAndExpand(Along(Second), Count("count"))
+      .summarise[Dimension.Second, Position2D, Aggregator[Position2D, Position1D, Position2D]](Along(Second),
+        Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")))
       .saveAsCSV(Over(Second), "./tmp.spark/agg2.csv")
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .summariseAndExpand(Along(First), List(Count("count"), Moments("mean", "sd", "skewness", "kurtosis"), Min("min"),
-        Max("max"), MaxAbs("max.abs")))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
+        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
+          Mean().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
+          StandardDeviation().andThenExpand((c: Cell[Position1D]) => c.position.append("sd")),
+          Skewness().andThenExpand((c: Cell[Position1D]) => c.position.append("skewness")),
+          Kurtosis().andThenExpand((c: Cell[Position1D]) => c.position.append("kurtosis")),
+          Min().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
+          Max().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
+          MaxAbs().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs"))))
       .saveAsCSV(Over(Second), "./tmp.spark/agg3.csv")
   }
 }
@@ -421,7 +436,8 @@ object TestSpark13 {
       .saveAsCSV(Over(Second), "./tmp.spark/fll2.out")
 
     data
-      .fill(Over(Second), all.summarise(Over(Second), Mean(strict=true, nan=true)))
+      .fill(Over(Second), all.summarise[Dimension.Second, Position1D, Mean[Position3D, Position1D]](Over(Second),
+        Mean(strict=true, nan=true)))
       .join(Over(First), inds)
       .saveAsCSV(Over(Second), "./tmp.spark/fll4.out")
   }
@@ -448,7 +464,8 @@ object TestSpark15 {
     data
       .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .summariseAndExpand(Along(Third), Sum("sum"))
+      .summarise[Dimension.Third, Position3D, Aggregator[Position3D, Position2D, Position3D]](Along(Third),
+        Sum().andThenExpand((c: Cell[Position2D]) => c.position.append("sum")))
       .melt(Third, Second)
       .saveAsCSV(Over(Second), "./tmp.spark/rsh1.out")
 
@@ -496,7 +513,12 @@ object TestSpark17 {
       .squash(Third, PreservingMaxPosition[Position3D]())
 
     val stats = data
-      .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
+        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
+          Mean().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
+          Min().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
+          Max().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
+          MaxAbs().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs"))))
       .toMap(Over(First))
 
     type W = Map[Position1D, Map[Position1D, Content]]
@@ -543,7 +565,12 @@ object TestSpark18 {
       .squash(Third, PreservingMaxPosition[Position3D]())
 
     val stats = data
-      .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
+        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
+          Mean().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
+          Min().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
+          Max().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
+          MaxAbs().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs"))))
 
     val rem = stats
       .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2)
@@ -581,7 +608,9 @@ object TestSpark19 {
 
     val stats = parts
       .get("train")
-      .summariseAndExpand(Along(First), List(Count("count"), MaxAbs("max.abs")))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
+        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
+          MaxAbs().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs"))))
 
     val rem = stats
       .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
@@ -796,7 +825,13 @@ object TestSpark28 {
                                 ("iid:" + i, "fid:B", Content(NominalSchema[Codex.StringCodex](), i.toString))) }
 
     val stats = data
-      .summariseAndExpand(Along(First), List(Count("count"), Min("min"), Max("max"), Moments("mean", "sd", "skewness")))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
+        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
+          Min().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
+          Max().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
+          Mean().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
+          StandardDeviation().andThenExpand((c: Cell[Position1D]) => c.position.append("sd")),
+          Skewness().andThenExpand((c: Cell[Position1D]) => c.position.append("skewness"))))
       .toMap(Over(First))
 
     type W = Map[Position1D, List[Double]]

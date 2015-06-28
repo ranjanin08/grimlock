@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.spark.examples
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
@@ -66,23 +67,45 @@ object MutualInformation {
     // Compute sum of marginal entropy
     // 1/ Compute the marginal entropy over the features (second dimension).
     // 2/ Compute pairwise sum of marginal entropies for all upper triangular values.
-    val marginal = data
-      .summariseAndExpand(Over(Second), Entropy("marginal"))
+    val mhist = data
+      .expand((c: Cell[Position2D]) => c.position.append(c.content.value.toShortString))
+      .summarise[Dimension.First, Position2D, Count[Position3D, Position2D]](Along(First), Count())
+
+    val mcount = mhist
+      .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Over(First), Sum())
+      .toMap()
+
+    type W = Map[Position1D, Content]
+
+    val marginal = mhist
+      .summariseWithValue[Dimension.First, Position2D, AggregatorWithValue[Position2D, Position1D, Position2D] { type V >: W }, W](Over(First),
+        Entropy(ExtractWithDimension[Dimension.First, Position2D, Content](First).andThenPresent(_.value.asDouble))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("marginal")), mcount)
       .pairwise[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Upper, Plus(name = "%s,%s"))
 
     // Compute joint entropy
     // 1/ Generate pairwise values for all upper triangular values.
     // 2/ Compute entropy over pairwise values. Negate the result for easy reduction below.
-    val joint = data
+    val jhist = data
       .pairwise[Dimension.Second, Position2D, Concatenate[Position1D, Position1D]](Over(Second), Upper,
         Concatenate(name = "%s,%s"))
-      .summariseAndExpand(Over(First), Entropy("joint", strict = true, nan = true, all = false, negate = true))
+      .expand((c: Cell[Position2D]) => c.position.append(c.content.value.toShortString))
+      .summarise[Dimension.Second, Position2D, Count[Position3D, Position2D]](Along(Second), Count())
+
+    val jcount = jhist
+      .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Over(First), Sum())
+      .toMap()
+
+    val joint = jhist
+      .summariseWithValue[Dimension.First, Position2D, AggregatorWithValue[Position2D, Position1D, Position2D] { type V >: W }, W](Over(First),
+        Entropy(ExtractWithDimension[Dimension.First, Position2D, Content](First).andThenPresent(_.value.asDouble), negate = true)
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("joint")), jcount)
 
     // Generate mutual information
     // 1/ Sum marginal and negated joint entropy
     // 2/ Persist mutual information.
     (marginal ++ joint)
-      .summarise(Over(First), Sum())
+      .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Over(First), Sum())
       .save(s"./demo.${output}/mi.out")
   }
 }

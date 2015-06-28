@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.scalding.examples
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
@@ -117,19 +118,48 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
     .split[String, CustomPartition](CustomPartition(First, "train", "test"))
 
   // Compute statistics on the training data. The results are written to file.
-  val statistics = List(
-    Count("count"),
-    Moments("mean", "sd", "skewness", "kurtosis"),
-    Min("min"),
-    Max("max"),
-    MaxAbs("max.abs"),
-    Histogram("%1$s=%2$s", List(Histogram.numberOfCategories("num.cat"),
-      Histogram.entropy("entropy"),
-      Histogram.frequencyRatio("freq.ratio"))))
+  val statistics1 = List(
+    Count[Position2D, Position1D]().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
+    Mean[Position2D, Position1D]().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
+    StandardDeviation[Position2D, Position1D]().andThenExpand((c: Cell[Position1D]) => c.position.append("sd")),
+    Skewness[Position2D, Position1D]().andThenExpand((c: Cell[Position1D]) => c.position.append("skewness")),
+    Kurtosis[Position2D, Position1D]().andThenExpand((c: Cell[Position1D]) => c.position.append("kurtosis")),
+    Min[Position2D, Position1D]().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
+    Max[Position2D, Position1D]().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
+    MaxAbs[Position2D, Position1D]().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs")))
 
-  val stats = parts
+  val stats1 = parts
     .get("train")
-    .summariseAndExpand(Along(First), statistics)
+    .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
+      statistics1)
+
+  val hist = parts
+    .get("train")
+    .filter(_.content.schema.kind.isSpecialisationOf(Type.Categorical))
+    .expand((c: Cell[Position2D]) => c.position.append("%1$s=%2$s".format(c.position(Second).toShortString,
+      c.content.value.toShortString)))
+    .summarise[Dimension.First, Position2D, Count[Position3D, Position2D]](Along(First), Count())
+
+  val counts = hist
+    .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Over(First), Sum())
+    .toMap()
+
+  type W = Map[Position1D, Content]
+
+  val statistics2 = List(
+    Count[Position2D, Position1D]()
+      .andThenExpand((c: Cell[Position1D]) => c.position.append("num.cat")),
+    Entropy[Position2D, Position1D, W](
+      ExtractWithDimension[Dimension.First, Position2D, Content](First).andThenPresent(_.value.asDouble))
+      .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy")),
+    FrequencyRatio[Position2D, Position1D]()
+      .andThenExpand((c: Cell[Position1D]) => c.position.append("freq.ratio")))
+
+  val stats2 = hist
+    .summariseWithValue[Dimension.First, Position2D, List[AggregatorWithValue[Position2D, Position1D, Position2D] { type V >: W }], W](
+      Over(First), statistics2, counts)
+
+  val stats = (stats1 ++ stats2 ++ hist)
     .save(s"./demo.${output}/stats.out")
 
   // Determine which features to filter based on statistics. In this case remove all features that occur for 2 or
@@ -153,10 +183,10 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
     .names(Over(Second))
 
   // Define type of statistics map.
-  type W = Map[Position1D, Map[Position1D, Content]]
+  type S = Map[Position1D, Map[Position1D, Content]]
 
   // Define extract object to get data out of statistics map.
-  def extractor(key: String): Extract[Position2D, W, Double] = {
+  def extractor(key: String): Extract[Position2D, S, Double] = {
     ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, key)
       .andThenPresent(_.value.asDouble)
   }
@@ -185,7 +215,7 @@ class DataSciencePipelineWithFiltering(args: Args) extends Job(args) {
 
     val csb = d
       .slice(Over(Second), rem2, false)
-      .transformWithValue[Position2D, List[TransformerWithValue[Position2D, Position2D] { type V >: W }], W](
+      .transformWithValue[Position2D, List[TransformerWithValue[Position2D, Position2D] { type V >: S }], S](
         transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
       .slice(Over(Second), rem3, false)
 
@@ -213,10 +243,13 @@ class Scoring(args: Args) extends Job(args) {
   val weights = load1D(s"${path}/exampleWeights.txt").toMap(Over(First))
 
   // Define type of statistics map.
-  type W = Map[Position1D, Map[Position1D, Content]]
+  type S = Map[Position1D, Map[Position1D, Content]]
+
+  // Type of the weights map.
+  type W = Map[Position1D, Content]
 
   // Define extract object to get data out of statistics map.
-  def extractor(key: String): Extract[Position2D, W, Double] = {
+  def extractor(key: String): Extract[Position2D, S, Double] = {
     ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, key)
       .andThenPresent(_.value.asDouble)
   }
@@ -231,9 +264,11 @@ class Scoring(args: Args) extends Job(args) {
     Clamp(extractor("min"), extractor("max")).andThenWithValue(Standardise(extractor("mean"), extractor("sd"))))
 
   data
-    .transformWithValue[Position2D, List[TransformerWithValue[Position2D, Position2D] { type V >: W }], W](
+    .transformWithValue[Position2D, List[TransformerWithValue[Position2D, Position2D] { type V >: S }], S](
       transforms, stats)
-    .summariseWithValue(Over(First), WeightedSum(Second), weights)
+    .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](Over(First),
+      WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
+        .andThenPresent(_.value.asDouble)), weights)
     .save(s"./demo.${output}/scores.out")
 }
 
@@ -246,15 +281,22 @@ class DataQualityAndAnalysis(args: Args) extends Job(args) {
   // Read the data. This returns a 2D matrix (instance x feature).
   val data = load2D(s"${path}/exampleInput.txt")
 
+  // Define moments to compute.
+  val moments = List(Mean[Position1D, Position0D]().andThenExpand((c: Cell[Position0D]) => c.position.append("mean")),
+    StandardDeviation[Position1D, Position0D]().andThenExpand((c: Cell[Position0D]) => c.position.append("sd")),
+    Skewness[Position1D, Position0D]().andThenExpand((c: Cell[Position0D]) => c.position.append("skewness")),
+    Kurtosis[Position1D, Position0D]().andThenExpand((c: Cell[Position0D]) => c.position.append("kurtosis")))
+
   // For the instances:
   //  1/ Compute the number of features for each instance;
   //  2/ Save the counts;
   //  3/ Compute the moments of the counts;
   //  4/ Save the moments.
   data
-    .summarise(Over(First), Count())
+    .summarise[Dimension.First, Position1D, Count[Position2D, Position1D]](Over(First), Count())
     .save(s"./demo.${output}/feature_count.out")
-    .summariseAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
+    .summarise[Dimension.First, Position1D, List[Aggregator[Position1D, Position0D, Position1D]]](Along(First),
+      moments)
     .save(s"./demo.${output}/feature_density.out")
 
   // For the features:
@@ -263,9 +305,10 @@ class DataQualityAndAnalysis(args: Args) extends Job(args) {
   //  3/ Compute the moments of the counts;
   //  4/ Save the moments.
   data
-    .summarise(Over(Second), Count())
+    .summarise[Dimension.Second, Position1D, Count[Position2D, Position1D]](Over(Second), Count())
     .save(s"./demo.${output}/instance_count.out")
-    .summariseAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis"))
+    .summarise[Dimension.First, Position1D, List[Aggregator[Position1D, Position0D, Position1D]]](Along(First),
+      moments)
     .save(s"./demo.${output}/instance_density.out")
 }
 
@@ -281,7 +324,8 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Compute histogram over the label values.
   val histogram = labels
-    .summariseAndExpand(Along(First), Histogram("%2$s", strict = true, all = true, frequency = true))
+    .expand((c: Cell[Position1D]) => c.position.append(c.content.value.toShortString))
+    .summarise[Dimension.First, Position1D, Count[Position2D, Position1D]](Along(First), Count())
 
   // Compute the total number of labels and store result in a Map.
   val sum = labels
@@ -302,7 +346,8 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Find the minimum ratio, and store the result as a Map.
   val min = ratio
-    .summariseAndExpand(Along(First), Min("min"))
+    .summarise[Dimension.First, Position1D, Aggregator[Position1D, Position0D, Position1D]](Along(First),
+      Min().andThenExpand((c: Cell[Position0D]) => c.position.append("min")))
     .toMap(Over(First))
 
   // Divide the ratio by the minimum ratio, and store the result as a Map.

@@ -85,6 +85,9 @@ class Ensemble(args: Args) extends Job(args) {
     Position1D(scripts(1)) -> Content(ContinuousSchema[Codex.DoubleCodex](), 0.33),
     Position1D(scripts(2)) -> Content(ContinuousSchema[Codex.DoubleCodex](), 0.33)))
 
+  // Type of the weights map.
+  type W = Map[Position1D, Content]
+
   // Train and score the data.
   //
   // The partition key is the script to apply to the model. This approach assumes that the scripts split
@@ -109,7 +112,9 @@ class Ensemble(args: Args) extends Job(args) {
     .split[String, EnsembleSplit](EnsembleSplit(scripts(0), scripts(1), scripts(2)))
     .forEach(scripts, trainAndScore)
     .merge(scripts)
-    .summariseWithValue(Over(First), WeightedSum(Second), weights)
+    .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](Over(First),
+      WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
+        .andThenPresent(_.value.asDouble)), weights)
     .save(s"./demo.${output}/ensemble.scores.out")
     .toMap(Over(First))
 
