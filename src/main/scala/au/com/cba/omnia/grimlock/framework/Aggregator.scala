@@ -20,8 +20,6 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-import scala.reflect.ClassTag
-
 /** Base trait for aggregations. */
 trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Position]
   extends AggregatorWithValue[P, S, Q] { self =>

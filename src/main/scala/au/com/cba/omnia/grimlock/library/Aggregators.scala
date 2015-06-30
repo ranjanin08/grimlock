@@ -23,8 +23,6 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.Type._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-import scala.reflect.ClassTag
-
 /** Count reductions. */
 case class Count[P <: Position, S <: Position with ExpandablePosition]() extends Aggregator[P, S, S] {
   type T = Long

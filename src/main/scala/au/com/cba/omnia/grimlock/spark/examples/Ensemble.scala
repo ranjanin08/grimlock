@@ -84,7 +84,7 @@ object Ensemble {
     // Ensemble scripts to apply to the data.
     val scripts = List(s"${path}/gbm.R", s"${path}/lr.R", s"${path}/rf.R")
 
-    // Weight each model equally
+    // Weigh each model equally.
     val weights = Map(Position1D(scripts(0)) -> Content(ContinuousSchema[Codex.DoubleCodex](), 0.33),
       Position1D(scripts(1)) -> Content(ContinuousSchema[Codex.DoubleCodex](), 0.33),
       Position1D(scripts(2)) -> Content(ContinuousSchema[Codex.DoubleCodex](), 0.33))
@@ -103,6 +103,10 @@ object Ensemble {
         .expand((cell: Cell[Position1D]) => cell.position.append(key))
     }
 
+    // Define extractor to get weight out of weights map.
+    val extractWeight = ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
+      .andThenPresent(_.value.asDouble)
+
     // Train and score an ensemble:
     // 1/ Expand with a dimension that holds the hash-code base 10 (for use in partitioning);
     // 2/ Partition the data roughly into 40% for each model, plus shared 20% for scoring;
@@ -117,8 +121,7 @@ object Ensemble {
       .forEach(scripts, trainAndScore)
       .merge(scripts)
       .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](Over(First),
-        WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
-          .andThenPresent(_.value.asDouble)), weights)
+        WeightedSum(extractWeight), weights)
       .save(s"./demo.${output}/ensemble.scores.out")
       .toMap(Over(First))
 

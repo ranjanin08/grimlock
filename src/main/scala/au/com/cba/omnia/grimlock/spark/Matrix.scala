@@ -467,12 +467,12 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 /** Base trait for methods that expand the number of dimension of a matrix using a `RDD[Cell[P]]`. */
 trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
 
-  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P, Q]): RDD[Cell[Q]] = {
+  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P#M, Q]): RDD[Cell[Q]] = {
     data.map { case c => Cell(expander(c), c.content) }
   }
 
   def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => Q, value: W)(
-    implicit ev: PosExpDep[P, Q]): RDD[Cell[Q]] = data.map { case c => Cell(expander(c, value), c.content) }
+    implicit ev: PosExpDep[P#M, Q]): RDD[Cell[Q]] = data.map { case c => Cell(expander(c, value), c.content) }
 }
 
 // TODO: Make this work on more than 2D matrices and share with Scalding

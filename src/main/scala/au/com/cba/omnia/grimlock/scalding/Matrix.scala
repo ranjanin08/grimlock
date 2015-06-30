@@ -513,12 +513,12 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 /** Base trait for methods that expand the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
 trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
 
-  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P, Q]): TypedPipe[Cell[Q]] = {
+  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P#M, Q]): TypedPipe[Cell[Q]] = {
     data.map { case c => Cell(expander(c), c.content) }
   }
 
   def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => Q, value: ValuePipe[W])(
-    implicit ev: PosExpDep[P, Q]): TypedPipe[Cell[Q]] = {
+    implicit ev: PosExpDep[P#M, Q]): TypedPipe[Cell[Q]] = {
     data.mapWithValue(value) { case (c, vo) => Cell(expander(c, vo.get), c.content) }
   }
 }

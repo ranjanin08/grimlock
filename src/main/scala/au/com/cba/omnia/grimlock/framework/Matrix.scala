@@ -761,7 +761,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
-  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
+  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P#M, Q]): U[Cell[Q]]
 
   /**
    * Expand a matrix with extra dimension(s) using a user supplied value.
@@ -772,7 +772,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
   def expandWithValue[Q <: Position, V](expander: (Cell[P], V) => Q, value: E[V])(
-    implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
+    implicit ev: PosExpDep[P#M, Q]): U[Cell[Q]]
 }
 
 /** Type class for transforming a type `T` into a `U[Cell[P]]`. */
