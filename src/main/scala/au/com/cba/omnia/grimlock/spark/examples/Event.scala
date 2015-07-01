@@ -144,13 +144,13 @@ object InstanceCentricTfIdf {
 
     // Read event data, then de-normalises the events and return a 2D matrix (event id x instance id).
     val data = ExampleEvent.load(s"${path}/exampleEvents.txt")
-      .transform[Position2D, Denormalise](Denormalise())
+      .transform(Denormalise())
 
     // For each event, append the word counts to the 3D matrix. The result is a 3D matrix (event id x instance id x word
     // count). Then aggregate out the event id. The result is a 2D matrix (instance x word count) where the counts are
     // the sums over all events.
     val tf = data
-      .transform[Position3D, WordCounts](WordCounts(stopwords = List()))
+      .transform(WordCounts(stopwords = List()))
       .summarise[Dimension.First, Position2D, Sum[Position3D, Position2D]](Along[Position3D, Dimension.First](First),
         Sum[Position3D, Position2D]())
 
@@ -159,11 +159,9 @@ object InstanceCentricTfIdf {
       .size(First)
       .toMap(Over(First))
 
-    // Type of `n`
-    type N = Map[Position1D, Content]
-
     // Define extractor to get data out of map.
-    val extractN = ExtractWithKey[Position1D, String, Content](First.toString).andThenPresent(_.value.asDouble)
+    val extractN = ExtractWithKey[Position1D, String, Content](First.toString)
+      .andThenPresent(_.value.asDouble)
 
     // Using the number of documents, compute Idf:
     //  1/ Compute document frequency;
@@ -172,12 +170,8 @@ object InstanceCentricTfIdf {
     val idf = tf
       .summarise[Dimension.First, Position1D, Count[Position2D, Position1D]](Along[Position2D, Dimension.First](First),
         Count[Position2D, Position1D]())
-      .transformWithValue[Position1D, Idf[Position1D, N], N](Idf(extractN,
-        (df: Double, n: Double) => math.log10(n / df)), n)
+      .transformWithValue(Idf(extractN, (df: Double, n: Double) => math.log10(n / df)), n)
       .toMap(Over(First))
-
-    // Type of `idf`
-    type I = Map[Position1D, Content]
 
     // Define extractor to get data out of idf map.
     val extractIdf = ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
@@ -187,15 +181,14 @@ object InstanceCentricTfIdf {
     //
     // Uncomment one of the 3 lines below to try different tf-idf versions.
     val tfIdf = tf
-      //.transform[Position2D, BooleanTf[Position2D]](BooleanTf())
-      //.transform[Position2D, LogarithmicTf[Position2D]](LogarithmicTf())
-      //.transformWithValue[Position2D, AugmentedTf[Position2D, Map[Position1D, Content]], Map[Position1D, Content]](
-      //  AugmentedTf(ExtractWithDimension[Dimension.First, Position2D, Content](First)
+      //.transform(BooleanTf[Position2D]())
+      //.transform(LogarithmicTf[Position2D]())
+      //.transformWithValue(AugmentedTf(ExtractWithDimension[Dimension.First, Position2D, Content](First)
       //    .andThenPresent(_.value.asDouble)),
       //  tf.summarise[Dimension.Second, Position1D, Max[Position2D, Position1D]](
       //      Along[Position2D, Dimension.Second](Second), Max[Position2D, Position1D]())
       //    .toMap(Over[Position1D, Dimension.First](First)))
-      .transformWithValue[Position2D, TfIdf[Position2D, I], I](TfIdf(extractIdf), idf)
+      .transformWithValue(TfIdf(extractIdf), idf)
       .save(s"./demo.${output}/tfidf_entity.out")
   }
 }

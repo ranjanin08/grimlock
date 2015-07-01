@@ -214,13 +214,10 @@ object DataSciencePipelineWithFiltering {
     }
 
     // List of transformations to apply to each partition.
-    val transforms = List(
-      Clamp[Position2D, S](extractStat("min"), extractStat("max"))
+    val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: S }] = List(
+      Clamp(extractStat("min"), extractStat("max"))
         .andThenWithValue(Standardise(extractStat("mean"), extractStat("sd"))),
-      Binarise[Position2D](Second))
-
-    // Define shorthand for TransformerWithValue type.
-    type TwV = TransformerWithValue[Position2D, Position2D] { type V >: S }
+      Binarise(Second))
 
     // For each partition:
     //  1/  Remove sparse features;
@@ -236,12 +233,11 @@ object DataSciencePipelineWithFiltering {
         .slice(Over(Second), rem1, false)
 
       val ind = d
-        .transform[Position2D, Transformer[Position2D, Position2D]](Indicator()
-          .andThenRename(Transformer.rename(Second, "%1$s.ind")))
+        .transform(Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
 
       val csb = d
         .slice(Over(Second), rem2, false)
-        .transformWithValue[Position2D, List[TwV], S](transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
+        .transformWithValue(transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
         .slice(Over(Second), rem3, false)
 
       (ind ++ csb)
@@ -288,21 +284,18 @@ object Scoring {
     //  1/ Create indicators, binarise categorical, and clamp & standardise numerical features;
     //  2/ Compute the scored (as a weighted sum);
     //  3/ Save the results.
-    val transforms = List(
-      Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")),
-      Binarise[Position2D](Second),
-      Clamp[Position2D, S](extractStat("min"), extractStat("max"))
+    val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: S }] = List(
+      Indicator().andThenRename(Transformer.rename(Second, "%1$s.ind")),
+      Binarise(Second),
+      Clamp(extractStat("min"), extractStat("max"))
         .andThenWithValue(Standardise(extractStat("mean"), extractStat("sd"))))
-
-    // Define shorthand for TransformerWithValue type.
-    type TwV = TransformerWithValue[Position2D, Position2D] { type V >: S }
 
     // Define extract object to get data out of weights map.
     val extractWeight = ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
       .andThenPresent(_.value.asDouble)
 
     data
-      .transformWithValue[Position2D, List[TwV], S](transforms, stats)
+      .transformWithValue(transforms, stats)
       .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
         Over[Position2D, Dimension.First](First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
       .save(s"./demo.${output}/scores.out")
@@ -388,12 +381,9 @@ object LabelWeighting {
       ExtractWithKey[Position1D, String, Content](key).andThenPresent(_.value.asDouble)
     }
 
-    // Type of value
-    type V = Map[Position1D, Content]
-
     // Compute the ratio of (total number of labels) / (count for each label).
     val ratio = histogram
-      .transformWithValue[Position1D, Fraction[Position1D, V], V](Fraction(extractor(First.toString), true), sum)
+      .transformWithValue(Fraction(extractor(First.toString), true), sum)
 
     // Find the minimum ratio, and store the result as a Map.
     val min = ratio
@@ -404,7 +394,7 @@ object LabelWeighting {
 
     // Divide the ratio by the minimum ratio, and store the result as a Map.
     val weights = ratio
-      .transformWithValue[Position1D, Fraction[Position1D, V], V](Fraction(extractor("min")), min)
+      .transformWithValue(Fraction(extractor("min")), min)
       .toMap(Over(First))
 
     case class AddWeight() extends TransformerWithValue[Position2D, Position3D] {
@@ -420,7 +410,7 @@ object LabelWeighting {
 
     // Re-read labels and add the computed weight.
     load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
-      .transformWithValue[Position3D, AddWeight, AddWeight#V](AddWeight(), weights)
+      .transformWithValue(AddWeight(), weights)
       .save(s"./demo.${output}/weighted.out")
   }
 }

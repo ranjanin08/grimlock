@@ -62,7 +62,7 @@ object MutualInformation {
     // 3/ Bucket all continuous variables by rounding them.
     val data = load3DWithDictionary(s"${path}/exampleMutual.txt", Dictionary.load(s"${path}/exampleDictionary.txt"))
       .squash(Third, PreservingMinPosition[Position3D]())
-      .transform[Position2D, CeilingBucketing](CeilingBucketing())
+      .transform(CeilingBucketing())
 
     // Define type for the histogram count map.
     type W = Map[Position1D, Content]
@@ -71,7 +71,8 @@ object MutualInformation {
     type AwV = AggregatorWithValue[Position2D, Position1D, Position2D] { type V >: W }
 
     // Define extractor for extracting count from histogram count map.
-    val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First).andThenPresent(_.value.asDouble)
+    val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First)
+      .andThenPresent(_.value.asDouble)
 
     // Compute histogram on the data.
     val mhist = data

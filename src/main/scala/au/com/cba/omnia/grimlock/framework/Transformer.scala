@@ -223,12 +223,14 @@ object Transformable {
   }
 
   /** Converts a `Transformer[P, Q]` to a `Transformer[P, Q]`; that is, it is a pass through. */
-  implicit def T2T[P <: Position, Q <: Position, T <: Transformer[P, Q]]: Transformable[T, P, Q] = {
+  implicit def TPQ2T[P <: Position, Q <: Position, T <: Transformer[P, Q]]: Transformable[T, P, Q] = {
     new Transformable[T, P, Q] { def convert(t: T): Transformer[P, Q] = t }
   }
+  implicit def TPP2T[P <: Position, T <: Transformer[P, P]]: Transformable[T, P, P] = TPQ2T[P, P, T]
+  implicit def TPPM2T[P <: Position with ExpandablePosition, T <: Transformer[P, P#M]]: Transformable[T, P, P#M] = TPQ2T[P, P#M, T]
 
   /** Converts a `List[Transformer[P, Q]]` to a single `Transformer[P, Q]`. */
-  implicit def LT2T[P <: Position, Q <: Position, T <: Transformer[P, Q]]: Transformable[List[T], P, Q] = {
+  implicit def LTPQ2T[P <: Position, Q <: Position, T <: Transformer[P, Q]]: Transformable[List[T], P, Q] = {
     new Transformable[List[T], P, Q] {
       def convert(t: List[T]): Transformer[P, Q] = {
         new Transformer[P, Q] {
@@ -237,6 +239,8 @@ object Transformable {
       }
     }
   }
+  implicit def LTPP2T[P <: Position, T <: Transformer[P, P]]: Transformable[List[T], P, P] = LTPQ2T[P, P, T]
+  implicit def LTPPM2T[P <: Position with ExpandablePosition, T <: Transformer[P, P#M]]: Transformable[List[T], P, P#M] = LTPQ2T[P, P#M, T]
 }
 
 /** Type class for transforming a type `T` to a `TransformerWithValue[P, Q]`. */
@@ -294,15 +298,17 @@ object TransformableWithValue {
    * Converts a `TransformerWithValue[P, Q] { type V >: W }` to a `TransformerWithValue[P, Q] { type V >: W }`;
    * that is, it is a pass through.
    */
-  implicit def T2TWV[P <: Position, Q <: Position, T <: TransformerWithValue[P, Q] { type V >: W }, W]: TransformableWithValue[T, P, Q, W] = {
+  implicit def TPQ2TWV[P <: Position, Q <: Position, T <: TransformerWithValue[P, Q] { type V >: W }, W]: TransformableWithValue[T, P, Q, W] = {
     new TransformableWithValue[T, P, Q, W] { def convert(t: T): TransformerWithValue[P, Q] { type V >: W } = t }
   }
+  implicit def TPP2TWV[P <: Position, T <: TransformerWithValue[P, P] { type V >: W }, W]: TransformableWithValue[T, P, P, W] = TPQ2TWV[P, P, T, W]
+  implicit def TPPM2TWV[P <: Position with ExpandablePosition, T <: TransformerWithValue[P, P#M] { type V >: W }, W]: TransformableWithValue[T, P, P#M, W] = TPQ2TWV[P, P#M, T, W]
 
   /**
    * Converts a `List[TransformerWithValue[P, Q] { type V >: W }]` to a single
    * `TransformerWithValue[P, Q] { type V >: W }`.
    */
-  implicit def LT2TWV[P <: Position, Q <: Position, T <: TransformerWithValue[P, Q] { type V >: W }, W]: TransformableWithValue[List[T], P, Q, W] = {
+  implicit def LTPQ2TWV[P <: Position, Q <: Position, T <: TransformerWithValue[P, Q] { type V >: W }, W]: TransformableWithValue[List[T], P, Q, W] = {
     new TransformableWithValue[List[T], P, Q, W] {
       def convert(t: List[T]): TransformerWithValue[P, Q] { type V >: W } = {
         new TransformerWithValue[P, Q] {
@@ -315,5 +321,7 @@ object TransformableWithValue {
       }
     }
   }
+  implicit def LTPP2TWV[P <: Position, T <: TransformerWithValue[P, P] { type V >: W }, W]: TransformableWithValue[List[T], P, P, W] = LTPQ2TWV[P, P, T, W]
+  implicit def LTPPM2TWV[P <: Position with ExpandablePosition, T <: TransformerWithValue[P, P#M] { type V >: W }, W]: TransformableWithValue[List[T], P, P#M, W] = LTPQ2TWV[P, P#M, T, W]
 }
 

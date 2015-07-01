@@ -494,29 +494,27 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
-    type V = Map[Position1D, Content]
-
     val mean = data
       .summarise[D, slice.S, Mean[Position2D, slice.S]](slice, Mean[Position2D, slice.S]())
       .toMap(Over(First))
 
     val centered = data
-      .transformWithValue[Position2D, Subtract[Position2D, V], V](Subtract(
-        ExtractWithDimension(slice.dimension).andThenPresent((con: Content) => con.value.asDouble)), mean)
+      .transformWithValue(Subtract(ExtractWithDimension(slice.dimension)
+        .andThenPresent((con: Content) => con.value.asDouble)), mean)
 
     val denom = centered
-      .transform[Position2D, Power[Position2D]](Power(2))
+      .transform(Power[Position2D](2))
       .summarise[D, slice.S, Sum[Position2D, slice.S]](slice, Sum[Position2D, slice.S]())
       .pairwise[Dimension.First, Position1D, Times[Position1D, Position0D]](Over(First), Lower, Times())
-      .transform[Position1D, SquareRoot[Position1D]](SquareRoot())
+      .transform(SquareRoot[Position1D]())
       .toMap(Over(First))
 
     centered
       .pairwise[D, slice.R#M, Times[slice.S, slice.R]](slice, Lower, Times())
       .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Over[Position2D, Dimension.First](First),
         Sum[Position2D, Position1D]())
-      .transformWithValue(Fraction(
-        ExtractWithDimension[Dimension.First, Position1D, Content](First).andThenPresent(_.value.asDouble)), denom)
+      .transformWithValue(Fraction(ExtractWithDimension[Dimension.First, Position1D, Content](First)
+        .andThenPresent(_.value.asDouble)), denom)
   }
 
   def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
@@ -543,31 +541,30 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     def isPositive(d: Double) = d > 0
 
-    type V = Map[Position1D, Content]
-
-    val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First).andThenPresent(_.value.asDouble)
+    val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First)
+      .andThenPresent(_.value.asDouble)
 
     val pos = data
-      .transform[Position2D, Compare[Position2D]](Compare(isPositive(_)))
+      .transform(Compare[Position2D](isPositive(_)))
       .summarise[D, slice.S, Sum[Position2D, slice.S]](slice, Sum[Position2D, slice.S]())
       .toMap(Over(First))
 
     val neg = data
-      .transform[Position2D, Compare[Position2D]](Compare(!isPositive(_)))
+      .transform(Compare[Position2D](!isPositive(_)))
       .summarise[D, slice.S, Sum[Position2D, slice.S]](slice, Sum[Position2D, slice.S]())
       .toMap(Over(First))
 
     val tpr = data
-      .transform[Position2D, Compare[Position2D]](Compare(isPositive(_)))
+      .transform(Compare[Position2D](isPositive(_)))
       .slide[D, slice.S#M, CumulativeSum[slice.S, slice.R]](slice, CumulativeSum())
-      .transformWithValue[Position2D, Fraction[Position2D, V], V](Fraction(extractor), pos)
+      .transformWithValue(Fraction(extractor), pos)
       .slide[Dimension.First, Position2D, Sliding[Position1D, Position1D]](Over(First),
         Sliding((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
 
     val fpr = data
-      .transform[Position2D, Compare[Position2D]](Compare(!isPositive(_)))
+      .transform(Compare[Position2D](!isPositive(_)))
       .slide[D, slice.S#M, CumulativeSum[slice.S, slice.R]](slice, CumulativeSum())
-      .transformWithValue[Position2D, Fraction[Position2D, V], V](Fraction(extractor), neg)
+      .transformWithValue(Fraction(extractor), neg)
       .slide[Dimension.First, Position2D, Sliding[Position1D, Position1D]](Over(First),
         Sliding((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
 
@@ -575,8 +572,8 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
       .pairwiseBetween[Dimension.First, Position2D, Times[Position1D, Position1D]](Along(First), Diagonal, fpr, Times())
       .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Along[Position2D, Dimension.First](First),
         Sum[Position2D, Position1D]())
-      .transformWithValue[Position1D, Subtract[Position1D, Map[Position1D, Double]], Map[Position1D, Double]](
-        Subtract(ExtractWithKey("one"), true), Map(Position1D("one") -> 1.0))
+      .transformWithValue(Subtract(ExtractWithKey[Position1D, String, Double]("one"), true),
+        Map(Position1D("one") -> 1.0))
   }
 }
 
