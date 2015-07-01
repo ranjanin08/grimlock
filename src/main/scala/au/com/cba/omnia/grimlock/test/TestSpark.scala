@@ -218,17 +218,20 @@ object TestSpark6 {
       .which((c: Cell[Position3D]) => c.content.value.isInstanceOf[LongValue])
       .save("./tmp.spark/whc4.out", descriptive=true)
 
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Mean().andThenExpand(_.position.append("mean")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
+
     TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
-        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
-          Mean().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
-          Min().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
-          Max().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
-          MaxAbs().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs"))))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
+        Along[Position2D, Dimension.First](First), aggregators)
       .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
                                 ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
       .save("./tmp.spark/whc5.out", descriptive=true)
@@ -347,31 +350,36 @@ object TestSpark10 {
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
-      .summarise[Dimension.Second, Position2D, Aggregator[Position3D, Position1D, Position2D]](Over(Second),
-        Mean(strict=true, nan=true).andThenExpand((c: Cell[Position1D]) => c.position.append("mean")))
+      .summarise[Dimension.Second, Position2D, Aggregator[Position3D, Position1D, Position2D]](
+        Over[Position3D, Dimension.Second](Second),
+        Mean[Position3D, Position1D](strict=true, nan=true).andThenExpand(_.position.append("mean")))
       .saveAsCSV(Over(Second), "./tmp.spark/agg1.csv")
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .summarise[Dimension.Second, Position2D, Aggregator[Position2D, Position1D, Position2D]](Along(Second),
-        Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")))
+      .summarise[Dimension.Second, Position2D, Aggregator[Position2D, Position1D, Position2D]](
+        Along[Position2D, Dimension.Second](Second),
+        Count[Position2D, Position1D]().andThenExpand(_.position.append("count")))
       .saveAsCSV(Over(Second), "./tmp.spark/agg2.csv")
+
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Mean().andThenExpand(_.position.append("mean")),
+      StandardDeviation().andThenExpand(_.position.append("sd")),
+      Skewness().andThenExpand(_.position.append("skewness")),
+      Kurtosis().andThenExpand(_.position.append("kurtosis")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
-        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
-          Mean().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
-          StandardDeviation().andThenExpand((c: Cell[Position1D]) => c.position.append("sd")),
-          Skewness().andThenExpand((c: Cell[Position1D]) => c.position.append("skewness")),
-          Kurtosis().andThenExpand((c: Cell[Position1D]) => c.position.append("kurtosis")),
-          Min().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
-          Max().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
-          MaxAbs().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs"))))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
+        Along[Position2D, Dimension.First](First), aggregators)
       .saveAsCSV(Over(Second), "./tmp.spark/agg3.csv")
   }
 }
@@ -436,8 +444,8 @@ object TestSpark13 {
       .saveAsCSV(Over(Second), "./tmp.spark/fll2.out")
 
     data
-      .fill(Over(Second), all.summarise[Dimension.Second, Position1D, Mean[Position3D, Position1D]](Over(Second),
-        Mean(strict=true, nan=true)))
+      .fill(Over(Second), all.summarise[Dimension.Second, Position1D, Mean[Position3D, Position1D]](
+        Over[Position3D, Dimension.Second](Second), Mean[Position3D, Position1D](true, true)))
       .join(Over(First), inds)
       .saveAsCSV(Over(Second), "./tmp.spark/fll4.out")
   }
@@ -464,8 +472,9 @@ object TestSpark15 {
     data
       .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .summarise[Dimension.Third, Position3D, Aggregator[Position3D, Position2D, Position3D]](Along(Third),
-        Sum().andThenExpand((c: Cell[Position2D]) => c.position.append("sum")))
+      .summarise[Dimension.Third, Position3D, Aggregator[Position3D, Position2D, Position3D]](
+        Along[Position3D, Dimension.Third](Third),
+        Sum[Position3D, Position2D]().andThenExpand(_.position.append("sum")))
       .melt(Third, Second)
       .saveAsCSV(Over(Second), "./tmp.spark/rsh1.out")
 
@@ -512,13 +521,16 @@ object TestSpark17 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
 
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Mean().andThenExpand(_.position.append("mean")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
+
     val stats = data
-      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
-        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
-          Mean().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
-          Min().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
-          Max().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
-          MaxAbs().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs"))))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
+        Along[Position2D, Dimension.First](First), aggregators)
       .toMap(Over(First))
 
     type W = Map[Position1D, Map[Position1D, Content]]
@@ -564,13 +576,16 @@ object TestSpark18 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
 
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Mean().andThenExpand(_.position.append("mean")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
+
     val stats = data
-      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
-        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
-          Mean().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
-          Min().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
-          Max().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
-          MaxAbs().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs"))))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
+        Along[Position2D, Dimension.First](First), aggregators)
 
     val rem = stats
       .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2)
@@ -606,11 +621,14 @@ object TestSpark19 {
     val parts = raw
       .split[String, CustomPartition](CustomPartition(First, "train", "test"))
 
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
+
     val stats = parts
       .get("train")
-      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
-        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
-          MaxAbs().andThenExpand((c: Cell[Position1D]) => c.position.append("max.abs"))))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
+        Along[Position2D, Dimension.First](First), aggregators)
 
     val rem = stats
       .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
@@ -824,14 +842,17 @@ object TestSpark28 {
       .flatMap { case i => List(("iid:" + i, "fid:A", Content(ContinuousSchema[Codex.LongCodex](), i)),
                                 ("iid:" + i, "fid:B", Content(NominalSchema[Codex.StringCodex](), i.toString))) }
 
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      Mean().andThenExpand(_.position.append("mean")),
+      StandardDeviation().andThenExpand(_.position.append("sd")),
+      Skewness().andThenExpand(_.position.append("skewness")))
+
     val stats = data
-      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
-        List(Count().andThenExpand((c: Cell[Position1D]) => c.position.append("count")),
-          Min().andThenExpand((c: Cell[Position1D]) => c.position.append("min")),
-          Max().andThenExpand((c: Cell[Position1D]) => c.position.append("max")),
-          Mean().andThenExpand((c: Cell[Position1D]) => c.position.append("mean")),
-          StandardDeviation().andThenExpand((c: Cell[Position1D]) => c.position.append("sd")),
-          Skewness().andThenExpand((c: Cell[Position1D]) => c.position.append("skewness"))))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
+        Along[Position2D, Dimension.First](First), aggregators)
       .toMap(Over(First))
 
     type W = Map[Position1D, List[Double]]

@@ -97,6 +97,8 @@ object Position {
   /** `MapablePosition` object for `PositionND` (N > 1) with `Along`. */
   case object MapAlong extends MapMapablePosition[Position1D] {}
 
+  /** Define dependency between expansion from `Position0D` to `Position0D`. */
+  implicit object P0P0 extends PosExpDep[Position0D, Position0D]
   /** Define dependency between expansion from `Position0D` to `Position1D`. */
   implicit object P0P1 extends PosExpDep[Position0D, Position1D]
   /** Define dependency between expansion from `Position0D` to `Position2D`. */

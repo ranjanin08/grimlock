@@ -151,7 +151,8 @@ object InstanceCentricTfIdf {
     // the sums over all events.
     val tf = data
       .transform[Position3D, WordCounts](WordCounts(stopwords = List()))
-      .summarise[Dimension.First, Position2D, Sum[Position3D, Position2D]](Along(First), Sum())
+      .summarise[Dimension.First, Position2D, Sum[Position3D, Position2D]](Along[Position3D, Dimension.First](First),
+        Sum[Position3D, Position2D]())
 
     // Get the number of instances (i.e. documents)
     val n = tf
@@ -169,7 +170,8 @@ object InstanceCentricTfIdf {
     //  2/ Apply Idf transformation (using document count);
     //  3/ Save as Map for use in Tf-Idf below.
     val idf = tf
-      .summarise[Dimension.First, Position1D, Count[Position2D, Position1D]](Along(First), Count())
+      .summarise[Dimension.First, Position1D, Count[Position2D, Position1D]](Along[Position2D, Dimension.First](First),
+        Count[Position2D, Position1D]())
       .transformWithValue[Position1D, Idf[Position1D, N], N](Idf(extractN,
         (df: Double, n: Double) => math.log10(n / df)), n)
       .toMap(Over(First))
@@ -190,7 +192,8 @@ object InstanceCentricTfIdf {
       //.transformWithValue[Position2D, AugmentedTf[Position2D, Map[Position1D, Content]], Map[Position1D, Content]](
       //  AugmentedTf(ExtractWithDimension[Dimension.First, Position2D, Content](First)
       //    .andThenPresent(_.value.asDouble)),
-      //  tf.summarise[Dimension.Second, Position1D, Max[Position2D, Position1D]](Along(Second), Max())
+      //  tf.summarise[Dimension.Second, Position1D, Max[Position2D, Position1D]](
+      //      Along[Position2D, Dimension.Second](Second), Max[Position2D, Position1D]())
       //    .toMap(Over[Position1D, Dimension.First](First)))
       .transformWithValue[Position2D, TfIdf[Position2D, I], I](TfIdf(extractIdf), idf)
       .save(s"./demo.${output}/tfidf_entity.out")

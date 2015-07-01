@@ -120,8 +120,8 @@ object Ensemble {
       .split[String, EnsembleSplit](EnsembleSplit(scripts(0), scripts(1), scripts(2)))
       .forEach(scripts, trainAndScore)
       .merge(scripts)
-      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](Over(First),
-        WeightedSum(extractWeight), weights)
+      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
+        Over[Position2D, Dimension.First](First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
       .save(s"./demo.${output}/ensemble.scores.out")
       .toMap(Over(First))
 

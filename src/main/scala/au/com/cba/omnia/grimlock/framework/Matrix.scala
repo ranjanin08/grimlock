@@ -562,6 +562,19 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     ev2: PosExpDep[slice.S, Q], ev3: Aggregatable[T, P, slice.S, Q], ev4: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
+   * Summarise a matrix and return the aggregates.
+   *
+   * @param slice       Encapsulates the dimension(s) along which to aggregate.
+   * @param aggregators The aggregator(s) to apply to the data.
+   * @param reducers    The number of reducers to use.
+   *
+   * @return A `U[Cell[Q]]` with the aggregates.
+   */
+  def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T, reducers: Int)(
+    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S, Q], ev3: Aggregatable[T, P, slice.S, Q],
+      ev4: ClassTag[slice.S]): U[Cell[Q]]
+
+  /**
    * Summarise a matrix, using a user supplied value, and return the aggregates.
    *
    * @param slice       Encapsulates the dimension(s) along which to aggregate.
@@ -573,6 +586,20 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W])(
     implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S, Q], ev3: AggregatableWithValue[T, P, slice.S, Q, W],
       ev4: ClassTag[slice.S]): U[Cell[Q]]
+
+  /**
+   * Summarise a matrix, using a user supplied value, and return the aggregates.
+   *
+   * @param slice       Encapsulates the dimension(s) along which to aggregate.
+   * @param aggregators The aggregator(s) to apply to the data.
+   * @param value       A `E` holding a user supplied value.
+   * @param reducers    The number of reducers to use.
+   *
+   * @return A `U[Cell[Q]]` with the aggregates.
+   */
+  def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W],
+    reducers: Int)(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S, Q],
+      ev3: AggregatableWithValue[T, P, slice.S, Q, W], ev4: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
    * Convert a matrix to an in-memory `Map`.

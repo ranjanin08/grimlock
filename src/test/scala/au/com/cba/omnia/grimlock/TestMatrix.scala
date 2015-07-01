@@ -2743,6 +2743,9 @@ trait TestMatrixSummarise extends TestMatrix {
     Cell(Position2D("foo", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14 / 1)),
     Cell(Position2D("qux", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56 / 4)))
 
+  val result34 = List(Cell(Position1D("sum.1"), Content(ContinuousSchema[Codex.DoubleCodex](), 12.56)),
+    Cell(Position1D("sum.2"), Content(ContinuousSchema[Codex.DoubleCodex](), 31.40)))
+
   val result35 = List(Cell(Position2D("bar", "sum"),
       Content(ContinuousSchema[Codex.DoubleCodex](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
     Cell(Position2D("baz", "sum"), Content(ContinuousSchema[Codex.DoubleCodex](), (9.42 + 18.84) * (1.0 / 3))),
@@ -2845,7 +2848,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.First, Position1D, Min[Position2D, Position1D]](Over(First), Min())
+        cells.summarise[Dimension.First, Position1D, Min[Position2D, Position1D]](
+          Over[Position2D, Dimension.First](First), Min[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -2856,7 +2860,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.First, Position1D, Max[Position2D, Position1D]](Along(First), Max())
+        cells.summarise[Dimension.First, Position1D, Max[Position2D, Position1D]](
+          Along[Position2D, Dimension.First](First), Max[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -2867,7 +2872,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.Second, Position1D, Max[Position2D, Position1D]](Over(Second), Max())
+        cells.summarise[Dimension.Second, Position1D, Max[Position2D, Position1D]](
+          Over[Position2D, Dimension.Second](Second), Max[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -2878,7 +2884,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.Second, Position1D, Min[Position2D, Position1D]](Along(Second), Min())
+        cells.summarise[Dimension.Second, Position1D, Min[Position2D, Position1D]](
+          Along[Position2D, Dimension.Second](Second), Min[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -2889,7 +2896,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.First, Position1D, Min[Position3D, Position1D]](Over(First), Min())
+        cells.summarise[Dimension.First, Position1D, Min[Position3D, Position1D]](
+          Over[Position3D, Dimension.First](First), Min[Position3D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -2900,7 +2908,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.First, Position2D, Max[Position3D, Position2D]](Along(First), Max())
+        cells.summarise[Dimension.First, Position2D, Max[Position3D, Position2D]](
+          Along[Position3D, Dimension.First](First), Max[Position3D, Position2D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -2911,7 +2920,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Second, Position1D, Max[Position3D, Position1D]](Over(Second), Max())
+        cells.summarise[Dimension.Second, Position1D, Max[Position3D, Position1D]](
+          Over[Position3D, Dimension.Second](Second), Max[Position3D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -2922,7 +2932,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Second, Position2D, Min[Position3D, Position2D]](Along(Second), Min())
+        cells.summarise[Dimension.Second, Position2D, Min[Position3D, Position2D]](
+          Along[Position3D, Dimension.Second](Second), Min[Position3D, Position2D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -2933,7 +2944,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Third, Position1D, Max[Position3D, Position1D]](Over(Third), Max())
+        cells.summarise[Dimension.Third, Position1D, Max[Position3D, Position1D]](
+          Over[Position3D, Dimension.Third](Third), Max[Position3D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -2944,7 +2956,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Third, Position2D, Min[Position3D, Position2D]](Along(Third), Min())
+        cells.summarise[Dimension.Third, Position2D, Min[Position3D, Position2D]](
+          Along[Position3D, Dimension.Third](Third), Min[Position3D, Position2D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -2955,8 +2968,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](Over(First),
-          WeightedSum(ExtractWithDimension[Dimension.First, Position2D, Double](First)), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
+          Over[Position2D, Dimension.First](First),
+          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First)),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -2967,8 +2982,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](Along(First),
-          WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Double](Second)), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
+          Along[Position2D, Dimension.First](First),
+          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second)),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
     }
@@ -2979,8 +2996,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](Over(Second),
-          WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Double](Second)), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](
+          Over[Position2D, Dimension.Second](Second),
+          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second)),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result13
     }
@@ -2991,8 +3010,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](Along(Second),
-          WeightedSum(ExtractWithDimension[Dimension.First, Position2D, Double](First)), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](
+          Along[Position2D, Dimension.Second](Second),
+          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First)),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result14
     }
@@ -3003,8 +3024,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.First, Position1D, WeightedSum[Position3D, Position1D, W], W](Over(First),
-          WeightedSum(ExtractWithDimension[Dimension.First, Position3D, Double](First)), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.First, Position1D, WeightedSum[Position3D, Position1D, W], W](
+          Over[Position3D, Dimension.First](First),
+          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First)),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result15
     }
@@ -3015,8 +3038,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.First, Position2D, WeightedSum[Position3D, Position2D, W], W](Along(First),
-          WeightedSum(ExtractWithDimension[Dimension.Second, Position3D, Double](Second)), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.First, Position2D, WeightedSum[Position3D, Position2D, W], W](
+          Along[Position3D, Dimension.First](First),
+          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second)),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result16
     }
@@ -3027,8 +3052,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position3D, Position1D, W], W](Over(Second),
-          WeightedSum(ExtractWithDimension[Dimension.Second, Position3D, Double](Second)), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position3D, Position1D, W], W](
+          Over[Position3D, Dimension.Second](Second),
+          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second)),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result17
     }
@@ -3039,8 +3066,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Second, Position2D, WeightedSum[Position3D, Position2D, W], W](Along(Second),
-          WeightedSum(ExtractWithDimension[Dimension.First, Position3D, Double](First)), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.Second, Position2D, WeightedSum[Position3D, Position2D, W], W](
+          Along[Position3D, Dimension.Second](Second),
+          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First)),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result18
     }
@@ -3051,8 +3080,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Third, Position1D, WeightedSum[Position3D, Position1D, W], W](Over(Third),
-          WeightedSum(ExtractWithDimension[Dimension.Third, Position3D, Double](Third)), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.Third, Position1D, WeightedSum[Position3D, Position1D, W], W](
+          Over[Position3D, Dimension.Third](Third),
+          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third)),
+          ValuePipe(ext))
     } Then {
         _.toList.sortBy(_.position) shouldBe result19
     }
@@ -3063,8 +3094,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Third, Position2D, WeightedSum[Position3D, Position2D, W], W](Along(Third),
-          WeightedSum(ExtractWithDimension[Dimension.Third, Position3D, Double](Third)), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.Third, Position2D, WeightedSum[Position3D, Position2D, W], W](
+          Along[Position3D, Dimension.Third](Third),
+          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third)),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result20
     }
@@ -3075,8 +3108,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.summarise[Dimension.First, Position2D, Aggregator[Position1D, Position1D, Position2D]](Over(First),
-          Min().andThenExpand(_.position.append("min")))
+        cells.summarise[Dimension.First, Position2D, Aggregator[Position1D, Position1D, Position2D]](
+          Over[Position1D, Dimension.First](First),
+          Min[Position1D, Position1D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result21
     }
@@ -3087,8 +3121,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.summarise[Dimension.First, Position1D, List[Aggregator[Position1D, Position0D, Position1D]]](Along(First),
-          List(Min().andThenExpand(_.position.append("min")), Max().andThenExpand(_.position.append("max"))))
+        cells.summarise[Dimension.First, Position1D, List[Aggregator[Position1D, Position0D, Position1D]]](
+          Along[Position1D, Dimension.First](First), List(
+            Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
+            Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result22
     }
@@ -3099,8 +3135,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.First, Position2D, Aggregator[Position2D, Position1D, Position2D]](Over(First),
-          Min().andThenExpand(_.position.append("min")))
+        cells.summarise[Dimension.First, Position2D, Aggregator[Position2D, Position1D, Position2D]](
+          Over[Position2D, Dimension.First](First),
+          Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result23
     }
@@ -3111,8 +3148,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
-          List(Min().andThenExpand(_.position.append("min")), Max().andThenExpand(_.position.append("max"))))
+        cells.summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
+          Along[Position2D, Dimension.First](First), List(
+            Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+            Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result24
     }
@@ -3124,8 +3163,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.summarise[Dimension.Second, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-          Over(Second), List(Min().andThenExpand(_.position.append("min")),
-            Max().andThenExpand(_.position.append("max"))))
+          Over[Position2D, Dimension.Second](Second), List(
+            Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+            Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result25
     }
@@ -3136,8 +3176,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.Second, Position2D, Aggregator[Position2D, Position1D, Position2D]](Along(Second),
-          Min().andThenExpand(_.position.append("min")))
+        cells.summarise[Dimension.Second, Position2D, Aggregator[Position2D, Position1D, Position2D]](
+          Along[Position2D, Dimension.Second](Second),
+          Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result26
     }
@@ -3148,8 +3189,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.First, Position2D, Aggregator[Position3D, Position1D, Position2D]](Over(First),
-          Min().andThenExpand(_.position.append("min")))
+        cells.summarise[Dimension.First, Position2D, Aggregator[Position3D, Position1D, Position2D]](
+          Over[Position3D, Dimension.First](First),
+          Min[Position3D, Position1D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result27
     }
@@ -3160,8 +3202,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.First, Position3D, List[Aggregator[Position3D, Position2D, Position3D]]](Along(First),
-          List(Min().andThenExpand(_.position.append("min")), Max().andThenExpand(_.position.append("max"))))
+        cells.summarise[Dimension.First, Position3D, List[Aggregator[Position3D, Position2D, Position3D]]](
+          Along[Position3D, Dimension.First](First), List(
+            Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+            Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result28
     }
@@ -3173,8 +3217,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.summarise[Dimension.Second, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](
-          Over(Second), List(Min().andThenExpand(_.position.append("min")),
-            Max().andThenExpand(_.position.append("max"))))
+          Over[Position3D, Dimension.Second](Second), List(
+            Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
+            Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result29
     }
@@ -3185,8 +3230,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-      cells.summarise[Dimension.Second, Position3D, Aggregator[Position3D, Position2D, Position3D]](Along(Second),
-        Min().andThenExpand(_.position.append("min")))
+      cells.summarise[Dimension.Second, Position3D, Aggregator[Position3D, Position2D, Position3D]](
+        Along[Position3D, Dimension.Second](Second),
+        Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result30
     }
@@ -3197,8 +3243,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Third, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](Over(Third),
-          List(Min().andThenExpand(_.position.append("min")), Max().andThenExpand(_.position.append("max"))))
+        cells.summarise[Dimension.Third, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](
+          Over[Position3D, Dimension.Third](Third), List(
+            Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
+            Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result31
     }
@@ -3209,8 +3257,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Third, Position3D, Aggregator[Position3D, Position2D, Position3D]](Along(Third),
-          Min().andThenExpand(_.position.append("min")))
+        cells.summarise[Dimension.Third, Position3D, Aggregator[Position3D, Position2D, Position3D]](
+          Along[Position3D, Dimension.Third](Third),
+          Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result32
     }
@@ -3221,11 +3270,30 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.summariseWithValue[Dimension.First, Position2D, AwV[Position1D, Position1D, Position2D], W](Over(First),
-          WeightedSum(ExtractWithDimension[Dimension.First, Position1D, Double](First))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.First, Position2D, AwV[Position1D, Position1D, Position2D], W](
+          Over[Position1D, Dimension.First](First),
+          WeightedSum[Position1D, Position1D, W](ExtractWithDimension[Dimension.First, Position1D, Double](First))
+            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result33
+    }
+  }
+
+  it should "return its first along aggregates in 1D" in {
+    Given {
+      num1
+    } When {
+      cells: TypedPipe[Cell[Position1D]] =>
+        cells.summariseWithValue[Dimension.First, Position1D, List[AwV[Position1D, Position0D, Position1D]], W](
+          Along[Position1D, Dimension.First](First), List(
+            WeightedSum[Position1D, Position0D, W](ExtractWithDimension[Dimension.First, Position1D, Double](First))
+              .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
+            WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName[Position1D](First, "%1$s.2"))
+              .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))),
+          ValuePipe(ext))
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result34
     }
   }
 
@@ -3234,9 +3302,11 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.First, Position2D, AwV[Position2D, Position1D, Position2D], W](Over(First),
-          WeightedSum(ExtractWithDimension[Dimension.First, Position2D, Double](First))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.First, Position2D, AwV[Position2D, Position1D, Position2D], W](
+          Over[Position2D, Dimension.First](First),
+          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First))
+            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result35
     }
@@ -3248,10 +3318,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.summariseWithValue[Dimension.First, Position2D, List[AwV[Position2D, Position1D, Position2D]], W](
-          Along(First), List(
-            WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
+          Along[Position2D, Dimension.First](First), List(
+            WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum(TestMatrixSummarise.ExtractWithName[Position2D](First, "%1$s.2"))
+            WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position2D](First, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3265,10 +3335,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.summariseWithValue[Dimension.Second, Position2D, List[AwV[Position2D, Position1D, Position2D]], W](
-          Over(Second), List(
-            WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
+          Over[Position2D, Dimension.Second](Second), List(
+            WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum(TestMatrixSummarise.ExtractWithName[Position2D](Second, "%1$s.2"))
+            WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position2D](Second, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3282,8 +3352,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.summariseWithValue[Dimension.Second, Position2D, AwV[Position2D, Position1D, Position2D], W](
-          Along(Second), WeightedSum(ExtractWithDimension[Dimension.First, Position2D, Double](First))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ValuePipe(ext))
+          Along[Position2D, Dimension.Second](Second),
+          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First))
+            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result38
     }
@@ -3294,9 +3366,11 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.First, Position2D, AwV[Position3D, Position1D, Position2D], W](Over(First),
-          WeightedSum(ExtractWithDimension[Dimension.First, Position3D, Double](First))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.First, Position2D, AwV[Position3D, Position1D, Position2D], W](
+          Over[Position3D, Dimension.First](First),
+          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First))
+            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result39
     }
@@ -3308,10 +3382,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.summariseWithValue[Dimension.First, Position3D, List[AwV[Position3D, Position2D, Position3D]], W](
-          Along(First), List(
-            WeightedSum(ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
+          Along[Position3D, Dimension.First](First), List(
+            WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
               .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
-            WeightedSum(TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
+            WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3325,10 +3399,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.summariseWithValue[Dimension.Second, Position2D, List[AwV[Position3D, Position1D, Position2D]], W](
-          Over(Second), List(
-            WeightedSum(ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
+          Over[Position3D, Dimension.Second](Second), List(
+            WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum(TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
+            WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3342,8 +3416,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.summariseWithValue[Dimension.Second, Position3D, AwV[Position3D, Position2D, Position3D], W](
-          Along(Second), WeightedSum(ExtractWithDimension[Dimension.First, Position3D, Double](First))
-            .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ValuePipe(ext))
+          Along[Position3D, Dimension.Second](Second),
+          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First))
+            .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result42
     }
@@ -3355,10 +3431,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.summariseWithValue[Dimension.Third, Position2D, List[AwV[Position3D, Position1D, Position2D]], W](
-          Over(Third), List(
-            WeightedSum(ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
+          Over[Position3D, Dimension.Third](Third), List(
+            WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum(TestMatrixSummarise.ExtractWithName[Position3D](Third, "%1$s.2"))
+            WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position3D](Third, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3371,9 +3447,11 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Third, Position3D, AwV[Position3D, Position2D, Position3D], W](Along(Third),
-          WeightedSum(ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
-            .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ValuePipe(ext))
+        cells.summariseWithValue[Dimension.Third, Position3D, AwV[Position3D, Position2D, Position3D], W](
+          Along[Position3D, Dimension.Third](Third),
+          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
+            .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result44
     }
@@ -3384,241 +3462,305 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   "A Matrix.summarise" should "return its first over aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.First, Position1D, Min[Position2D, Position1D]](Over(First), Min())
+      .summarise[Dimension.First, Position1D, Min[Position2D, Position1D]](
+        Over[Position2D, Dimension.First](First), Min[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.First, Position1D, Max[Position2D, Position1D]](Along(First), Max())
+      .summarise[Dimension.First, Position1D, Max[Position2D, Position1D]](
+        Along[Position2D, Dimension.First](First), Max[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its second over aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.Second, Position1D, Max[Position2D, Position1D]](Over(Second), Max())
+      .summarise[Dimension.Second, Position1D, Max[Position2D, Position1D]](
+        Over[Position2D, Dimension.Second](Second), Max[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.Second, Position1D, Min[Position2D, Position1D]](Along(Second), Min())
+      .summarise[Dimension.Second, Position1D, Min[Position2D, Position1D]](
+        Along[Position2D, Dimension.Second](Second), Min[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its first over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.First, Position1D, Min[Position3D, Position1D]](Over(First), Min())
+      .summarise[Dimension.First, Position1D, Min[Position3D, Position1D]](
+        Over[Position3D, Dimension.First](First), Min[Position3D, Position1D]())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.First, Position2D, Max[Position3D, Position2D]](Along(First), Max())
+      .summarise[Dimension.First, Position2D, Max[Position3D, Position2D]](
+        Along[Position3D, Dimension.First](First), Max[Position3D, Position2D]())
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its second over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Second, Position1D, Max[Position3D, Position1D]](Over(Second), Max())
+      .summarise[Dimension.Second, Position1D, Max[Position3D, Position1D]](
+        Over[Position3D, Dimension.Second](Second), Max[Position3D, Position1D]())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Second, Position2D, Min[Position3D, Position2D]](Along(Second), Min())
+      .summarise[Dimension.Second, Position2D, Min[Position3D, Position2D]](
+        Along[Position3D, Dimension.Second](Second), Min[Position3D, Position2D]())
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its third over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Third, Position1D, Max[Position3D, Position1D]](Over(Third), Max())
+      .summarise[Dimension.Third, Position1D, Max[Position3D, Position1D]](
+        Over[Position3D, Dimension.Third](Third), Max[Position3D, Position1D]())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Third, Position2D, Min[Position3D, Position2D]](Along(Third), Min())
+      .summarise[Dimension.Third, Position2D, Min[Position3D, Position2D]](
+        Along[Position3D, Dimension.Third](Third), Min[Position3D, Position2D]())
       .toList.sortBy(_.position) shouldBe result10
   }
 
   "A Matrix.summariseWithValue" should "return its first over aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](Over(First),
-        WeightedSum(ExtractWithDimension[Dimension.First, Position2D, Double](First)), ext)
+      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
+        Over[Position2D, Dimension.First](First),
+        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First)),
+        ext)
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](Along(First),
-        WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Double](Second)), ext)
+      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
+        Along[Position2D, Dimension.First](First),
+        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second)),
+        ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its second over aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](Over(Second),
-        WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Double](Second)), ext)
+      .summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](
+        Over[Position2D, Dimension.Second](Second),
+        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second)),
+        ext)
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](Along(Second),
-        WeightedSum(ExtractWithDimension[Dimension.First, Position2D, Double](First)), ext)
+      .summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](
+        Along[Position2D, Dimension.Second](Second),
+        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First)),
+        ext)
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its first over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position3D, Position1D, W], W](Over(First),
-        WeightedSum(ExtractWithDimension[Dimension.First, Position3D, Double](First)), ext)
+      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position3D, Position1D, W], W](
+        Over[Position3D, Dimension.First](First),
+        WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First)),
+        ext)
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.First, Position2D, WeightedSum[Position3D, Position2D, W], W](Along(First),
-        WeightedSum(ExtractWithDimension[Dimension.Second, Position3D, Double](Second)), ext)
+      .summariseWithValue[Dimension.First, Position2D, WeightedSum[Position3D, Position2D, W], W](
+        Along[Position3D, Dimension.First](First),
+        WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second)),
+        ext)
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its second over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position3D, Position1D, W], W](Over(Second),
-        WeightedSum(ExtractWithDimension[Dimension.Second, Position3D, Double](Second)), ext)
+      .summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position3D, Position1D, W], W](
+        Over[Position3D, Dimension.Second](Second),
+        WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second)),
+        ext)
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Second, Position2D, WeightedSum[Position3D, Position2D, W], W](Along(Second),
-        WeightedSum(ExtractWithDimension[Dimension.First, Position3D, Double](First)), ext)
+      .summariseWithValue[Dimension.Second, Position2D, WeightedSum[Position3D, Position2D, W], W](
+        Along[Position3D, Dimension.Second](Second),
+        WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First)),
+        ext)
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its third over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Third, Position1D, WeightedSum[Position3D, Position1D, W], W](Over(Third),
-        WeightedSum(ExtractWithDimension[Dimension.Third, Position3D, Double](Third)), ext)
+      .summariseWithValue[Dimension.Third, Position1D, WeightedSum[Position3D, Position1D, W], W](
+        Over[Position3D, Dimension.Third](Third),
+        WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third)),
+        ext)
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Third, Position2D, WeightedSum[Position3D, Position2D, W], W](Along(Third),
-        WeightedSum(ExtractWithDimension[Dimension.Third, Position3D, Double](Third)), ext)
+      .summariseWithValue[Dimension.Third, Position2D, WeightedSum[Position3D, Position2D, W], W](
+        Along[Position3D, Dimension.Third](Third),
+        WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third)),
+        ext)
       .toList.sortBy(_.position) shouldBe result20
   }
 
   "A Matrix.summariseAndExpand" should "return its first over aggregates in 1D" in {
     toRDD(num1)
-      .summarise[Dimension.First, Position2D, Aggregator[Position1D, Position1D, Position2D]](Over(First),
-        Min().andThenExpand(_.position.append("min")))
+      .summarise[Dimension.First, Position2D, Aggregator[Position1D, Position1D, Position2D]](
+        Over[Position1D, Dimension.First](First),
+        Min[Position1D, Position1D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its first along aggregates in 1D" in {
     toRDD(num1)
-      .summarise[Dimension.First, Position1D, List[Aggregator[Position1D, Position0D, Position1D]]](Along(First),
-        List(Min().andThenExpand(_.position.append("min")), Max().andThenExpand(_.position.append("max"))))
+      .summarise[Dimension.First, Position1D, List[Aggregator[Position1D, Position0D, Position1D]]](
+        Along[Position1D, Dimension.First](First), List(
+          Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
+          Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result22
   }
 
   it should "return its first over aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.First, Position2D, Aggregator[Position2D, Position1D, Position2D]](Over(First),
-        Min().andThenExpand(_.position.append("min")))
+      .summarise[Dimension.First, Position2D, Aggregator[Position2D, Position1D, Position2D]](
+        Over[Position2D, Dimension.First](First),
+        Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
-        List(Min().andThenExpand(_.position.append("min")), Max().andThenExpand(_.position.append("max"))))
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
+        Along[Position2D, Dimension.First](First), List(
+          Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+          Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its second over aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.Second, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Over(Second),
-        List(Min().andThenExpand(_.position.append("min")), Max().andThenExpand(_.position.append("max"))))
+      .summarise[Dimension.Second, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
+        Over[Position2D, Dimension.Second](Second), List(
+          Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+          Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.Second, Position2D, Aggregator[Position2D, Position1D, Position2D]](Along(Second),
-        Min().andThenExpand(_.position.append("min")))
+      .summarise[Dimension.Second, Position2D, Aggregator[Position2D, Position1D, Position2D]](
+        Along[Position2D, Dimension.Second](Second),
+        Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its first over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.First, Position2D, Aggregator[Position3D, Position1D, Position2D]](Over(First),
-        Min().andThenExpand(_.position.append("min")))
+      .summarise[Dimension.First, Position2D, Aggregator[Position3D, Position1D, Position2D]](
+        Over[Position3D, Dimension.First](First),
+        Min[Position3D, Position1D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.First, Position3D, List[Aggregator[Position3D, Position2D, Position3D]]](Along(First),
-        List(Min().andThenExpand(_.position.append("min")), Max().andThenExpand(_.position.append("max"))))
+      .summarise[Dimension.First, Position3D, List[Aggregator[Position3D, Position2D, Position3D]]](
+        Along[Position3D, Dimension.First](First), List(
+          Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+          Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its second over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Second, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](Over(Second),
-        List(Min().andThenExpand(_.position.append("min")), Max().andThenExpand(_.position.append("max"))))
+      .summarise[Dimension.Second, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](
+        Over[Position3D, Dimension.Second](Second), List(
+          Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
+          Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Second, Position3D, Aggregator[Position3D, Position2D, Position3D]](Along(Second),
-        Min().andThenExpand(_.position.append("min")))
+      .summarise[Dimension.Second, Position3D, Aggregator[Position3D, Position2D, Position3D]](
+        Along[Position3D, Dimension.Second](Second),
+        Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its third over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Third, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](Over(Third),
-        List(Min().andThenExpand(_.position.append("min")), Max().andThenExpand(_.position.append("max"))))
+      .summarise[Dimension.Third, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](
+        Over[Position3D, Dimension.Third](Third), List(
+          Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
+          Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Third, Position3D, Aggregator[Position3D, Position2D, Position3D]](Along(Third),
-        Min().andThenExpand(_.position.append("min")))
+      .summarise[Dimension.Third, Position3D, Aggregator[Position3D, Position2D, Position3D]](
+        Along[Position3D, Dimension.Third](Third),
+        Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result32
   }
 
   "A Matrix.summariseAndExpandWithValue" should "return its first over aggregates in 1D" in {
     toRDD(num1)
-      .summariseWithValue[Dimension.First, Position2D, AwV[Position1D, Position1D, Position2D], W](Over(First),
-        WeightedSum(ExtractWithDimension[Dimension.First, Position1D, Double](First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext)
+      .summariseWithValue[Dimension.First, Position2D, AwV[Position1D, Position1D, Position2D], W](
+        Over[Position1D, Dimension.First](First),
+        WeightedSum[Position1D, Position1D, W](ExtractWithDimension[Dimension.First, Position1D, Double](First))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+        ext)
       .toList.sortBy(_.position) shouldBe result33
+  }
+
+  it should "return its first along aggregates in 1D" in {
+    toRDD(num1)
+      .summariseWithValue[Dimension.First, Position1D, List[AwV[Position1D, Position0D, Position1D]], W](
+        Along[Position1D, Dimension.First](First), List(
+          WeightedSum[Position1D, Position0D, W](ExtractWithDimension[Dimension.First, Position1D, Double](First))
+            .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
+          WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName[Position1D](First, "%1$s.2"))
+            .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))),
+        ext)
+      .toList.sortBy(_.position) shouldBe result34
   }
 
   it should "return its first over aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.First, Position2D, AwV[Position2D, Position1D, Position2D], W](Over(First),
-        WeightedSum(ExtractWithDimension[Dimension.First, Position2D, Double](First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext)
+      .summariseWithValue[Dimension.First, Position2D, AwV[Position2D, Position1D, Position2D], W](
+        Over[Position2D, Dimension.First](First),
+        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+        ext)
       .toList.sortBy(_.position) shouldBe result35
   }
 
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.First, Position2D, List[AwV[Position2D, Position1D, Position2D]], W](Along(First),
-        List(
-          WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
+      .summariseWithValue[Dimension.First, Position2D, List[AwV[Position2D, Position1D, Position2D]], W](
+        Along[Position2D, Dimension.First](First), List(
+          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-          WeightedSum(TestMatrixSummarise.ExtractWithName[Position2D](First, "%1$s.2"))
+          WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position2D](First, "%1$s.2"))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
         ext)
       .toList.sortBy(_.position) shouldBe result36
@@ -3626,11 +3768,11 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its second over aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.Second, Position2D, List[AwV[Position2D, Position1D, Position2D]], W](Over(Second),
-        List(
-          WeightedSum(ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
+      .summariseWithValue[Dimension.Second, Position2D, List[AwV[Position2D, Position1D, Position2D]], W](
+        Over[Position2D, Dimension.Second](Second), List(
+          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-          WeightedSum(TestMatrixSummarise.ExtractWithName[Position2D](Second, "%1$s.2"))
+          WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position2D](Second, "%1$s.2"))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
         ext)
       .toList.sortBy(_.position) shouldBe result37
@@ -3638,27 +3780,31 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.Second, Position2D, AwV[Position2D, Position1D, Position2D], W](Along(Second),
-        WeightedSum(ExtractWithDimension[Dimension.First, Position2D, Double](First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext)
+      .summariseWithValue[Dimension.Second, Position2D, AwV[Position2D, Position1D, Position2D], W](
+        Along[Position2D, Dimension.Second](Second),
+        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+        ext)
       .toList.sortBy(_.position) shouldBe result38
   }
 
   it should "return its first over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.First, Position2D, AwV[Position3D, Position1D, Position2D], W](Over(First),
-        WeightedSum(ExtractWithDimension[Dimension.First, Position3D, Double](First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext)
+      .summariseWithValue[Dimension.First, Position2D, AwV[Position3D, Position1D, Position2D], W](
+        Over[Position3D, Dimension.First](First),
+        WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+        ext)
       .toList.sortBy(_.position) shouldBe result39
   }
 
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.First, Position3D, List[AwV[Position3D, Position2D, Position3D]], W](Along(First),
-        List(
-          WeightedSum(ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
+      .summariseWithValue[Dimension.First, Position3D, List[AwV[Position3D, Position2D, Position3D]], W](
+        Along[Position3D, Dimension.First](First), List(
+          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
             .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
-          WeightedSum(TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
+          WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
             .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))),
         ext)
       .toList.sortBy(_.position) shouldBe result40
@@ -3666,11 +3812,11 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its second over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Second, Position2D, List[AwV[Position3D, Position1D, Position2D]], W](Over(Second),
-        List(
-          WeightedSum(ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
+      .summariseWithValue[Dimension.Second, Position2D, List[AwV[Position3D, Position1D, Position2D]], W](
+        Over[Position3D, Dimension.Second](Second), List(
+          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-          WeightedSum(TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
+          WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
         ext)
       .toList.sortBy(_.position) shouldBe result41
@@ -3678,19 +3824,21 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Second, Position3D, AwV[Position3D, Position2D, Position3D], W](Along(Second),
-        WeightedSum(ExtractWithDimension[Dimension.First, Position3D, Double](First))
-          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext)
+      .summariseWithValue[Dimension.Second, Position3D, AwV[Position3D, Position2D, Position3D], W](
+        Along[Position3D, Dimension.Second](Second),
+        WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First))
+          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
+        ext)
       .toList.sortBy(_.position) shouldBe result42
   }
 
   it should "return its third over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Third, Position2D, List[AwV[Position3D, Position1D, Position2D]], W](Over(Third),
-        List(
-          WeightedSum(ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
+      .summariseWithValue[Dimension.Third, Position2D, List[AwV[Position3D, Position1D, Position2D]], W](
+        Over[Position3D, Dimension.Third](Third), List(
+          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-          WeightedSum(TestMatrixSummarise.ExtractWithName[Position3D](Third, "%1$s.2"))
+          WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position3D](Third, "%1$s.2"))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
         ext)
       .toList.sortBy(_.position) shouldBe result43
@@ -3698,9 +3846,11 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Third, Position3D, AwV[Position3D, Position2D, Position3D], W](Along(Third),
-        WeightedSum(ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
-          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext)
+      .summariseWithValue[Dimension.Third, Position3D, AwV[Position3D, Position2D, Position3D], W](
+        Along[Position3D, Dimension.Third](Third),
+        WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
+          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
+        ext)
       .toList.sortBy(_.position) shouldBe result44
   }
 }
@@ -8636,8 +8786,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.fill(Over(First),
-          cells.summarise[Dimension.First, Position1D, Mean[Position2D, Position1D]](Over(First), Mean()))
+        cells.fill(Over(First), cells.summarise[Dimension.First, Position1D, Mean[Position2D, Position1D]](
+          Over[Position2D, Dimension.First](First), Mean[Position2D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -8648,8 +8798,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.fill(Along(First),
-          cells.summarise[Dimension.First, Position1D, Mean[Position2D, Position1D]](Along(First), Mean()))
+        cells.fill(Along(First), cells.summarise[Dimension.First, Position1D, Mean[Position2D, Position1D]](
+          Along[Position2D, Dimension.First](First), Mean[Position2D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -8660,8 +8810,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.fill(Over(Second),
-          cells.summarise[Dimension.Second, Position1D, Mean[Position2D, Position1D]](Over(Second), Mean()))
+        cells.fill(Over(Second), cells.summarise[Dimension.Second, Position1D, Mean[Position2D, Position1D]](
+          Over[Position2D, Dimension.Second](Second), Mean[Position2D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -8672,8 +8822,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.fill(Along(Second),
-          cells.summarise[Dimension.Second, Position1D, Mean[Position2D, Position1D]](Along(Second), Mean()))
+        cells.fill(Along(Second), cells.summarise[Dimension.Second, Position1D, Mean[Position2D, Position1D]](
+          Along[Position2D, Dimension.Second](Second), Mean[Position2D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -8684,8 +8834,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Over(First),
-          cells.summarise[Dimension.First, Position1D, Mean[Position3D, Position1D]](Over(First), Mean()))
+        cells.fill(Over(First), cells.summarise[Dimension.First, Position1D, Mean[Position3D, Position1D]](
+          Over[Position3D, Dimension.First](First), Mean[Position3D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -8696,8 +8846,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Along(First),
-          cells.summarise[Dimension.First, Position2D, Mean[Position3D, Position2D]](Along(First), Mean()))
+        cells.fill(Along(First), cells.summarise[Dimension.First, Position2D, Mean[Position3D, Position2D]](
+          Along[Position3D, Dimension.First](First), Mean[Position3D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -8708,8 +8858,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Over(Second),
-          cells.summarise[Dimension.Second, Position1D, Mean[Position3D, Position1D]](Over(Second), Mean()))
+        cells.fill(Over(Second), cells.summarise[Dimension.Second, Position1D, Mean[Position3D, Position1D]](
+          Over[Position3D, Dimension.Second](Second), Mean[Position3D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -8720,8 +8870,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Along(Second),
-          cells.summarise[Dimension.Second, Position2D, Mean[Position3D, Position2D]](Along(Second), Mean()))
+        cells.fill(Along(Second), cells.summarise[Dimension.Second, Position2D, Mean[Position3D, Position2D]](
+          Along[Position3D, Dimension.Second](Second), Mean[Position3D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -8732,8 +8882,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Over(Third),
-          cells.summarise[Dimension.Third, Position1D, Mean[Position3D, Position1D]](Over(Third), Mean()))
+        cells.fill(Over(Third), cells.summarise[Dimension.Third, Position1D, Mean[Position3D, Position1D]](
+          Over[Position3D, Dimension.Third](Third), Mean[Position3D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -8744,8 +8894,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Along(Third),
-          cells.summarise[Dimension.Third, Position2D, Mean[Position3D, Position2D]](Along(Third), Mean()))
+        cells.fill(Along(Third), cells.summarise[Dimension.Third, Position2D, Mean[Position3D, Position2D]](
+          Along[Position3D, Dimension.Third](Third), Mean[Position3D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
     }
@@ -8770,8 +8920,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num2)
 
     cells
-      .fill(Over(First),
-        cells.summarise[Dimension.First, Position1D, Mean[Position2D, Position1D]](Over(First), Mean()))
+      .fill(Over(First), cells.summarise[Dimension.First, Position1D, Mean[Position2D, Position1D]](
+        Over[Position2D, Dimension.First](First), Mean[Position2D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result3
   }
 
@@ -8779,8 +8929,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num2)
 
     cells
-      .fill(Along(First),
-        cells.summarise[Dimension.First, Position1D, Mean[Position2D, Position1D]](Along(First), Mean()))
+      .fill(Along(First), cells.summarise[Dimension.First, Position1D, Mean[Position2D, Position1D]](
+        Along[Position2D, Dimension.First](First), Mean[Position2D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result4
   }
 
@@ -8788,8 +8938,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num2)
 
     cells
-      .fill(Over(Second),
-        cells.summarise[Dimension.Second, Position1D, Mean[Position2D, Position1D]](Over(Second), Mean()))
+      .fill(Over(Second), cells.summarise[Dimension.Second, Position1D, Mean[Position2D, Position1D]](
+        Over[Position2D, Dimension.Second](Second), Mean[Position2D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result5
   }
 
@@ -8797,8 +8947,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num2)
 
     cells
-      .fill(Along(Second),
-        cells.summarise[Dimension.Second, Position1D, Mean[Position2D, Position1D]](Along(Second), Mean()))
+      .fill(Along(Second), cells.summarise[Dimension.Second, Position1D, Mean[Position2D, Position1D]](
+        Along[Position2D, Dimension.Second](Second), Mean[Position2D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result6
   }
 
@@ -8806,8 +8956,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Over(First),
-        cells.summarise[Dimension.First, Position1D, Mean[Position3D, Position1D]](Over(First), Mean()))
+      .fill(Over(First), cells.summarise[Dimension.First, Position1D, Mean[Position3D, Position1D]](
+        Over[Position3D, Dimension.First](First), Mean[Position3D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result7
   }
 
@@ -8815,8 +8965,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Along(First),
-        cells.summarise[Dimension.First, Position2D, Mean[Position3D, Position2D]](Along(First), Mean()))
+      .fill(Along(First), cells.summarise[Dimension.First, Position2D, Mean[Position3D, Position2D]](
+        Along[Position3D, Dimension.First](First), Mean[Position3D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -8824,8 +8974,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Over(Second),
-        cells.summarise[Dimension.Second, Position1D, Mean[Position3D, Position1D]](Over(Second), Mean()))
+      .fill(Over(Second), cells.summarise[Dimension.Second, Position1D, Mean[Position3D, Position1D]](
+        Over[Position3D, Dimension.Second](Second), Mean[Position3D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result9
   }
 
@@ -8833,8 +8983,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Along(Second),
-        cells.summarise[Dimension.Second, Position2D, Mean[Position3D, Position2D]](Along(Second), Mean()))
+      .fill(Along(Second), cells.summarise[Dimension.Second, Position2D, Mean[Position3D, Position2D]](
+        Along[Position3D, Dimension.Second](Second), Mean[Position3D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result10
   }
 
@@ -8842,8 +8992,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Over(Third),
-        cells.summarise[Dimension.Third, Position1D, Mean[Position3D, Position1D]](Over(Third), Mean()))
+      .fill(Over(Third), cells.summarise[Dimension.Third, Position1D, Mean[Position3D, Position1D]](
+        Over[Position3D, Dimension.Third](Third), Mean[Position3D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result11
   }
 
@@ -8851,8 +9001,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Along(Third),
-        cells.summarise[Dimension.Third, Position2D, Mean[Position3D, Position2D]](Along(Third), Mean()))
+      .fill(Along(Third), cells.summarise[Dimension.Third, Position2D, Mean[Position3D, Position2D]](
+        Along[Position3D, Dimension.Third](Third), Mean[Position3D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result12
   }
 }

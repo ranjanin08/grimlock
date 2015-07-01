@@ -131,30 +131,33 @@ object DataSciencePipelineWithFiltering {
       .get("train")
 
     // Define descriptive statistics to be computed on the training data.
-    val dstats = List(Count[Position2D, Position1D]().andThenExpand(_.position.append("count")),
-      Mean[Position2D, Position1D]().andThenExpand(_.position.append("mean")),
-      StandardDeviation[Position2D, Position1D]().andThenExpand(_.position.append("sd")),
-      Skewness[Position2D, Position1D]().andThenExpand(_.position.append("skewness")),
-      Kurtosis[Position2D, Position1D]().andThenExpand(_.position.append("kurtosis")),
-      Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-      Max[Position2D, Position1D]().andThenExpand(_.position.append("max")),
-      MaxAbs[Position2D, Position1D]().andThenExpand(_.position.append("max.abs")))
+    val dstats: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Mean().andThenExpand(_.position.append("mean")),
+      StandardDeviation().andThenExpand(_.position.append("sd")),
+      Skewness().andThenExpand(_.position.append("skewness")),
+      Kurtosis().andThenExpand(_.position.append("kurtosis")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
 
     // Compute descriptive statistics on the training data.
     val descriptive = train
-      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](Along(First),
-        dstats)
+      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
+        Along[Position2D, Dimension.First](First), dstats)
 
     // Compute histogram on the categorical features in the training data.
     val histogram = train
       .filter(_.content.schema.kind.isSpecialisationOf(Type.Categorical))
       .expand((c: Cell[Position2D]) => c.position.append(
         "%1$s=%2$s".format(c.position(Second).toShortString, c.content.value.toShortString)))
-      .summarise[Dimension.First, Position2D, Count[Position3D, Position2D]](Along(First), Count())
+      .summarise[Dimension.First, Position2D, Count[Position3D, Position2D]](Along[Position3D, Dimension.First](First),
+        Count[Position3D, Position2D]())
 
     // Compute the counts for each categorical features.
     val counts = histogram
-      .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Over(First), Sum())
+      .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Over[Position2D, Dimension.First](First),
+        Sum[Position2D, Position1D]())
       .toMap()
 
     // Define type of the counts map.
@@ -164,18 +167,19 @@ object DataSciencePipelineWithFiltering {
     val extractCount = ExtractWithDimension[Dimension.First, Position2D, Content](First)
       .andThenPresent(_.value.asDouble)
 
-    // Define summary statisics to compute on the histogram.
-    val sstats = List(Count[Position2D, Position1D]().andThenExpand(_.position.append("num.cat")),
-      Entropy[Position2D, Position1D, W](extractCount)
-        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy")),
-      FrequencyRatio[Position2D, Position1D]().andThenExpand(_.position.append("freq.ratio")))
-
     // Define shorthand for AggregatorWithValue type.
     type AwV = AggregatorWithValue[Position2D, Position1D, Position2D] { type V >: W }
 
+    // Define summary statisics to compute on the histogram.
+    val sstats: List[AwV] = List(
+      Count().andThenExpand(_.position.append("num.cat")),
+      Entropy(extractCount).andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy")),
+      FrequencyRatio().andThenExpand(_.position.append("freq.ratio")))
+
     // Compute summary statisics on the histogram.
     val summary = histogram
-      .summariseWithValue[Dimension.First, Position2D, List[AwV], W](Over(First), sstats, counts)
+      .summariseWithValue[Dimension.First, Position2D, List[AwV], W](Over[Position2D, Dimension.First](First),
+        sstats, counts)
 
     // Combine all statistics and write result to file
     val stats = (descriptive ++ histogram ++ summary)
@@ -299,8 +303,8 @@ object Scoring {
 
     data
       .transformWithValue[Position2D, List[TwV], S](transforms, stats)
-      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](Over(First),
-        WeightedSum(extractWeight), weights)
+      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
+        Over[Position2D, Dimension.First](First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
       .save(s"./demo.${output}/scores.out")
   }
 }
@@ -318,14 +322,15 @@ object DataQualityAndAnalysis {
     // Read the data. This returns a 2D matrix (instance x feature).
     val data = load2D(s"${path}/exampleInput.txt")
 
-    // Define moments to compute.
-    val moments = List(Mean[Position1D, Position0D]().andThenExpand(_.position.append("mean")),
-      StandardDeviation[Position1D, Position0D]().andThenExpand(_.position.append("sd")),
-      Skewness[Position1D, Position0D]().andThenExpand(_.position.append("skewness")),
-      Kurtosis[Position1D, Position0D]().andThenExpand(_.position.append("kurtosis")))
-
     // Define shorthand for List[Aggregator] type.
     type LA = List[Aggregator[Position1D, Position0D, Position1D]]
+
+    // Define moments to compute.
+    val moments: LA = List(
+      Mean().andThenExpand(_.position.append("mean")),
+      StandardDeviation().andThenExpand(_.position.append("sd")),
+      Skewness().andThenExpand(_.position.append("skewness")),
+      Kurtosis().andThenExpand(_.position.append("kurtosis")))
 
     // For the instances:
     //  1/ Compute the number of features for each instance;
@@ -333,9 +338,10 @@ object DataQualityAndAnalysis {
     //  3/ Compute the moments of the counts;
     //  4/ Save the moments.
     data
-      .summarise[Dimension.First, Position1D, Count[Position2D, Position1D]](Over(First), Count())
+      .summarise[Dimension.First, Position1D, Count[Position2D, Position1D]](
+        Over[Position2D, Dimension.First](First), Count[Position2D, Position1D]())
       .save(s"./demo.${output}/feature_count.out")
-      .summarise[Dimension.First, Position1D, LA](Along(First), moments)
+      .summarise[Dimension.First, Position1D, LA](Along[Position1D, Dimension.First](First), moments)
       .save(s"./demo.${output}/feature_density.out")
 
     // For the features:
@@ -344,9 +350,10 @@ object DataQualityAndAnalysis {
     //  3/ Compute the moments of the counts;
     //  4/ Save the moments.
     data
-      .summarise[Dimension.Second, Position1D, Count[Position2D, Position1D]](Over(Second), Count())
+      .summarise[Dimension.Second, Position1D, Count[Position2D, Position1D]](
+        Over[Position2D, Dimension.Second](Second), Count[Position2D, Position1D]())
       .save(s"./demo.${output}/instance_count.out")
-      .summarise[Dimension.First, Position1D, LA](Along(First), moments)
+      .summarise[Dimension.First, Position1D, LA](Along[Position1D, Dimension.First](First), moments)
       .save(s"./demo.${output}/instance_density.out")
   }
 }
@@ -368,7 +375,8 @@ object LabelWeighting {
     // Compute histogram over the label values.
     val histogram = labels
       .expand((c: Cell[Position1D]) => c.position.append(c.content.value.toShortString))
-      .summarise[Dimension.First, Position1D, Count[Position2D, Position1D]](Along(First), Count())
+      .summarise[Dimension.First, Position1D, Count[Position2D, Position1D]](Along[Position2D, Dimension.First](First),
+        Count[Position2D, Position1D]())
 
     // Compute the total number of labels and store result in a Map.
     val sum = labels
@@ -389,8 +397,9 @@ object LabelWeighting {
 
     // Find the minimum ratio, and store the result as a Map.
     val min = ratio
-      .summarise[Dimension.First, Position1D, Aggregator[Position1D, Position0D, Position1D]](Along(First),
-        Min().andThenExpand(_.position.append("min")))
+      .summarise[Dimension.First, Position1D, Aggregator[Position1D, Position0D, Position1D]](
+        Along[Position1D, Dimension.First](First),
+        Min[Position1D, Position0D]().andThenExpand(_.position.append("min")))
       .toMap(Over(First))
 
     // Divide the ratio by the minimum ratio, and store the result as a Map.
