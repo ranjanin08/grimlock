@@ -113,11 +113,10 @@ class Ensemble(args: Args) extends Job(args) {
   // 7/ Collect the scores in a Map so they can be used to compute the Gini index with.
   val scores = data
     .expand((cell: Cell[Position2D]) => cell.position.append(math.abs(cell.position(First).hashCode % 10)))
-    .split[String, EnsembleSplit](EnsembleSplit(scripts(0), scripts(1), scripts(2)))
+    .split(EnsembleSplit(scripts(0), scripts(1), scripts(2)))
     .forEach(scripts, trainAndScore)
     .merge(scripts)
-    .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
-      Over[Position2D, Dimension.First](First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
+    .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
     .save(s"./demo.${output}/ensemble.scores.out")
     .toMap(Over(First))
 

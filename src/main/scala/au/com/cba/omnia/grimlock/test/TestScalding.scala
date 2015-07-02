@@ -218,8 +218,7 @@ class TestScalding6(args : Args) extends Job(args) {
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-      Along[Position2D, Dimension.First](First), aggregators)
+    .summarise(Along(First), aggregators)
     .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
                               ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
     .save("./tmp.scalding/whc5.out", descriptive=true)
@@ -291,7 +290,7 @@ class TestScalding9(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .split[String, StringPartitioner](StringPartitioner(Second))
+    .split(StringPartitioner(Second))
 
   prt1
     .save("./tmp.scalding/prt1.out", descriptive=true)
@@ -330,18 +329,14 @@ class TestScalding10(args : Args) extends Job(args) {
   val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
-    .summarise[Dimension.Second, Position2D, Aggregator[Position3D, Position1D, Position2D]](
-      Over[Position3D, Dimension.Second](Second),
-      Mean[Position3D, Position1D](true, true).andThenExpand(_.position.append("mean")))
+    .summarise(Over(Second), Mean[Position3D, Position1D](true, true).andThenExpand(_.position.append("mean")))
     .saveAsCSV(Over(Second), "./tmp.scalding/agg1.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .summarise[Dimension.Second, Position2D, Aggregator[Position2D, Position1D, Position2D]](
-      Along[Position2D, Dimension.Second](Second),
-      Count[Position2D, Position1D]().andThenExpand(_.position.append("count")))
+    .summarise(Along(Second), Count[Position2D, Position1D]().andThenExpand(_.position.append("count")))
     .saveAsCSV(Over(Second), "./tmp.scalding/agg2.csv")
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
@@ -358,8 +353,7 @@ class TestScalding10(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-      Along[Position2D, Dimension.First](First), aggregators)
+    .summarise(Along(First), aggregators)
     .saveAsCSV(Over(Second), "./tmp.scalding/agg3.csv")
 }
 
@@ -416,8 +410,7 @@ class TestScalding13(args : Args) extends Job(args) {
     .saveAsCSV(Over(Second), "./tmp.scalding/fll2.out")
 
   data
-    .fill(Over(Second), all.summarise[Dimension.Second, Position1D, Mean[Position3D, Position1D]](
-      Over[Position3D, Dimension.Second](Second), Mean[Position3D, Position1D](true, true)))
+    .fill(Over(Second), all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
     .join(Over(First), inds)
     .saveAsCSV(Over(Second), "./tmp.scalding/fll4.out")
 }
@@ -440,9 +433,7 @@ class TestScalding15(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .summarise[Dimension.Third, Position3D, Aggregator[Position3D, Position2D, Position3D]](
-      Along[Position3D, Dimension.Third](Third),
-      Sum[Position3D, Position2D]().andThenExpand(_.position.append("sum")))
+    .summarise(Along(Third), Sum[Position3D, Position2D]().andThenExpand(_.position.append("sum")))
     .melt(Third, Second)
     .saveAsCSV(Over(Second), "./tmp.scalding/rsh1.out")
 
@@ -492,8 +483,7 @@ class TestScalding17(args : Args) extends Job(args) {
     MaxAbs().andThenExpand(_.position.append("max.abs")))
 
   val stats = data
-    .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-      Along[Position2D, Dimension.First](First), aggregators)
+    .summarise(Along(First), aggregators)
     .toMap(Over(First))
 
   data
@@ -542,8 +532,7 @@ class TestScalding18(args : Args) extends Job(args) {
     MaxAbs().andThenExpand(_.position.append("max.abs")))
 
   val stats = data
-    .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-      Along[Position2D, Dimension.First](First), aggregators)
+    .summarise(Along(First), aggregators)
 
   val rem = stats
     .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2)
@@ -575,7 +564,7 @@ class TestScalding19(args : Args) extends Job(args) {
   }
 
   val parts = raw
-    .split[String, CustomPartition](CustomPartition(First, "train", "test"))
+    .split(CustomPartition(First, "train", "test"))
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
     Count().andThenExpand(_.position.append("count")),
@@ -583,8 +572,7 @@ class TestScalding19(args : Args) extends Job(args) {
 
   val stats = parts
     .get("train")
-    .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-      Along[Position2D, Dimension.First](First), aggregators)
+    .summarise(Along(First), aggregators)
 
   val rem = stats
     .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
@@ -659,11 +647,11 @@ class TestScalding22(args : Args) extends Job(args) {
   }
 
   data
-    .slide[Dimension.First, Position2D, Diff](Over(First), Diff())
+    .slide(Over(First), Diff())
     .save("./tmp.scalding/dif1.out")
 
   data
-    .slide[Dimension.Second, Position2D, Diff](Over(Second), Diff())
+    .slide(Over(Second), Diff())
     .permute(Second, First)
     .save("./tmp.scalding/dif2.out")
 }
@@ -683,7 +671,7 @@ class TestScalding23(args : Args) extends Job(args) {
   }
 
   data
-    .pairwise[Dimension.Second, Position2D, DiffSquared](Over(Second), Upper, DiffSquared())
+    .pairwise(Over(Second), Upper, DiffSquared())
     .save("./tmp.scalding/pws1.out")
 }
 
@@ -724,7 +712,7 @@ class TestScalding26(args: Args) extends Job(args) {
   val right = load2D(args("path") + "/algebraInputfile2.txt")
 
   left
-    .pairwiseBetween[Dimension.First, Position2D, Times[Position1D, Position1D]](Over(First), All, right, Times())
+    .pairwiseBetween(Over(First), All, right, Times[Position1D, Position1D]())
     .save("./tmp.scalding/alg.out")
 }
 
@@ -732,40 +720,33 @@ class TestScalding27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide[Dimension.Second, Position2D, SimpleMovingAverage[Position1D, Position1D]](Over(Second),
-      SimpleMovingAverage(5))
+    .slide(Over(Second), SimpleMovingAverage[Position1D, Position1D](5))
     .save("./tmp.scalding/sma1.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide[Dimension.Second, Position2D, SimpleMovingAverage[Position1D, Position1D]](Over(Second),
-      SimpleMovingAverage(5, all=true))
+    .slide(Over(Second), SimpleMovingAverage[Position1D, Position1D](5, all=true))
     .save("./tmp.scalding/sma2.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide[Dimension.Second, Position2D, CenteredMovingAverage[Position1D, Position1D]](Over(Second),
-      CenteredMovingAverage(2))
+    .slide(Over(Second), CenteredMovingAverage[Position1D, Position1D](2))
     .save("./tmp.scalding/tma.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide[Dimension.Second, Position2D, WeightedMovingAverage[Position1D, Position1D]](Over(Second),
-      WeightedMovingAverage(5))
+    .slide(Over(Second), WeightedMovingAverage[Position1D, Position1D](5))
     .save("./tmp.scalding/wma1.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide[Dimension.Second, Position2D, WeightedMovingAverage[Position1D, Position1D]](Over(Second),
-      WeightedMovingAverage(5, all=true))
+    .slide(Over(Second), WeightedMovingAverage[Position1D, Position1D](5, all=true))
     .save("./tmp.scalding/wma2.out")
 
   // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
   load1D(args("path") + "/cumMovAvgInputfile.txt")
-    .slide[Dimension.First, Position1D, CumulativeMovingAverage[Position0D, Position1D]](Along(First),
-      CumulativeMovingAverage())
+    .slide(Along(First), CumulativeMovingAverage[Position0D, Position1D]())
     .save("./tmp.scalding/cma.out")
 
   // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
   load1D(args("path") + "/expMovAvgInputfile.txt")
-    .slide[Dimension.First, Position1D, ExponentialMovingAverage[Position0D, Position1D]](Along(First),
-      ExponentialMovingAverage(0.33))
+    .slide(Along(First), ExponentialMovingAverage[Position0D, Position1D](0.33))
     .save("./tmp.scalding/ema.out")
 }
 
@@ -785,8 +766,7 @@ class TestScalding28(args: Args) extends Job(args) {
     Skewness().andThenExpand(_.position.append("skewness")))
 
   val stats = data
-    .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-      Along[Position2D, Dimension.First](First), aggregators)
+    .summarise(Along(First), aggregators)
     .toMap(Over(First))
 
   val extractor = ExtractWithDimension[Dimension.Second, Position2D, List[Double]](Second)

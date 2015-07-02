@@ -176,7 +176,7 @@ class TestCombinationOperator extends TestOperators {
   val pattern = "not.used"
 
   "A CombinationOperator" should "compute" in {
-    val obj = Operable.LO2O[Position2D, Position1D, Position2D, Operator[Position2D, Position1D, Position2D]].convert(
+    val obj = Operable.LOSRRM2O[Position2D, Position1D, Operator[Position2D, Position1D, Position2D]].convert(
       List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
 
     obj.compute(left, right, rem) shouldBe Collection(List(

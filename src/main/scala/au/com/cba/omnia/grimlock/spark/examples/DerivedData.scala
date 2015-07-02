@@ -78,7 +78,7 @@ object DerivedData {
     //    feature.from.gradient)
     // 4/ Persist 2D gradient features.
     load3D(s"${path}/exampleDerived.txt", third = DateCodex)
-      .slide[Dimension.Third, Position3D, Gradient](Along(Third), Gradient(First))
+      .slide(Along(Third), Gradient(First))
       .melt(Third, Second, ".from.")
       .save(s"./demo.${output}/gradient.out")
   }

@@ -308,10 +308,9 @@ class TestCombinationWindow extends TestGrimlock {
 
   "A CombinationWindow" should "present correctly" in {
     val sel = Position1D("sales")
-    val obj = Windowable.LW2W[Position1D, Position1D, Position2D, Window[Position1D, Position1D, Position2D]]
-      .convert(List(
-        SimpleMovingAverage[Position1D, Position1D](5, First, false).andThenRename(renamer("%1$s.simple")),
-        WeightedMovingAverage[Position1D, Position1D](5, First, false).andThenRename(renamer("%1$s.weighted"))))
+    val obj = Windowable.LWSRSM2W[Position1D, Position1D, Window[Position1D, Position1D, Position2D]].convert(List(
+      SimpleMovingAverage[Position1D, Position1D](5, First, false).andThenRename(renamer("%1$s.simple")),
+      WeightedMovingAverage[Position1D, Position1D](5, First, false).andThenRename(renamer("%1$s.weighted"))))
 
     val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
     init shouldBe ((List(List((StringValue("2003"), 4.0)), List((StringValue("2003"), 4.0))), Collection(List())))

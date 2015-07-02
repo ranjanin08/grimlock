@@ -184,7 +184,12 @@ trait Operable[T, S <: Position with ExpandablePosition, R <: Position with Expa
 
 /** Companion object for the `Operable` type class. */
 object Operable {
+  /** Converts a `(Cell[S], Cell[S], R) => Cell[R#M]` to a `Operator[S, R, R#M]`. */
+  implicit def CSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], Cell[S], R) => Cell[R#M], S, R, R#M] = C2O[S, R, R#M]
+
   /** Converts a `(Cell[S], Cell[S], R) => Cell[Q]` to a `Operator[S, R, Q]`. */
+  implicit def CSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] = C2O[S, R, Q]
+
   implicit def C2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] = {
     new Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] {
       def convert(t: (Cell[S], Cell[S], R) => Cell[Q]): Operator[S, R, Q] = {
@@ -195,8 +200,13 @@ object Operable {
     }
   }
 
+  /** Converts a `(Cell[S], Cell[S], R) => List[Cell[R#M]]` to a `Operator[S, R, R#M]`. */
+  implicit def LCSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], Cell[S], R) => List[Cell[R#M]], S, R, R#M] = LC2O[S, R, R#M]
+
   /** Converts a `(Cell[S], Cell[S], R) => List[Cell[Q]]` to a `Operator[S, R, Q]`. */
-  implicit def LC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] = {
+  implicit def LCSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] = LC2O[S, R, Q]
+
+  private def LC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] = {
     new Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] {
       def convert(t: (Cell[S], Cell[S], R) => List[Cell[Q]]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {
@@ -206,8 +216,13 @@ object Operable {
     }
   }
 
+  /** Converts a `(Cell[S], Cell[S], R) => Collection[Cell[R#M]]` to a `Operator[S, R, R#M]`. */
+  implicit def CCSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], Cell[S], R) => Collection[Cell[R#M]], S, R, R#M] = CC2O[S, R, R#M]
+
   /** Converts a `(Cell[S], Cell[S], R) => Collection[Cell[Q]]` to a `Operator[S, R, Q]`. */
-  implicit def CC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] = {
+  implicit def CCSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] = CC2O[S, R, Q]
+
+  private def CC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] = {
     new Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] {
       def convert(t: (Cell[S], Cell[S], R) => Collection[Cell[Q]]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {
@@ -217,13 +232,23 @@ object Operable {
     }
   }
 
+  /** Converts a `Operator[S, R, R#M]` to a `Operator[S, R, R#M]`; that is, it is a pass through. */
+  implicit def OSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: Operator[S, R, R#M]]: Operable[T, S, R, R#M] = O2O[S, R, R#M, T]
+
   /** Converts a `Operator[S, R, Q]` to a `Operator[S, R, Q]`; that is, it is a pass through. */
-  implicit def O2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Operator[S, R, Q]]: Operable[T, S, R, Q] = {
+  implicit def OSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Operator[S, R, Q]](implicit ev: PosExpDep[R, Q]): Operable[T, S, R, Q] = O2O[S, R, Q, T]
+
+  private def O2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Operator[S, R, Q]]: Operable[T, S, R, Q] = {
     new Operable[T, S, R, Q] { def convert(t: T): Operator[S, R, Q] = t }
   }
 
+  /** Converts a `List[Operator[S, R, R#M]]` to a single `Operator[S, R, R#M]`. */
+  implicit def LOSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: Operator[S, R, R#M]]: Operable[List[T], S, R, R#M] = LO2O[S, R, R#M, T]
+
   /** Converts a `List[Operator[S, R, Q]]` to a single `Operator[S, R, Q]`. */
-  implicit def LO2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Operator[S, R, Q]]: Operable[List[T], S, R, Q] = {
+  implicit def LOSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Operator[S, R, Q]](implicit ev: PosExpDep[R, Q]): Operable[List[T], S, R, Q] = LO2O[S, R, Q, T]
+
+  private def LO2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Operator[S, R, Q]]: Operable[List[T], S, R, Q] = {
     new Operable[List[T], S, R, Q] {
       def convert(t: List[T]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {
@@ -248,8 +273,13 @@ trait OperableWithValue[T, S <: Position with ExpandablePosition, R <: Position 
 
 /** Companion object for the `OperableWithValue` type class. */
 object OperableWithValue {
+  /** Converts a `(Cell[S], Cell[S], R, W) => Cell[R#M]` to a `OperatorWithValue[S, R, R#M] { type V >: W }`. */
+  implicit def CSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[R#M], S, R, R#M, W] = C2OWV[S, R, R#M, W]
+
   /** Converts a `(Cell[S], Cell[S], R, W) => Cell[Q]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
-  implicit def CWC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[Q], S, R, Q, W] = {
+  implicit def CSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[Q], S, R, Q, W] = C2OWV[S, R, Q, W]
+
+  private def C2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[Q], S, R, Q, W] = {
     new OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[Q], S, R, Q, W] {
       def convert(t: (Cell[S], Cell[S], R, W) => Cell[Q]): OperatorWithValue[S, R, Q] { type V >: W } = {
         new OperatorWithValue[S, R, Q] {
@@ -263,8 +293,13 @@ object OperableWithValue {
     }
   }
 
+  /** Converts a `(Cell[S], Cell[S], R, W) => List[Cell[R#M]]` to a `OperatorWithValue[S, R, R#M] { type V >: W }`. */
+  implicit def LCSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[R#M]], S, R, R#M, W] = LC2OWV[S, R, R#M, W]
+
   /** Converts a `(Cell[S], Cell[S], R, W) => List[Cell[Q]]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
-  implicit def CWLC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] = {
+  implicit def LCSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] = LC2OWV[S, R, Q, W]
+
+  private def LC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] = {
     new OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] {
       def convert(t: (Cell[S], Cell[S], R, W) => List[Cell[Q]]): OperatorWithValue[S, R, Q] { type V >: W } = {
         new OperatorWithValue[S, R, Q] {
@@ -278,8 +313,16 @@ object OperableWithValue {
     }
   }
 
+  /**
+   * Converts a `(Cell[S], Cell[S], R, W) => Collection[Cell[R#M]]` to a
+   * `OperatorWithValue[S, R, R#M] { type V >: W }`.
+   */
+  implicit def CCSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[R#M]], S, R, R#M, W] = CC2OWV[S, R, R#M, W]
+
   /** Converts a `(Cell[S], Cell[S], R, W) => Collection[Cell[Q]]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
-  implicit def CWCC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] = {
+  implicit def CCSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] = CC2OWV[S, R, Q, W]
+
+  private def CC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] = {
     new OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] {
       def convert(t: (Cell[S], Cell[S], R, W) => Collection[Cell[Q]]): OperatorWithValue[S, R, Q] { type V >: W } = {
         new OperatorWithValue[S, R, Q] {
@@ -294,18 +337,34 @@ object OperableWithValue {
   }
 
   /**
+   * Converts a `OperatorWithValue[S, R, R#M] { type V >: W }` to a `OperatorWithValue[S, R, R#M] { type V >: W }`;
+   * that is, it is a pass through.
+   */
+  implicit def OSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: OperatorWithValue[S, R, R#M] { type V >: W }, W]: OperableWithValue[T, S, R, R#M, W] = O2OWV[S, R, R#M, T, W]
+
+  /**
    * Converts a `OperatorWithValue[S, R, Q] { type V >: W }` to a `OperatorWithValue[S, R, Q] { type V >: W }`;
    * that is, it is a pass through.
    */
-  implicit def O2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: OperatorWithValue[S, R, Q] { type V >: W }, W]: OperableWithValue[T, S, R, Q, W] = {
+  implicit def OSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: OperatorWithValue[S, R, Q] { type V >: W }, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[T, S, R, Q, W] = O2OWV[S, R, Q, T, W]
+
+  private def O2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: OperatorWithValue[S, R, Q] { type V >: W }, W]: OperableWithValue[T, S, R, Q, W] = {
     new OperableWithValue[T, S, R, Q, W] { def convert(t: T): OperatorWithValue[S, R, Q] { type V >: W } = t }
   }
+
+  /**
+   * Converts a `List[OperatorWithValue[S, R, R#M] { type V >: W }]` to a single
+   * `OperatorWithValue[S, R, R#M] { type V >: W }`.
+   */
+  implicit def LOSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: OperatorWithValue[S, R, R#M] { type V >: W }, W]: OperableWithValue[List[T], S, R, R#M, W] = LO2OWV[S, R, R#M, T, W]
 
   /**
    * Converts a `List[OperatorWithValue[S, R, Q] { type V >: W }]` to a single
    * `OperatorWithValue[S, R, Q] { type V >: W }`.
    */
-  implicit def LO2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: OperatorWithValue[S, R, Q] { type V >: W }, W]: OperableWithValue[List[T], S, R, Q, W] = {
+  implicit def LOSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: OperatorWithValue[S, R, Q] { type V >: W }, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[List[T], S, R, Q, W] = LO2OWV[S, R, Q, T, W]
+
+  private def LO2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: OperatorWithValue[S, R, Q] { type V >: W }, W]: OperableWithValue[List[T], S, R, Q, W] = {
     new OperableWithValue[List[T], S, R, Q, W] {
       def convert(t: List[T]): OperatorWithValue[S, R, Q] { type V >: W } = {
         new OperatorWithValue[S, R, Q] {

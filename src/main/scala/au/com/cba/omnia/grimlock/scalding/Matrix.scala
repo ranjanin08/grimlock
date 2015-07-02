@@ -104,38 +104,36 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, operators: T)(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q], ev3: Operable[T, slice.S, slice.R, Q],
-    ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
-    val o = ev3.convert(operators)
+    implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
+    val o = ev2.convert(operators)
 
     pairwiseTuples(slice, comparer)(names(slice), data, names(slice), data)
       .flatMap { case (lc, rc, r) => o.compute(lc, rc, r).toList }
   }
 
   def pairwiseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, operators: T,
-    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q],
-      ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
-      ev6: ClassTag[slice.R]): U[Cell[Q]] = {
-    val o = ev3.convert(operators)
+    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
+      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
+    val o = ev2.convert(operators)
 
     pairwiseTuples(slice, comparer)(names(slice), data, names(slice), data)
       .flatMapWithValue(value) { case ((lc, rc, r), vo) => o.computeWithValue(lc, rc, r, vo.get).toList }
   }
 
   def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, that: S, operators: T)(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q], ev3: Operable[T, slice.S, slice.R, Q],
-    ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
-    val o = ev3.convert(operators)
+    implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
+    val o = ev2.convert(operators)
 
     pairwiseTuples(slice, comparer)(names(slice), data, that.names(slice), that.data)
       .flatMap { case (lc, rc, r) => o.compute(lc, rc, r).toList }
   }
 
   def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, that: S,
-    operators: T, value: E[W])(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q],
-      ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
-      ev6: ClassTag[slice.R]): U[Cell[Q]] = {
-    val o = ev3.convert(operators)
+    operators: T, value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
+      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
+    val o = ev2.convert(operators)
 
     pairwiseTuples(slice, comparer)(names(slice), data, that.names(slice), that.data)
       .flatMapWithValue(value) { case ((lc, rc, r), vo) => o.computeWithValue(lc, rc, r, vo.get).toList }
@@ -216,9 +214,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def slide[D <: Dimension, Q <: Position, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D],
-    ev2: PosExpDep[slice.S#M, Q], ev3: Windowable[T, slice.S, slice.R, Q], ev4: slice.R =!= Position0D,
-    ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
-    val w = ev3.convert(windows)
+    ev2: Windowable[T, slice.S, slice.R, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
+    ev5: ClassTag[slice.R]): U[Cell[Q]] = {
+    val w = ev2.convert(windows)
 
     data
       .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
@@ -235,9 +233,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def slideWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], windows: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S#M, Q], ev3: WindowableWithValue[T, slice.S, slice.R, Q, W],
-    ev4: slice.R =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
-    val w = ev3.convert(windows)
+    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
+    val w = ev2.convert(windows)
 
     data
       .mapWithValue(value) { case (Cell(p, c), vo) => (Cell(slice.selected(p), c), slice.remainder(p), vo.get) }
@@ -319,14 +317,13 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
-    ev2: PosExpDep[slice.S, Q], ev3: Aggregatable[T, P, slice.S, Q], ev4: ClassTag[slice.S]): U[Cell[Q]] = {
+    ev2: Aggregatable[T, P, slice.S, Q], ev3: ClassTag[slice.S]): U[Cell[Q]] = {
     summarise(slice, aggregators, 108)
   }
 
   def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T, reducers: Int)(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S, Q], ev3: Aggregatable[T, P, slice.S, Q],
-      ev4: ClassTag[slice.S]): U[Cell[Q]] = {
-    val a = ev3.convert(aggregators)
+    implicit ev1: PosDimDep[P, D], ev2: Aggregatable[T, P, slice.S, Q], ev3: ClassTag[slice.S]): U[Cell[Q]] = {
+    val a = ev2.convert(aggregators)
 
     Grouped(data.map { case c => (slice.selected(c.position), a.map { case b => b.prepare(c) }) })
       .withReducers(reducers)
@@ -337,13 +334,13 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S, Q], ev3: AggregatableWithValue[T, P, slice.S, Q, W],
-      ev4: ClassTag[slice.S]): U[Cell[Q]] = summariseWithValue(slice, aggregators, value, 108)
+    implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W],
+      ev3: ClassTag[slice.S]): U[Cell[Q]] = summariseWithValue(slice, aggregators, value, 108)
 
   def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W],
-    reducers: Int)(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S, Q],
-      ev3: AggregatableWithValue[T, P, slice.S, Q, W], ev4: ClassTag[slice.S]): U[Cell[Q]] = {
-    val a = ev3.convert(aggregators)
+    reducers: Int)(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W],
+      ev3: ClassTag[slice.S]): U[Cell[Q]] = {
+    val a = ev2.convert(aggregators)
 
     Grouped(data.mapWithValue(value) {
         case (c, vo) => (slice.selected(c.position), a.map { case b => b.prepareWithValue(c, vo.get) })
@@ -379,16 +376,15 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       })
   }
 
-  def transform[Q <: Position, T](transformers: T)(implicit ev1: Transformable[T, P, Q],
-    ev2: PosExpDep[P, Q]): U[Cell[Q]] = {
-    val transformer = ev1.convert(transformers)
+  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[T, P, Q]): U[Cell[Q]] = {
+    val transformer = ev.convert(transformers)
 
     data.flatMap { case c => transformer.present(c).toList }
   }
 
   def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
-    implicit ev1: TransformableWithValue[T, P, Q, W], ev2: PosExpDep[P, Q]): U[Cell[Q]] = {
-    val transformer = ev1.convert(transformers)
+    implicit ev: TransformableWithValue[T, P, Q, W]): U[Cell[Q]] = {
+    val transformer = ev.convert(transformers)
 
     data.flatMapWithValue(value) { case (c, vo) => transformer.presentWithValue(c, vo.get).toList }
   }
@@ -525,12 +521,12 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 /** Base trait for methods that expand the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
 trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
 
-  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P#M, Q]): TypedPipe[Cell[Q]] = {
+  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P, Q]): TypedPipe[Cell[Q]] = {
     data.map { case c => Cell(expander(c), c.content) }
   }
 
   def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => Q, value: ValuePipe[W])(
-    implicit ev: PosExpDep[P#M, Q]): TypedPipe[Cell[Q]] = {
+    implicit ev: PosExpDep[P, Q]): TypedPipe[Cell[Q]] = {
     data.mapWithValue(value) { case (c, vo) => Cell(expander(c, vo.get), c.content) }
   }
 }
@@ -549,7 +545,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
     val mean = data
-      .summarise[D, slice.S, Mean[Position2D, slice.S]](slice, Mean[Position2D, slice.S]())
+      .summarise(slice, Mean[Position2D, slice.S]())
       .toMap(Over(First))
 
     val centered = data
@@ -558,15 +554,14 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val denom = centered
       .transform(Power[Position2D](2))
-      .summarise[D, slice.S, Sum[Position2D, slice.S]](slice, Sum[Position2D, slice.S]())
-      .pairwise[Dimension.First, Position1D, Times[Position1D, Position0D]](Over(First), Lower, Times())
+      .summarise(slice, Sum[Position2D, slice.S]())
+      .pairwise(Over(First), Lower, Times[Position1D, Position0D]())
       .transform(SquareRoot[Position1D]())
       .toMap(Over(First))
 
     centered
-      .pairwise[D, slice.R#M, Times[slice.S, slice.R]](slice, Lower, Times())
-      .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Over[Position2D, Dimension.First](First),
-        Sum[Position2D, Position1D]())
+      .pairwise(slice, Lower, Times[slice.S, slice.R]())
+      .summarise(Over(First), Sum[Position2D, Position1D]())
       .transformWithValue(Fraction(ExtractWithDimension[Dimension.First, Position1D, Content](First)
         .andThenPresent(_.value.asDouble)), denom)
   }
@@ -586,21 +581,20 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val marginal = data
       .expand((c: Cell[Position2D]) => c.position.append(c.content.value.toShortString))
-      .summarise[dim.type, Position2D, Count[Position3D, Position2D]](Along[Position3D, dim.type](dim),
-        Count[Position3D, Position2D]())
-      .summariseWithValue[Dimension.Last, Position2D, Entropy[Position2D, Position2D]](Along(Last),
-        Entropy().andThenExpand((c: Cell[Position1D]) => c.position.append("marginal")))
-      .pairwise[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Upper, Plus(name = "%s,%s"))
+      .summarise(Along(dim), Count[Position3D, Position2D]())
+      .summariseWithValue(Along(Last), Entropy[Position2D, Position1D, W]()
+        .andThenExpand(_.position.append("marginal")), counts)
+      .pairwise(Over(First), Upper, Plus(name = "%s,%s"))
 
     val joint = data
-      .pairwise[D, slice.R#M, Concatenate[slice.S, slice.R]](slice, Upper, Concatenate(name = "%s,%s"))
+      .pairwise(slice, Upper, Concatenate(name = "%s,%s"))
       .expand((c: Cell[Position2D]) => c.position.append(c.content.value.toShortString))
-      .summarise[dim.type, Position2D, Count[Position3D, Position2D]](Along[Position3D, dim.type](dim), Count())
-      .summariseWithValue[Dimension.Last, Position2D, Aggregator[Position2D, Position1D, Position2D]](Along(Last),
-        Entropy(nan = true, negate = true).andThenExpand((c: Cell[Position1D]) => c.position.append("joint")))
+      .summarise(Along(dim), Count())
+      .summariseWithValue(Along(Last), Entropy[Position2D, Position1D, W](nan = true, negate = true)
+        .andThenExpand(_.position.append("joint")), counts)
 
     (marginal ++ joint)
-      .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Over(First), Sum())
+      .summarise(Over(First), Sum[Position2D, Position1D]())
   }*/
 
   def gini[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
@@ -615,32 +609,29 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val pos = data
       .transform(Compare[Position2D](isPositive(_)))
-      .summarise[D, slice.S, Sum[Position2D, slice.S]](slice, Sum[Position2D, slice.S]())
+      .summarise(slice, Sum[Position2D, slice.S]())
       .toMap(Over(First))
 
     val neg = data
       .transform(Compare[Position2D](!isPositive(_)))
-      .summarise[D, slice.S, Sum[Position2D, slice.S]](slice, Sum[Position2D, slice.S]())
+      .summarise(slice, Sum[Position2D, slice.S]())
       .toMap(Over(First))
 
     val tpr = data
       .transform(Compare[Position2D](isPositive(_)))
-      .slide[D, slice.S#M, CumulativeSum[slice.S, slice.R]](slice, CumulativeSum())
+      .slide(slice, CumulativeSum[slice.S, slice.R]())
       .transformWithValue(Fraction(extractor), pos)
-      .slide[Dimension.First, Position2D, Sliding[Position1D, Position1D]](Over(First),
-        Sliding((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
+      .slide(Over(First), Sliding[Position1D, Position1D]((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
 
     val fpr = data
       .transform(Compare[Position2D](!isPositive(_)))
-      .slide[D, slice.S#M, CumulativeSum[slice.S, slice.R]](slice, CumulativeSum())
+      .slide(slice, CumulativeSum[slice.S, slice.R]())
       .transformWithValue(Fraction(extractor), neg)
-      .slide[Dimension.First, Position2D, Sliding[Position1D, Position1D]](Over(First),
-        Sliding((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
+      .slide(Over(First), Sliding[Position1D, Position1D]((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
 
     tpr
-      .pairwiseBetween[Dimension.First, Position2D, Times[Position1D, Position1D]](Along(First), Diagonal, fpr, Times())
-      .summarise[Dimension.First, Position1D, Sum[Position2D, Position1D]](Along[Position2D, Dimension.First](First),
-        Sum[Position2D, Position1D]())
+      .pairwiseBetween(Along(First), Diagonal, fpr, Times[Position1D, Position1D]())
+      .summarise(Along(First), Sum[Position2D, Position1D]())
       .transformWithValue(Subtract(ExtractWithKey[Position1D, String, Double]("one"), true),
         ValuePipe(Map(Position1D("one") -> 1.0)))
   }

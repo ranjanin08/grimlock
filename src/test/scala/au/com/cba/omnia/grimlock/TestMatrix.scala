@@ -2541,9 +2541,6 @@ trait TestMatrixSummarise extends TestMatrix {
 
   type W = Map[Position1D, Double]
 
-  type AwV[A <: Position, B <: Position with ExpandablePosition, C <: Position] =
-    AggregatorWithValue[A, B, C] { type V >: W }
-
   val result1 = List(Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 6.28)),
     Cell(Position1D("baz"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42)),
     Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)),
@@ -2848,8 +2845,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.First, Position1D, Min[Position2D, Position1D]](
-          Over[Position2D, Dimension.First](First), Min[Position2D, Position1D]())
+        cells.summarise(Over(First), Min[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -2860,8 +2856,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.First, Position1D, Max[Position2D, Position1D]](
-          Along[Position2D, Dimension.First](First), Max[Position2D, Position1D]())
+        cells.summarise(Along(First), Max[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -2872,8 +2867,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.Second, Position1D, Max[Position2D, Position1D]](
-          Over[Position2D, Dimension.Second](Second), Max[Position2D, Position1D]())
+        cells.summarise(Over(Second), Max[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -2884,8 +2878,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.Second, Position1D, Min[Position2D, Position1D]](
-          Along[Position2D, Dimension.Second](Second), Min[Position2D, Position1D]())
+        cells.summarise(Along(Second), Min[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -2896,8 +2889,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.First, Position1D, Min[Position3D, Position1D]](
-          Over[Position3D, Dimension.First](First), Min[Position3D, Position1D]())
+        cells.summarise(Over(First), Min[Position3D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -2908,8 +2900,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.First, Position2D, Max[Position3D, Position2D]](
-          Along[Position3D, Dimension.First](First), Max[Position3D, Position2D]())
+        cells.summarise(Along(First), Max[Position3D, Position2D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -2920,8 +2911,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Second, Position1D, Max[Position3D, Position1D]](
-          Over[Position3D, Dimension.Second](Second), Max[Position3D, Position1D]())
+        cells.summarise(Over(Second), Max[Position3D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -2932,8 +2922,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Second, Position2D, Min[Position3D, Position2D]](
-          Along[Position3D, Dimension.Second](Second), Min[Position3D, Position2D]())
+        cells.summarise(Along(Second), Min[Position3D, Position2D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -2944,8 +2933,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Third, Position1D, Max[Position3D, Position1D]](
-          Over[Position3D, Dimension.Third](Third), Max[Position3D, Position1D]())
+        cells.summarise(Over(Third), Max[Position3D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -2956,8 +2944,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Third, Position2D, Min[Position3D, Position2D]](
-          Along[Position3D, Dimension.Third](Third), Min[Position3D, Position2D]())
+        cells.summarise(Along(Third), Min[Position3D, Position2D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -2968,9 +2955,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
-          Over[Position2D, Dimension.First](First),
-          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First)),
+        cells.summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First)),
           ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
@@ -2982,9 +2967,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
-          Along[Position2D, Dimension.First](First),
-          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second)),
+        cells.summariseWithValue(Along(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second)),
           ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
@@ -2996,9 +2979,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](
-          Over[Position2D, Dimension.Second](Second),
-          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second)),
+        cells.summariseWithValue(Over(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second)),
           ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result13
@@ -3010,9 +2991,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](
-          Along[Position2D, Dimension.Second](Second),
-          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First)),
+        cells.summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First)),
           ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result14
@@ -3024,9 +3003,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.First, Position1D, WeightedSum[Position3D, Position1D, W], W](
-          Over[Position3D, Dimension.First](First),
-          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First)),
+        cells.summariseWithValue(Over(First), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(First)),
           ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result15
@@ -3038,9 +3015,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.First, Position2D, WeightedSum[Position3D, Position2D, W], W](
-          Along[Position3D, Dimension.First](First),
-          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second)),
+        cells.summariseWithValue(Along(First), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second)),
           ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result16
@@ -3052,9 +3027,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position3D, Position1D, W], W](
-          Over[Position3D, Dimension.Second](Second),
-          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second)),
+        cells.summariseWithValue(Over(Second), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Second)),
           ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result17
@@ -3066,9 +3039,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Second, Position2D, WeightedSum[Position3D, Position2D, W], W](
-          Along[Position3D, Dimension.Second](Second),
-          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First)),
+        cells.summariseWithValue(Along(Second), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First)),
           ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result18
@@ -3080,9 +3051,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Third, Position1D, WeightedSum[Position3D, Position1D, W], W](
-          Over[Position3D, Dimension.Third](Third),
-          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third)),
+        cells.summariseWithValue(Over(Third), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Third)),
           ValuePipe(ext))
     } Then {
         _.toList.sortBy(_.position) shouldBe result19
@@ -3094,9 +3063,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Third, Position2D, WeightedSum[Position3D, Position2D, W], W](
-          Along[Position3D, Dimension.Third](Third),
-          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third)),
+        cells.summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third)),
           ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result20
@@ -3108,9 +3075,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.summarise[Dimension.First, Position2D, Aggregator[Position1D, Position1D, Position2D]](
-          Over[Position1D, Dimension.First](First),
-          Min[Position1D, Position1D]().andThenExpand(_.position.append("min")))
+        cells.summarise(Over(First), Min[Position1D, Position1D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result21
     }
@@ -3121,10 +3086,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.summarise[Dimension.First, Position1D, List[Aggregator[Position1D, Position0D, Position1D]]](
-          Along[Position1D, Dimension.First](First), List(
-            Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
-            Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))))
+        cells.summarise(Along(First), List(Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
+          Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result22
     }
@@ -3135,9 +3098,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.First, Position2D, Aggregator[Position2D, Position1D, Position2D]](
-          Over[Position2D, Dimension.First](First),
-          Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
+        cells.summarise(Over(First), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result23
     }
@@ -3148,10 +3109,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-          Along[Position2D, Dimension.First](First), List(
-            Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-            Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
+        cells.summarise(Along(First), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+          Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result24
     }
@@ -3162,10 +3121,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.Second, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-          Over[Position2D, Dimension.Second](Second), List(
-            Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-            Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
+        cells.summarise(Over(Second), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+          Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result25
     }
@@ -3176,9 +3133,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise[Dimension.Second, Position2D, Aggregator[Position2D, Position1D, Position2D]](
-          Along[Position2D, Dimension.Second](Second),
-          Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
+        cells.summarise(Along(Second), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result26
     }
@@ -3189,9 +3144,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.First, Position2D, Aggregator[Position3D, Position1D, Position2D]](
-          Over[Position3D, Dimension.First](First),
-          Min[Position3D, Position1D]().andThenExpand(_.position.append("min")))
+        cells.summarise(Over(First), Min[Position3D, Position1D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result27
     }
@@ -3202,10 +3155,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.First, Position3D, List[Aggregator[Position3D, Position2D, Position3D]]](
-          Along[Position3D, Dimension.First](First), List(
-            Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
-            Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))))
+        cells.summarise(Along(First), List(Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+          Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result28
     }
@@ -3216,10 +3167,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Second, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](
-          Over[Position3D, Dimension.Second](Second), List(
-            Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
-            Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
+        cells.summarise(Over(Second), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
+          Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result29
     }
@@ -3230,9 +3179,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-      cells.summarise[Dimension.Second, Position3D, Aggregator[Position3D, Position2D, Position3D]](
-        Along[Position3D, Dimension.Second](Second),
-        Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
+      cells.summarise(Along(Second), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result30
     }
@@ -3243,10 +3190,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Third, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](
-          Over[Position3D, Dimension.Third](Third), List(
-            Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
-            Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
+        cells.summarise(Over(Third), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
+          Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result31
     }
@@ -3257,9 +3202,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise[Dimension.Third, Position3D, Aggregator[Position3D, Position2D, Position3D]](
-          Along[Position3D, Dimension.Third](Third),
-          Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
+        cells.summarise(Along(Third), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result32
     }
@@ -3270,9 +3213,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.summariseWithValue[Dimension.First, Position2D, AwV[Position1D, Position1D, Position2D], W](
-          Over[Position1D, Dimension.First](First),
-          WeightedSum[Position1D, Position1D, W](ExtractWithDimension[Dimension.First, Position1D, Double](First))
+        cells.summariseWithValue(Over(First), WeightedSum[Position1D, Position1D, W](ExtractWithDimension(First))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
           ValuePipe(ext))
     } Then {
@@ -3285,11 +3226,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.summariseWithValue[Dimension.First, Position1D, List[AwV[Position1D, Position0D, Position1D]], W](
-          Along[Position1D, Dimension.First](First), List(
-            WeightedSum[Position1D, Position0D, W](ExtractWithDimension[Dimension.First, Position1D, Double](First))
+        cells.summariseWithValue(Along(First), List(
+            WeightedSum[Position1D, Position0D, W](ExtractWithDimension(First))
               .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName[Position1D](First, "%1$s.2"))
+            WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3302,9 +3242,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.First, Position2D, AwV[Position2D, Position1D, Position2D], W](
-          Over[Position2D, Dimension.First](First),
-          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First))
+        cells.summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
           ValuePipe(ext))
     } Then {
@@ -3317,11 +3255,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.First, Position2D, List[AwV[Position2D, Position1D, Position2D]], W](
-          Along[Position2D, Dimension.First](First), List(
-            WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
+        cells.summariseWithValue(Along(First), List(
+            WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position2D](First, "%1$s.2"))
+            WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3334,11 +3271,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.Second, Position2D, List[AwV[Position2D, Position1D, Position2D]], W](
-          Over[Position2D, Dimension.Second](Second), List(
-            WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
+        cells.summariseWithValue(Over(Second), List(
+            WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position2D](Second, "%1$s.2"))
+            WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3351,9 +3287,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue[Dimension.Second, Position2D, AwV[Position2D, Position1D, Position2D], W](
-          Along[Position2D, Dimension.Second](Second),
-          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First))
+        cells.summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
           ValuePipe(ext))
     } Then {
@@ -3366,9 +3300,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.First, Position2D, AwV[Position3D, Position1D, Position2D], W](
-          Over[Position3D, Dimension.First](First),
-          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First))
+        cells.summariseWithValue(Over(First), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(First))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
           ValuePipe(ext))
     } Then {
@@ -3381,11 +3313,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.First, Position3D, List[AwV[Position3D, Position2D, Position3D]], W](
-          Along[Position3D, Dimension.First](First), List(
-            WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
+        cells.summariseWithValue(Along(First), List(
+            WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second))
               .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
+            WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3398,11 +3329,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Second, Position2D, List[AwV[Position3D, Position1D, Position2D]], W](
-          Over[Position3D, Dimension.Second](Second), List(
-            WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
+        cells.summariseWithValue(Over(Second), List(
+            WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Second))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
+            WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3415,9 +3345,8 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Second, Position3D, AwV[Position3D, Position2D, Position3D], W](
-          Along[Position3D, Dimension.Second](Second),
-          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First))
+        cells.summariseWithValue(Along(Second),
+          WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First))
             .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
           ValuePipe(ext))
     } Then {
@@ -3430,11 +3359,10 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Third, Position2D, List[AwV[Position3D, Position1D, Position2D]], W](
-          Over[Position3D, Dimension.Third](Third), List(
-            WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
+        cells.summariseWithValue(Over(Third), List(
+            WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Third))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position3D](Third, "%1$s.2"))
+            WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Third, "%1$s.2"))
               .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
           ValuePipe(ext))
     } Then {
@@ -3447,9 +3375,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue[Dimension.Third, Position3D, AwV[Position3D, Position2D, Position3D], W](
-          Along[Position3D, Dimension.Third](Third),
-          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
+        cells.summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third))
             .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
           ValuePipe(ext))
     } Then {
@@ -3462,361 +3388,276 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   "A Matrix.summarise" should "return its first over aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.First, Position1D, Min[Position2D, Position1D]](
-        Over[Position2D, Dimension.First](First), Min[Position2D, Position1D]())
+      .summarise(Over(First), Min[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.First, Position1D, Max[Position2D, Position1D]](
-        Along[Position2D, Dimension.First](First), Max[Position2D, Position1D]())
+      .summarise(Along(First), Max[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its second over aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.Second, Position1D, Max[Position2D, Position1D]](
-        Over[Position2D, Dimension.Second](Second), Max[Position2D, Position1D]())
+      .summarise(Over(Second), Max[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.Second, Position1D, Min[Position2D, Position1D]](
-        Along[Position2D, Dimension.Second](Second), Min[Position2D, Position1D]())
+      .summarise(Along(Second), Min[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its first over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.First, Position1D, Min[Position3D, Position1D]](
-        Over[Position3D, Dimension.First](First), Min[Position3D, Position1D]())
+      .summarise(Over(First), Min[Position3D, Position1D]())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.First, Position2D, Max[Position3D, Position2D]](
-        Along[Position3D, Dimension.First](First), Max[Position3D, Position2D]())
+      .summarise(Along(First), Max[Position3D, Position2D]())
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its second over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Second, Position1D, Max[Position3D, Position1D]](
-        Over[Position3D, Dimension.Second](Second), Max[Position3D, Position1D]())
+      .summarise(Over(Second), Max[Position3D, Position1D]())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Second, Position2D, Min[Position3D, Position2D]](
-        Along[Position3D, Dimension.Second](Second), Min[Position3D, Position2D]())
+      .summarise(Along(Second), Min[Position3D, Position2D]())
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its third over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Third, Position1D, Max[Position3D, Position1D]](
-        Over[Position3D, Dimension.Third](Third), Max[Position3D, Position1D]())
+      .summarise(Over(Third), Max[Position3D, Position1D]())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Third, Position2D, Min[Position3D, Position2D]](
-        Along[Position3D, Dimension.Third](Third), Min[Position3D, Position2D]())
+      .summarise(Along(Third), Min[Position3D, Position2D]())
       .toList.sortBy(_.position) shouldBe result10
   }
 
   "A Matrix.summariseWithValue" should "return its first over aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
-        Over[Position2D, Dimension.First](First),
-        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First)),
-        ext)
+      .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First)), ext)
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position2D, Position1D, W], W](
-        Along[Position2D, Dimension.First](First),
-        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second)),
-        ext)
+      .summariseWithValue(Along(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second)), ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its second over aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](
-        Over[Position2D, Dimension.Second](Second),
-        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second)),
-        ext)
+      .summariseWithValue(Over(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second)), ext)
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position2D, Position1D, W], W](
-        Along[Position2D, Dimension.Second](Second),
-        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First)),
-        ext)
+      .summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First)), ext)
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its first over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.First, Position1D, WeightedSum[Position3D, Position1D, W], W](
-        Over[Position3D, Dimension.First](First),
-        WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First)),
-        ext)
+      .summariseWithValue(Over(First), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(First)), ext)
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.First, Position2D, WeightedSum[Position3D, Position2D, W], W](
-        Along[Position3D, Dimension.First](First),
-        WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second)),
-        ext)
+      .summariseWithValue(Along(First), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second)), ext)
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its second over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Second, Position1D, WeightedSum[Position3D, Position1D, W], W](
-        Over[Position3D, Dimension.Second](Second),
-        WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second)),
-        ext)
+      .summariseWithValue(Over(Second), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Second)), ext)
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Second, Position2D, WeightedSum[Position3D, Position2D, W], W](
-        Along[Position3D, Dimension.Second](Second),
-        WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First)),
-        ext)
+      .summariseWithValue(Along(Second), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First)), ext)
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its third over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Third, Position1D, WeightedSum[Position3D, Position1D, W], W](
-        Over[Position3D, Dimension.Third](Third),
-        WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third)),
-        ext)
+      .summariseWithValue(Over(Third), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Third)), ext)
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Third, Position2D, WeightedSum[Position3D, Position2D, W], W](
-        Along[Position3D, Dimension.Third](Third),
-        WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third)),
-        ext)
+      .summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third)), ext)
       .toList.sortBy(_.position) shouldBe result20
   }
 
   "A Matrix.summariseAndExpand" should "return its first over aggregates in 1D" in {
     toRDD(num1)
-      .summarise[Dimension.First, Position2D, Aggregator[Position1D, Position1D, Position2D]](
-        Over[Position1D, Dimension.First](First),
-        Min[Position1D, Position1D]().andThenExpand(_.position.append("min")))
+      .summarise(Over(First), Min[Position1D, Position1D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its first along aggregates in 1D" in {
     toRDD(num1)
-      .summarise[Dimension.First, Position1D, List[Aggregator[Position1D, Position0D, Position1D]]](
-        Along[Position1D, Dimension.First](First), List(
-          Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
-          Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))))
+      .summarise(Along(First), List(Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
+        Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result22
   }
 
   it should "return its first over aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.First, Position2D, Aggregator[Position2D, Position1D, Position2D]](
-        Over[Position2D, Dimension.First](First),
-        Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
+      .summarise(Over(First), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.First, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-        Along[Position2D, Dimension.First](First), List(
-          Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-          Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
+      .summarise(Along(First), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+        Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its second over aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.Second, Position2D, List[Aggregator[Position2D, Position1D, Position2D]]](
-        Over[Position2D, Dimension.Second](Second), List(
-          Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-          Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
+      .summarise(Over(Second), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+        Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
-      .summarise[Dimension.Second, Position2D, Aggregator[Position2D, Position1D, Position2D]](
-        Along[Position2D, Dimension.Second](Second),
-        Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
+      .summarise(Along(Second), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its first over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.First, Position2D, Aggregator[Position3D, Position1D, Position2D]](
-        Over[Position3D, Dimension.First](First),
-        Min[Position3D, Position1D]().andThenExpand(_.position.append("min")))
+      .summarise(Over(First), Min[Position3D, Position1D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.First, Position3D, List[Aggregator[Position3D, Position2D, Position3D]]](
-        Along[Position3D, Dimension.First](First), List(
-          Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
-          Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))))
+      .summarise(Along(First), List(Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+        Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its second over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Second, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](
-        Over[Position3D, Dimension.Second](Second), List(
-          Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
-          Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
+      .summarise(Over(Second), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
+        Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Second, Position3D, Aggregator[Position3D, Position2D, Position3D]](
-        Along[Position3D, Dimension.Second](Second),
-        Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
+      .summarise(Along(Second), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its third over aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Third, Position2D, List[Aggregator[Position3D, Position1D, Position2D]]](
-        Over[Position3D, Dimension.Third](Third), List(
-          Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
-          Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
+      .summarise(Over(Third), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
+        Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))))
       .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
-      .summarise[Dimension.Third, Position3D, Aggregator[Position3D, Position2D, Position3D]](
-        Along[Position3D, Dimension.Third](Third),
-        Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
+      .summarise(Along(Third), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")))
       .toList.sortBy(_.position) shouldBe result32
   }
 
   "A Matrix.summariseAndExpandWithValue" should "return its first over aggregates in 1D" in {
     toRDD(num1)
-      .summariseWithValue[Dimension.First, Position2D, AwV[Position1D, Position1D, Position2D], W](
-        Over[Position1D, Dimension.First](First),
-        WeightedSum[Position1D, Position1D, W](ExtractWithDimension[Dimension.First, Position1D, Double](First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
-        ext)
+      .summariseWithValue(Over(First), WeightedSum[Position1D, Position1D, W](ExtractWithDimension(First))
+        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext)
       .toList.sortBy(_.position) shouldBe result33
   }
 
   it should "return its first along aggregates in 1D" in {
     toRDD(num1)
-      .summariseWithValue[Dimension.First, Position1D, List[AwV[Position1D, Position0D, Position1D]], W](
-        Along[Position1D, Dimension.First](First), List(
-          WeightedSum[Position1D, Position0D, W](ExtractWithDimension[Dimension.First, Position1D, Double](First))
-            .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
-          WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName[Position1D](First, "%1$s.2"))
-            .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))),
-        ext)
+      .summariseWithValue(Along(First), List(
+        WeightedSum[Position1D, Position0D, W](ExtractWithDimension(First))
+          .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))), ext)
       .toList.sortBy(_.position) shouldBe result34
   }
 
   it should "return its first over aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.First, Position2D, AwV[Position2D, Position1D, Position2D], W](
-        Over[Position2D, Dimension.First](First),
-        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
-        ext)
+      .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
+        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext)
       .toList.sortBy(_.position) shouldBe result35
   }
 
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.First, Position2D, List[AwV[Position2D, Position1D, Position2D]], W](
-        Along[Position2D, Dimension.First](First), List(
-          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-          WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position2D](First, "%1$s.2"))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
-        ext)
+      .summariseWithValue(Along(First), List(
+        WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))), ext)
       .toList.sortBy(_.position) shouldBe result36
   }
 
   it should "return its second over aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.Second, Position2D, List[AwV[Position2D, Position1D, Position2D]], W](
-        Over[Position2D, Dimension.Second](Second), List(
-          WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.Second, Position2D, Double](Second))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-          WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position2D](Second, "%1$s.2"))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
-        ext)
+      .summariseWithValue(Over(Second), List(
+        WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))), ext)
       .toList.sortBy(_.position) shouldBe result37
   }
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
-      .summariseWithValue[Dimension.Second, Position2D, AwV[Position2D, Position1D, Position2D], W](
-        Along[Position2D, Dimension.Second](Second),
-        WeightedSum[Position2D, Position1D, W](ExtractWithDimension[Dimension.First, Position2D, Double](First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
-        ext)
+      .summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
+        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext)
       .toList.sortBy(_.position) shouldBe result38
   }
 
   it should "return its first over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.First, Position2D, AwV[Position3D, Position1D, Position2D], W](
-        Over[Position3D, Dimension.First](First),
-        WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
-        ext)
+      .summariseWithValue(Over(First), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(First))
+        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext)
       .toList.sortBy(_.position) shouldBe result39
   }
 
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.First, Position3D, List[AwV[Position3D, Position2D, Position3D]], W](
-        Along[Position3D, Dimension.First](First), List(
-          WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
-            .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
-          WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
-            .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))),
-        ext)
+      .summariseWithValue(Along(First), List(
+        WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second))
+          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))), ext)
       .toList.sortBy(_.position) shouldBe result40
   }
 
   it should "return its second over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Second, Position2D, List[AwV[Position3D, Position1D, Position2D]], W](
-        Over[Position3D, Dimension.Second](Second), List(
-          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Second, Position3D, Double](Second))
+      .summariseWithValue(Over(Second), List(
+          WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Second))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-          WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position3D](Second, "%1$s.2"))
+          WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
             .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
         ext)
       .toList.sortBy(_.position) shouldBe result41
@@ -3824,33 +3665,25 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Second, Position3D, AwV[Position3D, Position2D, Position3D], W](
-        Along[Position3D, Dimension.Second](Second),
-        WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.First, Position3D, Double](First))
-          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
-        ext)
+      .summariseWithValue(Along(Second), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First))
+        .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext)
       .toList.sortBy(_.position) shouldBe result42
   }
 
   it should "return its third over aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Third, Position2D, List[AwV[Position3D, Position1D, Position2D]], W](
-        Over[Position3D, Dimension.Third](Third), List(
-          WeightedSum[Position3D, Position1D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-          WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName[Position3D](Third, "%1$s.2"))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
-        ext)
+      .summariseWithValue(Over(Third), List(
+        WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Third))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Third, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))), ext)
       .toList.sortBy(_.position) shouldBe result43
   }
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
-      .summariseWithValue[Dimension.Third, Position3D, AwV[Position3D, Position2D, Position3D], W](
-        Along[Position3D, Dimension.Third](Third),
-        WeightedSum[Position3D, Position2D, W](ExtractWithDimension[Dimension.Third, Position3D, Double](Third))
-          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
-        ext)
+      .summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third))
+        .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext)
       .toList.sortBy(_.position) shouldBe result44
   }
 }
@@ -3916,7 +3749,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.split[String, Partitioner[Position1D, String]](TestMatrixSplit.TestPartitioner(First))
+        cells.split(TestMatrixSplit.TestPartitioner[Position1D](First))
     } Then {
       _.toList.sorted shouldBe result1
     }
@@ -3927,7 +3760,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.split[String, Partitioner[Position2D, String]](TestMatrixSplit.TestPartitioner(First))
+        cells.split(TestMatrixSplit.TestPartitioner[Position2D](First))
     } Then {
       _.toList.sorted shouldBe result2
     }
@@ -3938,7 +3771,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.split[String, Partitioner[Position2D, String]](TestMatrixSplit.TestPartitioner(Second))
+        cells.split(TestMatrixSplit.TestPartitioner[Position2D](Second))
     } Then {
       _.toList.sorted shouldBe result3
     }
@@ -3949,7 +3782,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.split[String, Partitioner[Position3D, String]](TestMatrixSplit.TestPartitioner(First))
+        cells.split(TestMatrixSplit.TestPartitioner[Position3D](First))
     } Then {
       _.toList.sorted shouldBe result4
     }
@@ -3960,7 +3793,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.split[String, Partitioner[Position3D, String]](TestMatrixSplit.TestPartitioner(Second))
+        cells.split(TestMatrixSplit.TestPartitioner[Position3D](Second))
     } Then {
       _.toList.sorted shouldBe result5
     }
@@ -3971,7 +3804,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data3
       } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.split[String, Partitioner[Position3D, String]](TestMatrixSplit.TestPartitioner(Third))
+        cells.split(TestMatrixSplit.TestPartitioner[Position3D](Third))
     } Then {
       _.toList.sorted shouldBe result6
     }
@@ -3982,8 +3815,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.splitWithValue[String, PartitionerWithValue[Position1D, String] { type V >: W }, W](
-          TestMatrixSplit.TestPartitionerWithValue(), ValuePipe(First))
+        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position1D](), ValuePipe(First))
     } Then {
       _.toList.sorted shouldBe result7
     }
@@ -3994,8 +3826,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.splitWithValue[String, PartitionerWithValue[Position2D, String] { type V >: W }, W](
-          TestMatrixSplit.TestPartitionerWithValue(), ValuePipe(First))
+        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position2D](), ValuePipe(First))
     } Then {
       _.toList.sorted shouldBe result8
     }
@@ -4006,8 +3837,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.splitWithValue[String, PartitionerWithValue[Position2D, String] { type V >: W }, W](
-          TestMatrixSplit.TestPartitionerWithValue(), ValuePipe(Second))
+        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position2D](), ValuePipe(Second))
     } Then {
       _.toList.sorted shouldBe result9
     }
@@ -4018,8 +3848,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.splitWithValue[String, PartitionerWithValue[Position3D, String] { type V >: W }, W](
-          TestMatrixSplit.TestPartitionerWithValue(), ValuePipe(First))
+        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), ValuePipe(First))
     } Then {
       _.toList.sorted shouldBe result10
     }
@@ -4030,8 +3859,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.splitWithValue[String, PartitionerWithValue[Position3D, String] { type V >: W }, W](
-          TestMatrixSplit.TestPartitionerWithValue(), ValuePipe(Second))
+        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), ValuePipe(Second))
     } Then {
       _.toList.sorted shouldBe result11
     }
@@ -4042,8 +3870,7 @@ class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.splitWithValue[String, PartitionerWithValue[Position3D, String] { type V >: W }, W](
-          TestMatrixSplit.TestPartitionerWithValue(), ValuePipe(Third))
+        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), ValuePipe(Third))
     } Then {
       _.toList.sorted shouldBe result12
     }
@@ -4054,79 +3881,73 @@ class TestSparkMatrixSplit extends TestMatrixSplit {
 
   "A Matrix.split" should "return its first partitions in 1D" in {
     toRDD(data1)
-      .split[String, Partitioner[Position1D, String]](TestMatrixSplit.TestPartitioner(First))
+      .split(TestMatrixSplit.TestPartitioner[Position1D](First))
       .toList.sorted shouldBe result1
   }
 
   it should "return its first partitions in 2D" in {
     toRDD(data2)
-      .split[String, Partitioner[Position2D, String]](TestMatrixSplit.TestPartitioner(First))
+      .split(TestMatrixSplit.TestPartitioner[Position2D](First))
       .toList.sorted shouldBe result2
   }
 
   it should "return its second partitions in 2D" in {
     toRDD(data2)
-      .split[String, Partitioner[Position2D, String]](TestMatrixSplit.TestPartitioner(Second))
+      .split(TestMatrixSplit.TestPartitioner[Position2D](Second))
       .toList.sorted shouldBe result3
   }
 
   it should "return its first partitions in 3D" in {
     toRDD(data3)
-      .split[String, Partitioner[Position3D, String]](TestMatrixSplit.TestPartitioner(First))
+      .split(TestMatrixSplit.TestPartitioner[Position3D](First))
       .toList.sorted shouldBe result4
   }
 
   it should "return its second partitions in 3D" in {
     toRDD(data3)
-      .split[String, Partitioner[Position3D, String]](TestMatrixSplit.TestPartitioner(Second))
+      .split(TestMatrixSplit.TestPartitioner[Position3D](Second))
       .toList.sorted shouldBe result5
   }
 
   it should "return its third partitions in 3D" in {
     toRDD(data3)
-      .split[String, Partitioner[Position3D, String]](TestMatrixSplit.TestPartitioner(Third))
+      .split(TestMatrixSplit.TestPartitioner[Position3D](Third))
       .toList.sorted shouldBe result6
   }
 
   "A Matrix.splitWithValue" should "return its first partitions in 1D" in {
     toRDD(data1)
-      .splitWithValue[String, PartitionerWithValue[Position1D, String] { type V >: W }, W](
-        TestMatrixSplit.TestPartitionerWithValue(), First)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position1D](), First)
       .toList.sorted shouldBe result7
   }
 
   it should "return its first partitions in 2D" in {
     toRDD(data2)
-      .splitWithValue[String, PartitionerWithValue[Position2D, String] { type V >: W }, W](
-        TestMatrixSplit.TestPartitionerWithValue(), First)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position2D](), First)
       .toList.sorted shouldBe result8
   }
 
   it should "return its second partitions in 2D" in {
     toRDD(data2)
-      .splitWithValue[String, PartitionerWithValue[Position2D, String] { type V >: W }, W](
-        TestMatrixSplit.TestPartitionerWithValue(), Second)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position2D](), Second)
       .toList.sorted shouldBe result9
   }
 
   it should "return its first partitions in 3D" in {
     toRDD(data3)
-      .splitWithValue[String, PartitionerWithValue[Position3D, String] { type V >: W }, W](
-        TestMatrixSplit.TestPartitionerWithValue(), First)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), First)
       .toList.sorted shouldBe result10
   }
 
   it should "return its second partitions in 3D" in {
     toRDD(data3)
-      .splitWithValue[String, PartitionerWithValue[Position3D, String] { type V >: W }, W](
-        TestMatrixSplit.TestPartitionerWithValue(), Second)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), Second)
       .toList.sorted shouldBe result11
   }
 
   it should "return its third partitions in 3D" in {
     toRDD(data3)
-      .splitWithValue[String, PartitionerWithValue[Position3D, String] { type V >: W }, W](
-        TestMatrixSplit.TestPartitionerWithValue(), Third)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), Third)
       .toList.sorted shouldBe result12
   }
 }
@@ -5220,10 +5041,6 @@ class TestSparkMatrixUnique extends TestMatrixUnique {
 
 trait TestMatrixPairwise extends TestMatrix {
 
-  type W = Double
-  type OwV[A <: Position with ExpandablePosition, B <: Position with ExpandablePosition] =
-    OperatorWithValue[A, B, B#M] { type V >: W }
-
   val ext = 1.0
 
   val dataA = List(Cell(Position1D("bar"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
@@ -5991,7 +5808,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.pairwise[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), Lower, Plus())
+        cells.pairwise(Over(First), Lower, Plus[Position1D, Position0D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -6002,7 +5819,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Lower, Plus())
+        cells.pairwise(Over(First), Lower, Plus[Position1D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -6013,8 +5830,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise[Dimension.First, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Along(First),
-          Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+        cells.pairwise(Along(First), Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -6025,8 +5841,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise[Dimension.Second, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Over(Second),
-          Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+        cells.pairwise(Over(Second), Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -6037,7 +5852,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), Lower, Plus())
+        cells.pairwise(Along(Second), Lower, Plus[Position1D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -6048,7 +5863,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), Lower, Plus())
+        cells.pairwise(Over(First), Lower, Plus[Position1D, Position2D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -6059,8 +5874,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise[Dimension.First, Position2D, List[Operator[Position2D, Position1D, Position2D]]](Along(First),
-          Lower, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+        cells.pairwise(Along(First), Lower, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -6071,8 +5885,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise[Dimension.Second, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Second),
-          Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+        cells.pairwise(Over(Second), Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -6083,7 +5896,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), Lower, Plus())
+        cells.pairwise(Along(Second), Lower, Plus[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -6094,8 +5907,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise[Dimension.Third, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Third),
-          Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+        cells.pairwise(Over(Third), Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -6106,7 +5918,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), Lower, Plus())
+        cells.pairwise(Along(Third), Lower, Plus[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -6117,8 +5929,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.pairwiseWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First), Lower,
-          TestMatrixPairwise.PlusX[Position1D, Position0D](), ValuePipe(ext))
+        cells.pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position0D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
     }
@@ -6129,8 +5940,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First), Lower,
-          TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
+        cells.pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result13
     }
@@ -6141,9 +5951,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position1D, Position1D]], W](Along(First), Lower,
-          List(TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
-          ValuePipe(ext))
+        cells.pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
+          TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result14
     }
@@ -6154,9 +5963,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue[Dimension.Second, Position2D, List[OwV[Position1D, Position1D]], W](Over(Second), Lower,
-          List(TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
-          ValuePipe(ext))
+        cells.pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
+          TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result15
     }
@@ -6167,8 +5975,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue[Dimension.Second, Position2D, OwV[Position1D, Position1D], W](Along(Second), Lower,
-          TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
+        cells.pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result16
     }
@@ -6179,8 +5987,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First), Lower,
-          TestMatrixPairwise.PlusX[Position1D, Position2D](), ValuePipe(ext))
+        cells.pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position2D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result17
     }
@@ -6191,9 +5998,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position2D, Position1D]], W](Along(First), Lower,
-          List(TestMatrixPairwise.PlusX[Position2D, Position1D](), TestMatrixPairwise.MinusX[Position2D, Position1D]()),
-          ValuePipe(ext))
+        cells.pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
+          TestMatrixPairwise.MinusX[Position2D, Position1D]()), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result18
     }
@@ -6204,9 +6010,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.Second, Position3D, List[OwV[Position1D, Position2D]], W](Over(Second), Lower,
-          List(TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
-          ValuePipe(ext))
+        cells.pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
+          TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result19
     }
@@ -6217,8 +6022,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.Second, Position2D, OwV[Position2D, Position1D], W](Along(Second), Lower,
-          TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
+        cells.pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result20
     }
@@ -6229,9 +6034,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.Third, Position3D, List[OwV[Position1D, Position2D]], W](Over(Third), Lower,
-          List(TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
-          ValuePipe(ext))
+        cells.pairwiseWithValue(Over(Third), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
+          TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result21
     }
@@ -6242,8 +6046,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third), Lower,
-          TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
+        cells.pairwiseWithValue(Along(Third), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result22
     }
@@ -6256,8 +6059,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataA
     } When {
       (cells: TypedPipe[Cell[Position1D]], that: TypedPipe[Cell[Position1D]]) =>
-        cells.pairwiseBetween[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), Lower, that,
-          Plus())
+        cells.pairwiseBetween(Over(First), Lower, that, Plus[Position1D, Position0D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result23
     }
@@ -6270,8 +6072,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataB
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Lower, that,
-          Plus())
+        cells.pairwiseBetween(Over(First), Lower, that, Plus[Position1D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result24
     }
@@ -6284,8 +6085,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataC
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween[Dimension.First, Position2D, List[Operator[Position1D, Position1D, Position2D]]](
-          Along(First), Lower, that, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+        cells.pairwiseBetween(Along(First), Lower, that, List(Plus[Position1D, Position1D](),
+          Minus[Position1D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result25
     }
@@ -6298,8 +6099,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataD
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween[Dimension.Second, Position2D, List[Operator[Position1D, Position1D, Position2D]]](
-          Over(Second), Lower, that, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+        cells.pairwiseBetween(Over(Second), Lower, that, List(Plus[Position1D, Position1D](),
+          Minus[Position1D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result26
     }
@@ -6312,8 +6113,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataE
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), Lower, that,
-          Plus())
+        cells.pairwiseBetween(Along(Second), Lower, that, Plus[Position1D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result27
     }
@@ -6326,8 +6126,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataF
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), Lower, that,
-          Plus())
+        cells.pairwiseBetween(Over(First), Lower, that, Plus[Position1D, Position2D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result28
     }
@@ -6340,8 +6139,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataG
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween[Dimension.First, Position2D, List[Operator[Position2D, Position1D, Position2D]]](
-          Along(First), Lower, that, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+        cells.pairwiseBetween(Along(First), Lower, that, List(Plus[Position2D, Position1D](),
+          Minus[Position2D, Position1D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result29
     }
@@ -6354,8 +6153,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataH
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween[Dimension.Second, Position3D, List[Operator[Position1D, Position2D, Position3D]]](
-          Over(Second), Lower, that, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+        cells.pairwiseBetween(Over(Second), Lower, that, List(Plus[Position1D, Position2D](),
+          Minus[Position1D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result30
     }
@@ -6368,8 +6167,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataI
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), Lower, that,
-          Plus())
+        cells.pairwiseBetween(Along(Second), Lower, that, Plus[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result31
     }
@@ -6382,8 +6180,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataJ
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween[Dimension.Third, Position3D, List[Operator[Position1D, Position2D, Position3D]]](
-          Over(Third), Lower, that, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+        cells.pairwiseBetween(Over(Third), Lower, that, List(Plus[Position1D, Position2D](),
+          Minus[Position1D, Position2D]()))
     } Then {
       _.toList.sortBy(_.position) shouldBe result32
     }
@@ -6396,8 +6194,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataK
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), Lower, that,
-          Plus())
+        cells.pairwiseBetween(Along(Third), Lower, that, Plus[Position2D, Position1D]())
     } Then {
       _.toList.sortBy(_.position) shouldBe result33
     }
@@ -6410,8 +6207,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataL
     } When {
       (cells: TypedPipe[Cell[Position1D]], that: TypedPipe[Cell[Position1D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First), Lower,
-          that, TestMatrixPairwise.PlusX[Position1D, Position0D](), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Over(First), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position0D](),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result34
     }
@@ -6424,8 +6221,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataM
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First), Lower,
-          that, TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Over(First), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position1D](),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result35
     }
@@ -6438,9 +6235,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataN
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.First, Position2D, List[OwV[Position1D, Position1D]], W](Along(First),
-          Lower, that, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
-            TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Along(First), Lower, that, List(
+          TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result36
     }
@@ -6453,9 +6250,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataO
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.Second, Position2D, List[OwV[Position1D, Position1D]], W](Over(Second),
-          Lower, that, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
-            TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Over(Second), Lower, that, List(
+          TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result37
     }
@@ -6468,8 +6265,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataP
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.Second, Position2D, OwV[Position1D, Position1D], W](Along(Second),
-          Lower, that, TestMatrixPairwise.PlusX[Position1D, Position1D](), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Along(Second), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position1D](),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result38
     }
@@ -6482,8 +6279,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataQ
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First), Lower,
-          that, TestMatrixPairwise.PlusX[Position1D, Position2D](), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Over(First), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position2D](),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result39
     }
@@ -6496,9 +6293,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataR
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.First, Position2D, List[OwV[Position2D, Position1D]], W](Along(First),
-          Lower, that, List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
-            TestMatrixPairwise.MinusX[Position2D, Position1D]()), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Along(First), Lower, that, List(
+          TestMatrixPairwise.PlusX[Position2D, Position1D](), TestMatrixPairwise.MinusX[Position2D, Position1D]()),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result40
     }
@@ -6511,9 +6308,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataS
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.Second, Position3D, List[OwV[Position1D, Position2D]], W](Over(Second),
-          Lower, that, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
-            TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Over(Second), Lower, that, List(
+          TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result41
     }
@@ -6526,8 +6323,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataT
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.Second, Position2D, OwV[Position2D, Position1D], W](Along(Second),
-          Lower, that, TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Along(Second), Lower, that, TestMatrixPairwise.PlusX[Position2D, Position1D](),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result42
     }
@@ -6540,9 +6337,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataU
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.Third, Position3D, List[OwV[Position1D, Position2D]], W](Over(Third),
-          Lower, that, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
-            TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Over(Third), Lower, that, List(
+          TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result43
     }
@@ -6555,8 +6352,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataV
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third), Lower,
-          that, TestMatrixPairwise.PlusX[Position2D, Position1D](), ValuePipe(ext))
+        cells.pairwiseBetweenWithValue(Along(Third), Lower, that, TestMatrixPairwise.PlusX[Position2D, Position1D](),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result44
     }
@@ -6567,313 +6364,286 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   "A Matrix.pairwise" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwise[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), Lower, Plus())
+      .pairwise(Over(First), Lower, Plus[Position1D, Position0D]())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwise[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Lower, Plus())
+      .pairwise(Over(First), Lower, Plus[Position1D, Position1D]())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
-      .pairwise[Dimension.First, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Along(First),
-        Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+      .pairwise(Along(First), Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
-      .pairwise[Dimension.Second, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Over(Second),
-        Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+      .pairwise(Over(Second), Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwise[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), Lower, Plus())
+      .pairwise(Along(Second), Lower, Plus[Position1D, Position1D]())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwise[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), Lower, Plus())
+      .pairwise(Over(First), Lower, Plus[Position1D, Position2D]())
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise[Dimension.First, Position2D, List[Operator[Position2D, Position1D, Position2D]]](Along(First),
-        Lower, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+      .pairwise(Along(First), Lower, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
-      .pairwise[Dimension.Second, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Second),
-        Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+      .pairwise(Over(Second), Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), Lower, Plus())
+      .pairwise(Along(Second), Lower, Plus[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
-      .pairwise[Dimension.Third, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Third),
-        Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+      .pairwise(Over(Third), Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), Lower, Plus())
+      .pairwise(Along(Third), Lower, Plus[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.pairwiseWithValue" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwiseWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First), Lower,
-        TestMatrixPairwise.PlusX[Position1D, Position0D](), ext)
+      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position0D](), ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First), Lower,
-        TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
+      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position1D, Position1D]], W](Along(First), Lower,
-        List(TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
-          ext)
+      .pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext)
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue[Dimension.Second, Position2D, List[OwV[Position1D, Position1D]], W](Over(Second), Lower,
-        List(TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
-          ext)
+      .pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext)
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue[Dimension.Second, Position2D, OwV[Position1D, Position1D], W](Along(Second), Lower,
-        TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
+      .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First), Lower,
-        TestMatrixPairwise.PlusX[Position1D, Position2D](), ext)
+      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position2D](), ext)
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.First, Position2D, List[OwV[Position2D, Position1D]], W](Along(First), Lower,
-        List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          TestMatrixPairwise.MinusX[Position2D, Position1D]()), ext)
+      .pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
+        TestMatrixPairwise.MinusX[Position2D, Position1D]()), ext)
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.Second, Position3D, List[OwV[Position1D, Position2D]], W](Over(Second), Lower,
-        List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
-          TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext)
+      .pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
+        TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext)
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.Second, Position2D, OwV[Position2D, Position1D], W](Along(Second), Lower,
-        TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
+      .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.Third, Position3D, List[OwV[Position1D, Position2D]], W](Over(Third), Lower,
-        List(TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
-          ext)
+      .pairwiseWithValue(Over(Third), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
+        TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext)
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third), Lower,
-        TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
+      .pairwiseWithValue(Along(Third), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result22
   }
 
   "A Matrix.pairwiseBetween" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwiseBetween[Dimension.First, Position1D, Plus[Position1D, Position0D]](Over(First), Lower, toRDD(dataA),
-        Plus())
+      .pairwiseBetween(Over(First), Lower, toRDD(dataA), Plus[Position1D, Position0D]())
       .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween[Dimension.First, Position2D, Plus[Position1D, Position1D]](Over(First), Lower, toRDD(dataB),
-        Plus())
+      .pairwiseBetween(Over(First), Lower, toRDD(dataB), Plus[Position1D, Position1D]())
       .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween[Dimension.First, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Along(First),
-        Lower, toRDD(dataC), List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+      .pairwiseBetween(Along(First), Lower, toRDD(dataC), List(Plus[Position1D, Position1D](),
+        Minus[Position1D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween[Dimension.Second, Position2D, List[Operator[Position1D, Position1D, Position2D]]](Over(Second),
-        Lower, toRDD(dataD), List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+      .pairwiseBetween(Over(Second), Lower, toRDD(dataD), List(Plus[Position1D, Position1D](),
+        Minus[Position1D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween[Dimension.Second, Position2D, Plus[Position1D, Position1D]](Along(Second), Lower, toRDD(dataE),
-        Plus())
+      .pairwiseBetween(Along(Second), Lower, toRDD(dataE), Plus[Position1D, Position1D]())
       .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween[Dimension.First, Position3D, Plus[Position1D, Position2D]](Over(First), Lower, toRDD(dataF),
-        Plus())
+      .pairwiseBetween(Over(First), Lower, toRDD(dataF), Plus[Position1D, Position2D]())
       .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween[Dimension.First, Position2D, List[Operator[Position2D, Position1D, Position2D]]](Along(First),
-        Lower, toRDD(dataG), List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+      .pairwiseBetween(Along(First), Lower, toRDD(dataG), List(Plus[Position2D, Position1D](),
+        Minus[Position2D, Position1D]()))
       .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween[Dimension.Second, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Second),
-        Lower, toRDD(dataH), List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+      .pairwiseBetween(Over(Second), Lower, toRDD(dataH), List(Plus[Position1D, Position2D](),
+        Minus[Position1D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween[Dimension.Second, Position2D, Plus[Position2D, Position1D]](Along(Second), Lower, toRDD(dataI),
-        Plus())
+      .pairwiseBetween(Along(Second), Lower, toRDD(dataI), Plus[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween[Dimension.Third, Position3D, List[Operator[Position1D, Position2D, Position3D]]](Over(Third),
-        Lower, toRDD(dataJ), List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+      .pairwiseBetween(Over(Third), Lower, toRDD(dataJ), List(Plus[Position1D, Position2D](),
+        Minus[Position1D, Position2D]()))
       .toList.sortBy(_.position) shouldBe result32
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween[Dimension.Third, Position2D, Plus[Position2D, Position1D]](Along(Third), Lower, toRDD(dataK),
-        Plus())
+      .pairwiseBetween(Along(Third), Lower, toRDD(dataK), Plus[Position2D, Position1D]())
       .toList.sortBy(_.position) shouldBe result33
   }
 
   "A Matrix.pairwiseBetweenWithValue" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwiseBetweenWithValue[Dimension.First, Position1D, OwV[Position1D, Position0D], W](Over(First), Lower,
-        toRDD(dataL), TestMatrixPairwise.PlusX[Position1D, Position0D](), ext)
+      .pairwiseBetweenWithValue(Over(First), Lower, toRDD(dataL), TestMatrixPairwise.PlusX[Position1D, Position0D](),
+        ext)
       .toList.sortBy(_.position) shouldBe result34
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetweenWithValue[Dimension.First, Position2D, OwV[Position1D, Position1D], W](Over(First), Lower,
-        toRDD(dataM), TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
+      .pairwiseBetweenWithValue(Over(First), Lower, toRDD(dataM), TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        ext)
       .toList.sortBy(_.position) shouldBe result35
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetweenWithValue[Dimension.First, Position2D, List[OwV[Position1D, Position1D]], W](Along(First),
-        Lower, toRDD(dataN), List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext)
+      .pairwiseBetweenWithValue(Along(First), Lower, toRDD(dataN), List(
+        TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext)
       .toList.sortBy(_.position) shouldBe result36
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetweenWithValue[Dimension.Second, Position2D, List[OwV[Position1D, Position1D]], W](Over(Second),
-        Lower, toRDD(dataO), List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext)
+      .pairwiseBetweenWithValue(Over(Second), Lower, toRDD(dataO), List(
+        TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext)
       .toList.sortBy(_.position) shouldBe result37
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetweenWithValue[Dimension.Second, Position2D, OwV[Position1D, Position1D], W](Along(Second),
-        Lower, toRDD(dataP), TestMatrixPairwise.PlusX[Position1D, Position1D](), ext)
+      .pairwiseBetweenWithValue(Along(Second), Lower, toRDD(dataP), TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        ext)
       .toList.sortBy(_.position) shouldBe result38
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetweenWithValue[Dimension.First, Position3D, OwV[Position1D, Position2D], W](Over(First), Lower,
-        toRDD(dataQ), TestMatrixPairwise.PlusX[Position1D, Position2D](), ext)
+      .pairwiseBetweenWithValue(Over(First), Lower, toRDD(dataQ), TestMatrixPairwise.PlusX[Position1D, Position2D](),
+        ext)
       .toList.sortBy(_.position) shouldBe result39
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetweenWithValue[Dimension.First, Position2D, List[OwV[Position2D, Position1D]], W](Along(First),
-        Lower, toRDD(dataR), List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          TestMatrixPairwise.MinusX[Position2D, Position1D]()), ext)
+      .pairwiseBetweenWithValue(Along(First), Lower, toRDD(dataR), List(
+        TestMatrixPairwise.PlusX[Position2D, Position1D](), TestMatrixPairwise.MinusX[Position2D, Position1D]()), ext)
       .toList.sortBy(_.position) shouldBe result40
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetweenWithValue[Dimension.Second, Position3D, List[OwV[Position1D, Position2D]], W](Over(Second),
-        Lower, toRDD(dataS), List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
-          TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext)
+      .pairwiseBetweenWithValue(Over(Second), Lower, toRDD(dataS), List(
+        TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext)
       .toList.sortBy(_.position) shouldBe result41
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetweenWithValue[Dimension.Second, Position2D, OwV[Position2D, Position1D], W](Along(Second),
-        Lower, toRDD(dataT), TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
+      .pairwiseBetweenWithValue(Along(Second), Lower, toRDD(dataT), TestMatrixPairwise.PlusX[Position2D, Position1D](),
+        ext)
       .toList.sortBy(_.position) shouldBe result42
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetweenWithValue[Dimension.Third, Position3D, List[OwV[Position1D, Position2D]], W](Over(Third),
-        Lower, toRDD(dataU), List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
-          TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext)
+      .pairwiseBetweenWithValue(Over(Third), Lower, toRDD(dataU), List(
+        TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext)
       .toList.sortBy(_.position) shouldBe result43
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetweenWithValue[Dimension.Third, Position2D, OwV[Position2D, Position1D], W](Along(Third),
-        Lower, toRDD(dataV), TestMatrixPairwise.PlusX[Position2D, Position1D](), ext)
+      .pairwiseBetweenWithValue(Along(Third), Lower, toRDD(dataV), TestMatrixPairwise.PlusX[Position2D, Position1D](),
+        ext)
       .toList.sortBy(_.position) shouldBe result44
   }
 }
@@ -7915,10 +7685,6 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
 
 trait TestMatrixSlide extends TestMatrix {
 
-  type W = Map[String, Int]
-  type WwV[A <: Position with ExpandablePosition, B <: Position with ExpandablePosition, C <: Position] =
-    WindowWithValue[A, B, C] { type V >: W }
-
   val ext = Map("one" -> 1, "two" -> 2)
 
   val result1 = List(Cell(Position1D("1*(baz-bar)"), Content(ContinuousSchema[Codex.DoubleCodex](), 9.42 - 6.28)),
@@ -8131,8 +7897,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.slide[Dimension.First, Position1D, List[Window[Position0D, Position1D, Position1D]]](Along(First),
-          List(TestMatrixSlide.Delta[Position0D, Position1D](1), TestMatrixSlide.Delta[Position0D, Position1D](2)))
+        cells.slide(Along(First), List(TestMatrixSlide.Delta[Position0D, Position1D](1),
+          TestMatrixSlide.Delta[Position0D, Position1D](2)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -8143,8 +7909,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide[Dimension.First, Position2D, Window[Position1D, Position1D, Position2D]](Over(First),
-          TestMatrixSlide.Delta[Position1D, Position1D](1))
+        cells.slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -8155,8 +7920,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide[Dimension.First, Position2D, Window[Position1D, Position1D, Position2D]](Along(First),
-          TestMatrixSlide.Delta[Position1D, Position1D](1))
+        cells.slide(Along(First), TestMatrixSlide.Delta[Position1D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -8167,8 +7931,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide[Dimension.Second, Position2D, Window[Position1D, Position1D, Position2D]](Over(Second),
-          TestMatrixSlide.Delta[Position1D, Position1D](1))
+        cells.slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -8179,8 +7942,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide[Dimension.Second, Position2D, Window[Position1D, Position1D, Position2D]](Along(Second),
-          TestMatrixSlide.Delta[Position1D, Position1D](1))
+        cells.slide(Along(Second), TestMatrixSlide.Delta[Position1D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -8191,8 +7953,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide[Dimension.First, Position2D, Window[Position1D, Position2D, Position2D]](Over(First),
-          TestMatrixSlide.Delta[Position1D, Position2D](1))
+        cells.slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -8203,8 +7964,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide[Dimension.First, Position3D, Window[Position2D, Position1D, Position3D]](Along(First),
-          TestMatrixSlide.Delta[Position2D, Position1D](1))
+        cells.slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -8215,8 +7975,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide[Dimension.Second, Position2D, Window[Position1D, Position2D, Position2D]](Over(Second),
-          TestMatrixSlide.Delta[Position1D, Position2D](1))
+        cells.slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -8227,8 +7986,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide[Dimension.Second, Position3D, Window[Position2D, Position1D, Position3D]](Along(Second),
-          TestMatrixSlide.Delta[Position2D, Position1D](1))
+        cells.slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -8239,8 +7997,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide[Dimension.Third, Position2D, Window[Position1D, Position2D, Position2D]](Over(Third),
-          TestMatrixSlide.Delta[Position1D, Position2D](1))
+        cells.slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -8251,8 +8008,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide[Dimension.Third, Position3D, Window[Position2D, Position1D, Position3D]](Along(Third),
-          TestMatrixSlide.Delta[Position2D, Position1D](1))
+        cells.slide(Along(Third), TestMatrixSlide.Delta[Position2D, Position1D](1))
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -8263,9 +8019,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.slideWithValue[Dimension.First, Position1D, List[WwV[Position0D, Position1D, Position1D]], W](
-          Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
-            TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ValuePipe(ext))
+        cells.slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
+          TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
     }
@@ -8276,8 +8031,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position1D, Position2D], W](Over(First),
-          TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ValuePipe(ext))
+        cells.slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result13
     }
@@ -8288,8 +8042,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position1D, Position2D], W](Along(First),
-          TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ValuePipe(ext))
+        cells.slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result14
     }
@@ -8300,8 +8054,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position1D, Position2D], W](Over(Second),
-          TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ValuePipe(ext))
+        cells.slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result15
     }
@@ -8312,8 +8066,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position1D, Position2D], W](Along(Second),
-          TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ValuePipe(ext))
+        cells.slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result16
     }
@@ -8324,8 +8078,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(First),
-          TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ValuePipe(ext))
+        cells.slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result17
     }
@@ -8336,8 +8089,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue[Dimension.First, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(First),
-          TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ValuePipe(ext))
+        cells.slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result18
     }
@@ -8348,8 +8101,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(Second),
-          TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ValuePipe(ext))
+        cells.slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result19
     }
@@ -8360,8 +8113,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue[Dimension.Second, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(Second),
-          TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ValuePipe(ext))
+        cells.slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result20
     }
@@ -8372,8 +8125,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue[Dimension.Third, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(Third),
-          TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ValuePipe(ext))
+        cells.slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result21
     }
@@ -8384,8 +8136,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue[Dimension.Third, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(Third),
-          TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ValuePipe(ext))
+        cells.slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
+          ValuePipe(ext))
     } Then {
       _.toList.sortBy(_.position) shouldBe result22
     }
@@ -8396,156 +8148,136 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   "A Matrix.slide" should "return its first along derived data in 1D" in {
     toRDD(num1)
-      .slide[Dimension.First, Position1D, List[Window[Position0D, Position1D, Position1D]]](Along(First),
-        List(TestMatrixSlide.Delta[Position0D, Position1D](1), TestMatrixSlide.Delta[Position0D, Position1D](2)))
+      .slide(Along(First), List(TestMatrixSlide.Delta[Position0D, Position1D](1),
+        TestMatrixSlide.Delta[Position0D, Position1D](2)))
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slide[Dimension.First, Position2D, Window[Position1D, Position1D, Position2D]](Over(First),
-        TestMatrixSlide.Delta[Position1D, Position1D](1))
+      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slide[Dimension.First, Position2D, Window[Position1D, Position1D, Position2D]](Along(First),
-        TestMatrixSlide.Delta[Position1D, Position1D](1))
+      .slide(Along(First), TestMatrixSlide.Delta[Position1D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slide[Dimension.Second, Position2D, Window[Position1D, Position1D, Position2D]](Over(Second),
-        TestMatrixSlide.Delta[Position1D, Position1D](1))
+      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
-      .slide[Dimension.Second, Position2D, Window[Position1D, Position1D, Position2D]](Along(Second),
-        TestMatrixSlide.Delta[Position1D, Position1D](1))
+      .slide(Along(Second), TestMatrixSlide.Delta[Position1D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slide[Dimension.First, Position2D, Window[Position1D, Position2D, Position2D]](Over(First),
-        TestMatrixSlide.Delta[Position1D, Position2D](1))
+      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slide[Dimension.First, Position3D, Window[Position2D, Position1D, Position3D]](Along(First),
-        TestMatrixSlide.Delta[Position2D, Position1D](1))
+      .slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slide[Dimension.Second, Position2D, Window[Position1D, Position2D, Position2D]](Over(Second),
-        TestMatrixSlide.Delta[Position1D, Position2D](1))
+      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slide[Dimension.Second, Position3D, Window[Position2D, Position1D, Position3D]](Along(Second),
-        TestMatrixSlide.Delta[Position2D, Position1D](1))
+      .slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slide[Dimension.Third, Position2D, Window[Position1D, Position2D, Position2D]](Over(Third),
-        TestMatrixSlide.Delta[Position1D, Position2D](1))
+      .slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slide[Dimension.Third, Position3D, Window[Position2D, Position1D, Position3D]](Along(Third),
-        TestMatrixSlide.Delta[Position2D, Position1D](1))
+      .slide(Along(Third), TestMatrixSlide.Delta[Position2D, Position1D](1))
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.slideWithValue" should "return its first along derived data in 1D" in {
     toRDD(num1)
-      .slideWithValue[Dimension.First, Position1D, List[WwV[Position0D, Position1D, Position1D]], W](
-        Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
-          TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ext)
+      .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
+        TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position1D, Position2D], W](Over(First),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
+      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position1D, Position2D], W](Along(First),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position1D, Position2D], W](Over(Second),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
+      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position1D, Position2D], W](Along(Second),
+      .slideWithValue(Along(Second),
         TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue[Dimension.First, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(First),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext)
+      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue[Dimension.First, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(First),
-        TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext)
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue[Dimension.Second, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(Second),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext)
+      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue[Dimension.Second, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(Second),
-        TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext)
+      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue[Dimension.Third, Position2D, WwV[Position1D, Position2D, Position2D], W](Over(Third),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext)
+      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue[Dimension.Third, Position3D, WwV[Position2D, Position1D, Position3D], W](Along(Third),
-        TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext)
+      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext)
       .toList.sortBy(_.position) shouldBe result22
   }
 }

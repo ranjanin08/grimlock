@@ -351,8 +351,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
   def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, operators: T)(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q], ev3: Operable[T, slice.S, slice.R, Q],
-    ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]]
+    implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all pairs of values given a slice with a user supplied value.
@@ -365,9 +365,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
   def pairwiseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, operators: T,
-    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q],
-      ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
-      ev6: ClassTag[slice.R]): U[Cell[Q]]
+    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
+      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all values of this and that given a slice.
@@ -380,8 +379,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
   def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, that: S, operators: T)(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q], ev3: Operable[T, slice.S, slice.R, Q],
-    ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]]
+    implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all values of this and that given a slice with a user supplied value.
@@ -395,9 +394,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
   def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, that: S,
-    operators: T, value: E[W])(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.R#M, Q],
-      ev3: OperableWithValue[T, slice.S, slice.R, Q, W], ev4: slice.S =!= Position0D, ev5: ClassTag[slice.S],
-      ev6: ClassTag[slice.R]): U[Cell[Q]]
+    operators: T, value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
+      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Rename the coordinates of a dimension.
@@ -498,8 +496,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
   def slide[D <: Dimension, Q <: Position, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D],
-    ev2: PosExpDep[slice.S#M, Q], ev3: Windowable[T, slice.S, slice.R, Q], ev4: slice.R =!= Position0D,
-    ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]]
+    ev2: Windowable[T, slice.S, slice.R, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
+    ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Create window based derived data with a user supplied value.
@@ -511,8 +509,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
   def slideWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], windows: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S#M, Q], ev3: WindowableWithValue[T, slice.S, slice.R, Q, W],
-    ev4: slice.R =!= Position0D, ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]]
+    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Partition a matrix according to `partitioner`.
@@ -559,7 +557,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[Q]]` with the aggregates.
    */
   def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
-    ev2: PosExpDep[slice.S, Q], ev3: Aggregatable[T, P, slice.S, Q], ev4: ClassTag[slice.S]): U[Cell[Q]]
+    ev2: Aggregatable[T, P, slice.S, Q], ev3: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
    * Summarise a matrix and return the aggregates.
@@ -571,8 +569,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[Q]]` with the aggregates.
    */
   def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T, reducers: Int)(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S, Q], ev3: Aggregatable[T, P, slice.S, Q],
-      ev4: ClassTag[slice.S]): U[Cell[Q]]
+    implicit ev1: PosDimDep[P, D], ev2: Aggregatable[T, P, slice.S, Q], ev3: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
    * Summarise a matrix, using a user supplied value, and return the aggregates.
@@ -584,8 +581,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[Q]]` with the aggregates.
    */
   def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S, Q], ev3: AggregatableWithValue[T, P, slice.S, Q, W],
-      ev4: ClassTag[slice.S]): U[Cell[Q]]
+    implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W], ev3: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
    * Summarise a matrix, using a user supplied value, and return the aggregates.
@@ -598,8 +594,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[Q]]` with the aggregates.
    */
   def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W],
-    reducers: Int)(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[slice.S, Q],
-      ev3: AggregatableWithValue[T, P, slice.S, Q, W], ev4: ClassTag[slice.S]): U[Cell[Q]]
+    reducers: Int)(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W],
+      ev3: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
    * Convert a matrix to an in-memory `Map`.
@@ -629,8 +625,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[Q]]` with the transformed cells.
    */
-  def transform[Q <: Position, T](transformers: T)(implicit ev1: Transformable[T, P, Q],
-    ev2: PosExpDep[P, Q]): U[Cell[Q]]
+  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[T, P, Q]): U[Cell[Q]]
 
   /**
    * Transform the content of a matrix using a user supplied value.
@@ -641,7 +636,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[P]]` with the transformed cells.
    */
   def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
-    implicit ev1: TransformableWithValue[T, P, Q, W], ev2: PosExpDep[P, Q]): U[Cell[Q]]
+    implicit ev: TransformableWithValue[T, P, Q, W]): U[Cell[Q]]
 
   /**
    * Returns the variable type of the content(s) for a given `slice`.
@@ -788,7 +783,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
-  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P#M, Q]): U[Cell[Q]]
+  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
 
   /**
    * Expand a matrix with extra dimension(s) using a user supplied value.
@@ -799,7 +794,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
   def expandWithValue[Q <: Position, V](expander: (Cell[P], V) => Q, value: E[V])(
-    implicit ev: PosExpDep[P#M, Q]): U[Cell[Q]]
+    implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
 }
 
 /** Type class for transforming a type `T` into a `U[Cell[P]]`. */

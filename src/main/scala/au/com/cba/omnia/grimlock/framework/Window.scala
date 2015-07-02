@@ -214,13 +214,23 @@ trait Windowable[T, S <: Position with ExpandablePosition, R <: Position with Ex
 
 /** Companion object for the `Windowable` type class. */
 object Windowable {
+  /** Converts a `Window[S, R, S#M]` to a `Window[S, R, S#M]`; that is, it is a pass through. */
+  implicit def WSRSM2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: Window[S, R, S#M]]: Windowable[T, S, R, S#M] = W2W[S, R, S#M, T]
+
   /** Converts a `Window[S, R, Q]` to a `Window[S, R, Q]`; that is, it is a pass through. */
-  implicit def W2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Window[S, R, Q]]: Windowable[T, S, R, Q] = {
+  implicit def WSRQ2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Window[S, R, Q]](implicit ev: PosExpDep[S, Q]): Windowable[T, S, R, Q] = W2W[S, R, Q, T]
+
+  private def W2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Window[S, R, Q]]: Windowable[T, S, R, Q] = {
     new Windowable[T, S, R, Q] { def convert(t: T): Window[S, R, Q] = t }
   }
 
+  /** Converts a `List[Window[S, R, S#M]]` to a single `Window[S, R, S#M]`. */
+  implicit def LWSRSM2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: Window[S, R, S#M]]: Windowable[List[T], S, R, S#M] = LW2W[S, R, S#M, T]
+
   /** Converts a `List[Window[S, R, Q]]` to a single `Window[S, R, Q]`. */
-  implicit def LW2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Window[S, R, Q]]: Windowable[List[T], S, R, Q] = {
+  implicit def LWSRQ2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Window[S, R, Q]](implicit ev: PosExpDep[S, Q]): Windowable[List[T], S, R, Q] = LW2W[S, R, Q, T]
+
+  private def LW2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Window[S, R, Q]]: Windowable[List[T], S, R, Q] = {
     new Windowable[List[T], S, R, Q] {
       def convert(windows: List[T]): Window[S, R, Q] = {
         new Window[S, R, Q] {
@@ -257,13 +267,23 @@ trait WindowableWithValue[T, S <: Position with ExpandablePosition, R <: Positio
 
 /** Companion object for the `WindowableWithValue` type class. */
 object WindowableWithValue {
+  /** Converts a `WindowWithValue[S, R, S#M]` to a `WindowWithValue[S, R, S#M]`; that is, it is a pass through. */
+  implicit def WSRSMW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: WindowWithValue[S, R, S#M] { type V >: W }, W]: WindowableWithValue[T, S, R, S#M, W] = W2WWV[S, R, S#M, T, W]
+
   /** Converts a `WindowWithValue[S, R, Q]` to a `WindowWithValue[S, R, Q]`; that is, it is a pass through. */
-  implicit def W2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: WindowWithValue[S, R, Q] { type V >: W }, W]: WindowableWithValue[T, S, R, Q, W] = {
+  implicit def WSRQW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: WindowWithValue[S, R, Q] { type V >: W }, W](implicit ev: PosExpDep[S, Q]): WindowableWithValue[T, S, R, Q, W] = W2WWV[S, R, Q, T, W]
+
+  private def W2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: WindowWithValue[S, R, Q] { type V >: W }, W]: WindowableWithValue[T, S, R, Q, W] = {
     new WindowableWithValue[T, S, R, Q, W] { def convert(t: T): WindowWithValue[S, R, Q] { type V >: W } = t }
   }
 
+  /** Converts a `List[WindowWithValue[S, R, S#M]]` to a single `WindowWithValue[S, R, S#M]`. */
+  implicit def LWSRSMW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: WindowWithValue[S, R, S#M] { type V >: W }, W]: WindowableWithValue[List[T], S, R, S#M, W] = LW2WWV[S, R, S#M, T, W]
+
   /** Converts a `List[WindowWithValue[S, R, Q]]` to a single `WindowWithValue[S, R, Q]`. */
-  implicit def LW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: WindowWithValue[S, R, Q] { type V >: W }, W]: WindowableWithValue[List[T], S, R, Q, W] = {
+  implicit def LWSRQW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: WindowWithValue[S, R, Q] { type V >: W }, W](implicit ev: PosExpDep[S, Q]): WindowableWithValue[List[T], S, R, Q, W] = LW2WWV[S, R, Q, T, W]
+
+  private def LW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: WindowWithValue[S, R, Q] { type V >: W }, W]: WindowableWithValue[List[T], S, R, Q, W] = {
     new WindowableWithValue[List[T], S, R, Q, W] {
       def convert(windows: List[T]): WindowWithValue[S, R, Q] { type V >: W } = {
         new WindowWithValue[S, R, Q] {
