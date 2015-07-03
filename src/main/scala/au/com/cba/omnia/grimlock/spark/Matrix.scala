@@ -513,21 +513,52 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   }
 
   def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
-    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = ??? /*{
-    implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
-    val marginal = data
-      .summariseAndExpand(slice, Entropy("marginal"))
-      .pairwise(Over(First), Upper, Plus(name = "%s,%s"))
+    val dim = slice match {
+      case Over(First) => Second
+      case Over(Second) => First
+      case Along(d) => d
+      case _ => throw new Exception("unexpected dimension")
+    }
 
-    val joint = data
-      .pairwise(slice, Upper, Concatenate(name = "%s,%s"))
-      .summariseAndExpand(Over(First), Entropy("joint", strict = true, nan = true, all = false, negate = true))
+    implicit object P3D extends PosDimDep[Position3D, dim.type]
+
+    type W = Map[Position1D, Content]
+
+    val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First)
+      .andThenPresent(_.value.asDouble)
+
+    val mhist = new Matrix2D(data)
+      .expand((c: Cell[Position2D]) => c.position.append(c.content.value.toShortString))
+      .summarise(Along[Position3D, dim.type](dim), Count[Position3D, Position2D]())
+
+    val mcount = mhist
+      .summarise(Over(First), Sum[Position2D, Position1D]())
+      .toMap()
+
+    val marginal = mhist
+      .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
+        .andThenExpandWithValue((cell, _) => cell.position.append("marginal")), mcount)
+      .pairwise(Over(First), Upper, Plus[Position1D, Position1D](name = "%s,%s"))
+
+    val jhist = new Matrix2D(data)
+      .pairwise(slice, Upper, Concatenate[slice.S, slice.R](name = "%s,%s"))
+      .expand((c: Cell[Position2D]) => c.position.append(c.content.value.toShortString))
+      .summarise(Along(Second), Count[Position3D, Position2D]())
+
+    val jcount = jhist
+      .summarise(Over(First), Sum[Position2D, Position1D]())
+      .toMap()
+
+    val joint = jhist
+      .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor, negate = true)
+        .andThenExpandWithValue((cell, _) => cell.position.append("joint")), jcount)
 
     (marginal ++ joint)
       .summarise(Over(First), Sum[Position2D, Position1D]())
-  }*/
+  }
 
   def gini[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
     ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
@@ -714,41 +745,85 @@ object Matrix {
   }
 
   /** Conversion from `RDD[Cell[Position1D]]` to a Spark `Matrix1D`. */
-  implicit def RDDP1DC2RDDM1D(data: RDD[Cell[Position1D]]): Matrix1D = new Matrix1D(data)
+  implicit def RDD2M1(data: RDD[Cell[Position1D]]): Matrix1D = new Matrix1D(data)
   /** Conversion from `RDD[Cell[Position2D]]` to a Spark `Matrix2D`. */
-  implicit def RDDP2DC2RDDM2D(data: RDD[Cell[Position2D]]): Matrix2D = new Matrix2D(data)
+  implicit def RDD2M2(data: RDD[Cell[Position2D]]): Matrix2D = new Matrix2D(data)
   /** Conversion from `RDD[Cell[Position3D]]` to a Spark `Matrix3D`. */
-  implicit def RDDP3DC2RDDM3D(data: RDD[Cell[Position3D]]): Matrix3D = new Matrix3D(data)
+  implicit def RDD2M3(data: RDD[Cell[Position3D]]): Matrix3D = new Matrix3D(data)
   /** Conversion from `RDD[Cell[Position4D]]` to a Spark `Matrix4D`. */
-  implicit def RDDP4DC2RDDM4D(data: RDD[Cell[Position4D]]): Matrix4D = new Matrix4D(data)
+  implicit def RDD2M4(data: RDD[Cell[Position4D]]): Matrix4D = new Matrix4D(data)
   /** Conversion from `RDD[Cell[Position5D]]` to a Spark `Matrix5D`. */
-  implicit def RDDP5DC2RDDM5D(data: RDD[Cell[Position5D]]): Matrix5D = new Matrix5D(data)
+  implicit def RDD2M5(data: RDD[Cell[Position5D]]): Matrix5D = new Matrix5D(data)
+  /** Conversion from `RDD[Cell[Position6D]]` to a Spark `Matrix6D`. */
+  implicit def RDD2M6(data: RDD[Cell[Position6D]]): Matrix6D = new Matrix6D(data)
+  /** Conversion from `RDD[Cell[Position7D]]` to a Spark `Matrix7D`. */
+  implicit def RDD2M7(data: RDD[Cell[Position7D]]): Matrix7D = new Matrix7D(data)
+  /** Conversion from `RDD[Cell[Position8D]]` to a Spark `Matrix8D`. */
+  implicit def RDD2M8(data: RDD[Cell[Position8D]]): Matrix8D = new Matrix8D(data)
+  /** Conversion from `RDD[Cell[Position9D]]` to a Spark `Matrix9D`. */
+  implicit def RDD2M9(data: RDD[Cell[Position9D]]): Matrix9D = new Matrix9D(data)
 
   /** Conversion from `List[(Valueable, Content)]` to a Spark `Matrix1D`. */
-  implicit def LVCT2RDDM1D[V: Valueable](list: List[(V, Content)])(implicit sc: SparkContext): Matrix1D = {
+  implicit def LV1C2M1[V: Valueable](list: List[(V, Content)])(implicit sc: SparkContext): Matrix1D = {
     new Matrix1D(sc.parallelize(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a Spark `Matrix2D`. */
-  implicit def LVVCT2RDDM2D[V: Valueable, W: Valueable](list: List[(V, W, Content)])(
+  implicit def LV2C2M2[V: Valueable, W: Valueable](list: List[(V, W, Content)])(
     implicit sc: SparkContext): Matrix2D = {
     new Matrix2D(sc.parallelize(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix3D`. */
-  implicit def LVVVCT2RDDM3D[V: Valueable, W: Valueable, X: Valueable](
+  implicit def LV3C2M3[V: Valueable, W: Valueable, X: Valueable](
     list: List[(V, W, X, Content)])(implicit sc: SparkContext): Matrix3D = {
     new Matrix3D(sc.parallelize(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix4D`. */
-  implicit def LVVVVCT2RDDM4D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
+  implicit def LV4C2M4[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
     list: List[(V, W, X, Y, Content)])(implicit sc: SparkContext): Matrix4D = {
     new Matrix4D(sc.parallelize(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix5D`.
    */
-  implicit def LVVVVVCT2RDDM5D[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV5C2M5[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
     list: List[(V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix5D = {
     new Matrix5D(sc.parallelize(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
+  }
+  /**
+   * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
+   * Spark `Matrix6D`.
+   */
+  implicit def LV6C2M6[U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+    list: List[(U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix6D = {
+    new Matrix6D(sc.parallelize(list.map { case (u, v, w, x, y, z, c) => Cell(Position6D(u, v, w, x, y, z), c) }))
+  }
+  /**
+   * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
+   * Spark `Matrix7D`.
+   */
+  implicit def LV7C2M7[T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+    list: List[(T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix7D = {
+    new Matrix7D(sc.parallelize(list.map { case (t, u, v, w, x, y, z, c) => Cell(Position7D(t, u, v, w, x, y, z), c) }))
+  }
+  /**
+   * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
+   * Content)]` to a Spark `Matrix8D`.
+   */
+  implicit def LV8C2M8[S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+    list: List[(S, T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix8D = {
+    new Matrix8D(sc.parallelize(list.map {
+      case (s, t, u, v, w, x, y, z, c) => Cell(Position8D(s, t, u, v, w, x, y, z), c)
+    }))
+  }
+  /**
+   * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
+   * Valueable, Content)]` to a Spark `Matrix9D`.
+   */
+  implicit def LV9C2M9[R: Valueable, S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+    list: List[(R, S, T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix9D = {
+    new Matrix9D(sc.parallelize(list.map {
+      case (r, s, t, u, v, w, x, y, z, c) => Cell(Position9D(r, s, t, u, v, w, x, y, z), c)
+    }))
   }
 }
 
@@ -1060,8 +1135,8 @@ class Matrix3D(val data: RDD[Cell[Position3D]]) extends Matrix[Position3D] with 
    * @param third  Dimension used for the third coordinate.
    */
   def permute[D <: Dimension, F <: Dimension, G <: Dimension](first: D, second: F, third: G)(
-    implicit ev1: PosDimDep[Position3D, D], ev2: PosDimDep[Position3D, F], ev3: PosDimDep[Position3D, G], ne1: D =!= F,
-    ne2: D =!= G, ne3: F =!= G): U[Cell[Position3D]] = {
+    implicit ev1: PosDimDep[Position3D, D], ev2: PosDimDep[Position3D, F], ev3: PosDimDep[Position3D, G],
+    ev4: Distinct3[D, F, G]): U[Cell[Position3D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third)), c) }
   }
 
@@ -1137,8 +1212,7 @@ class Matrix4D(val data: RDD[Cell[Position4D]]) extends Matrix[Position4D] with 
    */
   def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension](first: D, second: F, third: G,
     fourth: H)(implicit ev1: PosDimDep[Position4D, D], ev2: PosDimDep[Position4D, F], ev3: PosDimDep[Position4D, G],
-      ev4: PosDimDep[Position4D, H], ne1: D =!= F, ne2: D =!= G, ne3: D =!= H, ne4: F =!= G, ne5: F =!= H,
-      ne6: G =!= H): U[Cell[Position4D]] = {
+      ev4: PosDimDep[Position4D, H], ev5: Distinct4[D, F, G, H]): U[Cell[Position4D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth)), c) }
   }
 
@@ -1201,7 +1275,8 @@ class Matrix4D(val data: RDD[Cell[Position4D]]) extends Matrix[Position4D] with 
  *
  * @param data `RDD[Cell[Position5D]]`.
  */
-class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D] {
+class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D]
+  with ExpandableMatrix[Position5D] {
   def domain(): U[Position5D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
@@ -1223,9 +1298,8 @@ class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with 
    */
   def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension](first: D, second: F,
     third: G, fourth: H, fifth: I)(implicit ev1: PosDimDep[Position5D, D], ev2: PosDimDep[Position5D, F],
-      ev3: PosDimDep[Position5D, G], ev4: PosDimDep[Position5D, H], ev5: PosDimDep[Position5D, I], ne1: D =!= F,
-      ne2: D =!= G, ne3: D =!= H, ne4: D =!= I, ne5: F =!= G, ne6: F =!= H, ne7: F =!= I, ne8: G =!= H, ne9: G =!= I,
-      ne10: H =!= I): U[Cell[Position5D]] = {
+      ev3: PosDimDep[Position5D, G], ev4: PosDimDep[Position5D, H], ev5: PosDimDep[Position5D, I],
+      ev6: Distinct5[D, F, G, H, I]): U[Cell[Position5D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth)), c) }
   }
 
@@ -1280,6 +1354,449 @@ class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with 
       .map {
         case (_, ((c, i, j, k, l), m)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator + c.content.value.toShortString
+      }
+      .saveAsTextFile(file)
+
+    data
+  }
+}
+
+/**
+ * Rich wrapper around a `RDD[Cell[Position6D]]`.
+ *
+ * @param data `RDD[Cell[Position6D]]`.
+ */
+class Matrix6D(val data: RDD[Cell[Position6D]]) extends Matrix[Position6D] with ReduceableMatrix[Position6D]
+  with ExpandableMatrix[Position6D] {
+  def domain(): U[Position6D] = {
+    names(Over(First))
+      .map { case (Position1D(c), i) => c }
+      .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Third)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Fourth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Fifth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Sixth)).map { case (Position1D(c), i) => c })
+      .map { case (((((c1, c2), c3), c4), c5), c6) => Position6D(c1, c2, c3, c4, c5, c6) }
+  }
+
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param first  Dimension used for the first coordinate.
+   * @param second Dimension used for the second coordinate.
+   * @param third  Dimension used for the third coordinate.
+   * @param fourth Dimension used for the fourth coordinate.
+   * @param fifth  Dimension used for the fifth coordinate.
+   * @param sixth  Dimension used for the sixth coordinate.
+   */
+  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension](first: D,
+    second: F, third: G, fourth: H, fifth: I, sixth: J)(implicit ev1: PosDimDep[Position6D, D],
+      ev2: PosDimDep[Position6D, F], ev3: PosDimDep[Position6D, G], ev4: PosDimDep[Position6D, H],
+      ev5: PosDimDep[Position6D, I], ev6: PosDimDep[Position6D, J],
+      ev7: Distinct6[D, F, G, H, I, J]): U[Cell[Position6D]] = {
+    data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth, sixth)), c) }
+  }
+
+  /**
+   * Persist a `Matrix6D` as sparse matrix file (index, index, index, index, index, index, value).
+   *
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `RDD[Cell[Position6D]]`; that is it returns `data`.
+   */
+  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position6D]] = {
+    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
+      names(Over(Fifth)), names(Over(Sixth)), dictionary, separator)
+  }
+
+  /**
+   * Persist a `Matrix6D` as sparse matrix file (index, index, index, index, index, index, value).
+   *
+   * @param file       File to write to.
+   * @param namesI     The names to use for the first dimension (according to their ordering).
+   * @param namesJ     The names to use for the second dimension (according to their ordering).
+   * @param namesK     The names to use for the third dimension (according to their ordering).
+   * @param namesL     The names to use for the fourth dimension (according to their ordering).
+   * @param namesM     The names to use for the fifth dimension (according to their ordering).
+   * @param namesN     The names to use for the sixth dimension (according to their ordering).
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `RDD[Cell[Position6D]]`; that is it returns `data`.
+   *
+   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
+   */
+  def saveAsIVWithNames(file: String, namesI: U[(Position1D, Long)], namesJ: U[(Position1D, Long)],
+    namesK: U[(Position1D, Long)], namesL: U[(Position1D, Long)], namesM: U[(Position1D, Long)],
+      namesN: U[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d",
+      separator: String = "|"): U[Cell[Position6D]] = {
+    data
+      .keyBy { case c => Position1D(c.position(First)) }
+      .join(saveDictionary(namesI, file, dictionary, separator, First))
+      .values
+      .keyBy { case (c, i) => Position1D(c.position(Second)) }
+      .join(saveDictionary(namesJ, file, dictionary, separator, Second))
+      .map { case (_, ((c, i), j)) => (c, i, j) }
+      .keyBy { case (c, pi, pj) => Position1D(c.position(Third)) }
+      .join(saveDictionary(namesK, file, dictionary, separator, Third))
+      .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
+      .keyBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
+      .join(saveDictionary(namesL, file, dictionary, separator, Fourth))
+      .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
+      .keyBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
+      .join(saveDictionary(namesM, file, dictionary, separator, Fifth))
+      .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
+      .keyBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
+      .join(saveDictionary(namesN, file, dictionary, separator, Sixth))
+      .map {
+        case (_, ((c, i, j, k, l, m), n)) =>
+          i + separator + j + separator + k + separator + l + separator + m + separator +
+          n + separator + c.content.value.toShortString
+      }
+      .saveAsTextFile(file)
+
+    data
+  }
+}
+
+/**
+ * Rich wrapper around a `RDD[Cell[Position7D]]`.
+ *
+ * @param data `RDD[Cell[Position7D]]`.
+ */
+class Matrix7D(val data: RDD[Cell[Position7D]]) extends Matrix[Position7D] with ReduceableMatrix[Position7D]
+  with ExpandableMatrix[Position7D] {
+  def domain(): U[Position7D] = {
+    names(Over(First))
+      .map { case (Position1D(c), i) => c }
+      .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Third)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Fourth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Fifth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Sixth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Seventh)).map { case (Position1D(c), i) => c })
+      .map { case ((((((c1, c2), c3), c4), c5), c6), c7) => Position7D(c1, c2, c3, c4, c5, c6, c7) }
+  }
+
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param first   Dimension used for the first coordinate.
+   * @param second  Dimension used for the second coordinate.
+   * @param third   Dimension used for the third coordinate.
+   * @param fourth  Dimension used for the fourth coordinate.
+   * @param fifth   Dimension used for the fifth coordinate.
+   * @param sixth   Dimension used for the sixth coordinate.
+   * @param seventh Dimension used for the seventh coordinate.
+   */
+  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension](
+    first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K)(implicit ev1: PosDimDep[Position7D, D],
+      ev2: PosDimDep[Position7D, F], ev3: PosDimDep[Position7D, G], ev4: PosDimDep[Position7D, H],
+      ev5: PosDimDep[Position7D, I], ev6: PosDimDep[Position7D, J], ev7: PosDimDep[Position7D, K],
+      ev8: Distinct7[D, F, G, H, I, J, K]): U[Cell[Position7D]] = {
+    data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth, sixth, seventh)), c) }
+  }
+
+  /**
+   * Persist a `Matrix7D` as sparse matrix file (index, index, index, index, index, index, index, value).
+   *
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `RDD[Cell[Position7D]]`; that is it returns `data`.
+   */
+  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position7D]] = {
+    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
+      names(Over(Fifth)), names(Over(Sixth)), names(Over(Seventh)), dictionary, separator)
+  }
+
+  /**
+   * Persist a `Matrix7D` as sparse matrix file (index, index, index, index, index, index, index, value).
+   *
+   * @param file       File to write to.
+   * @param namesI     The names to use for the first dimension (according to their ordering).
+   * @param namesJ     The names to use for the second dimension (according to their ordering).
+   * @param namesK     The names to use for the third dimension (according to their ordering).
+   * @param namesL     The names to use for the fourth dimension (according to their ordering).
+   * @param namesM     The names to use for the fifth dimension (according to their ordering).
+   * @param namesN     The names to use for the sixth dimension (according to their ordering).
+   * @param namesO     The names to use for the seventh dimension (according to their ordering).
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `RDD[Cell[Position7D]]`; that is it returns `data`.
+   *
+   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
+   */
+  def saveAsIVWithNames(file: String, namesI: U[(Position1D, Long)], namesJ: U[(Position1D, Long)],
+    namesK: U[(Position1D, Long)], namesL: U[(Position1D, Long)], namesM: U[(Position1D, Long)],
+      namesN: U[(Position1D, Long)], namesO: U[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d",
+      separator: String = "|"): U[Cell[Position7D]] = {
+    data
+      .keyBy { case c => Position1D(c.position(First)) }
+      .join(saveDictionary(namesI, file, dictionary, separator, First))
+      .values
+      .keyBy { case (c, i) => Position1D(c.position(Second)) }
+      .join(saveDictionary(namesJ, file, dictionary, separator, Second))
+      .map { case (_, ((c, i), j)) => (c, i, j) }
+      .keyBy { case (c, pi, pj) => Position1D(c.position(Third)) }
+      .join(saveDictionary(namesK, file, dictionary, separator, Third))
+      .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
+      .keyBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
+      .join(saveDictionary(namesL, file, dictionary, separator, Fourth))
+      .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
+      .keyBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
+      .join(saveDictionary(namesM, file, dictionary, separator, Fifth))
+      .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
+      .keyBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
+      .join(saveDictionary(namesN, file, dictionary, separator, Sixth))
+      .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
+      .keyBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
+      .join(saveDictionary(namesO, file, dictionary, separator, Seventh))
+      .map {
+        case (_, ((c, i, j, k, l, m, n), o)) =>
+          i + separator + j + separator + k + separator + l + separator + m + separator +
+          n + separator + o + separator + c.content.value.toShortString
+      }
+      .saveAsTextFile(file)
+
+    data
+  }
+}
+
+/**
+ * Rich wrapper around a `RDD[Cell[Position8D]]`.
+ *
+ * @param data `RDD[Cell[Position8D]]`.
+ */
+class Matrix8D(val data: RDD[Cell[Position8D]]) extends Matrix[Position8D] with ReduceableMatrix[Position8D]
+  with ExpandableMatrix[Position8D] {
+  def domain(): U[Position8D] = {
+    names(Over(First))
+      .map { case (Position1D(c), i) => c }
+      .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Third)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Fourth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Fifth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Sixth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Seventh)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Eighth)).map { case (Position1D(c), i) => c })
+      .map { case (((((((c1, c2), c3), c4), c5), c6), c7), c8) => Position8D(c1, c2, c3, c4, c5, c6, c7, c8) }
+  }
+
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param first   Dimension used for the first coordinate.
+   * @param second  Dimension used for the second coordinate.
+   * @param third   Dimension used for the third coordinate.
+   * @param fourth  Dimension used for the fourth coordinate.
+   * @param fifth   Dimension used for the fifth coordinate.
+   * @param sixth   Dimension used for the sixth coordinate.
+   * @param seventh Dimension used for the seventh coordinate.
+   * @param eighth  Dimension used for the eighth coordinate.
+   */
+  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension, L <: Dimension](
+    first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K, eighth: L)(
+    implicit ev1: PosDimDep[Position8D, D], ev2: PosDimDep[Position8D, F], ev3: PosDimDep[Position8D, G],
+      ev4: PosDimDep[Position8D, H], ev5: PosDimDep[Position8D, I], ev6: PosDimDep[Position8D, J],
+      ev7: PosDimDep[Position8D, K], ev8: PosDimDep[Position8D, L],
+      ev9: Distinct8[D, F, G, H, I, J, K, L]): U[Cell[Position8D]] = {
+    data.map {
+      case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth, sixth, seventh, eighth)), c)
+    }
+  }
+
+  /**
+   * Persist a `Matrix8D` as sparse matrix file (index, index, index, index, index, index, index, index, value).
+   *
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `RDD[Cell[Position8D]]`; that is it returns `data`.
+   */
+  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position8D]] = {
+    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
+      names(Over(Fifth)), names(Over(Sixth)), names(Over(Seventh)), names(Over(Eighth)), dictionary, separator)
+  }
+
+  /**
+   * Persist a `Matrix8D` as sparse matrix file (index, index, index, index, index, index, index, index, value).
+   *
+   * @param file       File to write to.
+   * @param namesI     The names to use for the first dimension (according to their ordering).
+   * @param namesJ     The names to use for the second dimension (according to their ordering).
+   * @param namesK     The names to use for the third dimension (according to their ordering).
+   * @param namesL     The names to use for the fourth dimension (according to their ordering).
+   * @param namesM     The names to use for the fifth dimension (according to their ordering).
+   * @param namesN     The names to use for the sixth dimension (according to their ordering).
+   * @param namesO     The names to use for the seventh dimension (according to their ordering).
+   * @param namesP     The names to use for the eighth dimension (according to their ordering).
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `RDD[Cell[Position8D]]`; that is it returns `data`.
+   *
+   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
+   */
+  def saveAsIVWithNames(file: String, namesI: U[(Position1D, Long)], namesJ: U[(Position1D, Long)],
+    namesK: U[(Position1D, Long)], namesL: U[(Position1D, Long)], namesM: U[(Position1D, Long)],
+      namesN: U[(Position1D, Long)], namesO: U[(Position1D, Long)], namesP: U[(Position1D, Long)],
+      dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position8D]] = {
+    data
+      .keyBy { case c => Position1D(c.position(First)) }
+      .join(saveDictionary(namesI, file, dictionary, separator, First))
+      .values
+      .keyBy { case (c, i) => Position1D(c.position(Second)) }
+      .join(saveDictionary(namesJ, file, dictionary, separator, Second))
+      .map { case (_, ((c, i), j)) => (c, i, j) }
+      .keyBy { case (c, pi, pj) => Position1D(c.position(Third)) }
+      .join(saveDictionary(namesK, file, dictionary, separator, Third))
+      .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
+      .keyBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
+      .join(saveDictionary(namesL, file, dictionary, separator, Fourth))
+      .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
+      .keyBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
+      .join(saveDictionary(namesM, file, dictionary, separator, Fifth))
+      .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
+      .keyBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
+      .join(saveDictionary(namesN, file, dictionary, separator, Sixth))
+      .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
+      .keyBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
+      .join(saveDictionary(namesO, file, dictionary, separator, Seventh))
+      .map { case (_, ((c, i, j, k, l, m, n), o)) => (c, i, j, k, l, m, n, o) }
+      .keyBy { case (c, i, j, k, l, m, n, o) => Position1D(c.position(Eighth)) }
+      .join(saveDictionary(namesP, file, dictionary, separator, Eighth))
+      .map {
+        case (_, ((c, i, j, k, l, m, n, o), p)) =>
+          i + separator + j + separator + k + separator + l + separator + m + separator +
+          n + separator + o + separator + p + separator + c.content.value.toShortString
+      }
+      .saveAsTextFile(file)
+
+    data
+  }
+}
+
+/**
+ * Rich wrapper around a `RDD[Cell[Position9D]]`.
+ *
+ * @param data `RDD[Cell[Position9D]]`.
+ */
+class Matrix9D(val data: RDD[Cell[Position9D]]) extends Matrix[Position9D] with ReduceableMatrix[Position9D] {
+  def domain(): U[Position9D] = {
+    names(Over(First))
+      .map { case (Position1D(c), i) => c }
+      .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Third)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Fourth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Fifth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Sixth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Seventh)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Eighth)).map { case (Position1D(c), i) => c })
+      .cartesian(names(Over(Ninth)).map { case (Position1D(c), i) => c })
+      .map { case ((((((((c1, c2), c3), c4), c5), c6), c7), c8), c9) => Position9D(c1, c2, c3, c4, c5, c6, c7, c8, c9) }
+  }
+
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param first   Dimension used for the first coordinate.
+   * @param second  Dimension used for the second coordinate.
+   * @param third   Dimension used for the third coordinate.
+   * @param fourth  Dimension used for the fourth coordinate.
+   * @param fifth   Dimension used for the fifth coordinate.
+   * @param sixth   Dimension used for the sixth coordinate.
+   * @param seventh Dimension used for the seventh coordinate.
+   * @param eighth  Dimension used for the eighth coordinate.
+   * @param ninth   Dimension used for the ninth coordinate.
+   */
+  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension, L <: Dimension, M <: Dimension](
+    first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K, eighth: L, ninth: M)(
+    implicit ev1: PosDimDep[Position9D, D], ev2: PosDimDep[Position9D, F], ev3: PosDimDep[Position9D, G],
+      ev4: PosDimDep[Position9D, H], ev5: PosDimDep[Position9D, I], ev6: PosDimDep[Position9D, J],
+      ev7: PosDimDep[Position9D, K], ev8: PosDimDep[Position9D, L], ev9: PosDimDep[Position9D, M],
+      ev10: Distinct9[D, F, G, H, I, J, K, L, M]): U[Cell[Position9D]] = {
+    data.map {
+      case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)), c)
+    }
+  }
+
+  /**
+   * Persist a `Matrix9D` as sparse matrix file (index, index, index, index, index, index, index, index, index, value).
+   *
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `RDD[Cell[Position9D]]`; that is it returns `data`.
+   */
+  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position9D]] = {
+    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
+      names(Over(Fifth)), names(Over(Sixth)), names(Over(Seventh)), names(Over(Eighth)), names(Over(Ninth)),
+      dictionary, separator)
+  }
+
+  /**
+   * Persist a `Matrix9D` as sparse matrix file (index, index, index, index, index, index, index, index, index, value).
+   *
+   * @param file       File to write to.
+   * @param namesI     The names to use for the first dimension (according to their ordering).
+   * @param namesJ     The names to use for the second dimension (according to their ordering).
+   * @param namesK     The names to use for the third dimension (according to their ordering).
+   * @param namesL     The names to use for the fourth dimension (according to their ordering).
+   * @param namesM     The names to use for the fifth dimension (according to their ordering).
+   * @param namesN     The names to use for the sixth dimension (according to their ordering).
+   * @param namesO     The names to use for the seventh dimension (according to their ordering).
+   * @param namesP     The names to use for the eighth dimension (according to their ordering).
+   * @param namesQ     The names to use for the ninth dimension (according to their ordering).
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `RDD[Cell[Position9D]]`; that is it returns `data`.
+   *
+   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
+   */
+  def saveAsIVWithNames(file: String, namesI: U[(Position1D, Long)], namesJ: U[(Position1D, Long)],
+    namesK: U[(Position1D, Long)], namesL: U[(Position1D, Long)], namesM: U[(Position1D, Long)],
+      namesN: U[(Position1D, Long)], namesO: U[(Position1D, Long)], namesP: U[(Position1D, Long)],
+      namesQ: U[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d",
+      separator: String = "|"): U[Cell[Position9D]] = {
+    data
+      .keyBy { case c => Position1D(c.position(First)) }
+      .join(saveDictionary(namesI, file, dictionary, separator, First))
+      .values
+      .keyBy { case (c, i) => Position1D(c.position(Second)) }
+      .join(saveDictionary(namesJ, file, dictionary, separator, Second))
+      .map { case (_, ((c, i), j)) => (c, i, j) }
+      .keyBy { case (c, pi, pj) => Position1D(c.position(Third)) }
+      .join(saveDictionary(namesK, file, dictionary, separator, Third))
+      .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
+      .keyBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
+      .join(saveDictionary(namesL, file, dictionary, separator, Fourth))
+      .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
+      .keyBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
+      .join(saveDictionary(namesM, file, dictionary, separator, Fifth))
+      .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
+      .keyBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
+      .join(saveDictionary(namesN, file, dictionary, separator, Sixth))
+      .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
+      .keyBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
+      .join(saveDictionary(namesO, file, dictionary, separator, Seventh))
+      .map { case (_, ((c, i, j, k, l, m, n), o)) => (c, i, j, k, l, m, n, o) }
+      .keyBy { case (c, i, j, k, l, m, n, o) => Position1D(c.position(Eighth)) }
+      .join(saveDictionary(namesP, file, dictionary, separator, Eighth))
+      .map { case (_, ((c, i, j, k, l, m, n, o), p)) => (c, i, j, k, l, m, n, o, p) }
+      .keyBy { case (c, i, j, k, l, m, n, o, p) => Position1D(c.position(Ninth)) }
+      .join(saveDictionary(namesQ, file, dictionary, separator, Ninth))
+      .map {
+        case (_, ((c, i, j, k, l, m, n, o, p), q)) =>
+          i + separator + j + separator + k + separator + l + separator + m + separator +
+          n + separator + o + separator + p + separator + q + separator + c.content.value.toShortString
       }
       .saveAsTextFile(file)
 

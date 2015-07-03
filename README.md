@@ -23,7 +23,7 @@ Grimlock has default implementations for many of the above tasks. It also has a 
 
 * Supports wide variety of variable types;
 * Is easily extensible;
-* Can operate in multiple dimensions (currently up to 5);
+* Can operate in multiple dimensions (currently up to 9);
 * Supports hetrogeneous data;
 * Can be used in the Scalding/Spark REPL;
 * Supports basic as well as structured data types.
@@ -33,7 +33,7 @@ Concepts
 
 ### Data Structures
 
-The basic data structure in Grimlock is a N-dimensional sparse __Matrix__ (N=1..5). Each cell in matrix consists of a __Position__ and __Content__ tuple.
+The basic data structure in Grimlock is a N-dimensional sparse __Matrix__ (N=1..9). Each cell in matrix consists of a __Position__ and __Content__ tuple.
 
 ```
          Matrix
@@ -233,7 +233,7 @@ Position2D(StringValue(iid:0444510),StringValue(fid:D))
 Now for something a little more intersting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
 
 ```
-scala> val counts = data.summarise(Over(First), Count())
+scala> val counts = data.summarise(Over(First), Count[Position2D, Position1D]())
 
 scala> counts.dump
 Cell(Position1D(StringValue(iid:0064402)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
@@ -253,7 +253,7 @@ Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),D
 Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
 ```
 
-For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Event.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/MutualInformation.scala) or [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DerivedData.scala).
+For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Event.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Ensemble.scala, [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/MutualInformation.scala) or [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DerivedData.scala).
 
 Usage - Spark
 -----
@@ -359,7 +359,7 @@ Position2D(StringValue(iid:0444510),StringValue(fid:D))
 Now for something a little more intersting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
 
 ```
-scala> val counts = data.summarise(Over(First), Count())
+scala> val counts = data.summarise(Over(First), Count[Position2D, Position1D]())
 
 scala> counts.foreach(println)
 Cell(Position1D(StringValue(iid:0064402)),Content(DiscreteSchema[LongCodex](),LongValue(3)))
@@ -379,7 +379,7 @@ Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),D
 Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
 ```
 
-For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Event.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/MutualInformation.scala) or [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DerivedData.scala).
+For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Event.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Ensemble.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/MutualInformation.scala) or [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DerivedData.scala).
 
 Documentation
 -------------
