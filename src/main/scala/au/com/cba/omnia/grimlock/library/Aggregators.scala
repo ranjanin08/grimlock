@@ -187,8 +187,8 @@ case class Kurtosis[P <: Position, S <: Position with ExpandablePosition](strict
 }
 
 /** Base trait for aggregator that return a `Double` value. */
-private [aggregate] trait DoubleAggregator[P <: Position, S <: Position with ExpandablePosition]
-  extends StrictAggregator[P ,S] { self: Aggregator[P, S, S] =>
+private[aggregate] trait DoubleAggregator[P <: Position, S <: Position with ExpandablePosition]
+  extends StrictAggregator[P, S] { self: Aggregator[P, S, S] =>
   /** Type of the state being aggregated. */
   type T = Double
 

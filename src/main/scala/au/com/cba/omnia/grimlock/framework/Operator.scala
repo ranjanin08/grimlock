@@ -188,7 +188,8 @@ object Operable {
   implicit def CSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], Cell[S], R) => Cell[R#M], S, R, R#M] = C2O[S, R, R#M]
 
   /** Converts a `(Cell[S], Cell[S], R) => Cell[Q]` to a `Operator[S, R, Q]`. */
-  implicit def CSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] = C2O[S, R, Q]
+  implicit def CSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+    implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] = C2O[S, R, Q]
 
   implicit def C2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] = {
     new Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] {
@@ -204,7 +205,8 @@ object Operable {
   implicit def LCSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], Cell[S], R) => List[Cell[R#M]], S, R, R#M] = LC2O[S, R, R#M]
 
   /** Converts a `(Cell[S], Cell[S], R) => List[Cell[Q]]` to a `Operator[S, R, Q]`. */
-  implicit def LCSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] = LC2O[S, R, Q]
+  implicit def LCSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+    implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] = LC2O[S, R, Q]
 
   private def LC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] = {
     new Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] {
@@ -220,7 +222,8 @@ object Operable {
   implicit def CCSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], Cell[S], R) => Collection[Cell[R#M]], S, R, R#M] = CC2O[S, R, R#M]
 
   /** Converts a `(Cell[S], Cell[S], R) => Collection[Cell[Q]]` to a `Operator[S, R, Q]`. */
-  implicit def CCSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] = CC2O[S, R, Q]
+  implicit def CCSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+    implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] = CC2O[S, R, Q]
 
   private def CC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] = {
     new Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] {

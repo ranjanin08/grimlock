@@ -335,7 +335,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W])(
     implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W],
-      ev3: ClassTag[slice.S]): U[Cell[Q]] = summariseWithValue(slice, aggregators, value, 108)
+    ev3: ClassTag[slice.S]): U[Cell[Q]] = summariseWithValue(slice, aggregators, value, 108)
 
   def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W],
     reducers: Int)(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W],
@@ -456,7 +456,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   private def pairwiseTuples[D <: Dimension](slice: Slice[P, D], comparer: Comparer)(lnames: U[(slice.S, Long)],
     ldata: U[Cell[P]], rnames: U[(slice.S, Long)], rdata: U[Cell[P]])(implicit ev1: PosDimDep[P, D],
-    ev2: ClassTag[slice.S]): U[(Cell[slice.S], Cell[slice.S], slice.R)] = {
+      ev2: ClassTag[slice.S]): U[(Cell[slice.S], Cell[slice.S], slice.R)] = {
     lnames
       .cross(rnames)
       .collect { case ((l, _), (r, _)) if comparer.keep(l, r) => (l, r) }
@@ -539,6 +539,13 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   import au.com.cba.omnia.grimlock.library.transform._
   import au.com.cba.omnia.grimlock.library.window._
 
+  /**
+   * Compute correlations.
+   *
+   * @param slice Encapsulates the dimension for which to compute correlations.
+   *
+   * @return A `U[Cell[Position1D]]` with all pairwise correlations.
+   */
   def correlation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
     ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
@@ -566,6 +573,13 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
         .andThenPresent(_.value.asDouble)), denom)
   }
 
+  /**
+   * Compute mutual information.
+   *
+   * @param slice Encapsulates the dimension for which to compute mutual information.
+   *
+   * @return A `U[Cell[Position1D]]` with all pairwise mutual information.
+   */
   def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
     ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
@@ -614,37 +628,45 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
       .summarise(Over(First), Sum[Position2D, Position1D]())
   }
 
+  /**
+   * Compute Gini index.
+   *
+   * @param slice Encapsulates the dimension for which to compute the Gini index.
+   *
+   * @return A `U[Cell[Position1D]]` with all pairwise Gini indices.
+   */
   def gini[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
     ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
-    def isPositive(d: Double) = d > 0
+    def isPositive = (cell: Cell[Position2D]) => cell.content.value.asDouble.map(_ > 0).getOrElse(false)
+    def isNegative = (cell: Cell[Position2D]) => cell.content.value.asDouble.map(_ <= 0).getOrElse(false)
 
     val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First)
       .andThenPresent(_.value.asDouble)
 
     val pos = data
-      .transform(Compare[Position2D](isPositive(_)))
+      .transform(Compare[Position2D](isPositive))
       .summarise(slice, Sum[Position2D, slice.S]())
       .toMap(Over(First))
 
     val neg = data
-      .transform(Compare[Position2D](!isPositive(_)))
+      .transform(Compare[Position2D](isNegative))
       .summarise(slice, Sum[Position2D, slice.S]())
       .toMap(Over(First))
 
     val tpr = data
-      .transform(Compare[Position2D](isPositive(_)))
+      .transform(Compare[Position2D](isPositive))
       .slide(slice, CumulativeSum[slice.S, slice.R]())
       .transformWithValue(Fraction(extractor), pos)
-      .slide(Over(First), Sliding[Position1D, Position1D]((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
+      .slide(Over(First), BinOp[Position1D, Position1D]((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
 
     val fpr = data
-      .transform(Compare[Position2D](!isPositive(_)))
+      .transform(Compare[Position2D](isNegative))
       .slide(slice, CumulativeSum[slice.S, slice.R]())
       .transformWithValue(Fraction(extractor), neg)
-      .slide(Over(First), Sliding[Position1D, Position1D]((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
+      .slide(Over(First), BinOp[Position1D, Position1D]((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
 
     tpr
       .pairwiseBetween(Along(First), Diagonal, fpr, Times[Position1D, Position1D]())
@@ -1493,7 +1515,7 @@ class Matrix6D(val data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D]
   def saveAsIVWithNames(file: String, namesI: U[(Position1D, Long)], namesJ: U[(Position1D, Long)],
     namesK: U[(Position1D, Long)], namesL: U[(Position1D, Long)], namesM: U[(Position1D, Long)],
     namesN: U[(Position1D, Long)], dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-    implicit flow: FlowDef, mode: Mode): U[Cell[Position6D]] = {
+      implicit flow: FlowDef, mode: Mode): U[Cell[Position6D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(namesI, file, dictionary, separator, First))
@@ -1515,7 +1537,7 @@ class Matrix6D(val data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D]
       .map {
         case (_, ((c, i, j, k, l, m), n)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
-          n + separator + c.content.value.toShortString
+            n + separator + c.content.value.toShortString
       }
       .write(TypedSink(TextLine(file)))
 
@@ -1622,7 +1644,7 @@ class Matrix7D(val data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D]
       .map {
         case (_, ((c, i, j, k, l, m, n), o)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
-          n + separator + o + separator + c.content.value.toShortString
+            n + separator + o + separator + c.content.value.toShortString
       }
       .write(TypedSink(TextLine(file)))
 
@@ -1664,7 +1686,7 @@ class Matrix8D(val data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D]
    */
   def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension, L <: Dimension](
     first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K, eighth: L)(
-    implicit ev1: PosDimDep[Position8D, D], ev2: PosDimDep[Position8D, F], ev3: PosDimDep[Position8D, G],
+      implicit ev1: PosDimDep[Position8D, D], ev2: PosDimDep[Position8D, F], ev3: PosDimDep[Position8D, G],
       ev4: PosDimDep[Position8D, H], ev5: PosDimDep[Position8D, I], ev6: PosDimDep[Position8D, J],
       ev7: PosDimDep[Position8D, K], ev8: PosDimDep[Position8D, L],
       ev9: Distinct8[D, F, G, H, I, J, K, L]): U[Cell[Position8D]] = {
@@ -1739,7 +1761,7 @@ class Matrix8D(val data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D]
       .map {
         case (_, ((c, i, j, k, l, m, n, o), p)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
-          n + separator + o + separator + p + separator + c.content.value.toShortString
+            n + separator + o + separator + p + separator + c.content.value.toShortString
       }
       .write(TypedSink(TextLine(file)))
 
@@ -1782,7 +1804,7 @@ class Matrix9D(val data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D]
    */
   def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension, L <: Dimension, M <: Dimension](
     first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K, eighth: L, ninth: M)(
-    implicit ev1: PosDimDep[Position9D, D], ev2: PosDimDep[Position9D, F], ev3: PosDimDep[Position9D, G],
+      implicit ev1: PosDimDep[Position9D, D], ev2: PosDimDep[Position9D, F], ev3: PosDimDep[Position9D, G],
       ev4: PosDimDep[Position9D, H], ev5: PosDimDep[Position9D, I], ev6: PosDimDep[Position9D, J],
       ev7: PosDimDep[Position9D, K], ev8: PosDimDep[Position9D, L], ev9: PosDimDep[Position9D, M],
       ev10: Distinct9[D, F, G, H, I, J, K, L, M]): U[Cell[Position9D]] = {
@@ -1862,7 +1884,7 @@ class Matrix9D(val data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D]
       .map {
         case (_, ((c, i, j, k, l, m, n, o, p), q)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
-          n + separator + o + separator + p + separator + q + separator + c.content.value.toShortString
+            n + separator + o + separator + p + separator + q + separator + c.content.value.toShortString
       }
       .write(TypedSink(TextLine(file)))
 

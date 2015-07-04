@@ -246,14 +246,20 @@ Cell(Position1D(StringValue(iid:0375226)),Content(DiscreteSchema[LongCodex](),Lo
 Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
 Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
 
-scala> counts.summariseAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis")).dump
+scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = List(
+     | Mean().andThenExpand(_.position.append("mean")),
+     | StandardDeviation().andThenExpand(_.position.append("sd")),
+     | Skewness().andThenExpand(_.position.append("skewness")),
+     | Kurtosis().andThenExpand(_.position.append("kurtosis")))
+
+scala> counts.summarise(Along(First), aggregators).dump
 Cell(Position1D(StringValue(mean)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(4.0,DoubleCodex)))
 Cell(Position1D(StringValue(sd)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
 Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(0.348873899490999,DoubleCodex)))
 Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
 ```
 
-For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Event.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Ensemble.scala, [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/MutualInformation.scala) or [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DerivedData.scala).
+For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Demo.scala), [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DerivedData.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Ensemble.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Event.scala) or [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/MutualInformation.scala).
 
 Usage - Spark
 -----
@@ -372,14 +378,20 @@ Cell(Position1D(StringValue(iid:0375226)),Content(DiscreteSchema[LongCodex](),Lo
 Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema[LongCodex](),LongValue(5)))
 Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema[LongCodex](),LongValue(2)))
 
-scala> counts.summariseAndExpand(Along(First), Moments("mean", "sd", "skewness", "kurtosis")).foreach(println)
+scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = List(
+     | Mean().andThenExpand(_.position.append("mean")),
+     | StandardDeviation().andThenExpand(_.position.append("sd")),
+     | Skewness().andThenExpand(_.position.append("skewness")),
+     | Kurtosis().andThenExpand(_.position.append("kurtosis")))
+
+scala> counts.summarise(Along(First), aggregators).foreach(println)
 Cell(Position1D(StringValue(mean)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(4.0,DoubleCodex)))
 Cell(Position1D(StringValue(sd)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(1.5634719199411433,DoubleCodex)))
 Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(0.348873899490999,DoubleCodex)))
 Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema[DoubleCodex](),DoubleValue(-0.8057851239669427,DoubleCodex)))
 ```
 
-For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Demo.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Event.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Ensemble.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/MutualInformation.scala) or [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DerivedData.scala).
+For more examples see [Demo.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Demo.scala), [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DerivedData.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Ensemble.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Event.scala) or [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/MutualInformation.scala).
 
 Documentation
 -------------

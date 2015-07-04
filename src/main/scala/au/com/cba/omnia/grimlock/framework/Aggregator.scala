@@ -192,7 +192,8 @@ object Aggregatable {
   implicit def APSSM2A[P <: Position, S <: Position with ExpandablePosition, T <: Aggregator[P, S, S#M]]: Aggregatable[T, P, S, S#M] = A2A[P, S, S#M, T]
 
   /** Converts an `Aggregator[P, S, Q]` to a `List[Aggregator[P, S, Q]]`. */
-  implicit def APSQ2A[P <: Position, S <: Position with ExpandablePosition, Q <: Position, T <: Aggregator[P, S, Q]](implicit ev: PosExpDep[S, Q]): Aggregatable[T, P, S, Q] = A2A[P, S, Q, T]
+  implicit def APSQ2A[P <: Position, S <: Position with ExpandablePosition, Q <: Position, T <: Aggregator[P, S, Q]](
+    implicit ev: PosExpDep[S, Q]): Aggregatable[T, P, S, Q] = A2A[P, S, Q, T]
 
   private def A2A[P <: Position, S <: Position with ExpandablePosition, Q <: Position, T <: Aggregator[P, S, Q]]: Aggregatable[T, P, S, Q] = {
     new Aggregatable[T, P, S, Q] { def convert(t: T): List[Aggregator[P, S, Q]] = List(t) }
@@ -203,7 +204,7 @@ object Aggregatable {
 
   /** Converts a `List[Aggregator[P, S, Q]]` to a `List[Aggregator[P, S, Q]]`; that is, it's a pass through. */
   implicit def LAPSQ2A[P <: Position, S <: Position with ExpandablePosition, Q <: Position, T <: Aggregator[P, S, Q]](
-      implicit ev: PosExpDep[S, Q]): Aggregatable[List[T], P, S, Q] = LA2A[P, S, Q, T]
+    implicit ev: PosExpDep[S, Q]): Aggregatable[List[T], P, S, Q] = LA2A[P, S, Q, T]
 
   private def LA2A[P <: Position, S <: Position with ExpandablePosition, Q <: Position, T <: Aggregator[P, S, Q]]: Aggregatable[List[T], P, S, Q] = {
     new Aggregatable[List[T], P, S, Q] { def convert(t: List[T]): List[Aggregator[P, S, Q]] = t }
@@ -253,7 +254,7 @@ object AggregatableWithValue {
   implicit def LAPSSMW2AWV[P <: Position, S <: Position with ExpandablePosition, T <: AggregatorWithValue[P, S, S#M] { type V >: W }, W]: AggregatableWithValue[List[T], P, S, S#M, W] = LA2AWV[P, S, S#M, T, W]
 
   /**
-   * Converts a `List[AggregatorWithValue[P, S, Q] { type V >: W }]` to a 
+   * Converts a `List[AggregatorWithValue[P, S, Q] { type V >: W }]` to a
    * `List[AggregatorWithValue[P, S, Q] { type V >: W }]`; that is, it is a pass through.
    */
   implicit def LAPSQW2AWV[P <: Position, S <: Position with ExpandablePosition, Q <: Position, T <: AggregatorWithValue[P, S, Q] { type V >: W }, W](implicit ev: PosExpDep[S, Q]): AggregatableWithValue[List[T], P, S, Q, W] = LA2AWV[P, S, Q, T, W]

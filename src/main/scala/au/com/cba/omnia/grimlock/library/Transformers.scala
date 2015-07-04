@@ -33,7 +33,7 @@ private[transform] object Transform {
     }
   }
 
-  def presentDoubleWithValue[P <: Position, V](cell: Cell[P], ext: V, value: Extract[P, V, Double],
+  def presentDoubleWithValue[P <: Position, W](cell: Cell[P], ext: W, value: Extract[P, W, Double],
     transform: (Double, Double) => Double, inverse: Boolean = false): Collection[Cell[P]] = {
     (checkType(cell, Numerical), cell.content.value.asDouble, value.extract(cell, ext)) match {
       case (true, Some(l), Some(r)) => Collection(cell.position,
@@ -42,8 +42,8 @@ private[transform] object Transform {
     }
   }
 
-  def presentDoubleWithTwoValues[P <: Position, V](cell: Cell[P], ext: V, first: Extract[P, V, Double],
-    second: Extract[P, V, Double], transform: (Double, Double, Double) => Double): Collection[Cell[P]] = {
+  def presentDoubleWithTwoValues[P <: Position, W](cell: Cell[P], ext: W, first: Extract[P, W, Double],
+    second: Extract[P, W, Double], transform: (Double, Double, Double) => Double): Collection[Cell[P]] = {
     (checkType(cell, Numerical), cell.content.value.asDouble, first.extract(cell, ext),
       second.extract(cell, ext)) match {
         case (true, Some(v), Some(f), Some(s)) => Collection(cell.position,
@@ -460,11 +460,17 @@ trait CutRules {
   private def log2(x: Double): Double = math.log(x) / math.log(2)
 }
 
-// TODO: test, document and add appropriate constructors
-case class Compare[P <: Position](f: (Double) => Boolean) extends Transformer[P, P] {
+/**
+ * Check if a cell matches a predicate.
+ *
+ * @param comparer Function that checks if the cells matched a predicate.
+ *
+ * @note The returned cells contain boolean content.
+ */
+// TODO: Test this
+case class Compare[P <: Position](comparer: (Cell[P]) => Boolean) extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
-    Collection(cell.position,
-      Content(NominalSchema[Codex.BooleanCodex](), cell.content.value.asDouble.map(f).getOrElse(false)))
+    Collection(cell.position, Content(NominalSchema[Codex.BooleanCodex](), comparer(cell)))
   }
 }
 

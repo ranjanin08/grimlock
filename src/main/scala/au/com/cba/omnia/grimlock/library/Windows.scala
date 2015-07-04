@@ -165,7 +165,14 @@ case class ExponentialMovingAverage[S <: Position with ExpandablePosition, R <: 
   protected def compute(curr: Double, t: T): Double = alpha * curr + (1 - alpha) * t._1
 }
 
-// TODO: test, document and add appropriate constructors
+/**
+ * Compute cumulative sum.
+ *
+ * @param separator The separator to use for the appended coordinate.
+ *
+ * @note Non-numeric values are silently ignored.
+ */
+// TODO: Test this
 case class CumulativeSum[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
   separator: String = "|") extends Window[S, R, S#M] {
   type T = Option[Double]
@@ -193,9 +200,20 @@ case class CumulativeSum[S <: Position with ExpandablePosition, R <: Position wi
   }
 }
 
-// TODO: test, document and add appropriate constructors
-case class Sliding[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-  f: (Double, Double) => Double, name: String = "f(%1$s, %2$s)", separator: String = "|") extends Window[S, R, S#M] {
+/**
+ * Compute sliding binary operator on sequential numeric cells.
+ *
+ * @param binop     The binary operator to apply to two sequential numeric cells.
+ * @param name      The name of the appended (result) coordinate. Use `%[12]$``s` for the string representations of
+ *                  left (first) and right (second) coordinates.
+ * @param separator The separator to use for the appended coordinate.
+ *
+ * @note Non-numeric values are silently ignored.
+ */
+// TODO: Test this
+case class BinOp[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+  binop: (Double, Double) => Double, name: String = "f(%1$s, %2$s)",
+  separator: String = "|") extends Window[S, R, S#M] {
   type T = (Option[Double], String)
 
   def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[S#M]]) = {
@@ -214,7 +232,7 @@ case class Sliding[S <: Position with ExpandablePosition, R <: Position with Exp
       case ((Some(p), _), None) =>
         ((None, coord), Collection())
       case ((Some(p), c), Some(d)) =>
-        ((Some(d), coord), Collection(cell.position.append(name.format(c, coord)), Content(schema, f(p, d))))
+        ((Some(d), coord), Collection(cell.position.append(name.format(c, coord)), Content(schema, binop(p, d))))
     }
   }
 }
