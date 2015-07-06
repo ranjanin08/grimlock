@@ -51,11 +51,11 @@ then
     $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.BasicOperations $JAR local ../data
     $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
-      --class au.com.cba.omnia.grimlock.spark.examples.DataSciencePipelineWithFiltering $JAR local ../data
+      --class au.com.cba.omnia.grimlock.spark.examples.PipelineDataPreparation $JAR local ../data
     $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.Scoring $JAR local ../data
     $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
-      --class au.com.cba.omnia.grimlock.spark.examples.DataQualityAndAnalysis $JAR local ../data
+      --class au.com.cba.omnia.grimlock.spark.examples.DataAnalysis $JAR local ../data
     $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.LabelWeighting $JAR local ../data
     $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
