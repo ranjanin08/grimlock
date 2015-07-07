@@ -20,6 +20,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.squash._
+import au.com.cba.omnia.grimlock.library.transform._
 
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 
@@ -70,20 +71,39 @@ class Conditional(args: Args) extends Job(args) {
   // 3/ Expand matrix with gender.
   // 4/ Keep only the 'value' column of the second dimension (dropping hair/eye/gender
   //    columns as they are now extra dimensions).
-  // 5/ Aggregate out the row id.
-  val cube = data
+  // 5/ Squash the first dimension (row ids). As there is only one value for each
+  //    hair/eye/gender triplet, any squash function can be used.
+  val heg = data
     .expandWithValue(expander[Position2D], hair)
     .expandWithValue(expander[Position3D], eye)
     .expandWithValue(expander[Position4D], gender)
     .squash(Second, KeepSlice[Position5D, String]("value"))
-    .summarise(Along(First), Sum[Position4D, Position3D]())
+    .squash(First, PreservingMaxPosition[Position4D]())
 
-  cube
+  // Define an extractor for getting data out of the gender count map.
+  def extractor = ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
+    .andThenPresent(_.value.asDouble)
+
+  // Get the gender counts. Sum out hair and eye color.
+  val gcount = heg
     .summarise(Along(First), Sum[Position3D, Position2D]())
-    .save(s"./demo.${output}/cond.eye.out")
+    .summarise(Along(First), Sum[Position2D, Position1D]())
+    .toMap()
 
-  cube
+  // Get eye color conditional on gender.
+  // 1/ Sum out hair color.
+  // 2/ Divide each element by the gender's count to get conditional distribution.
+  heg
+    .summarise(Along(First), Sum[Position3D, Position2D]())
+    .transformWithValue(Fraction(extractor), gcount)
+    .save(s"./demo.${output}/eye.out")
+
+  // Get hair color conditional on gender.
+  // 1/ Sum out eye color.
+  // 2/ Divide each element by the gender's count to get conditional distribution.
+  heg
     .summarise(Along(Second), Sum[Position3D, Position2D]())
-    .save(s"./demo.${output}/cond.hair.out")
+    .transformWithValue(Fraction(extractor), gcount)
+    .save(s"./demo.${output}/hair.out")
 }
 

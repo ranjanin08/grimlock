@@ -51,6 +51,8 @@ then
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.BasicOperations --local --path ../data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
+      au.com.cba.omnia.grimlock.scalding.examples.Conditional --local --path ../data
+    export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.PipelineDataPreparation --local --path ../data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.Scoring --local --path ../data
@@ -95,11 +97,13 @@ then
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.BasicOperations --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-      au.com.cba.omnia.grimlock.scalding.examples.DataSciencePipelineWithFiltering --hdfs --path ./data
+      au.com.cba.omnia.grimlock.scalding.examples.Conditional --hdfs --path ./data
+    export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
+      au.com.cba.omnia.grimlock.scalding.examples.PipelineDataPreparation --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.Scoring --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
-      au.com.cba.omnia.grimlock.scalding.examples.DataQualityAndAnalysis --hdfs --path ./data
+      au.com.cba.omnia.grimlock.scalding.examples.DataAnalysis --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.LabelWeighting --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
