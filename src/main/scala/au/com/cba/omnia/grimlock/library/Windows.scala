@@ -237,77 +237,156 @@ case class BinOp[S <: Position with ExpandablePosition, R <: Position with Expan
   }
 }
 
+/**
+ * Compute sample quantiles.
+ *
+ * @param probs     List of probabilities; values must lie in [0 1].
+ * @param count     Function that extracts the count value statistics from the user provided value.
+ * @param min       Function that extracts the minimum value statistics from the user provided value.
+ * @param max       Function that extracts the maximum value statistics from the user provided value.
+ * @param quantiser Function that determines the quantile indices into the order statistics.
+ * @param name      Pattern for the name. Use `%1$``s` for the probability correpsponding to the quantile.
+ *
+ * @note Non-numeric result in `NaN` quantiles.
+ */
+// TODO: Test this
 case class Quantile[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W](
   probs: List[Double], count: Extract[S, W, Long], min: Extract[S, W, Double], max: Extract[S, W, Double],
-  quantise: Quantile.Quantiser, name: String = "%1$f%%") extends WindowWithValue[S, R, S#M] {
-  type T = (Option[Double], Long, List[(Long, Double, String)])
+  quantiser: Quantile.Quantiser, name: String = "%1$f%%") extends WindowWithValue[S, R, S#M] {
+  type T = (Double, Long, List[(Long, Double, String)])
   type V = W
 
   def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[S#M]]) = {
-    val n = count.extract(cell, ext).get
-    val s = probs
-      .zipWithIndex
+    val state = count
+      .extract(cell, ext)
       .map {
-        case (p, i) =>
-          val (j, g) = quantise(p, n)
+        case n => probs
+          .map {
+            case p =>
+              val (j, g) = quantiser(p, n)
 
-          (j, g, name.format(i + 1))
+              (j, g, name.format(p * 100))
+          }
       }
+      .getOrElse(List())
+    val curr = (state.isEmpty, cell.content.value.asDouble) match {
+      case (false, Some(c)) => c
+      case _ => Double.NaN
+    }
+    val col = Collection(List(boundary(cell, ext, min, name, 0, state),
+      boundary(cell, ext, max, name, 100, state)).flatten)
 
-    val col = Collection(List(
-      min.extract(cell, ext).map { case v => Cell[S#M](cell.position.append(name.format(0)),
-        Content(ContinuousSchema[Codex.DoubleCodex](), v)) }.toList,
-      max.extract(cell, ext).map { case v => Cell[S#M](cell.position.append(name.format(1)),
-        Content(ContinuousSchema[Codex.DoubleCodex](), v)) }.toList).flatten)
-
-    ((cell.content.value.asDouble, 0, s), col)
+    ((curr, 0, state), col)
   }
 
   def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[S#M]]) = {
-    val curr = cell.content.value.asDouble
-    val idx = t._3.map(_._1).indexOf(t._2)
-    val col = (idx != -1) match {
-      case true =>
-        val g = t._3(idx)._2
-        val n = t._3(idx)._3
-        val b = curr.flatMap {
-          case c => t._1.map {
-            case p => Cell[S#M](cell.position.append(n),
-              Content(ContinuousSchema[Codex.DoubleCodex](), (1 - g) * p + g * c))
-          }
-        }
+    val state = t._3
+    val curr = cell.content.value.asDouble.getOrElse(Double.NaN)
+    val col = Collection(state.find(_._1 == t._2) match {
+      case Some((_, g, n))  => List(Cell[S#M](cell.position.append(n),
+        Content(ContinuousSchema[Codex.DoubleCodex](), (1 - g) * t._1 + g * curr)))
+      case None => List()
+    })
 
-        Collection[Cell[S#M]](b.toList)
-      case false => Collection[Cell[S#M]]()
-    }
+    ((curr, t._2 + 1, state), col)
+  }
 
-    ((curr, t._2 + 1, t._3), col)
+  private def boundary(cell: Cell[S], ext: W, extractor: Extract[S, W, Double], name: String, value: Double,
+    state: List[(Long, Double, String)]): List[Cell[S#M]] = {
+    extractor
+      .extract(cell, ext)
+      .map {
+        case v => Cell[S#M](cell.position.append(name.format(value)),
+          Content(ContinuousSchema[Codex.DoubleCodex](), if (state.isEmpty) Double.NaN else v))
+      }
+      .toList
   }
 }
 
+/** Companion object to Quantile class. */
 object Quantile {
+  /** Type of quantiser function. */
   type Quantiser = (Double, Long) => (Long, Double)
 
+  /**
+   * Compute quantile indices and gamma coefficient according to R's Type 1 rule; inverse of empirical
+   * distribution function.
+   *
+   * @see https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+   */
   val Type1: Quantiser = (p: Double, n: Long) => {
     val (j, g) = TypeX(p, n, 0)
 
     (j, if (g == 0) 0 else 1)
   }
+
+  /**
+   * Compute quantile indices and gamma coefficient according to R's Type 2 rule; similar to type 1 but
+   * with averaging at discontinuities.
+   *
+   * @see https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+   */
   val Type2: Quantiser = (p: Double, n: Long) => {
     val (j, g) = TypeX(p, n, 0)
 
     (j, if (g == 0) 0.5 else 1)
   }
+
+  /**
+   * Compute quantile indices and gamma coefficient according to R's Type 3 rule; nearest even order statistic.
+   *
+   * @see https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+   */
   val Type3: Quantiser = (p: Double, n: Long) => {
     val (j, g) = TypeX(p, n, -0.5)
 
     (j, if (g == 0 && j % 2 == 0) 0 else 1)
   }
+
+  /**
+   * Compute quantile indices and gamma coefficient according to R's Type 4 rule; linear interpolation of
+   * the empirical cdf.
+   *
+   * @see https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+   */
   val Type4: Quantiser = (p: Double, n: Long) => { TypeX(p, n, 0) }
+
+  /**
+   * Compute quantile indices and gamma coefficient according to R's Type 5 rule; a piecewise linear function
+   * where the knots are the values midway through the steps of the empirical cdf.
+   *
+   * @see https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+   */
   val Type5: Quantiser = (p: Double, n: Long) => { TypeX(p, n, 0.5) }
+
+  /**
+   * Compute quantile indices and gamma coefficient according to R's Type 6 rule; p[k] = E[F(x[k])].
+   *
+   * @see https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+   */
   val Type6: Quantiser = (p: Double, n: Long) => { TypeX(p, n, p) }
+
+  /**
+   * Compute quantile indices and gamma coefficient according to R's Type 7 rule; p[k] = mode[F(x[k])].
+   *
+   * @see https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+   */
   val Type7: Quantiser = (p: Double, n: Long) => { TypeX(p, n, 1 - p) }
+
+  /**
+   * Compute quantile indices and gamma coefficient according to R's Type 8 rule; p[k] =~ median[F(x[k])]. The
+   * resulting quantile estimates are approximately median-unbiased regardless of the distribution of x.
+   *
+   * @see https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+   */
   val Type8: Quantiser = (p: Double, n: Long) => { TypeX(p, n, (p + 1) / 3) }
+
+  /**
+   * Compute quantile indices and gamma coefficient according to R's Type 9 rule; quantile estimates are
+   * approximately unbiased for the expected order statistics if x is normally distributed.
+   *
+   * @see https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+   */
   val Type9: Quantiser = (p: Double, n: Long) => { TypeX(p, n, (p / 4) + 3 / 8) }
 
   private val TypeX = (p: Double, n: Long, m: Double) => {
