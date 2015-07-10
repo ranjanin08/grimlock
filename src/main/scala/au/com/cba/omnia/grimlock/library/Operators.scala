@@ -23,16 +23,10 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
 /** Convenience trait for operators that apply to `Double` values. */
-trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]
-  extends Operator[S, R, R#M] {
-  /**
-   * Pattern for the new name of the pairwise coordinate. Use `%[12]$``s` for the string representations of the
-   * coordinate.
-   */
-  val name: String
-
-  /** Separator to use when writing positions to string. */
-  val separator: String
+trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
+  extends Operator[S, R, Q] {
+  /** Object to extract result position. */
+  val pos: OperatorLocate[S, R, Q]
 
   /** Indicator if pairwise operator `f()` should be called as `f(l, r)` or as `f(r, l)`. */
   val inverse: Boolean
@@ -44,13 +38,11 @@ trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with E
    * @param right The selected right cell to compute with.
    * @param rem   The remaining coordinates.
    */
-  def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[R#M]] = {
-    val coordinate = name.format(left.position.toShortString(separator), right.position.toShortString(separator))
-
-    (left.content.value.asDouble, right.content.value.asDouble) match {
-      case (Some(l), Some(r)) => Collection(rem.prepend(coordinate),
-        Content(ContinuousSchema[Codex.DoubleCodex](), if (inverse) compute(r, l) else compute(l, r)))
-      case _ => Collection[Cell[R#M]]()
+  def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
+    (pos.extract(left, reml, right, remr), left.content.value.asDouble, right.content.value.asDouble) match {
+      case (Some(pos), Some(l), Some(r)) => Collection[Cell[Q]](Cell(pos,
+        Content(ContinuousSchema[Codex.DoubleCodex](), if (inverse) compute(r, l) else compute(l, r))))
+      case _ => Collection[Cell[Q]]()
     }
   }
 
@@ -58,47 +50,46 @@ trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with E
 }
 
 /** Add two values. */
-case class Plus[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-  name: String = "(%1$s+%2$s)", separator: String = "|") extends DoubleOperator[S, R] {
+case class Plus[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  pos: OperatorLocate[S, R, Q]) extends DoubleOperator[S, R, Q] {
   val inverse: Boolean = false
   protected def compute(l: Double, r: Double) = l + r
 }
 
 /** Subtract two values. */
-case class Minus[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-  name: String = "(%1$s-%2$s)", separator: String = "|", inverse: Boolean = false) extends DoubleOperator[S, R] {
+case class Minus[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  pos: OperatorLocate[S, R, Q], inverse: Boolean = false) extends DoubleOperator[S, R, Q] {
   protected def compute(l: Double, r: Double) = l - r
 }
 
 /** Multiply two values. */
-case class Times[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-  name: String = "(%1$s*%2$s)", separator: String = "|") extends DoubleOperator[S, R] {
+case class Times[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  pos: OperatorLocate[S, R, Q]) extends DoubleOperator[S, R, Q] {
   val inverse: Boolean = false
   protected def compute(l: Double, r: Double) = l * r
 }
 
 /** Divide two values. */
-case class Divide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-  name: String = "(%1$s/%2$s)", separator: String = "|", inverse: Boolean = false) extends DoubleOperator[S, R] {
+case class Divide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  pos: OperatorLocate[S, R, Q], inverse: Boolean = false) extends DoubleOperator[S, R, Q] {
   protected def compute(l: Double, r: Double) = l / r
 }
 
 /**
  * Concatenate two cells.
  *
- * @param name      Pattern for the new name of the pairwise coordinate. Use `%[12]$``s` for the string representations
- *                  of the coordinate.
- * @param value     Pattern for the new (string) value of the pairwise contents. Use `%[12]$``s` for the string
- *                  representations of the content.
- * @param separator Separator to use when writing positions to string.
+ * @param pos   Object to extract result position.
+ * @param value Pattern for the new (string) value of the pairwise contents. Use `%[12]$``s` for the string
+ *              representations of the content.
  */
-case class Concatenate[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-  name: String = "(%1$s,%2$s)", value: String = "%1$s,%2$s", separator: String = "|") extends Operator[S, R, R#M] {
-  def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[R#M]] = {
-    val coordinate = name.format(left.position.toShortString(separator), right.position.toShortString(separator))
-    val content = value.format(left.content.value.toShortString, right.content.value.toShortString)
-
-    Collection(rem.prepend(coordinate), Content(NominalSchema[Codex.StringCodex](), content))
+case class Concatenate[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  pos: OperatorLocate[S, R, Q], value: String = "%1$s,%2$s") extends Operator[S, R, Q] {
+  def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
+    pos.extract(left, reml, right, remr) match {
+      case Some(pos) => Collection[Cell[Q]](Cell(pos, Content(NominalSchema[Codex.StringCodex](),
+        value.format(left.content.value.toShortString, right.content.value.toShortString))))
+      case None => Collection[Cell[Q]]()
+    }
   }
 }
 

@@ -371,7 +371,7 @@ class TestScalding11(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .transform(Binarise[Position2D](Second))
+    .transform(Binarise[Position2D](Binarise.rename(Second)))
     .saveAsCSV(Over(Second), "./tmp.scalding/trn3.out")
 }
 
@@ -582,7 +582,7 @@ class TestScalding19(args : Args) extends Job(args) {
 
   val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: W }] = List(
     Indicator().andThenRename(Transformer.rename(Second, "%1$s.ind")),
-    Binarise(Second),
+    Binarise(Binarise.rename(Second)),
     Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, "max.abs")
       .andThenPresent(_.value.asDouble)))
 
@@ -661,12 +661,17 @@ class TestScalding23(args : Args) extends Job(args) {
   val data = load2D(args("path") + "/somePairwise.txt")
 
   case class DiffSquared() extends Operator[Position1D, Position1D, Position2D] {
-    def compute(left: Cell[Position1D], right: Cell[Position1D], rem: Position1D): Collection[Cell[Position2D]] = {
+    def compute(left: Cell[Position1D], reml: Position1D, right: Cell[Position1D],
+      remr: Position1D): Collection[Cell[Position2D]] = {
       val xc = left.position.toShortString("")
       val yc = right.position.toShortString("")
 
-      Collection(rem.append("(" + xc + "-" + yc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
-        math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
+      (reml == remr) match {
+        case true => Collection(remr.append("(" + xc + "-" + yc + ")^2"),
+          Content(ContinuousSchema[Codex.DoubleCodex](),
+            math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
+        case false => Collection()
+      }
     }
   }
 
@@ -712,7 +717,7 @@ class TestScalding26(args: Args) extends Job(args) {
   val right = load2D(args("path") + "/algebraInputfile2.txt")
 
   left
-    .pairwiseBetween(Over(First), All, right, Times[Position1D, Position1D]())
+    .pairwiseBetween(Over(First), All, right, Times(StringLocate[Position1D, Position1D]("(%1$s*%2$s)")))
     .save("./tmp.scalding/alg.out")
 }
 

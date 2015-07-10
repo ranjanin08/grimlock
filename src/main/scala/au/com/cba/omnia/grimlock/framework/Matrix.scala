@@ -256,6 +256,173 @@ object Cell {
   }
 
   /**
+   * Parse a line into a `Option[Cell[Position4D]]`.
+   *
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param line      The line to parse.
+   */
+  def parse4D(separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex)(
+    line: String): Option[Cell[Position4D]] = {
+    line.trim.split(Pattern.quote(separator), 7) match {
+      case Array(a, b, c, d, t, e, v) =>
+        Schema.fromString(e, t).flatMap {
+          case s => (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
+            case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
+            case _ => None
+          }
+        }
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a line into a `Option[Cell[Position4D]]` with a dictionary.
+   *
+   * @param dict      The dictionary describing the features in the data.
+   * @param dim       The dimension on which to apply the dictionary.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param line      The line to parse.
+   */
+  def parse4DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String, first: Codex,
+    second: Codex, third: Codex, fourth: Codex)(line: String)(
+    implicit ev: PosDimDep[Position4D, D]): Option[Cell[Position4D]] = {
+    line.trim.split(Pattern.quote(separator), 5) match {
+      case Array(a, b, c, d, v) =>
+        val s = dim match {
+          case First => dict(a)
+          case Second => dict(b)
+          case Third => dict(c)
+          case Fourth => dict(d)
+        }
+
+        (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
+          case _ => None
+        }
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a line into a `Option[Cell[Position4D]]` with a schema.
+   *
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param line      The line to parse.
+   */
+  def parse4DWithSchema(schema: Schema, separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex)(
+    line: String): Option[Cell[Position4D]] = {
+    line.trim.split(Pattern.quote(separator), 5) match {
+      case Array(a, b, c, d, v) =>
+        (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
+          case _ => None
+        }
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a line into a `Option[Cell[Position5D]]`.
+   *
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   * @param line      The line to parse.
+   */
+  def parse5D(separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex, fifth: Codex)(
+    line: String): Option[Cell[Position5D]] = {
+    line.trim.split(Pattern.quote(separator), 8) match {
+      case Array(a, b, c, d, f, t, e, v) =>
+        Schema.fromString(e, t).flatMap {
+          case s => (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
+            fifth.decode(f)) match {
+            case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
+              Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
+            case _ => None
+          }
+        }
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a line into a `Option[Cell[Position5D]]` with a dictionary.
+   *
+   * @param dict      The dictionary describing the features in the data.
+   * @param dim       The dimension on which to apply the dictionary.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   * @param line      The line to parse.
+   */
+  def parse5DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String, first: Codex,
+    second: Codex, third: Codex, fourth: Codex, fifth: Codex)(line: String)(
+    implicit ev: PosDimDep[Position5D, D]): Option[Cell[Position5D]] = {
+    line.trim.split(Pattern.quote(separator), 6) match {
+      case Array(a, b, c, d, e, v) =>
+        val s = dim match {
+          case First => dict(a)
+          case Second => dict(b)
+          case Third => dict(c)
+          case Fourth => dict(d)
+          case Fifth => dict(e)
+        }
+
+        (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d), fifth.decode(e)) match {
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
+            Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
+          case _ => None
+        }
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a line into a `Option[Cell[Position5D]]` with a schema.
+   *
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   * @param line      The line to parse.
+   */
+  def parse5DWithSchema(schema: Schema, separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex,
+    fifth: Codex)(line: String): Option[Cell[Position5D]] = {
+    line.trim.split(Pattern.quote(separator), 6) match {
+      case Array(a, b, c, d, e, v) =>
+        (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
+          fifth.decode(e)) match {
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
+            Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
+          case _ => None
+        }
+      case _ => None
+    }
+  }
+
+  /**
    * Parse a line into a `List[Cell[Position2D]]` with column definitions.
    *
    * @param columns   `List[(String, Schema)]` describing each column in the table.
@@ -481,11 +648,12 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice     Encapsulates the dimension(s) to slice.
    * @param positions The position(s) within the dimension(s) to slice.
    * @param keep      Indicates if the `positions` should be kept or removed.
+   * @param reducers  The number of reducers/partitions to use/produce.
    *
    * @return A `U[Cell[P]]' of the remaining content.
    */
-  def slice[D <: Dimension, T](slice: Slice[P, D], positions: T, keep: Boolean)(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
+  def slice[D <: Dimension, T](slice: Slice[P, D], positions: T, keep: Boolean, reducers: Int)(
+    implicit ev1: PosDimDep[P, D], ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
 
   /**
    * Create window based derived data.

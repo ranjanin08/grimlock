@@ -393,7 +393,7 @@ object TestSpark11 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .transform(Binarise[Position2D](Second))
+      .transform(Binarise[Position2D](Binarise.rename(Second)))
       .saveAsCSV(Over(Second), "./tmp.spark/trn3.out")
   }
 }
@@ -620,7 +620,7 @@ object TestSpark19 {
 
     val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: W }] = List(
       Indicator().andThenRename(Transformer.rename(Second, "%1$s.ind")),
-      Binarise(Second),
+      Binarise(Binarise.rename(Second)),
       Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, "max.abs")
         .andThenPresent(_.value.asDouble)))
 
@@ -708,12 +708,17 @@ object TestSpark23 {
     val data = load2D(args(1) + "/somePairwise.txt")
 
     case class DiffSquared() extends Operator[Position1D, Position1D, Position2D] {
-      def compute(left: Cell[Position1D], right: Cell[Position1D], rem: Position1D): Collection[Cell[Position2D]] = {
+      def compute(left: Cell[Position1D], reml: Position1D, right: Cell[Position1D],
+        remr: Position1D): Collection[Cell[Position2D]] = {
         val xc = left.position.toShortString("")
         val yc = right.position.toShortString("")
 
-        Collection(rem.append("(" + xc + "-" + yc + ")^2"), Content(ContinuousSchema[Codex.DoubleCodex](),
-          math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
+        (reml == remr) match {
+          case true => Collection(remr.append("(" + xc + "-" + yc + ")^2"),
+            Content(ContinuousSchema[Codex.DoubleCodex](),
+              math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
+          case false => Collection()
+        }
       }
     }
 
@@ -766,7 +771,7 @@ object TestSpark26 {
     val right = load2D(args(1) + "/algebraInputfile2.txt")
 
     left
-      .pairwiseBetween(Over(First), All, right, Times[Position1D, Position1D]())
+      .pairwiseBetween(Over(First), All, right, Times(StringLocate[Position1D, Position1D]("(%1$s*%2$s)")))
       .save("./tmp.spark/alg.out")
   }
 }

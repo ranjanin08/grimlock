@@ -63,19 +63,31 @@ case class Indicator[P <: Position]() extends Transformer[P, P] {
 /**
  * Binarise categorical variables.
  *
- * @param dim  Dimension for which to update coordinate name.
- * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
- *             the coordinate, and the content.
+ * @param presenter Function that returns the updated position.
  *
  * @note Binarisation is only applied to categorical variables.
  */
-case class Binarise[P <: Position](dim: Dimension, name: String = "%1$s=%2$s") extends Transformer[P, P] {
+case class Binarise[P <: Position](presenter: (Cell[P]) => P) extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
     Transform.checkType(cell, Categorical) match {
-      case true => Collection(cell.position.update(dim, name.format(cell.position(dim).toShortString,
-        cell.content.value.toShortString)), Content(DiscreteSchema[Codex.LongCodex](), 1))
+      case true => Collection(presenter(cell), Content(DiscreteSchema[Codex.LongCodex](), 1))
       case false => Collection()
     }
+  }
+}
+
+/** Companion object to `Binarise` case class. */
+object Binarise {
+  /**
+   * Rename coordinate according a name pattern.
+   *
+   * @param dim  Dimension for which to update coordinate name.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
+   *             representations of the coordinate, and the content.
+   */
+  def rename[P <: Position](dim: Dimension, name: String = "%1$s=%2$s"): (Cell[P]) => P = {
+    (cell: Cell[P]) => cell.position.update(dim,
+      name.format(cell.position(dim).toShortString, cell.content.value.toShortString))
   }
 }
 

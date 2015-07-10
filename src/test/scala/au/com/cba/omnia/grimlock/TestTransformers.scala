@@ -65,17 +65,21 @@ class TestBinarise extends TestTransformers {
   val cell = Cell(Position2D("foo", "bar"), getStringContent("rules"))
 
   "A Binarise" should "present" in {
-    Binarise(First).present(cell) shouldBe Collection(Position2D("foo=rules", "bar"), getLongContent(1))
-    Binarise(Second).present(cell) shouldBe Collection(Position2D("foo", "bar=rules"), getLongContent(1))
+    Binarise(Binarise.rename(First)).present(cell) shouldBe
+      Collection(Position2D("foo=rules", "bar"), getLongContent(1))
+    Binarise(Binarise.rename(Second)).present(cell) shouldBe
+      Collection(Position2D("foo", "bar=rules"), getLongContent(1))
   }
 
   it should "present with name" in {
-    Binarise(First, "%1$s.%2$s").present(cell) shouldBe Collection(Position2D("foo.rules", "bar"), getLongContent(1))
-    Binarise(Second, "%1$s.%2$s").present(cell) shouldBe Collection(Position2D("foo", "bar.rules"), getLongContent(1))
+    Binarise(Binarise.rename(First, "%1$s.%2$s")).present(cell) shouldBe
+      Collection(Position2D("foo.rules", "bar"), getLongContent(1))
+    Binarise(Binarise.rename(Second, "%1$s.%2$s")).present(cell) shouldBe
+      Collection(Position2D("foo", "bar.rules"), getLongContent(1))
   }
 
   it should "not present a numerical" in {
-    Binarise(First).present(Cell(Position1D("foo"), getDoubleContent(3.1415))) shouldBe Collection()
+    Binarise(Binarise.rename(First)).present(Cell(Position1D("foo"), getDoubleContent(3.1415))) shouldBe Collection()
   }
 }
 
@@ -962,7 +966,8 @@ class TestAndThenTransformer extends TestTransformers {
   val cell = Cell(Position1D("foo"), getStringContent("rules"))
 
   "An AndThenTransformer" should "present" in {
-    Binarise[Position1D](First).andThen(Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")))
+    Binarise[Position1D](Binarise.rename(First))
+      .andThen(Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")))
       .present(cell) shouldBe Collection(List(Cell(Position1D("foo=rules.ind"), getLongContent(1))))
   }
 }

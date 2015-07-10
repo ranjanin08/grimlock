@@ -58,7 +58,7 @@ object Scoring {
     //  3/ Save the results.
     val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: S }] = List(
       Indicator().andThenRename(Transformer.rename(Second, "%1$s.ind")),
-      Binarise(Second),
+      Binarise(Binarise.rename(Second)),
       Clamp(extractStat("min"), extractStat("max"))
         .andThenWithValue(Standardise(extractStat("mean"), extractStat("sd"))))
 

@@ -5778,10 +5778,10 @@ object TestMatrixPairwise {
     extends OperatorWithValue[S, R, R#M] {
     type V = Double
 
-    val plus = Plus[S, R]()
+    val plus = Plus(StringLocate[S, R]("(%1$s+%2$s)"))
 
-    def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[R#M]] = {
-      Collection(plus.compute(left, right, rem).toList.map {
+    def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[R#M]] = {
+      Collection(plus.compute(left, reml, right, remr).toList.map {
         case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema[Codex.DoubleCodex](), d + ext))
       })
     }
@@ -5791,10 +5791,10 @@ object TestMatrixPairwise {
     extends OperatorWithValue[S, R, R#M] {
     type V = Double
 
-    val minus = Minus[S, R]()
+    val minus = Minus(StringLocate[S, R]("(%1$s-%2$s)"))
 
-    def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[R#M]] = {
-      Collection(minus.compute(left, right, rem).toList.map {
+    def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[R#M]] = {
+      Collection(minus.compute(left, reml, right, remr).toList.map {
         case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema[Codex.DoubleCodex](), d - ext))
       })
     }
@@ -5808,7 +5808,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.pairwise(Over(First), Lower, Plus[Position1D, Position0D]())
+        cells.pairwise(Over(First), Lower, Plus(StringLocate[Position1D, Position0D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -5819,7 +5819,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise(Over(First), Lower, Plus[Position1D, Position1D]())
+        cells.pairwise(Over(First), Lower, Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -5830,7 +5830,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise(Along(First), Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+        cells.pairwise(Along(First), Lower, List(
+          Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")),
+          Minus(StringLocate[Position1D, Position1D]("(%1$s-%2$s)"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -5841,7 +5843,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise(Over(Second), Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+        cells.pairwise(Over(Second), Lower, List(
+          Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")),
+          Minus(StringLocate[Position1D, Position1D]("(%1$s-%2$s)"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -5852,7 +5856,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise(Along(Second), Lower, Plus[Position1D, Position1D]())
+        cells.pairwise(Along(Second), Lower, Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -5863,7 +5867,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Over(First), Lower, Plus[Position1D, Position2D]())
+        cells.pairwise(Over(First), Lower, Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -5874,7 +5878,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Along(First), Lower, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+        cells.pairwise(Along(First), Lower, List(
+          Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")),
+          Minus(StringLocate[Position2D, Position1D]("(%1$s-%2$s)"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -5885,7 +5891,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Over(Second), Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+        cells.pairwise(Over(Second), Lower, List(
+          Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")),
+          Minus(StringLocate[Position1D, Position2D]("(%1$s-%2$s)"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -5896,7 +5904,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Along(Second), Lower, Plus[Position2D, Position1D]())
+        cells.pairwise(Along(Second), Lower, Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -5907,7 +5915,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Over(Third), Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+        cells.pairwise(Over(Third), Lower, List(
+          Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")),
+          Minus(StringLocate[Position1D, Position2D]("(%1$s-%2$s)"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -5918,7 +5928,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Along(Third), Lower, Plus[Position2D, Position1D]())
+        cells.pairwise(Along(Third), Lower, Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -6059,7 +6069,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataA
     } When {
       (cells: TypedPipe[Cell[Position1D]], that: TypedPipe[Cell[Position1D]]) =>
-        cells.pairwiseBetween(Over(First), Lower, that, Plus[Position1D, Position0D]())
+        cells.pairwiseBetween(Over(First), Lower, that, Plus(StringLocate[Position1D, Position0D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result23
     }
@@ -6072,7 +6082,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataB
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween(Over(First), Lower, that, Plus[Position1D, Position1D]())
+        cells.pairwiseBetween(Over(First), Lower, that, Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result24
     }
@@ -6085,8 +6095,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataC
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween(Along(First), Lower, that, List(Plus[Position1D, Position1D](),
-          Minus[Position1D, Position1D]()))
+        cells.pairwiseBetween(Along(First), Lower, that, List(
+          Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")),
+          Minus(StringLocate[Position1D, Position1D]("(%1$s-%2$s)"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result25
     }
@@ -6099,8 +6110,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataD
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween(Over(Second), Lower, that, List(Plus[Position1D, Position1D](),
-          Minus[Position1D, Position1D]()))
+        cells.pairwiseBetween(Over(Second), Lower, that, List(
+          Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")),
+          Minus(StringLocate[Position1D, Position1D]("(%1$s-%2$s)"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result26
     }
@@ -6113,7 +6125,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataE
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween(Along(Second), Lower, that, Plus[Position1D, Position1D]())
+        cells.pairwiseBetween(Along(Second), Lower, that, Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result27
     }
@@ -6126,7 +6138,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataF
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Over(First), Lower, that, Plus[Position1D, Position2D]())
+        cells.pairwiseBetween(Over(First), Lower, that, Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result28
     }
@@ -6139,8 +6151,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataG
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Along(First), Lower, that, List(Plus[Position2D, Position1D](),
-          Minus[Position2D, Position1D]()))
+        cells.pairwiseBetween(Along(First), Lower, that, List(
+          Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")),
+          Minus(StringLocate[Position2D, Position1D]("(%1$s-%2$s)"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result29
     }
@@ -6153,8 +6166,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataH
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Over(Second), Lower, that, List(Plus[Position1D, Position2D](),
-          Minus[Position1D, Position2D]()))
+        cells.pairwiseBetween(Over(Second), Lower, that, List(
+          Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")),
+          Minus(StringLocate[Position1D, Position2D]("(%1$s-%2$s)"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result30
     }
@@ -6167,7 +6181,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataI
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Along(Second), Lower, that, Plus[Position2D, Position1D]())
+        cells.pairwiseBetween(Along(Second), Lower, that, Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result31
     }
@@ -6180,8 +6194,9 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataJ
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Over(Third), Lower, that, List(Plus[Position1D, Position2D](),
-          Minus[Position1D, Position2D]()))
+        cells.pairwiseBetween(Over(Third), Lower, that, List(
+          Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")),
+          Minus(StringLocate[Position1D, Position2D]("(%1$s-%2$s)"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result32
     }
@@ -6194,7 +6209,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       dataK
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Along(Third), Lower, that, Plus[Position2D, Position1D]())
+        cells.pairwiseBetween(Along(Third), Lower, that, Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")))
     } Then {
       _.toList.sortBy(_.position) shouldBe result33
     }
@@ -6364,67 +6379,77 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   "A Matrix.pairwise" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwise(Over(First), Lower, Plus[Position1D, Position0D]())
+      .pairwise(Over(First), Lower, Plus(StringLocate[Position1D, Position0D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwise(Over(First), Lower, Plus[Position1D, Position1D]())
+      .pairwise(Over(First), Lower, Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
-      .pairwise(Along(First), Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+      .pairwise(Along(First), Lower, List(
+        Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")),
+        Minus(StringLocate[Position1D, Position1D]("(%1$s-%2$s)"))))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
-      .pairwise(Over(Second), Lower, List(Plus[Position1D, Position1D](), Minus[Position1D, Position1D]()))
+      .pairwise(Over(Second), Lower, List(
+        Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")),
+        Minus(StringLocate[Position1D, Position1D]("(%1$s-%2$s)"))))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwise(Along(Second), Lower, Plus[Position1D, Position1D]())
+      .pairwise(Along(Second), Lower, Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Over(First), Lower, Plus[Position1D, Position2D]())
+      .pairwise(Over(First), Lower, Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Along(First), Lower, List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+      .pairwise(Along(First), Lower, List(
+        Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")),
+        Minus(StringLocate[Position2D, Position1D]("(%1$s-%2$s)"))))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Over(Second), Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+      .pairwise(Over(Second), Lower, List(
+        Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")),
+        Minus(StringLocate[Position1D, Position2D]("(%1$s-%2$s)"))))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Along(Second), Lower, Plus[Position2D, Position1D]())
+      .pairwise(Along(Second), Lower, Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Over(Third), Lower, List(Plus[Position1D, Position2D](), Minus[Position1D, Position2D]()))
+      .pairwise(Over(Third), Lower, List(
+        Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")),
+        Minus(StringLocate[Position1D, Position2D]("(%1$s-%2$s)"))))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwise(Along(Third), Lower, Plus[Position2D, Position1D]())
+      .pairwise(Along(Third), Lower, Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result11
   }
 
@@ -6501,72 +6526,77 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   "A Matrix.pairwiseBetween" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwiseBetween(Over(First), Lower, toRDD(dataA), Plus[Position1D, Position0D]())
+      .pairwiseBetween(Over(First), Lower, toRDD(dataA), Plus(StringLocate[Position1D, Position0D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween(Over(First), Lower, toRDD(dataB), Plus[Position1D, Position1D]())
+      .pairwiseBetween(Over(First), Lower, toRDD(dataB), Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween(Along(First), Lower, toRDD(dataC), List(Plus[Position1D, Position1D](),
-        Minus[Position1D, Position1D]()))
+      .pairwiseBetween(Along(First), Lower, toRDD(dataC), List(
+        Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")),
+        Minus(StringLocate[Position1D, Position1D]("(%1$s-%2$s)"))))
       .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween(Over(Second), Lower, toRDD(dataD), List(Plus[Position1D, Position1D](),
-        Minus[Position1D, Position1D]()))
+      .pairwiseBetween(Over(Second), Lower, toRDD(dataD), List(
+        Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")),
+        Minus(StringLocate[Position1D, Position1D]("(%1$s-%2$s)"))))
       .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseBetween(Along(Second), Lower, toRDD(dataE), Plus[Position1D, Position1D]())
+      .pairwiseBetween(Along(Second), Lower, toRDD(dataE), Plus(StringLocate[Position1D, Position1D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Over(First), Lower, toRDD(dataF), Plus[Position1D, Position2D]())
+      .pairwiseBetween(Over(First), Lower, toRDD(dataF), Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Along(First), Lower, toRDD(dataG), List(Plus[Position2D, Position1D](),
-        Minus[Position2D, Position1D]()))
+      .pairwiseBetween(Along(First), Lower, toRDD(dataG), List(
+        Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")),
+        Minus(StringLocate[Position2D, Position1D]("(%1$s-%2$s)"))))
       .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Over(Second), Lower, toRDD(dataH), List(Plus[Position1D, Position2D](),
-        Minus[Position1D, Position2D]()))
+      .pairwiseBetween(Over(Second), Lower, toRDD(dataH), List(
+        Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")),
+        Minus(StringLocate[Position1D, Position2D]("(%1$s-%2$s)"))))
       .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Along(Second), Lower, toRDD(dataI), Plus[Position2D, Position1D]())
+      .pairwiseBetween(Along(Second), Lower, toRDD(dataI), Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Over(Third), Lower, toRDD(dataJ), List(Plus[Position1D, Position2D](),
-        Minus[Position1D, Position2D]()))
+      .pairwiseBetween(Over(Third), Lower, toRDD(dataJ), List(
+        Plus(StringLocate[Position1D, Position2D]("(%1$s+%2$s)")),
+        Minus(StringLocate[Position1D, Position2D]("(%1$s-%2$s)"))))
       .toList.sortBy(_.position) shouldBe result32
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseBetween(Along(Third), Lower, toRDD(dataK), Plus[Position2D, Position1D]())
+      .pairwiseBetween(Along(Third), Lower, toRDD(dataK), Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)")))
       .toList.sortBy(_.position) shouldBe result33
   }
 
@@ -7410,7 +7440,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.transform[Position2D, List[Transformer[Position2D, Position2D]]](List(
           Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")),
-          Binarise(First)))
+          Binarise(Binarise.rename(First))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -7423,7 +7453,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.transform[Position3D, List[Transformer[Position3D, Position3D]]](List(
           Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")),
-          Binarise(First)))
+          Binarise(Binarise.rename(First))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -7496,7 +7526,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
           Indicator()
             .andThenRename(Transformer.rename(First, "%1$s.ind"))
             .andThenExpand(Transformer.expand[Position2D, Position2D, String]("ind")),
-          Binarise(First)
+          Binarise(Binarise.rename(First))
             .andThenExpand(Transformer.expand[Position2D, Position2D, String]("bin"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
@@ -7512,7 +7542,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
           Indicator()
             .andThenRename(Transformer.rename(First, "%1$s.ind"))
             .andThenExpand(Transformer.expand[Position3D, Position3D, String]("ind")),
-          Binarise(First)
+          Binarise(Binarise.rename(First))
             .andThenExpand(Transformer.expand[Position3D, Position3D, String]("bin"))))
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
@@ -7582,7 +7612,7 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
     toRDD(data2)
       .transform[Position2D, List[Transformer[Position2D, Position2D]]](List(
         Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")),
-        Binarise(First)))
+        Binarise(Binarise.rename(First))))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -7590,7 +7620,7 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
     toRDD(data3)
       .transform[Position3D, List[Transformer[Position3D, Position3D]]](List(
         Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")),
-        Binarise(First)))
+        Binarise(Binarise.rename(First))))
       .toList.sortBy(_.position) shouldBe result3
   }
 
@@ -7635,7 +7665,7 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
         Indicator()
           .andThenRename(Transformer.rename(First, "%1$s.ind"))
           .andThenExpand(Transformer.expand[Position2D, Position2D, String]("ind")),
-        Binarise(First)
+        Binarise(Binarise.rename(First))
           .andThenExpand(Transformer.expand[Position2D, Position2D, String]("bin"))))
       .toList.sortBy(_.position) shouldBe result8
   }
@@ -7646,7 +7676,7 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
         Indicator()
           .andThenRename(Transformer.rename(First, "%1$s.ind"))
           .andThenExpand(Transformer.expand[Position3D, Position3D, String]("ind")),
-        Binarise(First)
+        Binarise(Binarise.rename(First))
           .andThenExpand(Transformer.expand[Position3D, Position3D, String]("bin"))))
       .toList.sortBy(_.position) shouldBe result9
   }

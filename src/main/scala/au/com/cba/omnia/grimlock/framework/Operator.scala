@@ -59,24 +59,67 @@ case object LowerDiagonal extends Comparer {
   def keep[P <: Position](left: P, right: P): Boolean = left.compare(right) >= 0
 }
 
+/** Base trait for extracting positions for operater compute results. */
+trait OperatorLocate[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
+  extends Locate[S, R, Q] {
+
+  /**
+   * Extract position for left and right selected cells and their remainder.
+   *
+   * @param left  A cell with the left selected position together with its content.
+   * @param reml  The left remainder positions.
+   * @param right A cell with the right selected position together with its content.
+   * @param remr  The right remainder positions.
+   *
+   * @note An `Option` is returned to allow for additional filtering (for example requiring that
+   *       `reml` and `remr` are equal.
+   */
+  def extract(left: Cell[S], reml: R, right: Cell[S], remr: R): Option[Q]
+}
+
+/**
+ * Extract position use a name pattern.
+ *
+ * @param pattern   Name pattern of the new coordinate. Use `%[12]$``s` for the string representations of the
+ *                  left and right selected positions respectively.
+ * @param all       Indicates if all positions should be returned (true), or only if `reml` is equal to `remr`.
+ * @param separator Separator to use when converting left and right positions to string.
+ *
+ * @note If a position is returned then it's always `reml` with an additional coordinate prepended.
+ */
+// TODO: Test this
+case class StringLocate[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+  pattern: String, all: Boolean = false, separator: String = "|") extends OperatorLocate[S, R, R#M] {
+  def extract(left: Cell[S], reml: R, right: Cell[S], remr: R): Option[R#M] = {
+    (all || reml == remr) match {
+      case true => Some(reml.prepend(pattern.format(left.position.toShortString(separator),
+        right.position.toShortString(separator))))
+      case false => None
+    }
+  }
+}
+
 /** Base trait for computing pairwise values. */
 trait Operator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
   extends OperatorWithValue[S, R, Q] { self =>
   type V = Any
 
-  def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[Q]] = compute(left, right, rem)
+  def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[Q]] = {
+    compute(left, reml, right, remr)
+  }
 
   /**
    * Indicate if the cell is selected as part of the sample.
    *
    * @param left  The selected left cell to compute with.
+   * @param reml  The left remainder coordinates.
    * @param right The selected right cell to compute with.
-   * @param rem   The remaining coordinates.
+   * @param remr  The right remainder coordinates.
    *
    * @note The return value is a `Collection` to allow, for example, upper or lower triangular matrices to be returned
    *       (this can be done by comparing the selected coordinates)
    */
-  def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]]
+  def compute(left: Cell[S], rem: R, right: Cell[S], remr: R): Collection[Cell[Q]]
 
   /**
    * Operator for pairwise operations and then renaming dimensions.
@@ -85,11 +128,11 @@ trait Operator[S <: Position with ExpandablePosition, R <: Position with Expanda
    *
    * @return An operator that runs `this` and then renames the resulting dimension(s).
    */
-  def andThenRename(rename: (Cell[S], Cell[S], R, Cell[Q]) => Q) = {
+  def andThenRename(rename: (Cell[S], R, Cell[S], R, Cell[Q]) => Q) = {
     new Operator[S, R, Q] {
-      def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]] = {
-        Collection(self.compute(left, right, rem).toList.map {
-          case c => Cell(rename(left, right, rem, c), c.content)
+      def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
+        Collection(self.compute(left, reml, right, remr).toList.map {
+          case c => Cell(rename(left, reml, right, remr, c), c.content)
         })
       }
     }
@@ -102,11 +145,11 @@ trait Operator[S <: Position with ExpandablePosition, R <: Position with Expanda
    *
    * @return An operator that runs `this` and then expands the resulting dimensions.
    */
-  def andThenExpand[U <: Position](expand: (Cell[S], Cell[S], R, Cell[Q]) => U)(implicit ev: PosExpDep[Q, U]) = {
+  def andThenExpand[U <: Position](expand: (Cell[S], R, Cell[S], R, Cell[Q]) => U)(implicit ev: PosExpDep[Q, U]) = {
     new Operator[S, R, U] {
-      def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[U]] = {
-        Collection(self.compute(left, right, rem).toList.map {
-          case c => Cell(expand(left, right, rem, c), c.content)
+      def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[U]] = {
+        Collection(self.compute(left, reml, right, remr).toList.map {
+          case c => Cell(expand(left, reml, right, remr, c), c.content)
         })
       }
     }
@@ -123,14 +166,15 @@ trait OperatorWithValue[S <: Position with ExpandablePosition, R <: Position wit
    * Indicate if the cell is selected as part of the sample.
    *
    * @param left  The selected left cell to compute with.
+   * @param reml  The left remainder coordinates.
    * @param right The selected right cell to compute with.
-   * @param rem   The remaining coordinates.
+   * @param remr  The right remainder coordinates.
    * @param ext   The user define the value.
    *
    * @note The return value is a `Collection` to allow, for example, upper or lower triangular matrices to be returned
    *       (this can be done by comparing the selected coordinates)
    */
-  def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[Q]]
+  def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[Q]]
 
   /**
    * Operator for pairwise operations and then renaming dimensions.
@@ -139,13 +183,13 @@ trait OperatorWithValue[S <: Position with ExpandablePosition, R <: Position wit
    *
    * @return An operator that runs `this` and then renames the resulting dimension(s).
    */
-  def andThenRenameWithValue(rename: (Cell[S], Cell[S], R, V, Cell[Q]) => Q) = {
+  def andThenRenameWithValue(rename: (Cell[S], R, Cell[S], R, V, Cell[Q]) => Q) = {
     new OperatorWithValue[S, R, Q] {
       type V = self.V
 
-      def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[Q]] = {
-        Collection(self.computeWithValue(left, right, rem, ext).toList.map {
-          case c => Cell(rename(left, right, rem, ext, c), c.content)
+      def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[Q]] = {
+        Collection(self.computeWithValue(left, reml, right, remr, ext).toList.map {
+          case c => Cell(rename(left, reml, right, remr, ext, c), c.content)
         })
       }
     }
@@ -158,14 +202,14 @@ trait OperatorWithValue[S <: Position with ExpandablePosition, R <: Position wit
    *
    * @return An operator that runs `this` and then expands the resulting dimensions.
    */
-  def andThenExpandWithValue[U <: Position](expand: (Cell[S], Cell[S], R, V, Cell[Q]) => U)(
+  def andThenExpandWithValue[U <: Position](expand: (Cell[S], R, Cell[S], R, V, Cell[Q]) => U)(
     implicit ev: PosExpDep[Q, U]) = {
     new OperatorWithValue[S, R, U] {
       type V = self.V
 
-      def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[U]] = {
-        Collection(self.computeWithValue(left, right, rem, ext).toList.map {
-          case c => Cell(expand(left, right, rem, ext, c), c.content)
+      def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[U]] = {
+        Collection(self.computeWithValue(left, reml, right, remr, ext).toList.map {
+          case c => Cell(expand(left, reml, right, remr, ext, c), c.content)
         })
       }
     }
@@ -184,52 +228,56 @@ trait Operable[T, S <: Position with ExpandablePosition, R <: Position with Expa
 
 /** Companion object for the `Operable` type class. */
 object Operable {
-  /** Converts a `(Cell[S], Cell[S], R) => Cell[R#M]` to a `Operator[S, R, R#M]`. */
-  implicit def CSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], Cell[S], R) => Cell[R#M], S, R, R#M] = C2O[S, R, R#M]
+  /** Converts a `(Cell[S], R, Cell[S], R) => Cell[R#M]` to a `Operator[S, R, R#M]`. */
+  implicit def CSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], R, Cell[S], R) => Cell[R#M], S, R, R#M] = C2O[S, R, R#M]
 
-  /** Converts a `(Cell[S], Cell[S], R) => Cell[Q]` to a `Operator[S, R, Q]`. */
+  /** Converts a `(Cell[S], R, Cell[S], R) => Cell[Q]` to a `Operator[S, R, Q]`. */
   implicit def CSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-    implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] = C2O[S, R, Q]
+    implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], R, Cell[S], R) => Cell[Q], S, R, Q] = C2O[S, R, Q]
 
-  implicit def C2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] = {
-    new Operable[(Cell[S], Cell[S], R) => Cell[Q], S, R, Q] {
-      def convert(t: (Cell[S], Cell[S], R) => Cell[Q]): Operator[S, R, Q] = {
+  implicit def C2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], R, Cell[S], R) => Cell[Q], S, R, Q] = {
+    new Operable[(Cell[S], R, Cell[S], R) => Cell[Q], S, R, Q] {
+      def convert(t: (Cell[S], R, Cell[S], R) => Cell[Q]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {
-          def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]] = Collection(t(left, right, rem))
+          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
+            Collection(t(left, reml, right, remr))
+          }
         }
       }
     }
   }
 
-  /** Converts a `(Cell[S], Cell[S], R) => List[Cell[R#M]]` to a `Operator[S, R, R#M]`. */
-  implicit def LCSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], Cell[S], R) => List[Cell[R#M]], S, R, R#M] = LC2O[S, R, R#M]
+  /** Converts a `(Cell[S], R, Cell[S], R) => List[Cell[R#M]]` to a `Operator[S, R, R#M]`. */
+  implicit def LCSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], R, Cell[S], R) => List[Cell[R#M]], S, R, R#M] = LC2O[S, R, R#M]
 
-  /** Converts a `(Cell[S], Cell[S], R) => List[Cell[Q]]` to a `Operator[S, R, Q]`. */
+  /** Converts a `(Cell[S], R, Cell[S], R) => List[Cell[Q]]` to a `Operator[S, R, Q]`. */
   implicit def LCSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-    implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] = LC2O[S, R, Q]
+    implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], R, Cell[S], R) => List[Cell[Q]], S, R, Q] = LC2O[S, R, Q]
 
-  private def LC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] = {
-    new Operable[(Cell[S], Cell[S], R) => List[Cell[Q]], S, R, Q] {
-      def convert(t: (Cell[S], Cell[S], R) => List[Cell[Q]]): Operator[S, R, Q] = {
+  private def LC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], R, Cell[S], R) => List[Cell[Q]], S, R, Q] = {
+    new Operable[(Cell[S], R, Cell[S], R) => List[Cell[Q]], S, R, Q] {
+      def convert(t: (Cell[S], R, Cell[S], R) => List[Cell[Q]]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {
-          def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]] = Collection(t(left, right, rem))
+          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
+            Collection(t(left, reml, right, remr))
+          }
         }
       }
     }
   }
 
-  /** Converts a `(Cell[S], Cell[S], R) => Collection[Cell[R#M]]` to a `Operator[S, R, R#M]`. */
-  implicit def CCSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], Cell[S], R) => Collection[Cell[R#M]], S, R, R#M] = CC2O[S, R, R#M]
+  /** Converts a `(Cell[S], R, Cell[S], R) => Collection[Cell[R#M]]` to a `Operator[S, R, R#M]`. */
+  implicit def CCSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], R, Cell[S], R) => Collection[Cell[R#M]], S, R, R#M] = CC2O[S, R, R#M]
 
-  /** Converts a `(Cell[S], Cell[S], R) => Collection[Cell[Q]]` to a `Operator[S, R, Q]`. */
+  /** Converts a `(Cell[S], R, Cell[S], R) => Collection[Cell[Q]]` to a `Operator[S, R, Q]`. */
   implicit def CCSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-    implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] = CC2O[S, R, Q]
+    implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], R, Cell[S], R) => Collection[Cell[Q]], S, R, Q] = CC2O[S, R, Q]
 
-  private def CC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] = {
-    new Operable[(Cell[S], Cell[S], R) => Collection[Cell[Q]], S, R, Q] {
-      def convert(t: (Cell[S], Cell[S], R) => Collection[Cell[Q]]): Operator[S, R, Q] = {
+  private def CC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], R, Cell[S], R) => Collection[Cell[Q]], S, R, Q] = {
+    new Operable[(Cell[S], R, Cell[S], R) => Collection[Cell[Q]], S, R, Q] {
+      def convert(t: (Cell[S], R, Cell[S], R) => Collection[Cell[Q]]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {
-          def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]] = t(left, right, rem)
+          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = t(left, reml, right, remr)
         }
       }
     }
@@ -255,8 +303,8 @@ object Operable {
     new Operable[List[T], S, R, Q] {
       def convert(t: List[T]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {
-          def compute(left: Cell[S], right: Cell[S], rem: R): Collection[Cell[Q]] = {
-            Collection(t.flatMap { case s => s.compute(left, right, rem).toList })
+          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
+            Collection(t.flatMap { case s => s.compute(left, reml, right, remr).toList })
           }
         }
       }
@@ -276,40 +324,20 @@ trait OperableWithValue[T, S <: Position with ExpandablePosition, R <: Position 
 
 /** Companion object for the `OperableWithValue` type class. */
 object OperableWithValue {
-  /** Converts a `(Cell[S], Cell[S], R, W) => Cell[R#M]` to a `OperatorWithValue[S, R, R#M] { type V >: W }`. */
-  implicit def CSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[R#M], S, R, R#M, W] = C2OWV[S, R, R#M, W]
+  /** Converts a `(Cell[S], R, Cell[S], R, W) => Cell[R#M]` to a `OperatorWithValue[S, R, R#M] { type V >: W }`. */
+  implicit def CSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W]: OperableWithValue[(Cell[S], R, Cell[S], R, W) => Cell[R#M], S, R, R#M, W] = C2OWV[S, R, R#M, W]
 
-  /** Converts a `(Cell[S], Cell[S], R, W) => Cell[Q]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
-  implicit def CSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[Q], S, R, Q, W] = C2OWV[S, R, Q, W]
+  /** Converts a `(Cell[S], R, Cell[S], R, W) => Cell[Q]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
+  implicit def CSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[(Cell[S], R, Cell[S], R, W) => Cell[Q], S, R, Q, W] = C2OWV[S, R, Q, W]
 
-  private def C2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[Q], S, R, Q, W] = {
-    new OperableWithValue[(Cell[S], Cell[S], R, W) => Cell[Q], S, R, Q, W] {
-      def convert(t: (Cell[S], Cell[S], R, W) => Cell[Q]): OperatorWithValue[S, R, Q] { type V >: W } = {
+  private def C2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], R, Cell[S], R, W) => Cell[Q], S, R, Q, W] = {
+    new OperableWithValue[(Cell[S], R, Cell[S], R, W) => Cell[Q], S, R, Q, W] {
+      def convert(t: (Cell[S], R, Cell[S], R, W) => Cell[Q]): OperatorWithValue[S, R, Q] { type V >: W } = {
         new OperatorWithValue[S, R, Q] {
           type V = W
 
-          def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: W): Collection[Cell[Q]] = {
-            Collection(t(left, right, rem, ext))
-          }
-        }
-      }
-    }
-  }
-
-  /** Converts a `(Cell[S], Cell[S], R, W) => List[Cell[R#M]]` to a `OperatorWithValue[S, R, R#M] { type V >: W }`. */
-  implicit def LCSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[R#M]], S, R, R#M, W] = LC2OWV[S, R, R#M, W]
-
-  /** Converts a `(Cell[S], Cell[S], R, W) => List[Cell[Q]]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
-  implicit def LCSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] = LC2OWV[S, R, Q, W]
-
-  private def LC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] = {
-    new OperableWithValue[(Cell[S], Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] {
-      def convert(t: (Cell[S], Cell[S], R, W) => List[Cell[Q]]): OperatorWithValue[S, R, Q] { type V >: W } = {
-        new OperatorWithValue[S, R, Q] {
-          type V = W
-
-          def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: W): Collection[Cell[Q]] = {
-            Collection(t(left, right, rem, ext))
+          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: W): Collection[Cell[Q]] = {
+            Collection(t(left, reml, right, remr, ext))
           }
         }
       }
@@ -317,22 +345,44 @@ object OperableWithValue {
   }
 
   /**
-   * Converts a `(Cell[S], Cell[S], R, W) => Collection[Cell[R#M]]` to a
-   * `OperatorWithValue[S, R, R#M] { type V >: W }`.
+   * Converts a `(Cell[S], R, Cell[S], R, W) => List[Cell[R#M]]` to a `OperatorWithValue[S, R, R#M] { type V >: W }`.
    */
-  implicit def CCSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[R#M]], S, R, R#M, W] = CC2OWV[S, R, R#M, W]
+  implicit def LCSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W]: OperableWithValue[(Cell[S], R, Cell[S], R, W) => List[Cell[R#M]], S, R, R#M, W] = LC2OWV[S, R, R#M, W]
 
-  /** Converts a `(Cell[S], Cell[S], R, W) => Collection[Cell[Q]]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
-  implicit def CCSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] = CC2OWV[S, R, Q, W]
+  /** Converts a `(Cell[S], R, Cell[S], R, W) => List[Cell[Q]]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
+  implicit def LCSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[(Cell[S], R, Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] = LC2OWV[S, R, Q, W]
 
-  private def CC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] = {
-    new OperableWithValue[(Cell[S], Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] {
-      def convert(t: (Cell[S], Cell[S], R, W) => Collection[Cell[Q]]): OperatorWithValue[S, R, Q] { type V >: W } = {
+  private def LC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], R, Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] = {
+    new OperableWithValue[(Cell[S], R, Cell[S], R, W) => List[Cell[Q]], S, R, Q, W] {
+      def convert(t: (Cell[S], R, Cell[S], R, W) => List[Cell[Q]]): OperatorWithValue[S, R, Q] { type V >: W } = {
         new OperatorWithValue[S, R, Q] {
           type V = W
 
-          def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: W): Collection[Cell[Q]] = {
-            t(left, right, rem, ext)
+          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: W): Collection[Cell[Q]] = {
+            Collection(t(left, reml, right, remr, ext))
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Converts a `(Cell[S], R, Cell[S], R, W) => Collection[Cell[R#M]]` to a
+   * `OperatorWithValue[S, R, R#M] { type V >: W }`.
+   */
+  implicit def CCSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W]: OperableWithValue[(Cell[S], R, Cell[S], R, W) => Collection[Cell[R#M]], S, R, R#M, W] = CC2OWV[S, R, R#M, W]
+
+  /** Converts a `(Cell[S], R, Cell[S], R, W) => Collection[Cell[Q]]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
+  implicit def CCSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[(Cell[S], R, Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] = CC2OWV[S, R, Q, W]
+
+  private def CC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], R, Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] = {
+    new OperableWithValue[(Cell[S], R, Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] {
+      def convert(t: (Cell[S], R, Cell[S], R, W) => Collection[Cell[Q]]): OperatorWithValue[S, R, Q] { type V >: W } = {
+        new OperatorWithValue[S, R, Q] {
+          type V = W
+
+          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: W): Collection[Cell[Q]] = {
+            t(left, reml, right, remr, ext)
           }
         }
       }
@@ -373,8 +423,8 @@ object OperableWithValue {
         new OperatorWithValue[S, R, Q] {
           type V = W
 
-          def computeWithValue(left: Cell[S], right: Cell[S], rem: R, ext: V): Collection[Cell[Q]] = {
-            Collection(t.flatMap { case s => s.computeWithValue(left, right, rem, ext).toList })
+          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[Q]] = {
+            Collection(t.flatMap { case s => s.computeWithValue(left, reml, right, remr, ext).toList })
           }
         }
       }

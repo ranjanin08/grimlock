@@ -28,7 +28,8 @@ trait TestOperators extends TestGrimlock {
 
    val left = Cell(Position2D("left 1", "left 2"), Content(ContinuousSchema[Codex.LongCodex](), 2))
    val right = Cell(Position2D("right 1", "right 2"), Content(ContinuousSchema[Codex.LongCodex](), 4))
-   val rem = Position1D("rem")
+   val reml = Position1D("reml")
+   val remr = Position1D("remr")
    val separator = "."
    val pattern: String
 
@@ -39,7 +40,7 @@ trait TestOperators extends TestGrimlock {
       case 3 => ("right 1.right 2", "left 1.left 2")
     }
 
-    Position2D(pattern.format(first, second), "rem")
+    Position2D(pattern.format(first, second), "reml")
   }
   def getContent(value: Double): Content = Content(ContinuousSchema[Codex.DoubleCodex](), value)
 }
@@ -90,11 +91,11 @@ class TestPlus extends TestOperators {
    val pattern = "(%1$s plus %2$s)"
 
   "A Plus" should "compute" in {
-    val obj = Plus[Position2D, Position1D](pattern, separator)
+    val obj = Plus(StringLocate[Position2D, Position1D](pattern, true, separator))
 
-    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 + 4))
-    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 + 2))
-    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 + 2))
+    obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(2 + 4))
+    obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2 + 2))
+    obj.compute(right, reml, left, remr) shouldBe Collection(getPosition(3), getContent(4 + 2))
   }
 }
 
@@ -103,19 +104,19 @@ class TestMinus extends TestOperators {
    val pattern = "(%1$s minus %2$s)"
 
   "A Minus" should "compute" in {
-    val obj = Minus[Position2D, Position1D](pattern, separator, false)
+    val obj = Minus(StringLocate[Position2D, Position1D](pattern, true, separator), false)
 
-    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 - 4))
-    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
-    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 - 2))
+    obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(2 - 4))
+    obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2 - 2))
+    obj.compute(right, reml, left, remr) shouldBe Collection(getPosition(3), getContent(4 - 2))
   }
 
   it should "compute inverse" in {
-    val obj = Minus[Position2D, Position1D](pattern, separator, true)
+    val obj = Minus(StringLocate[Position2D, Position1D](pattern, true, separator), true)
 
-    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(4 - 2))
-    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 - 2))
-    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(2 - 4))
+    obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(4 - 2))
+    obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2 - 2))
+    obj.compute(right, reml, left, remr) shouldBe Collection(getPosition(3), getContent(2 - 4))
   }
 }
 
@@ -124,11 +125,11 @@ class TestTimes extends TestOperators {
    val pattern = "(%1$s times %2$s)"
 
   "A Times" should "compute" in {
-    val obj = Times[Position2D, Position1D](pattern, separator)
+    val obj = Times(StringLocate[Position2D, Position1D](pattern, true, separator))
 
-    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2 * 4))
-    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2 * 2))
-    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4 * 2))
+    obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(2 * 4))
+    obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2 * 2))
+    obj.compute(right, reml, left, remr) shouldBe Collection(getPosition(3), getContent(4 * 2))
   }
 }
 
@@ -137,19 +138,19 @@ class TestDivide extends TestOperators {
    val pattern = "(%1$s divide %2$s)"
 
   "A Divide" should "compute" in {
-    val obj = Divide[Position2D, Position1D](pattern, separator, false)
+    val obj = Divide(StringLocate[Position2D, Position1D](pattern, true, separator), false)
 
-    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2.0 / 4.0))
-    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
-    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4.0 / 2.0))
+    obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(2.0 / 4.0))
+    obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
+    obj.compute(right, reml, left, remr) shouldBe Collection(getPosition(3), getContent(4.0 / 2.0))
   }
 
   it should "compute inverse" in {
-    val obj = Divide[Position2D, Position1D](pattern, separator, true)
+    val obj = Divide(StringLocate[Position2D, Position1D](pattern, true, separator), true)
 
-    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(4.0 / 2.0))
-    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
-    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(2.0 / 4.0))
+    obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(4.0 / 2.0))
+    obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
+    obj.compute(right, reml, left, remr) shouldBe Collection(getPosition(3), getContent(2.0 / 4.0))
   }
 }
 
@@ -159,11 +160,11 @@ class TestConcatenate extends TestOperators {
    val format = "%1$s+%2$s"
 
   "A Concatenate" should "compute" in {
-    val obj = Concatenate[Position2D, Position1D](pattern, format, separator)
+    val obj = Concatenate(StringLocate[Position2D, Position1D](pattern, true, separator), format)
 
-    obj.compute(left, right, rem) shouldBe Collection(getPosition(1), getContent(2, 4))
-    obj.compute(left, left, rem) shouldBe Collection(getPosition(2), getContent(2, 2))
-    obj.compute(right, left, rem) shouldBe Collection(getPosition(3), getContent(4, 2))
+    obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(2, 4))
+    obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2, 2))
+    obj.compute(right, reml, left, remr) shouldBe Collection(getPosition(3), getContent(4, 2))
   }
 
   def getContent(left: Long, right: Long): Content = {
@@ -176,14 +177,15 @@ class TestCombinationOperator extends TestOperators {
   val pattern = "not.used"
 
   "A CombinationOperator" should "compute" in {
-    val obj = Operable.LOSRRM2O[Position2D, Position1D, Operator[Position2D, Position1D, Position2D]].convert(
-      List(Plus[Position2D, Position1D](), Minus[Position2D, Position1D]()))
+    val obj = Operable.LOSRRM2O[Position2D, Position1D, Operator[Position2D, Position1D, Position2D]].convert(List(
+      Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)", true)),
+      Minus(StringLocate[Position2D, Position1D]("(%1$s-%2$s)", true))))
 
-    obj.compute(left, right, rem) shouldBe Collection(List(
+    obj.compute(left, reml, right, remr) shouldBe Collection(List(
       Cell(getPosition(1, "(%1$s+%2$s)"), getContent(2 + 4)), Cell(getPosition(1, "(%1$s-%2$s)"), getContent(2 - 4))))
-    obj.compute(left, left, rem) shouldBe Collection(List(
+    obj.compute(left, reml, left, remr) shouldBe Collection(List(
       Cell(getPosition(2, "(%1$s+%2$s)"), getContent(2 + 2)), Cell(getPosition(2, "(%1$s-%2$s)"), getContent(2 - 2))))
-    obj.compute(right, left, rem) shouldBe Collection(List(
+    obj.compute(right, reml, left, remr) shouldBe Collection(List(
       Cell(getPosition(3, "(%1$s+%2$s)"), getContent(4 + 2)), Cell(getPosition(3, "(%1$s-%2$s)"), getContent(4 - 2))))
   }
 
@@ -194,7 +196,7 @@ class TestCombinationOperator extends TestOperators {
       case 3 => ("right 1|right 2", "left 1|left 2")
     }
 
-    Position2D(pattern.format(first, second), "rem")
+    Position2D(pattern.format(first, second), "reml")
   }
 }
 

@@ -146,7 +146,7 @@ object PipelineDataPreparation {
     val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: S }] = List(
       Clamp(extractStat("min"), extractStat("max"))
         .andThenWithValue(Standardise(extractStat("mean"), extractStat("sd"))),
-      Binarise(Second))
+      Binarise(Binarise.rename(Second)))
 
     // For each partition:
     //  1/  Remove sparse features;
