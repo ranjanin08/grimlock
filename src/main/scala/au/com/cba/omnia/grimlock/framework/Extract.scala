@@ -16,8 +16,6 @@ package au.com.cba.omnia.grimlock.framework
 
 import au.com.cba.omnia.grimlock.framework.position._
 
-// TODO: Test these
-
 /** Base trait for extracting data from a user provided value given a cell. */
 trait Extract[P <: Position, W, R] extends java.io.Serializable { self =>
   /** Type of the user provided data. */

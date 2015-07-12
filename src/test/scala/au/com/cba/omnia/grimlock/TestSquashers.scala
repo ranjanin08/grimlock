@@ -109,3 +109,42 @@ class TestPreservingMinPosition extends TestSquashers {
   }
 }
 
+class TestKeepSlice extends TestSquashers {
+
+  "A KeepSlice" should "return the first cell for the first dimension when equal" in {
+    KeepSlice(1).reduce(First, cell1, cell2) shouldBe cell1
+  }
+
+  it should "return the second cell for the first dimension when equal" in {
+    KeepSlice(2).reduce(First, cell1, cell2) shouldBe cell2
+  }
+
+  it should "return the second cell for the first dimension when not equal" in {
+    KeepSlice(3).reduce(First, cell1, cell2) shouldBe cell2
+  }
+
+  it should "return the second cell for the second dimension when equal" in {
+    KeepSlice("b").reduce(Second, cell1, cell2) shouldBe cell1
+  }
+
+  it should "return the first cell for the second dimension when equal" in {
+    KeepSlice("a").reduce(Second, cell1, cell2) shouldBe cell2
+  }
+
+  it should "return the second cell for the second dimension when not equal" in {
+    KeepSlice("c").reduce(Second, cell1, cell2) shouldBe cell2
+  }
+
+  it should "return the first cell for the third dimension when equal" in {
+    KeepSlice(DateValue(dfmt.parse("2001-01-01"), DateCodex)).reduce(Third, cell1, cell2) shouldBe cell1
+  }
+
+  it should "return the second cell for the third dimension when equal" in {
+    KeepSlice(DateValue(dfmt.parse("2002-01-01"), DateCodex)).reduce(Third, cell1, cell2) shouldBe cell2
+  }
+
+  it should "return the second cell for the third dimension when not equal" in {
+    KeepSlice(DateValue(dfmt.parse("2003-01-01"), DateCodex)).reduce(Third, cell1, cell2) shouldBe cell2
+  }
+}
+

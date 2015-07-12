@@ -20,6 +20,7 @@ import au.com.cba.omnia.grimlock.framework.{
   ExpandableMatrix => BaseExpandableMatrix,
   ExtractWithDimension,
   ExtractWithKey,
+  Locate,
   Matrix => BaseMatrix,
   Matrixable => BaseMatrixable,
   Nameable => BaseNameable,
@@ -511,12 +512,12 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val denom = centered
       .transform(Power[Position2D](2))
       .summarise(slice, Sum[Position2D, slice.S]())
-      .pairwise(Over(First), Lower, Times(StringLocate[Position1D, Position0D]("(%1$s*%2$s)")))
+      .pairwise(Over(First), Lower, Times(Locate.OperatorString[Position1D, Position0D]("(%1$s*%2$s)")))
       .transform(SquareRoot[Position1D]())
       .toMap(Over(First))
 
     centered
-      .pairwise(slice, Lower, Times(StringLocate[slice.S, slice.R]("(%1$s*%2$s)")))
+      .pairwise(slice, Lower, Times(Locate.OperatorString[slice.S, slice.R]("(%1$s*%2$s)")))
       .summarise(Over(First), Sum[Position2D, Position1D]())
       .transformWithValue(Fraction(ExtractWithDimension[Dimension.First, Position1D, Content](First)
         .andThenPresent(_.value.asDouble)), denom)
@@ -558,10 +559,10 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
         .andThenExpandWithValue((cell, _) => cell.position.append("marginal")), mcount)
-      .pairwise(Over(First), Upper, Plus(StringLocate[Position1D, Position1D]("%s,%s")))
+      .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position1D, Position1D]("%s,%s")))
 
     val jhist = new Matrix2D(data)
-      .pairwise(slice, Upper, Concatenate(StringLocate[slice.S, slice.R]("%s,%s")))
+      .pairwise(slice, Upper, Concatenate(Locate.OperatorString[slice.S, slice.R]("%s,%s")))
       .expand((c: Cell[Position2D]) => c.position.append(c.content.value.toShortString))
       .summarise(Along(Second), Count[Position3D, Position2D]())
 
@@ -607,18 +608,21 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val tpr = data
       .transform(Compare[Position2D](isPositive))
-      .slide(slice, CumulativeSum[slice.S, slice.R]())
+      .slide(slice, CumulativeSum(Locate.WindowString[slice.S, slice.R]()))
       .transformWithValue(Fraction(extractor), pos)
-      .slide(Over(First), BinOp[Position1D, Position1D]((l: Double, r: Double) => r + l, name = "%2$s.%1$s"))
+      .slide(Over(First), BinOp((l: Double, r: Double) => r + l,
+        Locate.WindowPairwiseString[Position1D, Position1D]("%2$s.%1$s")))
 
     val fpr = data
       .transform(Compare[Position2D](isNegative))
-      .slide(slice, CumulativeSum[slice.S, slice.R]())
+      .slide(slice, CumulativeSum(Locate.WindowString[slice.S, slice.R]()))
       .transformWithValue(Fraction(extractor), neg)
-      .slide(Over(First), BinOp[Position1D, Position1D]((l: Double, r: Double) => r - l, name = "%2$s.%1$s"))
+      .slide(Over(First), BinOp((l: Double, r: Double) => r - l,
+        Locate.WindowPairwiseString[Position1D, Position1D]("%2$s.%1$s")))
 
     tpr
-      .pairwiseBetween(Along(First), Diagonal, fpr, Times(StringLocate[Position1D, Position1D]("(%1$s*%2$s)")))
+      .pairwiseBetween(Along(First), Diagonal, fpr,
+        Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
       .summarise(Along(First), Sum[Position2D, Position1D]())
       .transformWithValue(Subtract(ExtractWithKey[Position1D, String, Double]("one"), true),
         Map(Position1D("one") -> 1.0))

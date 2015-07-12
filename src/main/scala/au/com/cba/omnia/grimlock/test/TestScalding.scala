@@ -717,7 +717,7 @@ class TestScalding26(args: Args) extends Job(args) {
   val right = load2D(args("path") + "/algebraInputfile2.txt")
 
   left
-    .pairwiseBetween(Over(First), All, right, Times(StringLocate[Position1D, Position1D]("(%1$s*%2$s)")))
+    .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
     .save("./tmp.scalding/alg.out")
 }
 
@@ -725,33 +725,33 @@ class TestScalding27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide(Over(Second), SimpleMovingAverage[Position1D, Position1D](5))
+    .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
     .save("./tmp.scalding/sma1.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide(Over(Second), SimpleMovingAverage[Position1D, Position1D](5, all=true))
+    .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all=true))
     .save("./tmp.scalding/sma2.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide(Over(Second), CenteredMovingAverage[Position1D, Position1D](2))
+    .slide(Over(Second), CenteredMovingAverage(2, Locate.WindowDimension[Position1D, Position1D](First)))
     .save("./tmp.scalding/tma.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide(Over(Second), WeightedMovingAverage[Position1D, Position1D](5))
+    .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
     .save("./tmp.scalding/wma1.out")
 
   load2D(args("path") + "/simMovAvgInputfile.txt", first=LongCodex)
-    .slide(Over(Second), WeightedMovingAverage[Position1D, Position1D](5, all=true))
+    .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all=true))
     .save("./tmp.scalding/wma2.out")
 
   // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
   load1D(args("path") + "/cumMovAvgInputfile.txt")
-    .slide(Along(First), CumulativeMovingAverage[Position0D, Position1D]())
+    .slide(Along(First), CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First)))
     .save("./tmp.scalding/cma.out")
 
   // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
   load1D(args("path") + "/expMovAvgInputfile.txt")
-    .slide(Along(First), ExponentialMovingAverage[Position0D, Position1D](0.33))
+    .slide(Along(First), ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First)))
     .save("./tmp.scalding/ema.out")
 }
 

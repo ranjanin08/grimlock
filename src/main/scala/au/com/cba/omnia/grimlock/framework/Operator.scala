@@ -59,46 +59,6 @@ case object LowerDiagonal extends Comparer {
   def keep[P <: Position](left: P, right: P): Boolean = left.compare(right) >= 0
 }
 
-/** Base trait for extracting positions for operater compute results. */
-trait OperatorLocate[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends Locate[S, R, Q] {
-
-  /**
-   * Extract position for left and right selected cells and their remainder.
-   *
-   * @param left  A cell with the left selected position together with its content.
-   * @param reml  The left remainder positions.
-   * @param right A cell with the right selected position together with its content.
-   * @param remr  The right remainder positions.
-   *
-   * @note An `Option` is returned to allow for additional filtering (for example requiring that
-   *       `reml` and `remr` are equal.
-   */
-  def extract(left: Cell[S], reml: R, right: Cell[S], remr: R): Option[Q]
-}
-
-/**
- * Extract position use a name pattern.
- *
- * @param pattern   Name pattern of the new coordinate. Use `%[12]$``s` for the string representations of the
- *                  left and right selected positions respectively.
- * @param all       Indicates if all positions should be returned (true), or only if `reml` is equal to `remr`.
- * @param separator Separator to use when converting left and right positions to string.
- *
- * @note If a position is returned then it's always `reml` with an additional coordinate prepended.
- */
-// TODO: Test this
-case class StringLocate[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-  pattern: String, all: Boolean = false, separator: String = "|") extends OperatorLocate[S, R, R#M] {
-  def extract(left: Cell[S], reml: R, right: Cell[S], remr: R): Option[R#M] = {
-    (all || reml == remr) match {
-      case true => Some(reml.prepend(pattern.format(left.position.toShortString(separator),
-        right.position.toShortString(separator))))
-      case false => None
-    }
-  }
-}
-
 /** Base trait for computing pairwise values. */
 trait Operator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
   extends OperatorWithValue[S, R, Q] { self =>

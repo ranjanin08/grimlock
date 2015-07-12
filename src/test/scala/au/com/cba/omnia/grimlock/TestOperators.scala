@@ -91,7 +91,7 @@ class TestPlus extends TestOperators {
    val pattern = "(%1$s plus %2$s)"
 
   "A Plus" should "compute" in {
-    val obj = Plus(StringLocate[Position2D, Position1D](pattern, true, separator))
+    val obj = Plus(Locate.OperatorString[Position2D, Position1D](pattern, true, separator))
 
     obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(2 + 4))
     obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2 + 2))
@@ -104,7 +104,7 @@ class TestMinus extends TestOperators {
    val pattern = "(%1$s minus %2$s)"
 
   "A Minus" should "compute" in {
-    val obj = Minus(StringLocate[Position2D, Position1D](pattern, true, separator), false)
+    val obj = Minus(Locate.OperatorString[Position2D, Position1D](pattern, true, separator), false)
 
     obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(2 - 4))
     obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2 - 2))
@@ -112,7 +112,7 @@ class TestMinus extends TestOperators {
   }
 
   it should "compute inverse" in {
-    val obj = Minus(StringLocate[Position2D, Position1D](pattern, true, separator), true)
+    val obj = Minus(Locate.OperatorString[Position2D, Position1D](pattern, true, separator), true)
 
     obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(4 - 2))
     obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2 - 2))
@@ -125,7 +125,7 @@ class TestTimes extends TestOperators {
    val pattern = "(%1$s times %2$s)"
 
   "A Times" should "compute" in {
-    val obj = Times(StringLocate[Position2D, Position1D](pattern, true, separator))
+    val obj = Times(Locate.OperatorString[Position2D, Position1D](pattern, true, separator))
 
     obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(2 * 4))
     obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2 * 2))
@@ -138,7 +138,7 @@ class TestDivide extends TestOperators {
    val pattern = "(%1$s divide %2$s)"
 
   "A Divide" should "compute" in {
-    val obj = Divide(StringLocate[Position2D, Position1D](pattern, true, separator), false)
+    val obj = Divide(Locate.OperatorString[Position2D, Position1D](pattern, true, separator), false)
 
     obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(2.0 / 4.0))
     obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
@@ -146,7 +146,7 @@ class TestDivide extends TestOperators {
   }
 
   it should "compute inverse" in {
-    val obj = Divide(StringLocate[Position2D, Position1D](pattern, true, separator), true)
+    val obj = Divide(Locate.OperatorString[Position2D, Position1D](pattern, true, separator), true)
 
     obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(4.0 / 2.0))
     obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2.0 / 2.0))
@@ -160,7 +160,7 @@ class TestConcatenate extends TestOperators {
    val format = "%1$s+%2$s"
 
   "A Concatenate" should "compute" in {
-    val obj = Concatenate(StringLocate[Position2D, Position1D](pattern, true, separator), format)
+    val obj = Concatenate(Locate.OperatorString[Position2D, Position1D](pattern, true, separator), format)
 
     obj.compute(left, reml, right, remr) shouldBe Collection(getPosition(1), getContent(2, 4))
     obj.compute(left, reml, left, remr) shouldBe Collection(getPosition(2), getContent(2, 2))
@@ -178,8 +178,8 @@ class TestCombinationOperator extends TestOperators {
 
   "A CombinationOperator" should "compute" in {
     val obj = Operable.LOSRRM2O[Position2D, Position1D, Operator[Position2D, Position1D, Position2D]].convert(List(
-      Plus(StringLocate[Position2D, Position1D]("(%1$s+%2$s)", true)),
-      Minus(StringLocate[Position2D, Position1D]("(%1$s-%2$s)", true))))
+      Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)", true)),
+      Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)", true))))
 
     obj.compute(left, reml, right, remr) shouldBe Collection(List(
       Cell(getPosition(1, "(%1$s+%2$s)"), getContent(2 + 4)), Cell(getPosition(1, "(%1$s-%2$s)"), getContent(2 - 4))))

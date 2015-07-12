@@ -479,7 +479,6 @@ trait CutRules {
  *
  * @note The returned cells contain boolean content.
  */
-// TODO: Test this
 case class Compare[P <: Position](comparer: (Cell[P]) => Boolean) extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
     Collection(cell.position, Content(NominalSchema[Codex.BooleanCodex](), comparer(cell)))

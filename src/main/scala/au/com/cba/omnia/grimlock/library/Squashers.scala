@@ -34,7 +34,6 @@ case class PreservingMinPosition[P <: Position]() extends Squasher[P] {
 }
 
 /** Reduce two cells preserving the cell whose coordinate matches `keep`. */
-// TODO: Test this
 case class KeepSlice[P <: Position, V](keep: V)(implicit ev: Valueable[V]) extends Squasher[P] {
   def reduce(dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = if (x.position(dim) equ keep) { x } else { y }
 }

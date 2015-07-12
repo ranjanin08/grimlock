@@ -782,6 +782,29 @@ class TestCut extends TestTransformers {
   }
 }
 
+class TestCompare extends TestTransformers {
+
+  val cell = Cell(Position1D("foo"), getDoubleContent(3.1415))
+
+  def equ(v: Double) = (cell: Cell[Position1D]) => {
+    cell.content.value.asDouble.map(_ == v).getOrElse(false)
+  }
+
+  "A Compare" should "present" in {
+    Compare(equ(3.1415)).present(cell) shouldBe Collection(Position1D("foo"),
+      Content(NominalSchema[Codex.BooleanCodex](), true))
+    Compare(equ(3.3)).present(cell) shouldBe Collection(Position1D("foo"),
+      Content(NominalSchema[Codex.BooleanCodex](), false))
+  }
+
+  it should "present with name" in {
+    Compare(equ(3.1415)).andThenRename(Transformer.rename(First, "%1$s.cmp")).present(cell) shouldBe
+      Collection(List(Cell(Position1D("foo.cmp"), Content(NominalSchema[Codex.BooleanCodex](), true))))
+    Compare(equ(3.3)).andThenRename(Transformer.rename(First, "%1$s.cmp")).present(cell) shouldBe
+      Collection(List(Cell(Position1D("foo.cmp"), Content(NominalSchema[Codex.BooleanCodex](), false))))
+  }
+}
+
 class TestScaldingCutRules extends TestTransformers {
 
   import au.com.cba.omnia.grimlock.scalding.transform.CutRules
