@@ -35,13 +35,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">SampleByScore</span><span class="params">()</span><span class="result"> extends <a href="../../framework/sample/Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Sampler">Sampler</a> with <a href="../../framework/sample/SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue">SelectWithValue</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">SampleByScore</span><span class="params">()</span><span class="result"> extends <a href="../../framework/sample/SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/12bc90a7d2a8e54b0ccc0492427dd584e36ea074//src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Ensemble.scala" target="_blank">Ensemble.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Ensemble.scala" target="_blank">Ensemble.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../../framework/sample/SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue">SelectWithValue</a>, <a href="../../framework/sample/Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Sampler">Sampler</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../../framework/sample/SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>], <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -59,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore"><span>SampleByScore</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue"><span>SelectWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.sample.Sampler"><span>Sampler</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore"><span>SampleByScore</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue"><span>SamplerWithValue</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -109,7 +109,7 @@
         <span class="name">V</span><span class="result"> = <span class="extype" name="scala.collection.immutable.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore">SampleByScore</a> → <a href="../../framework/sample/SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue">SelectWithValue</a></dd></dl></div>
+      <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore">SampleByScore</a> → <a href="../../framework/sample/SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -182,22 +182,22 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue#andThen" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThen[W&lt;:SelectWithValue.this.V](that:au.com.cba.omnia.grimlock.framework.sample.Samplerwithau.com.cba.omnia.grimlock.framework.sample.SelectWithValue{typeV=W}):au.com.cba.omnia.grimlock.framework.sample.AndThenSamplerWithValue[W]"></a>
-      <a id="andThen[W&lt;:V](SamplerwithSelectWithValue{typeV=W}):AndThenSamplerWithValue[W]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue#andThenWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenWithValue(that:au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue[P]{typeV&gt;:SamplerWithValue.this.V}):au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue[P]{typeV=SamplerWithValue.this.V}"></a>
+      <a id="andThenWithValue(SamplerWithValue[Position2D]{typeV&gt;:SampleByScore.this.V}):SamplerWithValue[Position2D]{typeV=SampleByScore.this.V}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThen</span><span class="tparams">[<span name="W">W &lt;: <a href="#V=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore.V">V</a></span>]</span><span class="params">(<span name="that">that: <a href="../../framework/sample/Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Sampler">Sampler</a> with <a href="../../framework/sample/SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue">SelectWithValue</a> { type V = W }</span>)</span><span class="result">: <a href="../../framework/sample/AndThenSamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.AndThenSamplerWithValue">AndThenSamplerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue.andThen.W">W</span>]</span>
+        <span class="name">andThenWithValue</span><span class="params">(<span name="that">that: <a href="../../framework/sample/SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>] { type V &gt;: SampleByScore.this.V }</span>)</span><span class="result">: <a href="../../framework/sample/SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>] { type V = SampleByScore.this.V }</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Operator for chaining sampling.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for chaining sampling.
 </p></div><dl class="paramcmts block"><dt class="param">that</dt><dd class="cmt"><p>The sampling to perform after <code>this</code>.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A sampler that runs <code>this</code> and then <code>that</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/sample/SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue">SelectWithValue</a></dd></dl></div>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/sample/SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -327,21 +327,21 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore#select" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="select[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:SampleByScore.this.V):Boolean"></a>
-      <a id="select[P&lt;:Position](Cell[P],V):Boolean"></a>
+    </li><li name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore#selectWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="selectWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[au.com.cba.omnia.grimlock.framework.position.Position2D],ext:SampleByScore.this.V):Boolean"></a>
+      <a id="selectWithValue(Cell[Position2D],V):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">select</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore.select.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">selectWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>]</span>, <span name="ext">ext: <a href="#V=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Indicate if the cell is selected as part of the sample.</p><div class="fullcomment"><div class="comment cmt"><p>Indicate if the cell is selected as part of the sample.
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user define the value.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore">SampleByScore</a> → <a href="../../framework/sample/SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue">SelectWithValue</a></dd></dl></div>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore">SampleByScore</a> → <a href="../../framework/sample/SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -423,16 +423,14 @@
         <div id="inheritedMembers">
         <div class="parent" name="scala.Serializable">
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.Product">
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue">
-              <h3>Inherited from <a href="../../framework/sample/SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue">SelectWithValue</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.sample.Sampler">
-              <h3>Inherited from <a href="../../framework/sample/Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Sampler">Sampler</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">
+              <h3>Inherited from <a href="../../framework/sample/SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>]</h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

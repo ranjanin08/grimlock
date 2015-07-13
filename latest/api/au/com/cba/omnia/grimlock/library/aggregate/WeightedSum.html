@@ -24,9 +24,9 @@
         </head>
         <body class="type">
       <div id="definition">
-        <a href="WeightedSum$.html" title="Go to companion"><img src="../../../../../../../lib/class_to_object_big.png" /></a>
+        <img src="../../../../../../../lib/class_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.library">library</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate">aggregate</a></p>
-        <h1><a href="WeightedSum$.html" title="Go to companion">WeightedSum</a></h1>
+        <h1>WeightedSum</h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,15 +35,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">WeightedSum</span><span class="result"> extends <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> with <a href="../../framework/aggregate/PresentSingleAndMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue">PresentSingleAndMultipleWithValue</a> with <a href="StrictAggregate.html" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregate">StrictAggregate</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">WeightedSum</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../../framework/position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="weight">weight: <a href="../../framework/Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.W">W</span>, <span class="extype" name="scala.Double">Double</span>]</span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result"> extends <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Weighted sum reduction. This is particularly useful for scoring linear models.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/12bc90a7d2a8e54b0ccc0492427dd584e36ea074//src/main/scala/au/com/cba/omnia/grimlock/library/Aggregators.scala" target="_blank">Aggregators.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The <code>Position1D</code> in the <code>type V</code> must all be <code>StringValue</code> if a format is used.
-</p></span></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">weight</dt><dd class="cmt"><p>Object that will extract, for <code>cell</code>, its corresponding weight.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+              If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+              data).
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/library/Aggregators.scala" target="_blank">Aggregators.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="StrictAggregate.html" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregate">StrictAggregate</a>, <a href="../../framework/aggregate/PresentSingleAndMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue">PresentSingleAndMultipleWithValue</a>, <a href="../../framework/aggregate/PresentMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultipleWithValue">PresentMultipleWithValue</a>, <a href="../../framework/aggregate/PresentSingleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleWithValue">PresentSingleWithValue</a>, <a href="../../framework/aggregate/PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValue">PrepareWithValue</a>, <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -61,7 +63,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum"><span>WeightedSum</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregate"><span>StrictAggregate</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue"><span>PresentSingleAndMultipleWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultipleWithValue"><span>PresentMultipleWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleWithValue"><span>PresentSingleWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValue"><span>PrepareWithValue</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator"><span>Aggregator</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum"><span>WeightedSum</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue"><span>AggregatorWithValue</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -79,7 +81,26 @@
 
       <div id="template">
         <div id="allMembers">
-        
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(weight:au.com.cba.omnia.grimlock.framework.Extract[P,W,Double],strict:Boolean,nan:Boolean):au.com.cba.omnia.grimlock.library.aggregate.WeightedSum[P,S,W]"></a>
+      <a id="&lt;init&gt;:WeightedSum[P,S,W]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">WeightedSum</span><span class="params">(<span name="weight">weight: <a href="../../framework/Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.W">W</span>, <span class="extype" name="scala.Double">Double</span>]</span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">weight</dt><dd class="cmt"><p>Object that will extract, for <code>cell</code>, its corresponding weight.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+              If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
+              data).
+</p></dd></dl></div>
+    </li></ol>
+            </div>
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
@@ -95,9 +116,9 @@
         <span class="name">T</span><span class="result"> = <span class="extype" name="scala.Double">Double</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Type of the state being aggregated.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state being aggregated.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a></dd></dl></div>
+      <p class="shortcomment cmt">Type of the state being aggregated.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state being aggregated.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="V=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]"></a>
+      <a id="V=W"></a>
       <a id="V:V"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -105,10 +126,10 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">V</span><span class="result"> = <span class="extype" name="scala.collection.immutable.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>]</span>
+        <span class="name">V</span><span class="result"> = <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.W">W</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a></dd></dl></div>
+      <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -181,6 +202,38 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenExpandWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenExpandWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
+      <a id="andThenExpandWithValue[R&lt;:Position]((Cell[S],V)⇒R)(PosExpDep[S,R]):AggregatorWithValue[P,S,R]{.../*2definitionsintyperefinement*/}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">andThenExpandWithValue</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>], <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.V">V</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span>] { ... /* 2 definitions in type refinement */ }</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Operator for aggregating and then expanding dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then expanding dimensions.
+</p></div><dl class="paramcmts block"><dt class="param">expand</dt><dd class="cmt"><p>The expansion to apply after the aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then expands the resulting dimensions.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenRenameWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenRenameWithValue(rename:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;Q):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
+      <a id="andThenRenameWithValue((Cell[S],V)⇒S):AggregatorWithValue[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">andThenRenameWithValue</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>], <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.V">V</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Operator for aggregating and then renaming dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then renaming dimensions.
+</p></div><dl class="paramcmts block"><dt class="param">rename</dt><dd class="cmt"><p>The rename to apply after the aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then renames the resulting dimension(s).
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -213,45 +266,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#content" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="content(t:WeightedSum.this.T):Option[au.com.cba.omnia.grimlock.framework.content.Content]"></a>
-      <a id="content(T):Option[Content]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">content</span><span class="params">(<span name="t">t: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.T">T</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/PresentSingleAndMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue">PresentSingleAndMultipleWithValue</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#ct" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ct:scala.reflect.ClassTag[Double]"></a>
-      <a id="ct:ClassTag[Double]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">ct</span><span class="result">: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="scala.Double">Double</span>]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Serialisation ClassTag for state <code>T</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Serialisation ClassTag for state <code>T</code>.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#dim" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="dim:au.com.cba.omnia.grimlock.framework.position.Dimension"></a>
-      <a id="dim:Dimension"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">dim</span><span class="result">: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Dimension for for which to create weigthed variables.</p>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -284,20 +298,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#format" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="format:Option[String]"></a>
-      <a id="format:Option[String]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">format</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Format for converting dimension to string, this allows multiple models to be scored simultaneuously.</p><div class="fullcomment"><div class="comment cmt"><p>Format for converting dimension to string, this allows multiple models to be scored simultaneuously.
-              Use <code>%1$</code><code>s</code> for the string representation of the coordinate.</p></div></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -311,19 +311,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#invalid" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="invalid(t:WeightedSum.this.T):Boolean"></a>
-      <a id="invalid(T):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">invalid</span><span class="params">(<span name="t">t: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.T">T</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="StrictAggregate.html" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregate">StrictAggregate</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -337,20 +324,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="name:Option[au.com.cba.omnia.grimlock.framework.encoding.Value]"></a>
-      <a id="name:Option[Value]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">name</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../../framework/encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a>]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Coordinate name of the computed weighted sum.</p><div class="fullcomment"><div class="comment cmt"><p>Coordinate name of the computed weighted sum.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/PresentSingleAndMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue">PresentSingleAndMultipleWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#nan" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="nan:Boolean"></a>
       <a id="nan:Boolean"></a>
@@ -405,64 +378,43 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#prepareWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepareWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension](slice:au.com.cba.omnia.grimlock.framework.Slice[P,D],cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:WeightedSum.this.V):WeightedSum.this.T"></a>
-      <a id="prepareWithValue[P&lt;:Position,D&lt;:Dimension](Slice[P,D],Cell[P],V):T"></a>
+      <a id="prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:WeightedSum.this.V):WeightedSum.this.T"></a>
+      <a id="prepareWithValue(Cell[P],V):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepareWithValue</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="../../framework/Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.prepareWithValue.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.prepareWithValue.D">D</span>]</span>, <span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.prepareWithValue.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.V">V</a></span>)</span><span class="result">: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.T">T</a></span>
+        <span class="name">prepareWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.P">P</span>]</span>, <span name="ext">ext: <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.V">V</a></span>)</span><span class="result">: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.T">T</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
-</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) over with to aggregate.</p></dd><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be aggregated. Note that its position is prior to <code>slice.selected</code> being applied.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for preparation.
+</p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be aggregated. Note that its position is prior to <code>slice.selected</code> being applied.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for preparation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValue">PrepareWithValue</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue#presentMultipleWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="presentMultipleWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition](pos:P,t:PresentSingleAndMultipleWithValue.this.T,ext:PresentSingleAndMultipleWithValue.this.V):au.com.cba.omnia.grimlock.framework.utility.Collection[au.com.cba.omnia.grimlock.framework.Cell[P#M]]"></a>
-      <a id="presentMultipleWithValue[P&lt;:PositionwithExpandablePosition](P,T,V):Collection[Cell[framework.aggregate.PresentSingleAndMultipleWithValue.presentMultipleWithValue.P.M]]"></a>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#presentWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="presentWithValue(pos:S,t:WeightedSum.this.T,ext:WeightedSum.this.V):Option[au.com.cba.omnia.grimlock.framework.Cell[S]]"></a>
+      <a id="presentWithValue(S,T,V):Option[Cell[S]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">presentMultipleWithValue</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../../framework/position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue.presentMultipleWithValue.P">P</span></span>, <span name="t">t: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.T">T</a></span>, <span name="ext">ext: <a href="#V=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.V">V</a></span>)</span><span class="result">: <a href="../../framework/utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition.M">framework.aggregate.PresentSingleAndMultipleWithValue.presentMultipleWithValue.P.M</span>]]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Present the reduced content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content(s).
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for presentation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell tuple where the position is creating by appending to <code>pos</code> (<code>append</code> method) and the
-        content(s) is derived from <code>t</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/PresentSingleAndMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue">PresentSingleAndMultipleWithValue</a> → <a href="../../framework/aggregate/PresentMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultipleWithValue">PresentMultipleWithValue</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow aggregators to be selective in what content they apply to.
-      For example, computing the mean is undefined for categorical variables. The aggregator now has the option to
-      return <code>None</code>. This in turn permits an external API, for simple cases, where the user need not know about
-      the types of variables of their data.
-</p></span></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue#presentSingleWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="presentSingleWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](pos:P,t:PresentSingleAndMultipleWithValue.this.T,ext:PresentSingleAndMultipleWithValue.this.V):Option[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
-      <a id="presentSingleWithValue[P&lt;:Position](P,T,V):Option[Cell[P]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">presentSingleWithValue</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue.presentSingleWithValue.P">P</span></span>, <span name="t">t: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.T">T</a></span>, <span name="ext">ext: <a href="#V=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue.presentSingleWithValue.P">P</span>]]</span>
+        <span class="name">presentWithValue</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span></span>, <span name="t">t: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.T">T</a></span>, <span name="ext">ext: <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the reduced content.</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content.
 </p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for presentation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell where the position is <code>pos</code> and the content is derived from <code>t</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/PresentSingleAndMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue">PresentSingleAndMultipleWithValue</a> → <a href="../../framework/aggregate/PresentSingleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleWithValue">PresentSingleWithValue</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow aggregators to be selective in what content they apply to.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow aggregators to be selective in what content they apply to.
       For example, computing the mean is undefined for categorical variables. The aggregator now has the option to
       return <code>None</code>. This in turn permits an external API, for simple cases, where the user need not know about
       the types of variables of their data.
 </p></span></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregate#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="reduce(lt:StrictAggregate.this.T,rt:StrictAggregate.this.T):StrictAggregate.this.T"></a>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="reduce(lt:WeightedSum.this.T,rt:WeightedSum.this.T):WeightedSum.this.T"></a>
       <a id="reduce(T,T):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -476,20 +428,7 @@
       <p class="shortcomment cmt">Standard reduce method.</p><div class="fullcomment"><div class="comment cmt"><p>Standard reduce method.
 </p></div><dl class="paramcmts block"><dt class="param">lt</dt><dd class="cmt"><p>Left state to reduce.</p></dd><dt class="param">rt</dt><dd class="cmt"><p>Right state to reduce.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Reduced state
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StrictAggregate.html" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregate">StrictAggregate</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#reduction" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="reduction(lt:WeightedSum.this.T,rt:WeightedSum.this.T):WeightedSum.this.T"></a>
-      <a id="reduction(T,T):T"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">reduction</span><span class="params">(<span name="lt">lt: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.T">T</a></span>, <span name="rt">rt: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.T">T</a></span>)</span><span class="result">: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.T">T</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="StrictAggregate.html" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregate">StrictAggregate</a></dd></dl></div>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#strict" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="strict:Boolean"></a>
       <a id="strict:Boolean"></a>
@@ -503,7 +442,7 @@
       </span>
       </h4>
       <p class="shortcomment cmt">Indicates if strict data handling is required.</p><div class="fullcomment"><div class="comment cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
-              If not then non-numeric values are silently ignored.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum">WeightedSum</a> → <a href="StrictAggregate.html" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregate">StrictAggregate</a></dd></dl></div>
+              If not then non-numeric values are silently ignored.</p></div></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -574,6 +513,19 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum#weight" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="weight:au.com.cba.omnia.grimlock.framework.Extract[P,W,Double]"></a>
+      <a id="weight:Extract[P,W,Double]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">weight</span><span class="result">: <a href="../../framework/Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.W">W</span>, <span class="extype" name="scala.Double">Double</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Object that will extract, for <code>cell</code>, its corresponding weight.</p>
     </li></ol>
             </div>
 
@@ -585,24 +537,14 @@
         <div id="inheritedMembers">
         <div class="parent" name="scala.Serializable">
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.Product">
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregate">
-              <h3>Inherited from <a href="StrictAggregate.html" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregate">StrictAggregate</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue">
-              <h3>Inherited from <a href="../../framework/aggregate/PresentSingleAndMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue">PresentSingleAndMultipleWithValue</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultipleWithValue">
-              <h3>Inherited from <a href="../../framework/aggregate/PresentMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultipleWithValue">PresentMultipleWithValue</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleWithValue">
-              <h3>Inherited from <a href="../../framework/aggregate/PresentSingleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleWithValue">PresentSingleWithValue</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValue">
-              <h3>Inherited from <a href="../../framework/aggregate/PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValue">PrepareWithValue</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">
-              <h3>Inherited from <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">
+              <h3>Inherited from <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.WeightedSum.S">S</span>]</h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

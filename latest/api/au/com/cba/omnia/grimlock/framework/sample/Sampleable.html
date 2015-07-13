@@ -35,11 +35,11 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Sampleable</span><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">Sampleable</span><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Type class for transforming a type <code>T</code> to a <code>Sampler with Select</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/12bc90a7d2a8e54b0ccc0492427dd584e36ea074//src/main/scala/au/com/cba/omnia/grimlock/framework/Sampler.scala" target="_blank">Sampler.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Type class for transforming a type <code>T</code> to a <code>Sampler[P]</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Sampler.scala" target="_blank">Sampler.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -84,19 +84,19 @@
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.sample.Sampleable#convert" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="convert(t:T):au.com.cba.omnia.grimlock.framework.sample.Samplerwithau.com.cba.omnia.grimlock.framework.sample.Select"></a>
-      <a id="convert(T):SamplerwithSelect"></a>
+      <a id="convert(t:T):au.com.cba.omnia.grimlock.framework.sample.Sampler[P]"></a>
+      <a id="convert(T):Sampler[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">convert</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Sampleable.T">T</span></span>)</span><span class="result">: <a href="Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Sampler">Sampler</a> with <a href="Select.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Select">Select</a></span>
+        <span class="name">convert</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Sampleable.T">T</span></span>)</span><span class="result">: <a href="Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Sampler">Sampler</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Sampleable.P">P</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Returns a <code>Sampler with Select</code> for type <code>T</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a <code>Sampler with Select</code> for type <code>T</code>.
-</p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>Object that can be converted to a <code>Sampler with Select</code>.
+      <p class="shortcomment cmt">Returns a <code>Sampler[P]</code> for type <code>T</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a <code>Sampler[P]</code> for type <code>T</code>.
+</p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>Object that can be converted to a <code>Sampler[P]</code>.
 </p></dd></dl></div>
     </li></ol>
             </div>

@@ -58,97 +58,58 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.window.CombinationWindowed" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CombinationWindowed[T&lt;:au.com.cba.omnia.grimlock.framework.window.Windowedwithau.com.cba.omnia.grimlock.framework.window.Initialise]extendsWindowedwithInitialisewithProductwithSerializable"></a>
-      <a id="CombinationWindowed[T&lt;:WindowedwithInitialise]:CombinationWindowed[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="CombinationWindowed.html"><span class="name">CombinationWindowed</span></a><span class="tparams">[<span name="T">T &lt;: <a href="Windowed.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowed">Windowed</a> with <a href="Initialise.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Initialise">Initialise</a></span>]</span><span class="params">(<span name="singles">singles: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.window.CombinationWindowed.T">T</span>]</span>)</span><span class="result"> extends <a href="Windowed.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowed">Windowed</a> with <a href="Initialise.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Initialise">Initialise</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Windowed that is a combination of one or more <code>Windowed with Initialise</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.window.CombinationWindowedWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CombinationWindowedWithValue[T&lt;:au.com.cba.omnia.grimlock.framework.window.Windowedwithau.com.cba.omnia.grimlock.framework.window.InitialiseWithValue{typeV&gt;:W},W]extendsWindowedwithInitialiseWithValuewithProductwithSerializable"></a>
-      <a id="CombinationWindowedWithValue[T&lt;:WindowedwithInitialiseWithValue{typeV&gt;:W},W]:CombinationWindowedWithValue[T,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="CombinationWindowedWithValue.html"><span class="name">CombinationWindowedWithValue</span></a><span class="tparams">[<span name="T">T &lt;: <a href="Windowed.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowed">Windowed</a> with <a href="InitialiseWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.InitialiseWithValue">InitialiseWithValue</a> { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="params">(<span name="singles">singles: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.window.CombinationWindowedWithValue.T">T</span>]</span>)</span><span class="result"> extends <a href="Windowed.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowed">Windowed</a> with <a href="InitialiseWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.InitialiseWithValue">InitialiseWithValue</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Windowed that is a combination of one or more <code>Windowed with InitialiseWithValue</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.window.Initialise" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="InitialiseextendsInitialiseWithValue"></a>
-      <a id="Initialise:Initialise"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.window.Window" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Window[S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsWindowWithValue[S,R,Q]"></a>
+      <a id="Window[S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position]:Window[S,R,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Initialise.html"><span class="name">Initialise</span></a><span class="result"> extends <a href="InitialiseWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.InitialiseWithValue">InitialiseWithValue</a></span>
+        <a href="Window.html"><span class="name">Window</span></a><span class="tparams">[<span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="WindowWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue">WindowWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window.Q">Q</span>]</span>
       </span>
       </h4>
-      <p class="comment cmt">Base trait for initialising a windowed.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.window.InitialiseWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="InitialiseWithValueextendsAnyRef"></a>
-      <a id="InitialiseWithValue:InitialiseWithValue"></a>
+      <p class="comment cmt">Base trait for generating windowed data.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="WindowWithValue[S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
+      <a id="WindowWithValue[S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position]:WindowWithValue[S,R,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="InitialiseWithValue.html"><span class="name">InitialiseWithValue</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="WindowWithValue.html"><span class="name">WindowWithValue</span></a><span class="tparams">[<span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Base trait for initialising a windowed with a user supplied value.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.window.Windowable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Windowable[T]extendsAnyRef"></a>
-      <a id="Windowable[T]:Windowable[T]"></a>
+      <a id="Windowable[T,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef"></a>
+      <a id="Windowable[T,S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position]:Windowable[T,S,R,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Windowable.html"><span class="name">Windowable</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Windowable.html"><span class="name">Windowable</span></a><span class="tparams">[<span name="T">T</span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Windowed with Initialise</code>.</p>
+      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Window[S, R, Q]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.window.WindowableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="WindowableWithValue[T,W]extendsAnyRef"></a>
-      <a id="WindowableWithValue[T,W]:WindowableWithValue[T,W]"></a>
+      <a id="WindowableWithValue[T,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef"></a>
+      <a id="WindowableWithValue[T,S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position,W]:WindowableWithValue[T,S,R,Q,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="WindowableWithValue.html"><span class="name">WindowableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="WindowableWithValue.html"><span class="name">WindowableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Windowed with InitialiseWithValue</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.window.Windowed" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="WindowedextendsAnyRef"></a>
-      <a id="Windowed:Windowed"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="Windowed.html"><span class="name">Windowed</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Base trait for generating windowed data.</p>
+      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>WindowWithValue[S, R, Q]</code>.</p>
     </li></ol>
             </div>
 

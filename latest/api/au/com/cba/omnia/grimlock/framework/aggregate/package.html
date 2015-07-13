@@ -58,176 +58,58 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatableMultiple" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="AggregatableMultiple[T]extendsAnyRef"></a>
-      <a id="AggregatableMultiple[T]:AggregatableMultiple[T]"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Aggregatable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef"></a>
+      <a id="Aggregatable[T,P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position]:Aggregatable[T,P,S,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="AggregatableMultiple.html"><span class="name">AggregatableMultiple</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Aggregatable.html"><span class="name">Aggregatable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to an aggregator with <code>PresentMultiple</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatableMultipleWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="AggregatableMultipleWithValue[T,W]extendsAnyRef"></a>
-      <a id="AggregatableMultipleWithValue[T,W]:AggregatableMultipleWithValue[T,W]"></a>
+      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>List[Aggregator[P, S, Q]]</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AggregatableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef"></a>
+      <a id="AggregatableWithValue[T,P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position,W]:AggregatableWithValue[T,P,S,Q,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="AggregatableMultipleWithValue.html"><span class="name">AggregatableMultipleWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="AggregatableWithValue.html"><span class="name">AggregatableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to an 'Aggregator with PrepareWithValue with PresentMultipleWithValue<code>.</code></p>
+      <p class="comment cmt">Type class for transforming a type <code>T</code> to a 'List[AggregatorWithValue[P S, Q] { type V &gt;: W }]<code>.</code></p>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="AggregatorextendsAnyRef"></a>
-      <a id="Aggregator:Aggregator"></a>
+      <a id="Aggregator[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAggregatorWithValue[P,S,Q]"></a>
+      <a id="Aggregator[P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position]:Aggregator[P,S,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Aggregator.html"><span class="name">Aggregator</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Aggregator.html"><span class="name">Aggregator</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.Q">Q</span>]</span>
       </span>
       </h4>
-      <p class="comment cmt">Base trait for aggregattion.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.CombinationAggregatorMultiple" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CombinationAggregatorMultiple[R&lt;:au.com.cba.omnia.grimlock.framework.aggregate.Aggregatorwithau.com.cba.omnia.grimlock.framework.aggregate.Preparewithau.com.cba.omnia.grimlock.framework.aggregate.PresentMultiple]extendsAggregatorwithPreparewithPresentMultiplewithProductwithSerializable"></a>
-      <a id="CombinationAggregatorMultiple[R&lt;:AggregatorwithPreparewithPresentMultiple]:CombinationAggregatorMultiple[R]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="CombinationAggregatorMultiple.html"><span class="name">CombinationAggregatorMultiple</span></a><span class="tparams">[<span name="R">R &lt;: <a href="Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultiple">PresentMultiple</a></span>]</span><span class="params">(<span name="aggregators">aggregators: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.CombinationAggregatorMultiple.R">R</span>]</span>)</span><span class="result"> extends <a href="Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> with <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Prepare">Prepare</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultiple">PresentMultiple</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Aggregator that is a combination of one or more aggregators with <code>PresentMultiple</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.CombinationAggregatorMultipleWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CombinationAggregatorMultipleWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.aggregate.Aggregatorwithau.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValuewithau.com.cba.omnia.grimlock.framework.aggregate.PresentMultipleWithValue{typeV&gt;:W},W]extendsAggregatorwithPrepareWithValuewithPresentMultipleWithValuewithProductwithSerializable"></a>
-      <a id="CombinationAggregatorMultipleWithValue[R&lt;:AggregatorwithPrepareWithValuewithPresentMultipleWithValue{typeV&gt;:W},W]:CombinationAggregatorMultipleWithValue[R,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="CombinationAggregatorMultipleWithValue.html"><span class="name">CombinationAggregatorMultipleWithValue</span></a><span class="tparams">[<span name="R">R &lt;: <a href="Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValue">PrepareWithValue</a> with <a href="PresentMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultipleWithValue">PresentMultipleWithValue</a> { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="params">(<span name="aggregators">aggregators: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.CombinationAggregatorMultipleWithValue.R">R</span>]</span>)</span><span class="result"> extends <a href="Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> with <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValue">PrepareWithValue</a> with <a href="PresentMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultipleWithValue">PresentMultipleWithValue</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Aggregator that is a combination of one or more aggregators with <code>PrepareWithValue</code> with <code>PresentMultiple</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Prepare" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PrepareextendsPrepareWithValue"></a>
-      <a id="Prepare:Prepare"></a>
+      <p class="comment cmt">Base trait for aggregations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AggregatorWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
+      <a id="AggregatorWithValue[P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position]:AggregatorWithValue[P,S,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Prepare.html"><span class="name">Prepare</span></a><span class="result"> extends <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValue">PrepareWithValue</a></span>
+        <a href="AggregatorWithValue.html"><span class="name">AggregatorWithValue</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Base trait for reduction preparation.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PrepareWithValueextendsAnyRef"></a>
-      <a id="PrepareWithValue:PrepareWithValue"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="PrepareWithValue.html"><span class="name">PrepareWithValue</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Base trait for reduction preparation with a user supplied value.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultiple" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PresentMultipleextendsAnyRef"></a>
-      <a id="PresentMultiple:PresentMultiple"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="PresentMultiple.html"><span class="name">PresentMultiple</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Base trait for reductions that return multiple values.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultipleWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PresentMultipleWithValueextendsAnyRef"></a>
-      <a id="PresentMultipleWithValue:PresentMultipleWithValue"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="PresentMultipleWithValue.html"><span class="name">PresentMultipleWithValue</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Base trait for reductions that return multiple values using user supplied data.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingle" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PresentSingleextendsPresentSingleWithValue"></a>
-      <a id="PresentSingle:PresentSingle"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="PresentSingle.html"><span class="name">PresentSingle</span></a><span class="result"> extends <a href="PresentSingleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleWithValue">PresentSingleWithValue</a></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Base trait for reductions that return a single value.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultiple" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PresentSingleAndMultipleextendsPreparewithPresentSinglewithPresentMultiple"></a>
-      <a id="PresentSingleAndMultiple:PresentSingleAndMultiple"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="PresentSingleAndMultiple.html"><span class="name">PresentSingleAndMultiple</span></a><span class="result"> extends <a href="Prepare.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Prepare">Prepare</a> with <a href="PresentSingle.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingle">PresentSingle</a> with <a href="PresentMultiple.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultiple">PresentMultiple</a></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Convenience trait for aggregators that present a value both as <code>PresentSingle</code> and <code>PresentMultiple</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleAndMultipleWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PresentSingleAndMultipleWithValueextendsPrepareWithValuewithPresentSingleWithValuewithPresentMultipleWithValue"></a>
-      <a id="PresentSingleAndMultipleWithValue:PresentSingleAndMultipleWithValue"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="PresentSingleAndMultipleWithValue.html"><span class="name">PresentSingleAndMultipleWithValue</span></a><span class="result"> extends <a href="PrepareWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PrepareWithValue">PrepareWithValue</a> with <a href="PresentSingleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleWithValue">PresentSingleWithValue</a> with <a href="PresentMultipleWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.PresentMultipleWithValue">PresentMultipleWithValue</a></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Convenience trait for aggregators that present a value both as <code>PresentSingleWithValue</code> and
-<code>PresentMultipleWithValue</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.PresentSingleWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PresentSingleWithValueextendsAnyRef"></a>
-      <a id="PresentSingleWithValue:PresentSingleWithValue"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="PresentSingleWithValue.html"><span class="name">PresentSingleWithValue</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Base trait for reductions that return a single value using user supplied data.</p>
+      <p class="comment cmt">Base trait for aggregations with a user supplied value.</p>
     </li></ol>
             </div>
 
@@ -235,32 +117,32 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatableMultiple" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="AggregatableMultiple"></a>
-      <a id="AggregatableMultiple:AggregatableMultiple"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregatable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Aggregatable"></a>
+      <a id="Aggregatable:Aggregatable"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="AggregatableMultiple$.html"><span class="name">AggregatableMultiple</span></a>
+        <a href="Aggregatable$.html"><span class="name">Aggregatable</span></a>
       </span>
       </h4>
-      <p class="comment cmt">Companion object for the <code>AggregatableMultiple</code> type class.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatableMultipleWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="AggregatableMultipleWithValue"></a>
-      <a id="AggregatableMultipleWithValue:AggregatableMultipleWithValue"></a>
+      <p class="comment cmt">Companion object for the <code>Aggregatable</code> type class.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatableWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AggregatableWithValue"></a>
+      <a id="AggregatableWithValue:AggregatableWithValue"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="AggregatableMultipleWithValue$.html"><span class="name">AggregatableMultipleWithValue</span></a>
+        <a href="AggregatableWithValue$.html"><span class="name">AggregatableWithValue</span></a>
       </span>
       </h4>
-      <p class="comment cmt">Companion object for the <code>AggregatableMultipleWithValue</code> type class.</p>
+      <p class="comment cmt">Companion object for the <code>AggregatableWithValue</code> type class.</p>
     </li></ol>
             </div>
 

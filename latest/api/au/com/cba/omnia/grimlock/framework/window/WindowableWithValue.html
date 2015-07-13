@@ -35,11 +35,11 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">WindowableWithValue</span><span class="tparams">[<span name="T">T</span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">WindowableWithValue</span><span class="tparams">[<span name="T">T</span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Type class for transforming a type <code>T</code> to a <code>Windowed with InitialiseWithValue</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/12bc90a7d2a8e54b0ccc0492427dd584e36ea074//src/main/scala/au/com/cba/omnia/grimlock/framework/Windowed.scala" target="_blank">Windowed.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Type class for transforming a type <code>T</code> to a <code>WindowWithValue[S, R, Q]</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Window.scala" target="_blank">Window.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -84,19 +84,19 @@
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.window.WindowableWithValue#convert" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="convert(t:T):au.com.cba.omnia.grimlock.framework.window.Windowedwithau.com.cba.omnia.grimlock.framework.window.InitialiseWithValue{typeV&gt;:W}"></a>
-      <a id="convert(T):WindowedwithInitialiseWithValue{typeV&gt;:W}"></a>
+      <a id="convert(t:T):au.com.cba.omnia.grimlock.framework.window.WindowWithValue[S,R,Q]{typeV&gt;:W}"></a>
+      <a id="convert(T):WindowWithValue[S,R,Q]{typeV&gt;:W}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">convert</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowableWithValue.T">T</span></span>)</span><span class="result">: <a href="Windowed.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowed">Windowed</a> with <a href="InitialiseWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.InitialiseWithValue">InitialiseWithValue</a> { type V &gt;: W }</span>
+        <span class="name">convert</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowableWithValue.T">T</span></span>)</span><span class="result">: <a href="WindowWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue">WindowWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowableWithValue.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowableWithValue.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowableWithValue.Q">Q</span>] { type V &gt;: W }</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Returns a <code>Windowed with InitialiseWithValue</code> for type <code>T</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a <code>Windowed with InitialiseWithValue</code> for type <code>T</code>.
-</p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>Object that can be converted to a <code>Windowed with InitialiseWithValue</code>.
+      <p class="shortcomment cmt">Returns a <code>WindowWithValue[S, R, Q]</code> for type <code>T</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a <code>WindowWithValue[S, R, Q]</code> for type <code>T</code>.
+</p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>Object that can be converted to a <code>WindowWithValue[S, R, Q]</code>.
 </p></dd></dl></div>
     </li></ol>
             </div>

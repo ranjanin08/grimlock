@@ -58,8 +58,21 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.spark.examples.CeilingBucketing" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CeilingBucketingextendsTransformerwithPresentwithProductwithSerializable"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.spark.examples.AddWeight" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AddWeightextendsTransformerWithValue[au.com.cba.omnia.grimlock.framework.position.Position2D,au.com.cba.omnia.grimlock.framework.position.Position3D]withProductwithSerializable"></a>
+      <a id="AddWeight:AddWeight"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="AddWeight.html"><span class="name">AddWeight</span></a><span class="params">()</span><span class="result"> extends <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>, <a href="../../framework/position/Position3D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position3D">Position3D</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="au.com.cba.omnia.grimlock.spark.examples.CeilingBucketing" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CeilingBucketingextendsTransformer[au.com.cba.omnia.grimlock.framework.position.Position2D,au.com.cba.omnia.grimlock.framework.position.Position2D]withProductwithSerializable"></a>
       <a id="CeilingBucketing:CeilingBucketing"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -67,12 +80,25 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="CeilingBucketing.html"><span class="name">CeilingBucketing</span></a><span class="params">()</span><span class="result"> extends <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a> with <a href="../../framework/transform/Present.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Present">Present</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="CeilingBucketing.html"><span class="name">CeilingBucketing</span></a><span class="params">()</span><span class="result"> extends <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>, <a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="au.com.cba.omnia.grimlock.spark.examples.CustomPartition" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CustomPartitionextendsPartitioner[au.com.cba.omnia.grimlock.framework.position.Position2D,String]withProductwithSerializable"></a>
+      <a id="CustomPartition:CustomPartition"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CustomPartition.html"><span class="name">CustomPartition</span></a><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="left">left: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="right">right: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>, <span class="extype" name="scala.Predef.String">String</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
     </li><li name="au.com.cba.omnia.grimlock.spark.examples.Denormalise" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DenormaliseextendsTransformerwithPresentExpandedwithProductwithSerializable"></a>
+      <a id="DenormaliseextendsTransformer[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.position.Position2D]withProductwithSerializable"></a>
       <a id="Denormalise:Denormalise"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -80,12 +106,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Denormalise.html"><span class="name">Denormalise</span></a><span class="params">()</span><span class="result"> extends <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a> with <a href="../../framework/transform/PresentExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.PresentExpanded">PresentExpanded</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Denormalise.html"><span class="name">Denormalise</span></a><span class="params">()</span><span class="result"> extends <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
     </li><li name="au.com.cba.omnia.grimlock.spark.examples.EnsembleSplit" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="EnsembleSplitextendsPartitionerwithAssignwithProductwithSerializable"></a>
+      <a id="EnsembleSplitextendsPartitioner[au.com.cba.omnia.grimlock.framework.position.Position3D,String]withProductwithSerializable"></a>
       <a id="EnsembleSplit:EnsembleSplit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -93,7 +119,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="EnsembleSplit.html"><span class="name">EnsembleSplit</span></a><span class="params">(<span name="gbm">gbm: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="rf">rf: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="lr">lr: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a> with <a href="../../framework/partition/Assign.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Assign">Assign</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="EnsembleSplit.html"><span class="name">EnsembleSplit</span></a><span class="params">(<span name="gbm">gbm: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="rf">rf: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="lr">lr: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<a href="../../framework/position/Position3D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position3D">Position3D</a>, <span class="extype" name="scala.Predef.String">String</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
@@ -111,7 +137,7 @@
       </h4>
       
     </li><li name="au.com.cba.omnia.grimlock.spark.examples.Gradient" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="GradientextendsWindowedwithInitialisewithProductwithSerializable"></a>
+      <a id="GradientextendsWindow[au.com.cba.omnia.grimlock.framework.position.Position2D,au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.position.Position3D]withProductwithSerializable"></a>
       <a id="Gradient:Gradient"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -119,12 +145,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Gradient.html"><span class="name">Gradient</span></a><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>)</span><span class="result"> extends <a href="../../framework/window/Windowed.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowed">Windowed</a> with <a href="../../framework/window/Initialise.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Initialise">Initialise</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Gradient.html"><span class="name">Gradient</span></a><span class="params">(<span name="dim">dim: <a href="../../framework/position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>)</span><span class="result"> extends <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>, <a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <a href="../../framework/position/Position3D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position3D">Position3D</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
     </li><li name="au.com.cba.omnia.grimlock.spark.examples.SampleByScore" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SampleByScoreextendsSamplerwithSelectWithValuewithProductwithSerializable"></a>
+      <a id="SampleByScoreextendsSamplerWithValue[au.com.cba.omnia.grimlock.framework.position.Position2D]withProductwithSerializable"></a>
       <a id="SampleByScore:SampleByScore"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -132,12 +158,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="SampleByScore.html"><span class="name">SampleByScore</span></a><span class="params">()</span><span class="result"> extends <a href="../../framework/sample/Sampler.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.Sampler">Sampler</a> with <a href="../../framework/sample/SelectWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SelectWithValue">SelectWithValue</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="SampleByScore.html"><span class="name">SampleByScore</span></a><span class="params">()</span><span class="result"> extends <a href="../../framework/sample/SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
     </li><li name="au.com.cba.omnia.grimlock.spark.examples.WordCounts" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="WordCountsextendsTransformerwithPresentExpandedwithProductwithSerializable"></a>
+      <a id="WordCountsextendsTransformer[au.com.cba.omnia.grimlock.framework.position.Position2D,au.com.cba.omnia.grimlock.framework.position.Position3D]withProductwithSerializable"></a>
       <a id="WordCounts:WordCounts"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -145,7 +171,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="WordCounts.html"><span class="name">WordCounts</span></a><span class="params">(<span name="minLength">minLength: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">scala.Long.MinValue</span></span>, <span name="ngrams">ngrams: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;_&quot;</span></span>, <span name="stopwords">stopwords: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="au.com.cba.omnia.grimlock.framework.nlp.Stopwords.English">...</span></span>)</span><span class="result"> extends <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a> with <a href="../../framework/transform/PresentExpanded.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.PresentExpanded">PresentExpanded</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="WordCounts.html"><span class="name">WordCounts</span></a><span class="params">(<span name="minLength">minLength: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">scala.Long.MinValue</span></span>, <span name="ngrams">ngrams: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;_&quot;</span></span>, <span name="stopwords">stopwords: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="defval" name="au.com.cba.omnia.grimlock.framework.nlp.Stopwords.English">...</span></span>)</span><span class="result"> extends <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<a href="../../framework/position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>, <a href="../../framework/position/Position3D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position3D">Position3D</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
@@ -169,29 +195,29 @@
       </span>
       </h4>
       
-    </li><li name="au.com.cba.omnia.grimlock.spark.examples.DataQualityAndAnalysis" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DataQualityAndAnalysis"></a>
-      <a id="DataQualityAndAnalysis:DataQualityAndAnalysis"></a>
+    </li><li name="au.com.cba.omnia.grimlock.spark.examples.Conditional" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Conditional"></a>
+      <a id="Conditional:Conditional"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="DataQualityAndAnalysis$.html"><span class="name">DataQualityAndAnalysis</span></a>
+        <a href="Conditional$.html"><span class="name">Conditional</span></a>
       </span>
       </h4>
       
-    </li><li name="au.com.cba.omnia.grimlock.spark.examples.DataSciencePipelineWithFiltering" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DataSciencePipelineWithFiltering"></a>
-      <a id="DataSciencePipelineWithFiltering:DataSciencePipelineWithFiltering"></a>
+    </li><li name="au.com.cba.omnia.grimlock.spark.examples.DataAnalysis" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DataAnalysis"></a>
+      <a id="DataAnalysis:DataAnalysis"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="DataSciencePipelineWithFiltering$.html"><span class="name">DataSciencePipelineWithFiltering</span></a>
+        <a href="DataAnalysis$.html"><span class="name">DataAnalysis</span></a>
       </span>
       </h4>
       
@@ -283,6 +309,19 @@
       </span>
       <span class="symbol">
         <a href="MutualInformation$.html"><span class="name">MutualInformation</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="au.com.cba.omnia.grimlock.spark.examples.PipelineDataPreparation" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PipelineDataPreparation"></a>
+      <a id="PipelineDataPreparation:PipelineDataPreparation"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PipelineDataPreparation$.html"><span class="name">PipelineDataPreparation</span></a>
       </span>
       </h4>
       

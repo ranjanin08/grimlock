@@ -58,33 +58,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.pairwise.CombinationOperator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CombinationOperator[T&lt;:au.com.cba.omnia.grimlock.framework.pairwise.Operatorwithau.com.cba.omnia.grimlock.framework.pairwise.Compute]extendsOperatorwithComputewithProductwithSerializable"></a>
-      <a id="CombinationOperator[T&lt;:OperatorwithCompute]:CombinationOperator[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="CombinationOperator.html"><span class="name">CombinationOperator</span></a><span class="tparams">[<span name="T">T &lt;: <a href="Operator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator">Operator</a> with <a href="Compute.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Compute">Compute</a></span>]</span><span class="params">(<span name="singles">singles: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.CombinationOperator.T">T</span>]</span>)</span><span class="result"> extends <a href="Operator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator">Operator</a> with <a href="Compute.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Compute">Compute</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Operator that is a combination of one or more operators with <code>Compute</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.CombinationOperatorWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CombinationOperatorWithValue[T&lt;:au.com.cba.omnia.grimlock.framework.pairwise.Operatorwithau.com.cba.omnia.grimlock.framework.pairwise.ComputeWithValue{typeV&gt;:W},W]extendsOperatorwithComputeWithValuewithProductwithSerializable"></a>
-      <a id="CombinationOperatorWithValue[T&lt;:OperatorwithComputeWithValue{typeV&gt;:W},W]:CombinationOperatorWithValue[T,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="CombinationOperatorWithValue.html"><span class="name">CombinationOperatorWithValue</span></a><span class="tparams">[<span name="T">T &lt;: <a href="Operator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator">Operator</a> with <a href="ComputeWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.ComputeWithValue">ComputeWithValue</a> { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="params">(<span name="singles">singles: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.CombinationOperatorWithValue.T">T</span>]</span>)</span><span class="result"> extends <a href="Operator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator">Operator</a> with <a href="ComputeWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.ComputeWithValue">ComputeWithValue</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Operator that is a combination of one or more operators with <code>ComputeWithValue</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.Comparer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.pairwise.Comparer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ComparerextendsAnyRef"></a>
       <a id="Comparer:Comparer"></a>
       <h4 class="signature">
@@ -96,72 +70,59 @@
         <a href="Comparer.html"><span class="name">Comparer</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Base trait for comparing two positions to determine is pairwise operation is to be applied.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.Compute" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="ComputeextendsComputeWithValue"></a>
-      <a id="Compute:Compute"></a>
+      <p class="comment cmt">Base trait for comparing two positions to determine if pairwise operation is to be applied.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.Operable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Operable[T,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef"></a>
+      <a id="Operable[T,S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position]:Operable[T,S,R,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Compute.html"><span class="name">Compute</span></a><span class="result"> extends <a href="ComputeWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.ComputeWithValue">ComputeWithValue</a></span>
+        <a href="Operable.html"><span class="name">Operable</span></a><span class="tparams">[<span name="T">T</span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Operator[S, R, Q]</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.OperableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="OperableWithValue[T,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef"></a>
+      <a id="OperableWithValue[T,S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position,W]:OperableWithValue[T,S,R,Q,W]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="OperableWithValue.html"><span class="name">OperableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>OperatorWithValue</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.Operator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Operator[S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsOperatorWithValue[S,R,Q]"></a>
+      <a id="Operator[S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position]:Operator[S,R,Q]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Operator.html"><span class="name">Operator</span></a><span class="tparams">[<span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="OperatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.OperatorWithValue">OperatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator.Q">Q</span>]</span>
       </span>
       </h4>
       <p class="comment cmt">Base trait for computing pairwise values.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.ComputeWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="ComputeWithValueextendsAnyRef"></a>
-      <a id="ComputeWithValue:ComputeWithValue"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.OperatorWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="OperatorWithValue[S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
+      <a id="OperatorWithValue[S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position]:OperatorWithValue[S,R,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="ComputeWithValue.html"><span class="name">ComputeWithValue</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="OperatorWithValue.html"><span class="name">OperatorWithValue</span></a><span class="tparams">[<span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Base trait for computing pairwise values with a user provided value.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.Operable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Operable[T]extendsAnyRef"></a>
-      <a id="Operable[T]:Operable[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="Operable.html"><span class="name">Operable</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Operator with Compute</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.OperableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="OperableWithValue[T,W]extendsAnyRef"></a>
-      <a id="OperableWithValue[T,W]:OperableWithValue[T,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="OperableWithValue.html"><span class="name">OperableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Operator with ComputeWithValue</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.Operator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="OperatorextendsAnyRef"></a>
-      <a id="Operator:Operator"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="Operator.html"><span class="name">Operator</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Base trait for pairwise operations.</p>
     </li></ol>
             </div>
 
