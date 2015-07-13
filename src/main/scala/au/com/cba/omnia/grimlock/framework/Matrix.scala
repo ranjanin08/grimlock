@@ -256,6 +256,173 @@ object Cell {
   }
 
   /**
+   * Parse a line into a `Option[Cell[Position4D]]`.
+   *
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param line      The line to parse.
+   */
+  def parse4D(separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex)(
+    line: String): Option[Cell[Position4D]] = {
+    line.trim.split(Pattern.quote(separator), 7) match {
+      case Array(a, b, c, d, t, e, v) =>
+        Schema.fromString(e, t).flatMap {
+          case s => (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
+            case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
+            case _ => None
+          }
+        }
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a line into a `Option[Cell[Position4D]]` with a dictionary.
+   *
+   * @param dict      The dictionary describing the features in the data.
+   * @param dim       The dimension on which to apply the dictionary.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param line      The line to parse.
+   */
+  def parse4DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String, first: Codex,
+    second: Codex, third: Codex, fourth: Codex)(line: String)(
+    implicit ev: PosDimDep[Position4D, D]): Option[Cell[Position4D]] = {
+    line.trim.split(Pattern.quote(separator), 5) match {
+      case Array(a, b, c, d, v) =>
+        val s = dim match {
+          case First => dict(a)
+          case Second => dict(b)
+          case Third => dict(c)
+          case Fourth => dict(d)
+        }
+
+        (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
+          case _ => None
+        }
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a line into a `Option[Cell[Position4D]]` with a schema.
+   *
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param line      The line to parse.
+   */
+  def parse4DWithSchema(schema: Schema, separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex)(
+    line: String): Option[Cell[Position4D]] = {
+    line.trim.split(Pattern.quote(separator), 5) match {
+      case Array(a, b, c, d, v) =>
+        (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
+          case _ => None
+        }
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a line into a `Option[Cell[Position5D]]`.
+   *
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   * @param line      The line to parse.
+   */
+  def parse5D(separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex, fifth: Codex)(
+    line: String): Option[Cell[Position5D]] = {
+    line.trim.split(Pattern.quote(separator), 8) match {
+      case Array(a, b, c, d, f, t, e, v) =>
+        Schema.fromString(e, t).flatMap {
+          case s => (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
+            fifth.decode(f)) match {
+            case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
+              Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
+            case _ => None
+          }
+        }
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a line into a `Option[Cell[Position5D]]` with a dictionary.
+   *
+   * @param dict      The dictionary describing the features in the data.
+   * @param dim       The dimension on which to apply the dictionary.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   * @param line      The line to parse.
+   */
+  def parse5DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String, first: Codex,
+    second: Codex, third: Codex, fourth: Codex, fifth: Codex)(line: String)(
+    implicit ev: PosDimDep[Position5D, D]): Option[Cell[Position5D]] = {
+    line.trim.split(Pattern.quote(separator), 6) match {
+      case Array(a, b, c, d, e, v) =>
+        val s = dim match {
+          case First => dict(a)
+          case Second => dict(b)
+          case Third => dict(c)
+          case Fourth => dict(d)
+          case Fifth => dict(e)
+        }
+
+        (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d), fifth.decode(e)) match {
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
+            Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
+          case _ => None
+        }
+      case _ => None
+    }
+  }
+
+  /**
+   * Parse a line into a `Option[Cell[Position5D]]` with a schema.
+   *
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   * @param line      The line to parse.
+   */
+  def parse5DWithSchema(schema: Schema, separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex,
+    fifth: Codex)(line: String): Option[Cell[Position5D]] = {
+    line.trim.split(Pattern.quote(separator), 6) match {
+      case Array(a, b, c, d, e, v) =>
+        (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
+          fifth.decode(e)) match {
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
+            Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
+          case _ => None
+        }
+      case _ => None
+    }
+  }
+
+  /**
    * Parse a line into a `List[Cell[Position2D]]` with column definitions.
    *
    * @param columns   `List[(String, Schema)]` describing each column in the table.
@@ -299,7 +466,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]' with the changed contents.
    */
-  def change[T, D <: Dimension](slice: Slice[P, D], positions: T, schema: Schema)(implicit ev1: PosDimDep[P, D],
+  def change[D <: Dimension, T](slice: Slice[P, D], positions: T, schema: Schema)(implicit ev1: PosDimDep[P, D],
     ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
 
   /** Return all possible positions of a matrix. */
@@ -331,7 +498,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @param slice Encapsulates the dimension(s) for which the names are to be returned.
    *
-   * @return A `U[(Slice.S, Long)]` of the distinct position(s) together with a unique index.
+   * @return A `U[(slice.S, Long)]` of the distinct position(s) together with a unique index.
    *
    * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
    *       index itself is unique for each position but no ordering is defined.
@@ -345,71 +512,57 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * Compute pairwise values between all pairs of values given a slice.
    *
    * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param comparer  Defines which element the pairwise operations should apply to.
    * @param operators The pairwise operators to apply.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwise[D <: Dimension, T](slice: Slice[P, D], operators: T)(implicit ev1: PosDimDep[P, D], ev2: Operable[T],
-    ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.R#M]]
+  def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, operators: T)(
+    implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all pairs of values given a slice with a user supplied value.
    *
    * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param comparer  Defines which element the pairwise operations should apply to.
    * @param operators The pairwise operators to apply.
    * @param value     The user supplied value.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseWithValue[D <: Dimension, T, W](slice: Slice[P, D], operators: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-    ev5: ClassTag[slice.R]): U[Cell[slice.R#M]]
+  def pairwiseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, operators: T,
+    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
+      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all values of this and that given a slice.
    *
    * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param comparer  Defines which element the pairwise operations should apply to.
    * @param that      Other matrix to compute pairwise values with.
    * @param operators The pairwise operators to apply.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetween[D <: Dimension, T](slice: Slice[P, D], that: S, operators: T)(implicit ev1: PosDimDep[P, D],
-    ev2: Operable[T], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.R#M]]
+  def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, that: S, operators: T)(
+    implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all values of this and that given a slice with a user supplied value.
    *
    * @param slice     Encapsulates the dimension(s) along which to compute values.
+   * @param comparer  Defines which element the pairwise operations should apply to.
    * @param that      Other matrix to compute pairwise values with.
    * @param operators The pairwise operators to apply.
    * @param value     The user supplied value.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetweenWithValue[D <: Dimension, T, W](slice: Slice[P, D], that: S, operators: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-    ev5: ClassTag[slice.R]): U[Cell[slice.R#M]]
-
-  /**
-   * Partition a matrix according to `partitioner`.
-   *
-   * @param partitioner Assigns each position to zero, one or more partitions.
-   *
-   * @return A `U[(I, Cell[P])]` where `T` is the partition for the corresponding tuple.
-   */
-  def partition[I: Ordering](partitioner: Partitioner with Assign { type T = I }): U[(I, Cell[P])]
-
-  /**
-   * Partition a matrix according to `partitioner` using a user supplied value.
-   *
-   * @param partitioner Assigns each position to zero, one or more partitions.
-   * @param value       A `ValuePipe` holding a user supplied value.
-   *
-   * @return A `U[(I, Cell[P])]` where `T` is the partition for the corresponding tuple.
-   */
-  def partitionWithValue[I: Ordering, W](partitioner: Partitioner with AssignWithValue { type V >: W; type T = I },
-    value: E[W]): U[(I, Cell[P])]
+  def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, that: S,
+    operators: T, value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
+      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Rename the coordinates of a dimension.
@@ -437,7 +590,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]` with the sampled cells.
    */
-  def sample[T](samplers: T)(implicit ev: Sampleable[T]): U[Cell[P]]
+  def sample[T](samplers: T)(implicit ev: Sampleable[T, P]): U[Cell[P]]
 
   /**
    * Sample a matrix according to some `sampler` using a user supplied value. It keeps only those cells for which
@@ -448,7 +601,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]` with the sampled cells.
    */
-  def sampleWithValue[T, V](samplers: T, value: E[V])(implicit ev: SampleableWithValue[T, V]): U[Cell[P]]
+  def sampleWithValue[T, W](samplers: T, value: E[W])(implicit ev: SampleableWithValue[T, P, W]): U[Cell[P]]
 
   /**
    * Set `value` as the content for all `positions` in a matrix.
@@ -495,11 +648,57 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice     Encapsulates the dimension(s) to slice.
    * @param positions The position(s) within the dimension(s) to slice.
    * @param keep      Indicates if the `positions` should be kept or removed.
+   * @param reducers  The number of reducers/partitions to use/produce.
    *
    * @return A `U[Cell[P]]' of the remaining content.
    */
-  def slice[T, D <: Dimension](slice: Slice[P, D], positions: T, keep: Boolean)(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
+  def slice[D <: Dimension, T](slice: Slice[P, D], positions: T, keep: Boolean, reducers: Int)(
+    implicit ev1: PosDimDep[P, D], ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
+
+  /**
+   * Create window based derived data.
+   *
+   * @param slice   Encapsulates the dimension(s) to slide over.
+   * @param windows The window functions to apply to the content.
+   *
+   * @return A `U[Cell[slice.S#M]]` with the derived data.
+   */
+  def slide[D <: Dimension, Q <: Position, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D],
+    ev2: Windowable[T, slice.S, slice.R, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
+    ev5: ClassTag[slice.R]): U[Cell[Q]]
+
+  /**
+   * Create window based derived data with a user supplied value.
+   *
+   * @param slice   Encapsulates the dimension(s) to slide over.
+   * @param windows The window functions to apply to the content.
+   * @param value   A `E` holding a user supplied value.
+   *
+   * @return A `U[Cell[slice.S#M]]` with the derived data.
+   */
+  def slideWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], windows: T, value: E[W])(
+    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+
+  /**
+   * Partition a matrix according to `partitioner`.
+   *
+   * @param partitioners Assigns each position to zero, one or more partition(s).
+   *
+   * @return A `U[(Q, Cell[P])]` where `Q` is the partition for the corresponding tuple.
+   */
+  def split[Q, T](partitioners: T)(implicit ev: Partitionable[T, P, Q]): U[(Q, Cell[P])]
+
+  /**
+   * Partition a matrix according to `partitioner` using a user supplied value.
+   *
+   * @param partitioners Assigns each position to zero, one or more partition(s).
+   * @param value        A `ValuePipe` holding a user supplied value.
+   *
+   * @return A `U[(Q, Cell[P])]` where `Q` is the partition for the corresponding tuple.
+   */
+  def splitWithValue[Q, T, W](partitioners: T, value: E[W])(
+    implicit ev: PartitionableWithValue[T, P, Q, W]): U[(Q, Cell[P])]
 
   /**
    * Stream this matrix through `command` and apply `script`.
@@ -518,42 +717,69 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     parser: String => Option[Cell[Q]]): U[Cell[Q]]
 
   /**
-   * Summarise a matrix and return the aggregates with an expanded position.
+   * Summarise a matrix and return the aggregates.
    *
    * @param slice       Encapsulates the dimension(s) along which to aggregate.
    * @param aggregators The aggregator(s) to apply to the data.
    *
-   * @return A `U[Cell[slice.S#M]]` with the aggregates.
-   *
-   * @note If the `slice` is an `Over` then the returned position will be a `Position2D` since `Slice.S` for `Over` is
-   *       a `Position1D` and that expands to `Position2D`. Analogously, if the `slice` is an `Along` then the returned
-   *       position will be equal to `P`.
+   * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summariseAndExpand[T, D <: Dimension](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
-    ev2: AggregatableMultiple[T], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]]
+  def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
+    ev2: Aggregatable[T, P, slice.S, Q], ev3: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
-   * Summarise a matrix, using a user supplied value, and return the aggregates with an expanded position.
+   * Summarise a matrix and return the aggregates.
+   *
+   * @param slice       Encapsulates the dimension(s) along which to aggregate.
+   * @param aggregators The aggregator(s) to apply to the data.
+   * @param reducers    The number of reducers to use.
+   *
+   * @return A `U[Cell[Q]]` with the aggregates.
+   */
+  def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T, reducers: Int)(
+    implicit ev1: PosDimDep[P, D], ev2: Aggregatable[T, P, slice.S, Q], ev3: ClassTag[slice.S]): U[Cell[Q]]
+
+  /**
+   * Summarise a matrix, using a user supplied value, and return the aggregates.
    *
    * @param slice       Encapsulates the dimension(s) along which to aggregate.
    * @param aggregators The aggregator(s) to apply to the data.
    * @param value       A `E` holding a user supplied value.
    *
-   * @return A `U[Cell[slice.S#M]]` with the aggregates.
-   *
-   * @note If the `slice` is an `Over` then the returned position will be a `Position2D` since `Slice.S` for `Over` is
-   *       a `Position1D` and that expands to `Position2D`. Analogously, if the `slice` is an `Along` then the returned
-   *       position will be equal to `P`.
+   * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summariseAndExpandWithValue[T, D <: Dimension, V](slice: Slice[P, D], aggregators: T, value: E[V])(
-    implicit ev1: PosDimDep[P, D], ev2: AggregatableMultipleWithValue[T, V], ev3: ClassTag[slice.S]): U[Cell[slice.S#M]]
+  def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W])(
+    implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W], ev3: ClassTag[slice.S]): U[Cell[Q]]
+
+  /**
+   * Summarise a matrix, using a user supplied value, and return the aggregates.
+   *
+   * @param slice       Encapsulates the dimension(s) along which to aggregate.
+   * @param aggregators The aggregator(s) to apply to the data.
+   * @param value       A `E` holding a user supplied value.
+   * @param reducers    The number of reducers to use.
+   *
+   * @return A `U[Cell[Q]]` with the aggregates.
+   */
+  def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W],
+    reducers: Int)(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W],
+      ev3: ClassTag[slice.S]): U[Cell[Q]]
+
+  /**
+   * Convert a matrix to an in-memory `Map`.
+   *
+   * @return A `E[Map[P, Content]]` containing the Map representation of this matrix.
+   *
+   * @note Avoid using this for very large matrices.
+   */
+  def toMap()(implicit ev: ClassTag[P]): E[Map[P, Content]]
 
   /**
    * Convert a matrix to an in-memory `Map`.
    *
    * @param slice Encapsulates the dimension(s) along which to convert.
    *
-   * @return A `E[Map[Slice.S, Slice.C]]` containing the Map representation of this matrix.
+   * @return A `E[Map[slice.S, Slice.C]]` containing the Map representation of this matrix.
    *
    * @note Avoid using this for very large matrices.
    */
@@ -565,9 +791,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @param transformers The transformer(s) to apply to the content.
    *
-   * @return A `U[Cell[P]]` with the transformed cells.
+   * @return A `U[Cell[Q]]` with the transformed cells.
    */
-  def transform[T](transformers: T)(implicit ev: Transformable[T]): U[Cell[P]]
+  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[T, P, Q]): U[Cell[Q]]
 
   /**
    * Transform the content of a matrix using a user supplied value.
@@ -577,7 +803,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]` with the transformed cells.
    */
-  def transformWithValue[T, V](transformers: T, value: E[V])(implicit ev: TransformableWithValue[T, V]): U[Cell[P]]
+  def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
+    implicit ev: TransformableWithValue[T, P, Q, W]): U[Cell[Q]]
 
   /**
    * Returns the variable type of the content(s) for a given `slice`.
@@ -585,7 +812,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice    Encapsulates the dimension(s) for this the types are to be returned.
    * @param specific Indicates if the most specific type should be returned, or it's generalisation (default).
    *
-   * @return A `U[(Slice.S, Type)]` of the distinct position(s) together with their type.
+   * @return A `U[(slice.S, Type)]` of the distinct position(s) together with their type.
    *
    * @see [[Types]]
    */
@@ -623,7 +850,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[P]' of the positions for which the content matches `predicate`.
    */
-  def which[T, D <: Dimension](slice: Slice[P, D], positions: T, predicate: Predicate)(implicit ev1: PosDimDep[P, D],
+  def which[D <: Dimension, T](slice: Slice[P, D], positions: T, predicate: Predicate)(implicit ev1: PosDimDep[P, D],
     ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P]): U[P]
 
   /**
@@ -636,38 +863,14 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[P]' of the positions for which the content matches predicates.
    */
-  def which[T, D <: Dimension](slice: Slice[P, D], pospred: List[(T, Predicate)])(implicit ev1: PosDimDep[P, D],
+  def which[D <: Dimension, T](slice: Slice[P, D], pospred: List[(T, Predicate)])(implicit ev1: PosDimDep[P, D],
     ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P]): U[P]
-
-  /**
-   * Create window based derived data.
-   *
-   * @param slice   Encapsulates the dimension(s) to derive over.
-   * @param windows The windowed functions to apply to the content.
-   *
-   * @return A `U[Cell[slice.S#M]]` with the derived data.
-   */
-  def window[D <: Dimension, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[T],
-    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
-
-  /**
-   * Create window based derived data with a user supplied value.
-   *
-   * @param slice   Encapsulates the dimension(s) to derive over.
-   * @param windows The windowed functions to apply to the content.
-   * @param value   A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[slice.S#M]]` with the derived data.
-   */
-  def windowWithValue[D <: Dimension, T, W](slice: Slice[P, D], windows: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, W], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[slice.S#M]]
 
   protected def toString(t: Cell[P], separator: String, descriptive: Boolean): String = {
     t.toString(separator, descriptive)
   }
 
-  protected implicit def PositionOrdering[T <: Position] = Position.Ordering[T]
+  protected implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
 
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations
@@ -717,30 +920,6 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
     ev2: PosDimDep[P, F], ne: D =!= F): U[Cell[P#L]]
 
   /**
-   * Summarise a matrix.
-   *
-   * @param slice      Encapsulates the dimension(s) along which to aggregate.
-   * @param aggregator The aggregator to apply to the data.
-   *
-   * @return A `U[Cell[slice.S]]` with the aggregates.
-   */
-  def summarise[D <: Dimension](slice: Slice[P, D], aggregator: Aggregator with Prepare with PresentSingle)(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): U[Cell[slice.S]]
-
-  /**
-   * Summarise a matrix, using a user supplied value.
-   *
-   * @param slice      Encapsulates the dimension(s) along which to aggregate.
-   * @param aggregator The aggregator to apply to the data.
-   * @param value      A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[slice.S]]` with the aggregates.
-   */
-  def summariseWithValue[D <: Dimension, W](slice: Slice[P, D],
-    aggregator: Aggregator with PrepareWithValue with PresentSingleWithValue { type V >: W }, value: E[W])(
-      implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]): U[Cell[slice.S]]
-
-  /**
    * Squash a dimension of a matrix.
    *
    * @param dim      The dimension to squash.
@@ -748,7 +927,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squash[D <: Dimension](dim: D, squasher: Squasher with Reduce)(implicit ev: PosDimDep[P, D]): U[Cell[P#L]]
+  def squash[D <: Dimension, T](dim: D, squasher: T)(implicit ev1: PosDimDep[P, D], ev2: Squashable[T, P]): U[Cell[P#L]]
 
   /**
    * Squash a dimension of a matrix with a user supplied value.
@@ -759,8 +938,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squashWithValue[D <: Dimension, W](dim: D, squasher: Squasher with ReduceWithValue { type V >: W },
-    value: E[W])(implicit ev: PosDimDep[P, D]): U[Cell[P#L]]
+  def squashWithValue[D <: Dimension, T, W](dim: D, squasher: T, value: E[W])(implicit ev1: PosDimDep[P, D],
+    ev2: SquashableWithValue[T, P, W]): U[Cell[P#L]]
 }
 
 /** Base trait for methods that expands the number of dimension of a matrix. */
@@ -772,7 +951,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
-  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: ExpPosDep[P, Q]): U[Cell[Q]]
+  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
 
   /**
    * Expand a matrix with extra dimension(s) using a user supplied value.
@@ -783,54 +962,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
   def expandWithValue[Q <: Position, V](expander: (Cell[P], V) => Q, value: E[V])(
-    implicit ev: ExpPosDep[P, Q]): U[Cell[Q]]
-
-  /**
-   * Transform the content of a matrix and return the transformations with an expanded position.
-   *
-   * @param transformers The transformer(s) to apply to the content.
-   *
-   * @return A `U[Cell[P#M]]` with the transformed cells.
-   */
-  def transformAndExpand[T](transformers: T)(implicit ev: TransformableExpanded[T]): U[Cell[P#M]]
-
-  /**
-   * Transform the content of a matrix using a user supplied value, and return the transformations with an expanded
-   * position.
-   *
-   * @param transformers The transformer(s) to apply to the content.
-   * @param value        A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[P#M]]` with the transformed cells.
-   */
-  def transformAndExpandWithValue[T, V](transformers: T, value: E[V])(
-    implicit ev: TransformableExpandedWithValue[T, V]): U[Cell[P#M]]
-}
-
-/** Trait for capturing the dependency between an expansion and a position. */
-trait ExpPosDep[A, B] extends java.io.Serializable
-
-object Matrix {
-  /** Define dependency between expansion from `Position1D` to `Position2D`. */
-  implicit object P1P2 extends ExpPosDep[Position1D, Position2D]
-  /** Define dependency between expansion from `Position1D` to `Position3D`. */
-  implicit object P1P3 extends ExpPosDep[Position1D, Position3D]
-  /** Define dependency between expansion from `Position1D` to `Position4D`. */
-  implicit object P1P4 extends ExpPosDep[Position1D, Position4D]
-  /** Define dependency between expansion from `Position1D` to `Position5D`. */
-  implicit object P1P5 extends ExpPosDep[Position1D, Position5D]
-  /** Define dependency between expansion from `Position2D` to `Position3D`. */
-  implicit object P2P3 extends ExpPosDep[Position2D, Position3D]
-  /** Define dependency between expansion from `Position2D` to `Position4D`. */
-  implicit object P2P4 extends ExpPosDep[Position2D, Position4D]
-  /** Define dependency between expansion from `Position2D` to `Position5D`. */
-  implicit object P2P5 extends ExpPosDep[Position2D, Position5D]
-  /** Define dependency between expansion from `Position3D` to `Position4D`. */
-  implicit object P3P4 extends ExpPosDep[Position3D, Position4D]
-  /** Define dependency between expansion from `Position3D` to `Position5D`. */
-  implicit object P3P5 extends ExpPosDep[Position3D, Position5D]
-  /** Define dependency between expansion from `Position4D` to `Position5D`. */
-  implicit object P4P5 extends ExpPosDep[Position4D, Position5D]
+    implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
 }
 
 /** Type class for transforming a type `T` into a `U[Cell[P]]`. */

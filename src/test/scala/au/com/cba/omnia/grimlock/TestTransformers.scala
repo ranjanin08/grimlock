@@ -28,6 +28,20 @@ trait TestTransformers extends TestGrimlock {
   def getLongContent(value: Long): Content = Content(DiscreteSchema[Codex.LongCodex](), value)
   def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Codex.DoubleCodex](), value)
   def getStringContent(value: String): Content = Content(NominalSchema[Codex.StringCodex](), value)
+
+  def extractor[D <: Dimension, P <: Position](dim: D, key: String)(
+    implicit ev: PosDimDep[P, D]): Extract[P, Map[Position1D, Map[Position1D, Content]], Double] = {
+    ExtractWithDimensionAndKey[D, P, String, Content](dim, key).andThenPresent(_.value.asDouble)
+  }
+
+  def dimExtractor[D <: Dimension, P <: Position](dim: D)(
+    implicit ev: PosDimDep[P, D]): Extract[P, Map[Position1D, Content], Double] = {
+    ExtractWithDimension[D, P, Content](dim).andThenPresent(_.value.asDouble)
+  }
+
+  def keyExtractor[P <: Position](key: String): Extract[P, Map[Position1D, Content], Double] = {
+    ExtractWithKey[P, String, Content](key).andThenPresent(_.value.asDouble)
+  }
 }
 
 class TestIndicator extends TestTransformers {
@@ -39,10 +53,10 @@ class TestIndicator extends TestTransformers {
   }
 
   it should "present with name" in {
-    Indicator(First, "%1$s-%2$s.ind").present(cell) shouldBe Collection(Position2D("foo-3.1415.ind", "bar"),
-      getLongContent(1))
-    Indicator(Second, "%1$s-%2$s.ind").present(cell) shouldBe Collection(Position2D("foo", "bar-3.1415.ind"),
-      getLongContent(1))
+    Indicator().andThenRename(Transformer.rename(First, "%1$s-%2$s.ind")).present(cell) shouldBe
+      Collection(List(Cell(Position2D("foo-3.1415.ind", "bar"), getLongContent(1))))
+    Indicator().andThenRename(Transformer.rename(Second, "%1$s-%2$s.ind")).present(cell) shouldBe
+      Collection(List(Cell(Position2D("foo", "bar-3.1415.ind"), getLongContent(1))))
   }
 }
 
@@ -51,17 +65,21 @@ class TestBinarise extends TestTransformers {
   val cell = Cell(Position2D("foo", "bar"), getStringContent("rules"))
 
   "A Binarise" should "present" in {
-    Binarise(First).present(cell) shouldBe Collection(Position2D("foo=rules", "bar"), getLongContent(1))
-    Binarise(Second).present(cell) shouldBe Collection(Position2D("foo", "bar=rules"), getLongContent(1))
+    Binarise(Binarise.rename(First)).present(cell) shouldBe
+      Collection(Position2D("foo=rules", "bar"), getLongContent(1))
+    Binarise(Binarise.rename(Second)).present(cell) shouldBe
+      Collection(Position2D("foo", "bar=rules"), getLongContent(1))
   }
 
   it should "present with name" in {
-    Binarise(First, "%1$s.%2$s").present(cell) shouldBe Collection(Position2D("foo.rules", "bar"), getLongContent(1))
-    Binarise(Second, "%1$s.%2$s").present(cell) shouldBe Collection(Position2D("foo", "bar.rules"), getLongContent(1))
+    Binarise(Binarise.rename(First, "%1$s.%2$s")).present(cell) shouldBe
+      Collection(Position2D("foo.rules", "bar"), getLongContent(1))
+    Binarise(Binarise.rename(Second, "%1$s.%2$s")).present(cell) shouldBe
+      Collection(Position2D("foo", "bar.rules"), getLongContent(1))
   }
 
   it should "not present a numerical" in {
-    Binarise(First).present(Cell(Position1D("foo"), getDoubleContent(3.1415))) shouldBe Collection()
+    Binarise(Binarise.rename(First)).present(Cell(Position1D("foo"), getDoubleContent(3.1415))) shouldBe Collection()
   }
 }
 
@@ -72,27 +90,36 @@ class TestNormalise extends TestTransformers {
     Position1D("bar") -> Map(Position1D("const") -> getDoubleContent(-1.57075)))
 
   "An Normalise" should "present" in {
-    Normalise(First, "const").present(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(0.5))
-    Normalise(Second, "const").present(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(-2))
+    Normalise(extractor[Dimension.First, Position2D](First, "const"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(0.5))
+    Normalise(extractor[Dimension.Second, Position2D](Second, "const"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(-2))
   }
 
   it should "present with name" in {
-    Normalise(First, "const", "%1$s-%2$s.norm").present(cell, ext) shouldBe
-      Collection(Position2D("foo-3.1415.norm", "bar"), getDoubleContent(0.5))
-    Normalise(Second, "const", "%1$s-%2$s.norm").present(cell, ext) shouldBe
-      Collection(Position2D("foo", "bar-3.1415.norm"), getDoubleContent(-2))
+    Normalise(extractor[Dimension.First, Position2D](First, "const"))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.norm"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo-3.1415.norm", "bar"),
+        getDoubleContent(0.5))))
+    Normalise(extractor[Dimension.Second, Position2D](Second, "const"))
+      .andThenRenameWithValue(TransformerWithValue.rename(Second, "%1$s-%2$s.norm"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo", "bar-3.1415.norm"),
+        getDoubleContent(-2))))
   }
 
   it should "not present with missing key" in {
-    Normalise(First, "not.there").present(cell, ext) shouldBe Collection()
+    Normalise(extractor[Dimension.First, Position2D](First, "not.there"))
+      .presentWithValue(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
-    Normalise(First, "const").present(Cell(Position1D("baz"), getDoubleContent(3.1415)), ext) shouldBe Collection()
+    Normalise(extractor[Dimension.First, Position1D](First, "const"))
+      .presentWithValue(Cell(Position1D("baz"), getDoubleContent(3.1415)), ext) shouldBe Collection()
   }
 
   it should "not present with a categorical" in {
-    Normalise(First, "const").present(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
+    Normalise(extractor[Dimension.First, Position1D](First, "const"))
+      .presentWithValue(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
   }
 }
 
@@ -104,74 +131,118 @@ class TestStandardise extends TestTransformers {
     Position1D("bar") -> Map(Position1D("mean") -> getDoubleContent(-0.75), Position1D("sd") -> getDoubleContent(0.75)))
 
   "A Standardise" should "present" in {
-    Standardise(First, "mean", "sd").present(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent((3.1415 - 0.75) / 1.25))
-    Standardise(Second, "mean", "sd").present(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent((3.1415 + 0.75) / 0.75))
+    Standardise(extractor[Dimension.First, Position2D](First, "mean"),
+      extractor[Dimension.First, Position2D](First, "sd"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
+        getDoubleContent((3.1415 - 0.75) / 1.25))
+    Standardise(extractor[Dimension.Second, Position2D](Second, "mean"),
+      extractor[Dimension.Second, Position2D](Second, "sd"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
+        getDoubleContent((3.1415 + 0.75) / 0.75))
   }
 
   it should "present with name" in {
-    Standardise(First, "mean", "sd", "%1$s-%2$s.std").present(cell, ext) shouldBe
-      Collection(Position2D("foo-3.1415.std", "bar"), getDoubleContent((3.1415 - 0.75) / 1.25))
-    Standardise(Second, "mean", "sd", "%1$s-%2$s.std").present(cell, ext) shouldBe
-      Collection(Position2D("foo", "bar-3.1415.std"), getDoubleContent((3.1415 + 0.75) / 0.75))
+    Standardise(extractor[Dimension.First, Position2D](First, "mean"),
+      extractor[Dimension.First, Position2D](First, "sd"))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo-3.1415.std", "bar"),
+        getDoubleContent((3.1415 - 0.75) / 1.25))))
+    Standardise(extractor[Dimension.Second, Position2D](Second, "mean"),
+      extractor[Dimension.Second, Position2D](Second, "sd"))
+      .andThenRenameWithValue(TransformerWithValue.rename(Second, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo", "bar-3.1415.std"),
+        getDoubleContent((3.1415 + 0.75) / 0.75))))
   }
 
   it should "present with threshold" in {
-    Standardise(First, "mean", "sd", 1.0).present(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent((3.1415 - 0.75) / 1.25))
-    Standardise(Second, "mean", "sd", 1.0).present(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent(0))
+    Standardise(extractor[Dimension.First, Position2D](First, "mean"),
+      extractor[Dimension.First, Position2D](First, "sd"), 1.0)
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
+        getDoubleContent((3.1415 - 0.75) / 1.25))
+    Standardise(extractor[Dimension.Second, Position2D](Second, "mean"),
+      extractor[Dimension.Second, Position2D](Second, "sd"), 1.0)
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(0))
   }
 
   it should "present with N" in {
-    Standardise(First, "mean", "sd", 2).present(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent((3.1415 - 0.75) / (2 * 1.25)))
-    Standardise(Second, "mean", "sd", 2).present(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent((3.1415 + 0.75) / (2 * 0.75)))
+    Standardise(extractor[Dimension.First, Position2D](First, "mean"),
+      extractor[Dimension.First, Position2D](First, "sd"), n=2)
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
+        getDoubleContent((3.1415 - 0.75) / (2 * 1.25)))
+    Standardise(extractor[Dimension.Second, Position2D](Second, "mean"),
+      extractor[Dimension.Second, Position2D](Second, "sd"), n=2)
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
+        getDoubleContent((3.1415 + 0.75) / (2 * 0.75)))
   }
 
   it should "present with name and threshold" in {
-    Standardise(First, "mean", "sd", "%1$s-%2$s.std", 1.0).present(cell, ext) shouldBe
-      Collection(Position2D("foo-3.1415.std", "bar"), getDoubleContent((3.1415 - 0.75) / 1.25))
-    Standardise(Second, "mean", "sd", "%1$s-%2$s.std", 1.0).present(cell, ext) shouldBe
-      Collection(Position2D("foo", "bar-3.1415.std"), getDoubleContent(0))
+    Standardise(extractor[Dimension.First, Position2D](First, "mean"),
+      extractor[Dimension.First, Position2D](First, "sd"), 1.0)
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo-3.1415.std", "bar"),
+        getDoubleContent((3.1415 - 0.75) / 1.25))))
+    Standardise(extractor[Dimension.Second, Position2D](Second, "mean"),
+      extractor[Dimension.Second, Position2D](Second, "sd"), 1.0)
+      .andThenRenameWithValue(TransformerWithValue.rename(Second, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo", "bar-3.1415.std"),
+        getDoubleContent(0))))
   }
 
   it should "present with name and N" in {
-    Standardise(First, "mean", "sd", "%1$s-%2$s.std", 2).present(cell, ext) shouldBe
-      Collection(Position2D("foo-3.1415.std", "bar"), getDoubleContent((3.1415 - 0.75) / (2 * 1.25)))
-    Standardise(Second, "mean", "sd", "%1$s-%2$s.std", 2).present(cell, ext) shouldBe
-      Collection(Position2D("foo", "bar-3.1415.std"), getDoubleContent((3.1415 + 0.75) / (2 * 0.75)))
+    Standardise(extractor[Dimension.First, Position2D](First, "mean"),
+      extractor[Dimension.First, Position2D](First, "sd"), n=2)
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo-3.1415.std", "bar"),
+        getDoubleContent((3.1415 - 0.75) / (2 * 1.25)))))
+    Standardise(extractor[Dimension.Second, Position2D](Second, "mean"),
+      extractor[Dimension.Second, Position2D](Second, "sd"), n=2)
+      .andThenRenameWithValue(TransformerWithValue.rename(Second, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo", "bar-3.1415.std"),
+        getDoubleContent((3.1415 + 0.75) / (2 * 0.75)))))
   }
 
   it should "present with threshold and N" in {
-    Standardise(First, "mean", "sd", 1.0, 2).present(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent((3.1415 - 0.75) / (2 * 1.25)))
-    Standardise(Second, "mean", "sd", 1.0, 2).present(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent(0))
+    Standardise(extractor[Dimension.First, Position2D](First, "mean"),
+      extractor[Dimension.First, Position2D](First, "sd"), 1.0, 2)
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
+        getDoubleContent((3.1415 - 0.75) / (2 * 1.25)))
+    Standardise(extractor[Dimension.Second, Position2D](Second, "mean"),
+      extractor[Dimension.Second, Position2D](Second, "sd"), 1.0, 2)
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(0))
   }
 
   it should "present with name, threshold and N" in {
-    Standardise(First, "mean", "sd", "%1$s-%2$s.std", 1.0, 2).present(cell, ext) shouldBe
-      Collection(Position2D("foo-3.1415.std", "bar"), getDoubleContent((3.1415 - 0.75) / (2 * 1.25)))
-    Standardise(Second, "mean", "sd", "%1$s-%2$s.std", 1.0, 2).present(cell, ext) shouldBe
-      Collection(Position2D("foo", "bar-3.1415.std"), getDoubleContent(0))
+    Standardise(extractor[Dimension.First, Position2D](First, "mean"),
+      extractor[Dimension.First, Position2D](First, "sd"), 1.0, 2)
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo-3.1415.std", "bar"),
+        getDoubleContent((3.1415 - 0.75) / (2 * 1.25)))))
+    Standardise(extractor[Dimension.Second, Position2D](Second, "mean"),
+      extractor[Dimension.Second, Position2D](Second, "sd"), 1.0, 2)
+      .andThenRenameWithValue(TransformerWithValue.rename(Second, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo", "bar-3.1415.std"),
+        getDoubleContent(0))))
   }
 
   it should "not present with missing key" in {
-    Standardise(First, "not.there", "sd").present(cell, ext) shouldBe Collection()
-    Standardise(First, "mean", "not.there").present(cell, ext) shouldBe Collection()
+    Standardise(extractor[Dimension.First, Position2D](First, "not.there"),
+      extractor[Dimension.First, Position2D](First, "sd"))
+      .presentWithValue(cell, ext) shouldBe Collection()
+    Standardise(extractor[Dimension.First, Position2D](First, "mean"),
+      extractor[Dimension.First, Position2D](First, "not.there"))
+      .presentWithValue(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
-    Standardise(First, "mean", "sd").present(Cell(Position1D("baz"), getDoubleContent(3.1415)), ext) shouldBe
-      Collection()
+    Standardise(extractor[Dimension.First, Position1D](First, "mean"),
+      extractor[Dimension.First, Position1D](First, "sd"))
+      .presentWithValue(Cell(Position1D("baz"), getDoubleContent(3.1415)), ext) shouldBe Collection()
   }
 
   it should "not present with a categorical" in {
-    Standardise(First, "mean", "sd").present(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe
-      Collection()
+    Standardise(extractor[Dimension.First, Position1D](First, "mean"),
+      extractor[Dimension.First, Position1D](First, "sd"))
+      .presentWithValue(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
   }
 }
 
@@ -185,34 +256,48 @@ class TestClamp extends TestTransformers {
       Position1D("max") -> getDoubleContent(6.283)))
 
   "A Clamp" should "present" in {
-    Clamp(First, "min", "max").present(cell, ext) shouldBe Collection(Position3D("foo", "bar", "baz"),
-      getDoubleContent(3.1415))
-    Clamp(Second, "min", "max").present(cell, ext) shouldBe Collection(Position3D("foo", "bar", "baz"),
-      getDoubleContent(1.57075))
-    Clamp(Third, "min", "max").present(cell, ext) shouldBe Collection(Position3D("foo", "bar", "baz"),
-      getDoubleContent(4.71225))
+    Clamp(extractor[Dimension.First, Position3D](First, "min"), extractor[Dimension.First, Position3D](First, "max"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position3D("foo", "bar", "baz"), getDoubleContent(3.1415))
+    Clamp(extractor[Dimension.Second, Position3D](Second, "min"),
+      extractor[Dimension.Second, Position3D](Second, "max"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position3D("foo", "bar", "baz"), getDoubleContent(1.57075))
+    Clamp(extractor[Dimension.Third, Position3D](Third, "min"), extractor[Dimension.Third, Position3D](Third, "max"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position3D("foo", "bar", "baz"), getDoubleContent(4.71225))
   }
 
   it should "present with name" in {
-    Clamp(First, "min", "max", "%1$s-%2$s.std").present(cell, ext) shouldBe
-      Collection(Position3D("foo-3.1415.std", "bar", "baz"), getDoubleContent(3.1415))
-    Clamp(Second, "min", "max", "%1$s-%2$s.std").present(cell, ext) shouldBe
-      Collection(Position3D("foo", "bar-3.1415.std", "baz"), getDoubleContent(1.57075))
-    Clamp(Third, "min", "max", "%1$s-%2$s.std").present(cell, ext) shouldBe
-      Collection(Position3D("foo", "bar", "baz-3.1415.std"), getDoubleContent(4.71225))
+    Clamp(extractor[Dimension.First, Position3D](First, "min"), extractor[Dimension.First, Position3D](First, "max"))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position3D("foo-3.1415.std", "bar", "baz"),
+        getDoubleContent(3.1415))))
+    Clamp(extractor[Dimension.Second, Position3D](Second, "min"),
+      extractor[Dimension.Second, Position3D](Second, "max"))
+      .andThenRenameWithValue(TransformerWithValue.rename(Second, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position3D("foo", "bar-3.1415.std", "baz"),
+        getDoubleContent(1.57075))))
+    Clamp(extractor[Dimension.Third, Position3D](Third, "min"), extractor[Dimension.Third, Position3D](Third, "max"))
+      .andThenRenameWithValue(TransformerWithValue.rename(Third, "%1$s-%2$s.std"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position3D("foo", "bar", "baz-3.1415.std"),
+        getDoubleContent(4.71225))))
   }
 
   it should "not present with missing key" in {
-    Clamp(First, "not.there", "max").present(cell, ext) shouldBe Collection()
-    Clamp(First, "min", "not.there").present(cell, ext) shouldBe Collection()
+    Clamp(extractor[Dimension.First, Position3D](First, "not.there"),
+      extractor[Dimension.First, Position3D](First, "max"))
+      .presentWithValue(cell, ext) shouldBe Collection()
+    Clamp(extractor[Dimension.First, Position3D](First, "min"),
+      extractor[Dimension.First, Position3D](First, "not.there"))
+      .presentWithValue(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
-    Clamp(First, "min", "max").present(Cell(Position1D("abc"), getDoubleContent(3.1415)), ext) shouldBe Collection()
+    Clamp(extractor[Dimension.First, Position1D](First, "min"), extractor[Dimension.First, Position1D](First, "max"))
+      .presentWithValue(Cell(Position1D("abc"), getDoubleContent(3.1415)), ext) shouldBe Collection()
   }
 
   it should "not present with a categorical" in {
-    Clamp(First, "min", "max").present(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
+    Clamp(extractor[Dimension.First, Position1D](First, "min"), extractor[Dimension.First, Position1D](First, "max"))
+      .presentWithValue(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
   }
 }
 
@@ -222,53 +307,64 @@ class TestIdf extends TestTransformers {
   val ext = Map(Position1D("foo") -> getLongContent(2), Position1D("bar") -> getLongContent(2))
 
   "An Idf" should "present" in {
-    Idf(First).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0))
+    Idf(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0))
   }
 
   it should "present with name" in {
-    Idf(First, "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.idf"),
-      getDoubleContent(0))
+    Idf(dimExtractor[Dimension.First, Position1D](First))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.idf"), getDoubleContent(0))))
   }
 
   it should "present with key" in {
-    Idf("bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0))
+    Idf(keyExtractor[Position1D]("bar"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0))
   }
 
   it should "present with function" in {
-    Idf(First, Idf.Transform(math.log10, 0)).present(cell, ext) shouldBe Collection(Position1D("foo"),
-      getDoubleContent(math.log10(2)))
+    Idf(dimExtractor[Dimension.First, Position1D](First), (df, n) => math.log10(n / df))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(math.log10(2)))
   }
 
   it should "present with name and key" in {
-    Idf(First, "bar", "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.idf"),
-      getDoubleContent(0))
+    Idf(keyExtractor[Position1D]("bar"))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.idf"), getDoubleContent(0))))
   }
 
   it should "present with name and function" in {
-    Idf(First, "%1$s-%2$s.idf", Idf.Transform(math.log10, 0)).present(cell, ext) shouldBe
-      Collection(Position1D("foo-1.idf"), getDoubleContent(math.log10(2)))
+    Idf(dimExtractor[Dimension.First, Position1D](First), (df, n) => math.log10(n / df))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.idf"),
+        getDoubleContent(math.log10(2)))))
   }
 
   it should "present with key and function" in {
-    Idf("bar", Idf.Transform(math.log10, 0)).present(cell, ext) shouldBe Collection(Position1D("foo"),
-      getDoubleContent(math.log10(2)))
+    Idf(keyExtractor[Position1D]("bar"), (df, n) => math.log10(n / df))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(math.log10(2)))
   }
 
   it should "present with name, key and function" in {
-    Idf(First, "bar", "%1$s-%2$s.idf", Idf.Transform(math.log10, 0)).present(cell, ext) shouldBe
-      Collection(Position1D("foo-1.idf"), getDoubleContent(math.log10(2)))
+    Idf(keyExtractor[Position1D]("bar"), (df, n) => math.log10(n / df))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.idf"),
+        getDoubleContent(math.log10(2)))))
   }
 
   it should "not present with missing key" in {
-    Idf("not.there").present(cell, ext) shouldBe Collection()
+    Idf(keyExtractor[Position1D]("not.there"))
+      .presentWithValue(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
-    Idf(First).present(Cell(Position1D("abc"), getLongContent(1)), ext) shouldBe Collection()
+    Idf(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(Cell(Position1D("abc"), getLongContent(1)), ext) shouldBe Collection()
   }
 
   it should "not present with a categorical" in {
-    Idf(First).present(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
+    Idf(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
   }
 }
 
@@ -281,10 +377,10 @@ class TestBooleanTf extends TestTransformers {
   }
 
   it should "present with name" in {
-    BooleanTf(First, "%1$s-%2$s.btf").present(cell) shouldBe Collection(Position2D("foo-3.btf", "bar"),
-      getDoubleContent(1))
-    BooleanTf(Second, "%1$s-%2$s.btf").present(cell) shouldBe Collection(Position2D("foo", "bar-3.btf"),
-      getDoubleContent(1))
+    BooleanTf().andThenRename(Transformer.rename(First, "%1$s-%2$s.btf")).present(cell) shouldBe
+      Collection(List(Cell(Position2D("foo-3.btf", "bar"), getDoubleContent(1))))
+    BooleanTf().andThenRename(Transformer.rename(Second, "%1$s-%2$s.btf")).present(cell) shouldBe
+      Collection(List(Cell(Position2D("foo", "bar-3.btf"), getDoubleContent(1))))
   }
 
   it should "not present with a categorical" in {
@@ -301,10 +397,10 @@ class TestLogarithmicTf extends TestTransformers {
   }
 
   it should "present with name" in {
-    LogarithmicTf(First, "%1$s-%2$s.ltf").present(cell) shouldBe Collection(Position2D("foo-3.ltf", "bar"),
-      getDoubleContent(1 + math.log(3)))
-    LogarithmicTf(Second, "%1$s-%2$s.ltf").present(cell) shouldBe Collection(Position2D("foo", "bar-3.ltf"),
-      getDoubleContent(1 + math.log(3)))
+    LogarithmicTf().andThenRename(Transformer.rename(First, "%1$s-%2$s.ltf")).present(cell) shouldBe
+      Collection(List(Cell(Position2D("foo-3.ltf", "bar"), getDoubleContent(1 + math.log(3)))))
+    LogarithmicTf().andThenRename(Transformer.rename(Second, "%1$s-%2$s.ltf")).present(cell) shouldBe
+      Collection(List(Cell(Position2D("foo", "bar-3.ltf"), getDoubleContent(1 + math.log(3)))))
   }
 
   it should "present with log" in {
@@ -313,10 +409,10 @@ class TestLogarithmicTf extends TestTransformers {
   }
 
   it should "present with name and log" in {
-    LogarithmicTf(First, "%1$s-%2$s.ltf", math.log10 _).present(cell) shouldBe
-      Collection(Position2D("foo-3.ltf", "bar"), getDoubleContent(1 + math.log10(3)))
-    LogarithmicTf(Second, "%1$s-%2$s.ltf", math.log10 _).present(cell) shouldBe
-      Collection(Position2D("foo", "bar-3.ltf"), getDoubleContent(1 + math.log10(3)))
+    LogarithmicTf(math.log10 _).andThenRename(Transformer.rename(First, "%1$s-%2$s.ltf")).present(cell) shouldBe
+      Collection(List(Cell(Position2D("foo-3.ltf", "bar"), getDoubleContent(1 + math.log10(3)))))
+    LogarithmicTf(math.log10 _).andThenRename(Transformer.rename(Second, "%1$s-%2$s.ltf")).present(cell) shouldBe
+      Collection(List(Cell(Position2D("foo", "bar-3.ltf"), getDoubleContent(1 + math.log10(3)))))
   }
 
   it should "not present with a categorical" in {
@@ -328,27 +424,35 @@ class TestAugmentedTf extends TestTransformers {
 
   val cell = Cell(Position2D("foo", "bar"), getLongContent(1))
   val ext = Map(Position1D("foo") -> getLongContent(2), Position1D("bar") -> getLongContent(2))
+  val ext2 = Map(Position1D("foo") -> Map(Position1D("baz") -> getLongContent(2)),
+    Position1D("bar") -> Map(Position1D("baz") -> getLongContent(2)))
 
   "An AugmentedTf" should "present" in {
-    AugmentedTf(First).present(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent(0.5 + 0.5 * 1 / 2))
-    AugmentedTf(Second).present(cell, ext) shouldBe Collection(Position2D("foo", "bar"),
-      getDoubleContent(0.5 + 0.5 * 1 / 2))
+    AugmentedTf(dimExtractor[Dimension.First, Position2D](First))
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(0.5 + 0.5 * 1 / 2))
+    AugmentedTf(extractor[Second.type, Position2D](Second, "baz"))
+      .presentWithValue(cell, ext2) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(0.5 + 0.5 * 1 / 2))
   }
 
   it should "present with name" in {
-    AugmentedTf(First, "%1$s-%2$s.atf").present(cell, ext) shouldBe Collection(Position2D("foo-1.atf", "bar"),
-      getDoubleContent(0.5 + 0.5 * 1 / 2))
-    AugmentedTf(Second, "%1$s-%2$s.atf").present(cell, ext) shouldBe Collection(Position2D("foo", "bar-1.atf"),
-      getDoubleContent(0.5 + 0.5 * 1 / 2))
+    AugmentedTf(extractor[Dimension.First, Position2D](First, "baz"))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.atf"))
+      .presentWithValue(cell, ext2) shouldBe Collection(List(Cell(Position2D("foo-1.atf", "bar"),
+        getDoubleContent(0.5 + 0.5 * 1 / 2))))
+    AugmentedTf(dimExtractor[Dimension.Second, Position2D](Second))
+      .andThenRenameWithValue(TransformerWithValue.rename(Second, "%1$s-%2$s.atf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo", "bar-1.atf"),
+        getDoubleContent(0.5 + 0.5 * 1 / 2))))
   }
 
   it should "not present with missing value" in {
-    AugmentedTf(First).present(Cell(Position2D("abc", "bar"), getLongContent(1)), ext) shouldBe Collection()
+    AugmentedTf(dimExtractor[Dimension.First, Position2D](First))
+      .presentWithValue(Cell(Position2D("abc", "bar"), getLongContent(1)), ext) shouldBe Collection()
   }
 
   it should "not present with a categorical" in {
-    AugmentedTf(First).present(Cell(Position2D("foo", "bar"), getStringContent("baz")), ext) shouldBe Collection()
+    AugmentedTf(dimExtractor[Dimension.First, Position2D](First))
+      .presentWithValue(Cell(Position2D("foo", "bar"), getStringContent("baz")), ext) shouldBe Collection()
   }
 }
 
@@ -359,38 +463,52 @@ class TestTfIdf extends TestTransformers {
     Position1D("baz") -> getDoubleContent(2))
 
   "A TfIdf" should "present" in {
-    TfIdf(First).present(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(3))
-    TfIdf(Second).present(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(3))
+    TfIdf(dimExtractor[Dimension.First, Position2D](First))
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(3))
+    TfIdf(dimExtractor[Dimension.Second, Position2D](Second))
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(3))
   }
 
   it should "present with name" in {
-    TfIdf(First, "%1$s-%2$s.tfidf").present(cell, ext) shouldBe Collection(Position2D("foo-1.5.tfidf", "bar"),
-      getDoubleContent(3))
-    TfIdf(Second, "%1$s-%2$s.tfidf").present(cell, ext) shouldBe Collection(Position2D("foo", "bar-1.5.tfidf"),
-      getDoubleContent(3))
+    TfIdf(dimExtractor[Dimension.First, Position2D](First))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.tfidf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo-1.5.tfidf", "bar"),
+        getDoubleContent(3))))
+    TfIdf(dimExtractor[Dimension.Second, Position2D](Second))
+      .andThenRenameWithValue(TransformerWithValue.rename(Second, "%1$s-%2$s.tfidf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo", "bar-1.5.tfidf"),
+        getDoubleContent(3))))
   }
 
   it should "present with key" in {
-    TfIdf("baz").present(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(3))
+    TfIdf(keyExtractor[Position2D]("baz"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position2D("foo", "bar"), getDoubleContent(3))
   }
 
   it should "present with name and key" in {
-    TfIdf(First, "baz", "%1$s-%2$s.tfidf").present(cell, ext) shouldBe Collection(Position2D("foo-1.5.tfidf", "bar"),
-      getDoubleContent(3))
-    TfIdf(Second, "baz", "%1$s-%2$s.tfidf").present(cell, ext) shouldBe Collection(Position2D("foo", "bar-1.5.tfidf"),
-      getDoubleContent(3))
+    TfIdf(keyExtractor[Position2D]("baz"))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.tfidf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo-1.5.tfidf", "bar"),
+        getDoubleContent(3))))
+    TfIdf(keyExtractor[Position2D]("baz"))
+      .andThenRenameWithValue(TransformerWithValue.rename(Second, "%1$s-%2$s.tfidf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position2D("foo", "bar-1.5.tfidf"),
+        getDoubleContent(3))))
   }
 
   it should "not present with missing key" in {
-    TfIdf("not.there").present(cell, ext) shouldBe Collection()
+    TfIdf(keyExtractor[Position2D]("not.there"))
+      .presentWithValue(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
-    TfIdf(First).present(Cell(Position2D("abc", "bar"), getDoubleContent(1.5)), ext) shouldBe Collection()
+    TfIdf(dimExtractor[Dimension.First, Position2D](First))
+      .presentWithValue(Cell(Position2D("abc", "bar"), getDoubleContent(1.5)), ext) shouldBe Collection()
   }
 
   it should "not present with a categorical" in {
-    TfIdf(First).present(Cell(Position2D("foo", "bar"), getStringContent("baz")), ext) shouldBe Collection()
+    TfIdf(dimExtractor[Dimension.First, Position2D](First))
+      .presentWithValue(Cell(Position2D("foo", "bar"), getStringContent("baz")), ext) shouldBe Collection()
   }
 }
 
@@ -400,33 +518,40 @@ class TestAdd extends TestTransformers {
   val ext = Map(Position1D("foo") -> getDoubleContent(2), Position1D("bar") -> getDoubleContent(2))
 
   "An Add" should "present" in {
-    Add(First).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(3))
+    Add(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(3))
   }
 
   it should "present with name" in {
-    Add(First, "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(3))
+    Add(dimExtractor[Dimension.First, Position1D](First))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(3))))
   }
 
   it should "present with key" in {
-    Add("bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(3))
+    Add(keyExtractor[Position1D]("bar"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(3))
   }
 
   it should "present with name and key" in {
-    Add(First, "bar", "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(3))
+    Add(keyExtractor[Position1D]("bar"))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(3))))
   }
 
   it should "not present with missing key" in {
-    Add("not.there").present(cell, ext) shouldBe Collection()
+    Add(keyExtractor[Position1D]("not.there"))
+      .presentWithValue(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
-    Add(First).present(Cell(Position1D("abc"), getDoubleContent(1)), ext) shouldBe Collection()
+    Add(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(Cell(Position1D("abc"), getDoubleContent(1)), ext) shouldBe Collection()
   }
 
   it should "not present with a categorical" in {
-    Add(First).present(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
+    Add(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
   }
 }
 
@@ -436,51 +561,62 @@ class TestSubtract extends TestTransformers {
   val ext = Map(Position1D("foo") -> getDoubleContent(2), Position1D("bar") -> getDoubleContent(2))
 
   "A Subtract" should "present" in {
-    Subtract(First).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(-1))
+    Subtract(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(-1))
   }
 
   it should "present with name" in {
-    Subtract(First, "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(-1))
+    Subtract(dimExtractor[Dimension.First, Position1D](First))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(-1))))
   }
 
   it should "present with key" in {
-    Subtract("bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(-1))
+    Subtract(keyExtractor[Position1D]("bar"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(-1))
   }
 
   it should "present with inverse" in {
-    Subtract(First, true).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(1))
+    Subtract(dimExtractor[Dimension.First, Position1D](First), true)
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(1))
   }
 
   it should "present with name and key" in {
-    Subtract(First, "bar", "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(-1))
+    Subtract(keyExtractor[Position1D]("bar"))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(-1))))
   }
 
   it should "present with name and inverse" in {
-    Subtract(First, "%1$s-%2$s.idf", true).present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(1))
+    Subtract(dimExtractor[Dimension.First, Position1D](First), true)
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(1))))
   }
 
   it should "present with key and inverse" in {
-    Subtract("bar", true).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(1))
+    Subtract(keyExtractor[Position1D]("bar"), true)
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(1))
   }
 
   it should "present with name, key and inverse" in {
-    Subtract(First, "bar", "%1$s-%2$s.idf", true).present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(1))
+    Subtract(keyExtractor[Position1D]("bar"), true)
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(1))))
   }
 
   it should "not present with missing key" in {
-    Subtract("not.there").present(cell, ext) shouldBe Collection()
+    Subtract(keyExtractor[Position1D]("not.there"))
+      .presentWithValue(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
-    Subtract(First).present(Cell(Position1D("abc"), getDoubleContent(1)), ext) shouldBe Collection()
+    Subtract(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(Cell(Position1D("abc"), getDoubleContent(1)), ext) shouldBe Collection()
   }
 
   it should "not present with a categorical" in {
-    Subtract(First).present(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
+    Subtract(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
   }
 }
 
@@ -490,33 +626,40 @@ class TestMultiply extends TestTransformers {
   val ext = Map(Position1D("foo") -> getDoubleContent(2), Position1D("bar") -> getDoubleContent(2))
 
   "A Multiply" should "present" in {
-    Multiply(First).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
+    Multiply(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
   }
 
   it should "present with name" in {
-    Multiply(First, "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(2))
+    Multiply(dimExtractor[Dimension.First, Position1D](First))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(2))))
   }
 
   it should "present with key" in {
-    Multiply("bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
+    Multiply(keyExtractor[Position1D]("bar"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
   }
 
   it should "present with name and key" in {
-    Multiply(First, "bar", "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(2))
+    Multiply(keyExtractor[Position1D]("bar"))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(2))))
   }
 
   it should "not present with missing key" in {
-    Multiply("not.there").present(cell, ext) shouldBe Collection()
+    Multiply(keyExtractor[Position1D]("not.there"))
+      .presentWithValue(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
-    Multiply(First).present(Cell(Position1D("abc"), getDoubleContent(1)), ext) shouldBe Collection()
+    Multiply(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(Cell(Position1D("abc"), getDoubleContent(1)), ext) shouldBe Collection()
   }
 
   it should "not present with a categorical" in {
-    Multiply(First).present(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
+    Multiply(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
   }
 }
 
@@ -526,51 +669,62 @@ class TestFraction extends TestTransformers {
   val ext = Map(Position1D("foo") -> getDoubleContent(2), Position1D("bar") -> getDoubleContent(2))
 
   "A Fraction" should "present" in {
-    Fraction(First).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0.5))
+    Fraction(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0.5))
   }
 
   it should "present with name" in {
-    Fraction(First, "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(0.5))
+    Fraction(dimExtractor[Dimension.First, Position1D](First))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(0.5))))
   }
 
   it should "present with key" in {
-    Fraction("bar").present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0.5))
+    Fraction(keyExtractor[Position1D]("bar"))
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(0.5))
   }
 
   it should "present with inverse" in {
-    Fraction(First, true).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
+    Fraction(dimExtractor[Dimension.First, Position1D](First), true)
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
   }
 
   it should "present with name and key" in {
-    Fraction(First, "bar", "%1$s-%2$s.idf").present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(0.5))
+    Fraction(keyExtractor[Position1D]("bar"))
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(0.5))))
   }
 
   it should "present with name and inverse" in {
-    Fraction(First, "%1$s-%2$s.idf", true).present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(2))
+    Fraction(dimExtractor[Dimension.First, Position1D](First), true)
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(2))))
   }
 
   it should "present with key and inverse" in {
-    Fraction("bar", true).present(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
+    Fraction(keyExtractor[Position1D]("bar"), true)
+      .presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"), getDoubleContent(2))
   }
 
   it should "present with name, key and inverse" in {
-    Fraction(First, "bar", "%1$s-%2$s.idf", true).present(cell, ext) shouldBe Collection(Position1D("foo-1.0.idf"),
-      getDoubleContent(2))
+    Fraction(keyExtractor[Position1D]("bar"), true)
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s-%2$s.idf"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(2))))
   }
 
   it should "not present with missing key" in {
-    Fraction("not.there").present(cell, ext) shouldBe Collection()
+    Fraction(keyExtractor[Position1D]("not.there"))
+      .presentWithValue(cell, ext) shouldBe Collection()
   }
 
   it should "not present with missing value" in {
-    Fraction(First).present(Cell(Position1D("abc"), getDoubleContent(1)), ext) shouldBe Collection()
+    Fraction(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(Cell(Position1D("abc"), getDoubleContent(1)), ext) shouldBe Collection()
   }
 
   it should "not present with a categorical" in {
-    Fraction(First).present(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
+    Fraction(dimExtractor[Dimension.First, Position1D](First))
+      .presentWithValue(Cell(Position1D("foo"), getStringContent("bar")), ext) shouldBe Collection()
   }
 }
 
@@ -583,8 +737,8 @@ class TestPower extends TestTransformers {
   }
 
   it should "present with name" in {
-    Power(First, 2, "%1$s-%2$s.pwr").present(cell) shouldBe Collection(Position1D("foo-3.1415.pwr"),
-      getDoubleContent(3.1415 * 3.1415))
+    Power(2).andThenRename(Transformer.rename(First, "%1$s-%2$s.pwr")).present(cell) shouldBe
+      Collection(List(Cell(Position1D("foo-3.1415.pwr"), getDoubleContent(3.1415 * 3.1415))))
   }
 }
 
@@ -597,8 +751,8 @@ class TestSquareRoot extends TestTransformers {
   }
 
   it should "present with name" in {
-    SquareRoot(First, "%1$s-%2$s.sqr").present(cell) shouldBe Collection(Position1D("foo-3.1415.sqr"),
-      getDoubleContent(math.sqrt(3.1415)))
+    SquareRoot().andThenRename(Transformer.rename(First, "%1$s-%2$s.sqr")).present(cell) shouldBe
+      Collection(List(Cell(Position1D("foo-3.1415.sqr"), getDoubleContent(math.sqrt(3.1415)))))
   }
 }
 
@@ -607,19 +761,47 @@ class TestCut extends TestTransformers {
   val cell = Cell(Position1D("foo"), getDoubleContent(3.1415))
   val ext = Map(Position1D("foo") -> List[Double](0,1,2,3,4,5))
 
+  val binExtractor = ExtractWithDimension[Dimension.First, Position1D, List[Double]](First)
+
   "A Cut" should "present" in {
-    Cut(First).present(cell, ext) shouldBe Collection(Position1D("foo"), Content(OrdinalSchema[Codex.StringCodex](
-      List("(0.0,1.0]","(1.0,2.0]","(2.0,3.0]","(3.0,4.0]","(4.0,5.0]")), "(3.0,4.0]"))
+    Cut(binExtractor).presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"),
+      Content(OrdinalSchema[Codex.StringCodex](List("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]", "(4.0,5.0]")),
+        "(3.0,4.0]"))
   }
 
   it should "present with name" in {
-    Cut(First, "%1$s.cut").present(cell, ext) shouldBe Collection(Position1D("foo.cut"),
-        Content(OrdinalSchema[Codex.StringCodex](List("(0.0,1.0]","(1.0,2.0]","(2.0,3.0]","(3.0,4.0]","(4.0,5.0]")),
-          "(3.0,4.0]"))
+    Cut(binExtractor)
+      .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.cut"))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo.cut"),
+        Content(OrdinalSchema[Codex.StringCodex](List("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]",
+          "(4.0,5.0]")), "(3.0,4.0]"))))
   }
 
   it should "not present with missing bins" in {
-    Cut(First).present(cell, Map()) shouldBe Collection()
+    Cut(binExtractor).presentWithValue(cell, Map()) shouldBe Collection()
+  }
+}
+
+class TestCompare extends TestTransformers {
+
+  val cell = Cell(Position1D("foo"), getDoubleContent(3.1415))
+
+  def equ(v: Double) = (cell: Cell[Position1D]) => {
+    cell.content.value.asDouble.map(_ == v).getOrElse(false)
+  }
+
+  "A Compare" should "present" in {
+    Compare(equ(3.1415)).present(cell) shouldBe Collection(Position1D("foo"),
+      Content(NominalSchema[Codex.BooleanCodex](), true))
+    Compare(equ(3.3)).present(cell) shouldBe Collection(Position1D("foo"),
+      Content(NominalSchema[Codex.BooleanCodex](), false))
+  }
+
+  it should "present with name" in {
+    Compare(equ(3.1415)).andThenRename(Transformer.rename(First, "%1$s.cmp")).present(cell) shouldBe
+      Collection(List(Cell(Position1D("foo.cmp"), Content(NominalSchema[Codex.BooleanCodex](), true))))
+    Compare(equ(3.3)).andThenRename(Transformer.rename(First, "%1$s.cmp")).present(cell) shouldBe
+      Collection(List(Cell(Position1D("foo.cmp"), Content(NominalSchema[Codex.BooleanCodex](), false))))
   }
 }
 
@@ -807,8 +989,9 @@ class TestAndThenTransformer extends TestTransformers {
   val cell = Cell(Position1D("foo"), getStringContent("rules"))
 
   "An AndThenTransformer" should "present" in {
-    AndThenTransformer(Binarise(First), Indicator(First, "%1$s.ind")).present(cell) shouldBe
-      Collection(List(Cell(Position1D("foo=rules.ind"), getLongContent(1))))
+    Binarise[Position1D](Binarise.rename(First))
+      .andThen(Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")))
+      .present(cell) shouldBe Collection(List(Cell(Position1D("foo=rules.ind"), getLongContent(1))))
   }
 }
 
@@ -819,31 +1002,9 @@ class TestAndThenTransformerWithValue extends TestTransformers {
     Position1D("max") -> getDoubleContent(2), Position1D("max.abs") -> getDoubleContent(3)))
 
   "An AndThenTransformerWithValue" should "present" in {
-    AndThenTransformerWithValue(Clamp(First, "min", "max"), Normalise(First, "max.abs")).present(cell, ext) shouldBe
-      Collection(List(Cell(Position1D("foo"), getDoubleContent(2.0 / 3.0))))
-  }
-}
-
-class TestCombinationTransformer extends TestTransformers {
-
-  val cell = Cell(Position1D("foo"), getStringContent("rules"))
-
-  "A CombinationTransformer" should "present" in {
-    CombinationTransformer(List(Binarise(First), Indicator(First, "%1$s.ind"))).present(cell) shouldBe
-      Collection(List(Cell(Position1D("foo=rules"), getLongContent(1)), Cell(Position1D("foo.ind"), getLongContent(1))))
-  }
-}
-
-class TestCombinationTransformerWithValue extends TestTransformers {
-
-  val cell = Cell(Position1D("foo"), getDoubleContent(3.1415))
-  val ext = Map(Position1D("foo") -> Map(Position1D("min") -> getDoubleContent(0),
-    Position1D("max") -> getDoubleContent(2), Position1D("max.abs") -> getDoubleContent(3)))
-
-  "A CombinationTransformerWithValue" should "present" in {
-    CombinationTransformerWithValue(List(Clamp(First, "min", "max"), Normalise(First, "max.abs")))
-      .present(cell, ext) shouldBe Collection(List(Cell(Position1D("foo"), getDoubleContent(2.0)),
-        Cell(Position1D("foo"), getDoubleContent(3.1415 / 3))))
+    Clamp(extractor[Dimension.First, Position1D](First, "min"), extractor[Dimension.First, Position1D](First, "max"))
+      .andThenWithValue(Normalise(extractor[Dimension.First, Position1D](First, "max.abs")))
+      .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo"), getDoubleContent(2.0 / 3.0))))
   }
 }
 

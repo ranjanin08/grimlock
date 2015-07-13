@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.test
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
@@ -22,6 +23,7 @@ import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.sample._
+import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.Type._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.window._
@@ -172,24 +174,24 @@ object TestSpark5 {
     data
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), "iid:0221707", true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .save("./tmp.spark/sqs1.out", descriptive=true)
 
     data
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .save("./tmp.spark/sqs2.out", descriptive=true)
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .saveAsCSV(Over(First), "./tmp.spark/sqs3.out")
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .saveAsCSV(Over(First), "./tmp.spark/sqs4.out")
   }
 }
@@ -216,12 +218,19 @@ object TestSpark6 {
       .which((c: Cell[Position3D]) => c.content.value.isInstanceOf[LongValue])
       .save("./tmp.spark/whc4.out", descriptive=true)
 
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Mean().andThenExpand(_.position.append("mean")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
+
     TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
-      .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
+      .squash(Third, PreservingMaxPosition[Position3D]())
+      .summarise(Along(First), aggregators)
       .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
                                 ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
       .save("./tmp.spark/whc5.out", descriptive=true)
@@ -251,7 +260,7 @@ object TestSpark8 {
 
     data
       .slice(Over(Second), "fid:B", true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .unique
       .save("./tmp.spark/uniq.out", descriptive=true)
 
@@ -262,21 +271,21 @@ object TestSpark8 {
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .saveAsCSV(Over(Second), "./tmp.spark/test.csv")
       .saveAsCSV(Over(First), "./tmp.spark/tset.csv", writeHeader=false, separator=",")
 
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .permute(Second, First)
       .save("./tmp.spark/trs1.out", descriptive=true)
 
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .save("./tmp.spark/data.txt")
   }
 }
@@ -286,11 +295,9 @@ object TestSpark9 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
-    case class StringPartitioner(dim: Dimension) extends Partitioner with Assign {
-      type T = String
-
-      def assign[P <: Position](pos: P): Collection[T] = {
-        Collection(List(pos(dim) match {
+    case class StringPartitioner(dim: Dimension) extends Partitioner[Position2D, String] {
+      def assign(cell: Cell[Position2D]): Collection[String] = {
+        Collection(List(cell.position(dim) match {
           case StringValue("fid:A") => "training"
           case StringValue("fid:B") => "testing"
         }, "scoring"))
@@ -300,17 +307,15 @@ object TestSpark9 {
     val prt1 = data
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
-      .partition(StringPartitioner(Second))
+      .squash(Third, PreservingMaxPosition[Position3D]())
+      .split(StringPartitioner(Second))
 
     prt1
       .save("./tmp.spark/prt1.out", descriptive=true)
 
-    case class IntTuplePartitioner(dim: Dimension) extends Partitioner with Assign {
-      type T = (Int, Int, Int)
-
-      def assign[P <: Position](pos: P): Collection[T] = {
-        Collection(List(pos(dim) match {
+    case class IntTuplePartitioner(dim: Dimension) extends Partitioner[Position2D, (Int, Int, Int)] {
+      def assign(cell: Cell[Position2D]): Collection[(Int, Int, Int)] = {
+        Collection(List(cell.position(dim) match {
           case StringValue("fid:A") => (1, 0, 0)
           case StringValue("fid:B") => (0, 1, 0)
         }, (0, 0, 1)))
@@ -320,8 +325,8 @@ object TestSpark9 {
     data
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
-      .partition(IntTuplePartitioner(Second))
+      .squash(Third, PreservingMaxPosition[Position3D]())
+      .split[(Int, Int, Int), IntTuplePartitioner](IntTuplePartitioner(Second))
       .save("./tmp.spark/prt2.out", descriptive=true)
 
     prt1
@@ -344,22 +349,31 @@ object TestSpark10 {
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
-      .summariseAndExpand(Over(Second), Mean("mean", strict=true, nan=true))
+      .summarise(Over(Second), Mean[Position3D, Position1D](true, true).andThenExpand(_.position.append("mean")))
       .saveAsCSV(Over(Second), "./tmp.spark/agg1.csv")
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-      .squash(Third, PreservingMaxPosition())
-      .summariseAndExpand(Along(Second), Count("count"))
+      .squash(Third, PreservingMaxPosition[Position3D]())
+      .summarise(Along(Second), Count[Position2D, Position1D]().andThenExpand(_.position.append("count")))
       .saveAsCSV(Over(Second), "./tmp.spark/agg2.csv")
+
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Mean().andThenExpand(_.position.append("mean")),
+      StandardDeviation().andThenExpand(_.position.append("sd")),
+      Skewness().andThenExpand(_.position.append("skewness")),
+      Kurtosis().andThenExpand(_.position.append("kurtosis")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
-      .squash(Third, PreservingMaxPosition())
-      .summariseAndExpand(Along(First), List(Count("count"), Moments("mean", "sd", "skewness", "kurtosis"), Min("min"),
-        Max("max"), MaxAbs("max.abs")))
+      .squash(Third, PreservingMaxPosition[Position3D]())
+      .summarise(Along(First), aggregators)
       .saveAsCSV(Over(Second), "./tmp.spark/agg3.csv")
   }
 }
@@ -372,14 +386,14 @@ object TestSpark11 {
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .transform(Indicator(Second, "%1$s.ind"))
+      .transform(Indicator[Position3D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
       .save("./tmp.spark/trn2.out", descriptive=true)
 
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .squash(Third, PreservingMaxPosition())
-      .transform(Binarise(Second))
+      .squash(Third, PreservingMaxPosition[Position3D]())
+      .transform(Binarise[Position2D](Binarise.rename(Second)))
       .saveAsCSV(Over(Second), "./tmp.spark/trn3.out")
   }
 }
@@ -392,7 +406,7 @@ object TestSpark12 {
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
     data
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
       .saveAsCSV(Over(Second), "./tmp.spark/fll1.out")
 
@@ -410,10 +424,10 @@ object TestSpark13 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
 
     val inds = data
-      .transform(Indicator(Second, "%1$s.ind"))
+      .transform(Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
       .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
 
     data
@@ -422,7 +436,7 @@ object TestSpark13 {
       .saveAsCSV(Over(Second), "./tmp.spark/fll2.out")
 
     data
-      .fill(Over(Second), all.summarise(Over(Second), Mean(strict=true, nan=true)))
+      .fill(Over(Second), all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
       .join(Over(First), inds)
       .saveAsCSV(Over(Second), "./tmp.spark/fll4.out")
   }
@@ -449,7 +463,7 @@ object TestSpark15 {
     data
       .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .summariseAndExpand(Along(Third), Sum("sum"))
+      .summarise(Along(Third), Sum[Position3D, Position2D]().andThenExpand(_.position.append("sum")))
       .melt(Third, Second)
       .saveAsCSV(Over(Second), "./tmp.spark/rsh1.out")
 
@@ -457,15 +471,15 @@ object TestSpark15 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
-      .transform(Indicator(Second, "%1$s.ind"))
+      .squash(Third, PreservingMaxPosition[Position3D]())
+      .transform(Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
       .saveAsCSV(Over(Second), "./tmp.spark/trn1.csv")
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
       .join(Over(First), inds)
       .saveAsCSV(Over(Second), "./tmp.spark/jn1.csv")
   }
@@ -476,8 +490,8 @@ object TestSpark16 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
-    case class HashSample() extends Sampler with Select {
-      def select[P <: Position](cell: Cell[P]): Boolean = (cell.position(First).toString.hashCode % 25) == 0
+    case class HashSample() extends Sampler[Position3D] {
+      def select(cell: Cell[Position3D]): Boolean = (cell.position(First).toString.hashCode % 25) == 0
     }
 
     data
@@ -493,28 +507,36 @@ object TestSpark17 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
+
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Mean().andThenExpand(_.position.append("mean")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
 
     val stats = data
-      .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
+      .summarise(Along(First), aggregators)
       .toMap(Over(First))
 
     data
-      .transformWithValue(Normalise(Second, "max.abs"), stats)
+      .transformWithValue(Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second,
+        "max.abs").andThenPresent(_.value.asDouble)), stats)
       .saveAsCSV(Over(Second), "./tmp.spark/trn6.csv")
 
-    case class Sample500() extends Sampler with Select {
-      def select[P <: Position](cell: Cell[P]): Boolean = cell.content.value gtr 500
+    case class Sample500() extends Sampler[Position2D] {
+      def select(cell: Cell[Position2D]): Boolean = cell.content.value gtr 500
     }
 
     data
       .sample(Sample500())
       .saveAsCSV(Over(Second), "./tmp.spark/flt1.csv")
 
-    case class RemoveGreaterThanMean(dim: Dimension) extends Sampler with SelectWithValue {
+    case class RemoveGreaterThanMean(dim: Dimension) extends SamplerWithValue[Position2D] {
       type V = Map[Position1D, Map[Position1D, Content]]
 
-      def select[P <: Position](cell: Cell[P], ext: V): Boolean = {
+      def selectWithValue(cell: Cell[Position2D], ext: V): Boolean = {
         if (cell.content.schema.kind.isSpecialisationOf(Numerical)) {
           cell.content.value leq ext(Position1D(cell.position(dim)))(Position1D("mean")).value
         } else {
@@ -536,10 +558,17 @@ object TestSpark18 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
+
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Mean().andThenExpand(_.position.append("mean")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
 
     val stats = data
-      .summariseAndExpand(Along(First), List(Count("count"), Mean("mean"), Min("min"), Max("max"), MaxAbs("max.abs")))
+      .summarise(Along(First), aggregators)
 
     val rem = stats
       .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2)
@@ -558,37 +587,47 @@ object TestSpark19 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
-      .squash(Third, PreservingMaxPosition())
+      .squash(Third, PreservingMaxPosition[Position3D]())
 
-    case class CustomPartition[S: Ordering](dim: Dimension, left: S, right: S) extends Partitioner with Assign {
-      type T = S
+    case class CustomPartition(dim: Dimension, left: String, right: String) extends Partitioner[Position2D, String] {
+      val bhs = BinaryHashSplit[Position2D, String](dim, 7, left, right, base=10)
 
-      val bhs = BinaryHashSplit(dim, 7, left, right, base=10)
-      def assign[P <: Position](pos: P): Collection[T] = {
-        if (pos(dim).toShortString == "iid:0364354") {
+      def assign(cell: Cell[Position2D]): Collection[String] = {
+        if (cell.position(dim).toShortString == "iid:0364354") {
           Collection(right)
         } else {
-          bhs.assign(pos)
+          bhs.assign(cell)
         }
       }
     }
 
     val parts = raw
-      .partition(CustomPartition(First, "train", "test"))
+      .split(CustomPartition(First, "train", "test"))
+
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      MaxAbs().andThenExpand(_.position.append("max.abs")))
 
     val stats = parts
       .get("train")
-      .summariseAndExpand(Along(First), List(Count("count"), MaxAbs("max.abs")))
+      .summarise(Along(First), aggregators)
 
     val rem = stats
       .which((c: Cell[Position2D]) => (c.position(Second) equ "count") && (c.content.value leq 2))
       .names(Over(First))
 
+    type W = Map[Position1D, Map[Position1D, Content]]
+
+    val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: W }] = List(
+      Indicator().andThenRename(Transformer.rename(Second, "%1$s.ind")),
+      Binarise(Binarise.rename(Second)),
+      Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, "max.abs")
+        .andThenPresent(_.value.asDouble)))
+
     def cb(key: String, pipe: RDD[Cell[Position2D]]): RDD[Cell[Position2D]] = {
       pipe
         .slice(Over(Second), rem, false)
-        .transformWithValue(List(Indicator(Second, "%1$s.ind"), Binarise(Second), Normalise(Second, "max.abs")),
-          stats.toMap(Over(First)))
+        .transformWithValue(transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
         .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
         .saveAsCSV(Over(Second), "./tmp.spark/pln_" + key + ".csv")
     }
@@ -635,29 +674,29 @@ object TestSpark22 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = load2D(args(1) + "/numericInputfile.txt")
 
-    case class Diff() extends Windowed with Initialise {
+    case class Diff() extends Window[Position1D, Position1D, Position2D] {
       type T = Cell[Position]
 
-      def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
-        Cell(rem, cell.content)
+      def initialise(cell: Cell[Position1D], rem: Position1D): (T, Collection[Cell[Position2D]]) = {
+        (Cell(rem, cell.content), Collection[Cell[Position2D]]())
       }
-      def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
-        t: T): (T, Collection[Cell[slice.S#M]]) = {
+
+      def present(cell: Cell[Position1D], rem: Position1D, t: T): (T, Collection[Cell[Position2D]]) = {
         (Cell(rem, cell.content), (cell.content.value.asDouble, t.content.value.asDouble) match {
           case (Some(c), Some(l)) =>
             Collection(cell.position.append(rem.toShortString("") + "-" + t.position.toShortString("")),
               Content(ContinuousSchema[Codex.DoubleCodex](), c - l))
-          case _ => Collection[Cell[slice.S#M]]()
+          case _ => Collection[Cell[Position2D]]()
         })
       }
     }
 
     data
-      .window(Over(First), Diff())
+      .slide(Over(First), Diff())
       .save("./tmp.spark/dif1.out")
 
     data
-      .window(Over(Second), Diff())
+      .slide(Over(Second), Diff())
       .permute(Second, First)
       .save("./tmp.spark/dif2.out")
   }
@@ -668,23 +707,23 @@ object TestSpark23 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = load2D(args(1) + "/somePairwise.txt")
 
-    case class DiffSquared() extends Operator with Compute {
-      def compute[P <: Position, D <: Dimension](slice: Slice[P, D])(left: Cell[slice.S], right: Cell[slice.S],
-        rem: slice.R): Collection[Cell[slice.R#M]] = {
+    case class DiffSquared() extends Operator[Position1D, Position1D, Position2D] {
+      def compute(left: Cell[Position1D], reml: Position1D, right: Cell[Position1D],
+        remr: Position1D): Collection[Cell[Position2D]] = {
         val xc = left.position.toShortString("")
         val yc = right.position.toShortString("")
 
-        (xc < yc && xc != yc) match {
-          case true => Collection(rem.append("(" + xc + "-" + yc + ")^2"),
+        (reml == remr) match {
+          case true => Collection(remr.append("(" + xc + "-" + yc + ")^2"),
             Content(ContinuousSchema[Codex.DoubleCodex](),
               math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
-          case false => Collection[Cell[slice.R#M]]
+          case false => Collection()
         }
       }
     }
 
     data
-      .pairwise(Over(Second), DiffSquared())
+      .pairwise(Over(Second), Upper, DiffSquared())
       .save("./tmp.spark/pws1.out")
   }
 }
@@ -732,7 +771,7 @@ object TestSpark26 {
     val right = load2D(args(1) + "/algebraInputfile2.txt")
 
     left
-      .pairwiseBetween(Over(First), right, Times(comparer=All))
+      .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
       .save("./tmp.spark/alg.out")
   }
 }
@@ -743,33 +782,33 @@ object TestSpark27 {
 
     // http://www.statisticshowto.com/moving-average/
     load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
-      .window(Over(Second), SimpleMovingAverage(5))
+      .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
       .save("./tmp.spark/sma1.out")
 
     load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
-      .window(Over(Second), SimpleMovingAverage(5, all=true))
+      .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all=true))
       .save("./tmp.spark/sma2.out")
 
     load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
-      .window(Over(Second), CenteredMovingAverage(2))
+      .slide(Over(Second), CenteredMovingAverage(2, Locate.WindowDimension[Position1D, Position1D](First)))
       .save("./tmp.spark/tma.out")
 
     load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
-      .window(Over(Second), WeightedMovingAverage(5))
+      .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
       .save("./tmp.spark/wma1.out")
 
     load2D(args(1) + "/simMovAvgInputfile.txt", first=LongCodex)
-      .window(Over(Second), WeightedMovingAverage(5, all=true))
+      .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all=true))
       .save("./tmp.spark/wma2.out")
 
     // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
     load1D(args(1) + "/cumMovAvgInputfile.txt")
-      .window(Along(First), CumulativeMovingAverage())
+      .slide(Along(First), CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First)))
       .save("./tmp.spark/cma.out")
 
     // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
     load1D(args(1) + "/expMovAvgInputfile.txt")
-      .window(Along(First), ExponentialMovingAverage(0.33))
+      .slide(Along(First), ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First)))
       .save("./tmp.spark/ema.out")
   }
 }
@@ -782,37 +821,52 @@ object TestSpark28 {
       .flatMap { case i => List(("iid:" + i, "fid:A", Content(ContinuousSchema[Codex.LongCodex](), i)),
                                 ("iid:" + i, "fid:B", Content(NominalSchema[Codex.StringCodex](), i.toString))) }
 
+    val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
+      Count().andThenExpand(_.position.append("count")),
+      Min().andThenExpand(_.position.append("min")),
+      Max().andThenExpand(_.position.append("max")),
+      Mean().andThenExpand(_.position.append("mean")),
+      StandardDeviation().andThenExpand(_.position.append("sd")),
+      Skewness().andThenExpand(_.position.append("skewness")))
+
     val stats = data
-      .summariseAndExpand(Along(First), List(Count("count"), Min("min"), Max("max"), Moments("mean", "sd", "skewness")))
+      .summarise(Along(First), aggregators)
       .toMap(Over(First))
 
+    val extractor = ExtractWithDimension[Dimension.Second, Position2D, List[Double]](Second)
+
     data
-      .transformWithValue(Cut(Second), CutRules.fixed(stats, "min", "max", 4))
+      .transformWithValue(Cut(extractor), CutRules.fixed(stats, "min", "max", 4))
       .save("./tmp.spark/cut1.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.square"), CutRules.squareRootChoice(stats, "count", "min", "max"))
+      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.square")),
+        CutRules.squareRootChoice(stats, "count", "min", "max"))
       .save("./tmp.spark/cut2.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.sturges"), CutRules.sturgesFormula(stats, "count", "min", "max"))
+      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.sturges")),
+        CutRules.sturgesFormula(stats, "count", "min", "max"))
       .save("./tmp.spark/cut3.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.rice"), CutRules.riceRule(stats, "count", "min", "max"))
+      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.rice")),
+        CutRules.riceRule(stats, "count", "min", "max"))
       .save("./tmp.spark/cut4.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.doane"), CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
+      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.doane")),
+        CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
       .save("./tmp.spark/cut5.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.scott"),
+      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.scott")),
         CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
       .save("./tmp.spark/cut6.out")
 
     data
-      .transformWithValue(Cut(Second, "%s.break"), CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
+      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.break")),
+        CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
       .save("./tmp.spark/cut7.out")
   }
 }

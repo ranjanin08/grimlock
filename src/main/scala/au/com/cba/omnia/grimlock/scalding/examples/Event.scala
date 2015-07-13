@@ -89,12 +89,12 @@ case object ExampleEventCodex extends EventCodex {
 
 // Transformer for denormalising events; that is, create a separate cell in the matrix for each (event, instance) pair.
 // Assumes that the initial position is 1D with event id (as is the output from `read` above).
-case class Denormalise() extends Transformer with PresentExpanded {
-  def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]] = {
+case class Denormalise() extends Transformer[Position1D, Position2D] {
+  def present(cell: Cell[Position1D]): Collection[Cell[Position2D]] = {
     cell.content match {
       case Content(_, EventValue(ExampleEvent(_, _, _, _, instances, _), _)) =>
-        Collection(for { iid <- instances } yield { Cell[P#M](cell.position.append(iid), cell.content) })
-      case _ => Collection[Cell[P#M]]()
+        Collection(for { iid <- instances } yield { Cell(cell.position.append(iid), cell.content) })
+      case _ => Collection[Cell[Position2D]]()
     }
   }
 }
@@ -102,8 +102,8 @@ case class Denormalise() extends Transformer with PresentExpanded {
 // For each event, get the details out. Split the details string, apply filtering, and (optinally) add ngrams. Then
 // simply return the count for each term (word or ngram) in the document (i.e. event).
 case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separator: String = "_",
-  stopwords: List[String] = Stopwords.English) extends Transformer with PresentExpanded {
-  def present[P <: Position with ExpandablePosition](cell: Cell[P]): Collection[Cell[P#M]] = {
+  stopwords: List[String] = Stopwords.English) extends Transformer[Position2D, Position3D] {
+  def present(cell: Cell[Position2D]): Collection[Cell[Position3D]] = {
     cell.content match {
       case Content(_, EventValue(ExampleEvent(_, _, _, _, _, details), _)) =>
         // Get words from details. Optionally filter by length and/or stopwords.
@@ -125,10 +125,10 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
         Collection(terms
           .groupBy(identity)
           .map {
-            case (k, v) => Cell[P#M](cell.position.append(k), Content(DiscreteSchema[Codex.LongCodex](), v.size))
+            case (k, v) => Cell(cell.position.append(k), Content(DiscreteSchema[Codex.LongCodex](), v.size))
           }
           .toList)
-      case _ => Collection[Cell[P#M]]()
+      case _ => Collection[Cell[Position3D]]()
     }
   }
 }
@@ -142,37 +142,47 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
 
   // Read event data, then de-normalises the events and return a 2D matrix (event id x instance id).
   val data = ExampleEvent.load(s"${path}/exampleEvents.txt")
-    .transformAndExpand(Denormalise())
+    .transform(Denormalise())
 
   // For each event, append the word counts to the 3D matrix. The result is a 3D matrix (event id x instance id x word
   // count). Then aggregate out the event id. The result is a 2D matrix (instance x word count) where the counts are
   // the sums over all events.
   val tf = data
-    .transformAndExpand(WordCounts(stopwords = List()))
-    .summarise(Along(First), Sum())
+    .transform(WordCounts(stopwords = List()))
+    .summarise(Along(First), Sum[Position3D, Position2D]())
 
   // Get the number of instances (i.e. documents)
   val n = tf
     .size(First)
     .toMap(Over(First))
 
+  // Define extractor to get data out of map.
+  val extractN = ExtractWithKey[Position1D, String, Content](First.toString)
+    .andThenPresent(_.value.asDouble)
+
   // Using the number of documents, compute Idf:
   //  1/ Compute document frequency;
   //  2/ Apply Idf transformation (using document count);
   //  3/ Save as Map for use in Tf-Idf below.
   val idf = tf
-    .summarise(Along(First), Count())
-    .transformWithValue(Idf(First.toString, Idf.Transform(math.log10, 0)), n)
+    .summarise(Along(First), Count[Position2D, Position1D]())
+    .transformWithValue(Idf(extractN, (df: Double, n: Double) => math.log10(n / df)), n)
     .toMap(Over(First))
+
+  // Define extractor to get data out of idf map.
+  val extractIdf = ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
+    .andThenPresent(_.value.asDouble)
 
   // Apply TfIdf to the term frequency matrix with the Idf values, then save the results to file.
   //
   // Uncomment one of the 3 lines below to try different tf-idf versions.
   val tfIdf = tf
-    //.transform(BooleanTf(Second))
-    //.transform(LogarithmicTf(Second))
-    //.transformWithValue(AugmentedTf(First), tf.summarise(Along(Second), Max()).toMap(Over(First)))
-    .transformWithValue(TfIdf(Second), idf)
+    //.transform(BooleanTf[Position2D]())
+    //.transform(LogarithmicTf[Position2D]())
+    //.transformWithValue(AugmentedTf(ExtractWithDimension[Dimension.First, Position2D, Content](First)
+    //    .andThenPresent(_.value.asDouble)),
+    //  tf.summarise(Along(Second), Max[Position2D, Position1D]()).toMap(Over(First)))
+    .transformWithValue(TfIdf(extractIdf), idf)
     .save(s"./demo.${output}/tfidf_entity.out")
 }
 

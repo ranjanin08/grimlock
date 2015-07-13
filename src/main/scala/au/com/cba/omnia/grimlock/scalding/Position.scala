@@ -38,7 +38,7 @@ class Positions[P <: Position](val data: TypedPipe[P]) extends BasePositions[P] 
 
   def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
     ev3: ClassTag[slice.S]): TypedPipe[(slice.S, Long)] = {
-    Names.number(data.map { case p => slice.selected(p) }.distinct(Position.Ordering[slice.S]))
+    Names.number(data.map { case p => slice.selected(p) }.distinct(Position.Ordering[slice.S]()))
   }
 }
 

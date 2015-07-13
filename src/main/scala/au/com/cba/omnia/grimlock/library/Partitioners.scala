@@ -14,6 +14,7 @@
 
 package au.com.cba.omnia.grimlock.library.partition
 
+import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
@@ -33,12 +34,10 @@ import java.util.Date
  * @note The hash code modulo `base` is used for comparison with the ratio. While the position is assigned to the left
  *       partition if it is less or equal to the `ratio` value.
  */
-case class BinaryHashSplit[S: Ordering](dim: Dimension, ratio: Int, left: S, right: S, base: Int = 100)
-  extends Partitioner with Assign {
-  type T = S
-
-  def assign[P <: Position](pos: P): Collection[T] = {
-    Collection(if (math.abs(pos(dim).hashCode % base) <= ratio) left else right)
+case class BinaryHashSplit[P <: Position, S](dim: Dimension, ratio: Int, left: S, right: S,
+  base: Int = 100) extends Partitioner[P, S] {
+  def assign(cell: Cell[P]): Collection[S] = {
+    Collection(if (math.abs(cell.position(dim).hashCode % base) <= ratio) left else right)
   }
 }
 
@@ -57,12 +56,10 @@ case class BinaryHashSplit[S: Ordering](dim: Dimension, ratio: Int, left: S, rig
  *       partition `left` if it is less or equal to `lower`, `middle` if it is less of equal to `upper` or else to
  *       `right`.
  */
-case class TernaryHashSplit[S: Ordering](dim: Dimension, lower: Int, upper: Int, left: S, middle: S, right: S,
-  base: Int = 100) extends Partitioner with Assign {
-  type T = S
-
-  def assign[P <: Position](pos: P): Collection[T] = {
-    val hash = math.abs(pos(dim).hashCode % base)
+case class TernaryHashSplit[P <: Position, S](dim: Dimension, lower: Int, upper: Int, left: S, middle: S, right: S,
+  base: Int = 100) extends Partitioner[P, S] {
+  def assign(cell: Cell[P]): Collection[S] = {
+    val hash = math.abs(cell.position(dim).hashCode % base)
 
     Collection(if (hash <= lower) left else if (hash <= upper) middle else right)
   }
@@ -79,19 +76,17 @@ case class TernaryHashSplit[S: Ordering](dim: Dimension, lower: Int, upper: Int,
  *       (strictly) greater than the lower value (first value in tuple) and less or equal to the upper value (second
  *       value in tuple).
  */
-case class HashSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Int, Int)], base: Int = 100) extends Partitioner
-  with Assign {
-  type T = S
-
-  def assign[P <: Position](pos: P): Collection[T] = {
-    val hash = math.abs(pos(dim).hashCode % base)
+case class HashSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Int, Int)],
+  base: Int = 100) extends Partitioner[P, S] {
+  def assign(cell: Cell[P]): Collection[S] = {
+    val hash = math.abs(cell.position(dim).hashCode % base)
     val parts = ranges.flatMap {
       case (k, (l, u)) if (hash > l && hash <= u) => Some(k)
       case _ => None
     }.toList
 
     parts.size match {
-      case 0 => Collection[T]()
+      case 0 => Collection[S]()
       case 1 => Collection(parts.head)
       case _ => Collection(parts)
     }
@@ -110,12 +105,11 @@ case class HashSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Int, Int)], ba
  * @note The position is assigned to the `left` partition if it is less or equal to the `date` value, to `right`
  *       otherwise.
  */
-case class BinaryDateSplit[S: Ordering](dim: Dimension, date: Date, left: S, right: S,
-  codex: DateAndTimeCodex = DateCodex) extends Partitioner with Assign {
-  type T = S
-
-  def assign[P <: Position](pos: P): Collection[T] = {
-    Collection(codex.compare(pos(dim), codex.toValue(date)).map { case cmp => Left(if (cmp <= 0) left else right) })
+case class BinaryDateSplit[P <: Position, S](dim: Dimension, date: Date, left: S, right: S,
+  codex: DateAndTimeCodex = DateCodex) extends Partitioner[P, S] {
+  def assign(cell: Cell[P]): Collection[S] = {
+    Collection(codex.compare(cell.position(dim),
+      codex.toValue(date)).map { case cmp => Left(if (cmp <= 0) left else right) })
   }
 }
 
@@ -133,15 +127,14 @@ case class BinaryDateSplit[S: Ordering](dim: Dimension, date: Date, left: S, rig
  * @note The position is assigned to the partition `left` if it is less or equal to `lower`, `middle` if it is less or
  *       equal to `upper` or else to `right`.
  */
-case class TernaryDateSplit[S: Ordering](dim: Dimension, lower: Date, upper: Date, left: S, middle: S, right: S,
-  codex: DateAndTimeCodex = DateCodex) extends Partitioner with Assign {
-  type T = S
-
-  def assign[P <: Position](pos: P): Collection[T] = {
-    (codex.compare(pos(dim), codex.toValue(lower)), codex.compare(pos(dim), codex.toValue(upper))) match {
-      case (Some(l), Some(u)) => Collection(if (l <= 0) left else if (u <= 0) middle else right)
-      case _ => Collection[T]()
-    }
+case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper: Date, left: S, middle: S, right: S,
+  codex: DateAndTimeCodex = DateCodex) extends Partitioner[P, S] {
+  def assign(cell: Cell[P]): Collection[S] = {
+    (codex.compare(cell.position(dim), codex.toValue(lower)),
+      codex.compare(cell.position(dim), codex.toValue(upper))) match {
+        case (Some(l), Some(u)) => Collection(if (l <= 0) left else if (u <= 0) middle else right)
+        case _ => Collection[S]()
+      }
   }
 }
 
@@ -155,21 +148,20 @@ case class TernaryDateSplit[S: Ordering](dim: Dimension, lower: Date, upper: Dat
  * @note A position falls in a range if it is (strictly) greater than the lower value (first value in tuple) and less
  *       or equal to the upper value (second value in tuple).
  */
-case class DateSplit[S: Ordering](dim: Dimension, ranges: Map[S, (Date, Date)], codex: DateAndTimeCodex = DateCodex)
-  extends Partitioner with Assign {
-  type T = S
-
-  def assign[P <: Position](pos: P): Collection[T] = {
+case class DateSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Date, Date)],
+  codex: DateAndTimeCodex = DateCodex) extends Partitioner[P, S] {
+  def assign(cell: Cell[P]): Collection[S] = {
     val parts = ranges.flatMap {
       case (k, (lower, upper)) =>
-        (codex.compare(pos(dim), codex.toValue(lower)), codex.compare(pos(dim), codex.toValue(upper))) match {
-          case (Some(l), Some(u)) if (l > 0 && u <= 0) => Some(k)
-          case _ => None
-        }
+        (codex.compare(cell.position(dim), codex.toValue(lower)),
+          codex.compare(cell.position(dim), codex.toValue(upper))) match {
+            case (Some(l), Some(u)) if (l > 0 && u <= 0) => Some(k)
+            case _ => None
+          }
     }.toList
 
     parts.size match {
-      case 0 => Collection[T]()
+      case 0 => Collection[S]()
       case 1 => Collection(parts.head)
       case _ => Collection(parts)
     }

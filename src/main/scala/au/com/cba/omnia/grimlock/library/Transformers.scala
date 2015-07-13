@@ -23,1109 +23,298 @@ import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.Type._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-/** Convenience trait defining common functionality patterns for implementing transformers. */
-trait PresentCell[T] {
-  protected def present[P <: Position](dim: Option[Dimension], cell: Cell[P], name: Option[String], typ: Option[Type],
-    value: T): Collection[Cell[P]] = {
-    if (checkContent(cell.content, typ)) { getCell(dim, cell, name, value) } else { Collection[Cell[P]]() }
-  }
+private[transform] object Transform {
+  def checkType[P <: Position](cell: Cell[P], typ: Type): Boolean = cell.content.schema.kind.isSpecialisationOf(typ)
 
-  protected def present[P <: Position](dim: Option[Dimension], cell: Cell[P], name: Option[String], typ: Option[Type],
-    f: (T) => T): Collection[Cell[P]] = {
-    (checkContent(cell.content, typ), getValue(cell.content)) match {
-      case (true, Some(v)) => getCell(dim, cell, name, f(v))
-      case _ => Collection[Cell[P]]()
+  def presentDouble[P <: Position](cell: Cell[P], f: (Double) => Double): Collection[Cell[P]] = {
+    (checkType(cell, Numerical), cell.content.value.asDouble) match {
+      case (true, Some(d)) => Collection(cell.position, Content(ContinuousSchema[Codex.DoubleCodex](), f(d)))
+      case _ => Collection()
     }
   }
 
-  protected def present[P <: Position](dim: Option[Dimension], cell: Cell[P], ext: Map[Position1D, Content],
-    key: Option[Position1D], name: Option[String], typ: Option[Type], f: (T, T) => T,
-    inverse: Boolean): Collection[Cell[P]] = {
-    present(dim, cell, name, typ, f, inverse, getValue(getKey(dim, cell.position, key), ext))
+  def presentDoubleWithValue[P <: Position, W](cell: Cell[P], ext: W, value: Extract[P, W, Double],
+    transform: (Double, Double) => Double, inverse: Boolean = false): Collection[Cell[P]] = {
+    (checkType(cell, Numerical), cell.content.value.asDouble, value.extract(cell, ext)) match {
+      case (true, Some(l), Some(r)) => Collection(cell.position,
+        Content(ContinuousSchema[Codex.DoubleCodex](), if (inverse) transform(r, l) else transform(l, r)))
+      case _ => Collection()
+    }
   }
 
-  protected def present[P <: Position](dim: Dimension, cell: Cell[P], ext: Map[Position1D, Map[Position1D, Content]],
-    key: Position1D, name: Option[String], typ: Option[Type], f: (T, T) => T, inverse: Boolean): Collection[Cell[P]] = {
-    present(Some(dim), cell, name, typ, f, inverse, getValue(getKey(Some(dim), cell.position, None), key, ext))
-  }
-
-  protected def present[P <: Position](dim: Dimension, cell: Cell[P], ext: Map[Position1D, Map[Position1D, Content]],
-    key1: Position1D, key2: Position1D, name: Option[String], typ: Option[Type],
-    f: (T, T, T) => T): Collection[Cell[P]] = {
-    (checkContent(cell.content, typ), getValue(cell.content),
-      getValue(getKey(Some(dim), cell.position, None), key1, ext),
-      getValue(getKey(Some(dim), cell.position, None), key2, ext)) match {
-        case (true, Some(v), Some(x), Some(y)) => getCell(Some(dim), cell, name, f(v, x, y))
-        case _ => Collection[Cell[P]]()
+  def presentDoubleWithTwoValues[P <: Position, W](cell: Cell[P], ext: W, first: Extract[P, W, Double],
+    second: Extract[P, W, Double], transform: (Double, Double, Double) => Double): Collection[Cell[P]] = {
+    (checkType(cell, Numerical), cell.content.value.asDouble, first.extract(cell, ext),
+      second.extract(cell, ext)) match {
+        case (true, Some(v), Some(f), Some(s)) => Collection(cell.position,
+          Content(ContinuousSchema[Codex.DoubleCodex](), transform(v, f, s)))
+        case _ => Collection()
       }
   }
-
-  protected def getContent(value: T): Content
-  protected def getValue(con: Content): Option[T]
-
-  private def checkContent(con: Content, typ: Option[Type]): Boolean = {
-    typ.map { t => con.schema.kind.isSpecialisationOf(t) }.getOrElse(true)
-  }
-
-  private def getValue(key: Position1D, ext: Map[Position1D, Content]): Option[T] = ext.get(key).flatMap(getValue(_))
-
-  private def getValue(key1: Position1D, key2: Position1D,
-    ext: Map[Position1D, Map[Position1D, Content]]): Option[T] = ext.get(key1).flatMap(_.get(key2).flatMap(getValue(_)))
-
-  private def getName[P <: Position](dim: Option[Dimension], cell: Cell[P], name: Option[String]): P = {
-    val pos = cell.position
-    val con = cell.content
-
-    (dim, name) match {
-      case (Some(d), Some(n)) => pos.update(d, n.format(pos(d).toShortString, con.value.toShortString))
-      case _ => pos
-    }
-  }
-
-  private def getKey[P <: Position](dim: Option[Dimension], pos: P, key: Option[Position1D]): Position1D = {
-    (dim, key) match {
-      case (_, Some(k)) => k
-      case (Some(d), None) => Position1D(pos(d))
-      case _ => throw new Exception("Missing both dimension and key")
-    }
-  }
-
-  private def getCell[P <: Position](dim: Option[Dimension], cell: Cell[P], name: Option[String],
-    value: T): Collection[Cell[P]] = Collection(getName(dim, cell, name), getContent(value))
-
-  private def present[P <: Position](dim: Option[Dimension], cell: Cell[P], name: Option[String], typ: Option[Type],
-    f: (T, T) => T, inverse: Boolean, value: Option[T]): Collection[Cell[P]] = {
-    (checkContent(cell.content, typ), getValue(cell.content), value) match {
-      case (true, Some(l), Some(r)) => getCell(dim, cell, name, if (inverse) f(r, l) else f(l, r))
-      case _ => Collection[Cell[P]]()
-    }
-  }
 }
 
-/** Convenience trait defining common functionality patterns for implementing transformers returning `Long` values. */
-trait PresentLong extends PresentCell[Long] {
-  protected def getContent(value: Long): Content = Content(DiscreteSchema[Codex.LongCodex](), value)
-  protected def getValue(con: Content): Option[Long] = con.value.asLong
-}
-
-/** Convenience trait defining common functionality patterns for implementing transformers returning `Double` values. */
-trait PresentDouble extends PresentCell[Double] {
-  protected def getContent(value: Double): Content = Content(ContinuousSchema[Codex.DoubleCodex](), value)
-  protected def getValue(con: Content): Option[Double] = con.value.asDouble
-}
-
-/**
- * Create indicator variables.
- *
- * @param dim  Optional dimension for which to update coordinate name.
- * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *             representations of the coordinate, and the content.
- */
-case class Indicator private (dim: Option[Dimension],
-  name: Option[String]) extends Transformer with Present with PresentLong {
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = present(dim, cell, name, None, 1)
-}
-
-/** Companion object to the `Indicator` class defining constructors. */
-object Indicator {
-  /** Create indicator variables. */
-  def apply(): Indicator = Indicator(None, None)
-
-  /**
-   * Create indicator variables.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): Indicator = Indicator(Some(dim), Some(name))
+/** Create indicator variables. */
+case class Indicator[P <: Position]() extends Transformer[P, P] {
+  def present(cell: Cell[P]): Collection[Cell[P]] = {
+    Collection(cell.position, Content(DiscreteSchema[Codex.LongCodex](), 1))
+  }
 }
 
 /**
  * Binarise categorical variables.
  *
- * @param dim  Dimension for which to update coordinate name.
- * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
- *             the coordinate, and the content.
+ * @param presenter Function that returns the updated position.
  *
  * @note Binarisation is only applied to categorical variables.
  */
-case class Binarise(dim: Dimension, name: String = "%1$s=%2$s") extends Transformer with Present with PresentLong {
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
-    present(Some(dim), cell, Some(name), Some(Categorical), 1)
+case class Binarise[P <: Position](presenter: (Cell[P]) => P) extends Transformer[P, P] {
+  def present(cell: Cell[P]): Collection[Cell[P]] = {
+    Transform.checkType(cell, Categorical) match {
+      case true => Collection(presenter(cell), Content(DiscreteSchema[Codex.LongCodex](), 1))
+      case false => Collection()
+    }
+  }
+}
+
+/** Companion object to `Binarise` case class. */
+object Binarise {
+  /**
+   * Rename coordinate according a name pattern.
+   *
+   * @param dim  Dimension for which to update coordinate name.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
+   *             representations of the coordinate, and the content.
+   */
+  def rename[P <: Position](dim: Dimension, name: String = "%1$s=%2$s"): (Cell[P]) => P = {
+    (cell: Cell[P]) => cell.position.update(dim,
+      name.format(cell.position(dim).toShortString, cell.content.value.toShortString))
   }
 }
 
 /**
  * Normalise numeric variables.
  *
- * @param dim  Optional dimension for which to update coordinate name.
- * @param key  Key into the inner map of `V`, identifying the normalisation constant.
- * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *             representations of the coordinate, and the content.
+ * @param const Object that will extract, for `cell`, its corresponding normalisation constant.
  *
  * @note Normalisation scales a variable in the range [-1, 1]. It is only applied to numerical variables.
  */
-case class Normalise private (dim: Dimension, key: Position1D, name: Option[String]) extends Transformer
-  with PresentWithValue with PresentDouble {
-  type V = Map[Position1D, Map[Position1D, Content]]
+case class Normalise[P <: Position, W](const: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, key, name, Some(Numerical), (value: Double, const: Double) => value / const, false)
-  }
-}
-
-/** Companion object to the `Normalise` class defining constructors. */
-object Normalise {
-  /**
-   * Normalise numeric variables.
-   *
-   * @param dim Dimension for which to create normalised variables.
-   * @param key Key into the inner map of `V`, identifying the normalisation constant.
-   */
-  def apply[T](dim: Dimension, key: T)(implicit ev: Positionable[T, Position1D]): Normalise = {
-    Normalise(dim, ev.convert(key), None)
-  }
-
-  /**
-   * Normalise numeric variables.
-   *
-   * @param dim  Dimension for which to create normalised variables and update name.
-   * @param key  Key into the inner map of `V`, identifying the normalisation constant.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply[T](dim: Dimension, key: T, name: String)(implicit ev: Positionable[T, Position1D]): Normalise = {
-    Normalise(dim, ev.convert(key), Some(name))
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Transform.presentDoubleWithValue(cell, ext, const, (v, n) => v / n)
   }
 }
 
 /**
  * Standardise numeric variables.
  *
- * @param dim       Dimension for which to create standardised variables.
- * @param mean      Key into the inner map of `V`, identifying the standardisation constant for the mean.
- * @param sd        Key into the inner map of `V`, identifying the standardisation constant for the standard deviation.
- * @param name      Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *                  representations of the coordinate, and the content.
+ * @param mean      Object that will extract, for `cell`, its corresponding mean value.
+ * @param sd        Object that will extract, for `cell`, its corresponding standard deviation.
  * @param threshold Minimum standard deviation threshold. Values less than this result in standardised value of zero.
  * @param n         Number of times division by standard deviation.
  *
  * @note Standardisation results in a variable with zero mean and variance of one. It is only applied to numerical
  *       variables.
  */
-case class Standardise private (dim: Dimension, mean: Position1D, sd: Position1D, name: Option[String],
-  threshold: Double, n: Int) extends Transformer with PresentWithValue with PresentDouble {
-  type V = Map[Position1D, Map[Position1D, Content]]
+case class Standardise[P <: Position, W](mean: Extract[P, W, Double], sd: Extract[P, W, Double],
+  threshold: Double = 1e-4, n: Int = 1) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, mean, sd, name, Some(Numerical), standardise _)
-  }
-
-  private def standardise(v: Double, m: Double, s: Double) = if (math.abs(s) < threshold) 0.0 else (v - m) / (n * s)
-}
-
-/** Companion object to the `Standardise` class defining constructors. */
-object Standardise {
-  /** Default standard deviation threshold; values less than this are taken as 0 standard deviation. */
-  val DefaultThreshold = 1e-4
-
-  /* Default values for number of divisions by standard deviation. */
-  val DefaultN = 1
-
-  /**
-   * Standardise numeric variables.
-   *
-   * @param dim  Dimension for which to create standardised variables.
-   * @param mean Key into the inner map of `V`, identifying the standardisation constant for the mean.
-   * @param sd   Key into the inner map of `V`, identifying the standardisation constant for the standard deviation.
-   */
-  def apply[T, U](dim: Dimension, mean: T, sd: U)(implicit ev1: Positionable[T, Position1D],
-    ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(sd), None, DefaultThreshold, DefaultN)
-  }
-
-  /**
-   * Standardise numeric variables.
-   *
-   * @param dim  Dimension for which to create standardised variables and update coordinate name.
-   * @param mean Key into the inner map of `V`, identifying the standardisation constant for the mean.
-   * @param sd   Key into the inner map of `V`, identifying the standardisation constant for the standard deviation.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply[T, U](dim: Dimension, mean: T, sd: U, name: String)(implicit ev1: Positionable[T, Position1D],
-    ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name), DefaultThreshold, DefaultN)
-  }
-
-  /**
-   * Standardise numeric variables.
-   *
-   * @param dim       Dimension for which to create standardised variables.
-   * @param mean      Key into the inner map of `V`, identifying the standardisation constant for the mean.
-   * @param sd        Key into the inner map of `V`, identifying the standardisation constant for the standard
-   *                  deviation.
-   * @param threshold Minimum standard deviation threshold. Values less than this result in standardised value of zero.
-   */
-  def apply[T, U](dim: Dimension, mean: T, sd: U, threshold: Double)(implicit ev1: Positionable[T, Position1D],
-    ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(sd), None, threshold, DefaultN)
-  }
-
-  /**
-   * Standardise numeric variables.
-   *
-   * @param dim       Dimension for which to create standardised variables.
-   * @param mean      Key into the inner map of `V`, identifying the standardisation constant for the mean.
-   * @param sd        Key into the inner map of `V`, identifying the standardisation constant for the standard
-   *                  deviation.
-   * @param n         Number of times division by standard deviation.
-   */
-  def apply[T, U](dim: Dimension, mean: T, sd: U, n: Int)(implicit ev1: Positionable[T, Position1D],
-    ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(sd), None, DefaultThreshold, n)
-  }
-
-  /**
-   * Standardise numeric variables.
-   *
-   * @param dim       Dimension for which to create standardised variables and update coordinate name.
-   * @param mean      Key into the inner map of `V`, identifying the standardisation constant for the mean.
-   * @param sd        Key into the inner map of `V`, identifying the standardisation constant for the standard
-   *                  deviation.
-   * @param name      Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
-   *                  representations of the coordinate, and the content.
-   * @param threshold Minimum standard deviation threshold. Values less than this result in standardised value of zero.
-   */
-  def apply[T, U](dim: Dimension, mean: T, sd: U, name: String, threshold: Double)(
-    implicit ev1: Positionable[T, Position1D], ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name), threshold, DefaultN)
-  }
-
-  /**
-   * Standardise numeric variables.
-   *
-   * @param dim       Dimension for which to create standardised variables and update coordinate name.
-   * @param mean      Key into the inner map of `V`, identifying the standardisation constant for the mean.
-   * @param sd        Key into the inner map of `V`, identifying the standardisation constant for the standard
-   *                  deviation.
-   * @param name      Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
-   *                  representations of the coordinate, and the content.
-   * @param n         Number of times division by standard deviation.
-   */
-  def apply[T, U](dim: Dimension, mean: T, sd: U, name: String, n: Int)(implicit ev1: Positionable[T, Position1D],
-    ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name), DefaultThreshold, n)
-  }
-
-  /**
-   * Standardise numeric variables.
-   *
-   * @param dim       Dimension for which to create standardised variables.
-   * @param mean      Key into the inner map of `V`, identifying the standardisation constant for the mean.
-   * @param sd        Key into the inner map of `V`, identifying the standardisation constant for the standard
-   *                  deviation.
-   * @param threshold Minimum standard deviation threshold. Values less than this result in standardised value of zero.
-   * @param n         Number of times division by standard deviation.
-   */
-  def apply[T, U](dim: Dimension, mean: T, sd: U, threshold: Double, n: Int)(implicit ev1: Positionable[T, Position1D],
-    ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(sd), None, threshold, n)
-  }
-
-  /**
-   * Standardise numeric variables.
-   *
-   * @param dim       Dimension for which to create standardised variables and update coordinate name.
-   * @param mean      Key into the inner map of `V`, identifying the standardisation constant for the mean.
-   * @param sd        Key into the inner map of `V`, identifying the standardisation constant for the standard
-   *                  deviation.
-   * @param name      Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
-   *                  representations of the coordinate, and the content.
-   * @param threshold Minimum standard deviation threshold. Values less than this result in standardised value of zero.
-   * @param n         Number of times division by standard deviation.
-   */
-  def apply[T, U](dim: Dimension, mean: T, sd: U, name: String, threshold: Double, n: Int)(
-    implicit ev1: Positionable[T, Position1D], ev2: Positionable[U, Position1D]): Standardise = {
-    Standardise(dim, ev1.convert(mean), ev2.convert(sd), Some(name), threshold, n)
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Transform.presentDoubleWithTwoValues(cell, ext, mean, sd,
+      (v, m, s) => if (math.abs(s) < threshold) 0.0 else (v - m) / (n * s))
   }
 }
 
 /**
  * Clamp numeric variables.
  *
- * @param dim   Dimension for which to create clamped variables.
- * @param lower Key into the inner map of `V`, identifying the lower clamping constant for the mean.
- * @param upper Key into the inner map of `V`, identifying the upper clamping constant for the standard deviation.
- * @param name  Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *              representations of the coordinate, and the content.
+ * @param lower Object that will extract, for `cell`, its corresponding lower clamping constant.
+ * @param upper Object that will extract, for `cell`, its corresponding upper clamping constant.
  *
  * @note Clamping results in a variable not smaller (or greater) than the clamping constants. It is only applied to
  *       numerical variables.
  */
-case class Clamp private (dim: Dimension, lower: Position1D, upper: Position1D, name: Option[String])
-  extends Transformer with PresentWithValue with PresentDouble {
-  type V = Map[Position1D, Map[Position1D, Content]]
+case class Clamp[P <: Position, W](lower: Extract[P, W, Double],
+  upper: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, lower, upper, name, Some(Numerical), clamp _)
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Transform.presentDoubleWithTwoValues(cell, ext, lower, upper, (v, l, u) => if (v < l) l else if (v > u) u else v)
   }
-
-  private def clamp(v: Double, l: Double, u: Double) = if (v < l) l else if (v > u) u else v
-}
-
-/** Companion object to the `Clamp` class defining constructors. */
-object Clamp {
-  /**
-   * Clamp numeric variables.
-   *
-   * @param dim   Dimension for which to create clamped variables.
-   * @param lower Key into the inner map of `V`, identifying the lower clamping constant for the mean.
-   * @param upper Key into the inner map of `V`, identifying the upper clamping constant for the standard deviation.
-   */
-  def apply[T, U](dim: Dimension, lower: T, upper: U)(implicit ev1: Positionable[T, Position1D],
-    ev2: Positionable[U, Position1D]): Clamp = Clamp(dim, ev1.convert(lower), ev2.convert(upper), None)
-
-  /**
-   * Clamp numeric variables.
-   *
-   * @param dim   Dimension for which to create clamped variables and update coordinate name.
-   * @param lower Key into the inner map of `V`, identifying the lower clamping constant for the mean.
-   * @param upper Key into the inner map of `V`, identifying the upper clamping constant for the standard deviation.
-   * @param name  Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations
-   *              of the coordinate, and the content.
-   */
-  def apply[T, U](dim: Dimension, lower: T, upper: U, name: String)(implicit ev1: Positionable[T, Position1D],
-    ev2: Positionable[U, Position1D]): Clamp = Clamp(dim, ev1.convert(lower), ev2.convert(upper), Some(name))
 }
 
 /**
  * Compute the inverse document frequency.
  *
- * @param dim  Optional dimension for which to create inverse document frequencies.
- * @param key  Optional key into the map `V` identifying the number of documents.
- * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *             representations of the coordinate, and the content.
+ * @param freq Object that will extract, for `cell`, its corresponding document frequency.
  * @param idf  Idf function to use.
  *
  * @note Idf is only applied to numerical variables.
  */
-case class Idf private (dim: Option[Dimension], key: Option[Position1D], name: Option[String],
-  idf: (Double, Double) => Double) extends Transformer with PresentWithValue with PresentDouble {
-  type V = Map[Position1D, Content]
+case class Idf[P <: Position, W](freq: Extract[P, W, Double],
+  idf: (Double, Double) => Double = (df, n) => math.log(n / (1 + df))) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, key, name, Some(Numerical), (df: Double, n: Double) => idf(df, n), false)
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Transform.presentDoubleWithValue(cell, ext, freq, (df, n) => idf(df, n))
   }
-}
-
-/** Companion object to the `Idf` class defining constructors. */
-object Idf {
-  /**
-   * Standard inverse document frequency.
-   *
-   * @param log The logarithmic function to use.
-   * @param add Offset to add to document frequency.
-   */
-  def Transform(log: (Double) => Double, add: Int): (Double, Double) => Double = {
-    (df: Double, n: Double) => log(n / (add + df))
-  }
-
-  /** Default idf log transformation. */
-  def DefaultTransform() = Transform(math.log, 1)
-
-  /**
-   * Compute the inverse document frequency.
-   *
-   * @param dim Dimension for which to create inverse document frequencies.
-   */
-  def apply(dim: Dimension): Idf = Idf(Some(dim), None, None, DefaultTransform)
-
-  /**
-   * Compute the inverse document frequency.
-   *
-   * @param key Key into the map `V` identifying the number of documents.
-   */
-  def apply[T](key: T)(implicit ev: Positionable[T, Position1D]): Idf = {
-    Idf(None, Some(ev.convert(key)), None, DefaultTransform)
-  }
-
-  /**
-   * Compute the inverse document frequency.
-   *
-   * @param dim  Dimension for which to create inverse document frequencies.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): Idf = Idf(Some(dim), None, Some(name), DefaultTransform)
-
-  /**
-   * Compute the inverse document frequency.
-   *
-   * @param dim Dimension for which to create inverse document frequencies.
-   * @param idf Idf function to use.
-   */
-  def apply(dim: Dimension, idf: (Double, Double) => Double): Idf = Idf(Some(dim), None, None, idf)
-
-  /**
-   * Compute the inverse document frequency.
-   *
-   * @param dim  Dimension for which to create inverse document frequencies.
-   * @param key  Key into the map `V` identifying the number of documents.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply[T](dim: Dimension, key: T, name: String)(implicit ev: Positionable[T, Position1D]): Idf = {
-    Idf(Some(dim), Some(ev.convert(key)), Some(name), DefaultTransform)
-  }
-
-  /**
-   * Compute the inverse document frequency.
-   *
-   * @param key Key into the map `V` identifying the number of documents.
-   * @param idf Idf function to use.
-   */
-  def apply[T](key: T, idf: (Double, Double) => Double)(implicit ev: Positionable[T, Position1D]): Idf = {
-    Idf(None, Some(ev.convert(key)), None, idf)
-  }
-
-  /**
-   * Compute the inverse document frequency.
-   *
-   * @param dim  Dimension for which to create inverse document frequencies.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   * @param idf  Idf function to use.
-   */
-  def apply(dim: Dimension, name: String, idf: (Double, Double) => Double): Idf = Idf(Some(dim), None, Some(name), idf)
-
-  /**
-   * Compute the inverse document frequency.
-   *
-   * @param dim  Dimension for which to create inverse document frequencies.
-   * @param key  Key into the map `V` identifying the number of documents.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   * @param idf  Idf function to use.
-   */
-  def apply[T](dim: Dimension, key: T, name: String, idf: (Double, Double) => Double)(
-    implicit ev: Positionable[T, Position1D]): Idf = Idf(Some(dim), Some(ev.convert(key)), Some(name), idf)
 }
 
 /**
  * Create boolean term frequencies; all term frequencies are binarised.
  *
- * @param dim  Optional dimension for which to update coordinate name.
- * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *             representations of the coordinate, and the content.
- *
  * @note Boolean tf is only applied to numerical variables.
  */
-case class BooleanTf private (dim: Option[Dimension], name: Option[String]) extends Transformer with Present
-  with PresentDouble {
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = present(dim, cell, name, Some(Numerical), 1)
-}
-
-/** Companion object to the `BooleanTf` class defining constructors. */
-object BooleanTf {
-  /** Create boolean term frequencies; all term frequencies are binarised. */
-  def apply(): BooleanTf = BooleanTf(None, None)
-
-  /**
-   * Create boolean term frequencies; all term frequencies are binarised.
-   *
-   * @param dim  Dimension for which to coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): BooleanTf = BooleanTf(Some(dim), Some(name))
+case class BooleanTf[P <: Position]() extends Transformer[P, P] {
+  def present(cell: Cell[P]): Collection[Cell[P]] = Transform.presentDouble(cell, (v) => 1)
 }
 
 /**
  * Create logarithmic term frequencies.
  *
- * @param dim  Optional dimension for which to update coordinate name.
- * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *             representations of the coordinate, and the content.
  * @param log  Log function to use.
  *
  * @note Logarithmic tf is only applied to numerical variables.
  */
-case class LogarithmicTf private (dim: Option[Dimension], name: Option[String],
-  log: (Double) => Double) extends Transformer with Present with PresentDouble {
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
-    present(dim, cell, name, Some(Numerical), (tf: Double) => 1 + log(tf))
-  }
-}
-
-/** Companion object to the `LogarithmicTf` class defining constructors. */
-object LogarithmicTf {
-  /** Default logarithm. */
-  def DefaultLog(): (Double) => Double = math.log
-
-  /** Create logarithmic term frequencies. */
-  def apply(): LogarithmicTf = LogarithmicTf(None, None, DefaultLog)
-
-  /**
-   * Create logarithmic term frequencies.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): LogarithmicTf = LogarithmicTf(Some(dim), Some(name), DefaultLog)
-
-  /**
-   * Create logarithmic term frequencies.
-   *
-   * @param log Log function to use.
-   */
-  def apply(log: (Double) => Double): LogarithmicTf = LogarithmicTf(None, None, log)
-
-  /**
-   * Create logarithmic term frequencies.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   * @param log  Log function to use.
-   */
-  def apply(dim: Dimension, name: String, log: (Double) => Double): LogarithmicTf = {
-    LogarithmicTf(Some(dim), Some(name), log)
-  }
+case class LogarithmicTf[P <: Position](log: (Double) => Double = math.log) extends Transformer[P, P] {
+  def present(cell: Cell[P]): Collection[Cell[P]] = Transform.presentDouble(cell, (tf) => 1 + log(tf))
 }
 
 /**
  * Create augmented term frequencies.
  *
- * @param dim  Dimension for which to create boolean term frequencies.
- * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *             representations of the coordinate, and the content.
+ * @param extractor Object that will extract, for `cell`, its corresponding maximum count.
  *
  * @note Augmented tf is only applied to numerical variables.
  */
-case class AugmentedTf private (dim: Dimension, name: Option[String]) extends Transformer with PresentWithValue
-  with PresentDouble {
-  type V = Map[Position1D, Content]
+case class AugmentedTf[P <: Position, W](max: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(Some(dim), cell, ext, None, name, Some(Numerical), (tf: Double, m: Double) => 0.5 + (0.5 * tf) / m, false)
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Transform.presentDoubleWithValue(cell, ext, max, (tf, m) => 0.5 + (0.5 * tf) / m)
   }
-}
-
-/** Companion object to the `AugmentedTf` class defining constructors. */
-object AugmentedTf {
-  /**
-   * Create augmented term frequencies.
-   *
-   * @param dim Dimension for which to create boolean term frequencies.
-   */
-  def apply(dim: Dimension): AugmentedTf = AugmentedTf(dim, None)
-
-  /**
-   * Create augmented term frequencies.
-   *
-   * @param dim  Dimension for which to create boolean term frequencies.
-   * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
-   *             representations of the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): AugmentedTf = AugmentedTf(dim, Some(name))
 }
 
 /**
  * Create tf-idf values.
  *
- * @param dim  Optional dimension for which to create term frequencies or update coordinate name.
- * @param key  Optional key into the map `V` identifying the inverse document frequency.
- * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *             representations of the coordinate, and the content.
+ * @param idf Object that will extract, for `cell`, its corresponding inverse document frequency.
  *
  * @note Tf-idf is only applied to numerical variables.
  */
-case class TfIdf private (dim: Option[Dimension], key: Option[Position1D],
-  name: Option[String]) extends Transformer with PresentWithValue with PresentDouble {
-  type V = Map[Position1D, Content]
+case class TfIdf[P <: Position, W](idf: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, key, name, Some(Numerical), (tf: Double, idf: Double) => tf * idf, false)
-  }
-}
-
-/** Companion object to the `TfIdf` class defining constructors. */
-object TfIdf {
-  /**
-   * Create tf-idf values.
-   *
-   * @param dim Dimension for which to create term frequencies.
-   */
-  def apply(dim: Dimension): TfIdf = TfIdf(Some(dim), None, None)
-
-  /**
-   * Create tf-idf values.
-   *
-   * @param key Key into the map `V` identifying the inverse document frequency.
-   */
-  def apply[T](key: T)(implicit ev: Positionable[T, Position1D]): TfIdf = {
-    TfIdf(None, Some(ev.convert(key)), None)
-  }
-
-  /**
-   * Create tf-idf values.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): TfIdf = TfIdf(Some(dim), None, Some(name))
-
-  /**
-   * Create tf-idf values.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param key  Key into the map `V` identifying the inverse document frequency.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply[T](dim: Dimension, key: T, name: String)(implicit ev: Positionable[T, Position1D]): TfIdf = {
-    TfIdf(Some(dim), Some(ev.convert(key)), Some(name))
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Transform.presentDoubleWithValue(cell, ext, idf, (t, i) => t * i)
   }
 }
 
 /**
  * Add a value.
  *
- * @param dim     Optional dimension for which to add or update coordinate name.
- * @param key     Optional key into the map `V` identifying the value to add.
- * @param name    Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *                representations of the coordinate, and the content.
+ * @param value Object that will extract, for `cell`, its corresponding value to add.
  *
  * @note Add is only applied to numerical variables.
  */
-case class Add private (dim: Option[Dimension], key: Option[Position1D],
-  name: Option[String]) extends Transformer with PresentWithValue with PresentDouble {
-  type V = Map[Position1D, Content]
+case class Add[P <: Position, W](value: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, key, name, Some(Numerical), (l: Double, r: Double) => l + r, false)
-  }
-}
-
-/** Companion object to the `Add` class defining constructors. */
-object Add {
-  /**
-   * Add a value.
-   *
-   * @param dim Dimension for which to add.
-   */
-  def apply(dim: Dimension): Add = Add(Some(dim), None, None)
-
-  /**
-   * Add a value.
-   *
-   * @param dim  Dimension for which to add and update coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): Add = Add(Some(dim), None, Some(name))
-
-  /**
-   * Add a value.
-   *
-   * @param key Key into the map `V` identifying the value to add.
-   */
-  def apply[T](key: T)(implicit ev: Positionable[T, Position1D]): Add = Add(None, Some(ev.convert(key)), None)
-
-  /**
-   * Add a value.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param key  Key into the map `V` identifying the value to add.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply[T](dim: Dimension, key: T, name: String)(implicit ev: Positionable[T, Position1D]): Add = {
-    Add(Some(dim), Some(ev.convert(key)), Some(name))
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Transform.presentDoubleWithValue(cell, ext, value, (l, r) => l + r)
   }
 }
 
 /**
  * Subtract a value.
  *
- * @param dim     Optional dimension for which to subtract or update coordinate name.
- * @param key     Optional key into the map `V` identifying the value to subtract.
- * @param name    Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *                representations of the coordinate, and the content.
+ * @param value   Object that will extract, for `cell`, its corresponding value to subtract.
  * @param inverse Indicator specifying order of subtract.
  *
  * @note Subtract is only applied to numerical variables.
  */
-case class Subtract private (dim: Option[Dimension], key: Option[Position1D], name: Option[String], inverse: Boolean)
-  extends Transformer with PresentWithValue with PresentDouble {
-  type V = Map[Position1D, Content]
+case class Subtract[P <: Position, W](value: Extract[P, W, Double],
+  inverse: Boolean = false) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, key, name, Some(Numerical), (l: Double, r: Double) => l - r, inverse)
-  }
-}
-
-/** Companion object to the `Subtract` class defining constructors. */
-object Subtract {
-  /**
-   * Subtract a value.
-   *
-   * @param dim Dimension for which to subtract.
-   */
-  def apply(dim: Dimension): Subtract = Subtract(Some(dim), None, None, false)
-
-  /**
-   * Subtract a value.
-   *
-   * @param dim  Dimension for which to subtract and update coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): Subtract = Subtract(Some(dim), None, Some(name), false)
-
-  /**
-   * Subtract a value.
-   *
-   * @param key Key into the map `V` identifying the value to subtract.
-   */
-  def apply[T](key: T)(implicit ev: Positionable[T, Position1D]): Subtract = {
-    Subtract(None, Some(ev.convert(key)), None, false)
-  }
-
-  /**
-   * Subtract a value.
-   *
-   * @param dim     Dimension for which to subtract.
-   * @param inverse Indicator specifying order of subtract.
-   */
-  def apply(dim: Dimension, inverse: Boolean): Subtract = Subtract(Some(dim), None, None, inverse)
-
-  /**
-   * Subtract a value.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param key  Key into the map `V` identifying the value to subtract.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply[T](dim: Dimension, key: T, name: String)(implicit ev: Positionable[T, Position1D]): Subtract = {
-    Subtract(Some(dim), Some(ev.convert(key)), Some(name), false)
-  }
-
-  /**
-   * Subtract a value.
-   *
-   * @param key     Key into the map `V` identifying the value to subtract.
-   * @param inverse Indicator specifying order of subtract.
-   */
-  def apply[T](key: T, inverse: Boolean)(implicit ev: Positionable[T, Position1D]): Subtract = {
-    Subtract(None, Some(ev.convert(key)), None, inverse)
-  }
-
-  /**
-   * Subtract a value.
-   *
-   * @param dim     Dimension for which to subtract and update coordinate name.
-   * @param name    Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations
-   *                of the coordinate, and the content.
-   * @param inverse Indicator specifying order of subtract.
-   */
-  def apply(dim: Dimension, name: String, inverse: Boolean): Subtract = Subtract(Some(dim), None, Some(name), inverse)
-
-  /**
-   * Subtract a value.
-   *
-   * @param dim     Dimension for which to update coordinate name.
-   * @param key     Key into the map `V` identifying the value to subtract.
-   * @param name    Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations
-   *                of the coordinate, and the content.
-   * @param inverse Indicator specifying order of subtract.
-   */
-  def apply[T](dim: Dimension, key: T, name: String, inverse: Boolean)(
-    implicit ev: Positionable[T, Position1D]): Subtract = {
-    Subtract(Some(dim), Some(ev.convert(key)), Some(name), inverse)
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Transform.presentDoubleWithValue(cell, ext, value, (l, r) => l - r, inverse)
   }
 }
 
 /**
  * Multiply a value.
  *
- * @param dim     Optional dimension for which to multiply or update coordinate name.
- * @param key     Optional key into the map `V` identifying the value to multiply by.
- * @param name    Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *                representations of the coordinate, and the content.
+ * @param value Object that will extract, for `cell`, its corresponding value to multiply by.
  *
  * @note Multiply is only applied to numerical variables.
  */
-case class Multiply private (dim: Option[Dimension], key: Option[Position1D],
-  name: Option[String]) extends Transformer with PresentWithValue with PresentDouble {
-  type V = Map[Position1D, Content]
+case class Multiply[P <: Position, W](value: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, key, name, Some(Numerical), (l: Double, r: Double) => l * r, false)
-  }
-}
-
-/** Companion object to the `Multiply` class defining constructors. */
-object Multiply {
-  /**
-   * Multiply a value.
-   *
-   * @param dim Dimension for which to multiply.
-   */
-  def apply(dim: Dimension): Multiply = Multiply(Some(dim), None, None)
-
-  /**
-   * Multiply a value.
-   *
-   * @param dim  Dimension for which to multiply and update coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): Multiply = Multiply(Some(dim), None, Some(name))
-
-  /**
-   * Multiply a value.
-   *
-   * @param key Key into the map `V` identifying the value to multiply by.
-   */
-  def apply[T](key: T)(implicit ev: Positionable[T, Position1D]): Multiply = Multiply(None, Some(ev.convert(key)), None)
-
-  /**
-   * Multiply a value.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param key  Key into the map `V` identifying the value to multiply by.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply[T](dim: Dimension, key: T, name: String)(implicit ev: Positionable[T, Position1D]): Multiply = {
-    Multiply(Some(dim), Some(ev.convert(key)), Some(name))
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Transform.presentDoubleWithValue(cell, ext, value, (l, r) => l * r)
   }
 }
 
 /**
  * Divide a value.
  *
- * @param dim     Optional dimension for which to divide or update coordinate name.
- * @param key     Optional key into the map `V` identifying the value to divide by.
- * @param name    Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *                representations of the coordinate, and the content.
+ * @param value   Object that will extract, for `cell`, its corresponding value to divide by.
  * @param inverse Indicator specifying order of division.
  *
  * @note Fraction is only applied to numerical variables.
  */
-case class Fraction private (dim: Option[Dimension], key: Option[Position1D], name: Option[String],
-  inverse: Boolean) extends Transformer with PresentWithValue with PresentDouble {
-  type V = Map[Position1D, Content]
+case class Fraction[P <: Position, W](value: Extract[P, W, Double],
+  inverse: Boolean = false) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    present(dim, cell, ext, key, name, Some(Numerical), (l: Double, r: Double) => l / r, inverse)
-  }
-}
-
-/** Companion object to the `Fraction` class defining constructors. */
-object Fraction {
-  /**
-   * Divide a value.
-   *
-   * @param dim Dimension for which to divide.
-   */
-  def apply(dim: Dimension): Fraction = Fraction(Some(dim), None, None, false)
-
-  /**
-   * Divide a value.
-   *
-   * @param dim  Dimension for which to divide and update coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): Fraction = Fraction(Some(dim), None, Some(name), false)
-
-  /**
-   * Divide a value.
-   *
-   * @param key Key into the map `V` identifying the value to divide by.
-   */
-  def apply[T](key: T)(implicit ev: Positionable[T, Position1D]): Fraction = {
-    Fraction(None, Some(ev.convert(key)), None, false)
-  }
-
-  /**
-   * Divide a value.
-   *
-   * @param dim     Dimension for which to divide.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply(dim: Dimension, inverse: Boolean): Fraction = Fraction(Some(dim), None, None, inverse)
-
-  /**
-   * Divide a value.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param key  Key into the map `V` identifying the value to divide by.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply[T](dim: Dimension, key: T, name: String)(implicit ev: Positionable[T, Position1D]): Fraction = {
-    Fraction(Some(dim), Some(ev.convert(key)), Some(name), false)
-  }
-
-  /**
-   * Divide a value.
-   *
-   * @param key     Key into the map `V` identifying the value to divide by.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply[T](key: T, inverse: Boolean)(implicit ev: Positionable[T, Position1D]): Fraction = {
-    Fraction(None, Some(ev.convert(key)), None, inverse)
-  }
-
-  /**
-   * Divide a value.
-   *
-   * @param dim     Dimension for which to divide and update coordinate name.
-   * @param name    Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations
-   *                of the coordinate, and the content.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply(dim: Dimension, name: String, inverse: Boolean): Fraction = Fraction(Some(dim), None, Some(name), inverse)
-
-  /**
-   * Divide a value.
-   *
-   * @param dim     Dimension for which to update coordinate name.
-   * @param key     Key into the map `V` identifying the value to divide by.
-   * @param name    Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations
-   *                of the coordinate, and the content.
-   * @param inverse Indicator specifying order of division.
-   */
-  def apply[T](dim: Dimension, key: T, name: String, inverse: Boolean)(
-    implicit ev: Positionable[T, Position1D]): Fraction = {
-    Fraction(Some(dim), Some(ev.convert(key)), Some(name), inverse)
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    Transform.presentDoubleWithValue(cell, ext, value, (l, r) => l / r, inverse)
   }
 }
 
 /**
  * Raise value to a power.
  *
- * @param dim   Optional dimension for which to update coordinate name.
  * @param power The power to raise to.
- * @param name  Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *              representations of the coordinate, and the content.
  *
  * @note Power is only applied to numerical variables.
  */
-case class Power private (dim: Option[Dimension], power: Double,
-  name: Option[String]) extends Transformer with Present with PresentDouble {
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
-    present(dim, cell, name, Some(Numerical), (d: Double) => math.pow(d, power))
-  }
-}
-
-/** Companion object to the `Power` class defining constructors. */
-object Power {
-  /**
-   * Raise value to a power.
-   *
-   * @param power The power to raise to.
-   */
-  def apply(power: Double): Power = Power(None, power, None)
-
-  /**
-   * Raise value to a power.
-   *
-   * @param dim   Dimension for which to update coordinate name.
-   * @param power The power to raise to.
-   * @param name  Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations
-   *              of the coordinate, and the content.
-   */
-  def apply(dim: Dimension, power: Double, name: String): Power = Power(Some(dim), power, Some(name))
+case class Power[P <: Position](power: Double) extends Transformer[P, P] {
+  def present(cell: Cell[P]): Collection[Cell[P]] = Transform.presentDouble(cell, (d) => math.pow(d, power))
 }
 
 /**
  * Take square root of a value.
  *
- * @param dim  Optional dimension for which to update coordinate name.
- * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
- *             representations of the coordinate, and the content.
- *
  * @note SquareRoot is only applied to numerical variables.
  */
-case class SquareRoot private (dim: Option[Dimension],
-  name: Option[String]) extends Transformer with Present with PresentDouble {
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
-    present(dim, cell, name, Some(Numerical), math.sqrt(_))
-  }
-}
-
-/** Companion object to the `SquareRoot` class defining constructors. */
-object SquareRoot {
-  /** Take square root of a value. */
-  def apply(): SquareRoot = SquareRoot(None, None)
-
-  /**
-   * Take square root of a value.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string representations of
-   *             the coordinate, and the content.
-   */
-  def apply(dim: Dimension, name: String): SquareRoot = SquareRoot(Some(dim), Some(name))
+case class SquareRoot[P <: Position]() extends Transformer[P, P] {
+  def present(cell: Cell[P]): Collection[Cell[P]] = Transform.presentDouble(cell, (d) => math.sqrt(d))
 }
 
 /**
  * Convert a numeric value to categorical.
  *
- * @param dim  Dimension for which to convert.
- * @param name Optional pattern for the new name of the coordinate at `dim`. Use `%1$``s` for the string
- *             representations of the coordinate.
+ * @param extractor Object that will extract, for `cell`, its corresponding bins.
  *
  * @note Cut is only applied to numerical variables.
  */
-case class Cut private (dim: Dimension, name: Option[String]) extends Transformer with PresentWithValue {
-  type V = Map[Position1D, List[Double]]
+case class Cut[P <: Position, W](bins: Extract[P, W, List[Double]]) extends TransformerWithValue[P, P] {
+  type V = W
 
-  def present[P <: Position](cell: Cell[P], ext: V): Collection[Cell[P]] = {
-    val pos = cell.position
-    val con = cell.content
+  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+    (Transform.checkType(cell, Numerical), cell.content.value.asDouble, bins.extract(cell, ext)) match {
+      case (true, Some(v), Some(b)) =>
+        val bstr = b.sliding(2).map("(" + _.mkString(",") + "]").toList
 
-    val p = name match {
-      case Some(n) => pos.update(dim, n.format(pos(dim).toShortString))
-      case None => pos
-    }
-
-    (con.schema.kind.isSpecialisationOf(Numerical), con.value.asDouble, ext.get(Position1D(pos(dim)))) match {
-      case (true, Some(v), Some(r)) =>
-        val bins = r.sliding(2).map("(" + _.mkString(",") + "]").toList
-
-        Collection(p, Content(OrdinalSchema[Codex.StringCodex](bins), bins(r.lastIndexWhere(_ < v))))
-      case _ => Collection[Cell[P]]()
+        Collection(cell.position, Content(OrdinalSchema[Codex.StringCodex](bstr), bstr(b.lastIndexWhere(_ < v))))
+      case _ => Collection()
     }
   }
-}
-
-/** Companion object to the `Cut` class defining constructors. */
-object Cut {
-  /**
-   * Convert numerical value to categorical.
-   *
-   * @param dim  Dimension for which to convert.
-   */
-  def apply(dim: Dimension): Cut = Cut(dim, None)
-
-  /**
-   * Convert numerical value to categorical.
-   *
-   * @param dim  Dimension for which to convert.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%1$``s` for the string representations of
-   *             the coordinate.
-   */
-  def apply(dim: Dimension, name: String): Cut = Cut(dim, Some(name))
 }
 
 /** Base trait that defined various rules for cutting continuous data. */
@@ -1146,11 +335,10 @@ trait CutRules {
    *
    * @return A `E` holding the break values.
    */
-  def fixed[V: Valueable, W: Valueable](ext: E[Stats], min: V, max: W, k: Long): E[Cut#V]
+  def fixed[V: Valueable, W: Valueable](ext: E[Stats], min: V, max: W, k: Long): E[Map[Position1D, List[Double]]]
 
-  protected def fixedFromStats[V: Valueable, W: Valueable](stats: Stats, min: V, max: W, k: Long): Cut#V = {
-    cut(stats, min, max, _ => Some(k))
-  }
+  protected def fixedFromStats[V: Valueable, W: Valueable](stats: Stats, min: V, max: W,
+    k: Long): Map[Position1D, List[Double]] = cut(stats, min, max, _ => Some(k))
 
   /**
    * Define range of bins based on the square-root choice.
@@ -1162,10 +350,11 @@ trait CutRules {
    *
    * @return A `E` holding the break values.
    */
-  def squareRootChoice[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W, max: X): E[Cut#V]
+  def squareRootChoice[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W,
+    max: X): E[Map[Position1D, List[Double]]]
 
   protected def squareRootChoiceFromStats[V: Valueable, W: Valueable, X: Valueable](stats: Stats, count: V, min: W,
-    max: X): Cut#V = {
+    max: X): Map[Position1D, List[Double]] = {
     cut(stats, min, max, extract(_, count).map { case n => math.round(math.sqrt(n)) })
   }
 
@@ -1179,10 +368,13 @@ trait CutRules {
    *
    * @return A `E` holding the break values.
    */
-  def sturgesFormula[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W, max: X): E[Cut#V]
+  def sturgesFormula[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W,
+    max: X): E[Map[Position1D, List[Double]]]
 
   protected def sturgesFormulaFromStats[V: Valueable, W: Valueable, X: Valueable](stats: Stats, count: V, min: W,
-    max: X): Cut#V = cut(stats, min, max, extract(_, count).map { case n => math.ceil(log2(n) + 1).toLong })
+    max: X): Map[Position1D, List[Double]] = {
+    cut(stats, min, max, extract(_, count).map { case n => math.ceil(log2(n) + 1).toLong })
+  }
 
   /**
    * Define range of bins based on the Rice rule.
@@ -1194,10 +386,11 @@ trait CutRules {
    *
    * @return A `E` holding the break values.
    */
-  def riceRule[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W, max: X): E[Cut#V]
+  def riceRule[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W,
+    max: X): E[Map[Position1D, List[Double]]]
 
   protected def riceRuleFromStats[V: Valueable, W: Valueable, X: Valueable](stats: Stats, count: V, min: W,
-    max: X): Cut#V = {
+    max: X): Map[Position1D, List[Double]] = {
     cut(stats, min, max, extract(_, count).map { case n => math.ceil(2 * math.pow(n, 1.0 / 3.0)).toLong })
   }
 
@@ -1213,10 +406,10 @@ trait CutRules {
    * @return A `E` holding the break values.
    */
   def doanesFormula[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: E[Stats], count: V, min: W, max: X,
-    skewness: Y): E[Cut#V]
+    skewness: Y): E[Map[Position1D, List[Double]]]
 
   protected def doanesFormulaFromStats[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](stats: Stats, count: V,
-    min: W, max: X, skewness: Y): Cut#V = {
+    min: W, max: X, skewness: Y): Map[Position1D, List[Double]] = {
     cut(stats, min, max, m => (extract(m, count), extract(m, skewness)) match {
       case (Some(n), Some(s)) =>
         Some(math.round(1 + log2(n) + log2(1 + math.abs(s) / math.sqrt((6 * (n - 2)) / ((n + 1) * (n + 3))))))
@@ -1236,10 +429,10 @@ trait CutRules {
    * @return A `E` holding the break values.
    */
   def scottsNormalReferenceRule[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: E[Stats], count: V,
-    min: W, max: X, sd: Y): E[Cut#V]
+    min: W, max: X, sd: Y): E[Map[Position1D, List[Double]]]
 
   protected def scottsNormalReferenceRuleFromStats[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](stats: Stats,
-    count: V, min: W, max: X, sd: Y): Cut#V = {
+    count: V, min: W, max: X, sd: Y): Map[Position1D, List[Double]] = {
     cut(stats, min, max, m => (extract(m, count), extract(m, min), extract(m, max), extract(m, sd)) match {
       case (Some(n), Some(l), Some(u), Some(s)) => Some(math.ceil((u - l) / (3.5 * s / math.pow(n, 1.0 / 3.0))).toLong)
       case _ => None
@@ -1251,15 +444,15 @@ trait CutRules {
    *
    * @param range A map (holding for each key) the bins range of that feature.
    */
-  def breaks[V: Valueable](range: Map[V, List[Double]]): E[Cut#V]
+  def breaks[V: Valueable](range: Map[V, List[Double]]): E[Map[Position1D, List[Double]]]
 
-  protected def breaksFromMap[V: Valueable](range: Map[V, List[Double]]): Cut#V = {
+  protected def breaksFromMap[V: Valueable](range: Map[V, List[Double]]): Map[Position1D, List[Double]] = {
     range.map { case (v, l) => (Position1D(v), l) }
   }
 
   // TODO: Add 'right' and 'labels' options (analogous to R's)
   private def cut[V: Valueable, W: Valueable](stats: Stats, min: V, max: W,
-    bins: (Map[Position1D, Content]) => Option[Long]): Cut#V = {
+    bins: (Map[Position1D, Content]) => Option[Long]): Map[Position1D, List[Double]] = {
     stats.flatMap {
       case (pos, map) => (extract(map, min), extract(map, max), bins(map)) match {
         case (Some(l), Some(u), Some(k)) =>
@@ -1279,11 +472,16 @@ trait CutRules {
   private def log2(x: Double): Double = math.log(x) / math.log(2)
 }
 
-// TODO: test, document and add appropriate constructors
-case class Compare(f: (Double) => Boolean) extends Transformer with Present {
-  def present[P <: Position](cell: Cell[P]): Collection[Cell[P]] = {
-    Collection(cell.position,
-      Content(NominalSchema[Codex.BooleanCodex](), cell.content.value.asDouble.map { f(_) }.getOrElse(false)))
+/**
+ * Check if a cell matches a predicate.
+ *
+ * @param comparer Function that checks if the cells matched a predicate.
+ *
+ * @note The returned cells contain boolean content.
+ */
+case class Compare[P <: Position](comparer: (Cell[P]) => Boolean) extends Transformer[P, P] {
+  def present(cell: Cell[P]): Collection[Cell[P]] = {
+    Collection(cell.position, Content(NominalSchema[Codex.BooleanCodex](), comparer(cell)))
   }
 }
 

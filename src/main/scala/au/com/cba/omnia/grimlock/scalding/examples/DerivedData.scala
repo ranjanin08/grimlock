@@ -27,20 +27,19 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 import com.twitter.scalding.{ Args, Job }
 
 // Simple gradient feature genertor
-case class Gradient(dim: Dimension) extends Windowed with Initialise {
-  type T = Cell[Position]
+case class Gradient(dim: Dimension) extends Window[Position2D, Position1D, Position3D] {
+  type T = Cell[Position1D]
 
   // Initialise state to the remainder coordinates (contains the date) and the content.
-  def initialise[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R): T = {
-    Cell(rem, cell.content)
+  def initialise(cell: Cell[Position2D], rem: Position1D): (T, Collection[Cell[Position3D]]) = {
+    (Cell(rem, cell.content), Collection[Cell[Position3D]])
   }
 
   val DayInMillis = 1000 * 60 * 60 * 24
   val separator = ""
 
   // For each new cell, output the difference with the previous cell (contained in `t`).
-  def present[P <: Position, D <: Dimension](slice: Slice[P, D])(cell: Cell[slice.S], rem: slice.R,
-    t: T): (T, Collection[Cell[slice.S#M]]) = {
+  def present(cell: Cell[Position2D], rem: Position1D, t: T): (T, Collection[Cell[Position3D]]) = {
     // Get current date from `rem` and previous date from `t` and compute number of days between the dates.
     val days = rem(dim).asDate.flatMap {
       case dc => t.position(dim).asDate.map { case dt => (dc.getTime - dt.getTime) / DayInMillis }
@@ -52,7 +51,7 @@ case class Gradient(dim: Dimension) extends Windowed with Initialise {
     // Generate cell containing the gradient (delta / days).
     val grad = days.flatMap {
       case td => delta.map {
-        case vd => Left(Cell[slice.S#M](cell.position.append(t.position.toShortString(separator) + ".to." +
+        case vd => Left(Cell(cell.position.append(t.position.toShortString(separator) + ".to." +
           rem.toShortString(separator)), Content(ContinuousSchema[Codex.DoubleCodex](), vd / td)))
       }
     }
@@ -75,7 +74,7 @@ class DerivedData(args: Args) extends Job(args) {
   //    feature.from.gradient)
   // 4/ Persist 2D gradient features.
   load3D(s"${path}/exampleDerived.txt", third = DateCodex)
-    .window(Along(Third), Gradient(First))
+    .slide(Along(Third), Gradient(First))
     .melt(Third, Second, ".from.")
     .save(s"./demo.${output}/gradient.out")
 }

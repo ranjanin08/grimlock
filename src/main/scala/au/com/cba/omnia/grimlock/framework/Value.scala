@@ -127,12 +127,7 @@ object Value {
   /** Define an ordering between 2 values. Only use with values of the same type. */
   val Ordering: Ordering[Value] = new Ordering[Value] {
     def compare(x: Value, y: Value): Int = {
-      x.codex.compare(x, y) match {
-        case Some(0) => 0
-        case Some(x) if (x > 0) => 1
-        case Some(x) if (x < 0) => -1
-        case _ => throw new Exception("unable to compare different values.")
-      }
+      x.codex.compare(x, y).getOrElse(throw new Exception("unable to compare different values."))
     }
   }
 }

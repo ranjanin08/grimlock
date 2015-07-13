@@ -32,6 +32,7 @@ sealed trait Slice[P <: Position, D <: Dimension] {
    */
   type R <: Position with ExpandablePosition
 
+  /** The dimension of this slice. */
   val dimension: D
 
   /** Returns the selected coordinate(s) for the given `pos`. */
