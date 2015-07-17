@@ -198,13 +198,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val wanted = keep match {
       case true => pos
       case false =>
-        names(slice)
-          .groupBy { case (p, i) => p }
-          .leftJoin(pos.groupBy { case (p, i) => p })
+        Grouped(names(slice))
+          .leftJoin(Grouped(pos))
           .flatMap {
-            case (p, (lpi, rpi)) => rpi match {
+            case (p, (li, rio)) => rio match {
               case Some(_) => None
-              case None => Some(lpi)
+              case None => Some((p, li))
             }
           }
     }
@@ -212,7 +211,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data
       .groupBy { case c => slice.selected(c.position) }
       .withReducers(reducers)
-      .join(wanted.groupBy { case (p, i) => p })
+      .join(Grouped(wanted))
       .map { case (_, (c, _)) => c }
   }
 
@@ -458,10 +457,39 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   private def pairwiseTuples[D <: Dimension](slice: Slice[P, D], comparer: Comparer)(lnames: U[(slice.S, Long)],
     ldata: U[Cell[P]], rnames: U[(slice.S, Long)], rdata: U[Cell[P]])(implicit ev1: PosDimDep[P, D],
       ev2: ClassTag[slice.S]): U[(Cell[slice.S], slice.R, Cell[slice.S], slice.R)] = {
+  val rl = Grouped(rnames)
+     .withReducers(4)
+     .forceToReducers
+     .map { case (p, _) => List(p) }
+     .sum
+
+  val keys = Grouped(lnames)
+    .withReducers(512)
+    .forceToReducers
+    .keys
+    .flatMapWithValue(rl) { case (l, vo) => vo.get.collect { case r if comparer.keep(l, r) => (r, l) } }
+    .forceToDisk
+
+  //implicit def serialize(key: Position3D): Array[Byte] = key.toShortString("|").toCharArray.map(_.toByte)
+  ldata
+    .groupBy { case Cell(p, _) => slice.selected(p) }
+    //.sketch(999)
+    .withReducers(2048)
+    .join(Grouped(rdata
+            .groupBy { case Cell(p, _) => slice.selected(p) }
+            .withReducers(128)
+            .join(Grouped(keys))
+            .map { case (r, (c, l)) => (l, c) }))
+    .map {
+      case (_, (lc, rc)) => (Cell(slice.selected(lc.position), lc.content), slice.remainder(lc.position),
+        Cell(slice.selected(rc.position), rc.content), slice.remainder(rc.position))
+    }
+/*
     lnames
       .cross(rnames)
       .collect { case ((l, _), (r, _)) if comparer.keep(l, r) => (l, r) }
       .groupBy { case (l, _) => l }
+      .withReducers(256)
       .join(ldata.groupBy { case Cell(p, _) => slice.selected(p) })
       .groupBy { case (_, ((_, r), _)) => r }
       .join(rdata.groupBy { case Cell(p, _) => slice.selected(p) })
@@ -469,6 +497,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
         case (_, ((_, ((lp, rp), lc)), rc)) =>
           (Cell(lp, lc.content), slice.remainder(lc.position), Cell(rp, rc.content), slice.remainder(rc.position))
       }
+*/
   }
 }
 
