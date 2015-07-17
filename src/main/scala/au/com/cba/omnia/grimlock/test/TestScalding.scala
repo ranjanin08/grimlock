@@ -88,7 +88,7 @@ class TestScalding1(args : Args) extends Job(args) {
     .slice(Over(First), "iid:1548763", true)
     .save("./tmp.scalding/dat2.out", descriptive=true)
 
-  load3D(args("path") + "/smallInputfile.txt")
+  load3D(args("path") + "/smallInputfile.txt", third=DateCodex)
     .save("./tmp.scalding/dat3.out", descriptive=true)
 }
 
@@ -600,7 +600,8 @@ class TestScalding19(args : Args) extends Job(args) {
 
 class TestScalding20(args : Args) extends Job(args) {
 
-  load3DWithDictionary(args("path") + "/ivoryInputfile1.txt", Dictionary.load(args("path") + "/dict.txt"))
+  load3DWithDictionary(args("path") + "/ivoryInputfile1.txt", Dictionary.load(args("path") + "/dict.txt"),
+    third=DateCodex)
     .save("./tmp.scalding/ivr1.out")
 }
 

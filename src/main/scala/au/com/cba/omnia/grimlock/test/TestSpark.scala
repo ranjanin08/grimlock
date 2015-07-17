@@ -90,7 +90,7 @@ object TestSpark1 {
       .slice(Over(First), "iid:1548763", true)
       .save("./tmp.spark/dat2.out", descriptive=true)
 
-    load3D(args(1) + "/smallInputfile.txt")
+    load3D(args(1) + "/smallInputfile.txt", third=DateCodex)
       .save("./tmp.spark/dat3.out", descriptive=true)
   }
 }
@@ -641,7 +641,7 @@ object TestSpark20 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
-    load3DWithDictionary(args(1) + "/ivoryInputfile1.txt", Dictionary.load(args(1) + "/dict.txt"))
+    load3DWithDictionary(args(1) + "/ivoryInputfile1.txt", Dictionary.load(args(1) + "/dict.txt"), third=DateCodex)
       .save("./tmp.spark/ivr1.out")
   }
 }

@@ -737,7 +737,7 @@ object Matrix {
    * @param third     The codex for decoding the third dimension.
    */
   def load3DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
-    separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = DateCodex)(
+    separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex)(
       implicit ev: PosDimDep[Position3D, D], sc: SparkContext): RDD[Cell[Position3D]] = {
     sc.textFile(file).flatMap { Cell.parse3DWithDictionary(dict, dim, separator, first, second, third)(_) }
   }
@@ -753,8 +753,115 @@ object Matrix {
    * @param third     The codex for decoding the third dimension.
    */
   def load3DWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
-    second: Codex = StringCodex, third: Codex = DateCodex)(implicit sc: SparkContext): RDD[Cell[Position3D]] = {
+    second: Codex = StringCodex, third: Codex = StringCodex)(implicit sc: SparkContext): RDD[Cell[Position3D]] = {
     sc.textFile(file).flatMap { Cell.parse3DWithSchema(schema, separator, first, second, third)(_) }
+  }
+
+  /**
+   * Read column oriented, pipe separated matrix data into a `RDD[Cell[Position4D]]`.
+   *
+   * @param file      The file to read from.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   */
+  def load4D(file: String, separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
+    third: Codex = StringCodex, fourth: Codex = StringCodex)(implicit sc: SparkContext): RDD[Cell[Position4D]] = {
+    sc.textFile(file).flatMap { Cell.parse4D(separator, first, second, third, fourth)(_) }
+  }
+
+  /**
+   * Read column oriented, pipe separated data into a `RDD[Cell[Position4D]]`.
+   *
+   * @param file      The file to read from.
+   * @param dict      The dictionary describing the features in the data.
+   * @param dim       The dimension on which to apply the dictionary.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   */
+  def load4DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
+    separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex,
+    fourth: Codex = StringCodex)(implicit ev: PosDimDep[Position4D, D], sc: SparkContext): RDD[Cell[Position4D]] = {
+    sc.textFile(file).flatMap { Cell.parse4DWithDictionary(dict, dim, separator, first, second, third, fourth)(_) }
+  }
+
+  /**
+   * Read column oriented, pipe separated data into a `RDD[Cell[Position4D]]`.
+   *
+   * @param file      The file to read from.
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   */
+  def load4DWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
+    second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex)(
+      implicit sc: SparkContext): RDD[Cell[Position4D]] = {
+    sc.textFile(file).flatMap { Cell.parse4DWithSchema(schema, separator, first, second, third, fourth)(_) }
+  }
+
+  /**
+   * Read column oriented, pipe separated matrix data into a `RDD[Cell[Position5D]]`.
+   *
+   * @param file      The file to read from.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   */
+  def load5D(file: String, separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
+    third: Codex = StringCodex, fourth: Codex = StringCodex, fifth: Codex = StringCodex)(
+      implicit sc: SparkContext): RDD[Cell[Position5D]] = {
+    sc.textFile(file).flatMap { Cell.parse5D(separator, first, second, third, fourth, fifth)(_) }
+  }
+
+  /**
+   * Read column oriented, pipe separated data into a `RDD[Cell[Position5D]]`.
+   *
+   * @param file      The file to read from.
+   * @param dict      The dictionary describing the features in the data.
+   * @param dim       The dimension on which to apply the dictionary.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   */
+  def load5DWithDictionary[D <: Dimension](file: String, dict: Map[String, Schema], dim: D = Second,
+    separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex,
+    fourth: Codex = StringCodex, fifth: Codex = StringCodex)(implicit ev: PosDimDep[Position5D, D],
+      sc: SparkContext): RDD[Cell[Position5D]] = {
+    sc.textFile(file).flatMap {
+      Cell.parse5DWithDictionary(dict, dim, separator, first, second, third, fourth, fifth)(_)
+    }
+  }
+
+  /**
+   * Read column oriented, pipe separated data into a `RDD[Cell[Position5D]]`.
+   *
+   * @param file      The file to read from.
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   */
+  def load5DWithSchema(file: String, schema: Schema, separator: String = "|", first: Codex = StringCodex,
+    second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex, fifth: Codex = StringCodex)(
+      implicit sc: SparkContext): RDD[Cell[Position5D]] = {
+    sc.textFile(file).flatMap { Cell.parse5DWithSchema(schema, separator, first, second, third, fourth, fifth)(_) }
   }
 
   /**
