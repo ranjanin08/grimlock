@@ -31,6 +31,11 @@ import java.util.regex.Pattern
 
 import scala.reflect.ClassTag
 
+sealed trait Tuner extends java.io.Serializable
+case class InMemory() extends Tuner
+case class Balanced(reducers: Int = 108) extends Tuner
+case class Unbalanced(reducers: Int = 108) extends Tuner
+
 /**
  * Cell in a matrix.
  *
@@ -463,11 +468,12 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice     Encapsulates the dimension(s) to change.
    * @param positions The position(s) within the dimension(s) to change.
    * @param schema    The schema to change to.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[P]]' with the changed contents.
    */
-  def change[D <: Dimension, T](slice: Slice[P, D], positions: T, schema: Schema)(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
+  def change[D <: Dimension, T](slice: Slice[P, D], positions: T, schema: Schema, tuner: Tuner = InMemory())(
+    implicit ev1: PosDimDep[P, D], ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
 
   /** Return all possible positions of a matrix. */
   def domain(): U[P]
@@ -476,10 +482,12 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * Return contents of a matrix at `positions`.
    *
    * @param positions The positions for which to get the contents.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[P]]' of the `positions` together with their content.
    */
-  def get[T](positions: T)(implicit ev1: PositionDistributable[T, P, U], ev2: ClassTag[P]): U[Cell[P]]
+  def get[T](positions: T, tuner: Tuner = InMemory())(implicit ev1: PositionDistributable[T, P, U],
+    ev2: ClassTag[P]): U[Cell[P]]
 
   /**
    * Join two matrices.
@@ -648,11 +656,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice     Encapsulates the dimension(s) to slice.
    * @param positions The position(s) within the dimension(s) to slice.
    * @param keep      Indicates if the `positions` should be kept or removed.
-   * @param reducers  The number of reducers/partitions to use/produce.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[P]]' of the remaining content.
    */
-  def slice[D <: Dimension, T](slice: Slice[P, D], positions: T, keep: Boolean, reducers: Int)(
+  def slice[D <: Dimension, T](slice: Slice[P, D], positions: T, keep: Boolean, tuner: Tuner = InMemory())(
     implicit ev1: PosDimDep[P, D], ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
 
   /**
@@ -871,6 +879,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   }
 
   protected implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
+
+  protected implicit def serialize[T <: Position](key: T): Array[Byte] = {
+    key.toShortString("|").toCharArray.map(_.toByte)
+  }
 
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations

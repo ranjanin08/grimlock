@@ -27,6 +27,7 @@ import au.com.cba.omnia.grimlock.framework.{
   Over,
   ReduceableMatrix => BaseReduceableMatrix,
   Slice,
+  Tuner,
   Type
 }
 import au.com.cba.omnia.grimlock.framework.aggregate._
@@ -56,8 +57,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type E[B] = B
   type S = Matrix[P]
 
-  def change[D <: Dimension, T](slice: Slice[P, D], positions: T, schema: Schema)(implicit ev1: PosDimDep[P, D],
-    ev2: BaseNameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S]): U[Cell[P]] = {
+  def change[D <: Dimension, T](slice: Slice[P, D], positions: T, schema: Schema, tuner: Tuner)(
+    implicit ev1: PosDimDep[P, D], ev2: BaseNameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S]): U[Cell[P]] = {
     data
       .keyBy { case c => slice.selected(c.position) }
       .leftOuterJoin(ev2.convert(this, slice, positions).keyBy { case (p, i) => p })
@@ -69,7 +70,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def get[T](positions: T)(implicit ev1: PositionDistributable[T, P, RDD], ev2: ClassTag[P]): U[Cell[P]] = {
+  def get[T](positions: T, tuner: Tuner)(implicit ev1: PositionDistributable[T, P, RDD],
+    ev2: ClassTag[P]): U[Cell[P]] = {
     data
       .keyBy { case c => c.position }
       .join(ev1.convert(positions).keyBy { case p => p })
@@ -181,7 +183,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .parallelize(List(Cell(Position1D(dim.toString), Content(DiscreteSchema[Codex.LongCodex](), dist.count))))
   }
 
-  def slice[D <: Dimension, T](slice: Slice[P, D], positions: T, keep: Boolean, reducers: Int = data.partitions.length)(
+  def slice[D <: Dimension, T](slice: Slice[P, D], positions: T, keep: Boolean, tuner: Tuner)(
     implicit ev1: PosDimDep[P, D], ev2: BaseNameable[T, P, slice.S, D, RDD], ev3: ClassTag[slice.S]): U[Cell[P]] = {
     val pos = ev2.convert(this, slice, positions)
     val wanted = keep match {
@@ -200,7 +202,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
     data
       .keyBy { case c => slice.selected(c.position) }
-      .join(wanted.keyBy { case (p, i) => p }, reducers)
+      .join(wanted.keyBy { case (p, i) => p })
       .map { case (_, (c, _)) => c }
   }
 
