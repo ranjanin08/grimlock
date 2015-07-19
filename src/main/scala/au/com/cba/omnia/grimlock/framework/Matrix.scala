@@ -33,7 +33,7 @@ import scala.reflect.ClassTag
 
 sealed trait Tuner extends java.io.Serializable
 case class InMemory() extends Tuner
-case class Balanced(reducers: Int = 108) extends Tuner
+case class Reducers(reducers: Int = 108) extends Tuner
 case class Unbalanced(reducers: Int = 108) extends Tuner
 
 /**
@@ -522,12 +522,13 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice     Encapsulates the dimension(s) along which to compute values.
    * @param comparer  Defines which element the pairwise operations should apply to.
    * @param operators The pairwise operators to apply.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, operators: T)(
+  def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, operators: T, tuner: Tuner)(
     implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all pairs of values given a slice with a user supplied value.
@@ -536,11 +537,12 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param comparer  Defines which element the pairwise operations should apply to.
    * @param operators The pairwise operators to apply.
    * @param value     The user supplied value.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
   def pairwiseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, operators: T,
-    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
+    value: E[W], tuner: Tuner)(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
       ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
@@ -550,12 +552,13 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param comparer  Defines which element the pairwise operations should apply to.
    * @param that      Other matrix to compute pairwise values with.
    * @param operators The pairwise operators to apply.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, that: S, operators: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+  def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, that: S, operators: T,
+    tuner: Tuner)(implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
+      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all values of this and that given a slice with a user supplied value.
@@ -565,12 +568,14 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param that      Other matrix to compute pairwise values with.
    * @param operators The pairwise operators to apply.
    * @param value     The user supplied value.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
   def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, that: S,
-    operators: T, value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
-      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+    operators: T, value: E[W], tuner: Tuner)(implicit ev1: PosDimDep[P, D],
+    ev2: OperableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
+      ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Rename the coordinates of a dimension.
@@ -616,19 +621,22 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @param positions The positions for which to set the contents.
    * @param value     The value to set.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[P]]' where the `positions` have `value` as their content.
    */
-  def set[T](positions: T, value: Content)(implicit ev1: PositionDistributable[T, P, U], ev2: ClassTag[P]): U[Cell[P]]
+  def set[T](positions: T, value: Content, tuner: Tuner = Unbalanced())(implicit ev1: PositionDistributable[T, P, U],
+    ev2: ClassTag[P]): U[Cell[P]]
 
   /**
    * Set the `values` in a matrix.
    *
    * @param values The values to set.
+   * @param tuner  The tuner for the job.
    *
    * @return A `U[Cell[P]]' with the `values` set.
    */
-  def set[T](values: T)(implicit ev1: Matrixable[T, P, U], ev2: ClassTag[P]): U[Cell[P]]
+  def set[T](values: T, tuner: Tuner = Unbalanced())(implicit ev1: Matrixable[T, P, U], ev2: ClassTag[P]): U[Cell[P]]
 
   /**
    * Returns the shape of the matrix.

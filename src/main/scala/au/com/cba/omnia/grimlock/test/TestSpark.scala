@@ -723,7 +723,7 @@ object TestSpark23 {
     }
 
     data
-      .pairwise(Over(Second), Upper, DiffSquared())
+      .pairwise(Over(Second), Upper, DiffSquared(), InMemory())
       .save("./tmp.spark/pws1.out")
   }
 }
@@ -771,7 +771,8 @@ object TestSpark26 {
     val right = load2D(args(1) + "/algebraInputfile2.txt")
 
     left
-      .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
+      .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")),
+        InMemory())
       .save("./tmp.spark/alg.out")
   }
 }

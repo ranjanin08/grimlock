@@ -677,7 +677,7 @@ class TestScalding23(args : Args) extends Job(args) {
   }
 
   data
-    .pairwise(Over(Second), Upper, DiffSquared())
+    .pairwise(Over(Second), Upper, DiffSquared(), InMemory())
     .save("./tmp.scalding/pws1.out")
 }
 
@@ -718,7 +718,8 @@ class TestScalding26(args: Args) extends Job(args) {
   val right = load2D(args("path") + "/algebraInputfile2.txt")
 
   left
-    .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
+    .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")),
+      InMemory())
     .save("./tmp.scalding/alg.out")
 }
 

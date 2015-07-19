@@ -16,7 +16,6 @@ package au.com.cba.omnia.grimlock.scalding
 
 import au.com.cba.omnia.grimlock.framework.{
   Along,
-  Balanced,
   Cell,
   ExpandableMatrix => BaseExpandableMatrix,
   ExtractWithDimension,
@@ -28,6 +27,7 @@ import au.com.cba.omnia.grimlock.framework.{
   Nameable => BaseNameable,
   Over,
   ReduceableMatrix => BaseReduceableMatrix,
+  Reducers,
   Slice,
   Tuner,
   Type,
@@ -81,7 +81,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           .flatMapWithValue(pos.map { case (p, _) => List(p) }.sum) {
             case (c, vo) => f(vo.get.contains(slice.selected(c.position)), c)
           }
-      case Balanced(reducers) =>
+      case Reducers(reducers) =>
         data
           .groupBy { case c => slice.selected(c.position) }
           .withReducers(reducers)
@@ -106,7 +106,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           .flatMapWithValue(pos.map { case p => List(p) }.sum) {
             case (c, vo) => if (vo.get.contains(c.position)) { Some(c) } else { None }
           }
-      case Balanced(reducers) =>
+      case Reducers(reducers) =>
         data
           .groupBy { case c => c.position }
           .withReducers(reducers)
@@ -143,39 +143,40 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     Names.number(data.map { case c => slice.selected(c.position) }.distinct)
   }
 
-  def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, operators: T)(
+  def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, operators: T, tuner: Tuner)(
     implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
     ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
     val o = ev2.convert(operators)
 
-    pairwiseTuples(slice, comparer)(data, data)
+    pairwiseTuples(slice, comparer, tuner)(data, data)
       .flatMap { case (lc, lr, rc, rr) => o.compute(lc, lr, rc, rr).toList }
   }
 
   def pairwiseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, operators: T,
-    value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
+    value: E[W], tuner: Tuner)(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
       ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
     val o = ev2.convert(operators)
 
-    pairwiseTuples(slice, comparer)(data, data)
+    pairwiseTuples(slice, comparer, tuner)(data, data)
       .flatMapWithValue(value) { case ((lc, lr, rc, rr), vo) => o.computeWithValue(lc, lr, rc, rr, vo.get).toList }
   }
 
-  def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, that: S, operators: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
+  def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, that: S, operators: T,
+    tuner: Tuner)(implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
+      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
     val o = ev2.convert(operators)
 
-    pairwiseTuples(slice, comparer)(data, that.data)
+    pairwiseTuples(slice, comparer, tuner)(data, that.data)
       .flatMap { case (lc, lr, rc, rr) => o.compute(lc, lr, rc, rr).toList }
   }
 
   def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, that: S,
-    operators: T, value: E[W])(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
-      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]] = {
+    operators: T, value: E[W], tuner: Tuner)(implicit ev1: PosDimDep[P, D],
+    ev2: OperableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
+      ev5: ClassTag[slice.R]): U[Cell[Q]] = {
     val o = ev2.convert(operators)
 
-    pairwiseTuples(slice, comparer)(data, that.data)
+    pairwiseTuples(slice, comparer, tuner)(data, that.data)
       .flatMapWithValue(value) { case ((lc, lr, rc, rr), vo) => o.computeWithValue(lc, lr, rc, rr, vo.get).toList }
   }
 
@@ -197,15 +198,15 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.filterWithValue(value) { case (c, vo) => sampler.selectWithValue(c, vo.get) }
   }
 
-  def set[T](positions: T, value: Content)(implicit ev1: PositionDistributable[T, P, TypedPipe],
+  def set[T](positions: T, value: Content, tuner: Tuner)(implicit ev1: PositionDistributable[T, P, TypedPipe],
     ev2: ClassTag[P]): U[Cell[P]] = {
-    set(ev1.convert(positions).map { case p => Cell(p, value) })
+    set(ev1.convert(positions).map { case p => Cell(p, value) }, tuner)
   }
 
-  def set[T](values: T)(implicit ev1: BaseMatrixable[T, P, TypedPipe], ev2: ClassTag[P]): U[Cell[P]] = {
+  def set[T](values: T, tuner: Tuner)(implicit ev1: BaseMatrixable[T, P, TypedPipe], ev2: ClassTag[P]): U[Cell[P]] = {
     data
       .groupBy { case c => c.position }
-      .outerJoin(ev1.convert(values).groupBy { case c => c.position })
+      .outerJoin(ev1.convert(values).groupBy { case c => c.position }) // Sketched doesn't have outerJoin
       .map { case (_, (co, cn)) => cn.getOrElse(co.get) }
   }
 
@@ -241,7 +242,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           .flatMapWithValue(pos.map { case (p, _) => List(p) }.sum) {
             case (c, vo) => f(vo.get.contains(slice.selected(c.position)), c)
           }
-      case Balanced(reducers) =>
+      case Reducers(reducers) =>
         data
           .groupBy { case c => slice.selected(c.position) }
           .withReducers(reducers)
@@ -495,11 +496,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     Grouped(names)
   }
 
-  private def pairwiseTuples[D <: Dimension](slice: Slice[P, D], comparer: Comparer)(ldata: U[Cell[P]],
+  private def pairwiseTuples[D <: Dimension](slice: Slice[P, D], comparer: Comparer, tuner: Tuner)(ldata: U[Cell[P]],
     rdata: U[Cell[P]])(implicit ev1: PosDimDep[P, D],
       ev2: ClassTag[slice.S]): U[(Cell[slice.S], slice.R, Cell[slice.S], slice.R)] = {
-    val tuner: Tuner = Unbalanced() 
-
     tuner match {
       case InMemory() =>
         ldata
@@ -634,11 +633,12 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    * Compute correlations.
    *
    * @param slice Encapsulates the dimension for which to compute correlations.
+   * @param tuner The tuner for the job.
    *
    * @return A `U[Cell[Position1D]]` with all pairwise correlations.
    */
-  def correlation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
-    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
+  def correlation[D <: Dimension](slice: Slice[Position2D, D], tuner: Tuner = Unbalanced())(
+    implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
@@ -653,12 +653,12 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val denom = centered
       .transform(Power[Position2D](2))
       .summarise(slice, Sum[Position2D, slice.S]())
-      .pairwise(Over(First), Lower, Times(Locate.OperatorString[Position1D, Position0D]("(%1$s*%2$s)")))
+      .pairwise(Over(First), Lower, Times(Locate.OperatorString[Position1D, Position0D]("(%1$s*%2$s)")), tuner)
       .transform(SquareRoot[Position1D]())
       .toMap(Over(First))
 
     centered
-      .pairwise(slice, Lower, Times(Locate.OperatorString[slice.S, slice.R]("(%1$s*%2$s)")))
+      .pairwise(slice, Lower, Times(Locate.OperatorString[slice.S, slice.R]("(%1$s*%2$s)")), tuner)
       .summarise(Over(First), Sum[Position2D, Position1D]())
       .transformWithValue(Fraction(ExtractWithDimension[Dimension.First, Position1D, Content](First)
         .andThenPresent(_.value.asDouble)), denom)
@@ -668,11 +668,12 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    * Compute mutual information.
    *
    * @param slice Encapsulates the dimension for which to compute mutual information.
+   * @param tuner The tuner for the job.
    *
    * @return A `U[Cell[Position1D]]` with all pairwise mutual information.
    */
-  def mutualInformation[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
-    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
+  def mutualInformation[D <: Dimension](slice: Slice[Position2D, D], tuner: Tuner = Unbalanced())(
+    implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
     val dim = slice match {
@@ -700,10 +701,10 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
         .andThenExpandWithValue((cell, _) => cell.position.append("marginal")), mcount)
-      .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position1D, Position1D]("%s,%s")))
+      .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position1D, Position1D]("%s,%s")), tuner)
 
     val jhist = new Matrix2D(data)
-      .pairwise(slice, Upper, Concatenate(Locate.OperatorString[slice.S, slice.R]("%s,%s")))
+      .pairwise(slice, Upper, Concatenate(Locate.OperatorString[slice.S, slice.R]("%s,%s")), tuner)
       .expand((c: Cell[Position2D]) => c.position.append(c.content.value.toShortString))
       .summarise(Along(Second), Count[Position3D, Position2D]())
 
@@ -723,11 +724,12 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    * Compute Gini index.
    *
    * @param slice Encapsulates the dimension for which to compute the Gini index.
+   * @param tuner The tuner for the job.
    *
    * @return A `U[Cell[Position1D]]` with all pairwise Gini indices.
    */
-  def gini[D <: Dimension](slice: Slice[Position2D, D])(implicit ev1: PosDimDep[Position2D, D],
-    ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
+  def gini[D <: Dimension](slice: Slice[Position2D, D], tuner: Tuner = Unbalanced())(
+    implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
@@ -763,7 +765,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     tpr
       .pairwiseBetween(Along(First), Diagonal, fpr,
-        Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
+        Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")), tuner)
       .summarise(Along(First), Sum[Position2D, Position1D]())
       .transformWithValue(Subtract(ExtractWithKey[Position1D, String, Double]("one"), true),
         ValuePipe(Map(Position1D("one") -> 1.0)))
