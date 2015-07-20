@@ -888,10 +888,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
 
   protected implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
 
-  protected implicit def serialize[T <: Position](key: T): Array[Byte] = {
-    key.toShortString("|").toCharArray.map(_.toByte)
-  }
-
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations
   // TODO: Add read/write[CSV|Hive|VW|LibSVM] operations

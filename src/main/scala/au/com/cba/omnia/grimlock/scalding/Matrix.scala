@@ -57,14 +57,40 @@ import java.io.{ File, PrintWriter }
 import java.lang.{ ProcessBuilder, Thread }
 import java.nio.file.Paths
 
+import scala.collection.immutable.HashSet
 import scala.io.Source
 import scala.reflect.ClassTag
+
+private[scalding] object ScaldingImplicits {
+
+  implicit def hashSetSemigroup[A] = new com.twitter.algebird.Semigroup[HashSet[A]] {
+    def plus(l: HashSet[A], r: HashSet[A]): HashSet[A] = l ++ r
+  }
+
+  implicit def mapSemigroup[K, V] = new com.twitter.algebird.Semigroup[Map[K, V]] {
+    def plus(l: Map[K, V], r: Map[K, V]): Map[K, V] = l ++ r
+  }
+
+  implicit def cellOrdering[P <: Position] = new Ordering[Cell[P]] {
+    def compare(l: Cell[P], r: Cell[P]) = l.toString.compare(r.toString)
+  }
+
+  implicit def contentOrdering = new Ordering[Content] {
+    def compare(l: Content, r: Content) = l.toString.compare(r.toString)
+  }
+
+  implicit def serialisePosition[T <: Position](key: T): Array[Byte] = {
+    key.toShortString("|").toCharArray.map(_.toByte)
+  }
+}
 
 /** Base trait for matrix operations using a `TypedPipe[Cell[P]]`. */
 trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type U[A] = TypedPipe[A]
   type E[B] = ValuePipe[B]
   type S = Matrix[P]
+
+  import ScaldingImplicits._
 
   def change[D <: Dimension, T](slice: Slice[P, D], positions: T, schema: Schema, tuner: Tuner)(
     implicit ev1: PosDimDep[P, D], ev2: BaseNameable[T, P, slice.S, D, TypedPipe],
@@ -78,7 +104,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     tuner match {
       case InMemory() =>
         data
-          .flatMapWithValue(pos.map { case (p, _) => List(p) }.sum) {
+          .flatMapWithValue(pos.map { case (p, _) => HashSet(p) }.sum) {
             case (c, vo) => f(vo.get.contains(slice.selected(c.position)), c)
           }
       case Reducers(reducers) =>
@@ -103,7 +129,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     tuner match {
       case InMemory() =>
         data
-          .flatMapWithValue(pos.map { case p => List(p) }.sum) {
+          .flatMapWithValue(pos.map { case p => HashSet(p) }.sum) {
             case (c, vo) => if (vo.get.contains(c.position)) { Some(c) } else { None }
           }
       case Reducers(reducers) =>
@@ -239,7 +265,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     tuner match {
       case InMemory() =>
         data
-          .flatMapWithValue(pos.map { case (p, _) => List(p) }.sum) {
+          .flatMapWithValue(pos.map { case (p, _) => HashSet(p) }.sum) {
             case (c, vo) => f(vo.get.contains(slice.selected(c.position)), c)
           }
       case Reducers(reducers) =>
@@ -403,9 +429,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def toMap()(implicit ev: ClassTag[P]): E[Map[P, Content]] = {
     data
       .map { case c => Map(c.position -> c.content) }
-      .sum(new com.twitter.algebird.Semigroup[Map[P, Content]] {
-        def plus(l: Map[P, Content], r: Map[P, Content]): Map[P, Content] = l ++ r
-      })
+      .sum
   }
 
   def toMap[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
@@ -415,9 +439,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .groupBy { case (p, m) => slice.selected(p) }
       .reduce[(P, Map[slice.S, slice.C])] { case ((lp, lm), (rp, rm)) => (lp, slice.combineMaps(lp, lm, rm)) }
       .map { case (_, (_, m)) => m }
-      .sum(new com.twitter.algebird.Semigroup[Map[slice.S, slice.C]] {
-        def plus(l: Map[slice.S, slice.C], r: Map[slice.S, slice.C]): Map[slice.S, slice.C] = l ++ r
-      })
+      .sum
   }
 
   def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[T, P, Q]): U[Cell[Q]] = {
@@ -444,16 +466,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def unique(): U[Content] = {
     data
       .map { case c => c.content }
-      .distinct(new Ordering[Content] { def compare(l: Content, r: Content) = l.toString.compare(r.toString) })
+      .distinct
   }
 
   /** @note Comparison is performed based on the string representation of the `Content`. */
   def unique[D <: Dimension](slice: Slice[P, D])(implicit ev: slice.S =!= Position0D): U[Cell[slice.S]] = {
     data
       .map { case Cell(p, c) => Cell(slice.selected(p), c) }
-      .distinct(new Ordering[Cell[slice.S]] {
-        def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString.compare(r.toString)
-      })
+      .distinct
   }
 
   def which(predicate: Predicate)(implicit ev: ClassTag[P]): U[P] = {
@@ -510,7 +530,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
                     Cell(slice.selected(r.position), r.content), slice.remainder(r.position))
               }
           }
-      case _ =>
+      case Reducers(reducers) =>
         val lnames = ldata.map { case Cell(p, _) => (slice.selected(p), ()) }.distinct
         val rnames = rdata.map { case Cell(p, _) => (slice.selected(p), ()) }.distinct
         val rl = Grouped(rnames)
@@ -526,11 +546,37 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           .flatMapWithValue(rl) { case (l, vo) => vo.get.collect { case r if comparer.keep(l, r) => (r, l) } }
           .forceToDisk
 
-        //implicit def serialize(key: Position3D): Array[Byte] = key.toShortString("|").toCharArray.map(_.toByte)
         ldata
           .groupBy { case Cell(p, _) => slice.selected(p) }
-          //.sketch(999)
-          .withReducers(2048)
+          .withReducers(reducers)
+          .join(Grouped(rdata
+                  .groupBy { case Cell(p, _) => slice.selected(p) }
+                  .withReducers(128)
+                  .join(Grouped(keys))
+                  .map { case (r, (c, l)) => (l, c) }))
+          .map {
+            case (_, (lc, rc)) => (Cell(slice.selected(lc.position), lc.content), slice.remainder(lc.position),
+              Cell(slice.selected(rc.position), rc.content), slice.remainder(rc.position))
+          }
+      case Unbalanced(reducers) =>
+        val lnames = ldata.map { case Cell(p, _) => (slice.selected(p), ()) }.distinct
+        val rnames = rdata.map { case Cell(p, _) => (slice.selected(p), ()) }.distinct
+        val rl = Grouped(rnames)
+           .withReducers(4)
+           .forceToReducers
+           .map { case (p, _) => List(p) }
+           .sum
+
+        val keys = Grouped(lnames)
+          .withReducers(512)
+          .forceToReducers
+          .keys
+          .flatMapWithValue(rl) { case (l, vo) => vo.get.collect { case r if comparer.keep(l, r) => (r, l) } }
+          .forceToDisk
+
+        ldata
+          .groupBy { case Cell(p, _) => slice.selected(p) }
+          .sketch(reducers)
           .join(Grouped(rdata
                   .groupBy { case Cell(p, _) => slice.selected(p) }
                   .withReducers(128)
@@ -541,20 +587,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
               Cell(slice.selected(rc.position), rc.content), slice.remainder(rc.position))
           }
     }
-/*
-    lnames
-      .cross(rnames)
-      .collect { case ((l, _), (r, _)) if comparer.keep(l, r) => (l, r) }
-      .groupBy { case (l, _) => l }
-      .withReducers(256)
-      .join(ldata.groupBy { case Cell(p, _) => slice.selected(p) })
-      .groupBy { case (_, ((_, r), _)) => r }
-      .join(rdata.groupBy { case Cell(p, _) => slice.selected(p) })
-      .map {
-        case (_, ((_, ((lp, rp), lc)), rc)) =>
-          (Cell(lp, lc.content), slice.remainder(lc.position), Cell(rp, rc.content), slice.remainder(rc.position))
-      }
-*/
   }
 }
 
