@@ -494,12 +494,13 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @param slice Encapsulates the dimension(s) along which to join.
    * @param that  The matrix to join with.
+   * @param tuner The tuner for the job.
    *
    * @return A `U[Cell[P]]` consisting of the inner-join of the two matrices.
    */
   // TODO: Add inner/left/right/outer join functionality?
-  def join[D <: Dimension](slice: Slice[P, D], that: S)(implicit ev1: PosDimDep[P, D], ev2: P =!= Position1D,
-    ev3: ClassTag[slice.S]): U[Cell[P]]
+  def join[D <: Dimension](slice: Slice[P, D], that: S, tuner: Tuner = Unbalanced())(implicit ev1: PosDimDep[P, D],
+    ev2: P =!= Position1D, ev3: ClassTag[slice.S]): U[Cell[P]]
 
   /**
    * Returns the distinct position(s) (or names) for a given `slice`.
@@ -676,12 +677,13 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @param slice   Encapsulates the dimension(s) to slide over.
    * @param windows The window functions to apply to the content.
+   * @param tuner   The tuner for the job.
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def slide[D <: Dimension, Q <: Position, T](slice: Slice[P, D], windows: T)(implicit ev1: PosDimDep[P, D],
-    ev2: Windowable[T, slice.S, slice.R, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
-    ev5: ClassTag[slice.R]): U[Cell[Q]]
+  def slide[D <: Dimension, Q <: Position, T](slice: Slice[P, D], windows: T, tuner: Reducers = Reducers())(
+    implicit ev1: PosDimDep[P, D], ev2: Windowable[T, slice.S, slice.R, Q], ev3: slice.R =!= Position0D,
+      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Create window based derived data with a user supplied value.
@@ -689,12 +691,13 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice   Encapsulates the dimension(s) to slide over.
    * @param windows The window functions to apply to the content.
    * @param value   A `E` holding a user supplied value.
+   * @param tuner   The tuner for the job.
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def slideWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], windows: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+  def slideWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], windows: T, value: E[W],
+    tuner: Reducers = Reducers())(implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, slice.S, slice.R, Q, W],
+    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Partition a matrix according to `partitioner`.
@@ -737,22 +740,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @param slice       Encapsulates the dimension(s) along which to aggregate.
    * @param aggregators The aggregator(s) to apply to the data.
+   * @param tuner       The tuner for the job.
    *
    * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T)(implicit ev1: PosDimDep[P, D],
-    ev2: Aggregatable[T, P, slice.S, Q], ev3: ClassTag[slice.S]): U[Cell[Q]]
-
-  /**
-   * Summarise a matrix and return the aggregates.
-   *
-   * @param slice       Encapsulates the dimension(s) along which to aggregate.
-   * @param aggregators The aggregator(s) to apply to the data.
-   * @param reducers    The number of reducers to use.
-   *
-   * @return A `U[Cell[Q]]` with the aggregates.
-   */
-  def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T, reducers: Int)(
+  def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T, tuner: Reducers = Reducers())(
     implicit ev1: PosDimDep[P, D], ev2: Aggregatable[T, P, slice.S, Q], ev3: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
@@ -761,24 +753,12 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice       Encapsulates the dimension(s) along which to aggregate.
    * @param aggregators The aggregator(s) to apply to the data.
    * @param value       A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[Q]]` with the aggregates.
-   */
-  def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W])(
-    implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W], ev3: ClassTag[slice.S]): U[Cell[Q]]
-
-  /**
-   * Summarise a matrix, using a user supplied value, and return the aggregates.
-   *
-   * @param slice       Encapsulates the dimension(s) along which to aggregate.
-   * @param aggregators The aggregator(s) to apply to the data.
-   * @param value       A `E` holding a user supplied value.
-   * @param reducers    The number of reducers to use.
+   * @param tuner       The tuner for the job.
    *
    * @return A `U[Cell[Q]]` with the aggregates.
    */
   def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W],
-    reducers: Int)(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W],
+    tuner: Reducers = Reducers())(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W],
       ev3: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
@@ -794,13 +774,14 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * Convert a matrix to an in-memory `Map`.
    *
    * @param slice Encapsulates the dimension(s) along which to convert.
+   * @param tuner The tuner for the job.
    *
    * @return A `E[Map[slice.S, Slice.C]]` containing the Map representation of this matrix.
    *
    * @note Avoid using this for very large matrices.
    */
-  def toMap[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
-    ev3: ClassTag[slice.S]): E[Map[slice.S, slice.C]]
+  def toMap[D <: Dimension](slice: Slice[P, D], tuner: Reducers = Reducers())(implicit ev1: PosDimDep[P, D],
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S]): E[Map[slice.S, slice.C]]
 
   /**
    * Transform the content of a matrix.
@@ -827,13 +808,14 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @param slice    Encapsulates the dimension(s) for this the types are to be returned.
    * @param specific Indicates if the most specific type should be returned, or it's generalisation (default).
+   * @param tuner    The tuner for the job.
    *
    * @return A `U[(slice.S, Type)]` of the distinct position(s) together with their type.
    *
    * @see [[Types]]
    */
-  def types[D <: Dimension](slice: Slice[P, D], specific: Boolean = false)(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S]): U[(slice.S, Type)]
+  def types[D <: Dimension](slice: Slice[P, D], specific: Boolean = false, tuner: Reducers = Reducers())(
+    implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S]): U[(slice.S, Type)]
 
   /** Return the unique (distinct) contents of an entire matrix. */
   def unique(): U[Content]
