@@ -23,8 +23,7 @@ object Locate {
    * @note An `Option` is returned to allow for additional filtering (for example requiring that
    *       `reml` and `remr` are equal.
    */
-  type Operator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] =
-    (Cell[S], R, Cell[S], R) => Option[Q]
+  type Operator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (Cell[S], R, Cell[S], R) => Option[Q]
 
   /**
    * Extract position use a name pattern.
@@ -38,18 +37,18 @@ object Locate {
    */
   def OperatorString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](pattern: String,
     all: Boolean = false, separator: String = "|"): Operator[S, R, R#M] = {
-    (left: Cell[S], reml: R, right: Cell[S], remr: R) => {
-      (all || reml == remr) match {
-        case true => Some(reml.prepend(pattern.format(left.position.toShortString(separator),
-          right.position.toShortString(separator))))
-        case false => None
+    (left: Cell[S], reml: R, right: Cell[S], remr: R) =>
+      {
+        (all || reml == remr) match {
+          case true => Some(reml.prepend(pattern.format(left.position.toShortString(separator),
+            right.position.toShortString(separator))))
+          case false => None
+        }
       }
-    }
   }
 
   /** Extract position for the selected cell and its remainder. */
-  type WindowSize1[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] =
-    (Cell[S], R) => Q
+  type WindowSize1[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (Cell[S], R) => Q
 
   /**
    * Extract position using a dimension.
@@ -70,8 +69,7 @@ object Locate {
   }
 
   /** Extract position for the selected cell and its current and prior remainder. */
-  type WindowSize2[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] =
-    (Cell[S], R, R) => Q
+  type WindowSize2[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (Cell[S], R, R) => Q
 
   /**
    * Extract position using string of current and previous `rem`.
@@ -82,9 +80,8 @@ object Locate {
    */
   def WindowPairwiseString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
     pattern: String, separator: String = "|"): WindowSize2[S, R, S#M] = {
-    (cell: Cell[S], curr: R, prev: R) => {
+    (cell: Cell[S], curr: R, prev: R) =>
       cell.position.append(pattern.format(prev.toShortString(separator), curr.toShortString(separator)))
-    }
   }
 }
 

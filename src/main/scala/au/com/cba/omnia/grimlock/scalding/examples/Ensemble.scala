@@ -41,12 +41,13 @@ case class EnsembleSplit(gbm: String, rf: String, lr: String) extends Partitione
   //   [8, 9] -> all
   def assign(cell: Cell[Position3D]): Collection[String] = {
     val parts = cell.position(Third).asLong.map {
-      case hash => if (hash < 2) List(gbm)
+      case hash =>
+        if (hash < 2) List(gbm)
         else if (hash < 4) List(gbm, rf)
         else if (hash < 6) List(rf, lr)
         else if (hash < 8) List(lr)
         else List(gbm, rf, lr)
-      }
+    }
       .getOrElse(List())
 
     Collection(parts)

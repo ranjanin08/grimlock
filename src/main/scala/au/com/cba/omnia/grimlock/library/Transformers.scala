@@ -86,8 +86,8 @@ object Binarise {
    *             representations of the coordinate, and the content.
    */
   def rename[P <: Position](dim: Dimension, name: String = "%1$s=%2$s"): (Cell[P]) => P = {
-    (cell: Cell[P]) => cell.position.update(dim,
-      name.format(cell.position(dim).toShortString, cell.content.value.toShortString))
+    (cell: Cell[P]) =>
+      cell.position.update(dim, name.format(cell.position(dim).toShortString, cell.content.value.toShortString))
   }
 }
 

@@ -298,7 +298,7 @@ object Cell {
    */
   def parse4DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String, first: Codex,
     second: Codex, third: Codex, fourth: Codex)(line: String)(
-    implicit ev: PosDimDep[Position4D, D]): Option[Cell[Position4D]] = {
+      implicit ev: PosDimDep[Position4D, D]): Option[Cell[Position4D]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(a, b, c, d, v) =>
         val s = dim match {
@@ -357,10 +357,10 @@ object Cell {
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
             fifth.decode(f)) match {
-            case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
-              Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
-            case _ => None
-          }
+              case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
+                Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
+              case _ => None
+            }
         }
       case _ => None
     }
@@ -381,7 +381,7 @@ object Cell {
    */
   def parse5DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String, first: Codex,
     second: Codex, third: Codex, fourth: Codex, fifth: Codex)(line: String)(
-    implicit ev: PosDimDep[Position5D, D]): Option[Cell[Position5D]] = {
+      implicit ev: PosDimDep[Position5D, D]): Option[Cell[Position5D]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(a, b, c, d, e, v) =>
         val s = dim match {
@@ -419,10 +419,10 @@ object Cell {
       case Array(a, b, c, d, e, v) =>
         (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
           fifth.decode(e)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
-            Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
-          case _ => None
-        }
+            case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
+              Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
+            case _ => None
+          }
       case _ => None
     }
   }
@@ -529,7 +529,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, operators: T, tuner: Tuner)(
     implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
-      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all pairs of values given a slice with a user supplied value.
@@ -575,7 +575,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, that: S,
     operators: T, value: E[W], tuner: Tuner)(implicit ev1: PosDimDep[P, D],
-    ev2: OperableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
+      ev2: OperableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
       ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
@@ -683,7 +683,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def slide[D <: Dimension, Q <: Position, T](slice: Slice[P, D], windows: T, tuner: Reducers = Reducers())(
     implicit ev1: PosDimDep[P, D], ev2: Windowable[T, slice.S, slice.R, Q], ev3: slice.R =!= Position0D,
-      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Create window based derived data with a user supplied value.
@@ -697,7 +697,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def slideWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], windows: T, value: E[W],
     tuner: Reducers = Reducers())(implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, slice.S, slice.R, Q, W],
-    ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+      ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Partition a matrix according to `partitioner`.

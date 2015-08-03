@@ -320,7 +320,8 @@ case class Entropy[P <: Position, S <: Position with ExpandablePosition, W](coun
   }
 
   def reduce(lt: T, rt: T): T = {
-    (lt._1 + rt._1, if (lt._2.isNaN) { if (strict) { lt._2 } else { rt._2 } }
+    (lt._1 + rt._1,
+      if (lt._2.isNaN) { if (strict) { lt._2 } else { rt._2 } }
       else if (rt._2.isNaN) { if (strict) { rt._2 } else { lt._2 } }
       else { lt._2 + rt._2 })
   }

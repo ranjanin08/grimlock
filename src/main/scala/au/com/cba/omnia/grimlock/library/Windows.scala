@@ -253,7 +253,7 @@ case class Quantile[S <: Position with ExpandablePosition, R <: Position with Ex
       case _ => Double.NaN
     }
     val col = Collection(state.find(_._1 == t._2) match {
-      case Some((_, g, n))  => List(Cell[S#M](cell.position.append(n),
+      case Some((_, g, n)) => List(Cell[S#M](cell.position.append(n),
         Content(ContinuousSchema[Codex.DoubleCodex](), (1 - g) * t._1 + g * curr)))
       case None => List()
     })
