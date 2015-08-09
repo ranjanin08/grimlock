@@ -28,7 +28,7 @@ private[transform] object Transform {
 
   def presentDouble[P <: Position](cell: Cell[P], f: (Double) => Double): Collection[Cell[P]] = {
     (checkType(cell, Numerical), cell.content.value.asDouble) match {
-      case (true, Some(d)) => Collection(cell.position, Content(ContinuousSchema[Codex.DoubleCodex](), f(d)))
+      case (true, Some(d)) => Collection(cell.position, Content(ContinuousSchema(DoubleCodex), f(d)))
       case _ => Collection()
     }
   }
@@ -37,7 +37,7 @@ private[transform] object Transform {
     transform: (Double, Double) => Double, inverse: Boolean = false): Collection[Cell[P]] = {
     (checkType(cell, Numerical), cell.content.value.asDouble, value.extract(cell, ext)) match {
       case (true, Some(l), Some(r)) => Collection(cell.position,
-        Content(ContinuousSchema[Codex.DoubleCodex](), if (inverse) transform(r, l) else transform(l, r)))
+        Content(ContinuousSchema(DoubleCodex), if (inverse) transform(r, l) else transform(l, r)))
       case _ => Collection()
     }
   }
@@ -47,7 +47,7 @@ private[transform] object Transform {
     (checkType(cell, Numerical), cell.content.value.asDouble, first.extract(cell, ext),
       second.extract(cell, ext)) match {
         case (true, Some(v), Some(f), Some(s)) => Collection(cell.position,
-          Content(ContinuousSchema[Codex.DoubleCodex](), transform(v, f, s)))
+          Content(ContinuousSchema(DoubleCodex), transform(v, f, s)))
         case _ => Collection()
       }
   }
@@ -56,7 +56,7 @@ private[transform] object Transform {
 /** Create indicator variables. */
 case class Indicator[P <: Position]() extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
-    Collection(cell.position, Content(DiscreteSchema[Codex.LongCodex](), 1))
+    Collection(cell.position, Content(DiscreteSchema(LongCodex), 1))
   }
 }
 
@@ -70,7 +70,7 @@ case class Indicator[P <: Position]() extends Transformer[P, P] {
 case class Binarise[P <: Position](presenter: (Cell[P]) => P) extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
     Transform.checkType(cell, Categorical) match {
-      case true => Collection(presenter(cell), Content(DiscreteSchema[Codex.LongCodex](), 1))
+      case true => Collection(presenter(cell), Content(DiscreteSchema(LongCodex), 1))
       case false => Collection()
     }
   }
@@ -311,7 +311,8 @@ case class Cut[P <: Position, W](bins: Extract[P, W, List[Double]]) extends Tran
       case (true, Some(v), Some(b)) =>
         val bstr = b.sliding(2).map("(" + _.mkString(",") + "]").toList
 
-        Collection(cell.position, Content(OrdinalSchema[Codex.StringCodex](bstr), bstr(b.lastIndexWhere(_ < v))))
+        Collection(cell.position,
+          Content(OrdinalSchema[Codex.StringCodex](StringCodex, bstr), bstr(b.lastIndexWhere(_ < v))))
       case _ => Collection()
     }
   }
@@ -481,7 +482,7 @@ trait CutRules {
  */
 case class Compare[P <: Position](comparer: (Cell[P]) => Boolean) extends Transformer[P, P] {
   def present(cell: Cell[P]): Collection[Cell[P]] = {
-    Collection(cell.position, Content(NominalSchema[Codex.BooleanCodex](), comparer(cell)))
+    Collection(cell.position, Content(NominalSchema(BooleanCodex), comparer(cell)))
   }
 }
 

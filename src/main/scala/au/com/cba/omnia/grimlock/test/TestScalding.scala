@@ -54,19 +54,19 @@ object TestScaldingReader {
   def load4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
     def hashDate(v: String) = {
       val cal = java.util.Calendar.getInstance()
-      cal.setTime(DateCodex.fromValue(DateCodex.decode("2014-05-14").get))
+      cal.setTime(DateCodex().fromValue(DateCodex().decode("2014-05-14").get))
       cal.add(java.util.Calendar.DATE, -(v.hashCode % 21)) // Generate 3 week window prior to date
-      DateValue(cal.getTime(), DateCodex)
+      DateValue(cal.getTime(), DateCodex())
     }
 
     (TypedPsv[(String, String, String, String)](file))
       .flatMap {
         case (i, f, e, v) =>
           val schema = e match {
-            case StringCodex.name => NominalSchema[Codex.StringCodex]()
+            case StringCodex.name => NominalSchema(StringCodex)
             case _ => scala.util.Try(v.toLong).toOption match {
-              case Some(_) => ContinuousSchema[Codex.LongCodex](Long.MinValue, Long.MaxValue)
-              case None => ContinuousSchema[Codex.DoubleCodex](Double.MinValue, Double.MaxValue)
+              case Some(_) => ContinuousSchema[Codex.LongCodex](LongCodex, Long.MinValue, Long.MaxValue)
+              case None => ContinuousSchema[Codex.DoubleCodex](DoubleCodex, Double.MinValue, Double.MaxValue)
             }
           }
 
@@ -83,12 +83,12 @@ class TestScalding1(args : Args) extends Job(args) {
     .save("./tmp.scalding/dat1.out", descriptive=true)
 
   data
-    .set(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
-      Content(ContinuousSchema[Codex.LongCodex](), 1234))
+    .set(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
+      Content(ContinuousSchema(LongCodex), 1234))
     .slice(Over(First), "iid:1548763", true)
     .save("./tmp.scalding/dat2.out", descriptive=true)
 
-  load3D(args("path") + "/smallInputfile.txt", third=DateCodex)
+  load3D(args("path") + "/smallInputfile.txt", third=DateCodex())
     .save("./tmp.scalding/dat3.out", descriptive=true)
 }
 
@@ -229,12 +229,12 @@ class TestScalding7(args : Args) extends Job(args) {
   val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
-    .get(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get))
+    .get(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get))
     .save("./tmp.scalding/get1.out", descriptive=true)
 
   data
-    .get(List(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
-              Position3D("iid:1303823", "fid:A", DateCodex.decode("2014-05-05").get)))
+    .get(List(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
+              Position3D("iid:1303823", "fid:A", DateCodex().decode("2014-05-05").get)))
     .save("./tmp.scalding/get2.out", descriptive=true)
 }
 
@@ -383,11 +383,11 @@ class TestScalding12(args : Args) extends Job(args) {
 
   data
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fill(Content(ContinuousSchema(LongCodex), 0))
     .saveAsCSV(Over(Second), "./tmp.scalding/fll1.out")
 
   data
-    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fill(Content(ContinuousSchema(LongCodex), 0))
     .save("./tmp.scalding/fll3.out", descriptive=true)
 }
 
@@ -402,11 +402,11 @@ class TestScalding13(args : Args) extends Job(args) {
 
   val inds = data
     .transform(Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
-    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fill(Content(ContinuousSchema(LongCodex), 0))
 
   data
     .join(Over(First), inds)
-    .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+    .fill(Content(ContinuousSchema(LongCodex), 0))
     .saveAsCSV(Over(Second), "./tmp.scalding/fll2.out")
 
   data
@@ -422,7 +422,7 @@ class TestScalding14(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
   data
-    .change(Over(Second), "fid:A", NominalSchema[Codex.LongCodex]())
+    .change(Over(Second), "fid:A", NominalSchema(LongCodex))
     .save("./tmp.scalding/chg1.out", descriptive=true)
 }
 
@@ -590,7 +590,7 @@ class TestScalding19(args : Args) extends Job(args) {
     pipe
       .slice(Over(Second), rem, false)
       .transformWithValue(transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
-      .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+      .fill(Content(ContinuousSchema(LongCodex), 0))
       .saveAsCSV(Over(Second), "./tmp.scalding/pln_" + key + ".csv")
   }
 
@@ -601,7 +601,7 @@ class TestScalding19(args : Args) extends Job(args) {
 class TestScalding20(args : Args) extends Job(args) {
 
   load3DWithDictionary(args("path") + "/ivoryInputfile1.txt", Dictionary.load(args("path") + "/dict.txt"),
-    third=DateCodex)
+    third=DateCodex())
     .save("./tmp.scalding/ivr1.out")
 }
 
@@ -641,7 +641,7 @@ class TestScalding22(args : Args) extends Job(args) {
       (Cell(rem, cell.content), (cell.content.value.asDouble, t.content.value.asDouble) match {
         case (Some(c), Some(l)) =>
           Collection(cell.position.append(rem.toShortString("") + "-" + t.position.toShortString("")),
-            Content(ContinuousSchema[Codex.DoubleCodex](), c - l))
+            Content(ContinuousSchema(DoubleCodex), c - l))
         case _ => Collection[Cell[Position2D]]()
       })
     }
@@ -669,7 +669,7 @@ class TestScalding23(args : Args) extends Job(args) {
 
       (reml == remr) match {
         case true => Collection(remr.append("(" + xc + "-" + yc + ")^2"),
-          Content(ContinuousSchema[Codex.DoubleCodex](),
+          Content(ContinuousSchema(DoubleCodex),
             math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
         case false => Collection()
       }
@@ -685,19 +685,19 @@ class TestScalding24(args: Args) extends Job(args) {
 
   // see http://www.mathsisfun.com/data/correlation.html for data
 
-  val schema = List(("day", NominalSchema[Codex.StringCodex]()),
-                    ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
-                    ("sales", DiscreteSchema[Codex.LongCodex]()))
+  val schema = List(("day", NominalSchema(StringCodex)),
+                    ("temperature", ContinuousSchema(DoubleCodex)),
+                    ("sales", DiscreteSchema(LongCodex)))
   val data = loadTable(args("path") + "/somePairwise2.txt", schema, separator="|")
 
   data
     .correlation(Over(Second))
     .save("./tmp.scalding/pws2.out")
 
-  val schema2 = List(("day", NominalSchema[Codex.StringCodex]()),
-                     ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
-                     ("sales", DiscreteSchema[Codex.LongCodex]()),
-                     ("neg.sales", DiscreteSchema[Codex.LongCodex]()))
+  val schema2 = List(("day", NominalSchema(StringCodex)),
+                     ("temperature", ContinuousSchema(DoubleCodex)),
+                     ("sales", DiscreteSchema(LongCodex)),
+                     ("neg.sales", DiscreteSchema(LongCodex)))
   val data2 = loadTable(args("path") + "/somePairwise3.txt", schema2, separator="|")
 
   data2
@@ -761,8 +761,8 @@ class TestScalding28(args: Args) extends Job(args) {
 
   val data = List
     .range(0, 16)
-    .flatMap { case i => List(("iid:" + i, "fid:A", Content(ContinuousSchema[Codex.LongCodex](), i)),
-                              ("iid:" + i, "fid:B", Content(NominalSchema[Codex.StringCodex](), i.toString))) }
+    .flatMap { case i => List(("iid:" + i, "fid:A", Content(ContinuousSchema(LongCodex), i)),
+                              ("iid:" + i, "fid:B", Content(NominalSchema(StringCodex), i.toString))) }
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
     Count().andThenExpand(_.position.append("count")),
@@ -815,7 +815,7 @@ class TestScalding28(args: Args) extends Job(args) {
 
 class TestScalding29(args: Args) extends Job(args) {
 
-  val schema = DiscreteSchema[Codex.LongCodex]()
+  val schema = DiscreteSchema(LongCodex)
   val data = List(("mod:123", "iid:A", Content(schema, 1)),
     ("mod:123", "iid:B", Content(schema, 1)),
     ("mod:123", "iid:C", Content(schema, 0)),
@@ -843,7 +843,7 @@ class TestScalding29(args: Args) extends Job(args) {
 
 class TestScalding30(args: Args) extends Job(args) {
 
-  val schema = DiscreteSchema[Codex.LongCodex]()
+  val schema = DiscreteSchema(LongCodex)
   val data = List(("iid:A", Content(schema, 0)),
     ("iid:B", Content(schema, 1)),
     ("iid:C", Content(schema, 2)),

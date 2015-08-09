@@ -138,7 +138,7 @@ object Value {
  * @param value A `java.util.Date`.
  * @param codex The codex used for encoding/decoding `value`.
  */
-case class DateValue(value: Date, codex: DateAndTimeCodex) extends Value {
+case class DateValue(value: Date, codex: DateCodex) extends Value {
   override def asDate = Some(value)
 }
 

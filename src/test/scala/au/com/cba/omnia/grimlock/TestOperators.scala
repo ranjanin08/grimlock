@@ -26,8 +26,8 @@ import au.com.cba.omnia.grimlock.library.pairwise._
 
 trait TestOperators extends TestGrimlock {
 
-   val left = Cell(Position2D("left 1", "left 2"), Content(ContinuousSchema[Codex.LongCodex](), 2))
-   val right = Cell(Position2D("right 1", "right 2"), Content(ContinuousSchema[Codex.LongCodex](), 4))
+   val left = Cell(Position2D("left 1", "left 2"), Content(ContinuousSchema(LongCodex), 2))
+   val right = Cell(Position2D("right 1", "right 2"), Content(ContinuousSchema(LongCodex), 4))
    val reml = Position1D("reml")
    val remr = Position1D("remr")
    val separator = "."
@@ -42,7 +42,7 @@ trait TestOperators extends TestGrimlock {
 
     Position2D(pattern.format(first, second), "reml")
   }
-  def getContent(value: Double): Content = Content(ContinuousSchema[Codex.DoubleCodex](), value)
+  def getContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
 }
 
 class TestComparer extends TestOperators {
@@ -168,7 +168,7 @@ class TestConcatenate extends TestOperators {
   }
 
   def getContent(left: Long, right: Long): Content = {
-    Content(NominalSchema[Codex.StringCodex](), format.format(left.toString, right.toString))
+    Content(NominalSchema(StringCodex), format.format(left.toString, right.toString))
   }
 }
 

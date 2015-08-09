@@ -41,7 +41,7 @@ trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with E
   def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
     (pos(left, reml, right, remr), left.content.value.asDouble, right.content.value.asDouble) match {
       case (Some(p), Some(l), Some(r)) => Collection[Cell[Q]](Cell(p,
-        Content(ContinuousSchema[Codex.DoubleCodex](), if (inverse) compute(r, l) else compute(l, r))))
+        Content(ContinuousSchema(DoubleCodex), if (inverse) compute(r, l) else compute(l, r))))
       case _ => Collection[Cell[Q]]()
     }
   }
@@ -86,7 +86,7 @@ case class Concatenate[S <: Position with ExpandablePosition, R <: Position with
   pos: Locate.Operator[S, R, Q], value: String = "%1$s,%2$s") extends Operator[S, R, Q] {
   def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
     pos(left, reml, right, remr) match {
-      case Some(p) => Collection[Cell[Q]](Cell(p, Content(NominalSchema[Codex.StringCodex](),
+      case Some(p) => Collection[Cell[Q]](Cell(p, Content(NominalSchema(StringCodex),
         value.format(left.content.value.toShortString, right.content.value.toShortString))))
       case None => Collection[Cell[Q]]()
     }

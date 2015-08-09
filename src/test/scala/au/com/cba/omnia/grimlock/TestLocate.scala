@@ -23,9 +23,9 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 class TestOperatorString extends TestGrimlock {
 
-  val left = Cell(Position1D("left"), Content(ContinuousSchema[Codex.DoubleCodex](), 1))
+  val left = Cell(Position1D("left"), Content(ContinuousSchema(DoubleCodex), 1))
   val reml = Position2D("abc", 123)
-  val right = Cell(Position1D("right"), Content(ContinuousSchema[Codex.DoubleCodex](), 2))
+  val right = Cell(Position1D("right"), Content(ContinuousSchema(DoubleCodex), 2))
   val remr = Position2D("def", 456)
 
   "A OperatorString" should "extract with all" in {
@@ -44,7 +44,7 @@ class TestOperatorString extends TestGrimlock {
 
 class TestWindowDimension extends TestGrimlock {
 
-  val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 1))
+  val cell = Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1))
   val rem = Position2D("abc", 123)
 
   "A WindowDimension" should "extract" in {
@@ -55,7 +55,7 @@ class TestWindowDimension extends TestGrimlock {
 
 class TestWindowString extends TestGrimlock {
 
-  val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 1))
+  val cell = Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1))
   val rem = Position2D("abc", 123)
 
   "A WindowString" should "extract" in {
@@ -65,7 +65,7 @@ class TestWindowString extends TestGrimlock {
 
 class TestWindowPairwiseString extends TestGrimlock {
 
-  val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Codex.DoubleCodex](), 1))
+  val cell = Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1))
   val curr = Position2D("abc", 123)
   val prev = Position2D("def", 456)
 

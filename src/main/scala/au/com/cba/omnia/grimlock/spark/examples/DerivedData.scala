@@ -52,7 +52,7 @@ case class Gradient(dim: Dimension) extends Window[Position2D, Position1D, Posit
     val grad = days.flatMap {
       case td => delta.map {
         case vd => Left(Cell(cell.position.append(t.position.toShortString(separator) + ".to." +
-          rem.toShortString(separator)), Content(ContinuousSchema[Codex.DoubleCodex](), vd / td)))
+          rem.toShortString(separator)), Content(ContinuousSchema(DoubleCodex), vd / td)))
       }
     }
 
@@ -77,7 +77,7 @@ object DerivedData {
     // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
     //    feature.from.gradient)
     // 4/ Persist 2D gradient features.
-    load3D(s"${path}/exampleDerived.txt", third = DateCodex)
+    load3D(s"${path}/exampleDerived.txt", third = DateCodex())
       .slide(Along(Third), Gradient(First))
       .melt(Third, Second, ".from.")
       .save(s"./demo.${output}/gradient.out")

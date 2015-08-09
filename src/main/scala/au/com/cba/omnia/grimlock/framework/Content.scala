@@ -157,12 +157,12 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Date value of the variable.
    */
-  def apply[T <: DateAndTimeCodex](schema: DateSchema[T], value: java.util.Date): Content = {
+  def apply(schema: DateSchema[Codex.DateCodex], value: java.util.Date): Content = {
     ContentImpl(schema, DateValue(value, schema.codex))
   }
 
   /**
-   * Construct a content using a date schema and value.
+   * Construct a content using a schema and value.
    *
    * @param schema Schema of the variable value.
    * @param value  The value
