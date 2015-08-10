@@ -15,7 +15,6 @@
 package au.com.cba.omnia.grimlock.scalding
 
 import au.com.cba.omnia.grimlock.framework.{
-  Along,
   Cell,
   ExpandableMatrix => BaseExpandableMatrix,
   ExtractWithDimension,
@@ -25,10 +24,8 @@ import au.com.cba.omnia.grimlock.framework.{
   Matrix => BaseMatrix,
   Matrixable => BaseMatrixable,
   Nameable => BaseNameable,
-  Over,
   ReduceableMatrix => BaseReduceableMatrix,
   Reducers,
-  Slice,
   Tuner,
   Type,
   Unbalanced

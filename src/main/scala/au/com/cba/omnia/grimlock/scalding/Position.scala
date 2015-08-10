@@ -14,7 +14,6 @@
 
 package au.com.cba.omnia.grimlock.scalding.position
 
-import au.com.cba.omnia.grimlock.framework.Slice
 import au.com.cba.omnia.grimlock.framework.position.{
   Positions => BasePositions,
   PositionDistributable => BasePositionDistributable,
