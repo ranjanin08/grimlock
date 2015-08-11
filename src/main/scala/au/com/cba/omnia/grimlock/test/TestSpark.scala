@@ -52,9 +52,9 @@ object TestSparkReader {
   def load4TupleDataAddDate(file: String)(implicit sc: SparkContext): RDD[Cell[Position3D]] = {
     def hashDate(v: String) = {
       val cal = java.util.Calendar.getInstance()
-      cal.setTime(DateCodex.fromValue(DateCodex.decode("2014-05-14").get))
+      cal.setTime(DateCodex().fromValue(DateCodex().decode("2014-05-14").get))
       cal.add(java.util.Calendar.DATE, -(v.hashCode % 21)) // Generate 3 week window prior to date
-      DateValue(cal.getTime(), DateCodex)
+      DateValue(cal.getTime(), DateCodex())
     }
 
     sc.textFile(file)
@@ -62,10 +62,10 @@ object TestSparkReader {
         _.trim.split(java.util.regex.Pattern.quote("|"), 4) match {
           case Array(i, f, e, v) =>
             val schema = e match {
-              case StringCodex.name => NominalSchema[Codex.StringCodex]()
+              case StringCodex.name => NominalSchema(StringCodex)
               case _ => scala.util.Try(v.toLong).toOption match {
-                case Some(_) => ContinuousSchema[Codex.LongCodex](Long.MinValue, Long.MaxValue)
-                case None => ContinuousSchema[Codex.DoubleCodex](Double.MinValue, Double.MaxValue)
+                case Some(_) => ContinuousSchema[Codex.LongCodex](LongCodex, Long.MinValue, Long.MaxValue)
+                case None => ContinuousSchema[Codex.DoubleCodex](DoubleCodex, Double.MinValue, Double.MaxValue)
               }
             }
 
@@ -85,12 +85,12 @@ object TestSpark1 {
       .save("./tmp.spark/dat1.out", descriptive=true)
 
     data
-      .set(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
-        Content(ContinuousSchema[Codex.LongCodex](), 1234), Default())
+      .set(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
+        Content(ContinuousSchema(LongCodex), 1234), Default())
       .slice(Over(First), "iid:1548763", true)
       .save("./tmp.spark/dat2.out", descriptive=true)
 
-    load3D(args(1) + "/smallInputfile.txt", third=DateCodex)
+    load3D(args(1) + "/smallInputfile.txt", third=DateCodex())
       .save("./tmp.spark/dat3.out", descriptive=true)
   }
 }
@@ -243,12 +243,12 @@ object TestSpark7 {
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
-      .get(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get))
+      .get(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get))
       .save("./tmp.spark/get1.out", descriptive=true)
 
     data
-      .get(List(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
-                Position3D("iid:1303823", "fid:A", DateCodex.decode("2014-05-05").get)))
+      .get(List(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
+                Position3D("iid:1303823", "fid:A", DateCodex().decode("2014-05-05").get)))
       .save("./tmp.spark/get2.out", descriptive=true)
   }
 }
@@ -407,11 +407,11 @@ object TestSpark12 {
 
     data
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+      .fill(Content(ContinuousSchema(LongCodex), 0))
       .saveAsCSV(Over(Second), "./tmp.spark/fll1.out")
 
     data
-      .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+      .fill(Content(ContinuousSchema(LongCodex), 0))
       .save("./tmp.spark/fll3.out", descriptive=true)
   }
 }
@@ -428,11 +428,11 @@ object TestSpark13 {
 
     val inds = data
       .transform(Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
-      .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+      .fill(Content(ContinuousSchema(LongCodex), 0))
 
     data
       .join(Over(First), inds)
-      .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+      .fill(Content(ContinuousSchema(LongCodex), 0))
       .saveAsCSV(Over(Second), "./tmp.spark/fll2.out")
 
     data
@@ -451,7 +451,7 @@ object TestSpark14 {
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
     data
-      .change(Over(Second), "fid:A", NominalSchema[Codex.LongCodex]())
+      .change(Over(Second), "fid:A", NominalSchema(LongCodex))
       .save("./tmp.spark/chg1.out", descriptive=true)
   }
 }
@@ -629,7 +629,7 @@ object TestSpark19 {
       pipe
         .slice(Over(Second), rem, false)
         .transformWithValue(transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
-        .fill(Content(ContinuousSchema[Codex.LongCodex](), 0))
+        .fill(Content(ContinuousSchema(LongCodex), 0))
         .saveAsCSV(Over(Second), "./tmp.spark/pln_" + key + ".csv")
     }
 
@@ -642,7 +642,7 @@ object TestSpark20 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
-    load3DWithDictionary(args(1) + "/ivoryInputfile1.txt", Dictionary.load(args(1) + "/dict.txt"), third=DateCodex)
+    load3DWithDictionary(args(1) + "/ivoryInputfile1.txt", Dictionary.load(args(1) + "/dict.txt"), third=DateCodex())
       .save("./tmp.spark/ivr1.out")
   }
 }
@@ -686,7 +686,7 @@ object TestSpark22 {
         (Cell(rem, cell.content), (cell.content.value.asDouble, t.content.value.asDouble) match {
           case (Some(c), Some(l)) =>
             Collection(cell.position.append(rem.toShortString("") + "-" + t.position.toShortString("")),
-              Content(ContinuousSchema[Codex.DoubleCodex](), c - l))
+              Content(ContinuousSchema(DoubleCodex), c - l))
           case _ => Collection[Cell[Position2D]]()
         })
       }
@@ -716,7 +716,7 @@ object TestSpark23 {
 
         (reml == remr) match {
           case true => Collection(remr.append("(" + xc + "-" + yc + ")^2"),
-            Content(ContinuousSchema[Codex.DoubleCodex](),
+            Content(ContinuousSchema(DoubleCodex),
               math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
           case false => Collection()
         }
@@ -734,19 +734,19 @@ object TestSpark24 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
     // see http://www.mathsisfun.com/data/correlation.html for data
-    val schema = List(("day", NominalSchema[Codex.StringCodex]()),
-                      ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
-                      ("sales", DiscreteSchema[Codex.LongCodex]()))
+    val schema = List(("day", NominalSchema(StringCodex)),
+                      ("temperature", ContinuousSchema(DoubleCodex)),
+                      ("sales", DiscreteSchema(LongCodex)))
     val data = loadTable(args(1) + "/somePairwise2.txt", schema, separator="|")
 
     data
       .correlation(Over(Second), ptuner=InMemory())
       .save("./tmp.spark/pws2.out")
 
-    val schema2 = List(("day", NominalSchema[Codex.StringCodex]()),
-                       ("temperature", ContinuousSchema[Codex.DoubleCodex]()),
-                       ("sales", DiscreteSchema[Codex.LongCodex]()),
-                       ("neg.sales", DiscreteSchema[Codex.LongCodex]()))
+    val schema2 = List(("day", NominalSchema(StringCodex)),
+                       ("temperature", ContinuousSchema(DoubleCodex)),
+                       ("sales", DiscreteSchema(LongCodex)),
+                       ("neg.sales", DiscreteSchema(LongCodex)))
     val data2 = loadTable(args(1) + "/somePairwise3.txt", schema2, separator="|")
 
     data2
@@ -820,8 +820,8 @@ object TestSpark28 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
     val data = List
       .range(0, 16)
-      .flatMap { case i => List(("iid:" + i, "fid:A", Content(ContinuousSchema[Codex.LongCodex](), i)),
-                                ("iid:" + i, "fid:B", Content(NominalSchema[Codex.StringCodex](), i.toString))) }
+      .flatMap { case i => List(("iid:" + i, "fid:A", Content(ContinuousSchema(LongCodex), i)),
+                                ("iid:" + i, "fid:B", Content(NominalSchema(StringCodex), i.toString))) }
 
     val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
       Count().andThenExpand(_.position.append("count")),
@@ -876,7 +876,7 @@ object TestSpark28 {
 object TestSpark29 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val schema = DiscreteSchema[Codex.LongCodex]()
+    val schema = DiscreteSchema(LongCodex)
     val data = List(("mod:123", "iid:A", Content(schema, 1)),
       ("mod:123", "iid:B", Content(schema, 1)),
       ("mod:123", "iid:C", Content(schema, 0)),
@@ -906,7 +906,7 @@ object TestSpark29 {
 object TestSpark30 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val schema = DiscreteSchema[Codex.LongCodex]()
+    val schema = DiscreteSchema(LongCodex)
     val data = List(("iid:A", Content(schema, 0)),
       ("iid:B", Content(schema, 1)),
       ("iid:C", Content(schema, 2)),

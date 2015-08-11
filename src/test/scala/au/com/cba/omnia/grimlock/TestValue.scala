@@ -22,11 +22,11 @@ class TestDateValue extends TestGrimlock {
   val dfmt = new java.text.SimpleDateFormat("dd/MM/yyyy")
   val date2001 = dfmt.parse("01/01/2001")
   val date2002 = dfmt.parse("01/01/2002")
-  val dv2001 = DateValue(date2001, DateCodex)
-  val dv2002 = DateValue(date2002, DateCodex)
+  val dv2001 = DateValue(date2001, DateCodex("dd/MM/yyyy"))
+  val dv2002 = DateValue(date2002, DateCodex("dd/MM/yyyy"))
 
   "A DateValue" should "return its short string" in {
-    dv2001.toShortString shouldBe "2001-01-01"
+    dv2001.toShortString shouldBe "01/01/2001"
   }
 
   it should "return a date" in {
@@ -56,7 +56,7 @@ class TestDateValue extends TestGrimlock {
 
   it should "equal itself" in {
     dv2001.equ(dv2001) shouldBe true
-    dv2001.equ(DateValue(date2001, DateCodex)) shouldBe true
+    dv2001.equ(DateValue(date2001, DateCodex("dd/MM/yyyy"))) shouldBe true
   }
 
   it should "not equal another date" in {
@@ -71,11 +71,11 @@ class TestDateValue extends TestGrimlock {
   }
 
   it should "match a matching pattern" in {
-    dv2001.like("^20.*".r) shouldBe true
+    dv2001.like("^01.*".r) shouldBe true
   }
 
   it should "not match a non-existing pattern" in {
-    dv2001.like("^2002.*".r) shouldBe false
+    dv2001.like("^02.*".r) shouldBe false
   }
 
   it should "identify a smaller value calling lss" in {

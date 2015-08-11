@@ -26,9 +26,9 @@ import au.com.cba.omnia.grimlock.library.squash._
 trait TestSquashers extends TestGrimlock {
 
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
-  val con = Content(ContinuousSchema[Codex.LongCodex](), 123)
-  val cell1 = Cell(Position3D(1, "b", DateValue(dfmt.parse("2001-01-01"), DateCodex)), con)
-  val cell2 = Cell(Position3D(2, "a", DateValue(dfmt.parse("2002-01-01"), DateCodex)), con)
+  val con = Content(ContinuousSchema(LongCodex), 123)
+  val cell1 = Cell(Position3D(1, "b", DateValue(dfmt.parse("2001-01-01"), DateCodex())), con)
+  val cell2 = Cell(Position3D(2, "a", DateValue(dfmt.parse("2002-01-01"), DateCodex())), con)
 }
 
 class TestPreservingMaxPosition extends TestSquashers {
@@ -136,15 +136,15 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the first cell for the third dimension when equal" in {
-    KeepSlice(DateValue(dfmt.parse("2001-01-01"), DateCodex)).reduce(Third, cell1, cell2) shouldBe cell1
+    KeepSlice(DateValue(dfmt.parse("2001-01-01"), DateCodex())).reduce(Third, cell1, cell2) shouldBe cell1
   }
 
   it should "return the second cell for the third dimension when equal" in {
-    KeepSlice(DateValue(dfmt.parse("2002-01-01"), DateCodex)).reduce(Third, cell1, cell2) shouldBe cell2
+    KeepSlice(DateValue(dfmt.parse("2002-01-01"), DateCodex())).reduce(Third, cell1, cell2) shouldBe cell2
   }
 
   it should "return the second cell for the third dimension when not equal" in {
-    KeepSlice(DateValue(dfmt.parse("2003-01-01"), DateCodex)).reduce(Third, cell1, cell2) shouldBe cell2
+    KeepSlice(DateValue(dfmt.parse("2003-01-01"), DateCodex())).reduce(Third, cell1, cell2) shouldBe cell2
   }
 }
 

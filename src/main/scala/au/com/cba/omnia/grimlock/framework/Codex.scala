@@ -84,8 +84,7 @@ object Codex {
    */
   def fromString[T](str: String): Option[Codex] = {
     str match {
-      case DateCodex.name => Some(DateCodex)
-      case DateTimeCodex.name => Some(DateTimeCodex)
+      case DateCodex.pattern(format) => Some(DateCodex(format))
       case StringCodex.name => Some(StringCodex)
       case DoubleCodex.name => Some(DoubleCodex)
       case LongCodex.name => Some(LongCodex)
@@ -95,9 +94,7 @@ object Codex {
   }
 
   /** Shorthand for `DateCodex` type. */
-  type DateCodex = DateCodex.type
-  /** Shorthand for `DateTimeCodex` type. */
-  type DateTimeCodex = DateTimeCodex.type
+  type DateCodex = au.com.cba.omnia.grimlock.framework.encoding.DateCodex
   /** Shorthand for `StringCodex` type. */
   type StringCodex = StringCodex.type
   /** Shorthand for `DoubleCodex` type. */
@@ -106,25 +103,11 @@ object Codex {
   type LongCodex = LongCodex.type
   /** Shorthand for `BooleanCodex` type. */
   type BooleanCodex = BooleanCodex.type
-
-  /** Implicit value for `DateCodex`. */
-  implicit val TC: DateCodex = DateCodex
-  /** Implicit value for `DateTimeCodex`. */
-  implicit val DTC: DateTimeCodex = DateTimeCodex
-  /** Implicit value for `StringCodex`. */
-  implicit val SC: StringCodex = StringCodex
-  /** Implicit value for `DoubleCodex`. */
-  implicit val DC: DoubleCodex = DoubleCodex
-  /** Implicit value for `LongCodex`. */
-  implicit val LC: LongCodex = LongCodex
-  /** Implicit value for `BooleanCodex`. */
-  implicit val BC: BooleanCodex = BooleanCodex
 }
 
-/** Base trait for dealing with `java.util.Date`. */
-trait DateAndTimeCodex extends Codex {
-  /** The format string of the date. */
-  val format: String
+/** Codex for dealing with `java.util.Date`. */
+case class DateCodex(format: String = "yyyy-MM-dd") extends Codex {
+  val name = s"date(${format})"
 
   type T = java.util.Date
   type V = DateValue
@@ -142,16 +125,8 @@ trait DateAndTimeCodex extends Codex {
   protected def toString(value: T): String = (new SimpleDateFormat(format)).format(value)
 }
 
-/** Codex for dealing with `java.util.Date` formatted as `yyyy-MM-dd`. */
-case object DateCodex extends DateAndTimeCodex {
-  val name = "date"
-  val format = "yyyy-MM-dd"
-}
-
-/** Codex for dealing with `java.util.Date` formatted as `yyyy-MM-dd hh:mm:ss`. */
-case object DateTimeCodex extends DateAndTimeCodex {
-  val name = "date.time"
-  val format = "yyyy-MM-dd hh:mm:ss"
+object DateCodex {
+  val pattern = """date\((.*)\)""".r
 }
 
 /** Codex for dealing with `String`. */

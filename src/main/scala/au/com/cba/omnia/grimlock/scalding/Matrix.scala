@@ -15,7 +15,6 @@
 package au.com.cba.omnia.grimlock.scalding
 
 import au.com.cba.omnia.grimlock.framework.{
-  Along,
   Cell,
   Default,
   ExpandableMatrix => BaseExpandableMatrix,
@@ -27,10 +26,8 @@ import au.com.cba.omnia.grimlock.framework.{
   Matrixable => BaseMatrixable,
   Nameable => BaseNameable,
   NoParameters,
-  Over,
   ReduceableMatrix => BaseReduceableMatrix,
   Reducers,
-  Slice,
   Sequence2,
   Tuner,
   Type,
@@ -246,7 +243,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def shape(): U[Cell[Position1D]] = {
     Grouped(data.flatMap { case c => c.position.coordinates.map(_.toString).zipWithIndex.map(_.swap) }.distinct)
       .size
-      .map { case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema[Codex.LongCodex](), s)) }
+      .map { case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema(LongCodex), s)) }
   }
 
   def size[D <: Dimension](dim: D, distinct: Boolean = false)(implicit ev: PosDimDep[P, D]): U[Cell[Position1D]] = {
@@ -256,7 +253,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     dist
       .map { case _ => 1L }
       .sum
-      .map { case sum => Cell(Position1D(dim.toString), Content(DiscreteSchema[Codex.LongCodex](), sum)) }
+      .map { case sum => Cell(Position1D(dim.toString), Content(DiscreteSchema(LongCodex), sum)) }
   }
 
   def slice[D <: Dimension, I, T](slice: Slice[P, D], positions: I, keep: Boolean, tuner: T)(

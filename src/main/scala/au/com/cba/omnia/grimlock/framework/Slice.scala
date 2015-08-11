@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.framework
+package au.com.cba.omnia.grimlock.framework.position
 
-import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework._
 
 /** Base trait that encapsulates dimension on which to operate. */
 sealed trait Slice[P <: Position, D <: Dimension] {

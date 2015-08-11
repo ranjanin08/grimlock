@@ -14,7 +14,6 @@
 
 package au.com.cba.omnia.grimlock.spark.position
 
-import au.com.cba.omnia.grimlock.framework.Slice
 import au.com.cba.omnia.grimlock.framework.position.{
   Positions => BasePositions,
   PositionDistributable => BasePositionDistributable,

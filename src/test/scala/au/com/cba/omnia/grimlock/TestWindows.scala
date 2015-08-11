@@ -26,7 +26,7 @@ import au.com.cba.omnia.grimlock.library.window._
 
 trait TestBatchMovingAverage extends TestGrimlock {
   // test initilise
-  val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Codex.LongCodex](), 1))
+  val cell = Cell(Position1D("foo"), Content(ContinuousSchema(LongCodex), 1))
   val rem = Position2D("bar", "baz")
   val first = (rem, 1.0)
   val second = (rem, 1.0)
@@ -34,9 +34,9 @@ trait TestBatchMovingAverage extends TestGrimlock {
   // test present
   val sel = Position1D("sales")
 
-  def createContent(value: Long): Content = Content(ContinuousSchema[Codex.LongCodex](), value)
+  def createContent(value: Long): Content = Content(ContinuousSchema(LongCodex), value)
   def createCollection(year: String, value: Double) = {
-    Collection(Position2D("sales", year), Content(ContinuousSchema[Codex.DoubleCodex](), value))
+    Collection(Position2D("sales", year), Content(ContinuousSchema(DoubleCodex), value))
   }
 }
 
@@ -47,22 +47,22 @@ class TestSimpleMovingAverage extends TestBatchMovingAverage {
       .initialise(cell, rem) shouldBe ((List(first), Collection()))
     SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), true)
       .initialise(cell, rem) shouldBe ((List(first), Collection(Cell(Position2D("foo", "bar"),
-        Content(ContinuousSchema[Codex.DoubleCodex](), 1.0)))))
+        Content(ContinuousSchema(DoubleCodex), 1.0)))))
     SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), false)
       .initialise(cell, rem) shouldBe ((List(second), Collection()))
     SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), true)
       .initialise(cell, rem) shouldBe ((List(second), Collection(Cell(Position2D("foo", "baz"),
-        Content(ContinuousSchema[Codex.DoubleCodex](), 1.0)))))
+        Content(ContinuousSchema(DoubleCodex), 1.0)))))
     SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), false)
       .initialise(cell, rem) shouldBe ((List(first), Collection()))
     SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), true)
       .initialise(cell, rem) shouldBe ((List(first), Collection(Cell(Position2D("foo", "bar"),
-        Content(ContinuousSchema[Codex.DoubleCodex](), 1.0)))))
+        Content(ContinuousSchema(DoubleCodex), 1.0)))))
     SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), false)
       .initialise(cell, rem) shouldBe ((List(second), Collection()))
     SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), true)
       .initialise(cell, rem) shouldBe ((List(second), Collection(Cell(Position2D("foo", "baz"),
-        Content(ContinuousSchema[Codex.DoubleCodex](), 1.0)))))
+        Content(ContinuousSchema(DoubleCodex), 1.0)))))
   }
 
   it should "present correctly" in {
@@ -165,22 +165,22 @@ class TestWeightedMovingAverage extends TestBatchMovingAverage {
       .initialise(cell, rem) shouldBe ((List(first), Collection()))
     WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), true)
       .initialise(cell, rem) shouldBe ((List(first), Collection(Cell(Position2D("foo", "bar"),
-        Content(ContinuousSchema[Codex.DoubleCodex](), 1.0)))))
+        Content(ContinuousSchema(DoubleCodex), 1.0)))))
     WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), false)
       .initialise(cell, rem) shouldBe ((List(second), Collection()))
     WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), true)
       .initialise(cell, rem) shouldBe ((List(second), Collection(Cell(Position2D("foo", "baz"),
-        Content(ContinuousSchema[Codex.DoubleCodex](), 1.0)))))
+        Content(ContinuousSchema(DoubleCodex), 1.0)))))
     WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), false)
       .initialise(cell, rem) shouldBe ((List(first), Collection()))
     WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), true)
       .initialise(cell, rem) shouldBe ((List(first), Collection(Cell(Position2D("foo", "bar"),
-        Content(ContinuousSchema[Codex.DoubleCodex](), 1.0)))))
+        Content(ContinuousSchema(DoubleCodex), 1.0)))))
     WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), false)
       .initialise(cell, rem) shouldBe ((List(second), Collection()))
     WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), true)
       .initialise(cell, rem) shouldBe ((List(second), Collection(Cell(Position2D("foo", "baz"),
-        Content(ContinuousSchema[Codex.DoubleCodex](), 1.0)))))
+        Content(ContinuousSchema(DoubleCodex), 1.0)))))
   }
 
   it should "present correctly" in {
@@ -239,16 +239,16 @@ class TestWeightedMovingAverage extends TestBatchMovingAverage {
 
 trait TestOnlineMovingAverage extends TestGrimlock {
   // test initilise
-  val cell = Cell(Position1D("foo"), Content(ContinuousSchema[Codex.LongCodex](), 1))
+  val cell = Cell(Position1D("foo"), Content(ContinuousSchema(LongCodex), 1))
   val rem = Position2D("bar", "baz")
   val first = ((1.0, 1), Collection(Cell(Position2D("foo", "bar"), createContent(1.0))))
   val second = ((1.0, 1), Collection(Cell(Position2D("foo", "baz"), createContent(1.0))))
   // test present
   val sel = Position0D()
 
-  def createContent(value: Double): Content = Content(ContinuousSchema[Codex.DoubleCodex](), value)
+  def createContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
   def createCollection(str: String, value: Double) = {
-    Collection(Position1D(str), Content(ContinuousSchema[Codex.DoubleCodex](), value))
+    Collection(Position1D(str), Content(ContinuousSchema(DoubleCodex), value))
   }
 }
 
@@ -316,8 +316,8 @@ class TestExponentialMovingAverage extends TestOnlineMovingAverage {
 
 trait TestWindow extends TestGrimlock {
 
-  val cell1 = Cell(Position1D("foo"), Content(ContinuousSchema[Codex.LongCodex](), 1))
-  val cell2 = Cell(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "abc"))
+  val cell1 = Cell(Position1D("foo"), Content(ContinuousSchema(LongCodex), 1))
+  val cell2 = Cell(Position1D("foo"), Content(NominalSchema(StringCodex), "abc"))
   val rem = Position2D("bar", "baz")
 }
 
@@ -327,7 +327,7 @@ class TestCumulativeSum extends TestWindow {
   val result2 = (None, Collection())
 
   def createCollection(value: Double) = {
-    Collection(Position2D("foo", "bar|baz"), Content(ContinuousSchema[Codex.DoubleCodex](), value))
+    Collection(Position2D("foo", "bar|baz"), Content(ContinuousSchema(DoubleCodex), value))
   }
 
   "A CumulativeSum" should "initialise correctly" in {
@@ -423,7 +423,7 @@ class TestBinOp extends TestWindow {
   val result2 = ((None, rem), Collection())
 
   def createCollection(value: Double) = {
-    Collection(Position2D("foo", "p(bar|baz, bar|baz)"), Content(ContinuousSchema[Codex.DoubleCodex](), value))
+    Collection(Position2D("foo", "p(bar|baz, bar|baz)"), Content(ContinuousSchema(DoubleCodex), value))
   }
 
   "A BinOp" should "initialise correctly" in {
@@ -533,27 +533,27 @@ class TestQuantile extends TestGrimlock {
     .andThenPresent(_.value.asDouble)
   val quantiser = Quantile.Type7
   val name = "quantile=%1$f"
-  val cell1 = Cell(Position1D("abc"), Content(ContinuousSchema[Codex.LongCodex](), 1))
-  val cell2 = Cell(Position1D("abc"), Content(ContinuousSchema[Codex.LongCodex](), 2))
-  val cell4 = Cell(Position1D("abc"), Content(ContinuousSchema[Codex.LongCodex](), 4))
-  val cellX = Cell(Position1D("abc"), Content(NominalSchema[Codex.StringCodex](), "def"))
-  val cellY = Cell(Position1D("def"), Content(ContinuousSchema[Codex.LongCodex](), 3))
+  val cell1 = Cell(Position1D("abc"), Content(ContinuousSchema(LongCodex), 1))
+  val cell2 = Cell(Position1D("abc"), Content(ContinuousSchema(LongCodex), 2))
+  val cell4 = Cell(Position1D("abc"), Content(ContinuousSchema(LongCodex), 4))
+  val cellX = Cell(Position1D("abc"), Content(NominalSchema(StringCodex), "def"))
+  val cellY = Cell(Position1D("def"), Content(ContinuousSchema(LongCodex), 3))
   val rem = Position1D("not.used")
-  val ext = Map(Position1D("abc") -> Map(Position1D("count") -> Content(DiscreteSchema[Codex.LongCodex](), 10),
-    Position1D("min") -> Content(ContinuousSchema[Codex.DoubleCodex](), 1),
-    Position1D("max") -> Content(ContinuousSchema[Codex.DoubleCodex](), 10)))
+  val ext = Map(Position1D("abc") -> Map(Position1D("count") -> Content(DiscreteSchema(LongCodex), 10),
+    Position1D("min") -> Content(ContinuousSchema(DoubleCodex), 1),
+    Position1D("max") -> Content(ContinuousSchema(DoubleCodex), 10)))
 
   type W = Map[Position1D, Map[Position1D, Content]]
 
   val result1 = ((1.0, 0L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
     (7L, 0.75, "quantile=75.000000"))), Collection(List(
-      Cell(Position2D("abc", "quantile=0.000000"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
-      Cell(Position2D("abc", "quantile=100.000000"), Content(ContinuousSchema[Codex.DoubleCodex](), 10)))))
+      Cell(Position2D("abc", "quantile=0.000000"), Content(ContinuousSchema(DoubleCodex), 1)),
+      Cell(Position2D("abc", "quantile=100.000000"), Content(ContinuousSchema(DoubleCodex), 10)))))
 
   val result2 = ((Double.NaN, 0L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
     (7L, 0.75, "quantile=75.000000"))), Collection(List(
-      Cell(Position2D("abc", "quantile=0.000000"), Content(ContinuousSchema[Codex.DoubleCodex](), 1)),
-      Cell(Position2D("abc", "quantile=100.000000"), Content(ContinuousSchema[Codex.DoubleCodex](), 10)))))
+      Cell(Position2D("abc", "quantile=0.000000"), Content(ContinuousSchema(DoubleCodex), 1)),
+      Cell(Position2D("abc", "quantile=100.000000"), Content(ContinuousSchema(DoubleCodex), 10)))))
 
   val result3 = ((Double.NaN, 0L, List()), Collection(List()))
 
@@ -562,13 +562,13 @@ class TestQuantile extends TestGrimlock {
 
   val result5 = ((4.0, 4L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
     (7L, 0.75, "quantile=75.000000"))), Collection(List(Cell(Position2D("abc", "quantile=25.000000"),
-      Content(ContinuousSchema[Codex.DoubleCodex](), 3.25)))))
+      Content(ContinuousSchema(DoubleCodex), 3.25)))))
 
   val result6 = ((Double.NaN, 4L, List()), Collection(List()))
 
   val result7 = ((Double.NaN, 4L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
     (7L, 0.75, "quantile=75.000000"))), Collection(List(Cell(Position2D("abc", "quantile=25.000000"),
-      Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN)))))
+      Content(ContinuousSchema(DoubleCodex), Double.NaN)))))
 
   val result8 = ((Double.NaN, 1L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
     (7L, 0.75, "quantile=75.000000"))), Collection(List()))
@@ -697,11 +697,11 @@ class TestCombinationWindow extends TestGrimlock {
       createCollection("2008", 6.6, 6.733333333333333)))
   }
 
-  def createContent(value: Long): Content = Content(ContinuousSchema[Codex.LongCodex](), value)
+  def createContent(value: Long): Content = Content(ContinuousSchema(LongCodex), value)
   def createCollection(year: String, value1: Double, value2: Double) = {
     Collection(List(
-      Cell(Position2D("sales", year + ".simple"), Content(ContinuousSchema[Codex.DoubleCodex](), value1)),
-      Cell(Position2D("sales", year + ".weighted"), Content(ContinuousSchema[Codex.DoubleCodex](), value2))))
+      Cell(Position2D("sales", year + ".simple"), Content(ContinuousSchema(DoubleCodex), value1)),
+      Cell(Position2D("sales", year + ".weighted"), Content(ContinuousSchema(DoubleCodex), value2))))
   }
 }
 

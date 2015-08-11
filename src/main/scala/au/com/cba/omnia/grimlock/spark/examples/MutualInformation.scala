@@ -37,7 +37,7 @@ import org.apache.spark.{ SparkConf, SparkContext }
 case class CeilingBucketing() extends Transformer[Position2D, Position2D] {
   def present(cell: Cell[Position2D]): Collection[Cell[Position2D]] = {
     val con = (cell.content.schema.kind.isSpecialisationOf(Type.Numerical), cell.content.value.asDouble) match {
-      case (true, Some(d)) => Content(NominalSchema[Codex.LongCodex](), math.ceil(d).toLong)
+      case (true, Some(d)) => Content(NominalSchema(LongCodex), math.ceil(d).toLong)
       case _ => cell.content
     }
 
@@ -61,7 +61,7 @@ object MutualInformation {
     //    (instance x feature).
     // 3/ Bucket all continuous variables by rounding them.
     val data = load3DWithDictionary(s"${path}/exampleMutual.txt", Dictionary.load(s"${path}/exampleDictionary.txt"),
-      third = DateCodex)
+      third = DateCodex())
       .squash(Third, PreservingMinPosition[Position3D]())
       .transform(CeilingBucketing())
 

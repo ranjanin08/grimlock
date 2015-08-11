@@ -25,9 +25,9 @@ import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.library.transform._
 
 trait TestTransformers extends TestGrimlock {
-  def getLongContent(value: Long): Content = Content(DiscreteSchema[Codex.LongCodex](), value)
-  def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Codex.DoubleCodex](), value)
-  def getStringContent(value: String): Content = Content(NominalSchema[Codex.StringCodex](), value)
+  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
+  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
 
   def extractor[D <: Dimension, P <: Position](dim: D, key: String)(
     implicit ev: PosDimDep[P, D]): Extract[P, Map[Position1D, Map[Position1D, Content]], Double] = {
@@ -765,16 +765,16 @@ class TestCut extends TestTransformers {
 
   "A Cut" should "present" in {
     Cut(binExtractor).presentWithValue(cell, ext) shouldBe Collection(Position1D("foo"),
-      Content(OrdinalSchema[Codex.StringCodex](List("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]", "(4.0,5.0]")),
-        "(3.0,4.0]"))
+      Content(OrdinalSchema[Codex.StringCodex](StringCodex,
+        List("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]", "(4.0,5.0]")), "(3.0,4.0]"))
   }
 
   it should "present with name" in {
     Cut(binExtractor)
       .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.cut"))
       .presentWithValue(cell, ext) shouldBe Collection(List(Cell(Position1D("foo.cut"),
-        Content(OrdinalSchema[Codex.StringCodex](List("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]",
-          "(4.0,5.0]")), "(3.0,4.0]"))))
+        Content(OrdinalSchema[Codex.StringCodex](StringCodex,
+          List("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]", "(4.0,5.0]")), "(3.0,4.0]"))))
   }
 
   it should "not present with missing bins" in {
@@ -792,16 +792,16 @@ class TestCompare extends TestTransformers {
 
   "A Compare" should "present" in {
     Compare(equ(3.1415)).present(cell) shouldBe Collection(Position1D("foo"),
-      Content(NominalSchema[Codex.BooleanCodex](), true))
+      Content(NominalSchema(BooleanCodex), true))
     Compare(equ(3.3)).present(cell) shouldBe Collection(Position1D("foo"),
-      Content(NominalSchema[Codex.BooleanCodex](), false))
+      Content(NominalSchema(BooleanCodex), false))
   }
 
   it should "present with name" in {
     Compare(equ(3.1415)).andThenRename(Transformer.rename(First, "%1$s.cmp")).present(cell) shouldBe
-      Collection(List(Cell(Position1D("foo.cmp"), Content(NominalSchema[Codex.BooleanCodex](), true))))
+      Collection(List(Cell(Position1D("foo.cmp"), Content(NominalSchema(BooleanCodex), true))))
     Compare(equ(3.3)).andThenRename(Transformer.rename(First, "%1$s.cmp")).present(cell) shouldBe
-      Collection(List(Cell(Position1D("foo.cmp"), Content(NominalSchema[Codex.BooleanCodex](), false))))
+      Collection(List(Cell(Position1D("foo.cmp"), Content(NominalSchema(BooleanCodex), false))))
   }
 }
 

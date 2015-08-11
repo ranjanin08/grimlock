@@ -52,7 +52,7 @@ object LabelWeighting {
     val output = "spark"
 
     // Read labels and melt the date into the instance id to generate a 1D matrix.
-    val labels = load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+    val labels = load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema(DoubleCodex))
       .melt(Second, First, ":")
 
     // Compute histogram over the label values.
@@ -85,7 +85,7 @@ object LabelWeighting {
       .toMap(Over(First))
 
     // Re-read labels and add the computed weight.
-    load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema[Codex.DoubleCodex]())
+    load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema(DoubleCodex))
       .transformWithValue(AddWeight(), weights)
       .save(s"./demo.${output}/weighted.out")
   }

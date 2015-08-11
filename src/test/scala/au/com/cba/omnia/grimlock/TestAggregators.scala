@@ -27,9 +27,9 @@ import au.com.cba.omnia.grimlock.library.aggregate._
 import scala.collection.immutable.TreeMap
 
 trait TestAggregators extends TestGrimlock {
-  def getLongContent(value: Long): Content = Content(DiscreteSchema[Codex.LongCodex](), value)
-  def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Codex.DoubleCodex](), value)
-  def getStringContent(value: String): Content = Content(NominalSchema[Codex.StringCodex](), value)
+  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
+  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
 }
 
 class TestCount extends TestAggregators {

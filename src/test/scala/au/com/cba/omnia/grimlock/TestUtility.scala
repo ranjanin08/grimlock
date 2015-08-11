@@ -37,8 +37,8 @@ class TestCollection extends TestGrimlock {
   }
 
   it should "create a collection with a cell" in {
-    Collection(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "bar")) shouldBe
-      Collection(Some(Left(Cell(Position1D("foo"), Content(NominalSchema[Codex.StringCodex](), "bar")))))
+    Collection(Position1D("foo"), Content(NominalSchema(StringCodex), "bar")) shouldBe
+      Collection(Some(Left(Cell(Position1D("foo"), Content(NominalSchema(StringCodex), "bar")))))
   }
 
   it should "identify an empty collection" in {

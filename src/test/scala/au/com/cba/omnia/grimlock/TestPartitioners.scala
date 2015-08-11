@@ -49,9 +49,9 @@ trait TestHashPartitioners extends TestGrimlock {
 
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
 
-  val cell1 = Cell(Position2D(1, "b"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14))
-  val cell2 = Cell(Position2D(3, "a"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14))
-  val cell3 = Cell(Position2D(4, "c"), Content(ContinuousSchema[Codex.DoubleCodex](), 3.14))
+  val cell1 = Cell(Position2D(1, "b"), Content(ContinuousSchema(DoubleCodex), 3.14))
+  val cell2 = Cell(Position2D(3, "a"), Content(ContinuousSchema(DoubleCodex), 3.14))
+  val cell3 = Cell(Position2D(4, "c"), Content(ContinuousSchema(DoubleCodex), 3.14))
 }
 
 class TestBinaryHashSplit extends TestHashPartitioners {
@@ -158,63 +158,67 @@ trait TestDatePartitioners extends TestGrimlock {
 
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
 
-  val cell1 = Cell(Position2D(1, DateValue(dfmt.parse("2004-01-01"), DateCodex)),
-    Content(ContinuousSchema[Codex.DoubleCodex](), 3.14))
-  val cell2 = Cell(Position2D(2, DateValue(dfmt.parse("2006-01-01"), DateCodex)),
-    Content(ContinuousSchema[Codex.DoubleCodex](), 3.14))
-  val cell3 = Cell(Position2D(3, DateValue(dfmt.parse("2007-01-01"), DateCodex)),
-    Content(ContinuousSchema[Codex.DoubleCodex](), 3.14))
+  val cell1 = Cell(Position2D(1, DateValue(dfmt.parse("2004-01-01"), DateCodex("yyyy-MM-dd"))),
+    Content(ContinuousSchema(DoubleCodex), 3.14))
+  val cell2 = Cell(Position2D(2, DateValue(dfmt.parse("2006-01-01"), DateCodex("yyyy-MM-dd"))),
+    Content(ContinuousSchema(DoubleCodex), 3.14))
+  val cell3 = Cell(Position2D(3, DateValue(dfmt.parse("2007-01-01"), DateCodex("yyyy-MM-dd"))),
+    Content(ContinuousSchema(DoubleCodex), 3.14))
 }
 
 class TestBinaryDateSplit extends TestDatePartitioners {
 
   "A BinaryDateSplit" should "assign none on the first dimension" in {
-    BinaryDateSplit(First, dfmt.parse("2005-01-01"), "left", "right").assign(cell1) shouldBe Collection()
+    BinaryDateSplit(First, dfmt.parse("2005-01-01"), "left", "right", DateCodex("yyyy-MM-dd"))
+      .assign(cell1) shouldBe Collection()
   }
 
   it should "assign left on the second dimension" in {
-    BinaryDateSplit(Second, dfmt.parse("2005-01-01"), "left", "right").assign(cell1) shouldBe Collection("left")
+    BinaryDateSplit(Second, dfmt.parse("2005-01-01"), "left", "right", DateCodex("yyyy-MM-dd"))
+      .assign(cell1) shouldBe Collection("left")
   }
 
   it should "assign left on the second dimension when on boundary" in {
-    BinaryDateSplit(Second, dfmt.parse("2004-01-01"), "left", "right").assign(cell1) shouldBe Collection("left")
+    BinaryDateSplit(Second, dfmt.parse("2004-01-01"), "left", "right", DateCodex("yyyy-MM-dd"))
+      .assign(cell1) shouldBe Collection("left")
   }
 
   it should "assign right on the second dimension" in {
-    BinaryDateSplit(Second, dfmt.parse("2005-01-01"), "left", "right").assign(cell2) shouldBe Collection("right")
+    BinaryDateSplit(Second, dfmt.parse("2005-01-01"), "left", "right", DateCodex("yyyy-MM-dd"))
+      .assign(cell2) shouldBe Collection("right")
   }
 }
 
 class TestTernaryDateSplit extends TestDatePartitioners {
 
   "A TernaryDateSplit" should "assign none on the first dimension" in {
-    TernaryDateSplit(First, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right")
-      .assign(cell1) shouldBe Collection()
+    TernaryDateSplit(First, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right",
+      DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe Collection()
   }
 
   it should "assign left on the second dimension" in {
-    TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right")
-      .assign(cell1) shouldBe Collection("left")
+    TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right",
+      DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe Collection("left")
   }
 
   it should "assign left on the second dimension when on boundary" in {
-    TernaryDateSplit(Second, dfmt.parse("2004-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right")
-      .assign(cell1) shouldBe Collection("left")
+    TernaryDateSplit(Second, dfmt.parse("2004-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right",
+      DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe Collection("left")
   }
 
   it should "assign middle on the second dimension" in {
-    TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-01-01"), "left", "middle", "right")
-      .assign(cell2) shouldBe Collection("middle")
+    TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-01-01"), "left", "middle", "right",
+      DateCodex("yyyy-MM-dd")).assign(cell2) shouldBe Collection("middle")
   }
 
   it should "assign middle on the second dimension when on boundary" in {
-    TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-01-01"), "left", "middle", "right")
-      .assign(cell2) shouldBe Collection("middle")
+    TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-01-01"), "left", "middle", "right",
+      DateCodex("yyyy-MM-dd")).assign(cell2) shouldBe Collection("middle")
   }
 
   it should "assign right on the second dimension" in {
-    TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right")
-      .assign(cell3) shouldBe Collection("right")
+    TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right",
+      DateCodex("yyyy-MM-dd")).assign(cell3) shouldBe Collection("right")
   }
 }
 
@@ -225,57 +229,57 @@ class TestDateSplit extends TestDatePartitioners {
     "right" -> ((dfmt.parse("2006-06-30"), dfmt.parse("2008-01-01"))))
 
   "A DateSplit" should "assign none on the first dimension" in {
-    DateSplit(First, map1).assign(cell1) shouldBe Collection()
+    DateSplit(First, map1, DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe Collection()
   }
 
   it should "assign both left on the second dimension" in {
-    DateSplit(Second, map1).assign(cell1) shouldBe Collection(List("lower.left", "upper.left"))
+    DateSplit(Second, map1, DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe Collection(List("lower.left", "upper.left"))
   }
 
   it should "assign right on the second dimension" in {
-    DateSplit(Second, map1).assign(cell3) shouldBe Collection("right")
+    DateSplit(Second, map1, DateCodex("yyyy-MM-dd")).assign(cell3) shouldBe Collection("right")
   }
 
   it should "assign none on the second dimension" in {
-    DateSplit(Second, map1).assign(cell2) shouldBe Collection()
+    DateSplit(Second, map1, DateCodex("yyyy-MM-dd")).assign(cell2) shouldBe Collection()
   }
 }
 
 trait TestPartitions extends TestGrimlock {
 
-  val data = List(("train", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 1))),
-    ("train", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 2))),
-    ("train", Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 3))),
-    ("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 4))),
-    ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 5))),
-    ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6))))
+  val data = List(("train", Cell(Position1D("fid:A"), Content(ContinuousSchema(LongCodex), 1))),
+    ("train", Cell(Position1D("fid:B"), Content(ContinuousSchema(LongCodex), 2))),
+    ("train", Cell(Position1D("fid:C"), Content(ContinuousSchema(LongCodex), 3))),
+    ("test", Cell(Position1D("fid:A"), Content(ContinuousSchema(LongCodex), 4))),
+    ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema(LongCodex), 5))),
+    ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema(LongCodex), 6))))
 
-  val data2 = List(Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8)),
-    Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9)))
+  val data2 = List(Cell(Position1D("fid:A"), Content(ContinuousSchema(LongCodex), 8)),
+    Cell(Position1D("fid:C"), Content(ContinuousSchema(LongCodex), 9)))
 
   val result1 = List("test", "train", "valid")
 
-  val result2 = List(Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 1)),
-    Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 2)),
-    Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 3)))
+  val result2 = List(Cell(Position1D("fid:A"), Content(ContinuousSchema(LongCodex), 1)),
+    Cell(Position1D("fid:B"), Content(ContinuousSchema(LongCodex), 2)),
+    Cell(Position1D("fid:C"), Content(ContinuousSchema(LongCodex), 3)))
 
-  val result3 = data ++ List(("xyz", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))),
-    ("xyz", Cell(Position1D("fid:C"), Content(ContinuousSchema[Codex.LongCodex](), 9))))
+  val result3 = data ++ List(("xyz", Cell(Position1D("fid:A"), Content(ContinuousSchema(LongCodex), 8))),
+    ("xyz", Cell(Position1D("fid:C"), Content(ContinuousSchema(LongCodex), 9))))
 
-  val result4 = List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 4))),
-    ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 5))),
-    ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 6))))
+  val result4 = List(("test", Cell(Position1D("fid:A"), Content(ContinuousSchema(LongCodex), 4))),
+    ("test", Cell(Position1D("fid:B"), Content(ContinuousSchema(LongCodex), 5))),
+    ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema(LongCodex), 6))))
 
-  val result5 = List(("test", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 10))),
-    ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema[Codex.LongCodex](), 12))),
-    ("test", Cell(Position1D("fid:A"), Content(ContinuousSchema[Codex.LongCodex](), 8))))
+  val result5 = List(("test", Cell(Position1D("fid:B"), Content(ContinuousSchema(LongCodex), 10))),
+    ("valid", Cell(Position1D("fid:B"), Content(ContinuousSchema(LongCodex), 12))),
+    ("test", Cell(Position1D("fid:A"), Content(ContinuousSchema(LongCodex), 8))))
 }
 
 object TestPartitions {
 
   def double(cell: Cell[Position1D]): Option[Cell[Position1D]] = {
     cell.content.value.asLong.map {
-      case v => Cell(cell.position, Content(ContinuousSchema[Codex.LongCodex](), 2 * v))
+      case v => Cell(cell.position, Content(ContinuousSchema(LongCodex), 2 * v))
     }
   }
 

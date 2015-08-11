@@ -30,7 +30,7 @@ trait MovingAverage[S <: Position with ExpandablePosition, R <: Position with Ex
   val pos: Locate.WindowSize1[S, R, Q]
 
   protected def getCollection(cell: Cell[S], rem: R, value: Double): Collection[Cell[Q]] = {
-    Collection(Cell[Q](pos(cell, rem), Content(ContinuousSchema[Codex.DoubleCodex](), value)))
+    Collection(Cell[Q](pos(cell, rem), Content(ContinuousSchema(DoubleCodex), value)))
   }
 
   protected def getDouble(con: Content): Double = con.value.asDouble.getOrElse(Double.NaN)
@@ -149,7 +149,7 @@ case class CumulativeSum[S <: Position with ExpandablePosition, R <: Position wi
   pos: Locate.WindowSize1[S, R, Q], strict: Boolean = true) extends Window[S, R, Q] {
   type T = Option[Double]
 
-  val schema = ContinuousSchema[Codex.DoubleCodex]()
+  val schema = ContinuousSchema(DoubleCodex)
 
   def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]]) = {
     val value = (strict, cell.content.value.asDouble) match {
@@ -205,7 +205,7 @@ case class BinOp[S <: Position with ExpandablePosition, R <: Position with Expan
   }
 
   private def getResult(cell: Cell[S], rem: R, value: Double, result: Double, prev: R): (T, Collection[Cell[Q]]) = {
-    ((Some(value), rem), Collection(pos(cell, rem, prev), Content(ContinuousSchema[Codex.DoubleCodex](), result)))
+    ((Some(value), rem), Collection(pos(cell, rem, prev), Content(ContinuousSchema(DoubleCodex), result)))
   }
 }
 
@@ -254,7 +254,7 @@ case class Quantile[S <: Position with ExpandablePosition, R <: Position with Ex
     }
     val col = Collection(state.find(_._1 == t._2) match {
       case Some((_, g, n)) => List(Cell[S#M](cell.position.append(n),
-        Content(ContinuousSchema[Codex.DoubleCodex](), (1 - g) * t._1 + g * curr)))
+        Content(ContinuousSchema(DoubleCodex), (1 - g) * t._1 + g * curr)))
       case None => List()
     })
 
@@ -267,7 +267,7 @@ case class Quantile[S <: Position with ExpandablePosition, R <: Position with Ex
       .extract(cell, ext)
       .map {
         case v => Cell[S#M](cell.position.append(name.format(value)),
-          Content(ContinuousSchema[Codex.DoubleCodex](), if (state.isEmpty) Double.NaN else v))
+          Content(ContinuousSchema(DoubleCodex), if (state.isEmpty) Double.NaN else v))
       }
       .toList
   }

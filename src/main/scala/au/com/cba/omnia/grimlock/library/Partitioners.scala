@@ -106,7 +106,7 @@ case class HashSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Int, Int)
  *       otherwise.
  */
 case class BinaryDateSplit[P <: Position, S](dim: Dimension, date: Date, left: S, right: S,
-  codex: DateAndTimeCodex = DateCodex) extends Partitioner[P, S] {
+  codex: DateCodex) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): Collection[S] = {
     Collection(codex.compare(cell.position(dim),
       codex.toValue(date)).map { case cmp => Left(if (cmp <= 0) left else right) })
@@ -128,7 +128,7 @@ case class BinaryDateSplit[P <: Position, S](dim: Dimension, date: Date, left: S
  *       equal to `upper` or else to `right`.
  */
 case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper: Date, left: S, middle: S, right: S,
-  codex: DateAndTimeCodex = DateCodex) extends Partitioner[P, S] {
+  codex: DateCodex) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): Collection[S] = {
     (codex.compare(cell.position(dim), codex.toValue(lower)),
       codex.compare(cell.position(dim), codex.toValue(upper))) match {
@@ -149,7 +149,7 @@ case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper
  *       or equal to the upper value (second value in tuple).
  */
 case class DateSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Date, Date)],
-  codex: DateAndTimeCodex = DateCodex) extends Partitioner[P, S] {
+  codex: DateCodex) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): Collection[S] = {
     val parts = ranges.flatMap {
       case (k, (lower, upper)) =>

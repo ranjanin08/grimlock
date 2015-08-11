@@ -44,14 +44,10 @@ case class ExampleEvent(
 object ExampleEvent {
   // Function to read a file with event data.
   def load(file: String)(implicit sc: SparkContext): RDD[Cell[Position1D]] = {
-    val es = EventSchema[ExampleEventCodex]()
+    val es = EventSchema(ExampleEventCodex)
     sc.textFile(file)
       .flatMap { case s => es.decode(s).map { case e => Cell(Position1D(es.codex.fromValue(e.value).eventId), e) } }
   }
-
-  // Define a type and implicit so schema construction looks simple.
-  type ExampleEventCodex = ExampleEventCodex.type
-  implicit val EC: ExampleEventCodex = ExampleEventCodex
 }
 
 // Define a codex for dealing with the example event. Note that comparison, for this example, is simply comparison
@@ -123,7 +119,7 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
         Collection(terms
           .groupBy(identity)
           .map {
-            case (k, v) => Cell(cell.position.append(k), Content(DiscreteSchema[Codex.LongCodex](), v.size))
+            case (k, v) => Cell(cell.position.append(k), Content(DiscreteSchema(LongCodex), v.size))
           }
           .toList)
       case _ => Collection[Cell[Position3D]]()

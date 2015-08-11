@@ -17,8 +17,7 @@ package au.com.cba.omnia.grimlock.spark
 import au.com.cba.omnia.grimlock.framework.{
   Matrix => BaseMatrix,
   Names => BaseNames,
-  Nameable => BaseNameable,
-  Slice
+  Nameable => BaseNameable
 }
 import au.com.cba.omnia.grimlock.framework.position._
 
