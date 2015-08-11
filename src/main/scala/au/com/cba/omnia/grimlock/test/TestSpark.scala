@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ object TestSpark1 {
 
     data
       .set(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
-        Content(ContinuousSchema[Codex.LongCodex](), 1234))
+        Content(ContinuousSchema[Codex.LongCodex](), 1234), Default())
       .slice(Over(First), "iid:1548763", true)
       .save("./tmp.spark/dat2.out", descriptive=true)
 
@@ -436,7 +436,8 @@ object TestSpark13 {
       .saveAsCSV(Over(Second), "./tmp.spark/fll2.out")
 
     data
-      .fill(Over(Second), all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
+      .fill[Dimension.Second, Position1D, Default[NoParameters.type]](Over(Second),
+        all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)), Default())
       .join(Over(First), inds)
       .saveAsCSV(Over(Second), "./tmp.spark/fll4.out")
   }
@@ -571,7 +572,7 @@ object TestSpark18 {
       .summarise(Along(First), aggregators)
 
     val rem = stats
-      .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2)
+      .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2, InMemory())
       .names(Over(First))
 
     data
@@ -739,7 +740,7 @@ object TestSpark24 {
     val data = loadTable(args(1) + "/somePairwise2.txt", schema, separator="|")
 
     data
-      .correlation(Over(Second))
+      .correlation(Over(Second), ptuner=InMemory())
       .save("./tmp.spark/pws2.out")
 
     val schema2 = List(("day", NominalSchema[Codex.StringCodex]()),
@@ -749,7 +750,7 @@ object TestSpark24 {
     val data2 = loadTable(args(1) + "/somePairwise3.txt", schema2, separator="|")
 
     data2
-      .correlation(Over(Second))
+      .correlation(Over(Second), ptuner=InMemory())
       .save("./tmp.spark/pws3.out")
   }
 }
@@ -759,7 +760,7 @@ object TestSpark25 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
     load2D(args(1) + "/mutualInputfile.txt")
-      .mutualInformation(Over(Second))
+      .mutualInformation(Over(Second), ptuner=InMemory())
       .save("./tmp.spark/mi.out")
   }
 }
@@ -892,12 +893,12 @@ object TestSpark29 {
       ("mod:456", "iid:H", Content(schema, 0)))
 
     data
-      .gini(Over(First))
+      .gini(Over(First), ptuner=InMemory())
       .save("./tmp.spark/gini.out")
 
   data
     .map { case (a, b, c) => (b, a, c) }
-    .gini(Along(First))
+    .gini(Along(First), ptuner=InMemory())
     .save("./tmp.spark/inig.out")
   }
 }

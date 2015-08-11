@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -232,5 +232,34 @@ object Distinct9 {
     ev5: D8[A, B, C, D, F, G, H, I], ev6: D8[A, B, C, E, F, G, H, I], ev7: D8[A, B, D, E, F, G, H, I],
     ev8: D8[A, C, D, E, F, G, H, I], ev9: D8[B, C, D, E, F, G, H, I]): Distinct9[A, B, C, D, E, F, G, H, I] =
     new Distinct9[A, B, C, D, E, F, G, H, I]
+}
+
+object OneOf {
+  type Not[A] = A => Nothing
+  type NotNot[A] = Not[Not[A]]
+
+  type Or2[R, S] = Not[Not[R] with Not[S]]
+  type OneOf2[R, S] = { type L[B] = NotNot[B] <:< Or2[R, S] }
+
+  type Or3[R, S, T] = Not[Not[R] with Not[S] with Not[T]]
+  type OneOf3[R, S, T] = { type L[B] = NotNot[B] <:< Or3[R, S, T] }
+
+  type Or4[R, S, T, U] = Not[Not[R] with Not[S] with Not[T] with Not[U]]
+  type OneOf4[R, S, T, U] = { type L[B] = NotNot[B] <:< Or4[R, S, T, U] }
+
+  type Or5[R, S, T, U, V] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V]]
+  type OneOf5[R, S, T, U, V] = { type L[B] = NotNot[B] <:< Or5[R, S, T, U, V] }
+
+  type Or6[R, S, T, U, V, W] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W]]
+  type OneOf6[R, S, T, U, V, W] = { type L[B] = NotNot[B] <:< Or6[R, S, T, U, V, W] }
+
+  type Or7[R, S, T, U, V, W, X] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X]]
+  type OneOf7[R, S, T, U, V, W, X] = { type L[B] = NotNot[B] <:< Or7[R, S, T, U, V, W, X] }
+
+  type Or8[R, S, T, U, V, W, X, Y] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X] with Not[Y]]
+  type OneOf8[R, S, T, U, V, W, X, Y] = { type L[B] = NotNot[B] <:< Or8[R, S, T, U, V, W, X, Y] }
+
+  type Or9[R, S, T, U, V, W, X, Y, Z] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X] with Not[Y] with Not[Z]]
+  type OneOf9[R, S, T, U, V, W, X, Y, Z] = { type L[B] = NotNot[B] <:< Or9[R, S, T, U, V, W, X, Y, Z] }
 }
 

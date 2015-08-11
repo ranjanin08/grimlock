@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,16 +25,12 @@ import au.com.cba.omnia.grimlock.framework.sample._
 import au.com.cba.omnia.grimlock.framework.squash._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 import au.com.cba.omnia.grimlock.framework.window._
 
 import java.util.regex.Pattern
 
 import scala.reflect.ClassTag
-
-sealed trait Tuner extends java.io.Serializable
-case class InMemory() extends Tuner
-case class Reducers(reducers: Int = 108) extends Tuner
-case class Unbalanced(reducers: Int = 108) extends Tuner
 
 /**
  * Cell in a matrix.
@@ -462,6 +458,23 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
   type Predicate = Cell[P] => Boolean
 
+  /** Shorthand for tuners that can only tune the number of reducers. */
+  type TP2 = (OneOf2[Default[NoParameters.type], Default[Reducers]])
+
+  /** Shorthand for tuners that can tune 4 ways, only ever with a single parameter. */
+  type TP4 = (OneOf4[InMemory[NoParameters.type], Default[NoParameters.type], Default[Reducers], Unbalanced[Reducers]])
+
+  /** Shorthand for `join` tuner parameters. */
+  type JP = (OneOf7[InMemory[NoParameters.type], InMemory[Reducers],
+                    Default[Sequence2[NoParameters.type, NoParameters.type]],
+                    Default[Sequence2[NoParameters.type, Reducers]], Default[Sequence2[Reducers, Reducers]],
+                    Unbalanced[Sequence2[NoParameters.type, Reducers]], Unbalanced[Sequence2[Reducers, Reducers]]])
+
+  /** Shorthand for `pairwise` tuner parameters. */
+  type PP = (OneOf3[InMemory[NoParameters.type],
+                    Default[Sequence2[Sequence2[Reducers, Reducers], Sequence2[Reducers, Reducers]]],
+                    Unbalanced[Sequence2[Sequence2[Reducers, Reducers], Sequence2[Reducers, Reducers]]]])
+
   /**
    * Change the variable type of `positions` in a matrix.
    *
@@ -472,8 +485,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]' with the changed contents.
    */
-  def change[D <: Dimension, T](slice: Slice[P, D], positions: T, schema: Schema, tuner: Tuner = InMemory())(
-    implicit ev1: PosDimDep[P, D], ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
+  def change[D <: Dimension, I, T](slice: Slice[P, D], positions: I, schema: Schema, tuner: T = InMemory())(
+    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S],
+      ev4: TP4#L[T]): U[Cell[P]]
 
   /** Return all possible positions of a matrix. */
   def domain(): U[P]
@@ -486,8 +500,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]' of the `positions` together with their content.
    */
-  def get[T](positions: T, tuner: Tuner = InMemory())(implicit ev1: PositionDistributable[T, P, U],
-    ev2: ClassTag[P]): U[Cell[P]]
+  def get[I, T](positions: I, tuner: T = InMemory())(implicit ev1: PositionDistributable[I, P, U], ev2: ClassTag[P],
+    ev3: TP4#L[T]): U[Cell[P]]
 
   /**
    * Join two matrices.
@@ -499,8 +513,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[P]]` consisting of the inner-join of the two matrices.
    */
   // TODO: Add inner/left/right/outer join functionality?
-  def join[D <: Dimension](slice: Slice[P, D], that: S, tuner: Tuner = Unbalanced())(implicit ev1: PosDimDep[P, D],
-    ev2: P =!= Position1D, ev3: ClassTag[slice.S]): U[Cell[P]]
+  def join[D <: Dimension, T](slice: Slice[P, D], that: S, tuner: T = Default(NoParameters, NoParameters))(
+    implicit ev1: PosDimDep[P, D], ev2: P =!= Position1D, ev3: ClassTag[slice.S], ev4: JP#L[T]): U[Cell[P]]
 
   /**
    * Returns the distinct position(s) (or names) for a given `slice`.
@@ -527,9 +541,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, operators: T, tuner: Tuner)(
-    implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+  def pairwise[D <: Dimension, Q <: Position, F, T](slice: Slice[P, D], comparer: Comparer, operators: F, tuner: T)(
+    implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all pairs of values given a slice with a user supplied value.
@@ -542,9 +556,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, operators: T,
-    value: E[W], tuner: Tuner)(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[T, slice.S, slice.R, Q, W],
-      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+  def pairwiseWithValue[D <: Dimension, Q <: Position, F, W, T](slice: Slice[P, D], comparer: Comparer, operators: F,
+    value: E[W], tuner: T)(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[F, slice.S, slice.R, Q, W],
+      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all values of this and that given a slice.
@@ -557,9 +571,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetween[D <: Dimension, Q <: Position, T](slice: Slice[P, D], comparer: Comparer, that: S, operators: T,
-    tuner: Tuner)(implicit ev1: PosDimDep[P, D], ev2: Operable[T, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
-      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+  def pairwiseBetween[D <: Dimension, Q <: Position, F, T](slice: Slice[P, D], comparer: Comparer, that: S,
+    operators: F, tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q],
+      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all values of this and that given a slice with a user supplied value.
@@ -573,10 +587,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], comparer: Comparer, that: S,
-    operators: T, value: E[W], tuner: Tuner)(implicit ev1: PosDimDep[P, D],
-      ev2: OperableWithValue[T, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-      ev5: ClassTag[slice.R]): U[Cell[Q]]
+  def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, F, W, T](slice: Slice[P, D], comparer: Comparer, that: S,
+    operators: F, value: E[W], tuner: T)(implicit ev1: PosDimDep[P, D],
+      ev2: OperableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
+      ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]]
 
   /**
    * Rename the coordinates of a dimension.
@@ -595,7 +609,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]` where the position has been renamed.
    */
-  def renameWithValue[V](renamer: (Cell[P], V) => P, value: E[V]): U[Cell[P]]
+  def renameWithValue[W](renamer: (Cell[P], W) => P, value: E[W]): U[Cell[P]]
 
   /**
    * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
@@ -604,7 +618,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]` with the sampled cells.
    */
-  def sample[T](samplers: T)(implicit ev: Sampleable[T, P]): U[Cell[P]]
+  def sample[F](samplers: F)(implicit ev: Sampleable[F, P]): U[Cell[P]]
 
   /**
    * Sample a matrix according to some `sampler` using a user supplied value. It keeps only those cells for which
@@ -615,7 +629,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]` with the sampled cells.
    */
-  def sampleWithValue[T, W](samplers: T, value: E[W])(implicit ev: SampleableWithValue[T, P, W]): U[Cell[P]]
+  def sampleWithValue[F, W](samplers: F, value: E[W])(implicit ev: SampleableWithValue[F, P, W]): U[Cell[P]]
 
   /**
    * Set `value` as the content for all `positions` in a matrix.
@@ -626,8 +640,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]' where the `positions` have `value` as their content.
    */
-  def set[T](positions: T, value: Content, tuner: Tuner = Unbalanced())(implicit ev1: PositionDistributable[T, P, U],
-    ev2: ClassTag[P]): U[Cell[P]]
+  def set[I, T](positions: I, value: Content, tuner: T = Default())(implicit ev1: PositionDistributable[I, P, U],
+    ev2: ClassTag[P], ev3: TP2#L[T]): U[Cell[P]]
 
   /**
    * Set the `values` in a matrix.
@@ -637,7 +651,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]' with the `values` set.
    */
-  def set[T](values: T, tuner: Tuner = Unbalanced())(implicit ev1: Matrixable[T, P, U], ev2: ClassTag[P]): U[Cell[P]]
+  def set[M, T](values: M, tuner: T = Default())(implicit ev1: Matrixable[M, P, U], ev2: ClassTag[P],
+    ev3: TP2#L[T]): U[Cell[P]]
 
   /**
    * Returns the shape of the matrix.
@@ -669,8 +684,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]' of the remaining content.
    */
-  def slice[D <: Dimension, T](slice: Slice[P, D], positions: T, keep: Boolean, tuner: Tuner = InMemory())(
-    implicit ev1: PosDimDep[P, D], ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S]): U[Cell[P]]
+  def slice[D <: Dimension, I, T](slice: Slice[P, D], positions: I, keep: Boolean, tuner: T = InMemory())(
+    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S],
+      ev4: TP4#L[T]): U[Cell[P]]
 
   /**
    * Create window based derived data.
@@ -681,9 +697,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def slide[D <: Dimension, Q <: Position, T](slice: Slice[P, D], windows: T, tuner: Reducers = Reducers())(
-    implicit ev1: PosDimDep[P, D], ev2: Windowable[T, slice.S, slice.R, Q], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+  def slide[D <: Dimension, Q <: Position, F, T](slice: Slice[P, D], windows: F, tuner: T = Default())(
+    implicit ev1: PosDimDep[P, D], ev2: Windowable[F, slice.S, slice.R, Q], ev3: slice.R =!= Position0D,
+    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: TP2#L[T]): U[Cell[Q]]
 
   /**
    * Create window based derived data with a user supplied value.
@@ -695,9 +711,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def slideWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], windows: T, value: E[W],
-    tuner: Reducers = Reducers())(implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[T, slice.S, slice.R, Q, W],
-      ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R]): U[Cell[Q]]
+  def slideWithValue[D <: Dimension, Q <: Position, F, W, T](slice: Slice[P, D], windows: F, value: E[W],
+    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[F, slice.S, slice.R, Q, W],
+      ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: TP2#L[T]): U[Cell[Q]]
 
   /**
    * Partition a matrix according to `partitioner`.
@@ -706,7 +722,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[(Q, Cell[P])]` where `Q` is the partition for the corresponding tuple.
    */
-  def split[Q, T](partitioners: T)(implicit ev: Partitionable[T, P, Q]): U[(Q, Cell[P])]
+  def split[Q, F](partitioners: F)(implicit ev: Partitionable[F, P, Q]): U[(Q, Cell[P])]
 
   /**
    * Partition a matrix according to `partitioner` using a user supplied value.
@@ -716,8 +732,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[(Q, Cell[P])]` where `Q` is the partition for the corresponding tuple.
    */
-  def splitWithValue[Q, T, W](partitioners: T, value: E[W])(
-    implicit ev: PartitionableWithValue[T, P, Q, W]): U[(Q, Cell[P])]
+  def splitWithValue[Q, F, W](partitioners: F, value: E[W])(
+    implicit ev: PartitionableWithValue[F, P, Q, W]): U[(Q, Cell[P])]
 
   /**
    * Stream this matrix through `command` and apply `script`.
@@ -744,8 +760,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summarise[D <: Dimension, Q <: Position, T](slice: Slice[P, D], aggregators: T, tuner: Reducers = Reducers())(
-    implicit ev1: PosDimDep[P, D], ev2: Aggregatable[T, P, slice.S, Q], ev3: ClassTag[slice.S]): U[Cell[Q]]
+  def summarise[D <: Dimension, Q <: Position, F, T](slice: Slice[P, D], aggregators: F, tuner: T = Default())(
+    implicit ev1: PosDimDep[P, D], ev2: Aggregatable[F, P, slice.S, Q], ev3: ClassTag[slice.S],
+      ev4: TP2#L[T]): U[Cell[Q]]
 
   /**
    * Summarise a matrix, using a user supplied value, and return the aggregates.
@@ -757,9 +774,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summariseWithValue[D <: Dimension, Q <: Position, T, W](slice: Slice[P, D], aggregators: T, value: E[W],
-    tuner: Reducers = Reducers())(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[T, P, slice.S, Q, W],
-      ev3: ClassTag[slice.S]): U[Cell[Q]]
+  def summariseWithValue[D <: Dimension, Q <: Position, F, W, T](slice: Slice[P, D], aggregators: F, value: E[W],
+    tuner: T= Default())(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[F, P, slice.S, Q, W],
+      ev3: ClassTag[slice.S], ev4: TP2#L[T]): U[Cell[Q]]
 
   /**
    * Convert a matrix to an in-memory `Map`.
@@ -780,8 +797,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @note Avoid using this for very large matrices.
    */
-  def toMap[D <: Dimension](slice: Slice[P, D], tuner: Reducers = Reducers())(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S]): E[Map[slice.S, slice.C]]
+  def toMap[D <: Dimension, T](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: TP2#L[T]): E[Map[slice.S, slice.C]]
 
   /**
    * Transform the content of a matrix.
@@ -790,7 +807,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[Q]]` with the transformed cells.
    */
-  def transform[Q <: Position, T](transformers: T)(implicit ev: Transformable[T, P, Q]): U[Cell[Q]]
+  def transform[Q <: Position, F](transformers: F)(implicit ev: Transformable[F, P, Q]): U[Cell[Q]]
 
   /**
    * Transform the content of a matrix using a user supplied value.
@@ -800,8 +817,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]` with the transformed cells.
    */
-  def transformWithValue[Q <: Position, T, W](transformers: T, value: E[W])(
-    implicit ev: TransformableWithValue[T, P, Q, W]): U[Cell[Q]]
+  def transformWithValue[Q <: Position, F, W](transformers: F, value: E[W])(
+    implicit ev: TransformableWithValue[F, P, Q, W]): U[Cell[Q]]
 
   /**
    * Returns the variable type of the content(s) for a given `slice`.
@@ -814,8 +831,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @see [[Types]]
    */
-  def types[D <: Dimension](slice: Slice[P, D], specific: Boolean = false, tuner: Reducers = Reducers())(
-    implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S]): U[(slice.S, Type)]
+  def types[D <: Dimension, T](slice: Slice[P, D], specific: Boolean = false, tuner: T = Default())(
+    implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S],
+      ev4: TP2#L[T]): U[(slice.S, Type)]
 
   /** Return the unique (distinct) contents of an entire matrix. */
   def unique(): U[Content]
@@ -845,11 +863,13 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice     Encapsulates the dimension(s) to query.
    * @param positions The position(s) within the dimension(s) to query.
    * @param predicate The predicate used to filter the contents.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[P]' of the positions for which the content matches `predicate`.
    */
-  def which[D <: Dimension, T](slice: Slice[P, D], positions: T, predicate: Predicate)(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P]): U[P]
+  def which[D <: Dimension, I, T](slice: Slice[P, D], positions: I, predicate: Predicate, tuner: T = InMemory())(
+    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
+      ev5: TP4#L[T]): U[P]
 
   /**
    * Query the contents of one of more positions of a matrix and return the positions of those that match the
@@ -858,11 +878,13 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param slice   Encapsulates the dimension(s) to query.
    * @param pospred The list of position(s) within the dimension(s) to query together with the predicates used to
    *                filter the contents.
+   * @param tuner   The tuner for the job.
    *
    * @return A `U[P]' of the positions for which the content matches predicates.
    */
-  def which[D <: Dimension, T](slice: Slice[P, D], pospred: List[(T, Predicate)])(implicit ev1: PosDimDep[P, D],
-    ev2: Nameable[T, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P]): U[P]
+  def which[D <: Dimension, I, T](slice: Slice[P, D], pospred: List[(I, Predicate)], tuner: T = InMemory())(
+    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
+      ev5: TP4#L[T]): U[P]
 
   protected def toString(t: Cell[P], separator: String, descriptive: Boolean): String = {
     t.toString(separator, descriptive)
@@ -880,27 +902,33 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
 trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] =>
+  /** Shorthand for `fill` tuner parameters. */
+  type FP = (OneOf4[InMemory[NoParameters.type], InMemory[Reducers], Default[NoParameters.type], Default[Reducers]])
+
   /**
    * Fill a matrix with `values` for a given `slice`.
    *
    * @param slice  Encapsulates the dimension(s) on which to fill.
    * @param values The content to fill a matrix with.
+   * @param tuner  The tuner for the job.
    *
    * @return A `U[Cell[P]]` where all missing values have been filled in.
    *
    * @note This joins `values` onto this matrix, as such it can be used for imputing missing values.
    */
-  def fill[D <: Dimension, Q <: Position](slice: Slice[P, D], values: U[Cell[Q]])(implicit ev1: PosDimDep[P, D],
-    ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q): U[Cell[P]]
+  def fill[D <: Dimension, Q <: Position, T](slice: Slice[P, D], values: U[Cell[Q]], tuner: T = Default())(
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
+      ev5: FP#L[T]): U[Cell[P]]
 
   /**
    * Fill a matrix with `value`.
    *
    * @param value The content to fill a matrix with.
+   * @param tuner The tuner for the job.
    *
    * @return A `U[Cell[P]]` where all missing values have been filled in.
    */
-  def fill(value: Content)(implicit ev: ClassTag[P]): U[Cell[P]]
+  def fill[T](value: Content, tuner: T = Default())(implicit ev1: ClassTag[P], ev2: TP2#L[T]): U[Cell[P]]
 
   /**
    * Melt one dimension of a matrix into another.
@@ -914,18 +942,20 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    * @note A melt coordinate is always a string value constructed from the string representation of the `dim` and
    *       `into` coordinates.
    */
-  def melt[D <: Dimension, F <: Dimension](dim: D, into: F, separator: String = ".")(implicit ev1: PosDimDep[P, D],
-    ev2: PosDimDep[P, F], ne: D =!= F): U[Cell[P#L]]
+  def melt[D <: Dimension, G <: Dimension](dim: D, into: G, separator: String = ".")(implicit ev1: PosDimDep[P, D],
+    ev2: PosDimDep[P, G], ne: D =!= G): U[Cell[P#L]]
 
   /**
    * Squash a dimension of a matrix.
    *
    * @param dim      The dimension to squash.
    * @param squasher The squasher that reduces two cells.
+   * @param tuner    The tuner for the job.
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squash[D <: Dimension, T](dim: D, squasher: T)(implicit ev1: PosDimDep[P, D], ev2: Squashable[T, P]): U[Cell[P#L]]
+  def squash[D <: Dimension, F, T](dim: D, squasher: F, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+    ev2: Squashable[F, P], ev3: TP2#L[T]): U[Cell[P#L]]
 
   /**
    * Squash a dimension of a matrix with a user supplied value.
@@ -933,11 +963,12 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    * @param dim      The dimension to squash.
    * @param squasher The squasher that reduces two cells.
    * @param value    The user supplied value.
+   * @param tuner    The tuner for the job.
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squashWithValue[D <: Dimension, T, W](dim: D, squasher: T, value: E[W])(implicit ev1: PosDimDep[P, D],
-    ev2: SquashableWithValue[T, P, W]): U[Cell[P#L]]
+  def squashWithValue[D <: Dimension, F, W, T](dim: D, squasher: F, value: E[W], tuner: T = Default())(
+    implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: TP2#L[T]): U[Cell[P#L]]
 }
 
 /** Base trait for methods that expands the number of dimension of a matrix. */
@@ -959,7 +990,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
-  def expandWithValue[Q <: Position, V](expander: (Cell[P], V) => Q, value: E[V])(
+  def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => Q, value: E[W])(
     implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
 }
 

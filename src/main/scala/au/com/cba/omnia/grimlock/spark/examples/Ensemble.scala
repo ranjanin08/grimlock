@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -140,7 +140,7 @@ object Ensemble {
       .slice(Over(Second), "label", true)
       .sampleWithValue(SampleByScore(), scores)
       .renameWithValue(renameWithScore, scores)
-      .gini(Over(Second))
+      .gini(Over(Second), ptuner=InMemory())
       .save(s"./demo.${output}/ensemble.gini.out")
   }
 }

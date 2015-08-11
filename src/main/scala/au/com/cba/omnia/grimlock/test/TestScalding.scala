@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ class TestScalding1(args : Args) extends Job(args) {
 
   data
     .set(Position3D("iid:1548763", "fid:Y", DateCodex.decode("2014-04-26").get),
-      Content(ContinuousSchema[Codex.LongCodex](), 1234))
+      Content(ContinuousSchema[Codex.LongCodex](), 1234), Default())
     .slice(Over(First), "iid:1548763", true)
     .save("./tmp.scalding/dat2.out", descriptive=true)
 
@@ -410,7 +410,8 @@ class TestScalding13(args : Args) extends Job(args) {
     .saveAsCSV(Over(Second), "./tmp.scalding/fll2.out")
 
   data
-    .fill(Over(Second), all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
+    .fill[Dimension.Second, Position1D, Default[NoParameters.type]](Over(Second),
+      all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
     .join(Over(First), inds)
     .saveAsCSV(Over(Second), "./tmp.scalding/fll4.out")
 }
@@ -535,7 +536,7 @@ class TestScalding18(args : Args) extends Job(args) {
     .summarise(Along(First), aggregators)
 
   val rem = stats
-    .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2)
+    .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2, InMemory())
     .names(Over(First))
 
   data
@@ -691,7 +692,7 @@ class TestScalding24(args: Args) extends Job(args) {
   val data = loadTable(args("path") + "/somePairwise2.txt", schema, separator="|")
 
   data
-    .correlation(Over(Second))
+    .correlation(Over(Second), ptuner=InMemory())
     .save("./tmp.scalding/pws2.out")
 
   val schema2 = List(("day", NominalSchema[Codex.StringCodex]()),
@@ -701,14 +702,14 @@ class TestScalding24(args: Args) extends Job(args) {
   val data2 = loadTable(args("path") + "/somePairwise3.txt", schema2, separator="|")
 
   data2
-    .correlation(Over(Second))
+    .correlation(Over(Second), ptuner=InMemory())
     .save("./tmp.scalding/pws3.out")
 }
 
 class TestScalding25(args: Args) extends Job(args) {
 
   load2D(args("path") + "/mutualInputfile.txt")
-    .mutualInformation(Over(Second))
+    .mutualInformation(Over(Second), ptuner=InMemory())
     .save("./tmp.scalding/mi.out")
 }
 
@@ -832,12 +833,12 @@ class TestScalding29(args: Args) extends Job(args) {
     ("mod:456", "iid:H", Content(schema, 0)))
 
   data
-    .gini(Over(First))
+    .gini(Over(First), ptuner=InMemory())
     .save("./tmp.scalding/gini.out")
 
   data
     .map { case (a, b, c) => (b, a, c) }
-    .gini(Along(First))
+    .gini(Along(First), ptuner=InMemory())
     .save("./tmp.scalding/inig.out")
 }
 
