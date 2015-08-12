@@ -234,32 +234,48 @@ object Distinct9 {
     new Distinct9[A, B, C, D, E, F, G, H, I]
 }
 
+/** Base trait for specifying `B` should be one of a number of types. */
+trait OneOf {
+  /** Check if `B` conforms to the set of allowed types. */
+  type L[B]
+}
+
+/** Companion object to `OneOf` trait. */
 object OneOf {
-  type Not[A] = A => Nothing
-  type NotNot[A] = Not[Not[A]]
+  private type Not[A] = A => Nothing
+  private type NotNot[A] = Not[Not[A]]
 
-  type Or2[R, S] = Not[Not[R] with Not[S]]
-  type OneOf2[R, S] = { type L[B] = NotNot[B] <:< Or2[R, S] }
+  private type Or2[R, S] = Not[Not[R] with Not[S]]
+  private type Or3[R, S, T] = Not[Not[R] with Not[S] with Not[T]]
+  private type Or4[R, S, T, U] = Not[Not[R] with Not[S] with Not[T] with Not[U]]
+  private type Or5[R, S, T, U, V] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V]]
+  private type Or6[R, S, T, U, V, W] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W]]
+  private type Or7[R, S, T, U, V, W, X] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X]]
+  private type Or8[R, S, T, U, V, W, X, Y] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X] with Not[Y]]
+  private type Or9[R, S, T, U, V, W, X, Y, Z] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X] with Not[Y] with Not[Z]]
 
-  type Or3[R, S, T] = Not[Not[R] with Not[S] with Not[T]]
-  type OneOf3[R, S, T] = { type L[B] = NotNot[B] <:< Or3[R, S, T] }
+  /** Type constraint to ensure `B` is either `R` or `S`. */
+  type OneOf2[R, S] = OneOf { type L[B] = NotNot[B] <:< Or2[R, S] }
 
-  type Or4[R, S, T, U] = Not[Not[R] with Not[S] with Not[T] with Not[U]]
-  type OneOf4[R, S, T, U] = { type L[B] = NotNot[B] <:< Or4[R, S, T, U] }
+  /** Type constraint to ensure `B` is either `R`, `S` or `T`. */
+  type OneOf3[R, S, T] = OneOf { type L[B] = NotNot[B] <:< Or3[R, S, T] }
 
-  type Or5[R, S, T, U, V] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V]]
-  type OneOf5[R, S, T, U, V] = { type L[B] = NotNot[B] <:< Or5[R, S, T, U, V] }
+  /** Type constraint to ensure `B` is either `R`, `S`, `T` or `U`. */
+  type OneOf4[R, S, T, U] = OneOf { type L[B] = NotNot[B] <:< Or4[R, S, T, U] }
 
-  type Or6[R, S, T, U, V, W] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W]]
-  type OneOf6[R, S, T, U, V, W] = { type L[B] = NotNot[B] <:< Or6[R, S, T, U, V, W] }
+  /** Type constraint to ensure `B` is either `R`, `S`, `T`, `U` or `V`. */
+  type OneOf5[R, S, T, U, V] = OneOf { type L[B] = NotNot[B] <:< Or5[R, S, T, U, V] }
 
-  type Or7[R, S, T, U, V, W, X] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X]]
-  type OneOf7[R, S, T, U, V, W, X] = { type L[B] = NotNot[B] <:< Or7[R, S, T, U, V, W, X] }
+  /** Type constraint to ensure `B` is either `R`, `S`, `T`, `U`, `V` or `W`. */
+  type OneOf6[R, S, T, U, V, W] = OneOf { type L[B] = NotNot[B] <:< Or6[R, S, T, U, V, W] }
 
-  type Or8[R, S, T, U, V, W, X, Y] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X] with Not[Y]]
-  type OneOf8[R, S, T, U, V, W, X, Y] = { type L[B] = NotNot[B] <:< Or8[R, S, T, U, V, W, X, Y] }
+  /** Type constraint to ensure `B` is either `R`, `S`, `T`, `U`, `V`, `W` or `X`. */
+  type OneOf7[R, S, T, U, V, W, X] = OneOf { type L[B] = NotNot[B] <:< Or7[R, S, T, U, V, W, X] }
 
-  type Or9[R, S, T, U, V, W, X, Y, Z] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X] with Not[Y] with Not[Z]]
-  type OneOf9[R, S, T, U, V, W, X, Y, Z] = { type L[B] = NotNot[B] <:< Or9[R, S, T, U, V, W, X, Y, Z] }
+  /** Type constraint to ensure `B` is either `R`, `S`, `T`, `U`, `V`, `W`, `X` or `Y`. */
+  type OneOf8[R, S, T, U, V, W, X, Y] = OneOf { type L[B] = NotNot[B] <:< Or8[R, S, T, U, V, W, X, Y] }
+
+  /** Type constraint to ensure `B` is either `R`, `S`, `T`, `U`, `V`, `W, `X`, `Y` or `Z`. */
+  type OneOf9[R, S, T, U, V, W, X, Y, Z] = OneOf { type L[B] = NotNot[B] <:< Or9[R, S, T, U, V, W, X, Y, Z] }
 }
 
