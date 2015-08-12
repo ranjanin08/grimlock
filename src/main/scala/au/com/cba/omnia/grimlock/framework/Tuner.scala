@@ -31,11 +31,12 @@ case class Sequence2[F <: TunerParameters, S <: TunerParameters](first: F, secon
   type P = Sequence2[F, S]
 }
 
-sealed trait Tuner[P <: TunerParameters] extends java.io.Serializable {
+sealed trait Tuner extends java.io.Serializable {
+  type P <: TunerParameters
   val parameters: P
 }
 
-case class InMemory[P <: TunerParameters](parameters: P = NoParameters) extends Tuner[P]
+case class InMemory[Q <: TunerParameters](parameters: Q = NoParameters) extends Tuner { type P = Q }
 
 object InMemory {
   def apply[F <: TunerParameters, S <: TunerParameters](f: F, s: S): InMemory[Sequence2[F, S]] = {
@@ -43,7 +44,7 @@ object InMemory {
   }
 }
 
-case class Default[P <: TunerParameters](parameters: P = NoParameters) extends Tuner[P]
+case class Default[Q <: TunerParameters](parameters: Q = NoParameters) extends Tuner { type P = Q }
 
 object Default {
   def apply[F <: TunerParameters, S <: TunerParameters](f: F, s: S): Default[Sequence2[F, S]] = {
@@ -51,7 +52,7 @@ object Default {
   }
 }
 
-case class Unbalanced[P <: TunerParameters](parameters: P) extends Tuner[P]
+case class Unbalanced[Q <: TunerParameters](parameters: Q) extends Tuner { type P = Q }
 
 object Unbalanced {
   def apply[F <: TunerParameters, S <: TunerParameters](f: F, s: S): Unbalanced[Sequence2[F, S]] = {

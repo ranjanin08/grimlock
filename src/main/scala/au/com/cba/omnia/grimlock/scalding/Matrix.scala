@@ -30,6 +30,7 @@ import au.com.cba.omnia.grimlock.framework.{
   Reducers,
   Sequence2,
   Tuner,
+  TunerParameters,
   Type,
   Unbalanced
 }
@@ -88,6 +89,41 @@ private[scalding] object ScaldingImplicits {
   implicit def serialisePosition[T <: Position](key: T): Array[Byte] = {
     key.toShortString("|").toCharArray.map(_.toByte)
   }
+
+  implicit class GroupedTuner[K <: Position, V](grouped: Grouped[K, V]) {
+    def tuneReducers(parameters: TunerParameters): Grouped[K, V] = {
+      parameters match {
+        case Reducers(reducers) => grouped.withReducers(reducers)
+        case _ => grouped
+      }
+    }
+
+    def tunedJoin[V2](tuner: Tuner, parameters: TunerParameters, smaller: TypedPipe[(K, V2)])(
+      implicit ev: Ordering[K]): TypedPipe[(K, (V, V2))] = {
+      (tuner, parameters) match {
+        case (Default(_), Reducers(reducers)) => grouped.withReducers(reducers).join(Grouped(smaller))
+        case (Unbalanced(_), Reducers(reducers)) => grouped.sketch(reducers).join(smaller)
+        case _ => grouped.join(Grouped(smaller))
+      }
+    }
+
+    def tunedLeftJoin[V2](tuner: Tuner, parameters: TunerParameters, smaller: TypedPipe[(K, V2)])(
+      implicit ev: Ordering[K]): TypedPipe[(K, (V, Option[V2]))] = {
+      (tuner, parameters) match {
+        case (Default(_), Reducers(reducers)) => grouped.withReducers(reducers).leftJoin(Grouped(smaller))
+        case (Unbalanced(_), Reducers(reducers)) => grouped.sketch(reducers).leftJoin(smaller)
+        case _ => grouped.leftJoin(Grouped(smaller))
+      }
+    }
+  }
+
+  implicit class PipeTuner[P](pipe: TypedPipe[P]) {
+    def mapSideJoin[V, Q](value: ValuePipe[V], f: (P, V) => Option[Q]): TypedPipe[Q] = {
+      pipe.flatMapWithValue(value) { case (c, vo) => f(c, vo.get) }
+    }
+
+    def toHashSet[Q](f: (P) => Q): ValuePipe[HashSet[Q]] = pipe.map { case p => HashSet(f(p)) }.sum
+  }
 }
 
 /** Base trait for matrix operations using a `TypedPipe[Cell[P]]`. */
@@ -98,66 +134,67 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   import ScaldingImplicits._
 
-  def change[D <: Dimension, I, T](slice: Slice[P, D], positions: I, schema: Schema, tuner: T)(
+  def change[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, schema: Schema, tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: BaseNameable[I, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S],
       ev4: TP4#L[T]): U[Cell[P]] = {
-    val pos = Grouped(ev2.convert(this, slice, positions))
+    val pos = ev2.convert(this, slice, positions)
     val update = (change: Boolean, cell: Cell[P]) => change match {
       case true => schema.decode(cell.content.value.toShortString).map { case con => Cell(cell.position, con) }
       case false => Some(cell)
     }
-    val group = () => data.groupBy { case c => slice.selected(c.position) }
-    val map = (pipe: TypedPipe[(slice.S, (Cell[P], Option[Long]))]) => pipe.flatMap {
-      case (_, (c, o)) => update(!o.isEmpty, c)
-    }
 
     tuner match {
-      case InMemory(NoParameters) =>
+      case InMemory(_) =>
         data
-          .flatMapWithValue(pos.map { case (p, _) => HashSet(p) }.sum) {
-            case (c, vo) => update(vo.get.contains(slice.selected(c.position)), c)
-          }
-      case Default(NoParameters) => map(group().leftJoin(pos))
-      case Default(Reducers(reducers)) => map(group().withReducers(reducers).leftJoin(pos))
-      case Unbalanced(Reducers(reducers)) => map(group().sketch(reducers).leftJoin(pos))
+          .mapSideJoin(pos.toHashSet[slice.S](_._1), (c: Cell[P], v: HashSet[slice.S]) =>
+            update(v.contains(slice.selected(c.position)), c))
+      case _ =>
+        data
+          .groupBy { case c => slice.selected(c.position) }
+          .tunedLeftJoin(tuner, tuner.parameters, pos)
+          .flatMap { case (_, (c, o)) => update(!o.isEmpty, c) }
     }
   }
 
-  def get[I, T](positions: I, tuner: T)(implicit ev1: PositionDistributable[I, P, TypedPipe], ev2: ClassTag[P],
+  def get[I, T <: Tuner](positions: I, tuner: T)(implicit ev1: PositionDistributable[I, P, TypedPipe], ev2: ClassTag[P],
     ev3: TP4#L[T]): U[Cell[P]] = {
     val pos = ev1.convert(positions)
-    val group = () => data.groupBy { case c => c.position }
-    val map = (pipe: TypedPipe[(P, (Cell[P], Unit))]) => pipe.map { case (_, (c, _)) => c }
 
     tuner match {
-      case InMemory(NoParameters) =>
+      case InMemory(_) =>
         data
-          .flatMapWithValue(pos.map { case p => HashSet(p) }.sum) {
-            case (c, vo) => if (vo.get.contains(c.position)) { Some(c) } else { None }
-          }
-      case Default(NoParameters) => map(group().join(pos.asKeys))
-      case Default(Reducers(reducers)) => map(group().withReducers(reducers).join(pos.asKeys))
-      case Unbalanced(Reducers(reducers)) => map(group().sketch(reducers).join(pos.map { case p => (p, ()) }))
+          .mapSideJoin(pos.toHashSet((p: P) => p), (c: Cell[P], v: HashSet[P]) =>
+            if (v.contains(c.position)) { Some(c) } else { None })
+      case _ =>
+        data
+          .groupBy { case c => c.position }
+          .tunedJoin(tuner, tuner.parameters, pos.map { case p => (p, ()) })
+          .map { case (_, (c, _)) => c }
     }
   }
 
-  def join[D <: Dimension, T](slice: Slice[P, D], that: S, tuner: T)(implicit ev1: PosDimDep[P, D],
+  def join[D <: Dimension, T <: Tuner](slice: Slice[P, D], that: S, tuner: T)(implicit ev1: PosDimDep[P, D],
     ev2: P =!= Position1D, ev3: ClassTag[slice.S], ev4: JP#L[T]): U[Cell[P]] = {
-    val group = () => (data ++ that.data).groupBy { case c => slice.selected(c.position) }
-    val map = (pipe: TypedPipe[(slice.S, (Cell[P], Unit))]) => pipe.map { case (_, (c, _)) => c }
+    val (p1, p2) = (tuner, tuner.parameters) match {
+      case (_, Sequence2(f, s)) => (f, s)
+      case (InMemory(_), p) => (p, NoParameters)
+      case (_, p) => (NoParameters, p)
+    }
     val keep = Grouped(names(slice))
-      .join(Grouped(that.names(slice))) // Does this need a withReducers or forceToDisk?
-      .map { case (p, _) => (p, ()) }
+      .tuneReducers(p1)
+      .join(Grouped(that.names(slice)))
+      .map { case (p, _) => (p, ()) } // Does this need a forceToDisk?
 
     tuner match {
       case InMemory(_) =>
         (data ++ that.data)
-          .flatMapWithValue(keep.map { case (p, _) => HashSet(p) }.sum) {
-            case (c, vo) => if (vo.get.contains(slice.selected(c.position))) { Some(c) } else { None }
-          }
-      case Default(Sequence2(_, NoParameters)) => map(group().join(keep))
-      case Default(Sequence2(_, Reducers(reducers))) => map(group().withReducers(reducers).join(keep))
-      case Unbalanced(Sequence2(_, Reducers(reducers))) => map(group().sketch(reducers).join(keep))
+          .mapSideJoin(keep.toHashSet[slice.S](_._1), (c: Cell[P], v: HashSet[slice.S]) =>
+            if (v.contains(slice.selected(c.position))) { Some(c) } else { None })
+      case _ =>
+        (data ++ that.data)
+          .groupBy { case c => slice.selected(c.position) }
+          .tunedJoin(tuner, p2, keep)
+          .map { case (_, (c, _)) => c }
     }
   }
 
@@ -166,41 +203,46 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     Names.number(data.map { case c => slice.selected(c.position) }.distinct)
   }
 
-  def pairwise[D <: Dimension, Q <: Position, F, T](slice: Slice[P, D], comparer: Comparer, operators: F, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]] = {
-    val o = ev2.convert(operators)
+  def pairwise[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], comparer: Comparer, operators: F,
+    tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
+      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]] = {
+    val operator = ev2.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, data)
-      .flatMap { case (lc, lr, rc, rr) => o.compute(lc, lr, rc, rr).toList }
+      .flatMap { case (lc, lr, rc, rr) => operator.compute(lc, lr, rc, rr).toList }
   }
 
-  def pairwiseWithValue[D <: Dimension, Q <: Position, F, W, T](slice: Slice[P, D], comparer: Comparer, operators: F,
-    value: E[W], tuner: T)(implicit ev1: PosDimDep[P, D], ev2: OperableWithValue[F, slice.S, slice.R, Q, W],
-      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]] = {
-    val o = ev2.convert(operators)
-
-    pairwiseTuples(slice, comparer, tuner)(data, data)
-      .flatMapWithValue(value) { case ((lc, lr, rc, rr), vo) => o.computeWithValue(lc, lr, rc, rr, vo.get).toList }
-  }
-
-  def pairwiseBetween[D <: Dimension, Q <: Position, F, T](slice: Slice[P, D], comparer: Comparer, that: S,
-    operators: F, tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q],
-      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]] = {
-    val o = ev2.convert(operators)
-
-    pairwiseTuples(slice, comparer, tuner)(data, that.data)
-      .flatMap { case (lc, lr, rc, rr) => o.compute(lc, lr, rc, rr).toList }
-  }
-
-  def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, F, W, T](slice: Slice[P, D], comparer: Comparer, that: S,
+  def pairwiseWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
     operators: F, value: E[W], tuner: T)(implicit ev1: PosDimDep[P, D],
       ev2: OperableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-      ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]] = {
-    val o = ev2.convert(operators)
+        ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]] = {
+    val operator = ev2.convert(operators)
+
+    pairwiseTuples(slice, comparer, tuner)(data, data)
+      .flatMapWithValue(value) {
+        case ((lc, lr, rc, rr), vo) => operator.computeWithValue(lc, lr, rc, rr, vo.get).toList
+      }
+  }
+
+  def pairwiseBetween[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], comparer: Comparer, that: S,
+    operators: F, tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q],
+      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]] = {
+    val operator = ev2.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, that.data)
-      .flatMapWithValue(value) { case ((lc, lr, rc, rr), vo) => o.computeWithValue(lc, lr, rc, rr, vo.get).toList }
+      .flatMap { case (lc, lr, rc, rr) => operator.compute(lc, lr, rc, rr).toList }
+  }
+
+  def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
+    that: S, operators: F, value: E[W], tuner: T)(implicit ev1: PosDimDep[P, D],
+      ev2: OperableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
+        ev5: ClassTag[slice.R], ev6: PP#L[T]): U[Cell[Q]] = {
+    val operator = ev2.convert(operators)
+
+    pairwiseTuples(slice, comparer, tuner)(data, that.data)
+      .flatMapWithValue(value) {
+        case ((lc, lr, rc, rr), vo) => operator.computeWithValue(lc, lr, rc, rr, vo.get).toList
+      }
   }
 
   def rename(renamer: (Cell[P]) => P): U[Cell[P]] = data.map { case c => Cell(renamer(c), c.content) }
@@ -221,23 +263,18 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.filterWithValue(value) { case (c, vo) => sampler.selectWithValue(c, vo.get) }
   }
 
-  def set[I, T](positions: I, value: Content, tuner: T)(implicit ev1: PositionDistributable[I, P, TypedPipe],
+  def set[I, T <: Tuner](positions: I, value: Content, tuner: T)(implicit ev1: PositionDistributable[I, P, TypedPipe],
     ev2: ClassTag[P], ev3: TP2#L[T]): U[Cell[P]] = {
     set(ev1.convert(positions).map { case p => Cell(p, value) }, tuner)
   }
 
-  def set[M, T](values: M, tuner: T)(implicit ev1: BaseMatrixable[M, P, TypedPipe], ev2: ClassTag[P],
+  def set[M, T <: Tuner](values: M, tuner: T)(implicit ev1: BaseMatrixable[M, P, TypedPipe], ev2: ClassTag[P],
     ev3: TP2#L[T]): U[Cell[P]] = {
-    val vals = ev1.convert(values).groupBy { case c => c.position }
-    val group = () => data.groupBy { case c => c.position }
-    val map = (pipe: TypedPipe[(P, (Option[Cell[P]], Option[Cell[P]]))]) => pipe.map {
-      case (_, (co, cn)) => cn.getOrElse(co.get)
-    }
-
-    tuner match {
-      case Default(NoParameters) => map(group().outerJoin(vals))
-      case Default(Reducers(reducers)) => map(group().withReducers(reducers).outerJoin(vals))
-    }
+    data
+      .groupBy { case c => c.position }
+      .tuneReducers(tuner.parameters)
+      .outerJoin(ev1.convert(values).groupBy { case c => c.position })
+      .map { case (_, (co, cn)) => cn.getOrElse(co.get) }
   }
 
   def shape(): U[Cell[Position1D]] = {
@@ -256,45 +293,37 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case sum => Cell(Position1D(dim.toString), Content(DiscreteSchema(LongCodex), sum)) }
   }
 
-  def slice[D <: Dimension, I, T](slice: Slice[P, D], positions: I, keep: Boolean, tuner: T)(
+  def slice[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, keep: Boolean, tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: BaseNameable[I, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S],
       ev4: TP4#L[T]): U[Cell[P]] = {
     val pos = ev2.convert(this, slice, positions)
-    val filter = (check: Boolean, cell: Cell[P]) => if (keep == check) { Some(cell) } else { None }
-    val group = () => data.groupBy { case c => slice.selected(c.position) }
-    val map = (pipe: TypedPipe[(slice.S, (Cell[P], Option[Long]))]) => pipe.flatMap {
-      case (_, (c, o)) => filter(!o.isEmpty, c)
-    }
 
     tuner match {
-      case InMemory(NoParameters) =>
+      case InMemory(_) =>
         data
-          .flatMapWithValue(pos.map { case (p, _) => HashSet(p) }.sum) {
-            case (c, vo) => filter(vo.get.contains(slice.selected(c.position)), c)
-          }
-      case Default(NoParameters) => map(group().leftJoin(Grouped(pos)))
-      case Default(Reducers(reducers)) => map(group().withReducers(reducers).leftJoin(Grouped(pos)))
-      case Unbalanced(Reducers(reducers)) => map(group().sketch(reducers).leftJoin(Grouped(pos)))
+          .mapSideJoin(pos.toHashSet[slice.S](_._1), (c: Cell[P], v: HashSet[slice.S]) =>
+            if (v.contains(slice.selected(c.position)) == keep) { Some(c) } else { None })
+      case _ =>
+        data
+          .groupBy { case c => slice.selected(c.position) }
+          .tunedLeftJoin(tuner, tuner.parameters, pos)
+          .collect { case (_, (c, o)) if (o.isEmpty != keep) => c }
     }
   }
 
-  def slide[D <: Dimension, Q <: Position, F, T](slice: Slice[P, D], windows: F, tuner: T)(
+  def slide[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], windows: F, tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: Windowable[F, slice.S, slice.R, Q], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: TP2#L[T]): U[Cell[Q]] = {
-    val w = ev2.convert(windows)
-    val group = () => data
+      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: TP2#L[T]): U[Cell[Q]] = {
+    val window = ev2.convert(windows)
+
+    data
       .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
       .groupBy { case (c, r) => c.position }
-    val grouped = tuner match {
-      case Default(NoParameters) => group()
-      case Default(Reducers(reducers)) => group().withReducers(reducers)
-    }
-
-    grouped
+      .tuneReducers(tuner.parameters)
       .sortBy { case (c, r) => r }
-      .scanLeft(Option.empty[(w.T, Collection[Cell[Q]])]) {
-        case (None, (c, r)) => Some(w.initialise(c, r))
-        case (Some((t, _)), (c, r)) => Some(w.present(c, r, t))
+      .scanLeft(Option.empty[(window.T, Collection[Cell[Q]])]) {
+        case (None, (c, r)) => Some(window.initialise(c, r))
+        case (Some((t, _)), (c, r)) => Some(window.present(c, r, t))
       }
       .flatMap {
         case (p, Some((t, c))) => c.toList
@@ -302,23 +331,19 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def slideWithValue[D <: Dimension, Q <: Position, F, W, T](slice: Slice[P, D], windows: F, value: E[W], tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: TP2#L[T]): U[Cell[Q]] = {
-    val w = ev2.convert(windows)
-    val group = () => data
+  def slideWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], windows: F, value: E[W],
+    tuner: T)(implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[F, slice.S, slice.R, Q, W],
+      ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: TP2#L[T]): U[Cell[Q]] = {
+    val window = ev2.convert(windows)
+
+    data
       .mapWithValue(value) { case (Cell(p, c), vo) => (Cell(slice.selected(p), c), slice.remainder(p), vo.get) }
       .groupBy { case (c, r, v) => c.position }
-    val grouped = tuner match {
-      case Default(NoParameters) => group()
-      case Default(Reducers(reducers)) => group().withReducers(reducers)
-    }
-
-    grouped
+      .tuneReducers(tuner.parameters)
       .sortBy { case (c, r, v) => r }
-      .scanLeft(Option.empty[(w.T, Collection[Cell[Q]])]) {
-        case (None, (c, r, v)) => Some(w.initialiseWithValue(c, r, v))
-        case (Some((t, _)), (c, r, v)) => Some(w.presentWithValue(c, r, v, t))
+      .scanLeft(Option.empty[(window.T, Collection[Cell[Q]])]) {
+        case (None, (c, r, v)) => Some(window.initialiseWithValue(c, r, v))
+        case (Some((t, _)), (c, r, v)) => Some(window.presentWithValue(c, r, v, t))
       }
       .flatMap {
         case (p, Some((t, c))) => c.toList
@@ -391,42 +416,40 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .flatMap(parser(_))
   }
 
-  def summarise[D <: Dimension, Q <: Position, F, T](slice: Slice[P, D], aggregators: F, tuner: T)(
+  def summarise[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], aggregators: F, tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: Aggregatable[F, P, slice.S, Q], ev3: ClassTag[slice.S],
       ev4: TP2#L[T]): U[Cell[Q]] = {
-    val a = ev2.convert(aggregators)
-    val group = () => Grouped(data.map { case c => (slice.selected(c.position), a.map { case b => b.prepare(c) }) })
-    val grouped = tuner match {
-      case Default(NoParameters) => group()
-      case Default(Reducers(reducers)) => group().withReducers(reducers)
-    }
+    val aggregator = ev2.convert(aggregators)
 
-    grouped
+    Grouped(data.map { case c => (slice.selected(c.position), aggregator.map { case a => a.prepare(c) }) })
+      .tuneReducers(tuner.parameters)
       .reduce[List[Any]] {
-        case (lt, rt) => (a, lt, rt).zipped.map { case (b, l, r) => b.reduce(l.asInstanceOf[b.T], r.asInstanceOf[b.T]) }
+        case (lt, rt) => (aggregator, lt, rt).zipped.map {
+          case (a, l, r) => a.reduce(l.asInstanceOf[a.T], r.asInstanceOf[a.T])
+        }
       }
-      .flatMap { case (p, t) => (a, t).zipped.flatMap { case (b, s) => b.present(p, s.asInstanceOf[b.T]).toList } }
+      .flatMap {
+        case (p, t) => (aggregator, t).zipped.flatMap { case (a, s) => a.present(p, s.asInstanceOf[a.T]).toList }
+      }
   }
 
-  def summariseWithValue[D <: Dimension, Q <: Position, F, W, T](slice: Slice[P, D], aggregators: F, value: E[W],
-    tuner: T)(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[F, P, slice.S, Q, W], ev3: ClassTag[slice.S],
-      ev4: TP2#L[T]): U[Cell[Q]] = {
-    val a = ev2.convert(aggregators)
-    val group = () => Grouped(data.mapWithValue(value) {
-      case (c, vo) => (slice.selected(c.position), a.map { case b => b.prepareWithValue(c, vo.get) })
-    })
-    val grouped = tuner match {
-      case Default(NoParameters) => group()
-      case Default(Reducers(reducers)) => group().withReducers(reducers)
-    }
+  def summariseWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], aggregators: F,
+    value: E[W], tuner: T)(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[F, P, slice.S, Q, W],
+      ev3: ClassTag[slice.S], ev4: TP2#L[T]): U[Cell[Q]] = {
+    val aggregator = ev2.convert(aggregators)
 
-    grouped
+    Grouped(data.mapWithValue(value) {
+      case (c, vo) => (slice.selected(c.position), aggregator.map { case a => a.prepareWithValue(c, vo.get) })
+    })
+      .tuneReducers(tuner.parameters)
       .reduce[List[Any]] {
-        case (lt, rt) => (a, lt, rt).zipped.map { case (b, l, r) => b.reduce(l.asInstanceOf[b.T], r.asInstanceOf[b.T]) }
+        case (lt, rt) => (aggregator, lt, rt).zipped.map {
+          case (a, l, r) => a.reduce(l.asInstanceOf[a.T], r.asInstanceOf[a.T])
+        }
       }
       .flatMapWithValue(value) {
-        case ((p, t), vo) => (a, t).zipped.flatMap {
-          case (b, s) => b.presentWithValue(p, s.asInstanceOf[b.T], vo.get).toList
+        case ((p, t), vo) => (aggregator, t).zipped.flatMap {
+          case (a, s) => a.presentWithValue(p, s.asInstanceOf[a.T], vo.get).toList
         }
       }
   }
@@ -437,17 +460,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .sum
   }
 
-  def toMap[D <: Dimension, T](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
-    ev3: ClassTag[slice.S], ev4: TP2#L[T]): E[Map[slice.S, slice.C]] = {
-    val group = () => data
+  def toMap[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: TP2#L[T]): E[Map[slice.S, slice.C]] = {
+    data
       .map { case c => (c.position, slice.toMap(c)) }
       .groupBy { case (p, m) => slice.selected(p) }
-    val grouped = tuner match {
-      case Default(NoParameters) => group()
-      case Default(Reducers(reducers)) => group().withReducers(reducers)
-    }
-
-    grouped
+      .tuneReducers(tuner.parameters)
       .reduce[(P, Map[slice.S, slice.C])] { case ((lp, lm), (rp, rm)) => (lp, slice.combineMaps(lp, lm, rm)) }
       .map { case (_, (_, m)) => m }
       .sum
@@ -466,15 +484,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMapWithValue(value) { case (c, vo) => transformer.presentWithValue(c, vo.get).toList }
   }
 
-  def types[D <: Dimension, T](slice: Slice[P, D], specific: Boolean, tuner: T)(implicit ev1: PosDimDep[P, D],
+  def types[D <: Dimension, T <: Tuner](slice: Slice[P, D], specific: Boolean, tuner: T)(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: TP2#L[T]): U[(slice.S, Type)] = {
-    val group = () => Grouped(data.map { case Cell(p, c) => (slice.selected(p), c.schema.kind) })
-    val grouped = tuner match {
-      case Default(NoParameters) => group()
-      case Default(Reducers(reducers)) => group().withReducers(reducers)
-    }
-
-    grouped
+    Grouped(data.map { case Cell(p, c) => (slice.selected(p), c.schema.kind) })
+      .tuneReducers(tuner.parameters)
       .reduce[Type] { case (lt, rt) => Type.getCommonType(lt, rt) }
       .map { case (p, t) => (p, if (specific) t else t.getGeneralisation()) }
   }
@@ -497,34 +510,29 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.collect { case c if predicate(c) => c.position }
   }
 
-  def which[D <: Dimension, I, T](slice: Slice[P, D], positions: I, predicate: Predicate, tuner: T)(
+  def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, predicate: Predicate, tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: BaseNameable[I, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S],
-    ev4: ClassTag[P], ev5: TP4#L[T]): U[P] = which(slice, List((positions, predicate)), tuner)
+      ev4: ClassTag[P], ev5: TP4#L[T]): U[P] = which(slice, List((positions, predicate)), tuner)
 
-  def which[D <: Dimension, I, T](slice: Slice[P, D], pospred: List[(I, Predicate)], tuner: T)(
+  def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], pospred: List[(I, Predicate)], tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: BaseNameable[I, P, slice.S, D, TypedPipe], ev3: ClassTag[slice.S],
-    ev4: ClassTag[P], ev5: TP4#L[T]): U[P] = {
-    val np = pospred.map { case (pos, pred) => ev2.convert(this, slice, pos).map { case (p, i) => (p, pred) } }
-    val pp = np.tail.foldLeft(np.head)((b, a) => b ++ a)
-    val group = () => data.groupBy { case c => slice.selected(c.position) }
-    val collect = (pipe: TypedPipe[(slice.S, (Cell[P], Predicate))]) =>
-      pipe.collect { case (_, (c, predicate)) if predicate(c) => c.position }
+      ev4: ClassTag[P], ev5: TP4#L[T]): U[P] = {
+    val pp = pospred
+      .map { case (pos, pred) => ev2.convert(this, slice, pos).map { case (p, i) => (p, pred) } }
+      .reduce((l, r) => l ++ r)
 
     tuner match {
-      case InMemory(NoParameters) =>
+      case InMemory(_) =>
         data
-          .flatMapWithValue(pp.map { case (pos, pred) => Map(pos -> List(pred)) }.sum) {
-            case (c, vo) =>
-              vo.get.get(slice.selected(c.position)).flatMap {
-                case lst => lst.exists((pred) => pred(c)) match {
-                  case true => Some(c.position)
-                  case false => None
-                }
-              }
-          }
-      case Default(NoParameters) => collect(group().join(Grouped(pp)))
-      case Default(Reducers(reducers)) => collect(group().withReducers(reducers).join(Grouped(pp)))
-      case Unbalanced(Reducers(reducers)) => collect(group().sketch(reducers).join(Grouped(pp)))
+          .mapSideJoin(pp.map { case (pos, pred) => Map(pos -> List(pred)) }.sum,
+            (c: Cell[P], v: Map[slice.S, List[Predicate]]) => v.get(slice.selected(c.position)).flatMap {
+              case lst => if (lst.exists((pred) => pred(c))) { Some(c.position) } else { None }
+            })
+      case _ =>
+        data
+          .groupBy { case c => slice.selected(c.position) }
+          .tunedJoin(tuner, tuner.parameters, pp)
+          .collect { case (_, (c, predicate)) if predicate(c) => c.position }
     }
   }
 
@@ -548,8 +556,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     Grouped(names)
   }
 
-  private def pairwiseTuples[D <: Dimension, T](slice: Slice[P, D], comparer: Comparer, tuner: T)(ldata: U[Cell[P]],
-    rdata: U[Cell[P]])(implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S],
+  private def pairwiseTuples[D <: Dimension, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
+    tuner: T)(ldata: U[Cell[P]], rdata: U[Cell[P]])(implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S],
       ev3: PP#L[T]): U[(Cell[slice.S], slice.R, Cell[slice.S], slice.R)] = {
     tuner match {
       case InMemory(_) =>
@@ -625,36 +633,35 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 /** Base trait for methods that reduce the number of dimensions or that can be filled using a `TypedPipe[Cell[P]]`. */
 trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduceableMatrix[P] { self: Matrix[P] =>
 
-  def fill[D <: Dimension, Q <: Position, T](slice: Slice[P, D], values: U[Cell[Q]], tuner: T)(
+  import ScaldingImplicits._
+
+  def fill[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]], tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
       ev5: FP#L[T]): U[Cell[P]] = {
-    val reducers = tuner match {
-      case InMemory(Reducers(r)) => r
-      case Default(Reducers(r)) => r
-      case _ => 108
+    val vals = values.groupBy { case c => c.position.asInstanceOf[slice.S] }
+    val dense = tuner match {
+      case InMemory(_) =>
+        domain
+          .mapSideJoin(vals.map { case (p, c) => Map(p -> c.content) }.sum, (p: P, v: Map[slice.S, Content]) =>
+            v.get(slice.selected(p)).map { case c => Cell(p, c) })
+      case _ =>
+        domain
+          .groupBy { case p => slice.selected(p) }
+          .tunedJoin(tuner, tuner.parameters, vals)
+          .map { case (_, (p, c)) => Cell(p, c.content) }
     }
-
-    val dense = domain
-      .groupBy { case p => slice.selected(p) }
-      .withReducers(reducers)
-      .join(values.groupBy { case c => c.position.asInstanceOf[slice.S] }) // Support in memory values
-      .map { case (_, (p, c)) => Cell(p, c.content) }
 
     dense
       .groupBy { case c => c.position }
-      .withReducers(reducers)
+      .tuneReducers(tuner.parameters)
       .leftJoin(data.groupBy { case c => c.position })
       .map { case (p, (fc, co)) => co.getOrElse(fc) }
   }
 
-  def fill[T](value: Content, tuner: T)(implicit ev1: ClassTag[P], ev2: TP2#L[T]): U[Cell[P]] = {
-    val group = () => domain.asKeys
-    val grouped = tuner match {
-      case Default(NoParameters) => group()
-      case Default(Reducers(reducers)) => group().withReducers(reducers)
-    }
-
-    grouped
+  def fill[T <: Tuner](value: Content, tuner: T)(implicit ev1: ClassTag[P], ev2: TP2#L[T]): U[Cell[P]] = {
+    domain
+      .asKeys
+      .tuneReducers(tuner.parameters)
       .leftJoin(data.groupBy { case c => c.position })
       .map { case (p, (_, co)) => co.getOrElse(Cell(p, value)) }
   }
@@ -664,30 +671,25 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
     data.map { case Cell(p, c) => Cell(p.melt(dim, into, separator), c) }
   }
 
-  def squash[D <: Dimension, F, T](dim: D, squasher: F, tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Squashable[F, P],
-    ev3: TP2#L[T]): U[Cell[P#L]] = {
+  def squash[D <: Dimension, F, T <: Tuner](dim: D, squasher: F, tuner: T)(implicit ev1: PosDimDep[P, D],
+    ev2: Squashable[F, P], ev3: TP2#L[T]): U[Cell[P#L]] = {
     val squash = ev2.convert(squasher)
-    val group = () => data.groupBy { case c => c.position.remove(dim) }
-    val grouped = tuner match {
-      case Default(NoParameters) => group()
-      case Default(Reducers(reducers)) => group().withReducers(reducers)
-    }
 
-    grouped
+    data
+      .groupBy { case c => c.position.remove(dim) }
+      .tuneReducers(tuner.parameters)
       .reduce[Cell[P]] { case (x, y) => squash.reduce(dim, x, y) }
       .map { case (p, c) => Cell(p, c.content) }
   }
 
-  def squashWithValue[D <: Dimension, F, W, T](dim: D, squasher: F, value: E[W], tuner: T)(
+  def squashWithValue[D <: Dimension, F, W, T <: Tuner](dim: D, squasher: F, value: E[W], tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: TP2#L[T]): U[Cell[P#L]] = {
     val squash = ev2.convert(squasher)
-    val group = () => data.leftCross(value).groupBy { case (c, vo) => c.position.remove(dim) }
-    val grouped = tuner match {
-      case Default(NoParameters) => group()
-      case Default(Reducers(reducers)) => group().withReducers(reducers)
-    }
 
-    grouped
+    data
+      .leftCross(value)
+      .groupBy { case (c, vo) => c.position.remove(dim) }
+      .tuneReducers(tuner.parameters)
       .reduce[(Cell[P], Option[W])] { case ((x, xvo), (y, yvo)) => (squash.reduceWithValue(dim, x, y, xvo.get), xvo) }
       .map { case (p, (c, _)) => Cell(p, c.content) }
   }
@@ -723,8 +725,8 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    *
    * @return A `U[Cell[Position1D]]` with all pairwise correlations.
    */
-  def correlation[D <: Dimension, ST, PT](slice: Slice[Position2D, D], stuner: ST = Default(), ptuner: PT)(
-    implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R], ev4: TP2#L[ST],
+  def correlation[D <: Dimension, ST <: Tuner, PT <: Tuner](slice: Slice[Position2D, D], stuner: ST = Default(),
+    ptuner: PT)(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R], ev4: TP2#L[ST],
       ev5: PP#L[PT]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
@@ -760,8 +762,8 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    *
    * @return A `U[Cell[Position1D]]` with all pairwise mutual information.
    */
-  def mutualInformation[D <: Dimension, ST, PT](slice: Slice[Position2D, D], stuner: ST = Default(), ptuner: PT)(
-    implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R], ev4: TP2#L[ST],
+  def mutualInformation[D <: Dimension, ST <: Tuner, PT <: Tuner](slice: Slice[Position2D, D], stuner: ST = Default(),
+    ptuner: PT)(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R], ev4: TP2#L[ST],
       ev5: PP#L[PT]): U[Cell[Position1D]] = {
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
@@ -819,9 +821,9 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    *
    * @return A `U[Cell[Position1D]]` with all pairwise Gini indices.
    */
-  def gini[D <: Dimension, T, PT](slice: Slice[Position2D, D], stuner: T = Default(), wtuner: T = Default(),
-    ptuner: PT)(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R], ev4: TP2#L[T],
-      ev5: PP#L[PT]): U[Cell[Position1D]] = {
+  def gini[D <: Dimension, T <: Tuner, PT <: Tuner](slice: Slice[Position2D, D], stuner: T = Default(),
+    wtuner: T = Default(), ptuner: PT)(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S],
+      ev3: ClassTag[slice.R], ev4: TP2#L[T], ev5: PP#L[PT]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
