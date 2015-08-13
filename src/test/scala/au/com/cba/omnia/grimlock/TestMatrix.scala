@@ -5872,7 +5872,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -5886,7 +5886,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
         cells.pairwise(Along(First), Lower, List(
           Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
           Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          Default(Redistribute(123), Redistribute(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -5899,7 +5899,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.pairwise(Over(Second), Lower, List(
           Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))), InMemory())
+          Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
+          Default(Redistribute(123), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -5911,7 +5912,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.pairwise(Along(Second), Lower, Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -5923,7 +5924,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          Default(Reducers(123), Redistribute(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -5936,7 +5937,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwise(Along(First), Lower, List(
           Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))), InMemory())
+          Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))),
+          Default(Reducers(123), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -5950,7 +5952,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
         cells.pairwise(Over(Second), Lower, List(
           Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
           Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
-          Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -5962,7 +5964,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwise(Along(Second), Lower, Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -5975,7 +5977,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwise(Over(Third), Lower, List(
           Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))), InMemory())
+          Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
+          Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -5987,7 +5990,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwise(Along(Third), Lower, Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-          Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -5999,7 +6002,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
         cells.pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position0D](),
-          ValuePipe(ext), Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ValuePipe(ext), Unbalanced(Reducers(123), Reducers(654)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
     }
@@ -6011,7 +6014,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          ValuePipe(ext), InMemory())
+          ValuePipe(ext), Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result13
     }
@@ -6023,8 +6026,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext),
-            Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext), InMemory())
     } Then {
       _.toList.sortBy(_.position) shouldBe result14
     }
@@ -6036,8 +6038,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext),
-            Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext), Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result15
     }
@@ -6049,7 +6050,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          ValuePipe(ext), InMemory())
+          ValuePipe(ext), Default(Redistribute(123), Redistribute(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result16
     }
@@ -6061,7 +6062,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position2D](),
-          ValuePipe(ext), Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ValuePipe(ext), Default(Redistribute(123), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result17
     }
@@ -6074,7 +6075,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
           TestMatrixPairwise.MinusX[Position2D, Position1D]()), ValuePipe(ext),
-            Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+            Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result18
     }
@@ -6086,7 +6087,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
-          TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext), InMemory())
+          TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext),
+            Default(Reducers(321), Redistribute(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result19
     }
@@ -6098,7 +6100,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          ValuePipe(ext), Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ValuePipe(ext), Default(Reducers(123), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result20
     }
@@ -6111,7 +6113,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwiseWithValue(Over(Third), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
           TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext),
-            Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+            Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result21
     }
@@ -6123,7 +6125,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.pairwiseWithValue(Along(Third), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          ValuePipe(ext), InMemory())
+          ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result22
     }
@@ -6138,7 +6140,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       (cells: TypedPipe[Cell[Position1D]], that: TypedPipe[Cell[Position1D]]) =>
         cells.pairwiseBetween(Over(First), Lower, that,
           Plus(Locate.OperatorString[Position1D, Position0D]("(%1$s+%2$s)")),
-            Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+            Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result23
     }
@@ -6153,7 +6155,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetween(Over(First), Lower, that,
           Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-            Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+            Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result24
     }
@@ -6168,7 +6170,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetween(Along(First), Lower, that, List(
           Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))), InMemory())
+          Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
+          Unbalanced(Reducers(123), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result25
     }
@@ -6184,7 +6187,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
         cells.pairwiseBetween(Over(Second), Lower, that, List(
           Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
           Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
-            Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+            Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result26
     }
@@ -6198,8 +6201,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetween(Along(Second), Lower, that,
-          Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-            Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")), InMemory())
     } Then {
       _.toList.sortBy(_.position) shouldBe result27
     }
@@ -6213,7 +6215,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetween(Over(First), Lower, that,
-          Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")), InMemory())
+          Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")), Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result28
     }
@@ -6229,7 +6231,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
         cells.pairwiseBetween(Along(First), Lower, that, List(
           Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
           Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))),
-            Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+            Default(Redistribute(123), Redistribute(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result29
     }
@@ -6245,7 +6247,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
         cells.pairwiseBetween(Over(Second), Lower, that, List(
           Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
           Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
-            Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+            Default(Redistribute(123), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result30
     }
@@ -6259,7 +6261,8 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetween(Along(Second), Lower, that,
-          Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), InMemory())
+          Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
+            Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result31
     }
@@ -6275,7 +6278,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
         cells.pairwiseBetween(Over(Third), Lower, that, List(
           Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
           Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
-            Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+            Default(Reducers(123), Redistribute(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result32
     }
@@ -6290,7 +6293,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetween(Along(Third), Lower, that,
           Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-            Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+            Default(Reducers(123), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result33
     }
@@ -6304,7 +6307,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position1D]], that: TypedPipe[Cell[Position1D]]) =>
         cells.pairwiseBetweenWithValue(Over(First), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position0D](),
-          ValuePipe(ext), InMemory())
+          ValuePipe(ext), Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result34
     }
@@ -6318,7 +6321,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetweenWithValue(Over(First), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          ValuePipe(ext), Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result35
     }
@@ -6333,7 +6336,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetweenWithValue(Along(First), Lower, that, List(
           TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
-          ValuePipe(ext), Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result36
     }
@@ -6348,7 +6351,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetweenWithValue(Over(Second), Lower, that, List(
           TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
-          ValuePipe(ext), InMemory())
+          ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result37
     }
@@ -6362,7 +6365,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
         cells.pairwiseBetweenWithValue(Along(Second), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          ValuePipe(ext), Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ValuePipe(ext), Unbalanced(Reducers(123), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result38
     }
@@ -6376,7 +6379,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetweenWithValue(Over(First), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position2D](),
-          ValuePipe(ext), Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ValuePipe(ext), Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result39
     }
@@ -6406,7 +6409,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetweenWithValue(Over(Second), Lower, that, List(
           TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
-          ValuePipe(ext), Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ValuePipe(ext), Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result41
     }
@@ -6420,7 +6423,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetweenWithValue(Along(Second), Lower, that, TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          ValuePipe(ext), Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ValuePipe(ext), Default(Redistribute(123), Redistribute(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result42
     }
@@ -6435,7 +6438,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetweenWithValue(Over(Third), Lower, that, List(
           TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
-          ValuePipe(ext), InMemory())
+          ValuePipe(ext), Default(Redistribute(123), Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result43
     }
@@ -6449,7 +6452,7 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
     } When {
       (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
         cells.pairwiseBetweenWithValue(Along(Third), Lower, that, TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          ValuePipe(ext), Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ValuePipe(ext), Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result44
     }

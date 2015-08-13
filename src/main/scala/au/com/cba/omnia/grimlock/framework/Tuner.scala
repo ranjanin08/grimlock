@@ -14,49 +14,95 @@
 
 package au.com.cba.omnia.grimlock.framework
 
+/** Base trait for tuner parameters. */
 sealed trait TunerParameters extends java.io.Serializable {
+  /** Type of these parameters. */
   type P <: TunerParameters
+
+  /**
+   * Create a sequence of tune operations.
+   *
+   * @param parameters The operations (parameters) to perform after this.
+   *
+   * @return A sequence of `this` followed by `parameters`.
+   */
   def |->[Q <: TunerParameters](parameters: Q): Sequence2[P, Q] = Sequence2(this.asInstanceOf[P], parameters)
 }
 
+/** Indicates that no special operations are to be performed. */
 case object NoParameters extends TunerParameters {
   type P = NoParameters.type
 }
 
+/**
+ * Tune the number of reducers.
+ *
+ * @param reducers The number of reducers to use.
+ */
 case class Reducers(reducers: Int) extends TunerParameters {
   type P = Reducers
 }
 
+/**
+ * Redistribute the data across a number of partitions.
+ *
+ * @param reducers The number of partitions to redistribute among.
+ */
+case class Redistribute(reducers: Int) extends TunerParameters {
+  type P = Redistribute
+}
+
+/**
+ * Create a sequence of two tuner parameters
+ *
+ * @param first  The first parameters of the sequence.
+ * @param second The second parameters of the sequence.
+ */
 case class Sequence2[F <: TunerParameters, S <: TunerParameters](first: F, second: S) extends TunerParameters {
   type P = Sequence2[F, S]
 }
 
+/** Base trait that indicates size/shape of the data for tuning. */
 sealed trait Tuner extends java.io.Serializable {
+  /** Type of the parameters used with this tuner. */
   type P <: TunerParameters
+
+  /** The parameters used for tuning. */
   val parameters: P
 }
 
+/** Indicates that some of the data can fit in memory (permits map-side only operations). */
 case class InMemory[Q <: TunerParameters](parameters: Q = NoParameters) extends Tuner { type P = Q }
 
-object InMemory {
-  def apply[F <: TunerParameters, S <: TunerParameters](f: F, s: S): InMemory[Sequence2[F, S]] = {
-    InMemory(Sequence2(f, s))
-  }
-}
-
+/** Indicates that the data is (reasonably) evenly distributed. */
 case class Default[Q <: TunerParameters](parameters: Q = NoParameters) extends Tuner { type P = Q }
 
+/** Companion object to `Default`. */
 object Default {
-  def apply[F <: TunerParameters, S <: TunerParameters](f: F, s: S): Default[Sequence2[F, S]] = {
-    Default(Sequence2(f, s))
+  /**
+   * Create a tuner with a sequence of two tuner parameters.
+   *
+   * @param first  The first parameters of the sequence.
+   * @param second The second parameters of the sequence.
+   */
+  def apply[F <: TunerParameters, S <: TunerParameters](first: F, second: S): Default[Sequence2[F, S]] = {
+    Default(Sequence2(first, second))
   }
 }
 
+/** Indicates that the data is (heavily) skewed. */
 case class Unbalanced[Q <: TunerParameters](parameters: Q) extends Tuner { type P = Q }
 
+/** Companion object to `Unbalanced`. */
 object Unbalanced {
-  def apply[F <: TunerParameters, S <: TunerParameters](f: F, s: S): Unbalanced[Sequence2[F, S]] = {
-    Unbalanced(Sequence2(f, s))
+  /**
+   * Create an unbalanced tuner with a sequence of two tuner parameters.
+   *
+   * @param first  The first parameters of the sequence.
+   * @param second The second parameters of the sequence.
+   */
+  def apply[F <: TunerParameters, S <: TunerParameters](first: F, second: S): Unbalanced[Sequence2[F, S]] = {
+    Unbalanced(Sequence2(first, second))
   }
 }
 

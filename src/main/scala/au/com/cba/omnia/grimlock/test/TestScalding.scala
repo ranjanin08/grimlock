@@ -692,7 +692,7 @@ class TestScalding24(args: Args) extends Job(args) {
   val data = loadTable(args("path") + "/somePairwise2.txt", schema, separator="|")
 
   data
-    .correlation(Over(Second), ptuner=InMemory())
+    .correlation(Over(Second))
     .save("./tmp.scalding/pws2.out")
 
   val schema2 = List(("day", NominalSchema(StringCodex)),
@@ -702,14 +702,14 @@ class TestScalding24(args: Args) extends Job(args) {
   val data2 = loadTable(args("path") + "/somePairwise3.txt", schema2, separator="|")
 
   data2
-    .correlation(Over(Second), ptuner=InMemory())
+    .correlation(Over(Second))
     .save("./tmp.scalding/pws3.out")
 }
 
 class TestScalding25(args: Args) extends Job(args) {
 
   load2D(args("path") + "/mutualInputfile.txt")
-    .mutualInformation(Over(Second), ptuner=InMemory())
+    .mutualInformation(Over(Second))
     .save("./tmp.scalding/mi.out")
 }
 
@@ -833,12 +833,12 @@ class TestScalding29(args: Args) extends Job(args) {
     ("mod:456", "iid:H", Content(schema, 0)))
 
   data
-    .gini(Over(First), ptuner=InMemory())
+    .gini(Over(First))
     .save("./tmp.scalding/gini.out")
 
   data
     .map { case (a, b, c) => (b, a, c) }
-    .gini(Along(First), ptuner=InMemory())
+    .gini(Along(First))
     .save("./tmp.scalding/inig.out")
 }
 

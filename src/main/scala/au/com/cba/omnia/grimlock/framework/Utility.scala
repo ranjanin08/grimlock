@@ -234,48 +234,72 @@ object Distinct9 {
     new Distinct9[A, B, C, D, E, F, G, H, I]
 }
 
-/** Base trait for specifying `B` should be one of a number of types. */
+/** Base trait for specifying `X` should be one of a number of types. */
 trait OneOf {
-  /** Check if `B` conforms to the set of allowed types. */
-  type L[B]
+  /** Verify that `X` belongs to the set of allowed types. */
+  type V[X]
 }
 
 /** Companion object to `OneOf` trait. */
 object OneOf {
-  private type Not[A] = A => Nothing
-  private type NotNot[A] = Not[Not[A]]
+  private type Not[X] = X => Nothing
+  private type NotNot[X] = Not[Not[X]]
 
-  private type Or2[R, S] = Not[Not[R] with Not[S]]
-  private type Or3[R, S, T] = Not[Not[R] with Not[S] with Not[T]]
-  private type Or4[R, S, T, U] = Not[Not[R] with Not[S] with Not[T] with Not[U]]
-  private type Or5[R, S, T, U, V] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V]]
-  private type Or6[R, S, T, U, V, W] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W]]
-  private type Or7[R, S, T, U, V, W, X] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X]]
-  private type Or8[R, S, T, U, V, W, X, Y] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X] with Not[Y]]
-  private type Or9[R, S, T, U, V, W, X, Y, Z] = Not[Not[R] with Not[S] with Not[T] with Not[U] with Not[V] with Not[W] with Not[X] with Not[Y] with Not[Z]]
+  private type Or2[A, B] = Not[Not[A] with Not[B]]
+  private type Or3[A, B, C] = Not[Not[A] with Not[B] with Not[C]]
+  private type Or4[A, B, C, D] = Not[Not[A] with Not[B] with Not[C] with Not[D]]
+  private type Or5[A, B, C, D, E] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E]]
+  private type Or6[A, B, C, D, E, F] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F]]
+  private type Or7[A, B, C, D, E, F, G] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G]]
+  private type Or8[A, B, C, D, E, F, G, H] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G] with Not[H]]
+  private type Or9[A, B, C, D, E, F, G, H, I] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G] with Not[H] with Not[I]]
+  private type Or10[A, B, C, D, E, F, G, H, I, J] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G] with Not[H] with Not[I] with Not[J]]
+  private type Or11[A, B, C, D, E, F, G, H, I, J, K] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G] with Not[H] with Not[I] with Not[J] with Not[K]]
+  private type Or12[A, B, C, D, E, F, G, H, I, J, K, L] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G] with Not[H] with Not[I] with Not[J] with Not[K] with Not[L]]
+  private type Or13[A, B, C, D, E, F, G, H, I, J, K, L, M] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G] with Not[H] with Not[I] with Not[J] with Not[K] with Not[L] with Not[M]]
+  private type Or14[A, B, C, D, E, F, G, H, I, J, K, L, M, N] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G] with Not[H] with Not[I] with Not[J] with Not[K] with Not[L] with Not[M] with Not[N]]
+  private type Or15[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G] with Not[H] with Not[I] with Not[J] with Not[K] with Not[L] with Not[M] with Not[N] with Not[O]]
 
-  /** Type constraint to ensure `B` is either `R` or `S`. */
-  type OneOf2[R, S] = OneOf { type L[B] = NotNot[B] <:< Or2[R, S] }
+  /** Type constraint to ensure `X` is either `A` or `B`. */
+  type OneOf2[A, B] = OneOf { type V[X] = NotNot[X] <:< Or2[A, B] }
 
-  /** Type constraint to ensure `B` is either `R`, `S` or `T`. */
-  type OneOf3[R, S, T] = OneOf { type L[B] = NotNot[B] <:< Or3[R, S, T] }
+  /** Type constraint to ensure `X` is either `A`, `B` or `C`. */
+  type OneOf3[A, B, C] = OneOf { type V[X] = NotNot[X] <:< Or3[A, B, C] }
 
-  /** Type constraint to ensure `B` is either `R`, `S`, `T` or `U`. */
-  type OneOf4[R, S, T, U] = OneOf { type L[B] = NotNot[B] <:< Or4[R, S, T, U] }
+  /** Type constraint to ensure `X` is either `A`, `B`, `C` or `D`. */
+  type OneOf4[A, B, C, D] = OneOf { type V[X] = NotNot[X] <:< Or4[A, B, C, D] }
 
-  /** Type constraint to ensure `B` is either `R`, `S`, `T`, `U` or `V`. */
-  type OneOf5[R, S, T, U, V] = OneOf { type L[B] = NotNot[B] <:< Or5[R, S, T, U, V] }
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D` or `E`. */
+  type OneOf5[A, B, C, D, E] = OneOf { type V[X] = NotNot[X] <:< Or5[A, B, C, D, E] }
 
-  /** Type constraint to ensure `B` is either `R`, `S`, `T`, `U`, `V` or `W`. */
-  type OneOf6[R, S, T, U, V, W] = OneOf { type L[B] = NotNot[B] <:< Or6[R, S, T, U, V, W] }
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D`, `E` or `F`. */
+  type OneOf6[A, B, C, D, E, F] = OneOf { type V[X] = NotNot[X] <:< Or6[A, B, C, D, E, F] }
 
-  /** Type constraint to ensure `B` is either `R`, `S`, `T`, `U`, `V`, `W` or `X`. */
-  type OneOf7[R, S, T, U, V, W, X] = OneOf { type L[B] = NotNot[B] <:< Or7[R, S, T, U, V, W, X] }
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D`, `E`, `F` or `G`. */
+  type OneOf7[A, B, C, D, E, F, G] = OneOf { type V[X] = NotNot[X] <:< Or7[A, B, C, D, E, F, G] }
 
-  /** Type constraint to ensure `B` is either `R`, `S`, `T`, `U`, `V`, `W`, `X` or `Y`. */
-  type OneOf8[R, S, T, U, V, W, X, Y] = OneOf { type L[B] = NotNot[B] <:< Or8[R, S, T, U, V, W, X, Y] }
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D`, `E`, `F`, `G` or `H`. */
+  type OneOf8[A, B, C, D, E, F, G, H] = OneOf { type V[X] = NotNot[X] <:< Or8[A, B, C, D, E, F, G, H] }
 
-  /** Type constraint to ensure `B` is either `R`, `S`, `T`, `U`, `V`, `W, `X`, `Y` or `Z`. */
-  type OneOf9[R, S, T, U, V, W, X, Y, Z] = OneOf { type L[B] = NotNot[B] <:< Or9[R, S, T, U, V, W, X, Y, Z] }
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D`, `E`, `F, `G`, `H` or `I`. */
+  type OneOf9[A, B, C, D, E, F, G, H, I] = OneOf { type V[X] = NotNot[X] <:< Or9[A, B, C, D, E, F, G, H, I] }
+
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D`, `E`, `F, `G`, `H`, `I` or `J`. */
+  type OneOf10[A, B, C, D, E, F, G, H, I, J] = OneOf { type V[X] = NotNot[X] <:< Or10[A, B, C, D, E, F, G, H, I, J] }
+
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D`, `E`, `F, `G`, `H`, `I`, `J` or `K`. */
+  type OneOf11[A, B, C, D, E, F, G, H, I, J, K] = OneOf { type V[X] = NotNot[X] <:< Or11[A, B, C, D, E, F, G, H, I, J, K] }
+
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D`, `E`, `F, `G`, `H`, `I`, `J`, `K` or `L`. */
+  type OneOf12[A, B, C, D, E, F, G, H, I, J, K, L] = OneOf { type V[X] = NotNot[X] <:< Or12[A, B, C, D, E, F, G, H, I, J, K, L] }
+
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D`, `E`, `F, `G`, `H`, `I`, `J`, `K`, `L` or `M`. */
+  type OneOf13[A, B, C, D, E, F, G, H, I, J, K, L, M] = OneOf { type V[X] = NotNot[X] <:< Or13[A, B, C, D, E, F, G, H, I, J, K, L, M] }
+
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D`, `E`, `F, `G`, `H`, `I`, `J`, `K`, `L`, `M` or `N`. */
+  type OneOf14[A, B, C, D, E, F, G, H, I, J, K, L, M, N] = OneOf { type V[X] = NotNot[X] <:< Or14[A, B, C, D, E, F, G, H, I, J, K, L, M, N] }
+
+  /** Type constraint to ensure `X` is either `A`, `B`, `C`, `D`, `E`, `F, `G`, `H`, `I`, `J`, `K`, `L`, `M`, `N` or `O`. */
+  type OneOf15[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O] = OneOf { type V[X] = NotNot[X] <:< Or15[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O] }
 }
 
