@@ -94,10 +94,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   import SparkImplicits._
 
-  protected type TP1 = OneOf1[Default[NoParameters.type]]
-  protected type TP2 = OneOf2[Default[NoParameters.type], Default[Reducers]]
-  protected type TP3 = OneOf3[Default[NoParameters.type], Default[Reducers], Default[Sequence2[Reducers, Reducers]]]
-
   type ChangeTuners = TP2
   def change[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, schema: Schema, tuner: T = Default())(
     implicit ev1: PosDimDep[P, D], ev2: BaseNameable[I, P, slice.S, D, RDD], ev3: ClassTag[slice.S],
@@ -136,8 +132,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case (_, (c, _)) => c }
   }
 
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
-    ev3: ClassTag[slice.S]): U[(slice.S, Long)] = {
+  type NamesTuners = TP2
+  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)] = {
     Names.number(data.map { case c => slice.selected(c.position) }.distinct)
   }
 
@@ -214,7 +211,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case (_, (co, cn)) => cn.getOrElse(co.get) }
   }
 
-  def shape(): U[Cell[Position1D]] = {
+  type ShapeTuners = TP2
+  def shape[T <: Tuner](tuner: T = Default())(implicit ev: ShapeTuners#V[T]): U[Cell[Position1D]] = {
     data
       .flatMap { case c => c.position.coordinates.map(_.toString).zipWithIndex }
       .distinct
@@ -224,7 +222,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def size[D <: Dimension](dim: D, distinct: Boolean = false)(implicit ev: PosDimDep[P, D]): U[Cell[Position1D]] = {
+  type SizeTuners = TP2
+  def size[D <: Dimension, T <: Tuner](dim: D, distinct: Boolean, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+    ev2: SizeTuners#V[T]): U[Cell[Position1D]] = {
     val coords = data.map { case c => c.position(dim) }
     val dist = if (distinct) { coords } else { coords.distinct() }
 
@@ -385,13 +385,15 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case (p, t) => (p, if (specific) t else t.getGeneralisation()) }
   }
 
-  def unique(): U[Content] = {
+  type UniqueTuners = TP2
+  def unique[T <: Tuner](tuner: T = Default())(implicit ev: UniqueTuners#V[T]): U[Content] = {
     data
       .map { case c => c.content }
       .distinct()
   }
 
-  def unique[D <: Dimension](slice: Slice[P, D])(implicit ev: slice.S =!= Position0D): U[Cell[slice.S]] = {
+  def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
+    implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[Cell[slice.S]] = {
     data
       .map { case Cell(p, c) => Cell(slice.selected(p), c) }
       .distinct()

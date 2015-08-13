@@ -261,11 +261,11 @@ object TestSpark8 {
     data
       .slice(Over(Second), "fid:B", true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .unique
+      .unique()
       .save("./tmp.spark/uniq.out", descriptive=true)
 
     load2D(args(1) + "/mutualInputfile.txt")
-      .unique(Over(Second))
+      .unique(Over[Position2D, Dimension.Second](Second))
       .save("./tmp.spark/uni2.out")
 
     data

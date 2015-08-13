@@ -144,7 +144,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   import ScaldingImplicits._
 
-  protected type TP2 = OneOf2[Default[NoParameters.type], Default[Reducers]]
   protected type TP4 = OneOf4[InMemory[NoParameters.type],
                               Default[NoParameters.type], Default[Reducers],
                               Unbalanced[Reducers]]
@@ -218,8 +217,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     }
   }
 
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
-    ev3: ClassTag[slice.S]): U[(slice.S, Long)] = {
+  type NamesTuners = TP1
+  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)] = {
     Names.number(data.map { case c => slice.selected(c.position) }.distinct)
   }
 
@@ -315,13 +315,16 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case (_, (co, cn)) => cn.getOrElse(co.get) }
   }
 
-  def shape(): U[Cell[Position1D]] = {
+  type ShapeTuners = TP1
+  def shape[T <: Tuner](tuner: T = Default())(implicit ev: ShapeTuners#V[T]): U[Cell[Position1D]] = {
     Grouped(data.flatMap { case c => c.position.coordinates.map(_.toString).zipWithIndex.map(_.swap) }.distinct)
       .size
       .map { case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema(LongCodex), s)) }
   }
 
-  def size[D <: Dimension](dim: D, distinct: Boolean = false)(implicit ev: PosDimDep[P, D]): U[Cell[Position1D]] = {
+  type SizeTuners = TP1
+  def size[D <: Dimension, T <: Tuner](dim: D, distinct: Boolean, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+    ev2: SizeTuners#V[T]): U[Cell[Position1D]] = {
     val coords = data.map { case c => c.position(dim) }
     val dist = if (distinct) { coords } else { coords.distinct(Value.Ordering) }
 
@@ -537,15 +540,17 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case (p, t) => (p, if (specific) t else t.getGeneralisation()) }
   }
 
+  type UniqueTuners = TP1
   /** @note Comparison is performed based on the string representation of the `Content`. */
-  def unique(): U[Content] = {
+  def unique[T <: Tuner](tuner: T = Default())(implicit ev: UniqueTuners#V[T]): U[Content] = {
     data
       .map { case c => c.content }
       .distinct
   }
 
   /** @note Comparison is performed based on the string representation of the `Content`. */
-  def unique[D <: Dimension](slice: Slice[P, D])(implicit ev: slice.S =!= Position0D): U[Cell[slice.S]] = {
+  def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
+    implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[Cell[slice.S]] = {
     data
       .map { case Cell(p, c) => Cell(slice.selected(p), c) }
       .distinct

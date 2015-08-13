@@ -245,11 +245,11 @@ class TestScalding8(args : Args) extends Job(args) {
   data
     .slice(Over(Second), "fid:B", true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .unique
+    .unique()
     .save("./tmp.scalding/uniq.out", descriptive=true)
 
   load2D(args("path") + "/mutualInputfile.txt")
-    .unique(Over(Second))
+    .unique(Over[Position2D, Dimension.Second](Second))
     .save("./tmp.scalding/uni2.out")
 
   data

@@ -15,11 +15,14 @@
 package au.com.cba.omnia.grimlock.scalding
 
 import au.com.cba.omnia.grimlock.framework.{
+  Default,
   Matrix => BaseMatrix,
   Names => BaseNames,
-  Nameable => BaseNameable
+  Nameable => BaseNameable,
+  NoParameters
 }
 import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.utility._
 
 import com.twitter.scalding.typed.TypedPipe
 
@@ -105,23 +108,26 @@ object Nameable {
   /** Converts a `TypedPipe[(Q, Long)]` into a `TypedPipe[(Q, Long)]`; that is, it is a pass through. */
   implicit def TPQL2TPN[P <: Position, Q <: Position, D <: Dimension]: BaseNameable[TypedPipe[(Q, Long)], P, Q, D, TypedPipe] = {
     new BaseNameable[TypedPipe[(Q, Long)], P, Q, D, TypedPipe] {
-      def convert(m: BaseMatrix[P], s: Slice[P, D], t: TypedPipe[(Q, Long)])(
-        implicit ev: ClassTag[s.S]): TypedPipe[(Q, Long)] = t
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: TypedPipe[(Q, Long)])(implicit ev1: ClassTag[s.S],
+        ev2: s.S =!= Position0D, ev3: m.NamesTuners#V[Default[NoParameters.type]]): TypedPipe[(Q, Long)] = t
     }
   }
   /** Converts a `TypedPipe[Q]` into a `TypedPipe[(Q, Long)]`. */
   implicit def TPQ2TPN[P <: Position, Q <: Position, D <: Dimension]: BaseNameable[TypedPipe[Q], P, Q, D, TypedPipe] = {
     new BaseNameable[TypedPipe[Q], P, Q, D, TypedPipe] {
-      def convert(m: BaseMatrix[P], s: Slice[P, D], t: TypedPipe[Q])(
-        implicit ev: ClassTag[s.S]): TypedPipe[(Q, Long)] = Names.number(t)
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: TypedPipe[Q])(implicit ev1: ClassTag[s.S],
+        ev2: s.S =!= Position0D, ev3: m.NamesTuners#V[Default[NoParameters.type]]): TypedPipe[(Q, Long)] = {
+        Names.number(t)
+      }
     }
   }
   /** Converts a `PositionListable` into a `TypedPipe[(Q, Long)]`. */
   implicit def PL2TPN[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
     ev2: PosDimDep[P, D], ev3: ClassTag[Q]): BaseNameable[T, P, Q, D, TypedPipe] = {
     new BaseNameable[T, P, Q, D, TypedPipe] {
-      def convert(m: BaseMatrix[P], s: Slice[P, D], t: T)(implicit ev: ClassTag[s.S]): TypedPipe[(Q, Long)] = {
-        new Names(m.names(s).asInstanceOf[TypedPipe[(Q, Long)]]).slice(t, true)
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: T)(implicit ev4: ClassTag[s.S], ev5: s.S =!= Position0D,
+        ev6: m.NamesTuners#V[Default[NoParameters.type]]): TypedPipe[(Q, Long)] = {
+        new Names(m.names(s, Default())(ev2, ev5, ev4, ev6).asInstanceOf[TypedPipe[(Q, Long)]]).slice(t, true)
       }
     }
   }

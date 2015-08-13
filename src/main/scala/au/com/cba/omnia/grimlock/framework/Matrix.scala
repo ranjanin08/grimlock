@@ -508,10 +508,14 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   def join[D <: Dimension, T <: Tuner](slice: Slice[P, D], that: S, tuner: T)(implicit ev1: PosDimDep[P, D],
     ev2: P =!= Position1D, ev3: ClassTag[slice.S], ev4: JoinTuners#V[T]): U[Cell[P]]
 
+  /** Specifies tuners permitted on a call to `names`. */
+  type NamesTuners <: OneOf
+
   /**
    * Returns the distinct position(s) (or names) for a given `slice`.
    *
    * @param slice Encapsulates the dimension(s) for which the names are to be returned.
+   * @param tuner The tuner for the job.
    *
    * @return A `U[(slice.S, Long)]` of the distinct position(s) together with a unique index.
    *
@@ -520,8 +524,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @see [[Names]]
    */
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
-    ev3: ClassTag[slice.S]): U[(slice.S, Long)]
+  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)]
 
   /** Specifies tuners permitted on a call to `pairwise` functions. */
   type PairwiseTuners <: OneOf
@@ -653,13 +657,21 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   def set[M, T <: Tuner](values: M, tuner: T)(implicit ev1: Matrixable[M, P, U], ev2: ClassTag[P],
     ev3: SetTuners#V[T]): U[Cell[P]]
 
+  /** Specifies tuners permitted on a call to `shape`. */
+  type ShapeTuners <: OneOf
+
   /**
    * Returns the shape of the matrix.
+   *
+   * @param tuner The tuner for the job.
    *
    * @return A `U[Cell[Position1D]]`. The position consists of a string value with the name of the dimension
    *         (`dim.toString`). The content has the actual size in it as a discrete variable.
    */
-  def shape(): U[Cell[Position1D]]
+  def shape[T <: Tuner](tuner: T)(implicit ev: ShapeTuners#V[T]): U[Cell[Position1D]]
+
+  /** Specifies tuners permitted on a call to `shape`. */
+  type SizeTuners <: OneOf
 
   /**
    * Returns the size of the matrix in dimension `dim`.
@@ -671,7 +683,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[Position1D]]`. The position consists of a string value with the name of the dimension
    *         (`dim.toString`). The content has the actual size in it as a discrete variable.
    */
-  def size[D <: Dimension](dim: D, distinct: Boolean = false)(implicit ev: PosDimDep[P, D]): U[Cell[Position1D]]
+  def size[D <: Dimension, T <: Tuner](dim: D, distinct: Boolean = false, tuner: T)(implicit ev1: PosDimDep[P, D],
+    ev2: SizeTuners#V[T]): U[Cell[Position1D]]
 
   /** Specifies tuners permitted on a call to `slice`. */
   type SliceTuners <: OneOf
@@ -849,18 +862,27 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S],
       ev4: TypesTuners#V[T]): U[(slice.S, Type)]
 
-  /** Return the unique (distinct) contents of an entire matrix. */
-  def unique(): U[Content]
+  /** Specifies tuners permitted on a call to `unique` functions. */
+  type UniqueTuners <: OneOf
+
+  /**
+   * Return the unique (distinct) contents of an entire matrix.
+   *
+   * @param tuner The tuner for the job.
+   */
+  def unique[T <: Tuner](tuner: T)(implicit ev: UniqueTuners#V[T]): U[Content]
 
   /**
    * Return the unique (distinct) contents along a dimension.
    *
    * @param slice Encapsulates the dimension(s) along which to join.
+   * @param tuner The tuner for the job.
    *
    * @return A `U[Cell[slice.S]]` consisting of the unique values.
    */
   // TODO: Should this return a Cell? Coordinates are no longer unique in the matrix.
-  def unique[D <: Dimension](slice: Slice[P, D])(implicit ev: slice.S =!= Position0D): U[Cell[slice.S]]
+  def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: slice.S =!= Position0D,
+    ev2: UniqueTuners#V[T]): U[Cell[slice.S]]
 
   /** Specifies tuners permitted on a call to `which` functions. */
   type WhichTuners <: OneOf
@@ -902,6 +924,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], pospred: List[(I, Predicate)], tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
       ev5: WhichTuners#V[T]): U[P]
+
+  protected type TP1 = OneOf1[Default[NoParameters.type]]
+  protected type TP2 = OneOf2[Default[NoParameters.type], Default[Reducers]]
+  protected type TP3 = OneOf3[Default[NoParameters.type], Default[Reducers], Default[Sequence2[Reducers, Reducers]]]
 
   protected def toString(t: Cell[P], separator: String, descriptive: Boolean): String = {
     t.toString(separator, descriptive)

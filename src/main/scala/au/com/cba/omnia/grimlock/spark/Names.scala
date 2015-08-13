@@ -15,11 +15,14 @@
 package au.com.cba.omnia.grimlock.spark
 
 import au.com.cba.omnia.grimlock.framework.{
+  Default,
   Matrix => BaseMatrix,
   Names => BaseNames,
-  Nameable => BaseNameable
+  Nameable => BaseNameable,
+  NoParameters
 }
 import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.utility._
 
 import org.apache.spark.rdd.RDD
 
@@ -84,14 +87,16 @@ object Nameable {
   /** Converts a `RDD[(Q, Long)]` into a `RDD[(Q, Long)]`; that is, it is a pass through. */
   implicit def RDDQL2RDDN[P <: Position, Q <: Position, D <: Dimension]: BaseNameable[RDD[(Q, Long)], P, Q, D, RDD] = {
     new BaseNameable[RDD[(Q, Long)], P, Q, D, RDD] {
-      def convert(m: BaseMatrix[P], s: Slice[P, D], t: RDD[(Q, Long)])(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = t
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: RDD[(Q, Long)])(implicit ev1: ClassTag[s.S],
+        ev2: s.S =!= Position0D, ev3: m.NamesTuners#V[Default[NoParameters.type]]): RDD[(Q, Long)] = t
     }
   }
 
   /** Converts a `RDD[Q]` into a `RDD[(Q, Long)]`. */
   implicit def RDDQ2RDDN[P <: Position, Q <: Position, D <: Dimension]: BaseNameable[RDD[Q], P, Q, D, RDD] = {
     new BaseNameable[RDD[Q], P, Q, D, RDD] {
-      def convert(m: BaseMatrix[P], s: Slice[P, D], t: RDD[Q])(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = {
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: RDD[Q])(implicit ev1: ClassTag[s.S], ev2: s.S =!= Position0D,
+        ev3: m.NamesTuners#V[Default[NoParameters.type]]): RDD[(Q, Long)] = {
         Names.number(t)
       }
     }
@@ -101,8 +106,9 @@ object Nameable {
   implicit def PL2RDDN[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
     ev2: PosDimDep[P, D], ev3: ClassTag[Q]): BaseNameable[T, P, Q, D, RDD] = {
     new BaseNameable[T, P, Q, D, RDD] {
-      def convert(m: BaseMatrix[P], s: Slice[P, D], t: T)(implicit ev: ClassTag[s.S]): RDD[(Q, Long)] = {
-        new Names(m.names(s).asInstanceOf[RDD[(Q, Long)]]).slice(t, true)
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: T)(implicit ev4: ClassTag[s.S], ev5: s.S =!= Position0D,
+        ev6: m.NamesTuners#V[Default[NoParameters.type]]): RDD[(Q, Long)] = {
+        new Names(m.names(s, Default())(ev2, ev5, ev4, ev6).asInstanceOf[RDD[(Q, Long)]]).slice(t, true)
       }
     }
   }

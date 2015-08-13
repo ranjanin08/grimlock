@@ -124,7 +124,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.names(Over(First))
+        cells.names(Over(First), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
         (Position1D("qux"), 3))
@@ -136,7 +136,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Over(First))
+        cells.names(Over(First), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
         (Position1D("qux"), 3))
@@ -148,7 +148,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Along(First))
+        cells.names(Along(First), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D(1), 0), (Position1D(2), 1), (Position1D(3), 2),
         (Position1D(4), 3))
@@ -160,7 +160,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Over(Second))
+        cells.names(Over(Second), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D(1), 0), (Position1D(2), 1), (Position1D(3), 2),
         (Position1D(4), 3))
@@ -172,7 +172,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Along(Second))
+        cells.names(Along(Second), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
         (Position1D("qux"), 3))
@@ -184,7 +184,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(First))
+        cells.names(Over(First), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
         (Position1D("qux"), 3))
@@ -196,7 +196,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Along(First))
+        cells.names(Along(First), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position2D(1, "xyz"), 0), (Position2D(2, "xyz"), 1),
         (Position2D(3, "xyz"), 2), (Position2D(4, "xyz"), 3))
@@ -208,7 +208,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(Second))
+        cells.names(Over(Second), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D(1), 0), (Position1D(2), 1), (Position1D(3), 2),
         (Position1D(4), 3))
@@ -220,7 +220,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Along(Second))
+        cells.names(Along(Second), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position2D("bar", "xyz"), 0), (Position2D("baz", "xyz"), 1),
         (Position2D("foo", "xyz"), 2), (Position2D("qux", "xyz"), 3))
@@ -232,7 +232,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(Third))
+        cells.names(Over(Third), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D("xyz"), 0))
     }
@@ -243,7 +243,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Along(Third))
+        cells.names(Along(Third), Default())
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position2D("bar", 1), 0), (Position2D("bar", 2), 1),
         (Position2D("bar", 3), 2), (Position2D("baz", 1), 3), (Position2D("baz", 2), 4), (Position2D("foo", 1), 5),
@@ -256,76 +256,76 @@ class TestSparkMatrixNames extends TestMatrix {
 
   "A Matrix.names" should "return its first over names in 1D" in {
     toRDD(data1)
-      .names(Over(First))
+      .names(Over(First), Default())
       .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
         (Position1D("qux"), 3)))
   }
 
   it should "return its first over names in 2D" in {
     toRDD(data2)
-      .names(Over(First))
+      .names(Over(First), Default(Reducers(12)))
       .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
         (Position1D("qux"), 3)))
   }
 
   it should "return its first along names in 2D" in {
     toRDD(data2)
-      .names(Along(First))
+      .names(Along(First), Default())
       .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 0), (Position1D(3), 1),
         (Position1D(4), 2)))
   }
 
   it should "return its second over names in 2D" in {
     toRDD(data2)
-      .names(Over(Second))
+      .names(Over(Second), Default(Reducers(12)))
       .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 0), (Position1D(3), 1),
         (Position1D(4), 2)))
   }
 
   it should "return its second along names in 2D" in {
     toRDD(data2)
-      .names(Along(Second))
+      .names(Along(Second), Default())
       .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
         (Position1D("qux"), 3)))
   }
 
   it should "return its first over names in 3D" in {
     toRDD(data3)
-      .names(Over(First))
+      .names(Over(First), Default(Reducers(12)))
       .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
         (Position1D("qux"), 3)))
   }
 
   it should "return its first along names in 3D" in {
     toRDD(data3)
-      .names(Along(First))
+      .names(Along(First), Default())
       .toList.sortBy(_._1) should be (List((Position2D(1, "xyz"), 3), (Position2D(2, "xyz"), 2),
         (Position2D(3, "xyz"), 1), (Position2D(4, "xyz"), 0)))
   }
 
   it should "return its second over names in 3D" in {
     toRDD(data3)
-      .names(Over(Second))
+      .names(Over(Second), Default(Reducers(12)))
       .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 0), (Position1D(3), 1),
         (Position1D(4), 2)))
   }
 
   it should "return its second along names in 3D" in {
     toRDD(data3)
-      .names(Along(Second))
+      .names(Along(Second), Default())
       .toList.sortBy(_._1) should be (List((Position2D("bar", "xyz"), 2), (Position2D("baz", "xyz"), 1),
         (Position2D("foo", "xyz"), 0), (Position2D("qux", "xyz"), 3)))
   }
 
   it should "return its third over names in 3D" in {
     toRDD(data3)
-      .names(Over(Third))
+      .names(Over(Third), Default(Reducers(12)))
       .toList.sortBy(_._1) should be (List((Position1D("xyz"), 0)))
   }
 
   it should "return its third along names in 3D" in {
     toRDD(data3)
-      .names(Along(Third))
+      .names(Along(Third), Default())
       .toList.sortBy(_._1) should be (List((Position2D("bar", 1), 1), (Position2D("bar", 2), 6),
         (Position2D("bar", 3), 2), (Position2D("baz", 1), 9), (Position2D("baz", 2), 4), (Position2D("foo", 1), 0),
         (Position2D("foo", 2), 3), (Position2D("foo", 3), 8), (Position2D("foo", 4), 5), (Position2D("qux", 1), 7)))
@@ -823,7 +823,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.size(First, false)
+        cells.size(First, false, Default())
     } Then {
       _.toList shouldBe result1
     }
@@ -834,7 +834,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.size(First, true)
+        cells.size(First, true, Default())
     } Then {
       _.toList shouldBe result2
     }
@@ -845,7 +845,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(First, false)
+        cells.size(First, false, Default())
     } Then {
       _.toList shouldBe result3
     }
@@ -856,7 +856,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(First, true)
+        cells.size(First, true, Default())
     } Then {
       _.toList shouldBe result4
     }
@@ -867,7 +867,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(Second, false)
+        cells.size(Second, false, Default())
     } Then {
       _.toList shouldBe result5
     }
@@ -878,7 +878,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(Second, true)
+        cells.size(Second, true, Default())
     } Then {
       _.toList shouldBe result6
     }
@@ -889,7 +889,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(First, false)
+        cells.size(First, false, Default())
     } Then {
       _.toList shouldBe result7
     }
@@ -900,7 +900,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(First, true)
+        cells.size(First, true, Default())
     } Then {
       _.toList shouldBe result8
     }
@@ -911,7 +911,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(Second, false)
+        cells.size(Second, false, Default())
     } Then {
       _.toList shouldBe result9
     }
@@ -922,7 +922,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(Second, true)
+        cells.size(Second, true, Default())
     } Then {
       _.toList shouldBe result10
     }
@@ -933,7 +933,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(Third, false)
+        cells.size(Third, false, Default())
     } Then {
       _.toList shouldBe result11
     }
@@ -944,7 +944,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(Third, true)
+        cells.size(Third, true, Default())
     } Then {
       _.toList shouldBe result12
     }
@@ -955,7 +955,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       dataA
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(Second, true)
+        cells.size(Second, true, Default())
     } Then {
       _.toList shouldBe result13
     }
@@ -966,79 +966,79 @@ class TestSparkMatrixSize extends TestMatrixSize {
 
   "A Matrix.size" should "return its first size in 1D" in {
     toRDD(data1)
-      .size(First, false)
+      .size(First, false, Default())
       .toList shouldBe result1
   }
 
   it should "return its first distinct size in 1D" in {
     toRDD(data1)
-      .size(First, true)
+      .size(First, true, Default(Reducers(12)))
       .toList shouldBe result2
   }
 
   it should "return its first size in 2D" in {
     toRDD(data2)
-      .size(First, false)
+      .size(First, false, Default())
       .toList shouldBe result3
   }
 
   it should "return its first distinct size in 2D" in {
     toRDD(data2)
-      .size(First, true)
+      .size(First, true, Default(Reducers(12)))
       .toList shouldBe result4
   }
 
   it should "return its second size in 2D" in {
     toRDD(data2)
-      .size(Second, false)
+      .size(Second, false, Default())
       .toList shouldBe result5
   }
 
   it should "return its second distinct size in 2D" in {
     toRDD(data2)
-      .size(Second, true)
+      .size(Second, true, Default(Reducers(12)))
       .toList shouldBe result6
   }
 
   it should "return its first size in 3D" in {
     toRDD(data3)
-      .size(First, false)
+      .size(First, false, Default())
       .toList shouldBe result7
   }
 
   it should "return its first distinct size in 3D" in {
     toRDD(data3)
-      .size(First, true)
+      .size(First, true, Default(Reducers(12)))
       .toList shouldBe result8
   }
 
   it should "return its second size in 3D" in {
     toRDD(data3)
-      .size(Second, false)
+      .size(Second, false, Default())
       .toList shouldBe result9
   }
 
   it should "return its second distinct size in 3D" in {
     toRDD(data3)
-      .size(Second, true)
+      .size(Second, true, Default(Reducers(12)))
       .toList shouldBe result10
   }
 
   it should "return its third size in 3D" in {
     toRDD(data3)
-      .size(Third, false)
+      .size(Third, false, Default())
       .toList shouldBe result11
   }
 
   it should "return its third distinct size in 3D" in {
     toRDD(data3)
-      .size(Third, true)
+      .size(Third, true, Default(Reducers(12)))
       .toList shouldBe result12
   }
 
   it should "return its distinct size" in {
     toRDD(dataA)
-      .size(Second, true)
+      .size(Second, true, Default())
       .toList shouldBe result13
   }
 }
@@ -1062,7 +1062,7 @@ class TestScaldingMatrixShape extends TestMatrixShape with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.shape()
+        cells.shape(Default())
     } Then {
       _.toList shouldBe result1
     }
@@ -1073,7 +1073,7 @@ class TestScaldingMatrixShape extends TestMatrixShape with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.shape()
+        cells.shape(Default())
     } Then {
       _.toList shouldBe result2
     }
@@ -1084,7 +1084,7 @@ class TestScaldingMatrixShape extends TestMatrixShape with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.shape()
+        cells.shape(Default())
     } Then {
       _.toList shouldBe result3
     }
@@ -1095,19 +1095,19 @@ class TestSparkMatrixShape extends TestMatrixShape {
 
   "A Matrix.shape" should "return its shape in 1D" in {
     toRDD(data1)
-      .shape()
+      .shape(Default())
       .toList shouldBe result1
   }
 
   it should "return its shape in 2D" in {
     toRDD(data2)
-      .shape()
+      .shape(Default(Reducers(12)))
       .toList shouldBe result2
   }
 
   it should "return its shape in 3D" in {
     toRDD(data3)
-      .shape()
+      .shape(Default())
       .toList shouldBe result3
   }
 }
@@ -4852,7 +4852,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.unique()
+        cells.unique(Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result1
     }
@@ -4863,7 +4863,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.unique(Over(First))
+        cells.unique(Over(First), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result2
     }
@@ -4874,7 +4874,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique()
+        cells.unique(Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result3
     }
@@ -4885,7 +4885,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Over(First))
+        cells.unique(Over(First), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result4
     }
@@ -4896,7 +4896,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Along(First))
+        cells.unique(Along(First), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result5
     }
@@ -4907,7 +4907,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Over(Second))
+        cells.unique(Over(Second), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result6
     }
@@ -4918,7 +4918,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Along(Second))
+        cells.unique(Along(Second), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result7
     }
@@ -4929,7 +4929,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique()
+        cells.unique(Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result8
     }
@@ -4940,7 +4940,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Over(First))
+        cells.unique(Over(First), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result9
     }
@@ -4951,7 +4951,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Along(First))
+        cells.unique(Along(First), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result10
     }
@@ -4962,7 +4962,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Over(Second))
+        cells.unique(Over(Second), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result11
     }
@@ -4973,7 +4973,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Along(Second))
+        cells.unique(Along(Second), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result12
     }
@@ -4984,7 +4984,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Over(Third))
+        cells.unique(Over(Third), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result13
     }
@@ -4995,7 +4995,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Along(Third))
+        cells.unique(Along(Third), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result14
     }
@@ -5006,85 +5006,85 @@ class TestSparkMatrixUnique extends TestMatrixUnique {
 
   "A Matrix.unique" should "return its content in 1D" in {
     toRDD(data1)
-      .unique()
+      .unique(Default())
       .toList.sortBy(_.toString) shouldBe result1
   }
 
   it should "return its first over content in 1D" in {
     toRDD(data1)
-      .unique(Over(First))
+      .unique(Over(First), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result2
   }
 
   it should "return its content in 2D" in {
     toRDD(data2)
-      .unique()
+      .unique(Default())
       .toList.sortBy(_.toString) shouldBe result3
   }
 
   it should "return its first over content in 2D" in {
     toRDD(data2)
-      .unique(Over(First))
+      .unique(Over(First), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result4
   }
 
   it should "return its first along content in 2D" in {
     toRDD(data2)
-      .unique(Along(First))
+      .unique(Along(First), Default())
       .toList.sortBy(_.toString) shouldBe result5
   }
 
   it should "return its second over content in 2D" in {
     toRDD(data2)
-      .unique(Over(Second))
+      .unique(Over(Second), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result6
   }
 
   it should "return its second along content in 2D" in {
     toRDD(data2)
-      .unique(Along(Second))
+      .unique(Along(Second), Default())
       .toList.sortBy(_.toString) shouldBe result7
   }
 
   it should "return its content in 3D" in {
     toRDD(data3)
-      .unique()
+      .unique(Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result8
   }
 
   it should "return its first over content in 3D" in {
     toRDD(data3)
-      .unique(Over(First))
+      .unique(Over(First), Default())
       .toList.sortBy(_.toString) shouldBe result9
   }
 
   it should "return its first along content in 3D" in {
     toRDD(data3)
-      .unique(Along(First))
+      .unique(Along(First), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result10
   }
 
   it should "return its second over content in 3D" in {
     toRDD(data3)
-      .unique(Over(Second))
+      .unique(Over(Second), Default())
       .toList.sortBy(_.toString) shouldBe result11
   }
 
   it should "return its second along content in 3D" in {
     toRDD(data3)
-      .unique(Along(Second))
+      .unique(Along(Second), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result12
   }
 
   it should "return its third over content in 3D" in {
     toRDD(data3)
-      .unique(Over(Third))
+      .unique(Over(Third), Default())
       .toList.sortBy(_.toString) shouldBe result13
   }
 
   it should "return its third along content in 3D" in {
     toRDD(data3)
-      .unique(Along(Third))
+      .unique(Along(Third), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result14
   }
 }
