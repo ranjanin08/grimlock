@@ -260,6 +260,9 @@ object OneOf {
   private type Or14[A, B, C, D, E, F, G, H, I, J, K, L, M, N] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G] with Not[H] with Not[I] with Not[J] with Not[K] with Not[L] with Not[M] with Not[N]]
   private type Or15[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O] = Not[Not[A] with Not[B] with Not[C] with Not[D] with Not[E] with Not[F] with Not[G] with Not[H] with Not[I] with Not[J] with Not[K] with Not[L] with Not[M] with Not[N] with Not[O]]
 
+  /** Type constraint to ensure `X` is `A`. */
+  type OneOf1[A] = OneOf { type V[X] = X <:< A }
+
   /** Type constraint to ensure `X` is either `A` or `B`. */
   type OneOf2[A, B] = OneOf { type V[X] = NotNot[X] <:< Or2[A, B] }
 

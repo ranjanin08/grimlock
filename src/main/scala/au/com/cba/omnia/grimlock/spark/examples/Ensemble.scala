@@ -140,7 +140,7 @@ object Ensemble {
       .slice(Over(Second), "label", true)
       .sampleWithValue(SampleByScore(), scores)
       .renameWithValue(renameWithScore, scores)
-      .gini(Over(Second), ptuner=InMemory())
+      .gini(Over(Second))
       .save(s"./demo.${output}/ensemble.gini.out")
   }
 }

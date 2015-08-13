@@ -658,7 +658,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its first over specific types in 1D" in {
     toRDD(data1)
-      .types(Over(First), true, Default(Reducers(123)))
+      .types(Over(First), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result2
   }
 
@@ -670,7 +670,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its first over specific types in 2D" in {
     toRDD(data2)
-      .types(Over(First), true, Default(Reducers(123)))
+      .types(Over(First), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result4
   }
 
@@ -682,7 +682,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its first along specific types in 2D" in {
     toRDD(data2)
-      .types(Along(First), true, Default(Reducers(123)))
+      .types(Along(First), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result6
   }
 
@@ -694,7 +694,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its second over specific types in 2D" in {
     toRDD(data2)
-      .types(Over(Second), true, Default(Reducers(123)))
+      .types(Over(Second), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result8
   }
 
@@ -706,7 +706,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its second along specific types in 2D" in {
     toRDD(data2)
-      .types(Along(Second), true, Default(Reducers(123)))
+      .types(Along(Second), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result10
   }
 
@@ -718,7 +718,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its first over specific types in 3D" in {
     toRDD(data3)
-      .types(Over(First), true, Default(Reducers(123)))
+      .types(Over(First), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result12
   }
 
@@ -730,7 +730,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its first along specific types in 3D" in {
     toRDD(data3)
-      .types(Along(First), true, Default(Reducers(123)))
+      .types(Along(First), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result14
   }
 
@@ -742,7 +742,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its second over specific types in 3D" in {
     toRDD(data3)
-      .types(Over(Second), true, Default(Reducers(123)))
+      .types(Over(Second), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result16
   }
 
@@ -754,7 +754,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its second along specific types in 3D" in {
     toRDD(data3)
-      .types(Along(Second), true, Default(Reducers(123)))
+      .types(Along(Second), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result18
   }
 
@@ -766,7 +766,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its third over specific types in 3D" in {
     toRDD(data3)
-      .types(Over(Third), true, Default(Reducers(123)))
+      .types(Over(Third), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result20
   }
 
@@ -778,7 +778,7 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
   it should "return its third along specific types in 3D" in {
     toRDD(data3)
-      .types(Along(Third), true, Default(Reducers(123)))
+      .types(Along(Third), true, Default(Reducers(12)))
       .toList.sortBy(_._1) shouldBe result22
   }
 }
@@ -1491,133 +1491,133 @@ class TestSparkMatrixSlice extends TestMatrixSlice {
 
   "A Matrix.slice" should "return its first over slice in 1D" in {
     toRDD(data1)
-      .slice(Over(First), List("bar", "qux"), false, InMemory())
+      .slice(Over(First), List("bar", "qux"), false, Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over inverse slice in 1D" in {
     toRDD(data1)
-      .slice(Over(First), List("bar", "qux"), true, Default())
+      .slice(Over(First), List("bar", "qux"), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first over slice in 2D" in {
     toRDD(data2)
-      .slice(Over(First), List("bar", "qux"), false, Default(Reducers(123)))
+      .slice(Over(First), List("bar", "qux"), false, Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its first over inverse slice in 2D" in {
     toRDD(data2)
-      .slice(Over(First), List("bar", "qux"), true, Unbalanced(Reducers(123)))
+      .slice(Over(First), List("bar", "qux"), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its first along slice in 2D" in {
     toRDD(data2)
-      .slice(Along(First), List(1, 3), false, InMemory())
+      .slice(Along(First), List(1, 3), false, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first along inverse slice in 2D" in {
     toRDD(data2)
-      .slice(Along(First), List(1, 3), true, Default())
+      .slice(Along(First), List(1, 3), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its second over slice in 2D" in {
     toRDD(data2)
-      .slice(Over(Second), List(1, 3), false, Default(Reducers(123)))
+      .slice(Over(Second), List(1, 3), false, Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over inverse slice in 2D" in {
     toRDD(data2)
-      .slice(Over(Second), List(1, 3), true, Unbalanced(Reducers(123)))
+      .slice(Over(Second), List(1, 3), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along slice in 2D" in {
     toRDD(data2)
-      .slice(Along(Second), List("bar", "qux"), false, InMemory())
+      .slice(Along(Second), List("bar", "qux"), false, Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its second along inverse slice in 2D" in {
     toRDD(data2)
-      .slice(Along(Second), List("bar", "qux"), true, Default())
+      .slice(Along(Second), List("bar", "qux"), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its first over slice in 3D" in {
     toRDD(data3)
-      .slice(Over(First), List("bar", "qux"), false, Default(Reducers(123)))
+      .slice(Over(First), List("bar", "qux"), false, Default())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its first over inverse slice in 3D" in {
     toRDD(data3)
-      .slice(Over(First), List("bar", "qux"), true, Unbalanced(Reducers(123)))
+      .slice(Over(First), List("bar", "qux"), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first along slice in 3D" in {
     toRDD(data3)
-      .slice(Along(First), List(Position2D(1, "xyz"), Position2D(3, "xyz")), false, InMemory())
+      .slice(Along(First), List(Position2D(1, "xyz"), Position2D(3, "xyz")), false, Default())
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along inverse slice in 3D" in {
     toRDD(data3)
-      .slice(Along(First), List(Position2D(1, "xyz"), Position2D(3, "xyz")), true, Default())
+      .slice(Along(First), List(Position2D(1, "xyz"), Position2D(3, "xyz")), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over slice in 3D" in {
     toRDD(data3)
-      .slice(Over(Second), List(1, 3), false, Default(Reducers(123)))
+      .slice(Over(Second), List(1, 3), false, Default())
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second over inverse slice in 3D" in {
     toRDD(data3)
-      .slice(Over(Second), List(1, 3), true, Unbalanced(Reducers(123)))
+      .slice(Over(Second), List(1, 3), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its second along slice in 3D" in {
     toRDD(data3)
-      .slice(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), false, InMemory())
+      .slice(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), false, Default())
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its second along inverse slice in 3D" in {
     toRDD(data3)
-      .slice(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), true, Default())
+      .slice(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its third over slice in 3D" in {
     toRDD(data3)
-      .slice(Over(Third), "xyz", false, Default(Reducers(123)))
+      .slice(Over(Third), "xyz", false, Default())
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its third over inverse slice in 3D" in {
     toRDD(data3)
-      .slice(Over(Third), "xyz", true, Unbalanced(Reducers(123)))
+      .slice(Over(Third), "xyz", true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third along slice in 3D" in {
     toRDD(data3)
-      .slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), false, InMemory())
+      .slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), false, Default())
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along inverse slice in 3D" in {
     toRDD(data3)
-      .slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), true, Default())
+      .slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result22
   }
 }
@@ -2004,7 +2004,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its first over coordinates in 1D" in {
     toRDD(data1)
-      .which(Over(First), List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c), InMemory())
+      .which(Over(First), List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c), Default())
       .toList.sorted shouldBe result2
   }
 
@@ -2012,7 +2012,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
     toRDD(data1)
       .which(Over[Position1D, Dimension.First](First), List(
         (List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c)),
-        (List("foo"), (c: Cell[Position1D]) => !TestMatrixWhich.predicate(c))), Default())
+        (List("foo"), (c: Cell[Position1D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result3
   }
 
@@ -2024,26 +2024,26 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its first over coordinates in 2D" in {
     toRDD(data2)
-      .which(Over(First), List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c),
-        Default(Reducers(123)))
+      .which(Over(First), List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c), Default())
       .toList.sorted shouldBe result5
   }
 
   it should "return its first along coordinates in 2D" in {
     toRDD(data2)
-      .which(Along(First), List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c), Unbalanced(Reducers(123)))
+      .which(Along(First), List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c), Default(Reducers(12)))
       .toList.sorted shouldBe result6
   }
 
   it should "return its second over coordinates in 2D" in {
     toRDD(data2)
-      .which(Over(Second), List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c), InMemory())
+      .which(Over(Second), List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c), Default())
       .toList.sorted shouldBe result7
   }
 
   it should "return its second along coordinates in 2D" in {
     toRDD(data2)
-      .which(Along(Second), List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c), Default())
+      .which(Along(Second), List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c),
+        Default(Reducers(12)))
       .toList.sorted shouldBe result8
   }
 
@@ -2051,7 +2051,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
     toRDD(data2)
       .which(Over[Position2D, Dimension.First](First), List(
         (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
-        (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(123)))
+        (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default())
       .toList.sorted shouldBe result9
   }
 
@@ -2059,7 +2059,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
     toRDD(data2)
       .which(Along[Position2D, Dimension.First](First), List(
         (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
-        (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Unbalanced(Reducers(123)))
+        (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result10
   }
 
@@ -2067,7 +2067,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
     toRDD(data2)
       .which(Over[Position2D, Dimension.Second](Second), List(
         (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
-        (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), InMemory())
+        (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default())
       .toList.sorted shouldBe result11
   }
 
@@ -2075,7 +2075,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
     toRDD(data2)
       .which(Along[Position2D, Dimension.Second](Second), List(
         (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
-        (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default())
+        (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result12
   }
 
@@ -2087,41 +2087,40 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its first over coordinates in 3D" in {
     toRDD(data3)
-      .which(Over(First), List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c),
-        Default(Reducers(123)))
+      .which(Over(First), List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default())
       .toList.sorted shouldBe result14
   }
 
   it should "return its first along coordinates in 3D" in {
     toRDD(data3)
       .which(Along(First), List(Position2D(2, "xyz"), Position2D(4, "xyz")),
-        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Unbalanced(Reducers(123)))
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default(Reducers(12)))
       .toList.sorted shouldBe result15
   }
 
   it should "return its second over coordinates in 3D" in {
     toRDD(data3)
-      .which(Over(Second), List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), InMemory())
+      .which(Over(Second), List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default())
       .toList.sorted shouldBe result16
   }
 
   it should "return its second along coordinates in 3D" in {
     toRDD(data3)
       .which(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
-        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default())
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default(Reducers(12)))
       .toList.sorted shouldBe result17
   }
 
   it should "return its third over coordinates in 3D" in {
     toRDD(data3)
-      .which(Over(Third), "xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default(Reducers(123)))
+      .which(Over(Third), "xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default())
       .toList.sorted shouldBe result18
   }
 
   it should "return its third along coordinates in 3D" in {
     toRDD(data3)
       .which(Along(Third), List(Position2D("bar", 2), Position2D("qux", 1)),
-        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Unbalanced(Reducers(123)))
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default(Reducers(12)))
       .toList.sorted shouldBe result19
   }
 
@@ -2129,7 +2128,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
     toRDD(data3)
       .which(Over[Position3D, Dimension.First](First), List(
         (List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-        (List("foo"), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
+        (List("foo"), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
       .toList.sorted shouldBe result20
   }
 
@@ -2137,7 +2136,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
     toRDD(data3)
       .which(Along[Position3D, Dimension.First](First), List(
         (List(Position2D(2, "xyz"), Position2D(4, "xyz")), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-        (List(Position2D(2, "xyz")), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
+        (List(Position2D(2, "xyz")), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result21
   }
 
@@ -2145,7 +2144,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
     toRDD(data3)
       .which(Over[Position3D, Dimension.Second](Second), List(
         (List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-        (List(2), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(123)))
+        (List(2), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
       .toList.sorted shouldBe result22
   }
 
@@ -2154,7 +2153,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
       .which(Along[Position3D, Dimension.Second](Second), List(
         (List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
         (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), (List(Position2D("foo", "xyz")),
-        (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Unbalanced(Reducers(123)))
+        (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result23
   }
 
@@ -2162,7 +2161,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
     toRDD(data3)
       .which(Over[Position3D, Dimension.Third](Third), List(
         ("xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-        ("xyz", (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
+        ("xyz", (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
       .toList.sorted shouldBe result24
   }
 
@@ -2170,7 +2169,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
     toRDD(data3)
       .which(Along[Position3D, Dimension.Third](Third), List(
         (List(Position2D("foo", 1), Position2D("qux", 1)), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-        (List(Position2D("foo", 2)), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
+        (List(Position2D("foo", 2)), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result25
   }
 }
@@ -2227,20 +2226,20 @@ class TestSparkMatrixGet extends TestMatrixGet {
 
   "A Matrix.get" should "return its cells in 1D" in {
     toRDD(data1)
-      .get("qux", InMemory())
+      .get("qux", Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its cells in 2D" in {
     toRDD(data2)
-      .get(List(Position2D("foo", 3), Position2D("qux", 1), Position2D("baz", 4)), Default())
+      .get(List(Position2D("foo", 3), Position2D("qux", 1), Position2D("baz", 4)), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its cells in 3D" in {
     toRDD(data3)
       .get(List(Position3D("foo", 3, "xyz"), Position3D("qux", 1, "xyz"), Position3D("baz", 4, "xyz")),
-        Unbalanced(Reducers(123)))
+        Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 }
@@ -2510,7 +2509,7 @@ class TestSparkMatrixToMap extends TestMatrixToMap {
   }
 
   it should "return its first over map in 2D" in {
-    toRDD(data2).toMap(Over(First), Default(Reducers(123))) shouldBe result2
+    toRDD(data2).toMap(Over(First), Default(Reducers(12))) shouldBe result2
   }
 
   it should "return its first along map in 2D" in {
@@ -2518,7 +2517,7 @@ class TestSparkMatrixToMap extends TestMatrixToMap {
   }
 
   it should "return its second over map in 2D" in {
-    toRDD(data2).toMap(Over(Second), Default(Reducers(123))) shouldBe result4
+    toRDD(data2).toMap(Over(Second), Default(Reducers(12))) shouldBe result4
   }
 
   it should "return its second along map in 2D" in {
@@ -2526,7 +2525,7 @@ class TestSparkMatrixToMap extends TestMatrixToMap {
   }
 
   it should "return its first over map in 3D" in {
-    toRDD(data3).toMap(Over(First), Default(Reducers(123))) shouldBe result6
+    toRDD(data3).toMap(Over(First), Default(Reducers(12))) shouldBe result6
   }
 
   it should "return its first along map in 3D" in {
@@ -2534,7 +2533,7 @@ class TestSparkMatrixToMap extends TestMatrixToMap {
   }
 
   it should "return its second over map in 3D" in {
-    toRDD(data3).toMap(Over(Second), Default(Reducers(123))) shouldBe result8
+    toRDD(data3).toMap(Over(Second), Default(Reducers(12))) shouldBe result8
   }
 
   it should "return its second along map in 3D" in {
@@ -2542,7 +2541,7 @@ class TestSparkMatrixToMap extends TestMatrixToMap {
   }
 
   it should "return its third over map in 3D" in {
-    toRDD(data3).toMap(Over(Third), Default(Reducers(123))) shouldBe result10
+    toRDD(data3).toMap(Over(Third), Default(Reducers(12))) shouldBe result10
   }
 
   it should "return its third along map in 3D" in {
@@ -3429,7 +3428,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
-      .summarise(Along(First), Max[Position2D, Position1D](), Default(Reducers(123)))
+      .summarise(Along(First), Max[Position2D, Position1D](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -3441,7 +3440,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
-      .summarise(Along(Second), Min[Position2D, Position1D](), Default(Reducers(123)))
+      .summarise(Along(Second), Min[Position2D, Position1D](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
@@ -3453,7 +3452,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
-      .summarise(Along(First), Max[Position3D, Position2D](), Default(Reducers(123)))
+      .summarise(Along(First), Max[Position3D, Position2D](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
@@ -3465,7 +3464,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
-      .summarise(Along(Second), Min[Position3D, Position2D](), Default(Reducers(123)))
+      .summarise(Along(Second), Min[Position3D, Position2D](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -3477,7 +3476,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
-      .summarise(Along(Third), Min[Position3D, Position2D](), Default(Reducers(123)))
+      .summarise(Along(Third), Min[Position3D, Position2D](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
@@ -3491,7 +3490,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
       .summariseWithValue(Along(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second)), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result12
   }
 
@@ -3505,7 +3504,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
       .summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First)), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result14
   }
 
@@ -3519,7 +3518,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
       .summariseWithValue(Along(First), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second)), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result16
   }
 
@@ -3533,7 +3532,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
       .summariseWithValue(Along(Second), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First)), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result18
   }
 
@@ -3547,7 +3546,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
       .summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third)), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result20
   }
 
@@ -3560,7 +3559,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its first along aggregates in 1D" in {
     toRDD(num1)
       .summarise(Along(First), List(Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
-        Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
+        Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result22
   }
 
@@ -3573,7 +3572,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
       .summarise(Along(First), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-        Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
+        Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result24
   }
 
@@ -3587,7 +3586,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
       .summarise(Along(Second), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result26
   }
 
@@ -3600,7 +3599,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
       .summarise(Along(First), List(Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
-        Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
+        Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result28
   }
 
@@ -3614,7 +3613,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
       .summarise(Along(Second), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result30
   }
 
@@ -3628,7 +3627,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
       .summarise(Along(Third), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result32
   }
 
@@ -3646,7 +3645,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
           .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
           .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result34
   }
 
@@ -3664,7 +3663,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
           .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
           .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result36
   }
 
@@ -3681,7 +3680,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
       .summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
-        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext, Default(Reducers(123)))
+        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result38
   }
 
@@ -3699,7 +3698,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
           .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
           .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result40
   }
 
@@ -3717,7 +3716,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
       .summariseWithValue(Along(Second), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First))
-        .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext, Default(Reducers(123)))
+        .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result42
   }
 
@@ -3734,7 +3733,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
       .summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third))
-        .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext, Default(Reducers(123)))
+        .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result44
   }
 }
@@ -4630,55 +4629,55 @@ class TestSparkMatrixJoin extends TestMatrixJoin {
 
   "A Matrix.join" should "return its first over join in 2D" in {
     toRDD(data2)
-      .join(Over(First), toRDD(dataA), InMemory())
+      .join(Over(First), toRDD(dataA), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first along join in 2D" in {
     toRDD(dataB)
-      .join(Along(First), toRDD(data2), InMemory(Reducers(123)))
+      .join(Along(First), toRDD(data2), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its second over join in 2D" in {
     toRDD(dataC)
-      .join(Over(Second), toRDD(data2), Default())
+      .join(Over(Second), toRDD(data2), Default(Reducers(12), Reducers(34)))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second along join in 2D" in {
     toRDD(data2)
-      .join(Along(Second), toRDD(dataD), Default(Reducers(456)))
+      .join(Along(Second), toRDD(dataD), Default())
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its first over join in 3D" in {
     toRDD(data3)
-      .join(Over(First), toRDD(dataE), Default(Reducers(123), Reducers(456)))
+      .join(Over(First), toRDD(dataE), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first along join in 3D" in {
     toRDD(dataF)
-      .join(Along(First), toRDD(data3), Unbalanced(Reducers(456)))
+      .join(Along(First), toRDD(data3), Default(Reducers(12), Reducers(34)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its second over join in 3D" in {
     toRDD(dataG)
-      .join(Over(Second), toRDD(data3), Unbalanced(Reducers(123), Reducers(456)))
+      .join(Over(Second), toRDD(data3), Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second along join in 3D" in {
     toRDD(data3)
-      .join(Along(Second), toRDD(dataH), InMemory())
+      .join(Along(Second), toRDD(dataH), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its third over join in 3D" in {
     toRDD(dataI)
-      .join(Over(Third), toRDD(data3), InMemory(Reducers(123)))
+      .join(Over(Third), toRDD(data3), Default(Reducers(12), Reducers(34)))
       .toList.sortBy(_.position) shouldBe result9
   }
 
@@ -6463,14 +6462,14 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
   "A Matrix.pairwise" should "return its first over pairwise in 1D" in {
     toRDD(num1)
-      .pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position0D]("(%1$s+%2$s)")), InMemory())
+      .pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position0D]("(%1$s+%2$s)")), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
       .pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-        Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -6479,7 +6478,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
       .pairwise(Along(First), Lower, List(
         Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
         Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result3
   }
 
@@ -6487,21 +6486,21 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num2)
       .pairwise(Over(Second), Lower, List(
         Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-        Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))), InMemory())
+        Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))), Default())
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
       .pairwise(Along(Second), Lower, Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-        Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
       .pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-        Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
@@ -6509,7 +6508,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num3)
       .pairwise(Along(First), Lower, List(
         Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-        Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))), InMemory())
+        Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))), Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
@@ -6517,15 +6516,14 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num3)
       .pairwise(Over(Second), Lower, List(
         Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
-          Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
       .pairwise(Along(Second), Lower, Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-        Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result9
   }
 
@@ -6533,108 +6531,102 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num3)
       .pairwise(Over(Third), Lower, List(
         Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))), InMemory())
+        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))), Default())
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
       .pairwise(Along(Third), Lower, Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-        Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.pairwiseWithValue" should "return its first over pairwise in 1D" in {
     toRDD(num1)
       .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position0D](), ext,
-        Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](), ext, InMemory())
+      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](), ext, Default())
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along pairwise in 2D" in {
     toRDD(num2)
       .pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
-        TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext,
-          Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over pairwise in 2D" in {
     toRDD(num2)
       .pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
-        TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext,
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        TestMatrixPairwise.MinusX[Position1D, Position1D]()), ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
-      .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](), ext, InMemory())
+      .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](), ext, Default())
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position2D](), ext,
-        Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
-        TestMatrixPairwise.MinusX[Position2D, Position1D]()), ext,
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        TestMatrixPairwise.MinusX[Position2D, Position1D]()), ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
-        TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext, InMemory())
+        TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext, Default())
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](), ext,
-        Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseWithValue(Over(Third), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
-        TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext,
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        TestMatrixPairwise.MinusX[Position1D, Position2D]()), ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
-      .pairwiseWithValue(Along(Third), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](), ext, InMemory())
+      .pairwiseWithValue(Along(Third), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](), ext, Default())
       .toList.sortBy(_.position) shouldBe result22
   }
 
   "A Matrix.pairwiseBetween" should "return its first over pairwise in 1D" in {
     toRDD(num1)
       .pairwiseBetween(Over(First), Lower, toRDD(dataA),
-        Plus(Locate.OperatorString[Position1D, Position0D]("(%1$s+%2$s)")),
-          Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Plus(Locate.OperatorString[Position1D, Position0D]("(%1$s+%2$s)")), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetween(Over(First), Lower, toRDD(dataB),
-        Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")), Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result24
   }
 
@@ -6642,7 +6634,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num2)
       .pairwiseBetween(Along(First), Lower, toRDD(dataC), List(
         Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-        Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))), InMemory())
+        Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))), Default())
       .toList.sortBy(_.position) shouldBe result25
   }
 
@@ -6650,23 +6642,21 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num2)
       .pairwiseBetween(Over(Second), Lower, toRDD(dataD), List(
         Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-        Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
-          Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetween(Along(Second), Lower, toRDD(dataE),
-        Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")), Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetween(Over(First), Lower, toRDD(dataF),
-        Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")), InMemory())
+        Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")), Default())
       .toList.sortBy(_.position) shouldBe result28
   }
 
@@ -6674,8 +6664,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num3)
       .pairwiseBetween(Along(First), Lower, toRDD(dataG), List(
         Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-        Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))),
-          Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result29
   }
 
@@ -6683,15 +6672,14 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num3)
       .pairwiseBetween(Over(Second), Lower, toRDD(dataH), List(
         Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))), Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetween(Along(Second), Lower, toRDD(dataI),
-        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), InMemory())
+        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), Default())
       .toList.sortBy(_.position) shouldBe result31
   }
 
@@ -6699,30 +6687,28 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num3)
       .pairwiseBetween(Over(Third), Lower, toRDD(dataJ), List(
         Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
-          Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result32
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetween(Along(Third), Lower, toRDD(dataK),
-        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-          Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result33
   }
 
   "A Matrix.pairwiseBetweenWithValue" should "return its first over pairwise in 1D" in {
     toRDD(num1)
       .pairwiseBetweenWithValue(Over(First), Lower, toRDD(dataL), TestMatrixPairwise.PlusX[Position1D, Position0D](),
-        ext, InMemory())
+        ext, Default())
       .toList.sortBy(_.position) shouldBe result34
   }
 
   it should "return its first over pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetweenWithValue(Over(First), Lower, toRDD(dataM), TestMatrixPairwise.PlusX[Position1D, Position1D](),
-        ext, Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result35
   }
 
@@ -6730,7 +6716,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num2)
       .pairwiseBetweenWithValue(Along(First), Lower, toRDD(dataN), List(
         TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
-          ext, Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result36
   }
 
@@ -6738,21 +6724,21 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num2)
       .pairwiseBetweenWithValue(Over(Second), Lower, toRDD(dataO), List(
         TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
-          ext, InMemory())
+          ext, Default())
       .toList.sortBy(_.position) shouldBe result37
   }
 
   it should "return its second along pairwise in 2D" in {
     toRDD(num2)
       .pairwiseBetweenWithValue(Along(Second), Lower, toRDD(dataP), TestMatrixPairwise.PlusX[Position1D, Position1D](),
-        ext, Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result38
   }
 
   it should "return its first over pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue(Over(First), Lower, toRDD(dataQ), TestMatrixPairwise.PlusX[Position1D, Position2D](),
-        ext, Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result39
   }
 
@@ -6760,7 +6746,7 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num3)
       .pairwiseBetweenWithValue(Along(First), Lower, toRDD(dataR), List(
         TestMatrixPairwise.PlusX[Position2D, Position1D](), TestMatrixPairwise.MinusX[Position2D, Position1D]()),
-          ext, InMemory())
+          ext, Default())
       .toList.sortBy(_.position) shouldBe result40
   }
 
@@ -6768,14 +6754,14 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num3)
       .pairwiseBetweenWithValue(Over(Second), Lower, toRDD(dataS), List(
         TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
-          ext, Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+          ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result41
   }
 
   it should "return its second along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue(Along(Second), Lower, toRDD(dataT), TestMatrixPairwise.PlusX[Position2D, Position1D](),
-        ext, Unbalanced(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        ext, Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result42
   }
 
@@ -6783,14 +6769,14 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
     toRDD(num3)
       .pairwiseBetweenWithValue(Over(Third), Lower, toRDD(dataU), List(
         TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
-          ext, InMemory())
+          ext, Default())
       .toList.sortBy(_.position) shouldBe result43
   }
 
   it should "return its third along pairwise in 3D" in {
     toRDD(num3)
       .pairwiseBetweenWithValue(Along(Third), Lower, toRDD(dataV), TestMatrixPairwise.PlusX[Position2D, Position1D](),
-        ext, Default(Reducers(123) |-> Reducers(456), Reducers(654) |-> Reducers(321)))
+        ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result44
   }
 }
@@ -7034,68 +7020,67 @@ class TestSparkMatrixChange extends TestMatrixChange {
 
   "A Matrix.change" should "return its first over data in 1D" in {
     toRDD(data1)
-      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), InMemory())
+      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over data in 2D" in {
     toRDD(data2)
-      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default())
+      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along data in 2D" in {
     toRDD(data2)
-      .change(Along(First), List(3, 4), ContinuousSchema(DoubleCodex), Default(Reducers(123)))
+      .change(Along(First), List(3, 4), ContinuousSchema(DoubleCodex), Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over data in 2D" in {
     toRDD(data2)
-      .change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Unbalanced(Reducers(123)))
+      .change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along data in 2D" in {
     toRDD(data2)
-      .change(Along(Second), "foo", ContinuousSchema(DoubleCodex), InMemory())
+      .change(Along(Second), "foo", ContinuousSchema(DoubleCodex), Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over data in 3D" in {
     toRDD(data3)
-      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default())
+      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along data in 3D" in {
     toRDD(data3)
-      .change(Along(First), List(Position2D(3, "xyz"), Position2D(4, "xyz")), ContinuousSchema(DoubleCodex),
-        Default(Reducers(123)))
+      .change(Along(First), List(Position2D(3, "xyz"), Position2D(4, "xyz")), ContinuousSchema(DoubleCodex), Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over data in 3D" in {
     toRDD(data3)
-      .change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Unbalanced(Reducers(123)))
+      .change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along data in 3D" in {
     toRDD(data3)
-      .change(Along(Second), Position2D("foo", "xyz"), ContinuousSchema(DoubleCodex), InMemory())
+      .change(Along(Second), Position2D("foo", "xyz"), ContinuousSchema(DoubleCodex), Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over data in 3D" in {
     toRDD(data3)
-      .change(Over(Third), List("xyz"), ContinuousSchema(DoubleCodex), Default())
+      .change(Over(Third), List("xyz"), ContinuousSchema(DoubleCodex), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along data in 3D" in {
     toRDD(data3)
-      .change(Along(Third), Position2D("foo", 1), ContinuousSchema(DoubleCodex), Default(Reducers(123)))
+      .change(Along(Third), Position2D("foo", 1), ContinuousSchema(DoubleCodex), Default())
       .toList.sortBy(_.position) shouldBe result11
   }
 }
@@ -7325,7 +7310,7 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   it should "return its updated and added data in 1D" in {
     toRDD(data1)
-      .set(List("foo", "quxx"), Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(123)))
+      .set(List("foo", "quxx"), Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -7337,20 +7322,19 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   it should "return its updated data in 2D" in {
     toRDD(data2)
-      .set(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(123)))
+      .set(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its updated and added data in 2D" in {
     toRDD(data2)
-      .set(List(Position2D("foo", 2), Position2D("quxx", 5)), Content(ContinuousSchema(DoubleCodex), 1),
-        Default())
+      .set(List(Position2D("foo", 2), Position2D("quxx", 5)), Content(ContinuousSchema(DoubleCodex), 1), Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its matrix updated data in 2D" in {
     toRDD(data2)
-      .set(toRDD(dataB), Default(Reducers(123)))
+      .set(toRDD(dataB), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
@@ -7363,7 +7347,7 @@ class TestSparkMatrixSet extends TestMatrixSet {
   it should "return its updated and added data in 3D" in {
     toRDD(data3)
       .set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc")),
-        Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(123)))
+        Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -8307,7 +8291,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1), Default(Reducers(123)))
+      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1), Default())
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -8319,7 +8303,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), Default(Reducers(123)))
+      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), Default())
       .toList.sortBy(_.position) shouldBe result4
   }
 
@@ -8331,7 +8315,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1), Default(Reducers(123)))
+      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1), Default())
       .toList.sortBy(_.position) shouldBe result6
   }
 
@@ -8343,7 +8327,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1), Default(Reducers(123)))
+      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1), Default())
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -8355,7 +8339,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1), Default(Reducers(123)))
+      .slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1), Default())
       .toList.sortBy(_.position) shouldBe result10
   }
 
@@ -8368,7 +8352,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
   "A Matrix.slideWithValue" should "return its first along derived data in 1D" in {
     toRDD(num1)
       .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
-        TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ext, Default(Reducers(123)))
+        TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ext, Default())
       .toList.sortBy(_.position) shouldBe result12
   }
 
@@ -8380,8 +8364,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext,
-        Default(Reducers(123)))
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, Default())
       .toList.sortBy(_.position) shouldBe result14
   }
 
@@ -8394,7 +8377,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
       .slideWithValue(Along(Second),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, Default(Reducers(123)))
+        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, Default())
       .toList.sortBy(_.position) shouldBe result16
   }
 
@@ -8406,8 +8389,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext,
-        Default(Reducers(123)))
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, Default())
       .toList.sortBy(_.position) shouldBe result18
   }
 
@@ -8419,8 +8401,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext,
-        Default(Reducers(123)))
+      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, Default())
       .toList.sortBy(_.position) shouldBe result20
   }
 
@@ -8432,8 +8413,7 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext,
-        Default(Reducers(123)))
+      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, Default())
       .toList.sortBy(_.position) shouldBe result22
   }
 }
@@ -8800,7 +8780,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
   it should "return its filled data in 3D" in {
     toRDD(num3)
-      .fill(Content(ContinuousSchema(DoubleCodex), 0), Default(Reducers(123)))
+      .fill(Content(ContinuousSchema(DoubleCodex), 0), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -8809,7 +8789,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
     cells
       .fill(Over[Position2D, Dimension.First](First),
-        cells.summarise(Over(First), Mean[Position2D, Position1D]()), InMemory())
+        cells.summarise(Over(First), Mean[Position2D, Position1D]()), Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
@@ -8818,7 +8798,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
     cells
       .fill(Along[Position2D, Dimension.First](First),
-        cells.summarise(Along(First), Mean[Position2D, Position1D]()), InMemory(Reducers(123)))
+        cells.summarise(Along(First), Mean[Position2D, Position1D]()), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
@@ -8827,7 +8807,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
     cells
       .fill(Over[Position2D, Dimension.Second](Second),
-        cells.summarise(Over(Second), Mean[Position2D, Position1D]()), Default())
+        cells.summarise(Over(Second), Mean[Position2D, Position1D]()), Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result5
   }
 
@@ -8836,7 +8816,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
     cells
       .fill(Along[Position2D, Dimension.Second](Second),
-        cells.summarise(Along(Second), Mean[Position2D, Position1D]()), Default(Reducers(123)))
+        cells.summarise(Along(Second), Mean[Position2D, Position1D]()), Default())
       .toList.sortBy(_.position) shouldBe result6
   }
 
@@ -8845,7 +8825,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
     cells
       .fill(Over[Position3D, Dimension.First](First),
-        cells.summarise(Over(First), Mean[Position3D, Position1D]()), InMemory())
+        cells.summarise(Over(First), Mean[Position3D, Position1D]()), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result7
   }
 
@@ -8854,7 +8834,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
     cells
       .fill(Along[Position3D, Dimension.First](First),
-        cells.summarise(Along(First), Mean[Position3D, Position2D]()), InMemory(Reducers(123)))
+        cells.summarise(Along(First), Mean[Position3D, Position2D]()), Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -8872,7 +8852,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
     cells
       .fill(Along[Position3D, Dimension.Second](Second),
-        cells.summarise(Along(Second), Mean[Position3D, Position2D]()), Default(Reducers(123)))
+        cells.summarise(Along(Second), Mean[Position3D, Position2D]()), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
@@ -8881,7 +8861,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
     cells
       .fill(Over[Position3D, Dimension.Third](Third),
-        cells.summarise(Over(Third), Mean[Position3D, Position1D]()), InMemory())
+        cells.summarise(Over(Third), Mean[Position3D, Position1D]()), Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result11
   }
 
@@ -8890,7 +8870,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
     cells
       .fill(Along[Position3D, Dimension.Third](Third),
-        cells.summarise(Along(Third), Mean[Position3D, Position2D]()), InMemory(Reducers(123)))
+        cells.summarise(Along(Third), Mean[Position3D, Position2D]()), Default())
       .toList.sortBy(_.position) shouldBe result12
   }
 }
@@ -9469,7 +9449,7 @@ class TestSparkMatrixSquash extends TestMatrixSquash {
 
   it should "return its second squashed data in 2D" in {
     toRDD(data2)
-      .squash(Second, PreservingMaxPosition[Position2D](), Default(Reducers(123)))
+      .squash(Second, PreservingMaxPosition[Position2D](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -9481,7 +9461,7 @@ class TestSparkMatrixSquash extends TestMatrixSquash {
 
   it should "return its second squashed data in 3D" in {
     toRDD(data3)
-      .squash(Second, PreservingMaxPosition[Position3D](), Default(Reducers(123)))
+      .squash(Second, PreservingMaxPosition[Position3D](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
@@ -9494,7 +9474,7 @@ class TestSparkMatrixSquash extends TestMatrixSquash {
   "A Matrix.squashWithValue" should "return its first squashed data in 2D" in {
     toRDD(data2)
       .squashWithValue(First, TestMatrixSquash.PreservingMaxPositionWithValue[Position2D](), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
@@ -9507,7 +9487,7 @@ class TestSparkMatrixSquash extends TestMatrixSquash {
   it should "return its first squashed data in 3D" in {
     toRDD(data3)
       .squashWithValue(First, TestMatrixSquash.PreservingMaxPositionWithValue[Position3D](), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -9520,7 +9500,7 @@ class TestSparkMatrixSquash extends TestMatrixSquash {
   it should "return its third squashed data in 3D" in {
     toRDD(data3)
       .squashWithValue(Third, TestMatrixSquash.PreservingMaxPositionWithValue[Position3D](), ext,
-        Default(Reducers(123)))
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
   }
 }

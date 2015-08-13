@@ -84,7 +84,7 @@ class TestScalding1(args : Args) extends Job(args) {
 
   data
     .set(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
-      Content(ContinuousSchema(LongCodex), 1234), Default())
+      Content(ContinuousSchema(LongCodex), 1234))
     .slice(Over(First), "iid:1548763", true)
     .save("./tmp.scalding/dat2.out", descriptive=true)
 
@@ -410,7 +410,7 @@ class TestScalding13(args : Args) extends Job(args) {
     .saveAsCSV(Over(Second), "./tmp.scalding/fll2.out")
 
   data
-    .fill[Dimension.Second, Position1D, Default[NoParameters.type]](Over(Second),
+    .fill(Over[Position2D, Dimension.Second](Second),
       all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
     .join(Over(First), inds)
     .saveAsCSV(Over(Second), "./tmp.scalding/fll4.out")
@@ -536,7 +536,7 @@ class TestScalding18(args : Args) extends Job(args) {
     .summarise(Along(First), aggregators)
 
   val rem = stats
-    .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2, InMemory())
+    .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2)
     .names(Over(First))
 
   data
@@ -678,7 +678,7 @@ class TestScalding23(args : Args) extends Job(args) {
   }
 
   data
-    .pairwise(Over(Second), Upper, DiffSquared(), InMemory())
+    .pairwise(Over(Second), Upper, DiffSquared())
     .save("./tmp.scalding/pws1.out")
 }
 
@@ -719,8 +719,7 @@ class TestScalding26(args: Args) extends Job(args) {
   val right = load2D(args("path") + "/algebraInputfile2.txt")
 
   left
-    .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")),
-      InMemory())
+    .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
     .save("./tmp.scalding/alg.out")
 }
 

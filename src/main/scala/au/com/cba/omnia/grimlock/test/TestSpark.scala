@@ -86,7 +86,7 @@ object TestSpark1 {
 
     data
       .set(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
-        Content(ContinuousSchema(LongCodex), 1234), Default())
+        Content(ContinuousSchema(LongCodex), 1234))
       .slice(Over(First), "iid:1548763", true)
       .save("./tmp.spark/dat2.out", descriptive=true)
 
@@ -436,8 +436,8 @@ object TestSpark13 {
       .saveAsCSV(Over(Second), "./tmp.spark/fll2.out")
 
     data
-      .fill[Dimension.Second, Position1D, Default[NoParameters.type]](Over(Second),
-        all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)), Default())
+      .fill(Over[Position2D, Dimension.Second](Second),
+        all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
       .join(Over(First), inds)
       .saveAsCSV(Over(Second), "./tmp.spark/fll4.out")
   }
@@ -572,7 +572,7 @@ object TestSpark18 {
       .summarise(Along(First), aggregators)
 
     val rem = stats
-      .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2, InMemory())
+      .which(Over(Second), "count", (c: Cell[Position2D]) => c.content.value leq 2)
       .names(Over(First))
 
     data
@@ -724,7 +724,7 @@ object TestSpark23 {
     }
 
     data
-      .pairwise(Over(Second), Upper, DiffSquared(), InMemory())
+      .pairwise(Over(Second), Upper, DiffSquared())
       .save("./tmp.spark/pws1.out")
   }
 }
@@ -740,7 +740,7 @@ object TestSpark24 {
     val data = loadTable(args(1) + "/somePairwise2.txt", schema, separator="|")
 
     data
-      .correlation(Over(Second), ptuner=InMemory())
+      .correlation(Over(Second))
       .save("./tmp.spark/pws2.out")
 
     val schema2 = List(("day", NominalSchema(StringCodex)),
@@ -750,7 +750,7 @@ object TestSpark24 {
     val data2 = loadTable(args(1) + "/somePairwise3.txt", schema2, separator="|")
 
     data2
-      .correlation(Over(Second), ptuner=InMemory())
+      .correlation(Over(Second))
       .save("./tmp.spark/pws3.out")
   }
 }
@@ -760,7 +760,7 @@ object TestSpark25 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
     load2D(args(1) + "/mutualInputfile.txt")
-      .mutualInformation(Over(Second), ptuner=InMemory())
+      .mutualInformation(Over(Second))
       .save("./tmp.spark/mi.out")
   }
 }
@@ -772,8 +772,7 @@ object TestSpark26 {
     val right = load2D(args(1) + "/algebraInputfile2.txt")
 
     left
-      .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")),
-        InMemory())
+      .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
       .save("./tmp.spark/alg.out")
   }
 }
@@ -893,12 +892,12 @@ object TestSpark29 {
       ("mod:456", "iid:H", Content(schema, 0)))
 
     data
-      .gini(Over(First), ptuner=InMemory())
+      .gini(Over(First))
       .save("./tmp.spark/gini.out")
 
   data
     .map { case (a, b, c) => (b, a, c) }
-    .gini(Along(First), ptuner=InMemory())
+    .gini(Along(First))
     .save("./tmp.spark/inig.out")
   }
 }

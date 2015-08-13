@@ -107,8 +107,8 @@ private[scalding] object ScaldingImplicits {
       }
     }
 
-    def tunedJoin[V2](tuner: Tuner, parameters: TunerParameters, smaller: TypedPipe[(K, V2)])(
-      implicit ev: Ordering[K]): TypedPipe[(K, (V, V2))] = {
+    def tunedJoin[W](tuner: Tuner, parameters: TunerParameters, smaller: TypedPipe[(K, W)])(
+      implicit ev: Ordering[K]): TypedPipe[(K, (V, W))] = {
       (tuner, parameters) match {
         case (Default(_), Reducers(reducers)) => grouped.withReducers(reducers).join(Grouped(smaller))
         case (Unbalanced(_), Reducers(reducers)) => grouped.sketch(reducers).join(smaller)
@@ -116,8 +116,8 @@ private[scalding] object ScaldingImplicits {
       }
     }
 
-    def tunedLeftJoin[V2](tuner: Tuner, parameters: TunerParameters, smaller: TypedPipe[(K, V2)])(
-      implicit ev: Ordering[K]): TypedPipe[(K, (V, Option[V2]))] = {
+    def tunedLeftJoin[W](tuner: Tuner, parameters: TunerParameters, smaller: TypedPipe[(K, W)])(
+      implicit ev: Ordering[K]): TypedPipe[(K, (V, Option[W]))] = {
       (tuner, parameters) match {
         case (Default(_), Reducers(reducers)) => grouped.withReducers(reducers).leftJoin(Grouped(smaller))
         case (Unbalanced(_), Reducers(reducers)) => grouped.sketch(reducers).leftJoin(smaller)
