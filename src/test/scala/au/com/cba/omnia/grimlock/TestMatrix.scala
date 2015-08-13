@@ -264,7 +264,7 @@ class TestSparkMatrixNames extends TestMatrix {
   it should "return its first over names in 2D" in {
     toRDD(data2)
       .names(Over(First), Default(Reducers(12)))
-      .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
         (Position1D("qux"), 3)))
   }
 
@@ -278,8 +278,8 @@ class TestSparkMatrixNames extends TestMatrix {
   it should "return its second over names in 2D" in {
     toRDD(data2)
       .names(Over(Second), Default(Reducers(12)))
-      .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 0), (Position1D(3), 1),
-        (Position1D(4), 2)))
+      .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 2), (Position1D(3), 1),
+        (Position1D(4), 0)))
   }
 
   it should "return its second along names in 2D" in {
@@ -292,7 +292,7 @@ class TestSparkMatrixNames extends TestMatrix {
   it should "return its first over names in 3D" in {
     toRDD(data3)
       .names(Over(First), Default(Reducers(12)))
-      .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
+      .toList.sortBy(_._1) should be (List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
         (Position1D("qux"), 3)))
   }
 
@@ -306,8 +306,8 @@ class TestSparkMatrixNames extends TestMatrix {
   it should "return its second over names in 3D" in {
     toRDD(data3)
       .names(Over(Second), Default(Reducers(12)))
-      .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 0), (Position1D(3), 1),
-        (Position1D(4), 2)))
+      .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 2), (Position1D(3), 1),
+        (Position1D(4), 0)))
   }
 
   it should "return its second along names in 3D" in {

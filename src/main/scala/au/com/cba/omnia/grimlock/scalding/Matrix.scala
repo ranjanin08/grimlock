@@ -223,8 +223,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     Names.number(data.map { case c => slice.selected(c.position) }.distinct)
   }
 
-  type PairwiseTuners = OneOf13[InMemory[NoParameters.type],
+  type PairwiseTuners = OneOf14[InMemory[NoParameters.type],
                                 Default[NoParameters.type],
+                                Default[Reducers],
                                 Default[Sequence2[Redistribute, Redistribute]],
                                 Default[Sequence2[Redistribute, Reducers]],
                                 Default[Sequence2[Redistribute, Sequence2[Redistribute, Reducers]]],
@@ -624,15 +625,16 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
             })
       case _ =>
         val (rr, rj, lr, lj) = tuner.parameters match {
+          case Sequence2(Sequence2(rr, rj), Sequence2(lr, lj)) => (rr, rj, lr, lj)
+          case Sequence2(rj @ Reducers(_), Sequence2(lr, lj)) => (NoParameters, rj, lr, lj)
+          case Sequence2(rr @ Redistribute(_), Sequence2(lr, lj)) => (rr, NoParameters, lr, lj)
+          case Sequence2(Sequence2(rr, rj), lj @ Reducers(_)) => (rr, rj, NoParameters, lj)
+          case Sequence2(Sequence2(rr, rj), lr @ Redistribute(_)) => (rr, rj, lr, NoParameters)
+          case Sequence2(rj @ Reducers(_), lj @ Reducers(_)) => (NoParameters, rj, NoParameters, lj)
+          case Sequence2(rr @ Redistribute(_), lj @ Reducers(_)) => (rr, NoParameters, NoParameters, lj)
+          case Sequence2(rj @ Reducers(_), lr @ Redistribute(_)) => (NoParameters, rj, lr, NoParameters)
           case Sequence2(rr @ Redistribute(_), lr @ Redistribute(_)) => (rr, NoParameters, lr, NoParameters)
-          case Sequence2(rr @ Redistribute(_), lj @ Reducers(_))     => (rr, NoParameters, NoParameters, lj)
-          case Sequence2(rr @ Redistribute(_), Sequence2(lr, lj))    => (rr, NoParameters, lr, lj)
-          case Sequence2(rj @ Reducers(_),     lr @ Redistribute(_)) => (NoParameters, rj, lr, NoParameters)
-          case Sequence2(rj @ Reducers(_),     lj @ Reducers(_))     => (NoParameters, rj, NoParameters, lj)
-          case Sequence2(rj @ Reducers(_),     Sequence2(lr, lj))    => (NoParameters, rj, lr, lj)
-          case Sequence2(Sequence2(rr, rj),    lr @ Redistribute(_)) => (rr, rj, lr, NoParameters)
-          case Sequence2(Sequence2(rr, rj),    lj @ Reducers(_))     => (rr, rj, NoParameters, lj)
-          case Sequence2(Sequence2(rr, rj),    Sequence2(lr, lj))    => (rr, rj, lr, lj)
+          case lj @ Reducers(_) => (NoParameters, NoParameters, NoParameters, lj)
           case _ => (NoParameters, NoParameters, NoParameters, NoParameters)
         }
         val right = Grouped(rdata.map { case Cell(p, _) => (slice.selected(p), ()) }.distinct)

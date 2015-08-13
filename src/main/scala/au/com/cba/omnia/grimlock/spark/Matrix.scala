@@ -55,6 +55,15 @@ import org.apache.spark.rdd.RDD
 import scala.reflect.ClassTag
 
 private[spark] object SparkImplicits {
+  implicit class RDDTuner[T](rdd: RDD[T]) {
+    def tunedDistinct(parameters: TunerParameters): RDD[T] = {
+      parameters match {
+        case Reducers(reducers) => rdd.distinct(reducers)
+        case _ => rdd.distinct()
+      }
+    }
+  }
+
   implicit class PairRDDTuner[K <: Position, V](rdd: RDD[(K, V)])(implicit kt: ClassTag[K], vt: ClassTag[V]) {
     def tunedJoin[W](parameters: TunerParameters, other: RDD[(K, W)]): RDD[(K, (V, W))] = {
       parameters match {
@@ -135,10 +144,15 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type NamesTuners = TP2
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)] = {
-    Names.number(data.map { case c => slice.selected(c.position) }.distinct)
+    Names.number(data.map { case c => slice.selected(c.position) }.tunedDistinct(tuner.parameters))
   }
 
-  type PairwiseTuners = TP3
+  type PairwiseTuners = OneOf6[Default[NoParameters.type],
+                               Default[Reducers],
+                               Default[Sequence2[Reducers, Reducers]],
+                               Default[Sequence2[Reducers, Sequence2[Reducers, Reducers]]],
+                               Default[Sequence2[Sequence2[Reducers, Reducers], Reducers]],
+                               Default[Sequence2[Sequence2[Reducers, Reducers], Sequence2[Reducers, Reducers]]]]
   def pairwise[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], comparer: Comparer, operators: F,
     tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q],
       ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R],
@@ -215,7 +229,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def shape[T <: Tuner](tuner: T = Default())(implicit ev: ShapeTuners#V[T]): U[Cell[Position1D]] = {
     data
       .flatMap { case c => c.position.coordinates.map(_.toString).zipWithIndex }
-      .distinct
+      .tunedDistinct(tuner.parameters)
       .groupBy { case (s, i) => i }
       .map {
         case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema(LongCodex), s.size))
@@ -226,7 +240,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def size[D <: Dimension, T <: Tuner](dim: D, distinct: Boolean, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
     ev2: SizeTuners#V[T]): U[Cell[Position1D]] = {
     val coords = data.map { case c => c.position(dim) }
-    val dist = if (distinct) { coords } else { coords.distinct() }
+    val dist = if (distinct) { coords } else { coords.tunedDistinct(tuner.parameters) }
 
     dist
       .context
@@ -389,14 +403,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def unique[T <: Tuner](tuner: T = Default())(implicit ev: UniqueTuners#V[T]): U[Content] = {
     data
       .map { case c => c.content }
-      .distinct()
+      .tunedDistinct(tuner.parameters)
   }
 
   def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
     implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[Cell[slice.S]] = {
     data
       .map { case Cell(p, c) => Cell(slice.selected(p), c) }
-      .distinct()
+      .tunedDistinct(tuner.parameters)
   }
 
   type WhichTuners = TP2
@@ -446,20 +460,22 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     ldata: U[Cell[P]], rdata: U[Cell[P]])(implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S],
       ev3: ClassTag[slice.R]): U[((Cell[slice.S], slice.R), (Cell[slice.S], slice.R))] = {
     val toTuple = (c: Cell[P]) => (Cell(slice.selected(c.position), c.content), slice.remainder(c.position))
-    val (p1, p2) = tuner.parameters match {
-      case Sequence2(f, s) => (f, s)
-      case p => (NoParameters, p)
+    val (rr, rj, lr, lj) = tuner.parameters match {
+      case Sequence2(Sequence2(rr, rj), Sequence2(lr, lj)) => (rr, rj, lr, lj)
+      case Sequence2(rj @ Reducers(_), Sequence2(lr, lj)) => (NoParameters, rj, lr, lj)
+      case Sequence2(Sequence2(rr, rj), lj @ Reducers(_)) => (rr, rj, NoParameters, lj)
+      case Sequence2(rj @ Reducers(_), lj @ Reducers(_)) => (NoParameters, rj, NoParameters, lj)
+      case lj @ Reducers(_) => (NoParameters, NoParameters, NoParameters, lj)
+      case _ => (NoParameters, NoParameters, NoParameters, NoParameters)
     }
 
-    ldata
-      .map { case c => slice.selected(c.position) }
-      .distinct
-      .cartesian(rdata.map { case c => slice.selected(c.position) }.distinct)
+    ldata.map { case c => slice.selected(c.position) }.tunedDistinct(lr)
+      .cartesian(rdata.map { case c => slice.selected(c.position) }.tunedDistinct(rr))
       .collect { case (l, r) if comparer.keep(l, r) => (l, r) }
       .keyBy { case (l, _) => l }
-      .tunedJoin(p2, ldata.keyBy { case Cell(p, _) => slice.selected(p) })
+      .tunedJoin(lj, ldata.keyBy { case Cell(p, _) => slice.selected(p) })
       .keyBy { case (_, ((_, r),  _)) => r }
-      .tunedJoin(p1, rdata.keyBy { case Cell(p, _) => slice.selected(p) })
+      .tunedJoin(rj, rdata.keyBy { case Cell(p, _) => slice.selected(p) })
       .map { case (_, ((_, (_, lc)), rc)) => (toTuple(lc), toTuple(rc)) }
   }
 }
