@@ -62,7 +62,7 @@ object Cell {
    * @param first     The codex for decoding the first dimension.
    * @param line      The line to parse.
    */
-  def parse1D(separator: String, first: Codex)(line: String): Option[Cell[Position1D]] = {
+  def parse1D(separator: String = "|", first: Codex = StringCodex)(line: String): Option[Cell[Position1D]] = {
     line.trim.split(Pattern.quote(separator), 4) match {
       case Array(r, t, e, v) =>
         Schema.fromString(e, t).flatMap {
@@ -83,7 +83,7 @@ object Cell {
    * @param first     The codex for decoding the first dimension.
    * @param line      The line to parse.
    */
-  def parse1DWithDictionary(dict: Map[String, Schema], separator: String, first: Codex)(
+  def parse1DWithDictionary(dict: Map[String, Schema], separator: String = "|", first: Codex = StringCodex)(
     line: String): Option[Cell[Position1D]] = {
     line.trim.split(Pattern.quote(separator), 2) match {
       case Array(e, v) =>
@@ -103,7 +103,8 @@ object Cell {
    * @param first     The codex for decoding the first dimension.
    * @param line      The line to parse.
    */
-  def parse1DWithSchema(schema: Schema, separator: String, first: Codex)(line: String): Option[Cell[Position1D]] = {
+  def parse1DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex)(
+    line: String): Option[Cell[Position1D]] = {
     line.trim.split(Pattern.quote(separator), 2) match {
       case Array(e, v) =>
         (schema.decode(v), first.decode(e)) match {
@@ -122,7 +123,8 @@ object Cell {
    * @param second    The codex for decoding the second dimension.
    * @param line      The line to parse.
    */
-  def parse2D(separator: String, first: Codex, second: Codex)(line: String): Option[Cell[Position2D]] = {
+  def parse2D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex)(
+    line: String): Option[Cell[Position2D]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(r, c, t, e, v) =>
         Schema.fromString(e, t).flatMap {
@@ -145,8 +147,9 @@ object Cell {
    * @param second    The codex for decoding the second dimension.
    * @param line      The line to parse.
    */
-  def parse2DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String, first: Codex,
-    second: Codex)(line: String)(implicit ev: PosDimDep[Position2D, D]): Option[Cell[Position2D]] = {
+  def parse2DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
+    first: Codex = StringCodex, second: Codex = StringCodex)(line: String)(
+      implicit ev: PosDimDep[Position2D, D]): Option[Cell[Position2D]] = {
     line.trim.split(Pattern.quote(separator), 3) match {
       case Array(e, a, v) =>
         val s = dim match {
@@ -171,8 +174,8 @@ object Cell {
    * @param second    The codex for decoding the second dimension.
    * @param line      The line to parse.
    */
-  def parse2DWithSchema(schema: Schema, separator: String, first: Codex, second: Codex)(
-    line: String): Option[Cell[Position2D]] = {
+  def parse2DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
+    second: Codex = StringCodex)(line: String): Option[Cell[Position2D]] = {
     line.trim.split(Pattern.quote(separator), 3) match {
       case Array(e, a, v) =>
         (schema.decode(v), first.decode(e), second.decode(a)) match {
@@ -192,7 +195,8 @@ object Cell {
    * @param third     The codex for decoding the third dimension.
    * @param line      The line to parse.
    */
-  def parse3D(separator: String, first: Codex, second: Codex, third: Codex)(line: String): Option[Cell[Position3D]] = {
+  def parse3D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
+    third: Codex = StringCodex)(line: String): Option[Cell[Position3D]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(r, c, d, t, e, v) =>
         Schema.fromString(e, t).flatMap {
@@ -216,8 +220,9 @@ object Cell {
    * @param third     The codex for decoding the third dimension.
    * @param line      The line to parse.
    */
-  def parse3DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String, first: Codex,
-    second: Codex, third: Codex)(line: String)(implicit ev: PosDimDep[Position3D, D]): Option[Cell[Position3D]] = {
+  def parse3DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
+    first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex)(line: String)(
+      implicit ev: PosDimDep[Position3D, D]): Option[Cell[Position3D]] = {
     line.trim.split(Pattern.quote(separator), 4) match {
       case Array(e, a, t, v) =>
         val s = dim match {
@@ -244,8 +249,8 @@ object Cell {
    * @param third     The codex for decoding the third dimension.
    * @param line      The line to parse.
    */
-  def parse3DWithSchema(schema: Schema, separator: String, first: Codex, second: Codex, third: Codex)(
-    line: String): Option[Cell[Position3D]] = {
+  def parse3DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
+    second: Codex = StringCodex, third: Codex = StringCodex)(line: String): Option[Cell[Position3D]] = {
     line.trim.split(Pattern.quote(separator), 4) match {
       case Array(e, a, t, v) =>
         (schema.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
@@ -266,8 +271,8 @@ object Cell {
    * @param fourth    The codex for decoding the fourth dimension.
    * @param line      The line to parse.
    */
-  def parse4D(separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex)(
-    line: String): Option[Cell[Position4D]] = {
+  def parse4D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
+    third: Codex = StringCodex, fourth: Codex = StringCodex)(line: String): Option[Cell[Position4D]] = {
     line.trim.split(Pattern.quote(separator), 7) match {
       case Array(a, b, c, d, t, e, v) =>
         Schema.fromString(e, t).flatMap {
@@ -292,9 +297,9 @@ object Cell {
    * @param fourth    The codex for decoding the fourth dimension.
    * @param line      The line to parse.
    */
-  def parse4DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String, first: Codex,
-    second: Codex, third: Codex, fourth: Codex)(line: String)(
-      implicit ev: PosDimDep[Position4D, D]): Option[Cell[Position4D]] = {
+  def parse4DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
+    first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex)(
+      line: String)(implicit ev: PosDimDep[Position4D, D]): Option[Cell[Position4D]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(a, b, c, d, v) =>
         val s = dim match {
@@ -323,8 +328,9 @@ object Cell {
    * @param fourth    The codex for decoding the fourth dimension.
    * @param line      The line to parse.
    */
-  def parse4DWithSchema(schema: Schema, separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex)(
-    line: String): Option[Cell[Position4D]] = {
+  def parse4DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
+    second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex)(
+      line: String): Option[Cell[Position4D]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(a, b, c, d, v) =>
         (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
@@ -346,8 +352,9 @@ object Cell {
    * @param fifth     The codex for decoding the fifth dimension.
    * @param line      The line to parse.
    */
-  def parse5D(separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex, fifth: Codex)(
-    line: String): Option[Cell[Position5D]] = {
+  def parse5D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
+    third: Codex = StringCodex, fourth: Codex = StringCodex, fifth: Codex = StringCodex)(
+      line: String): Option[Cell[Position5D]] = {
     line.trim.split(Pattern.quote(separator), 8) match {
       case Array(a, b, c, d, f, t, e, v) =>
         Schema.fromString(e, t).flatMap {
@@ -375,9 +382,9 @@ object Cell {
    * @param fifth     The codex for decoding the fifth dimension.
    * @param line      The line to parse.
    */
-  def parse5DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String, first: Codex,
-    second: Codex, third: Codex, fourth: Codex, fifth: Codex)(line: String)(
-      implicit ev: PosDimDep[Position5D, D]): Option[Cell[Position5D]] = {
+  def parse5DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
+    first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex,
+      fifth: Codex = StringCodex)(line: String)(implicit ev: PosDimDep[Position5D, D]): Option[Cell[Position5D]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(a, b, c, d, e, v) =>
         val s = dim match {
@@ -409,8 +416,9 @@ object Cell {
    * @param fifth     The codex for decoding the fifth dimension.
    * @param line      The line to parse.
    */
-  def parse5DWithSchema(schema: Schema, separator: String, first: Codex, second: Codex, third: Codex, fourth: Codex,
-    fifth: Codex)(line: String): Option[Cell[Position5D]] = {
+  def parse5DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
+    second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex, fifth: Codex = StringCodex)(
+      line: String): Option[Cell[Position5D]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(a, b, c, d, e, v) =>
         (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
@@ -431,7 +439,7 @@ object Cell {
    * @param separator The column separator.
    * @param line      The line to parse.
    */
-  def parseTable(columns: List[(String, Schema)], pkeyIndex: Int, separator: String)(
+  def parseTable(columns: List[(String, Schema)], pkeyIndex: Int = 0, separator: String = "\u0001")(
     line: String): List[Cell[Position2D]] = {
     val parts = line.trim.split(Pattern.quote(separator), columns.length)
     val pkey = parts(pkeyIndex)
@@ -767,7 +775,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *       contained script. Lastly, `parser` functions are provided on the `Cell` object.
    */
   def stream[Q <: Position](command: String, script: String, separator: String,
-    parser: String => Option[Cell[Q]]): U[Cell[Q]]
+    parser: String => TraversableOnce[Cell[Q]]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `summarise` functions. */
   type SummariseTuners <: OneOf

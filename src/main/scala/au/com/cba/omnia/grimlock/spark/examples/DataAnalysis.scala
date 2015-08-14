@@ -35,7 +35,7 @@ object DataAnalysis {
     val output = "spark"
 
     // Read the data. This returns a 2D matrix (instance x feature).
-    val data = load2D(s"${path}/exampleInput.txt")
+    val data = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
 
     // Define moments to compute.
     val moments: List[Aggregator[Position1D, Position0D, Position1D]] = List(

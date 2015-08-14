@@ -34,7 +34,7 @@ class Conditional(args: Args) extends Job(args) {
 
   // Read the data.
   // 1/ Read the data, this returns a 2D matrix (row x feature).
-  val data = load2D(s"${path}/exampleConditional.txt")
+  val data = loadText(s"${path}/exampleConditional.txt", Cell.parse2D())
 
   // Get map of row id -> hair color
   // 1/ Squash the matrix keeping only hair column.

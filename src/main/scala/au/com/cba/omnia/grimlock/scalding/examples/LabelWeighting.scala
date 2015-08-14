@@ -48,7 +48,7 @@ class LabelWeighting(args: Args) extends Job(args) {
   val output = "scalding"
 
   // Read labels and melt the date into the instance id to generate a 1D matrix.
-  val labels = load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema(DoubleCodex))
+  val labels = loadText(s"${path}/exampleLabels.txt", Cell.parse2DWithSchema(ContinuousSchema(DoubleCodex)))
     .melt(Second, First, ":")
 
   // Compute histogram over the label values.
@@ -81,7 +81,7 @@ class LabelWeighting(args: Args) extends Job(args) {
     .toMap(Over(First))
 
   // Re-read labels and add the computed weight.
-  load2DWithSchema(s"${path}/exampleLabels.txt", ContinuousSchema(DoubleCodex))
+  loadText(s"${path}/exampleLabels.txt", Cell.parse2DWithSchema(ContinuousSchema(DoubleCodex)))
     .transformWithValue(AddWeight(), weights)
     .save(s"./demo.${output}/weighted.out")
 }

@@ -33,11 +33,11 @@ class Scoring(args: Args) extends Job(args) {
   val output = "scalding"
 
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = load2D(s"${path}/exampleInput.txt")
+  val data = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
   // Read the statistics from the PipelineDataPreparation example.
-  val stats = load2D(s"./demo.${output}/stats.out").toMap(Over(First))
+  val stats = loadText(s"./demo.${output}/stats.out", Cell.parse2D()).toMap(Over(First))
   // Read externally learned weights.
-  val weights = load1D(s"${path}/exampleWeights.txt").toMap(Over(First))
+  val weights = loadText(s"${path}/exampleWeights.txt", Cell.parse1D()).toMap(Over(First))
 
   // Define type of statistics map.
   type S = Map[Position1D, Map[Position1D, Content]]

@@ -73,7 +73,7 @@ class DerivedData(args: Args) extends Job(args) {
   // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
   //    feature.from.gradient)
   // 4/ Persist 2D gradient features.
-  load3D(s"${path}/exampleDerived.txt", third = DateCodex())
+  loadText(s"${path}/exampleDerived.txt", Cell.parse3D(third = DateCodex()))
     .slide(Along(Third), Gradient(First))
     .melt(Third, Second, ".from.")
     .save(s"./demo.${output}/gradient.out")

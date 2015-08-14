@@ -56,7 +56,7 @@ object PipelineDataPreparation {
     val output = "spark"
 
     // Read the data. This returns a 2D matrix (instance x feature).
-    val data = load2D(s"${path}/exampleInput.txt")
+    val data = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
 
     // Perform a split of the data into a training and test set.
     val parts = data
