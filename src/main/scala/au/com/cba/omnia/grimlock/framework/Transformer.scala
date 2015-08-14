@@ -23,16 +23,16 @@ import au.com.cba.omnia.grimlock.framework.utility._
 trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, Q] { self =>
   type V = Any
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[Q]] = present(cell)
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[Q]] = present(cell)
 
   /**
    * Present the transformed content(s).
    *
    * @param cell The cell to transform.
    *
-   * @return A `Collection` of transformed cells.
+   * @return A `TraversableOnce` of transformed cells.
    */
-  def present(cell: Cell[P]): Collection[Cell[Q]]
+  def present(cell: Cell[P]): TraversableOnce[Cell[Q]]
 
   /**
    * Operator for chaining transformations.
@@ -43,9 +43,7 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
    */
   def andThen[R <: Position](that: Transformer[Q, R]) = {
     new Transformer[P, R] {
-      def present(cell: Cell[P]): Collection[Cell[R]] = {
-        Collection(self.present(cell).toList.flatMap { case c => that.present(c).toList })
-      }
+      def present(cell: Cell[P]): TraversableOnce[Cell[R]] = self.present(cell).flatMap { case c => that.present(c) }
     }
   }
 
@@ -58,8 +56,8 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
    */
   def andThenRename(rename: (Cell[P], Cell[Q]) => Q) = {
     new Transformer[P, Q] {
-      def present(cell: Cell[P]): Collection[Cell[Q]] = {
-        Collection(self.present(cell).toList.map { case c => Cell(rename(cell, c), c.content) })
+      def present(cell: Cell[P]): TraversableOnce[Cell[Q]] = {
+        self.present(cell).map { case c => Cell(rename(cell, c), c.content) }
       }
     }
   }
@@ -73,8 +71,8 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
    */
   def andThenExpand[R <: Position](expand: (Cell[P], Cell[Q]) => R)(implicit ev: PosExpDep[Q, R]) = {
     new Transformer[P, R] {
-      def present(cell: Cell[P]): Collection[Cell[R]] = {
-        Collection(self.present(cell).toList.map { case c => Cell(expand(cell, c), c.content) })
+      def present(cell: Cell[P]): TraversableOnce[Cell[R]] = {
+        self.present(cell).map { case c => Cell(expand(cell, c), c.content) }
       }
     }
   }
@@ -133,9 +131,9 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
    * @param cell The cell to transform.
    * @param ext  Externally provided data needed for the transformation.
    *
-   * @return A `Collection` of transformed cells.
+   * @return A `TraversableOnce` of transformed cells.
    */
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[Q]]
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[Q]]
 
   /**
    * Operator for chaining transformations.
@@ -148,8 +146,8 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
     new TransformerWithValue[P, R] {
       type V = self.V
 
-      def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[R]] = {
-        Collection(self.presentWithValue(cell, ext).toList.flatMap { case c => that.presentWithValue(c, ext).toList })
+      def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
+        self.presentWithValue(cell, ext).flatMap { case c => that.presentWithValue(c, ext) }
       }
     }
   }
@@ -165,8 +163,8 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
     new TransformerWithValue[P, Q] {
       type V = self.V
 
-      def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[Q]] = {
-        Collection(self.presentWithValue(cell, ext).toList.map { case c => Cell(rename(cell, c, ext), c.content) })
+      def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
+        self.presentWithValue(cell, ext).map { case c => Cell(rename(cell, c, ext), c.content) }
       }
     }
   }
@@ -182,8 +180,8 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
     new TransformerWithValue[P, R] {
       type V = self.V
 
-      def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[R]] = {
-        Collection(self.presentWithValue(cell, ext).toList.map { case c => Cell(expand(cell, c, ext), c.content) })
+      def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
+        self.presentWithValue(cell, ext).map { case c => Cell(expand(cell, c, ext), c.content) }
       }
     }
   }
@@ -255,7 +253,7 @@ object Transformable {
   private def C2T[P <: Position, Q <: Position]: Transformable[(Cell[P]) => Cell[Q], P, Q] = {
     new Transformable[(Cell[P]) => Cell[Q], P, Q] {
       def convert(t: (Cell[P]) => Cell[Q]): Transformer[P, Q] = {
-        new Transformer[P, Q] { def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t(cell)) }
+        new Transformer[P, Q] { def present(cell: Cell[P]): TraversableOnce[Cell[Q]] = Some(t(cell)) }
       }
     }
   }
@@ -272,24 +270,7 @@ object Transformable {
   private def LC2T[P <: Position, Q <: Position]: Transformable[(Cell[P]) => List[Cell[Q]], P, Q] = {
     new Transformable[(Cell[P]) => List[Cell[Q]], P, Q] {
       def convert(t: (Cell[P]) => List[Cell[Q]]): Transformer[P, Q] = {
-        new Transformer[P, Q] { def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t(cell)) }
-      }
-    }
-  }
-
-  /** Converts a `(Cell[P]) => Collection[Cell[P]]` to a `Transformer[P, P]`. */
-  implicit def CCPP2T[P <: Position]: Transformable[(Cell[P]) => Collection[Cell[P]], P, P] = CC2T[P, P]
-
-  /** Converts a `(Cell[P]) => Collection[Cell[P#M]]` to a `Transformer[P, P#M]`. */
-  implicit def CCPPM2T[P <: Position with ExpandablePosition]: Transformable[(Cell[P]) => Collection[Cell[P#M]], P, P#M] = CC2T[P, P#M]
-
-  /** Converts a `(Cell[P]) => Collection[Cell[Q]]` to a `Transformer[P, Q]`. */
-  implicit def CCPQ2T[P <: Position, Q <: Position](implicit ev: PosExpDep[P, Q]): Transformable[(Cell[P]) => Collection[Cell[Q]], P, Q] = CC2T[P, Q]
-
-  private def CC2T[P <: Position, Q <: Position]: Transformable[(Cell[P]) => Collection[Cell[Q]], P, Q] = {
-    new Transformable[(Cell[P]) => Collection[Cell[Q]], P, Q] {
-      def convert(t: (Cell[P]) => Collection[Cell[Q]]): Transformer[P, Q] = {
-        new Transformer[P, Q] { def present(cell: Cell[P]): Collection[Cell[Q]] = t(cell) }
+        new Transformer[P, Q] { def present(cell: Cell[P]): TraversableOnce[Cell[Q]] = t(cell) }
       }
     }
   }
@@ -320,7 +301,7 @@ object Transformable {
     new Transformable[List[T], P, Q] {
       def convert(t: List[T]): Transformer[P, Q] = {
         new Transformer[P, Q] {
-          def present(cell: Cell[P]): Collection[Cell[Q]] = Collection(t.flatMap { case s => s.present(cell).toList })
+          def present(cell: Cell[P]): TraversableOnce[Cell[Q]] = t.flatMap { case s => s.present(cell) }
         }
       }
     }
@@ -354,7 +335,7 @@ object TransformableWithValue {
         new TransformerWithValue[P, Q] {
           type V = W
 
-          def presentWithValue(cell: Cell[P], ext: W): Collection[Cell[Q]] = Collection(t(cell, ext))
+          def presentWithValue(cell: Cell[P], ext: W): TraversableOnce[Cell[Q]] = Some(t(cell, ext))
         }
       }
     }
@@ -375,28 +356,7 @@ object TransformableWithValue {
         new TransformerWithValue[P, Q] {
           type V = W
 
-          def presentWithValue(cell: Cell[P], ext: W): Collection[Cell[Q]] = Collection(t(cell, ext))
-        }
-      }
-    }
-  }
-
-  /** Converts a `(Cell[P], W) => Collection[Cell[P]]` to a `TransformerWithValue[P, P] { type V >: W }`. */
-  implicit def CCPPW2TWV[P <: Position, W]: TransformableWithValue[(Cell[P], W) => Collection[Cell[P]], P, P, W] = CC2TWV[P, P, W]
-
-  /** Converts a `(Cell[P], W) => Collection[Cell[P#M]]` to a `TransformerWithValue[P, P#M] { type V >: W }`. */
-  implicit def CCPPMW2TWV[P <: Position with ExpandablePosition, W]: TransformableWithValue[(Cell[P], W) => Collection[Cell[P#M]], P, P#M, W] = CC2TWV[P, P#M, W]
-
-  /** Converts a `(Cell[P], W) => Collection[Cell[Q]]` to a `TransformerWithValue[P, Q] { type V >: W }`. */
-  implicit def CCPQW2TWV[P <: Position, Q <: Position, W](implicit ev: PosExpDep[P, Q]): TransformableWithValue[(Cell[P], W) => Collection[Cell[Q]], P, Q, W] = CC2TWV[P, Q, W]
-
-  private def CC2TWV[P <: Position, Q <: Position, W]: TransformableWithValue[(Cell[P], W) => Collection[Cell[Q]], P, Q, W] = {
-    new TransformableWithValue[(Cell[P], W) => Collection[Cell[Q]], P, Q, W] {
-      def convert(t: (Cell[P], W) => Collection[Cell[Q]]): TransformerWithValue[P, Q] { type V >: W } = {
-        new TransformerWithValue[P, Q] {
-          type V = W
-
-          def presentWithValue(cell: Cell[P], ext: W): Collection[Cell[Q]] = t(cell, ext)
+          def presentWithValue(cell: Cell[P], ext: W): TraversableOnce[Cell[Q]] = t(cell, ext)
         }
       }
     }
@@ -448,8 +408,8 @@ object TransformableWithValue {
         new TransformerWithValue[P, Q] {
           type V = W
 
-          def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[Q]] = {
-            Collection(t.flatMap { case s => s.presentWithValue(cell, ext).toList })
+          def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
+            t.flatMap { case s => s.presentWithValue(cell, ext) }
           }
         }
       }

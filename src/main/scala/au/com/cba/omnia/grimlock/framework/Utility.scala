@@ -18,60 +18,6 @@ import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 
-/** Collection of zero, one or more objects. */
-case class Collection[T](data: Option[Either[T, List[T]]]) {
-  /** Check if the collection is empty. */
-  def isEmpty(): Boolean = data.isEmpty
-
-  /** Transforms a `Collection[T]` to a `List[T]`. */
-  def toList(): List[T] = {
-    flatten(data.map {
-      case Left(t) => List(t)
-      case Right(tl) => tl
-    })
-  }
-
-  /** Transforms a `Collection[T]` together with a single `U` to a `List[(T, U)]`. */
-  def toList[U](u: U): List[(T, U)] = {
-    flatten(data.map {
-      case Left(t) => List((t, u))
-      case Right(tl) => tl.map { case t => (t, u) }
-    })
-  }
-
-  private def flatten[V](tlo: Option[List[V]]): List[V] = tlo.getOrElse(List())
-}
-
-object Collection {
-  /** Create an empty collection. */
-  def apply[T](): Collection[T] = Collection(Option.empty[Either[T, List[T]]])
-
-  /**
-   * Create a collection with a single object.
-   *
-   * @param t The object to wrap in a collection.
-   */
-  def apply[T](t: T): Collection[T] = Collection(Some(Left(t)))
-
-  /**
-   * Create a collection with a list of objects.
-   *
-   * @param t The list of objects to wrap in a collection.
-   */
-  def apply[T](t: List[T]): Collection[T] = Collection(Some(Right(t)))
-
-  /**
-   * Create a collection from a position and content.
-   *
-   * @param pos The position.
-   * @param con The content.
-   */
-  def apply[P <: Position](pos: P, con: Content): Collection[Cell[P]] = Collection(Some(Left(Cell(pos, con))))
-
-  /** Create an empty collection. */
-  def empty[T](): Collection[T] = Collection[T]()
-}
-
 /** Base trait for ecaping special characters in a string. */
 trait Escape {
   /**

@@ -35,8 +35,8 @@ trait TestBatchMovingAverage extends TestGrimlock {
   val sel = Position1D("sales")
 
   def createContent(value: Long): Content = Content(ContinuousSchema(LongCodex), value)
-  def createCollection(year: String, value: Double) = {
-    Collection(Position2D("sales", year), Content(ContinuousSchema(DoubleCodex), value))
+  def createCell(year: String, value: Double) = {
+    List(Cell(Position2D("sales", year), Content(ContinuousSchema(DoubleCodex), value)))
   }
 }
 
@@ -44,24 +44,24 @@ class TestSimpleMovingAverage extends TestBatchMovingAverage {
 
   "A SimpleMovingAverage" should "initialise correctly" in {
     SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), false)
-      .initialise(cell, rem) shouldBe ((List(first), Collection()))
+      .initialise(cell, rem) shouldBe ((List(first), List()))
     SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), true)
-      .initialise(cell, rem) shouldBe ((List(first), Collection(Cell(Position2D("foo", "bar"),
+      .initialise(cell, rem) shouldBe ((List(first), List(Cell(Position2D("foo", "bar"),
         Content(ContinuousSchema(DoubleCodex), 1.0)))))
     SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), false)
-      .initialise(cell, rem) shouldBe ((List(second), Collection()))
+      .initialise(cell, rem) shouldBe ((List(second), List()))
     SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), true)
-      .initialise(cell, rem) shouldBe ((List(second), Collection(Cell(Position2D("foo", "baz"),
+      .initialise(cell, rem) shouldBe ((List(second), List(Cell(Position2D("foo", "baz"),
         Content(ContinuousSchema(DoubleCodex), 1.0)))))
     SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), false)
-      .initialise(cell, rem) shouldBe ((List(first), Collection()))
+      .initialise(cell, rem) shouldBe ((List(first), List()))
     SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), true)
-      .initialise(cell, rem) shouldBe ((List(first), Collection(Cell(Position2D("foo", "bar"),
+      .initialise(cell, rem) shouldBe ((List(first), List(Cell(Position2D("foo", "bar"),
         Content(ContinuousSchema(DoubleCodex), 1.0)))))
     SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), false)
-      .initialise(cell, rem) shouldBe ((List(second), Collection()))
+      .initialise(cell, rem) shouldBe ((List(second), List()))
     SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), true)
-      .initialise(cell, rem) shouldBe ((List(second), Collection(Cell(Position2D("foo", "baz"),
+      .initialise(cell, rem) shouldBe ((List(second), List(Cell(Position2D("foo", "baz"),
         Content(ContinuousSchema(DoubleCodex), 1.0)))))
   }
 
@@ -69,52 +69,51 @@ class TestSimpleMovingAverage extends TestBatchMovingAverage {
     val obj = SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), false)
 
     val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
-    init shouldBe ((List((Position1D("2003"), 4.0)), Collection()))
+    init shouldBe ((List((Position1D("2003"), 4.0)), List()))
 
     val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
-    first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), Collection()))
+    first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), List()))
 
     val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
-    second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)),
-      Collection()))
+    second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)), List()))
 
     val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
     third shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0)), Collection()))
+      (Position1D("2006"), 8.0)), List()))
 
     val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
     fourth shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCollection("2007", 6.4)))
+      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCell("2007", 6.4)))
 
     val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
     fifth shouldBe ((List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
-      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCollection("2008", 6.6)))
+      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCell("2008", 6.6)))
   }
 
   it should "present all correctly" in {
     val obj = SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), true)
 
     val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
-    init shouldBe ((List((Position1D("2003"), 4.0)), createCollection("2003", 4.0)))
+    init shouldBe ((List((Position1D("2003"), 4.0)), createCell("2003", 4.0)))
 
     val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
-    first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), createCollection("2004", 5)))
+    first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), createCell("2004", 5)))
 
     val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
     second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)),
-      createCollection("2005", 5)))
+      createCell("2005", 5)))
 
     val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
     third shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0)), createCollection("2006", 5.75)))
+      (Position1D("2006"), 8.0)), createCell("2006", 5.75)))
 
     val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
     fourth shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCollection("2007", 6.4)))
+      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCell("2007", 6.4)))
 
     val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
     fifth shouldBe ((List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
-      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCollection("2008", 6.6)))
+      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCell("2008", 6.6)))
   }
 }
 
@@ -122,39 +121,38 @@ class TestCenteredMovingAverage extends TestBatchMovingAverage {
 
   "A CenteredMovingAverage" should "initialise correctly" in {
     CenteredMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First)).initialise(cell, rem) shouldBe
-      ((List(first), Collection()))
+      ((List(first), List()))
     CenteredMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second)).initialise(cell, rem) shouldBe
-      ((List(second), Collection()))
+      ((List(second), List()))
     CenteredMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First)).initialise(cell, rem) shouldBe
-      ((List(first), Collection()))
+      ((List(first), List()))
     CenteredMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second)).initialise(cell, rem) shouldBe
-      ((List(second), Collection()))
+      ((List(second), List()))
   }
 
   it should "present correctly" in {
     val obj = CenteredMovingAverage(2, Locate.WindowDimension[Position1D, Position1D](First))
 
     val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
-    init shouldBe ((List((Position1D("2003"), 4.0)), Collection()))
+    init shouldBe ((List((Position1D("2003"), 4.0)), List()))
 
     val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
-    first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), Collection()))
+    first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), List()))
 
     val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
-    second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)),
-      Collection()))
+    second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)), List()))
 
     val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
     third shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0)), Collection()))
+      (Position1D("2006"), 8.0)), List()))
 
     val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
     fourth shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCollection("2005", 6.4)))
+      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCell("2005", 6.4)))
 
     val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
     fifth shouldBe ((List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
-      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCollection("2006", 6.6)))
+      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCell("2006", 6.6)))
   }
 }
 
@@ -162,24 +160,24 @@ class TestWeightedMovingAverage extends TestBatchMovingAverage {
 
   "A WeightedMovingAverage" should "initialise correctly" in {
     WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), false)
-      .initialise(cell, rem) shouldBe ((List(first), Collection()))
+      .initialise(cell, rem) shouldBe ((List(first), List()))
     WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), true)
-      .initialise(cell, rem) shouldBe ((List(first), Collection(Cell(Position2D("foo", "bar"),
+      .initialise(cell, rem) shouldBe ((List(first), List(Cell(Position2D("foo", "bar"),
         Content(ContinuousSchema(DoubleCodex), 1.0)))))
     WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), false)
-      .initialise(cell, rem) shouldBe ((List(second), Collection()))
+      .initialise(cell, rem) shouldBe ((List(second), List()))
     WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), true)
-      .initialise(cell, rem) shouldBe ((List(second), Collection(Cell(Position2D("foo", "baz"),
+      .initialise(cell, rem) shouldBe ((List(second), List(Cell(Position2D("foo", "baz"),
         Content(ContinuousSchema(DoubleCodex), 1.0)))))
     WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), false)
-      .initialise(cell, rem) shouldBe ((List(first), Collection()))
+      .initialise(cell, rem) shouldBe ((List(first), List()))
     WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), true)
-      .initialise(cell, rem) shouldBe ((List(first), Collection(Cell(Position2D("foo", "bar"),
+      .initialise(cell, rem) shouldBe ((List(first), List(Cell(Position2D("foo", "bar"),
         Content(ContinuousSchema(DoubleCodex), 1.0)))))
     WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), false)
-      .initialise(cell, rem) shouldBe ((List(second), Collection()))
+      .initialise(cell, rem) shouldBe ((List(second), List()))
     WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), true)
-      .initialise(cell, rem) shouldBe ((List(second), Collection(Cell(Position2D("foo", "baz"),
+      .initialise(cell, rem) shouldBe ((List(second), List(Cell(Position2D("foo", "baz"),
         Content(ContinuousSchema(DoubleCodex), 1.0)))))
   }
 
@@ -187,53 +185,52 @@ class TestWeightedMovingAverage extends TestBatchMovingAverage {
     val obj = WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), false)
 
     val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
-    init shouldBe ((List((Position1D("2003"), 4.0)), Collection()))
+    init shouldBe ((List((Position1D("2003"), 4.0)), List()))
 
     val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
-    first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), Collection()))
+    first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), List()))
 
     val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
-    second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)),
-      Collection()))
+    second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)), List()))
 
     val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
     third shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0)), Collection()))
+      (Position1D("2006"), 8.0)), List()))
 
     val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
     fourth shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCollection("2007", 7.2)))
+      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCell("2007", 7.2)))
 
     val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
     fifth shouldBe ((List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
-      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCollection("2008", 6.733333333333333)))
+      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCell("2008", 6.733333333333333)))
   }
 
   it should "present all correctly" in {
     val obj = WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), true)
 
     val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
-    init shouldBe ((List((Position1D("2003"), 4.0)), createCollection("2003", 4.0)))
+    init shouldBe ((List((Position1D("2003"), 4.0)), createCell("2003", 4.0)))
 
     val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
     first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)),
-      createCollection("2004", 5.333333333333333)))
+      createCell("2004", 5.333333333333333)))
 
     val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
     second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)),
-      createCollection("2005", 5.166666666666667)))
+      createCell("2005", 5.166666666666667)))
 
     val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
     third shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0)), createCollection("2006", 6.3)))
+      (Position1D("2006"), 8.0)), createCell("2006", 6.3)))
 
     val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
     fourth shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCollection("2007", 7.2)))
+      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCell("2007", 7.2)))
 
     val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
     fifth shouldBe ((List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
-      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCollection("2008", 6.733333333333333)))
+      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCell("2008", 6.733333333333333)))
   }
 }
 
@@ -241,14 +238,14 @@ trait TestOnlineMovingAverage extends TestGrimlock {
   // test initilise
   val cell = Cell(Position1D("foo"), Content(ContinuousSchema(LongCodex), 1))
   val rem = Position2D("bar", "baz")
-  val first = ((1.0, 1), Collection(Cell(Position2D("foo", "bar"), createContent(1.0))))
-  val second = ((1.0, 1), Collection(Cell(Position2D("foo", "baz"), createContent(1.0))))
+  val first = ((1.0, 1), List(Cell(Position2D("foo", "bar"), createContent(1.0))))
+  val second = ((1.0, 1), List(Cell(Position2D("foo", "baz"), createContent(1.0))))
   // test present
   val sel = Position0D()
 
   def createContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
-  def createCollection(str: String, value: Double) = {
-    Collection(Position1D(str), Content(ContinuousSchema(DoubleCodex), value))
+  def createCell(str: String, value: Double) = {
+    List(Cell(Position1D(str), Content(ContinuousSchema(DoubleCodex), value)))
   }
 }
 
@@ -265,19 +262,19 @@ class TestCumulativeMovingAverage extends TestOnlineMovingAverage {
     val obj = CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First))
 
     val init = obj.initialise(Cell(sel, createContent(1)), Position1D("val.1"))
-    init shouldBe (((1.0, 1), createCollection("val.1", 1.0)))
+    init shouldBe (((1.0, 1), createCell("val.1", 1.0)))
 
     val first = obj.present(Cell(sel, createContent(2)), Position1D("val.2"), init._1)
-    first shouldBe (((1.5, 2), createCollection("val.2", 1.5)))
+    first shouldBe (((1.5, 2), createCell("val.2", 1.5)))
 
     val second = obj.present(Cell(sel, createContent(3)), Position1D("val.3"), first._1)
-    second shouldBe (((2.0, 3), createCollection("val.3", 2)))
+    second shouldBe (((2.0, 3), createCell("val.3", 2)))
 
     val third = obj.present(Cell(sel, createContent(4)), Position1D("val.4"), second._1)
-    third shouldBe (((2.5, 4), createCollection("val.4", 2.5)))
+    third shouldBe (((2.5, 4), createCell("val.4", 2.5)))
 
     val fourth = obj.present(Cell(sel, createContent(5)), Position1D("val.5"), third._1)
-    fourth shouldBe (((3.0, 5), createCollection("val.5", 3)))
+    fourth shouldBe (((3.0, 5), createCell("val.5", 3)))
   }
 }
 
@@ -298,19 +295,19 @@ class TestExponentialMovingAverage extends TestOnlineMovingAverage {
     val obj = ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First))
 
     val init = obj.initialise(Cell(sel, createContent(16)), Position1D("day.1"))
-    init shouldBe (((16.0, 1), createCollection("day.1", 16.0)))
+    init shouldBe (((16.0, 1), createCell("day.1", 16.0)))
 
     val first = obj.present(Cell(sel, createContent(17)), Position1D("day.2"), init._1)
-    first shouldBe (((16.33, 2), createCollection("day.2", 16.33)))
+    first shouldBe (((16.33, 2), createCell("day.2", 16.33)))
 
     val second = obj.present(Cell(sel, createContent(17)), Position1D("day.3"), first._1)
-    second shouldBe (((16.551099999999998, 3), createCollection("day.3", 16.551099999999998)))
+    second shouldBe (((16.551099999999998, 3), createCell("day.3", 16.551099999999998)))
 
     val third = obj.present(Cell(sel, createContent(10)), Position1D("day.4"), second._1)
-    third shouldBe (((14.389236999999998, 4), createCollection("day.4", 14.389236999999998)))
+    third shouldBe (((14.389236999999998, 4), createCell("day.4", 14.389236999999998)))
 
     val fourth = obj.present(Cell(sel, createContent(17)), Position1D("day.5"), third._1)
-    fourth shouldBe (((15.250788789999998, 5), createCollection("day.5", 15.250788789999998)))
+    fourth shouldBe (((15.250788789999998, 5), createCell("day.5", 15.250788789999998)))
   }
 }
 
@@ -323,11 +320,11 @@ trait TestWindow extends TestGrimlock {
 
 class TestCumulativeSum extends TestWindow {
 
-  val result1 = (Some(1.0), createCollection(1))
-  val result2 = (None, Collection())
+  val result1 = (Some(1.0), createCell(1))
+  val result2 = (None, List())
 
-  def createCollection(value: Double) = {
-    Collection(Position2D("foo", "bar|baz"), Content(ContinuousSchema(DoubleCodex), value))
+  def createCell(value: Double) = {
+    List(Cell(Position2D("foo", "bar|baz"), Content(ContinuousSchema(DoubleCodex), value)))
   }
 
   "A CumulativeSum" should "initialise correctly" in {
@@ -335,8 +332,8 @@ class TestCumulativeSum extends TestWindow {
     CumulativeSum(Locate.WindowString[Position1D, Position2D](), false).initialise(cell1, rem) shouldBe result1
     val init = CumulativeSum(Locate.WindowString[Position1D, Position2D](), true).initialise(cell2, rem)
     init._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    init._2.toList()(0).position shouldBe (Position2D("foo", "bar|baz"))
-    init._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    init._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
+    init._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
     CumulativeSum(Locate.WindowString[Position1D, Position2D](), false).initialise(cell2, rem) shouldBe result2
   }
 
@@ -344,20 +341,20 @@ class TestCumulativeSum extends TestWindow {
     val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), true)
 
     val init = obj.initialise(cell1, rem)
-    init shouldBe ((Some(1.0), createCollection(1.0)))
+    init shouldBe ((Some(1.0), createCell(1.0)))
 
     val first = obj.present(cell1, rem, init._1)
-    first shouldBe ((Some(2.0), createCollection(2.0)))
+    first shouldBe ((Some(2.0), createCell(2.0)))
 
     val second = obj.present(cell2, rem, first._1)
     second._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    second._2.toList()(0).position shouldBe (Position2D("foo", "bar|baz"))
-    second._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    second._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
+    second._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
 
     val third = obj.present(cell1, rem, second._1)
     third._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    third._2.toList()(0).position shouldBe (Position2D("foo", "bar|baz"))
-    third._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    third._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
+    third._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
   }
 
   it should "present correctly strict on first" in {
@@ -365,65 +362,65 @@ class TestCumulativeSum extends TestWindow {
 
     val init = obj.initialise(cell2, rem)
     init._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    init._2.toList()(0).position shouldBe (Position2D("foo", "bar|baz"))
-    init._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    init._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
+    init._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
 
     val first = obj.present(cell1, rem, init._1)
     first._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    first._2.toList()(0).position shouldBe (Position2D("foo", "bar|baz"))
-    first._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    first._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
+    first._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
 
     val second = obj.present(cell2, rem, first._1)
     second._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    second._2.toList()(0).position shouldBe (Position2D("foo", "bar|baz"))
-    second._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    second._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
+    second._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
 
     val third = obj.present(cell1, rem, second._1)
     third._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    third._2.toList()(0).position shouldBe (Position2D("foo", "bar|baz"))
-    third._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    third._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
+    third._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
   }
 
   it should "present correctly non-strict" in {
     val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), false)
 
     val init = obj.initialise(cell1, rem)
-    init shouldBe ((Some(1.0), createCollection(1.0)))
+    init shouldBe ((Some(1.0), createCell(1.0)))
 
     val first = obj.present(cell1, rem, init._1)
-    first shouldBe ((Some(2.0), createCollection(2.0)))
+    first shouldBe ((Some(2.0), createCell(2.0)))
 
     val second = obj.present(cell2, rem, first._1)
-    second shouldBe ((Some(2.0), Collection()))
+    second shouldBe ((Some(2.0), List()))
 
     val third = obj.present(cell1, rem, second._1)
-    third shouldBe ((Some(3.0), createCollection(3.0)))
+    third shouldBe ((Some(3.0), createCell(3.0)))
   }
 
   it should "present correctly non-strict on first" in {
     val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), false)
 
     val init = obj.initialise(cell2, rem)
-    init shouldBe ((None, Collection()))
+    init shouldBe ((None, List()))
 
     val first = obj.present(cell1, rem, init._1)
-    first shouldBe ((Some(1.0), createCollection(1.0)))
+    first shouldBe ((Some(1.0), createCell(1.0)))
 
     val second = obj.present(cell2, rem, first._1)
-    second shouldBe ((Some(1.0), Collection()))
+    second shouldBe ((Some(1.0), List()))
 
     val third = obj.present(cell1, rem, second._1)
-    third shouldBe ((Some(2.0), createCollection(2.0)))
+    third shouldBe ((Some(2.0), createCell(2.0)))
   }
 }
 
 class TestBinOp extends TestWindow {
 
-  val result1 = ((Some(1.0), rem), Collection())
-  val result2 = ((None, rem), Collection())
+  val result1 = ((Some(1.0), rem), List())
+  val result2 = ((None, rem), List())
 
-  def createCollection(value: Double) = {
-    Collection(Position2D("foo", "p(bar|baz, bar|baz)"), Content(ContinuousSchema(DoubleCodex), value))
+  def createCell(value: Double) = {
+    List(Cell(Position2D("foo", "p(bar|baz, bar|baz)"), Content(ContinuousSchema(DoubleCodex), value)))
   }
 
   "A BinOp" should "initialise correctly" in {
@@ -435,7 +432,7 @@ class TestBinOp extends TestWindow {
       .initialise(cell2, rem)
     init._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     init._1._2 shouldBe (rem)
-    init._2 shouldBe (Collection())
+    init._2 shouldBe (List())
     BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
       .initialise(cell2, rem) shouldBe result2
   }
@@ -444,22 +441,22 @@ class TestBinOp extends TestWindow {
     val obj = BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
 
     val init = obj.initialise(cell1, rem)
-    init shouldBe (((Some(1.0), rem), Collection()))
+    init shouldBe (((Some(1.0), rem), List()))
 
     val first = obj.present(cell1, rem, init._1)
-    first shouldBe (((Some(1.0), rem), createCollection(2.0)))
+    first shouldBe (((Some(1.0), rem), createCell(2.0)))
 
     val second = obj.present(cell2, rem, first._1)
     second._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     second._1._2 shouldBe (rem)
-    second._2.toList()(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
-    second._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    second._2.toList(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
+    second._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
 
     val third = obj.present(cell1, rem, second._1)
     third._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     third._1._2 shouldBe (rem)
-    third._2.toList()(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
-    third._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    third._2.toList(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
+    third._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
   }
 
   it should "present correctly strict on first" in {
@@ -468,57 +465,57 @@ class TestBinOp extends TestWindow {
     val init = obj.initialise(cell2, rem)
     init._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     init._1._2 shouldBe (rem)
-    init._2. shouldBe (Collection())
+    init._2. shouldBe (List())
 
     val first = obj.present(cell1, rem, init._1)
     first._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     first._1._2 shouldBe (rem)
-    first._2.toList()(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
-    first._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    first._2.toList(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
+    first._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
 
     val second = obj.present(cell2, rem, first._1)
     second._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     second._1._2 shouldBe (rem)
-    second._2.toList()(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
-    second._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    second._2.toList(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
+    second._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
 
     val third = obj.present(cell1, rem, second._1)
     third._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     third._1._2 shouldBe (rem)
-    third._2.toList()(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
-    third._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    third._2.toList(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
+    third._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
   }
 
   it should "present correctly non-strict" in {
     val obj = BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
 
     val init = obj.initialise(cell1, rem)
-    init shouldBe (((Some(1.0), rem), Collection()))
+    init shouldBe (((Some(1.0), rem), List()))
 
     val first = obj.present(cell1, rem, init._1)
-    first shouldBe (((Some(1.0), rem), createCollection(2.0)))
+    first shouldBe (((Some(1.0), rem), createCell(2.0)))
 
     val second = obj.present(cell2, rem, first._1)
-    second shouldBe (((Some(1.0), rem), Collection()))
+    second shouldBe (((Some(1.0), rem), List()))
 
     val third = obj.present(cell1, rem, second._1)
-    third shouldBe (((Some(1.0), rem), createCollection(2.0)))
+    third shouldBe (((Some(1.0), rem), createCell(2.0)))
   }
 
   it should "present correctly non-strict on first" in {
     val obj = BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
 
     val init = obj.initialise(cell2, rem)
-    init shouldBe (((None, rem), Collection()))
+    init shouldBe (((None, rem), List()))
 
     val first = obj.present(cell1, rem, init._1)
-    first shouldBe (((Some(1.0), rem), Collection()))
+    first shouldBe (((Some(1.0), rem), List()))
 
     val second = obj.present(cell2, rem, first._1)
-    second shouldBe (((Some(1.0), rem), Collection()))
+    second shouldBe (((Some(1.0), rem), List()))
 
     val third = obj.present(cell1, rem, second._1)
-    third shouldBe (((Some(1.0), rem), createCollection(2.0)))
+    third shouldBe (((Some(1.0), rem), createCell(2.0)))
   }
 }
 
@@ -546,35 +543,35 @@ class TestQuantile extends TestGrimlock {
   type W = Map[Position1D, Map[Position1D, Content]]
 
   val result1 = ((1.0, 0L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), Collection(List(
+    (7L, 0.75, "quantile=75.000000"))), List(
       Cell(Position2D("abc", "quantile=0.000000"), Content(ContinuousSchema(DoubleCodex), 1)),
-      Cell(Position2D("abc", "quantile=100.000000"), Content(ContinuousSchema(DoubleCodex), 10)))))
+      Cell(Position2D("abc", "quantile=100.000000"), Content(ContinuousSchema(DoubleCodex), 10))))
 
   val result2 = ((Double.NaN, 0L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), Collection(List(
+    (7L, 0.75, "quantile=75.000000"))), List(
       Cell(Position2D("abc", "quantile=0.000000"), Content(ContinuousSchema(DoubleCodex), 1)),
-      Cell(Position2D("abc", "quantile=100.000000"), Content(ContinuousSchema(DoubleCodex), 10)))))
+      Cell(Position2D("abc", "quantile=100.000000"), Content(ContinuousSchema(DoubleCodex), 10))))
 
-  val result3 = ((Double.NaN, 0L, List()), Collection(List()))
+  val result3 = ((Double.NaN, 0L, List()), List())
 
   val result4 = ((2.0, 1L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), Collection(List()))
+    (7L, 0.75, "quantile=75.000000"))), List())
 
   val result5 = ((4.0, 4L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), Collection(List(Cell(Position2D("abc", "quantile=25.000000"),
-      Content(ContinuousSchema(DoubleCodex), 3.25)))))
+    (7L, 0.75, "quantile=75.000000"))), List(Cell(Position2D("abc", "quantile=25.000000"),
+      Content(ContinuousSchema(DoubleCodex), 3.25))))
 
-  val result6 = ((Double.NaN, 4L, List()), Collection(List()))
+  val result6 = ((Double.NaN, 4L, List()), List())
 
   val result7 = ((Double.NaN, 4L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), Collection(List(Cell(Position2D("abc", "quantile=25.000000"),
-      Content(ContinuousSchema(DoubleCodex), Double.NaN)))))
+    (7L, 0.75, "quantile=75.000000"))), List(Cell(Position2D("abc", "quantile=25.000000"),
+      Content(ContinuousSchema(DoubleCodex), Double.NaN))))
 
   val result8 = ((Double.NaN, 1L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), Collection(List()))
+    (7L, 0.75, "quantile=75.000000"))), List())
 
   val result9 = ((3.0, 1L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), Collection(List()))
+    (7L, 0.75, "quantile=75.000000"))), List())
 
   "A Quantile" should "initialise correctly" in {
     Quantile[Position1D, Position1D, W](probs, count, min, max, quantiser, name)
@@ -628,8 +625,8 @@ class TestQuantile extends TestGrimlock {
     present7._1._1.compare(Double.NaN) shouldBe (0)
     present7._1._2 shouldBe (result7._1._2)
     present7._1._3 shouldBe (result7._1._3)
-    present7._2.toList()(0).position shouldBe (result7._2.toList()(0).position)
-    present7._2.toList()(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    present7._2.toList(0).position shouldBe (result7._2.toList(0).position)
+    present7._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
   }
 
   it should "present with bad data" in {
@@ -662,31 +659,30 @@ class TestCombinationWindow extends TestGrimlock {
         .andThenRename(renamer("%1$s.weighted"))))
 
     val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
-    init shouldBe ((List(List((Position1D("2003"), 4.0)), List((Position1D("2003"), 4.0))), Collection(List())))
+    init shouldBe ((List(List((Position1D("2003"), 4.0)), List((Position1D("2003"), 4.0))), List()))
 
     val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
     first shouldBe ((List(List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)),
-      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0))), Collection(List())))
+      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0))), List()))
 
     val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
     second shouldBe ((List(
       List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)),
-      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0))),
-      Collection(List())))
+      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0))), List()))
 
     val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
     third shouldBe ((List(
       List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
         (Position1D("2006"), 8.0)),
       List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-        (Position1D("2006"), 8.0))), Collection(List())))
+        (Position1D("2006"), 8.0))), List()))
 
     val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
     fourth shouldBe ((List(
       List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
         (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)),
       List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-        (Position1D("2006"), 8.0), (Position1D("2007"), 9.0))), createCollection("2007", 6.4, 7.2)))
+        (Position1D("2006"), 8.0), (Position1D("2007"), 9.0))), createCell("2007", 6.4, 7.2)))
 
     val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
     fifth shouldBe ((List(
@@ -694,14 +690,14 @@ class TestCombinationWindow extends TestGrimlock {
         (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)),
       List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
         (Position1D("2007"), 9.0), (Position1D("2008"), 5.0))),
-      createCollection("2008", 6.6, 6.733333333333333)))
+      createCell("2008", 6.6, 6.733333333333333)))
   }
 
   def createContent(value: Long): Content = Content(ContinuousSchema(LongCodex), value)
-  def createCollection(year: String, value1: Double, value2: Double) = {
-    Collection(List(
+  def createCell(year: String, value1: Double, value2: Double) = {
+    List(
       Cell(Position2D("sales", year + ".simple"), Content(ContinuousSchema(DoubleCodex), value1)),
-      Cell(Position2D("sales", year + ".weighted"), Content(ContinuousSchema(DoubleCodex), value2))))
+      Cell(Position2D("sales", year + ".weighted"), Content(ContinuousSchema(DoubleCodex), value2)))
   }
 }
 

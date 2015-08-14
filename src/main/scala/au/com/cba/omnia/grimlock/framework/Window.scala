@@ -32,9 +32,9 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
   extends WindowWithValue[S, R, Q] { self =>
   type V = Any
 
-  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[Q]]) = initialise(cell, rem)
+  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[Q]]) = initialise(cell, rem)
 
-  def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[Q]]) = present(cell, rem, t)
+  def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[Q]]) = present(cell, rem, t)
 
   /**
    * Initialise the state using the first cell (ordered according to its position).
@@ -44,7 +44,7 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
    *
    * @return The state for this object.
    */
-  def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]])
+  def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]])
 
   /**
    * Update state with the current cell and, optionally, output derived data.
@@ -55,7 +55,7 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
    *
    * @return A tuple consisting of updated state together with optional derived data.
    */
-  def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[Q]])
+  def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]])
 
   /**
    * Operator for generating derived data and then renaming dimensions.
@@ -68,16 +68,16 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
     new Window[S, R, Q] {
       type T = self.T
 
-      def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]]) = {
+      def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
         val state = self.initialise(cell, rem)
 
-        (state._1, Collection(state._2.toList.map { case c => Cell(rename(cell, rem, c), c.content) }))
+        (state._1, state._2.map { case c => Cell(rename(cell, rem, c), c.content) })
       }
 
-      def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[Q]]) = {
+      def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
         val state = self.present(cell, rem, t)
 
-        (state._1, Collection(state._2.toList.map { case c => Cell(rename(cell, rem, c), c.content) }))
+        (state._1, state._2.map { case c => Cell(rename(cell, rem, c), c.content) })
       }
     }
   }
@@ -93,16 +93,16 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
     new Window[S, R, U] {
       type T = self.T
 
-      def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[U]]) = {
+      def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[U]]) = {
         val state = self.initialise(cell, rem)
 
-        (state._1, Collection(state._2.toList.map { case c => Cell(expand(cell, rem, c), c.content) }))
+        (state._1, state._2.map { case c => Cell(expand(cell, rem, c), c.content) })
       }
 
-      def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[U]]) = {
+      def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[U]]) = {
         val state = self.present(cell, rem, t)
 
-        (state._1, Collection(state._2.toList.map { case c => Cell(expand(cell, rem, c), c.content) }))
+        (state._1, state._2.map { case c => Cell(expand(cell, rem, c), c.content) })
       }
     }
   }
@@ -135,7 +135,7 @@ trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with 
    *
    * @return The state for this object.
    */
-  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[Q]])
+  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[Q]])
 
   /**
    * Update state with the current cell and, optionally, output derived data.
@@ -147,7 +147,7 @@ trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with 
    *
    * @return A tuple consisting of updated state together with optional derived data.
    */
-  def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[Q]])
+  def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[Q]])
 
   /**
    * Operator for generating derived data and then renaming dimensions.
@@ -161,16 +161,16 @@ trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with 
       type V = self.V
       type T = self.T
 
-      def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[Q]]) = {
+      def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[Q]]) = {
         val state = self.initialiseWithValue(cell, rem, ext)
 
-        (state._1, Collection(state._2.toList.map { case c => Cell(rename(cell, rem, ext, c), c.content) }))
+        (state._1, state._2.map { case c => Cell(rename(cell, rem, ext, c), c.content) })
       }
 
-      def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[Q]]) = {
+      def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[Q]]) = {
         val state = self.presentWithValue(cell, rem, ext, t)
 
-        (state._1, Collection(state._2.toList.map { case c => Cell(rename(cell, rem, ext, c), c.content) }))
+        (state._1, state._2.map { case c => Cell(rename(cell, rem, ext, c), c.content) })
       }
     }
   }
@@ -187,16 +187,16 @@ trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with 
       type V = self.V
       type T = self.T
 
-      def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[U]]) = {
+      def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[U]]) = {
         val state = self.initialiseWithValue(cell, rem, ext)
 
-        (state._1, Collection(state._2.toList.map { case c => Cell(expand(cell, rem, ext, c), c.content) }))
+        (state._1, state._2.map { case c => Cell(expand(cell, rem, ext, c), c.content) })
       }
 
-      def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[U]]) = {
+      def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[U]]) = {
         val state = self.presentWithValue(cell, rem, ext, t)
 
-        (state._1, Collection(state._2.toList.map { case c => Cell(expand(cell, rem, ext, c), c.content) }))
+        (state._1, state._2.map { case c => Cell(expand(cell, rem, ext, c), c.content) })
       }
     }
   }
@@ -236,18 +236,18 @@ object Windowable {
         new Window[S, R, Q] {
           type T = List[Any]
 
-          def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]]) = {
+          def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
             val state = windows.map { case window => window.initialise(cell, rem) }
 
-            (state.map { case (t, c) => t }, Collection(state.flatMap { case (t, c) => c.toList }))
+            (state.map { case (t, c) => t }, state.flatMap { case (t, c) => c })
           }
 
-          def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[Q]]) = {
+          def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
             val state = (windows, t)
               .zipped
               .map { case (window, s) => window.present(cell, rem, s.asInstanceOf[window.T]) }
 
-            (state.map { case (t, c) => t }, Collection(state.flatMap { case (t, c) => c.toList }))
+            (state.map { case (t, c) => t }, state.flatMap { case (t, c) => c })
           }
         }
       }
@@ -290,18 +290,18 @@ object WindowableWithValue {
           type T = List[Any]
           type V = W
 
-          def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[Q]]) = {
+          def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[Q]]) = {
             val state = windows.map { case window => window.initialiseWithValue(cell, rem, ext) }
 
-            (state.map { case (t, c) => t }, Collection(state.flatMap { case (t, c) => c.toList }))
+            (state.map { case (t, c) => t }, state.flatMap { case (t, c) => c })
           }
 
-          def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[Q]]) = {
+          def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[Q]]) = {
             val state = (windows, t)
               .zipped
               .map { case (window, s) => window.presentWithValue(cell, rem, ext, s.asInstanceOf[window.T]) }
 
-            (state.map { case (t, c) => t }, Collection(state.flatMap { case (t, c) => c.toList }))
+            (state.map { case (t, c) => t }, state.flatMap { case (t, c) => c })
           }
         }
       }

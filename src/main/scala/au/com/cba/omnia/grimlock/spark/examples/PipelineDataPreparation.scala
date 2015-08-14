@@ -36,11 +36,11 @@ import org.apache.spark.rdd.RDD
 // Define a custom partition. If the instance is 'iid:0364354' or 'iid:0216406' then assign it to the right (test)
 // partition. In all other cases assing it to the left (train) partition.
 case class CustomPartition(dim: Dimension, left: String, right: String) extends Partitioner[Position2D, String] {
-  def assign(cell: Cell[Position2D]): Collection[String] = {
+  def assign(cell: Cell[Position2D]): TraversableOnce[String] = {
     if (cell.position(dim).toShortString == "iid:0364354" || cell.position(dim).toShortString == "iid:0216406") {
-      Collection(right)
+      Some(right)
     } else {
-      Collection(left)
+      Some(left)
     }
   }
 }

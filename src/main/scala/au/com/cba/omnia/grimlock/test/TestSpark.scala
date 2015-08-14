@@ -296,11 +296,11 @@ object TestSpark9 {
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     case class StringPartitioner(dim: Dimension) extends Partitioner[Position2D, String] {
-      def assign(cell: Cell[Position2D]): Collection[String] = {
-        Collection(List(cell.position(dim) match {
+      def assign(cell: Cell[Position2D]): TraversableOnce[String] = {
+        List(cell.position(dim) match {
           case StringValue("fid:A") => "training"
           case StringValue("fid:B") => "testing"
-        }, "scoring"))
+        }, "scoring")
       }
     }
 
@@ -314,11 +314,11 @@ object TestSpark9 {
       .save("./tmp.spark/prt1.out", descriptive = true)
 
     case class IntTuplePartitioner(dim: Dimension) extends Partitioner[Position2D, (Int, Int, Int)] {
-      def assign(cell: Cell[Position2D]): Collection[(Int, Int, Int)] = {
-        Collection(List(cell.position(dim) match {
+      def assign(cell: Cell[Position2D]): TraversableOnce[(Int, Int, Int)] = {
+        List(cell.position(dim) match {
           case StringValue("fid:A") => (1, 0, 0)
           case StringValue("fid:B") => (0, 1, 0)
-        }, (0, 0, 1)))
+        }, (0, 0, 1))
       }
     }
 
@@ -593,9 +593,9 @@ object TestSpark19 {
     case class CustomPartition(dim: Dimension, left: String, right: String) extends Partitioner[Position2D, String] {
       val bhs = BinaryHashSplit[Position2D, String](dim, 7, left, right, base = 10)
 
-      def assign(cell: Cell[Position2D]): Collection[String] = {
+      def assign(cell: Cell[Position2D]): TraversableOnce[String] = {
         if (cell.position(dim).toShortString == "iid:0364354") {
-          Collection(right)
+          Some(right)
         } else {
           bhs.assign(cell)
         }
@@ -679,16 +679,16 @@ object TestSpark22 {
     case class Diff() extends Window[Position1D, Position1D, Position2D] {
       type T = Cell[Position]
 
-      def initialise(cell: Cell[Position1D], rem: Position1D): (T, Collection[Cell[Position2D]]) = {
-        (Cell(rem, cell.content), Collection[Cell[Position2D]]())
+      def initialise(cell: Cell[Position1D], rem: Position1D): (T, TraversableOnce[Cell[Position2D]]) = {
+        (Cell(rem, cell.content), None)
       }
 
-      def present(cell: Cell[Position1D], rem: Position1D, t: T): (T, Collection[Cell[Position2D]]) = {
+      def present(cell: Cell[Position1D], rem: Position1D, t: T): (T, TraversableOnce[Cell[Position2D]]) = {
         (Cell(rem, cell.content), (cell.content.value.asDouble, t.content.value.asDouble) match {
           case (Some(c), Some(l)) =>
-            Collection(cell.position.append(rem.toShortString("") + "-" + t.position.toShortString("")),
-              Content(ContinuousSchema(DoubleCodex), c - l))
-          case _ => Collection[Cell[Position2D]]()
+            Some(Cell(cell.position.append(rem.toShortString("") + "-" + t.position.toShortString("")),
+              Content(ContinuousSchema(DoubleCodex), c - l)))
+          case _ => None
         })
       }
     }
@@ -711,15 +711,15 @@ object TestSpark23 {
 
     case class DiffSquared() extends Operator[Position1D, Position1D, Position2D] {
       def compute(left: Cell[Position1D], reml: Position1D, right: Cell[Position1D],
-        remr: Position1D): Collection[Cell[Position2D]] = {
+        remr: Position1D): TraversableOnce[Cell[Position2D]] = {
         val xc = left.position.toShortString("")
         val yc = right.position.toShortString("")
 
         (reml == remr) match {
-          case true => Collection(remr.append("(" + xc + "-" + yc + ")^2"),
+          case true => Some(Cell(remr.append("(" + xc + "-" + yc + ")^2"),
             Content(ContinuousSchema(DoubleCodex),
-              math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2)))
-          case false => Collection()
+              math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2))))
+          case false => None
         }
       }
     }

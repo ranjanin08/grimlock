@@ -21,60 +21,6 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
-class TestCollection extends TestGrimlock {
-
-  "A Collection" should "create an empty collection" in {
-    Collection[String]() shouldBe Collection[String](None)
-    Collection.empty[String] shouldBe Collection[String](None)
-  }
-
-  it should "create a collection with a single entry" in {
-    Collection("foo") shouldBe Collection(Some(Left("foo")))
-  }
-
-  it should "create a collection with a multiple entries" in {
-    Collection(List("foo", "bar")) shouldBe Collection(Some(Right(List("foo", "bar"))))
-  }
-
-  it should "create a collection with a cell" in {
-    Collection(Position1D("foo"), Content(NominalSchema(StringCodex), "bar")) shouldBe
-      Collection(Some(Left(Cell(Position1D("foo"), Content(NominalSchema(StringCodex), "bar")))))
-  }
-
-  it should "identify an empty collection" in {
-    Collection[String]().isEmpty shouldBe true
-  }
-
-  it should "identify a non-empty collection" in {
-    Collection("foo").isEmpty shouldBe false
-    Collection(List("foo", "bar")).isEmpty shouldBe false
-  }
-
-  it should "return an empty list" in {
-    Collection[String]().toList shouldBe List()
-  }
-
-  it should "return a single entry list" in {
-    Collection("foo").toList shouldBe List("foo")
-  }
-
-  it should "return a multi entry list" in {
-    Collection(List("foo", "bar")).toList shouldBe List("foo", "bar")
-  }
-
-  it should "return an empty list with value" in {
-    Collection[String]().toList(3.14) shouldBe List()
-  }
-
-  it should "return a single entry list with value" in {
-    Collection("foo").toList(3.14) shouldBe List(("foo", 3.14))
-  }
-
-  it should "return a multi entry list with value" in {
-    Collection(List("foo", "bar")).toList(3.14) shouldBe List(("foo", 3.14), ("bar", 3.14))
-  }
-}
-
 class TestQuote extends TestGrimlock {
 
   "A Quote" should "escape a special character" in {

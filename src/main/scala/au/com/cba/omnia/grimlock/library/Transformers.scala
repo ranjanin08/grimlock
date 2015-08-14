@@ -26,37 +26,37 @@ import au.com.cba.omnia.grimlock.framework.utility._
 private[transform] object Transform {
   def checkType[P <: Position](cell: Cell[P], typ: Type): Boolean = cell.content.schema.kind.isSpecialisationOf(typ)
 
-  def presentDouble[P <: Position](cell: Cell[P], f: (Double) => Double): Collection[Cell[P]] = {
+  def presentDouble[P <: Position](cell: Cell[P], f: (Double) => Double): TraversableOnce[Cell[P]] = {
     (checkType(cell, Numerical), cell.content.value.asDouble) match {
-      case (true, Some(d)) => Collection(cell.position, Content(ContinuousSchema(DoubleCodex), f(d)))
-      case _ => Collection()
+      case (true, Some(d)) => Some(Cell(cell.position, Content(ContinuousSchema(DoubleCodex), f(d))))
+      case _ => None
     }
   }
 
   def presentDoubleWithValue[P <: Position, W](cell: Cell[P], ext: W, value: Extract[P, W, Double],
-    transform: (Double, Double) => Double, inverse: Boolean = false): Collection[Cell[P]] = {
+    transform: (Double, Double) => Double, inverse: Boolean = false): TraversableOnce[Cell[P]] = {
     (checkType(cell, Numerical), cell.content.value.asDouble, value.extract(cell, ext)) match {
-      case (true, Some(l), Some(r)) => Collection(cell.position,
-        Content(ContinuousSchema(DoubleCodex), if (inverse) transform(r, l) else transform(l, r)))
-      case _ => Collection()
+      case (true, Some(l), Some(r)) => Some(Cell(cell.position,
+        Content(ContinuousSchema(DoubleCodex), if (inverse) transform(r, l) else transform(l, r))))
+      case _ => None
     }
   }
 
   def presentDoubleWithTwoValues[P <: Position, W](cell: Cell[P], ext: W, first: Extract[P, W, Double],
-    second: Extract[P, W, Double], transform: (Double, Double, Double) => Double): Collection[Cell[P]] = {
+    second: Extract[P, W, Double], transform: (Double, Double, Double) => Double): TraversableOnce[Cell[P]] = {
     (checkType(cell, Numerical), cell.content.value.asDouble, first.extract(cell, ext),
       second.extract(cell, ext)) match {
-        case (true, Some(v), Some(f), Some(s)) => Collection(cell.position,
-          Content(ContinuousSchema(DoubleCodex), transform(v, f, s)))
-        case _ => Collection()
+        case (true, Some(v), Some(f), Some(s)) => Some(Cell(cell.position,
+          Content(ContinuousSchema(DoubleCodex), transform(v, f, s))))
+        case _ => None
       }
   }
 }
 
 /** Create indicator variables. */
 case class Indicator[P <: Position]() extends Transformer[P, P] {
-  def present(cell: Cell[P]): Collection[Cell[P]] = {
-    Collection(cell.position, Content(DiscreteSchema(LongCodex), 1))
+  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
+    Some(Cell(cell.position, Content(DiscreteSchema(LongCodex), 1)))
   }
 }
 
@@ -68,10 +68,10 @@ case class Indicator[P <: Position]() extends Transformer[P, P] {
  * @note Binarisation is only applied to categorical variables.
  */
 case class Binarise[P <: Position](presenter: (Cell[P]) => P) extends Transformer[P, P] {
-  def present(cell: Cell[P]): Collection[Cell[P]] = {
+  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
     Transform.checkType(cell, Categorical) match {
-      case true => Collection(presenter(cell), Content(DiscreteSchema(LongCodex), 1))
-      case false => Collection()
+      case true => Some(Cell(presenter(cell), Content(DiscreteSchema(LongCodex), 1)))
+      case false => None
     }
   }
 }
@@ -101,7 +101,7 @@ object Binarise {
 case class Normalise[P <: Position, W](const: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     Transform.presentDoubleWithValue(cell, ext, const, (v, n) => v / n)
   }
 }
@@ -121,7 +121,7 @@ case class Standardise[P <: Position, W](mean: Extract[P, W, Double], sd: Extrac
   threshold: Double = 1e-4, n: Int = 1) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     Transform.presentDoubleWithTwoValues(cell, ext, mean, sd,
       (v, m, s) => if (math.abs(s) < threshold) 0.0 else (v - m) / (n * s))
   }
@@ -140,7 +140,7 @@ case class Clamp[P <: Position, W](lower: Extract[P, W, Double],
   upper: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     Transform.presentDoubleWithTwoValues(cell, ext, lower, upper, (v, l, u) => if (v < l) l else if (v > u) u else v)
   }
 }
@@ -157,7 +157,7 @@ case class Idf[P <: Position, W](freq: Extract[P, W, Double],
   idf: (Double, Double) => Double = (df, n) => math.log(n / (1 + df))) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     Transform.presentDoubleWithValue(cell, ext, freq, (df, n) => idf(df, n))
   }
 }
@@ -168,7 +168,7 @@ case class Idf[P <: Position, W](freq: Extract[P, W, Double],
  * @note Boolean tf is only applied to numerical variables.
  */
 case class BooleanTf[P <: Position]() extends Transformer[P, P] {
-  def present(cell: Cell[P]): Collection[Cell[P]] = Transform.presentDouble(cell, (v) => 1)
+  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = Transform.presentDouble(cell, (v) => 1)
 }
 
 /**
@@ -179,7 +179,7 @@ case class BooleanTf[P <: Position]() extends Transformer[P, P] {
  * @note Logarithmic tf is only applied to numerical variables.
  */
 case class LogarithmicTf[P <: Position](log: (Double) => Double = math.log) extends Transformer[P, P] {
-  def present(cell: Cell[P]): Collection[Cell[P]] = Transform.presentDouble(cell, (tf) => 1 + log(tf))
+  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = Transform.presentDouble(cell, (tf) => 1 + log(tf))
 }
 
 /**
@@ -192,7 +192,7 @@ case class LogarithmicTf[P <: Position](log: (Double) => Double = math.log) exte
 case class AugmentedTf[P <: Position, W](max: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     Transform.presentDoubleWithValue(cell, ext, max, (tf, m) => 0.5 + (0.5 * tf) / m)
   }
 }
@@ -207,7 +207,7 @@ case class AugmentedTf[P <: Position, W](max: Extract[P, W, Double]) extends Tra
 case class TfIdf[P <: Position, W](idf: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     Transform.presentDoubleWithValue(cell, ext, idf, (t, i) => t * i)
   }
 }
@@ -222,7 +222,7 @@ case class TfIdf[P <: Position, W](idf: Extract[P, W, Double]) extends Transform
 case class Add[P <: Position, W](value: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     Transform.presentDoubleWithValue(cell, ext, value, (l, r) => l + r)
   }
 }
@@ -239,7 +239,7 @@ case class Subtract[P <: Position, W](value: Extract[P, W, Double],
   inverse: Boolean = false) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     Transform.presentDoubleWithValue(cell, ext, value, (l, r) => l - r, inverse)
   }
 }
@@ -254,7 +254,7 @@ case class Subtract[P <: Position, W](value: Extract[P, W, Double],
 case class Multiply[P <: Position, W](value: Extract[P, W, Double]) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     Transform.presentDoubleWithValue(cell, ext, value, (l, r) => l * r)
   }
 }
@@ -271,7 +271,7 @@ case class Fraction[P <: Position, W](value: Extract[P, W, Double],
   inverse: Boolean = false) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     Transform.presentDoubleWithValue(cell, ext, value, (l, r) => l / r, inverse)
   }
 }
@@ -284,7 +284,7 @@ case class Fraction[P <: Position, W](value: Extract[P, W, Double],
  * @note Power is only applied to numerical variables.
  */
 case class Power[P <: Position](power: Double) extends Transformer[P, P] {
-  def present(cell: Cell[P]): Collection[Cell[P]] = Transform.presentDouble(cell, (d) => math.pow(d, power))
+  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = Transform.presentDouble(cell, (d) => math.pow(d, power))
 }
 
 /**
@@ -293,7 +293,7 @@ case class Power[P <: Position](power: Double) extends Transformer[P, P] {
  * @note SquareRoot is only applied to numerical variables.
  */
 case class SquareRoot[P <: Position]() extends Transformer[P, P] {
-  def present(cell: Cell[P]): Collection[Cell[P]] = Transform.presentDouble(cell, (d) => math.sqrt(d))
+  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = Transform.presentDouble(cell, (d) => math.sqrt(d))
 }
 
 /**
@@ -306,14 +306,14 @@ case class SquareRoot[P <: Position]() extends Transformer[P, P] {
 case class Cut[P <: Position, W](bins: Extract[P, W, List[Double]]) extends TransformerWithValue[P, P] {
   type V = W
 
-  def presentWithValue(cell: Cell[P], ext: V): Collection[Cell[P]] = {
+  def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[P]] = {
     (Transform.checkType(cell, Numerical), cell.content.value.asDouble, bins.extract(cell, ext)) match {
       case (true, Some(v), Some(b)) =>
         val bstr = b.sliding(2).map("(" + _.mkString(",") + "]").toList
 
-        Collection(cell.position,
-          Content(OrdinalSchema[Codex.StringCodex](StringCodex, bstr), bstr(b.lastIndexWhere(_ < v))))
-      case _ => Collection()
+        Some(Cell(cell.position,
+          Content(OrdinalSchema[Codex.StringCodex](StringCodex, bstr), bstr(b.lastIndexWhere(_ < v)))))
+      case _ => None
     }
   }
 }
@@ -481,8 +481,8 @@ trait CutRules {
  * @note The returned cells contain boolean content.
  */
 case class Compare[P <: Position](comparer: (Cell[P]) => Boolean) extends Transformer[P, P] {
-  def present(cell: Cell[P]): Collection[Cell[P]] = {
-    Collection(cell.position, Content(NominalSchema(BooleanCodex), comparer(cell)))
+  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
+    Some(Cell(cell.position, Content(NominalSchema(BooleanCodex), comparer(cell))))
   }
 }
 

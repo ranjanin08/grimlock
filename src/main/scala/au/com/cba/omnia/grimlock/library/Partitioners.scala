@@ -36,8 +36,8 @@ import java.util.Date
  */
 case class BinaryHashSplit[P <: Position, S](dim: Dimension, ratio: Int, left: S, right: S,
   base: Int = 100) extends Partitioner[P, S] {
-  def assign(cell: Cell[P]): Collection[S] = {
-    Collection(if (math.abs(cell.position(dim).hashCode % base) <= ratio) left else right)
+  def assign(cell: Cell[P]): TraversableOnce[S] = {
+    Some(if (math.abs(cell.position(dim).hashCode % base) <= ratio) left else right)
   }
 }
 
@@ -58,10 +58,10 @@ case class BinaryHashSplit[P <: Position, S](dim: Dimension, ratio: Int, left: S
  */
 case class TernaryHashSplit[P <: Position, S](dim: Dimension, lower: Int, upper: Int, left: S, middle: S, right: S,
   base: Int = 100) extends Partitioner[P, S] {
-  def assign(cell: Cell[P]): Collection[S] = {
+  def assign(cell: Cell[P]): TraversableOnce[S] = {
     val hash = math.abs(cell.position(dim).hashCode % base)
 
-    Collection(if (hash <= lower) left else if (hash <= upper) middle else right)
+    Some(if (hash <= lower) left else if (hash <= upper) middle else right)
   }
 }
 
@@ -78,7 +78,7 @@ case class TernaryHashSplit[P <: Position, S](dim: Dimension, lower: Int, upper:
  */
 case class HashSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Int, Int)],
   base: Int = 100) extends Partitioner[P, S] {
-  def assign(cell: Cell[P]): Collection[S] = {
+  def assign(cell: Cell[P]): TraversableOnce[S] = {
     val hash = math.abs(cell.position(dim).hashCode % base)
     val parts = ranges.flatMap {
       case (k, (l, u)) if (hash > l && hash <= u) => Some(k)
@@ -86,9 +86,9 @@ case class HashSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Int, Int)
     }.toList
 
     parts.size match {
-      case 0 => Collection[S]()
-      case 1 => Collection(parts.head)
-      case _ => Collection(parts)
+      case 0 => None
+      case 1 => Some(parts.head)
+      case _ => parts
     }
   }
 }
@@ -107,9 +107,8 @@ case class HashSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Int, Int)
  */
 case class BinaryDateSplit[P <: Position, S](dim: Dimension, date: Date, left: S, right: S,
   codex: DateCodex) extends Partitioner[P, S] {
-  def assign(cell: Cell[P]): Collection[S] = {
-    Collection(codex.compare(cell.position(dim),
-      codex.toValue(date)).map { case cmp => Left(if (cmp <= 0) left else right) })
+  def assign(cell: Cell[P]): TraversableOnce[S] = {
+    codex.compare(cell.position(dim), codex.toValue(date)).map { case cmp => if (cmp <= 0) left else right }
   }
 }
 
@@ -129,11 +128,11 @@ case class BinaryDateSplit[P <: Position, S](dim: Dimension, date: Date, left: S
  */
 case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper: Date, left: S, middle: S, right: S,
   codex: DateCodex) extends Partitioner[P, S] {
-  def assign(cell: Cell[P]): Collection[S] = {
+  def assign(cell: Cell[P]): TraversableOnce[S] = {
     (codex.compare(cell.position(dim), codex.toValue(lower)),
       codex.compare(cell.position(dim), codex.toValue(upper))) match {
-        case (Some(l), Some(u)) => Collection(if (l <= 0) left else if (u <= 0) middle else right)
-        case _ => Collection[S]()
+        case (Some(l), Some(u)) => Some(if (l <= 0) left else if (u <= 0) middle else right)
+        case _ => None
       }
   }
 }
@@ -150,7 +149,7 @@ case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper
  */
 case class DateSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Date, Date)],
   codex: DateCodex) extends Partitioner[P, S] {
-  def assign(cell: Cell[P]): Collection[S] = {
+  def assign(cell: Cell[P]): TraversableOnce[S] = {
     val parts = ranges.flatMap {
       case (k, (lower, upper)) =>
         (codex.compare(cell.position(dim), codex.toValue(lower)),
@@ -161,9 +160,9 @@ case class DateSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Date, Dat
     }.toList
 
     parts.size match {
-      case 0 => Collection[S]()
-      case 1 => Collection(parts.head)
-      case _ => Collection(parts)
+      case 0 => None
+      case 1 => Some(parts.head)
+      case _ => parts
     }
   }
 }

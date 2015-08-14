@@ -35,9 +35,9 @@ case class AddWeight() extends TransformerWithValue[Position2D, Position3D] {
 
   // Adding the weight is a straight forward lookup by the value of the content. Also return this cell
   // (cell.position.append("label"), cell.content) so no additional join is needed with the original label data.
-  def presentWithValue(cell: Cell[Position2D], ext: V): Collection[Cell[Position3D]] = {
-    Collection(List(Cell(cell.position.append("label"), cell.content),
-      Cell(cell.position.append("weight"), ext(Position1D(cell.content.value.toShortString)))))
+  def presentWithValue(cell: Cell[Position2D], ext: V): TraversableOnce[Cell[Position3D]] = {
+    List(Cell(cell.position.append("label"), cell.content),
+      Cell(cell.position.append("weight"), ext(Position1D(cell.content.value.toShortString))))
   }
 }
 

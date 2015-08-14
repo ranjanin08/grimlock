@@ -246,7 +246,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val operator = ev2.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, data)
-      .flatMap { case ((lc, lr), (rc, rr)) => operator.compute(lc, lr, rc, rr).toList }
+      .flatMap { case ((lc, lr), (rc, rr)) => operator.compute(lc, lr, rc, rr) }
   }
 
   def pairwiseWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
@@ -256,9 +256,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val operator = ev2.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, data)
-      .flatMapWithValue(value) {
-        case (((lc, lr), (rc, rr)), vo) => operator.computeWithValue(lc, lr, rc, rr, vo.get).toList
-      }
+      .flatMapWithValue(value) { case (((lc, lr), (rc, rr)), vo) => operator.computeWithValue(lc, lr, rc, rr, vo.get) }
   }
 
   def pairwiseBetween[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], comparer: Comparer, that: S,
@@ -268,7 +266,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val operator = ev2.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, that.data)
-      .flatMap { case ((lc, lr), (rc, rr)) => operator.compute(lc, lr, rc, rr).toList }
+      .flatMap { case ((lc, lr), (rc, rr)) => operator.compute(lc, lr, rc, rr) }
   }
 
   def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
@@ -278,9 +276,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val operator = ev2.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, that.data)
-      .flatMapWithValue(value) {
-        case (((lc, lr), (rc, rr)), vo) => operator.computeWithValue(lc, lr, rc, rr, vo.get).toList
-      }
+      .flatMapWithValue(value) { case (((lc, lr), (rc, rr)), vo) => operator.computeWithValue(lc, lr, rc, rr, vo.get) }
   }
 
   def rename(renamer: (Cell[P]) => P): U[Cell[P]] = data.map { case c => Cell(renamer(c), c.content) }
@@ -365,13 +361,13 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .groupBy { case (c, r) => c.position }
       .tuneReducers(tuner.parameters)
       .sortBy { case (c, r) => r }
-      .scanLeft(Option.empty[(window.T, Collection[Cell[Q]])]) {
+      .scanLeft(Option.empty[(window.T, TraversableOnce[Cell[Q]])]) {
         case (None, (c, r)) => Some(window.initialise(c, r))
         case (Some((t, _)), (c, r)) => Some(window.present(c, r, t))
       }
       .flatMap {
-        case (p, Some((t, c))) => c.toList
-        case _ => List()
+        case (p, Some((t, c))) => c
+        case _ => None
       }
   }
 
@@ -386,27 +382,27 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .groupBy { case (c, r, v) => c.position }
       .tuneReducers(tuner.parameters)
       .sortBy { case (c, r, v) => r }
-      .scanLeft(Option.empty[(window.T, Collection[Cell[Q]])]) {
+      .scanLeft(Option.empty[(window.T, TraversableOnce[Cell[Q]])]) {
         case (None, (c, r, v)) => Some(window.initialiseWithValue(c, r, v))
         case (Some((t, _)), (c, r, v)) => Some(window.presentWithValue(c, r, v, t))
       }
       .flatMap {
-        case (p, Some((t, c))) => c.toList
-        case _ => List()
+        case (p, Some((t, c))) => c
+        case _ => None
       }
   }
 
   def split[Q, F](partitioners: F)(implicit ev: Partitionable[F, P, Q]): U[(Q, Cell[P])] = {
     val partitioner = ev.convert(partitioners)
 
-    data.flatMap { case c => partitioner.assign(c).toList(c) }
+    data.flatMap { case c => partitioner.assign(c).map { case q => (q, c) } }
   }
 
   def splitWithValue[Q, F, W](partitioners: F, value: E[W])(
     implicit ev: PartitionableWithValue[F, P, Q, W]): U[(Q, Cell[P])] = {
     val partitioner = ev.convert(partitioners)
 
-    data.flatMapWithValue(value) { case (c, vo) => partitioner.assignWithValue(c, vo.get).toList(c) }
+    data.flatMapWithValue(value) { case (c, vo) => partitioner.assignWithValue(c, vo.get).map { case q => (q, c) } }
   }
 
   def stream[Q <: Position](command: String, script: String, separator: String,
@@ -475,7 +471,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
         }
       }
       .flatMap {
-        case (p, t) => (aggregator, t).zipped.flatMap { case (a, s) => a.present(p, s.asInstanceOf[a.T]).toList }
+        case (p, t) => (aggregator, t).zipped.flatMap { case (a, s) => a.present(p, s.asInstanceOf[a.T]) }
       }
   }
 
@@ -495,7 +491,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
       .flatMapWithValue(value) {
         case ((p, t), vo) => (aggregator, t).zipped.flatMap {
-          case (a, s) => a.presentWithValue(p, s.asInstanceOf[a.T], vo.get).toList
+          case (a, s) => a.presentWithValue(p, s.asInstanceOf[a.T], vo.get)
         }
       }
   }
@@ -521,14 +517,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def transform[Q <: Position, F](transformers: F)(implicit ev: Transformable[F, P, Q]): U[Cell[Q]] = {
     val transformer = ev.convert(transformers)
 
-    data.flatMap { case c => transformer.present(c).toList }
+    data.flatMap { case c => transformer.present(c) }
   }
 
   def transformWithValue[Q <: Position, F, W](transformers: F, value: E[W])(
     implicit ev: TransformableWithValue[F, P, Q, W]): U[Cell[Q]] = {
     val transformer = ev.convert(transformers)
 
-    data.flatMapWithValue(value) { case (c, vo) => transformer.presentWithValue(c, vo.get).toList }
+    data.flatMapWithValue(value) { case (c, vo) => transformer.presentWithValue(c, vo.get) }
   }
 
   type TypesTuners = TP2

@@ -86,11 +86,11 @@ case object ExampleEventCodex extends EventCodex {
 // Transformer for denormalising events; that is, create a separate cell in the matrix for each (event, instance) pair.
 // Assumes that the initial position is 1D with event id (as is the output from `read` above).
 case class Denormalise() extends Transformer[Position1D, Position2D] {
-  def present(cell: Cell[Position1D]): Collection[Cell[Position2D]] = {
+  def present(cell: Cell[Position1D]): TraversableOnce[Cell[Position2D]] = {
     cell.content match {
       case Content(_, EventValue(ExampleEvent(_, _, _, _, instances, _), _)) =>
-        Collection(for { iid <- instances } yield { Cell(cell.position.append(iid), cell.content) })
-      case _ => Collection[Cell[Position2D]]()
+        for { iid <- instances } yield { Cell(cell.position.append(iid), cell.content) }
+      case _ => None
     }
   }
 }
@@ -99,7 +99,7 @@ case class Denormalise() extends Transformer[Position1D, Position2D] {
 // simply return the count for each term (word or ngram) in the document (i.e. event).
 case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separator: String = "_",
   stopwords: List[String] = Stopwords.English) extends Transformer[Position2D, Position3D] {
-  def present(cell: Cell[Position2D]): Collection[Cell[Position3D]] = {
+  def present(cell: Cell[Position2D]): TraversableOnce[Cell[Position3D]] = {
     cell.content match {
       case Content(_, EventValue(ExampleEvent(_, _, _, _, _, details), _)) =>
         // Get words from details. Optionally filter by length and/or stopwords.
@@ -118,13 +118,13 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
         }
 
         // Return the term and it's count in the document.
-        Collection(terms
+        terms
           .groupBy(identity)
           .map {
             case (k, v) => Cell(cell.position.append(k), Content(DiscreteSchema(LongCodex), v.size))
           }
-          .toList)
-      case _ => Collection[Cell[Position3D]]()
+          .toList
+      case _ => None
     }
   }
 }

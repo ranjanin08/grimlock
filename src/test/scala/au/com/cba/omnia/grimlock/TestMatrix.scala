@@ -3774,12 +3774,12 @@ trait TestMatrixSplit extends TestMatrix {
 object TestMatrixSplit {
 
   case class TestPartitioner[P <: Position](dim: Dimension) extends Partitioner[P, String] {
-    def assign(cell: Cell[P]): Collection[String] = Collection(cell.position(dim).toShortString)
+    def assign(cell: Cell[P]): TraversableOnce[String] = Some(cell.position(dim).toShortString)
   }
 
   case class TestPartitionerWithValue[P <: Position]() extends PartitionerWithValue[P, String] {
     type V = Dimension
-    def assignWithValue(cell: Cell[P], ext: V): Collection[String] = Collection(cell.position(ext).toShortString)
+    def assignWithValue(cell: Cell[P], ext: V): TraversableOnce[String] = Some(cell.position(ext).toShortString)
   }
 
   def TupleOrdering[P <: Position]() = new Ordering[(String, Cell[P])] {
@@ -5830,10 +5830,10 @@ object TestMatrixPairwise {
 
     val plus = Plus(Locate.OperatorString[S, R]("(%1$s+%2$s)"))
 
-    def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[R#M]] = {
-      Collection(plus.compute(left, reml, right, remr).toList.map {
+    def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): TraversableOnce[Cell[R#M]] = {
+      plus.compute(left, reml, right, remr).map {
         case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema(DoubleCodex), d + ext))
-      })
+      }
     }
   }
 
@@ -5843,10 +5843,10 @@ object TestMatrixPairwise {
 
     val minus = Minus(Locate.OperatorString[S, R]("(%1$s-%2$s)"))
 
-    def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[R#M]] = {
-      Collection(minus.compute(left, reml, right, remr).toList.map {
+    def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): TraversableOnce[Cell[R#M]] = {
+      minus.compute(left, reml, right, remr).map {
         case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema(DoubleCodex), d - ext))
-      })
+      }
     }
   }
 }
@@ -7987,17 +7987,17 @@ object TestMatrixSlide {
     times: Int) extends Window[S, R, S#M] {
     type T = Cell[R]
 
-    def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[S#M]]) = (Cell(rem, cell.content), Collection())
+    def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[S#M]]) = (Cell(rem, cell.content), None)
 
-    def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[S#M]]) = {
+    def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[S#M]]) = {
       val delta = cell.content.value.asDouble.flatMap {
         case dc => t.content.value.asDouble.map {
-          case dt => Left(Cell[S#M](cell.position.append(times + "*(" + rem.toShortString("|") + "-" +
-            t.position.toShortString("|") + ")"), Content(ContinuousSchema(DoubleCodex), times * (dc - dt))))
+          case dt => Cell[S#M](cell.position.append(times + "*(" + rem.toShortString("|") + "-" +
+            t.position.toShortString("|") + ")"), Content(ContinuousSchema(DoubleCodex), times * (dc - dt)))
         }
       }
 
-      (Cell(rem, cell.content), Collection(delta))
+      (Cell(rem, cell.content), delta)
     }
   }
 
@@ -8006,19 +8006,19 @@ object TestMatrixSlide {
     type T = Cell[R]
     type V = Map[String, Int]
 
-    def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[S#M]]) = {
-      (Cell(rem, cell.content), Collection())
+    def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[S#M]]) = {
+      (Cell(rem, cell.content), None)
     }
 
-    def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[S#M]]) = {
+    def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[S#M]]) = {
       val delta = cell.content.value.asDouble.flatMap {
         case dc => t.content.value.asDouble.map {
-          case dt => Left(Cell[S#M](cell.position.append(ext(key) + "*(" + rem.toShortString("|") + "-" +
-            t.position.toShortString("|") + ")"), Content(ContinuousSchema(DoubleCodex), ext(key) * (dc - dt))))
+          case dt => Cell[S#M](cell.position.append(ext(key) + "*(" + rem.toShortString("|") + "-" +
+            t.position.toShortString("|") + ")"), Content(ContinuousSchema(DoubleCodex), ext(key) * (dc - dt)))
         }
       }
 
-      (Cell(rem, cell.content), Collection(delta))
+      (Cell(rem, cell.content), delta)
     }
   }
 }

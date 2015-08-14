@@ -57,70 +57,70 @@ trait TestHashPartitioners extends TestGrimlock {
 class TestBinaryHashSplit extends TestHashPartitioners {
 
   "A BinaryHashSplit" should "assign left on the first dimension" in {
-    BinaryHashSplit(First, 5, "left", "right", 10).assign(cell1) shouldBe Collection("left")
+    BinaryHashSplit(First, 5, "left", "right", 10).assign(cell1) shouldBe List("left")
   }
 
   it should "assign left on the first dimension when on boundary" in {
-    BinaryHashSplit(First, 4, "left", "right", 10).assign(cell1) shouldBe Collection("left")
+    BinaryHashSplit(First, 4, "left", "right", 10).assign(cell1) shouldBe List("left")
   }
 
   it should "assign right on the first dimension" in {
-    BinaryHashSplit(First, 5, "left", "right", 10).assign(cell2) shouldBe Collection("right")
+    BinaryHashSplit(First, 5, "left", "right", 10).assign(cell2) shouldBe List("right")
   }
 
   it should "assign left on the second dimension" in {
-    BinaryHashSplit(Second, 7, "left", "right", 10).assign(cell1) shouldBe Collection("left")
+    BinaryHashSplit(Second, 7, "left", "right", 10).assign(cell1) shouldBe List("left")
   }
 
   it should "assign left on the second dimension when on boundary" in {
-    BinaryHashSplit(Second, 6, "left", "right", 10).assign(cell1) shouldBe Collection("left")
+    BinaryHashSplit(Second, 6, "left", "right", 10).assign(cell1) shouldBe List("left")
   }
 
   it should "assign right on the second dimension" in {
-    BinaryHashSplit(Second, 7, "left", "right", 10).assign(cell2) shouldBe Collection("right")
+    BinaryHashSplit(Second, 7, "left", "right", 10).assign(cell2) shouldBe List("right")
   }
 }
 
 class TestTernaryHashSplit extends TestHashPartitioners {
 
   "A TernaryHashSplit" should "assign left on the first dimension" in {
-    TernaryHashSplit(First, 3, 7, "left", "middle", "right", 10).assign(cell3) shouldBe Collection("left")
+    TernaryHashSplit(First, 3, 7, "left", "middle", "right", 10).assign(cell3) shouldBe List("left")
   }
 
   it should "assign left on the first dimension when on boundary" in {
-    TernaryHashSplit(First, 4, 7, "left", "middle", "right", 10).assign(cell3) shouldBe Collection("left")
+    TernaryHashSplit(First, 4, 7, "left", "middle", "right", 10).assign(cell3) shouldBe List("left")
   }
 
   it should "assign middle on the first dimension" in {
-    TernaryHashSplit(First, 3, 7, "left", "middle", "right", 10).assign(cell1) shouldBe Collection("middle")
+    TernaryHashSplit(First, 3, 7, "left", "middle", "right", 10).assign(cell1) shouldBe List("middle")
   }
 
   it should "assign middle on the first dimension when on boundary" in {
-    TernaryHashSplit(First, 3, 4, "left", "middle", "right", 10).assign(cell1) shouldBe Collection("middle")
+    TernaryHashSplit(First, 3, 4, "left", "middle", "right", 10).assign(cell1) shouldBe List("middle")
   }
 
   it should "assign right on the first dimension" in {
-    TernaryHashSplit(First, 4, 7, "left", "middle", "right", 10).assign(cell2) shouldBe Collection("right")
+    TernaryHashSplit(First, 4, 7, "left", "middle", "right", 10).assign(cell2) shouldBe List("right")
   }
 
   it should "assign left on the second dimension" in {
-    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(cell3) shouldBe Collection("left")
+    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(cell3) shouldBe List("left")
   }
 
   it should "assign left on the second dimension when on boundary" in {
-    TernaryHashSplit(Second, 6, 7, "left", "middle", "right", 10).assign(cell3) shouldBe Collection("left")
+    TernaryHashSplit(Second, 6, 7, "left", "middle", "right", 10).assign(cell3) shouldBe List("left")
   }
 
   it should "assign middle on the second dimension" in {
-    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(cell1) shouldBe Collection("middle")
+    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(cell1) shouldBe List("middle")
   }
 
   it should "assign middle on the second dimension when on boundary" in {
-    TernaryHashSplit(Second, 3, 8, "left", "middle", "right", 10).assign(cell1) shouldBe Collection("middle")
+    TernaryHashSplit(Second, 3, 8, "left", "middle", "right", 10).assign(cell1) shouldBe List("middle")
   }
 
   it should "assign right on the second dimension" in {
-    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(cell2) shouldBe Collection("right")
+    TernaryHashSplit(Second, 3, 7, "left", "middle", "right", 10).assign(cell2) shouldBe List("right")
   }
 }
 
@@ -130,27 +130,27 @@ class TestHashSplit extends TestHashPartitioners {
   val map2: Map[String, (Int, Int)] = Map("lower.left" -> ((0, 6)), "upper.left" -> ((1, 7)), "right" -> ((7, 10)))
 
   "A HashSplit" should "assign both left on the first dimension" in {
-    HashSplit(First, map1, 10).assign(cell1) shouldBe Collection(List("lower.left", "upper.left"))
+    HashSplit(First, map1, 10).assign(cell1) shouldBe List("lower.left", "upper.left")
   }
 
   it should "assign right on the first dimension" in {
-    HashSplit(First, map1, 10).assign(cell2) shouldBe Collection("right")
+    HashSplit(First, map1, 10).assign(cell2) shouldBe List("right")
   }
 
   it should "assign none on the first dimension" in {
-    HashSplit(First, map1, 10).assign(cell3) shouldBe Collection()
+    HashSplit(First, map1, 10).assign(cell3) shouldBe List()
   }
 
   it should "assign both left on the second dimension" in {
-    HashSplit(Second, map2, 10).assign(cell1) shouldBe Collection(List("lower.left", "upper.left"))
+    HashSplit(Second, map2, 10).assign(cell1) shouldBe List("lower.left", "upper.left")
   }
 
   it should "assign right on the second dimension" in {
-    HashSplit(Second, map2, 10).assign(cell2) shouldBe Collection("right")
+    HashSplit(Second, map2, 10).assign(cell2) shouldBe List("right")
   }
 
   it should "assign none on the second dimension" in {
-    HashSplit(Second, map2, 10).assign(cell3) shouldBe Collection()
+    HashSplit(Second, map2, 10).assign(cell3) shouldBe List()
   }
 }
 
@@ -170,22 +170,22 @@ class TestBinaryDateSplit extends TestDatePartitioners {
 
   "A BinaryDateSplit" should "assign none on the first dimension" in {
     BinaryDateSplit(First, dfmt.parse("2005-01-01"), "left", "right", DateCodex("yyyy-MM-dd"))
-      .assign(cell1) shouldBe Collection()
+      .assign(cell1) shouldBe List()
   }
 
   it should "assign left on the second dimension" in {
     BinaryDateSplit(Second, dfmt.parse("2005-01-01"), "left", "right", DateCodex("yyyy-MM-dd"))
-      .assign(cell1) shouldBe Collection("left")
+      .assign(cell1) shouldBe List("left")
   }
 
   it should "assign left on the second dimension when on boundary" in {
     BinaryDateSplit(Second, dfmt.parse("2004-01-01"), "left", "right", DateCodex("yyyy-MM-dd"))
-      .assign(cell1) shouldBe Collection("left")
+      .assign(cell1) shouldBe List("left")
   }
 
   it should "assign right on the second dimension" in {
     BinaryDateSplit(Second, dfmt.parse("2005-01-01"), "left", "right", DateCodex("yyyy-MM-dd"))
-      .assign(cell2) shouldBe Collection("right")
+      .assign(cell2) shouldBe List("right")
   }
 }
 
@@ -193,32 +193,32 @@ class TestTernaryDateSplit extends TestDatePartitioners {
 
   "A TernaryDateSplit" should "assign none on the first dimension" in {
     TernaryDateSplit(First, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right",
-      DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe Collection()
+      DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe List()
   }
 
   it should "assign left on the second dimension" in {
     TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right",
-      DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe Collection("left")
+      DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe List("left")
   }
 
   it should "assign left on the second dimension when on boundary" in {
     TernaryDateSplit(Second, dfmt.parse("2004-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right",
-      DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe Collection("left")
+      DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe List("left")
   }
 
   it should "assign middle on the second dimension" in {
     TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-01-01"), "left", "middle", "right",
-      DateCodex("yyyy-MM-dd")).assign(cell2) shouldBe Collection("middle")
+      DateCodex("yyyy-MM-dd")).assign(cell2) shouldBe List("middle")
   }
 
   it should "assign middle on the second dimension when on boundary" in {
     TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-01-01"), "left", "middle", "right",
-      DateCodex("yyyy-MM-dd")).assign(cell2) shouldBe Collection("middle")
+      DateCodex("yyyy-MM-dd")).assign(cell2) shouldBe List("middle")
   }
 
   it should "assign right on the second dimension" in {
     TernaryDateSplit(Second, dfmt.parse("2005-01-01"), dfmt.parse("2006-06-30"), "left", "middle", "right",
-      DateCodex("yyyy-MM-dd")).assign(cell3) shouldBe Collection("right")
+      DateCodex("yyyy-MM-dd")).assign(cell3) shouldBe List("right")
   }
 }
 
@@ -229,19 +229,19 @@ class TestDateSplit extends TestDatePartitioners {
     "right" -> ((dfmt.parse("2006-06-30"), dfmt.parse("2008-01-01"))))
 
   "A DateSplit" should "assign none on the first dimension" in {
-    DateSplit(First, map1, DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe Collection()
+    DateSplit(First, map1, DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe List()
   }
 
   it should "assign both left on the second dimension" in {
-    DateSplit(Second, map1, DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe Collection(List("lower.left", "upper.left"))
+    DateSplit(Second, map1, DateCodex("yyyy-MM-dd")).assign(cell1) shouldBe List("lower.left", "upper.left")
   }
 
   it should "assign right on the second dimension" in {
-    DateSplit(Second, map1, DateCodex("yyyy-MM-dd")).assign(cell3) shouldBe Collection("right")
+    DateSplit(Second, map1, DateCodex("yyyy-MM-dd")).assign(cell3) shouldBe List("right")
   }
 
   it should "assign none on the second dimension" in {
-    DateSplit(Second, map1, DateCodex("yyyy-MM-dd")).assign(cell2) shouldBe Collection()
+    DateSplit(Second, map1, DateCodex("yyyy-MM-dd")).assign(cell2) shouldBe List()
   }
 }
 
