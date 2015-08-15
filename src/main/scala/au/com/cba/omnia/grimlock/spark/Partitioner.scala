@@ -14,9 +14,11 @@
 
 package au.com.cba.omnia.grimlock.spark.partition
 
-import au.com.cba.omnia.grimlock.framework.Cell
+import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner }
 import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => BasePartitions }
 import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.spark._
 
@@ -33,6 +35,8 @@ class Partitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) extend
   with Persist[(T, Cell[P])] {
   type U[A] = RDD[A]
 
+  import SparkImplicits._
+
   def add(id: T, partition: U[Cell[P]]): U[(T, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
   def forEach[Q <: Position](ids: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])] = {
@@ -46,7 +50,10 @@ class Partitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) extend
 
   def get(id: T): U[Cell[P]] = data.collect { case (t, pc) if (id == t) => pc }
 
-  def ids()(implicit ev: ClassTag[T]): U[T] = data.keys.distinct
+  type IdsTuners = OneOf2[Default[NoParameters.type], Default[Reducers]]
+  def ids[N <: Tuner](tuner: N = Default())(implicit ev1: ClassTag[T], ev2: IdsTuners#V[N]): U[T] = {
+    data.keys.tunedDistinct(tuner.parameters)
+  }
 
   def merge(ids: List[T]): U[Cell[P]] = data.collect { case (t, c) if (ids.contains(t)) => c }
 

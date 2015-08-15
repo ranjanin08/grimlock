@@ -294,7 +294,7 @@ class TestScaldingPartitions extends TestPartitions with TBddDsl {
       data
     } When {
       parts: TypedPipe[(String, Cell[Position1D])] =>
-        parts.ids()
+        parts.ids(Default())
     } Then {
       _.toList.sorted shouldBe result1
     }
@@ -351,7 +351,7 @@ class TestSparkPartitions extends TestPartitions {
 
   "A Partitions" should "return its ids" in {
     toRDD(data)
-      .ids()
+      .ids(Default(Reducers(12)))
       .toList.sorted shouldBe result1
   }
 

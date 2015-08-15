@@ -483,8 +483,15 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S],
       ev4: ChangeTuners#V[T]): U[Cell[P]]
 
-  /** Return all possible positions of a matrix. */
-  def domain(): U[P]
+  /** Specifies tuners permitted on a call to `domain`. */
+  type DomainTuners <: OneOf
+
+  /**
+   * Return all possible positions of a matrix.
+   *
+   * @param tuner The tuner for the job.
+   */
+  def domain[T <: Tuner](tuner: T)(implicit ev: DomainTuners#V[T]): U[P]
 
   /** Specifies tuners permitted on a call to `get`. */
   type GetTuners <: OneOf

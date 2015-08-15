@@ -38,30 +38,30 @@ import scala.reflect.ClassTag
 class Names[P <: Position](val data: RDD[(P, Long)]) extends BaseNames[P] with Persist[(P, Long)] {
   type U[A] = RDD[A]
 
-  def moveToFront[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): RDD[(P, Long)] = {
+  def moveToFront[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): U[(P, Long)] = {
     val pos = ev1.convert(position)
     val state = data.collectAsMap
 
     data.map { case (p, i) => (p, if (p == pos) 0 else if (state(pos) > i) i + 1 else i) }
   }
 
-  def moveToBack[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): RDD[(P, Long)] = {
+  def moveToBack[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): U[(P, Long)] = {
     val pos = ev1.convert(position)
     val state = data.collectAsMap
 
     data.map { case (p, i) => (p, if (state(pos) < i) i - 1 else if (p == pos) state.values.max else i) }
   }
 
-  def renumber()(implicit ev: ClassTag[P]): RDD[(P, Long)] = Names.number(data.map { case (p, i) => p })
+  def renumber()(implicit ev: ClassTag[P]): U[(P, Long)] = Names.number(data.map { case (p, _) => p })
 
-  def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): RDD[(P, Long)] = {
+  def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): U[(P, Long)] = {
     val converted = positions.map { case (k, v) => ev.convert(k) -> v }
 
     data.map { case (p, i) => (p, converted.getOrElse(p, i)) }
   }
 
-  protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): RDD[(P, Long)] = {
-    Names.number(data.collect { case (p, i) if !keep ^ f(p) => p })
+  protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[(P, Long)] = {
+    Names.number(data.collect { case (p, _) if !keep ^ f(p) => p })
   }
 }
 

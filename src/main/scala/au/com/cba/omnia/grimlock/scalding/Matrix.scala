@@ -171,6 +171,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     }
   }
 
+  type DomainTuners = TP1
+
   type GetTuners = TP4
   def get[I, T <: Tuner](positions: I, tuner: T = InMemory())(implicit ev1: PositionDistributable[I, P, TypedPipe],
     ev2: ClassTag[P], ev3: GetTuners#V[T]): U[Cell[P]] = {
@@ -668,11 +670,11 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
     val vals = values.groupBy { case c => c.position.asInstanceOf[slice.S] }
     val dense = tuner match {
       case InMemory(_) =>
-        domain
+        domain(Default())
           .mapSideJoin(vals.map { case (p, c) => Map(p -> c.content) }.sum, (p: P, v: Map[slice.S, Content]) =>
             v.get(slice.selected(p)).map { case c => Cell(p, c) })
       case _ =>
-        domain
+        domain(Default())
           .groupBy { case p => slice.selected(p) }
           .tunedJoin(tuner, tuner.parameters, vals)
           .map { case (_, (p, c)) => Cell(p, c.content) }
@@ -688,7 +690,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
   type FillHomogeneousTuners = TP2
   def fill[T <: Tuner](value: Content, tuner: T = Default())(implicit ev1: ClassTag[P],
     ev2: FillHomogeneousTuners#V[T]): U[Cell[P]] = {
-    domain
+    domain(Default())
       .asKeys
       .tuneReducers(tuner.parameters)
       .leftJoin(data.groupBy { case c => c.position })
@@ -997,7 +999,9 @@ object Matrix {
  * @param data `TypedPipe[Cell[Position1D]]`.
  */
 class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D] with ExpandableMatrix[Position1D] {
-  def domain(): U[Position1D] = names(Over(First)).map { case (p, i) => p }
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position1D] = {
+    names(Over(First)).map { case (p, i) => p }
+  }
 
   /**
    * Persist a `Matrix1D` as sparse matrix file (index, value).
@@ -1044,7 +1048,7 @@ class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D]
  */
 class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
   with ExpandableMatrix[Position2D] with MatrixDistance {
-  def domain(): U[Position2D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position2D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cross(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1287,7 +1291,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
  */
 class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
   with ExpandableMatrix[Position3D] {
-  def domain(): U[Position3D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position3D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cross(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1362,7 +1366,7 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
  */
 class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D] with ReduceableMatrix[Position4D]
   with ExpandableMatrix[Position4D] {
-  def domain(): U[Position4D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position4D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cross(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1447,7 +1451,7 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
  */
 class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D]
   with ExpandableMatrix[Position5D] {
-  def domain(): U[Position5D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position5D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cross(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1540,7 +1544,7 @@ class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D]
  */
 class Matrix6D(val data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D] with ReduceableMatrix[Position6D]
   with ExpandableMatrix[Position6D] {
-  def domain(): U[Position6D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position6D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cross(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1641,7 +1645,7 @@ class Matrix6D(val data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D]
  */
 class Matrix7D(val data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D] with ReduceableMatrix[Position7D]
   with ExpandableMatrix[Position7D] {
-  def domain(): U[Position7D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position7D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cross(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1748,7 +1752,7 @@ class Matrix7D(val data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D]
  */
 class Matrix8D(val data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D] with ReduceableMatrix[Position8D]
   with ExpandableMatrix[Position8D] {
-  def domain(): U[Position8D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position8D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cross(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1864,7 +1868,7 @@ class Matrix8D(val data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D]
  * @param data `TypedPipe[Cell[Position9D]]`.
  */
 class Matrix9D(val data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D] with ReduceableMatrix[Position9D] {
-  def domain(): U[Position9D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position9D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cross(names(Over(Second)).map { case (Position1D(c), i) => c })

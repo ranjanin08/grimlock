@@ -14,12 +14,14 @@
 
 package au.com.cba.omnia.grimlock.scalding.position
 
+import au.com.cba.omnia.grimlock.framework.{ Default, NoParameters, Tuner }
 import au.com.cba.omnia.grimlock.framework.position.{
   Positions => BasePositions,
   PositionDistributable => BasePositionDistributable,
   _
 }
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.scalding._
 
@@ -35,8 +37,9 @@ import scala.reflect.ClassTag
 class Positions[P <: Position](val data: TypedPipe[P]) extends BasePositions[P] with Persist[P] {
   type U[A] = TypedPipe[A]
 
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
-    ev3: ClassTag[slice.S]): TypedPipe[(slice.S, Long)] = {
+  type NamesTuners = OneOf1[Default[NoParameters.type]]
+  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)] = {
     Names.number(data.map { case p => slice.selected(p) }.distinct(Position.Ordering[slice.S]()))
   }
 }

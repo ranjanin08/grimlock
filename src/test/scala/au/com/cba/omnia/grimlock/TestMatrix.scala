@@ -4214,7 +4214,7 @@ class TestScaldingMatrixDomain extends TestMatrixDomain with TBddDsl {
       dataA
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.domain()
+        cells.domain(Default())
     } Then {
       _.toList.sorted shouldBe result1
     }
@@ -4225,7 +4225,7 @@ class TestScaldingMatrixDomain extends TestMatrixDomain with TBddDsl {
       dataB
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.domain()
+        cells.domain(Default())
     } Then {
       _.toList.sorted shouldBe result2
     }
@@ -4236,7 +4236,7 @@ class TestScaldingMatrixDomain extends TestMatrixDomain with TBddDsl {
       dataC
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.domain()
+        cells.domain(Default())
     } Then {
       _.toList.sorted shouldBe result3
     }
@@ -4247,7 +4247,7 @@ class TestScaldingMatrixDomain extends TestMatrixDomain with TBddDsl {
       dataD
     } When {
       cells: TypedPipe[Cell[Position4D]] =>
-        cells.domain()
+        cells.domain(Default())
     } Then {
       _.toList.sorted shouldBe result4
     }
@@ -4258,7 +4258,7 @@ class TestScaldingMatrixDomain extends TestMatrixDomain with TBddDsl {
       dataE
     } When {
       cells: TypedPipe[Cell[Position5D]] =>
-        cells.domain()
+        cells.domain(Default())
     } Then {
       _.toList.sorted shouldBe result5
     }
@@ -4269,31 +4269,31 @@ class TestSparkMatrixDomain extends TestMatrixDomain {
 
   "A Matrix.domain" should "return its domain in 1D" in {
     toRDD(dataA)
-      .domain()
+      .domain(Default())
       .toList.sorted shouldBe result1
   }
 
   it should "return its domain in 2D" in {
     toRDD(dataB)
-      .domain()
+      .domain(Default())
       .toList.sorted shouldBe result2
   }
 
   it should "return its domain in 3D" in {
     toRDD(dataC)
-      .domain()
+      .domain(Default())
       .toList.sorted shouldBe result3
   }
 
   it should "return its domain in 4D" in {
     toRDD(dataD)
-      .domain()
+      .domain(Default())
       .toList.sorted shouldBe result4
   }
 
   it should "return its domain in 5D" in {
     toRDD(dataE)
-      .domain()
+      .domain(Default())
       .toList.sorted shouldBe result5
   }
 }

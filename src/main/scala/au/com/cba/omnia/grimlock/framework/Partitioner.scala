@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock.framework.partition
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import scala.reflect.ClassTag
 
@@ -86,8 +87,15 @@ trait Partitions[T, P <: Position] {
    */
   def get(id: T): U[Cell[P]]
 
-  /** Return the partition identifiers. */
-  def ids()(implicit ev: ClassTag[T]): U[T]
+  /** Specifies tuner permitted on a call to `ids`. */
+  type IdsTuners <: OneOf
+
+  /**
+   * Return the partition identifiers.
+   *
+   * @param tuner The tuner for the job.
+   */
+  def ids[N <: Tuner](tuner: N)(implicit ev1: ClassTag[T], ev2: IdsTuners#V[N]): U[T]
 
   /**
    * Merge partitions into a single matrix.

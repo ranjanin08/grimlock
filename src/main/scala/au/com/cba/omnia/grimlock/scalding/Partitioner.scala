@@ -14,9 +14,11 @@
 
 package au.com.cba.omnia.grimlock.scalding.partition
 
-import au.com.cba.omnia.grimlock.framework.Cell
+import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Tuner }
 import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => BasePartitions }
 import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.scalding._
 
@@ -47,7 +49,10 @@ class Partitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cell[P])]) 
 
   def get(id: T): U[Cell[P]] = data.collect { case (t, pc) if (id == t) => pc }
 
-  def ids()(implicit ev: ClassTag[T]): U[T] = Grouped(data).keys.distinct
+  type IdsTuners = OneOf1[Default[NoParameters.type]]
+  def ids[N <: Tuner](tuner: N = Default())(implicit ev1: ClassTag[T], ev2: IdsTuners#V[N]): U[T] = {
+    Grouped(data).keys.distinct
+  }
 
   def merge(ids: List[T]): U[Cell[P]] = data.collect { case (t, c) if (ids.contains(t)) => c }
 

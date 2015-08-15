@@ -118,6 +118,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
+  type DomainTuners = TP1
+
   type GetTuners = TP2
   def get[I, T <: Tuner](positions: I, tuner: T = Default())(implicit ev1: PositionDistributable[I, P, RDD],
     ev2: ClassTag[P], ev3: GetTuners#V[T]): U[Cell[P]] = {
@@ -494,7 +496,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
       case p => (NoParameters, p)
     }
 
-    domain
+    domain(Default())
       .keyBy { case p => slice.selected(p) }
       .tunedJoin(p1, values.keyBy { case c => c.position.asInstanceOf[slice.S] })
       .map { case (_, (p, c)) => (p, Cell(p, c.content)) }
@@ -505,7 +507,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
   type FillHomogeneousTuners = TP2
   def fill[T <: Tuner](value: Content, tuner: T = Default())(implicit ev1: ClassTag[P],
     ev2: FillHomogeneousTuners#V[T]): U[Cell[P]] = {
-    domain
+    domain(Default())
       .keyBy { case p => p }
       .tunedLeftJoin(tuner.parameters, data.keyBy { case c => c.position })
       .map { case (p, (_, co)) => co.getOrElse(Cell(p, value)) }
@@ -807,7 +809,9 @@ object Matrix {
  * @param data `RDD[Cell[Position1D]]`.
  */
 class Matrix1D(val data: RDD[Cell[Position1D]]) extends Matrix[Position1D] with ExpandableMatrix[Position1D] {
-  def domain(): U[Position1D] = names(Over(First)).map { case (p, i) => p }
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position1D] = {
+    names(Over(First)).map { case (p, i) => p }
+  }
 
   /**
    * Persist a `Matrix1D` as sparse matrix file (index, value).
@@ -853,7 +857,7 @@ class Matrix1D(val data: RDD[Cell[Position1D]]) extends Matrix[Position1D] with 
  */
 class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
   with ExpandableMatrix[Position2D] with MatrixDistance {
-  def domain(): U[Position2D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position2D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1093,7 +1097,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
  */
 class Matrix3D(val data: RDD[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
   with ExpandableMatrix[Position3D] {
-  def domain(): U[Position3D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position3D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1167,7 +1171,7 @@ class Matrix3D(val data: RDD[Cell[Position3D]]) extends Matrix[Position3D] with 
  */
 class Matrix4D(val data: RDD[Cell[Position4D]]) extends Matrix[Position4D] with ReduceableMatrix[Position4D]
   with ExpandableMatrix[Position4D] {
-  def domain(): U[Position4D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position4D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1251,7 +1255,7 @@ class Matrix4D(val data: RDD[Cell[Position4D]]) extends Matrix[Position4D] with 
  */
 class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D]
   with ExpandableMatrix[Position5D] {
-  def domain(): U[Position5D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position5D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1342,7 +1346,7 @@ class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with 
  */
 class Matrix6D(val data: RDD[Cell[Position6D]]) extends Matrix[Position6D] with ReduceableMatrix[Position6D]
   with ExpandableMatrix[Position6D] {
-  def domain(): U[Position6D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position6D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1442,7 +1446,7 @@ class Matrix6D(val data: RDD[Cell[Position6D]]) extends Matrix[Position6D] with 
  */
 class Matrix7D(val data: RDD[Cell[Position7D]]) extends Matrix[Position7D] with ReduceableMatrix[Position7D]
   with ExpandableMatrix[Position7D] {
-  def domain(): U[Position7D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position7D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1548,7 +1552,7 @@ class Matrix7D(val data: RDD[Cell[Position7D]]) extends Matrix[Position7D] with 
  */
 class Matrix8D(val data: RDD[Cell[Position8D]]) extends Matrix[Position8D] with ReduceableMatrix[Position8D]
   with ExpandableMatrix[Position8D] {
-  def domain(): U[Position8D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position8D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })
@@ -1662,7 +1666,7 @@ class Matrix8D(val data: RDD[Cell[Position8D]]) extends Matrix[Position8D] with 
  * @param data `RDD[Cell[Position9D]]`.
  */
 class Matrix9D(val data: RDD[Cell[Position9D]]) extends Matrix[Position9D] with ReduceableMatrix[Position9D] {
-  def domain(): U[Position9D] = {
+  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position9D] = {
     names(Over(First))
       .map { case (Position1D(c), i) => c }
       .cartesian(names(Over(Second)).map { case (Position1D(c), i) => c })

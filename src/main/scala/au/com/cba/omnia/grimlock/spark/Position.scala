@@ -14,12 +14,14 @@
 
 package au.com.cba.omnia.grimlock.spark.position
 
+import au.com.cba.omnia.grimlock.framework.{ Default, NoParameters, Reducers, Tuner }
 import au.com.cba.omnia.grimlock.framework.position.{
   Positions => BasePositions,
   PositionDistributable => BasePositionDistributable,
   _
 }
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.spark._
 
@@ -36,8 +38,13 @@ import scala.reflect.ClassTag
 class Positions[P <: Position](val data: RDD[P]) extends BasePositions[P] with Persist[P] {
   type U[A] = RDD[A]
 
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
-    ev3: ClassTag[slice.S]): RDD[(slice.S, Long)] = Names.number(data.map { case p => slice.selected(p) }.distinct)
+  import SparkImplicits._
+
+  type NamesTuners = OneOf2[Default[NoParameters.type], Default[Reducers]]
+  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)] = {
+    Names.number(data.map { case p => slice.selected(p) }.tunedDistinct(tuner.parameters))
+  }
 }
 
 /** Companion object for the Spark `Positions` class. */
