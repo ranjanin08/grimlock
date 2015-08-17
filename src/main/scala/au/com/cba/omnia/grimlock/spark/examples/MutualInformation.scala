@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,13 +35,13 @@ import org.apache.spark.{ SparkConf, SparkContext }
 // Simple bucketing implementation. For numerical values it generates categorical values that are the rounded up
 // value. All other values are passed through.
 case class CeilingBucketing() extends Transformer[Position2D, Position2D] {
-  def present(cell: Cell[Position2D]): Collection[Cell[Position2D]] = {
+  def present(cell: Cell[Position2D]): TraversableOnce[Cell[Position2D]] = {
     val con = (cell.content.schema.kind.isSpecialisationOf(Type.Numerical), cell.content.value.asDouble) match {
-      case (true, Some(d)) => Content(NominalSchema[Codex.LongCodex](), math.ceil(d).toLong)
+      case (true, Some(d)) => Content(NominalSchema(LongCodex), math.ceil(d).toLong)
       case _ => cell.content
     }
 
-    Collection(cell.position, con)
+    Some(Cell(cell.position, con))
   }
 }
 
@@ -60,7 +60,8 @@ object MutualInformation {
     // 2/ Squash the 3rd dimension, keeping values with minimum (earlier) coordinates. The result is a 2D matrix
     //    (instance x feature).
     // 3/ Bucket all continuous variables by rounding them.
-    val data = load3DWithDictionary(s"${path}/exampleMutual.txt", Dictionary.load(s"${path}/exampleDictionary.txt"))
+    val data = loadText(s"${path}/exampleMutual.txt",
+        Cell.parse3DWithDictionary(Dictionary.load(s"${path}/exampleDictionary.txt"), Second, third = DateCodex()))
       .squash(Third, PreservingMinPosition[Position3D]())
       .transform(CeilingBucketing())
 

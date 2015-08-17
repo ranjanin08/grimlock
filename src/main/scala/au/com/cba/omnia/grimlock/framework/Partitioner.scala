@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock.framework.partition
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
+import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import scala.reflect.ClassTag
 
@@ -24,7 +25,7 @@ import scala.reflect.ClassTag
 trait Partitioner[P <: Position, T] extends PartitionerWithValue[P, T] {
   type V = Any
 
-  def assignWithValue(cell: Cell[P], ext: V): Collection[T] = assign(cell)
+  def assignWithValue(cell: Cell[P], ext: V): TraversableOnce[T] = assign(cell)
 
   /**
    * Assign the cell to a partition.
@@ -33,7 +34,7 @@ trait Partitioner[P <: Position, T] extends PartitionerWithValue[P, T] {
    *
    * @return Optional of either a `T` or a `List[T]`, where the instances of `T` identify the partitions.
    */
-  def assign(cell: Cell[P]): Collection[T]
+  def assign(cell: Cell[P]): TraversableOnce[T]
 }
 
 /** Base trait for partitioners that use a user supplied value. */
@@ -49,7 +50,7 @@ trait PartitionerWithValue[P <: Position, T] {
    *
    * @return Optional of either a `T` or a `List[T]`, where the instances of `T` identify the partitions.
    */
-  def assignWithValue(cell: Cell[P], ext: V): Collection[T]
+  def assignWithValue(cell: Cell[P], ext: V): TraversableOnce[T]
 }
 
 /** Base trait that represents the partitions of matrices */
@@ -86,8 +87,15 @@ trait Partitions[T, P <: Position] {
    */
   def get(id: T): U[Cell[P]]
 
-  /** Return the partition identifiers. */
-  def ids()(implicit ev: ClassTag[T]): U[T]
+  /** Specifies tuner permitted on a call to `ids`. */
+  type IdsTuners <: OneOf
+
+  /**
+   * Return the partition identifiers.
+   *
+   * @param tuner The tuner for the job.
+   */
+  def ids[N <: Tuner](tuner: N)(implicit ev1: ClassTag[T], ev2: IdsTuners#V[N]): U[T]
 
   /**
    * Merge partitions into a single matrix.
@@ -143,7 +151,7 @@ object Partitionable {
   implicit def SPS2P[P <: Position, S]: Partitionable[(Cell[P]) => S, P, S] = {
     new Partitionable[(Cell[P]) => S, P, S] {
       def convert(t: (Cell[P]) => S): Partitioner[P, S] = {
-        new Partitioner[P, S] { def assign(cell: Cell[P]): Collection[S] = Collection(t(cell)) }
+        new Partitioner[P, S] { def assign(cell: Cell[P]): TraversableOnce[S] = Some(t(cell)) }
       }
     }
   }
@@ -167,31 +175,7 @@ object Partitionable {
   implicit def LSPS2P[P <: Position, S]: Partitionable[(Cell[P]) => List[S], P, S] = {
     new Partitionable[(Cell[P]) => List[S], P, S] {
       def convert(t: (Cell[P]) => List[S]): Partitioner[P, S] = {
-        new Partitioner[P, S] { def assign(cell: Cell[P]): Collection[S] = Collection(t(cell)) }
-      }
-    }
-  }
-
-  /** Converts a `(Cell[P]) => Collection[String]` to a `Partitioner[P, String]`. */
-  implicit def CSPStr2P[P <: Position]: Partitionable[(Cell[P]) => Collection[String], P, String] = CSPS2P[P, String]
-
-  /** Converts a `(Cell[P]) => Collection[Double]` to a `Partitioner[P, Double]`. */
-  implicit def CSPDbl2P[P <: Position]: Partitionable[(Cell[P]) => Collection[Double], P, Double] = CSPS2P[P, Double]
-
-  /** Converts a `(Cell[P]) => Collection[Long]` to a `Partitioner[P, Long]`. */
-  implicit def CSPLng2P[P <: Position]: Partitionable[(Cell[P]) => Collection[Long], P, Long] = CSPS2P[P, Long]
-
-  /** Converts a `(Cell[P]) => Collection[Int]` to a `Partitioner[P, Int]`. */
-  implicit def CSPInt2P[P <: Position]: Partitionable[(Cell[P]) => Collection[Int], P, Int] = CSPS2P[P, Int]
-
-  /** Converts a `(Cell[P]) => Collection[Boolean]` to a `Partitioner[P, Boolean]`. */
-  implicit def CSPBln2P[P <: Position]: Partitionable[(Cell[P]) => Collection[Boolean], P, Boolean] = CSPS2P[P, Boolean]
-
-  /** Converts a `(Cell[P]) => Collection[S]` to a `Partitioner[P, S]`. */
-  implicit def CSPS2P[P <: Position, S]: Partitionable[(Cell[P]) => Collection[S], P, S] = {
-    new Partitionable[(Cell[P]) => Collection[S], P, S] {
-      def convert(t: (Cell[P]) => Collection[S]): Partitioner[P, S] = {
-        new Partitioner[P, S] { def assign(cell: Cell[P]): Collection[S] = t(cell) }
+        new Partitioner[P, S] { def assign(cell: Cell[P]): TraversableOnce[S] = t(cell) }
       }
     }
   }
@@ -236,7 +220,7 @@ object Partitionable {
     new Partitionable[List[T], P, S] {
       def convert(t: List[T]): Partitioner[P, S] = {
         new Partitioner[P, S] {
-          def assign(cell: Cell[P]): Collection[S] = Collection(t.flatMap { case s => s.assign(cell).toList })
+          def assign(cell: Cell[P]): TraversableOnce[S] = t.flatMap { case s => s.assign(cell) }
         }
       }
     }
@@ -277,7 +261,7 @@ object PartitionableWithValue {
         new PartitionerWithValue[P, S] {
           type V = W
 
-          def assignWithValue(cell: Cell[P], ext: W): Collection[S] = Collection(t(cell, ext))
+          def assignWithValue(cell: Cell[P], ext: W): TraversableOnce[S] = Some(t(cell, ext))
         }
       }
     }
@@ -305,35 +289,7 @@ object PartitionableWithValue {
         new PartitionerWithValue[P, S] {
           type V = W
 
-          def assignWithValue(cell: Cell[P], ext: W): Collection[S] = Collection(t(cell, ext))
-        }
-      }
-    }
-  }
-
-  /** Converts a `(Cell[P], W) => Collection[String]` to a `PartitionerWithValue[P, String] { type V >: W }`. */
-  implicit def CSPStrW2PWV[P <: Position, W]: PartitionableWithValue[(Cell[P], W) => Collection[String], P, String, W] = CSPSW2PWV[P, String, W]
-
-  /** Converts a `(Cell[P], W) => Collection[Double]` to a `PartitionerWithValue[P, Double] { type V >: W }`. */
-  implicit def CSPDblW2PWV[P <: Position, W]: PartitionableWithValue[(Cell[P], W) => Collection[Double], P, Double, W] = CSPSW2PWV[P, Double, W]
-
-  /** Converts a `(Cell[P], W) => Collection[Long]` to a `PartitionerWithValue[P, Long] { type V >: W }`. */
-  implicit def CSPLngW2PWV[P <: Position, W]: PartitionableWithValue[(Cell[P], W) => Collection[Long], P, Long, W] = CSPSW2PWV[P, Long, W]
-
-  /** Converts a `(Cell[P], W) => Collection[Int]` to a `PartitionerWithValue[P, Int] { type V >: W }`. */
-  implicit def CSPIntW2PWV[P <: Position, W]: PartitionableWithValue[(Cell[P], W) => Collection[Int], P, Int, W] = CSPSW2PWV[P, Int, W]
-
-  /** Converts a `(Cell[P], W) => Collection[Boolean]` to a `PartitionerWithValue[P, Boolean] { type V >: W }`. */
-  implicit def CSPBlnW2PWV[P <: Position, W]: PartitionableWithValue[(Cell[P], W) => Collection[Boolean], P, Boolean, W] = CSPSW2PWV[P, Boolean, W]
-
-  /** Converts a `(Cell[P], W) => Collection[S]` to a `PartitionerWithValue[P, S] { type V >: W }`. */
-  implicit def CSPSW2PWV[P <: Position, S, W]: PartitionableWithValue[(Cell[P], W) => Collection[S], P, S, W] = {
-    new PartitionableWithValue[(Cell[P], W) => Collection[S], P, S, W] {
-      def convert(t: (Cell[P], W) => Collection[S]): PartitionerWithValue[P, S] { type V >: W } = {
-        new PartitionerWithValue[P, S] {
-          type V = W
-
-          def assignWithValue(cell: Cell[P], ext: W): Collection[S] = t(cell, ext)
+          def assignWithValue(cell: Cell[P], ext: W): TraversableOnce[S] = t(cell, ext)
         }
       }
     }
@@ -417,8 +373,8 @@ object PartitionableWithValue {
         new PartitionerWithValue[P, S] {
           type V = W
 
-          def assignWithValue(cell: Cell[P], ext: V): Collection[S] = {
-            Collection(t.flatMap { case s => s.assignWithValue(cell, ext).toList })
+          def assignWithValue(cell: Cell[P], ext: V): TraversableOnce[S] = {
+            t.flatMap { case s => s.assignWithValue(cell, ext).toList }
           }
         }
       }

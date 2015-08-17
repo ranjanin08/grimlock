@@ -20,116 +20,70 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 
 class TestDateCodex extends TestGrimlock {
 
-  val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
-
-  "A DateCodex" should "have a name" in {
-    DateCodex.name shouldBe "date"
-  }
-
-  it should "box a correct Value" in {
-    DateCodex.toValue(dfmt.parse("2001-01-01")) shouldBe DateValue(dfmt.parse("2001-01-01"), DateCodex)
-  }
-
-  it should "unbox a correct value" in {
-    DateCodex.fromValue(DateValue(dfmt.parse("2001-01-01"), DateCodex)) shouldBe dfmt.parse("2001-01-01")
-  }
-
-  it should "throw an exception for an invalid unbox" in {
-    a [ClassCastException] should be thrownBy { DateCodex.fromValue(LongValue(1)) }
-    a [ClassCastException] should be thrownBy { DateCodex.fromValue(DoubleValue(1)) }
-    a [ClassCastException] should be thrownBy { DateCodex.fromValue(StringValue("a")) }
-  }
-
-  it should "decode a correct value" in {
-    DateCodex.decode("2001-01-01") shouldBe Some(DateValue(dfmt.parse("2001-01-01"), DateCodex))
-  }
-
-  it should "not decode an incorrect value" in {
-    DateCodex.decode("a") shouldBe None
-    DateCodex.decode("1") shouldBe None
-  }
-
-  it should "encode a correct value" in {
-    DateCodex.encode(DateValue(dfmt.parse("2001-01-01"), DateCodex)) shouldBe "2001-01-01"
-  }
-
-  it should "not encode an incorrect value" in {
-    a [ClassCastException] should be thrownBy { DateCodex.encode(LongValue(1)) }
-    a [ClassCastException] should be thrownBy { DateCodex.encode(DoubleValue(1)) }
-    a [ClassCastException] should be thrownBy { DateCodex.encode(StringValue("a")) }
-  }
-
-  it should "compare a correct value" in {
-    DateCodex.compare(DateValue(dfmt.parse("2001-01-01"), DateCodex),
-      DateValue(dfmt.parse("2002-01-01"), DateCodex)) shouldBe Some(-1)
-    DateCodex.compare(DateValue(dfmt.parse("2001-01-01"), DateCodex),
-      DateValue(dfmt.parse("2001-01-01"), DateCodex)) shouldBe Some(0)
-    DateCodex.compare(DateValue(dfmt.parse("2002-01-01"), DateCodex),
-      DateValue(dfmt.parse("2001-01-01"), DateCodex)) shouldBe Some(1)
-  }
-
-  it should "not compare an incorrect value" in {
-    DateCodex.compare(DateValue(dfmt.parse("2001-01-01"), DateCodex), LongValue(1)) shouldBe None
-    DateCodex.compare(LongValue(1), DateValue(dfmt.parse("2001-01-01"), DateCodex)) shouldBe None
-  }
-}
-
-class TestDateTimeCodex extends TestGrimlock {
-
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd hh:ss:mm")
 
-  "A DateTimeCodex" should "have a name" in {
-    DateTimeCodex.name shouldBe "date.time"
+  "A DateCodex" should "have a name" in {
+    DateCodex("yyyy-MM-dd hh:ss:mm").name shouldBe "date(yyyy-MM-dd hh:ss:mm)"
   }
 
   it should "box a correct Value" in {
-    DateTimeCodex.toValue(dfmt.parse("2001-01-01 01:01:01")) shouldBe
-      DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)
+    DateCodex("yyyy-MM-dd hh:ss:mm").toValue(dfmt.parse("2001-01-01 01:01:01")) shouldBe
+      DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm"))
   }
 
   it should "unbox a correct value" in {
-    DateTimeCodex.fromValue(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex)) shouldBe
-      dfmt.parse("2001-01-01 01:01:01")
+    DateCodex("yyyy-MM-dd hh:ss:mm")
+      .fromValue(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm"))) shouldBe
+        dfmt.parse("2001-01-01 01:01:01")
   }
 
   it should "throw an exception for an invalid unbox" in {
-    a [ClassCastException] should be thrownBy { DateTimeCodex.fromValue(LongValue(1)) }
-    a [ClassCastException] should be thrownBy { DateTimeCodex.fromValue(DoubleValue(1)) }
-    a [ClassCastException] should be thrownBy { DateTimeCodex.fromValue(StringValue("a")) }
+    a [ClassCastException] should be thrownBy { DateCodex("yyyy-MM-dd hh:ss:mm").fromValue(LongValue(1)) }
+    a [ClassCastException] should be thrownBy { DateCodex("yyyy-MM-dd hh:ss:mm").fromValue(DoubleValue(1)) }
+    a [ClassCastException] should be thrownBy { DateCodex("yyyy-MM-dd hh:ss:mm").fromValue(StringValue("a")) }
   }
 
   it should "decode a correct value" in {
-    DateTimeCodex.decode("2001-01-01 01:01:01") shouldBe
-      Some(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex))
+    DateCodex("yyyy-MM-dd hh:ss:mm").decode("2001-01-01 01:01:01") shouldBe
+      Some(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm")))
   }
 
   it should "not decode an incorrect value" in {
-    DateTimeCodex.decode("a") shouldBe None
-    DateTimeCodex.decode("1") shouldBe None
+    DateCodex("yyyy-MM-dd hh:ss:mm").decode("a") shouldBe None
+    DateCodex("yyyy-MM-dd hh:ss:mm").decode("1") shouldBe None
   }
 
   it should "encode a correct value" in {
-    DateTimeCodex.encode(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex)) shouldBe "2001-01-01 01:01:01"
+    DateCodex("yyyy-MM-dd hh:ss:mm")
+      .encode(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm"))) shouldBe
+        "2001-01-01 01:01:01"
   }
 
   it should "not encode an incorrect value" in {
-    a [ClassCastException] should be thrownBy { DateTimeCodex.encode(LongValue(1)) }
-    a [ClassCastException] should be thrownBy { DateTimeCodex.encode(DoubleValue(1)) }
-    a [ClassCastException] should be thrownBy { DateTimeCodex.encode(StringValue("a")) }
+    a [ClassCastException] should be thrownBy { DateCodex("yyyy-MM-dd hh:ss:mm").encode(LongValue(1)) }
+    a [ClassCastException] should be thrownBy { DateCodex("yyyy-MM-dd hh:ss:mm").encode(DoubleValue(1)) }
+    a [ClassCastException] should be thrownBy { DateCodex("yyyy-MM-dd hh:ss:mm").encode(StringValue("a")) }
   }
 
   it should "compare a correct value" in {
-    DateTimeCodex.compare(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex),
-      DateValue(dfmt.parse("2002-01-01 01:01:01"), DateTimeCodex)) shouldBe Some(-1)
-    DateTimeCodex.compare(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex),
-      DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)) shouldBe Some(0)
-    DateTimeCodex.compare(DateValue(dfmt.parse("2002-01-01 01:01:01"), DateTimeCodex),
-      DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)) shouldBe Some(1)
+    DateCodex("yyyy-MM-dd hh:ss:mm")
+      .compare(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm")),
+        DateValue(dfmt.parse("2002-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm"))) shouldBe Some(-1)
+    DateCodex("yyyy-MM-dd hh:ss:mm")
+      .compare(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm")),
+        DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm"))) shouldBe Some(0)
+    DateCodex("yyyy-MM-dd hh:ss:mm")
+      .compare(DateValue(dfmt.parse("2002-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm")),
+        DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm"))) shouldBe Some(1)
   }
 
   it should "not compare an incorrect value" in {
-    DateTimeCodex.compare(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex), LongValue(1)) shouldBe None
-    DateTimeCodex.compare(LongValue(1), DateValue(dfmt.parse("2001-01-01 01:01:01"), DateTimeCodex)) shouldBe None
+    DateCodex("yyyy-MM-dd hh:ss:mm")
+      .compare(DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm")), LongValue(1)) shouldBe
+        None
+    DateCodex("yyyy-MM-dd hh:ss:mm")
+      .compare(LongValue(1), DateValue(dfmt.parse("2001-01-01 01:01:01"), DateCodex("yyyy-MM-dd hh:ss:mm"))) shouldBe
+        None
   }
 }
 

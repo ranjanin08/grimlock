@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.framework
 
 import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.utility._
 
 import scala.reflect.ClassTag
 import scala.util.matching.Regex
@@ -115,6 +116,8 @@ trait Nameable[T, P <: Position, Q <: Position, D <: Dimension, U[_]] {
    * @param s Encapsulates the dimension(s) for which to get names.
    * @param t Object that can be converted to a `U[(Q, Long)]`.
    */
-  def convert(m: Matrix[P], s: Slice[P, D], t: T)(implicit ev: ClassTag[s.S]): U[(Q, Long)]
+  // TODO: Should the tuner be passed in as an argument?
+  def convert(m: Matrix[P], s: Slice[P, D], t: T)(implicit ev1: ClassTag[s.S], ev2: s.S =!= Position0D,
+    ev3: m.NamesTuners#V[Default[NoParameters.type]]): U[(Q, Long)]
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,15 +31,15 @@ case class Gradient(dim: Dimension) extends Window[Position2D, Position1D, Posit
   type T = Cell[Position1D]
 
   // Initialise state to the remainder coordinates (contains the date) and the content.
-  def initialise(cell: Cell[Position2D], rem: Position1D): (T, Collection[Cell[Position3D]]) = {
-    (Cell(rem, cell.content), Collection[Cell[Position3D]])
+  def initialise(cell: Cell[Position2D], rem: Position1D): (T, TraversableOnce[Cell[Position3D]]) = {
+    (Cell(rem, cell.content), None)
   }
 
   val DayInMillis = 1000 * 60 * 60 * 24
   val separator = ""
 
   // For each new cell, output the difference with the previous cell (contained in `t`).
-  def present(cell: Cell[Position2D], rem: Position1D, t: T): (T, Collection[Cell[Position3D]]) = {
+  def present(cell: Cell[Position2D], rem: Position1D, t: T): (T, TraversableOnce[Cell[Position3D]]) = {
     // Get current date from `rem` and previous date from `t` and compute number of days between the dates.
     val days = rem(dim).asDate.flatMap {
       case dc => t.position(dim).asDate.map { case dt => (dc.getTime - dt.getTime) / DayInMillis }
@@ -51,13 +51,13 @@ case class Gradient(dim: Dimension) extends Window[Position2D, Position1D, Posit
     // Generate cell containing the gradient (delta / days).
     val grad = days.flatMap {
       case td => delta.map {
-        case vd => Left(Cell(cell.position.append(t.position.toShortString(separator) + ".to." +
-          rem.toShortString(separator)), Content(ContinuousSchema[Codex.DoubleCodex](), vd / td)))
+        case vd => Cell(cell.position.append(t.position.toShortString(separator) + ".to." +
+          rem.toShortString(separator)), Content(ContinuousSchema(DoubleCodex), vd / td))
       }
     }
 
     // Update state to be current `rem` and `con`, and output the gradient.
-    (Cell(rem, cell.content), Collection(grad))
+    (Cell(rem, cell.content), grad)
   }
 }
 
@@ -77,7 +77,7 @@ object DerivedData {
     // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
     //    feature.from.gradient)
     // 4/ Persist 2D gradient features.
-    load3D(s"${path}/exampleDerived.txt", third = DateCodex)
+    loadText(s"${path}/exampleDerived.txt", Cell.parse3D(third = DateCodex()))
       .slide(Along(Third), Gradient(First))
       .melt(Third, Second, ".from.")
       .save(s"./demo.${output}/gradient.out")

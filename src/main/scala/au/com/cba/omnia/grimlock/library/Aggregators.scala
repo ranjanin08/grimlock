@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ case class Count[P <: Position, S <: Position with ExpandablePosition]() extends
 
   def reduce(lt: T, rt: T): T = lt + rt
 
-  def present(pos: S, t: T): Option[Cell[S]] = Some(Cell(pos, Content(DiscreteSchema[Codex.LongCodex](), t)))
+  def present(pos: S, t: T): Option[Cell[S]] = Some(Cell(pos, Content(DiscreteSchema(LongCodex), t)))
 }
 
 /** Distinct count reductions. */
@@ -42,7 +42,7 @@ case class DistinctCount[P <: Position, S <: Position with ExpandablePosition]()
 
   def reduce(lt: T, rt: T): T = lt ++ rt
 
-  def present(pos: S, t: T): Option[Cell[S]] = Some(Cell(pos, Content(DiscreteSchema[Codex.LongCodex](), t.size)))
+  def present(pos: S, t: T): Option[Cell[S]] = Some(Cell(pos, Content(DiscreteSchema(LongCodex), t.size)))
 }
 
 /**
@@ -58,7 +58,7 @@ case class PredicateCount[P <: Position, S <: Position with ExpandablePosition](
 
   def reduce(lt: T, rt: T): T = lt + rt
 
-  def present(pos: S, t: T): Option[Cell[S]] = Some(Cell(pos, Content(DiscreteSchema[Codex.LongCodex](), t)))
+  def present(pos: S, t: T): Option[Cell[S]] = Some(Cell(pos, Content(DiscreteSchema(LongCodex), t)))
 }
 
 /** Trait for aggregators that can be lenient or strict when it comes to invalid (or unexpected) values. */
@@ -105,9 +105,9 @@ private[aggregate] trait StrictAggregator[P <: Position, S <: Position with Expa
     if (invalid(t) && !nan) {
       None
     } else if (invalid(t)) {
-      Some(Cell(pos, Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN)))
+      Some(Cell(pos, Content(ContinuousSchema(DoubleCodex), Double.NaN)))
     } else {
-      Some(Cell(pos, Content(ContinuousSchema[Codex.DoubleCodex](), asDouble(t))))
+      Some(Cell(pos, Content(ContinuousSchema(DoubleCodex), asDouble(t))))
     }
   }
 
@@ -289,7 +289,7 @@ case class WeightedSum[P <: Position, S <: Position with ExpandablePosition, W](
   def presentWithValue(pos: S, t: T, ext: V): Option[Cell[S]] = {
     (t.isNaN && !nan) match {
       case true => None
-      case false => Some(Cell(pos, Content(ContinuousSchema[Codex.DoubleCodex](), t)))
+      case false => Some(Cell(pos, Content(ContinuousSchema(DoubleCodex), t)))
     }
   }
 }
@@ -320,7 +320,8 @@ case class Entropy[P <: Position, S <: Position with ExpandablePosition, W](coun
   }
 
   def reduce(lt: T, rt: T): T = {
-    (lt._1 + rt._1, if (lt._2.isNaN) { if (strict) { lt._2 } else { rt._2 } }
+    (lt._1 + rt._1,
+      if (lt._2.isNaN) { if (strict) { lt._2 } else { rt._2 } }
       else if (rt._2.isNaN) { if (strict) { rt._2 } else { lt._2 } }
       else { lt._2 + rt._2 })
   }
@@ -328,7 +329,7 @@ case class Entropy[P <: Position, S <: Position with ExpandablePosition, W](coun
   def presentWithValue(pos: S, t: T, ext: V): Option[Cell[S]] = {
     (t._1 == 1 || (t._2.isNaN && !nan)) match {
       case true => None
-      case false => Some(Cell(pos, Content(ContinuousSchema[Codex.DoubleCodex](), if (negate) t._2 else -t._2)))
+      case false => Some(Cell(pos, Content(ContinuousSchema(DoubleCodex), if (negate) t._2 else -t._2)))
     }
   }
 }
@@ -369,9 +370,9 @@ case class FrequencyRatio[P <: Position, S <: Position with ExpandablePosition](
     if (t._1 == 1 || (t._2.isNaN && !nan)) {
       None
     } else if (t._2.isNaN) {
-      Some(Cell(pos, Content(ContinuousSchema[Codex.DoubleCodex](), Double.NaN)))
+      Some(Cell(pos, Content(ContinuousSchema(DoubleCodex), Double.NaN)))
     } else {
-      Some(Cell(pos, Content(ContinuousSchema[Codex.DoubleCodex](), t._2 / t._3)))
+      Some(Cell(pos, Content(ContinuousSchema(DoubleCodex), t._2 / t._3)))
     }
   }
 }

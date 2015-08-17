@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
 package au.com.cba.omnia.grimlock.scalding
 
 import au.com.cba.omnia.grimlock.framework.{
+  Default,
   Matrix => BaseMatrix,
   Names => BaseNames,
   Nameable => BaseNameable,
-  Slice
+  NoParameters
 }
 import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.utility._
 
 import com.twitter.scalding.typed.TypedPipe
 
@@ -36,7 +38,7 @@ import scala.reflect.ClassTag
 class Names[P <: Position](val data: TypedPipe[(P, Long)]) extends BaseNames[P] with Persist[(P, Long)] {
   type U[A] = TypedPipe[A]
 
-  def moveToFront[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): TypedPipe[(P, Long)] = {
+  def moveToFront[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): U[(P, Long)] = {
     val pos = ev1.convert(position)
     val state = data
       .map { case (p, i) => Map(p -> i) }
@@ -51,7 +53,7 @@ class Names[P <: Position](val data: TypedPipe[(P, Long)]) extends BaseNames[P] 
       }
   }
 
-  def moveToBack[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): TypedPipe[(P, Long)] = {
+  def moveToBack[T](position: T)(implicit ev1: Positionable[T, P], ev2: ClassTag[P]): U[(P, Long)] = {
     val pos = ev1.convert(position)
     val state = data
       .map { case (p, i) => Map(p -> i) }
@@ -66,16 +68,16 @@ class Names[P <: Position](val data: TypedPipe[(P, Long)]) extends BaseNames[P] 
       }
   }
 
-  def renumber()(implicit ev: ClassTag[P]): TypedPipe[(P, Long)] = Names.number(data.map { case (p, i) => p })
+  def renumber()(implicit ev: ClassTag[P]): U[(P, Long)] = Names.number(data.map { case (p, _) => p })
 
-  def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): TypedPipe[(P, Long)] = {
+  def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): U[(P, Long)] = {
     val converted = positions.map { case (k, v) => ev.convert(k) -> v }
 
     data.map { case (p, i) => (p, converted.getOrElse(p, i)) }
   }
 
-  protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): TypedPipe[(P, Long)] = {
-    Names.number(data.collect { case (p, i) if !keep ^ f(p) => p })
+  protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[(P, Long)] = {
+    Names.number(data.collect { case (p, _) if !keep ^ f(p) => p })
   }
 }
 
@@ -94,7 +96,7 @@ object Names {
     data
       .groupAll
       .mapValueStream { _.zipWithIndex }
-      .map { case ((), (p, i)) => (p, i) }
+      .map { case (_, (p, i)) => (p, i) }
   }
 
   /** Conversion from `TypedPipe[(Position, Long)]` to a Scalding `Names`. */
@@ -106,23 +108,28 @@ object Nameable {
   /** Converts a `TypedPipe[(Q, Long)]` into a `TypedPipe[(Q, Long)]`; that is, it is a pass through. */
   implicit def TPQL2TPN[P <: Position, Q <: Position, D <: Dimension]: BaseNameable[TypedPipe[(Q, Long)], P, Q, D, TypedPipe] = {
     new BaseNameable[TypedPipe[(Q, Long)], P, Q, D, TypedPipe] {
-      def convert(m: BaseMatrix[P], s: Slice[P, D], t: TypedPipe[(Q, Long)])(
-        implicit ev: ClassTag[s.S]): TypedPipe[(Q, Long)] = t
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: TypedPipe[(Q, Long)])(implicit ev1: ClassTag[s.S],
+        ev2: s.S =!= Position0D, ev3: m.NamesTuners#V[Default[NoParameters.type]]): TypedPipe[(Q, Long)] = t
     }
   }
+
   /** Converts a `TypedPipe[Q]` into a `TypedPipe[(Q, Long)]`. */
   implicit def TPQ2TPN[P <: Position, Q <: Position, D <: Dimension]: BaseNameable[TypedPipe[Q], P, Q, D, TypedPipe] = {
     new BaseNameable[TypedPipe[Q], P, Q, D, TypedPipe] {
-      def convert(m: BaseMatrix[P], s: Slice[P, D], t: TypedPipe[Q])(
-        implicit ev: ClassTag[s.S]): TypedPipe[(Q, Long)] = Names.number(t)
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: TypedPipe[Q])(implicit ev1: ClassTag[s.S],
+        ev2: s.S =!= Position0D, ev3: m.NamesTuners#V[Default[NoParameters.type]]): TypedPipe[(Q, Long)] = {
+        Names.number(t)
+      }
     }
   }
+
   /** Converts a `PositionListable` into a `TypedPipe[(Q, Long)]`. */
   implicit def PL2TPN[T, P <: Position, Q <: Position, D <: Dimension](implicit ev1: PositionListable[T, Q],
     ev2: PosDimDep[P, D], ev3: ClassTag[Q]): BaseNameable[T, P, Q, D, TypedPipe] = {
     new BaseNameable[T, P, Q, D, TypedPipe] {
-      def convert(m: BaseMatrix[P], s: Slice[P, D], t: T)(implicit ev: ClassTag[s.S]): TypedPipe[(Q, Long)] = {
-        new Names(m.names(s).asInstanceOf[TypedPipe[(Q, Long)]]).slice(t, true)
+      def convert(m: BaseMatrix[P], s: Slice[P, D], t: T)(implicit ev4: ClassTag[s.S], ev5: s.S =!= Position0D,
+        ev6: m.NamesTuners#V[Default[NoParameters.type]]): TypedPipe[(Q, Long)] = {
+        new Names(m.names(s, Default())(ev2, ev5, ev4, ev6).asInstanceOf[TypedPipe[(Q, Long)]]).slice(t, true)
       }
     }
   }

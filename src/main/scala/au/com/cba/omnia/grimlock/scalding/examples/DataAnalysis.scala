@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ class DataAnalysis(args: Args) extends Job(args) {
   val output = "scalding"
 
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = load2D(s"${path}/exampleInput.txt")
+  val data = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
 
   // Define moments to compute.
   val moments: List[Aggregator[Position1D, Position0D, Position1D]] = List(

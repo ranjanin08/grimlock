@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -157,12 +157,12 @@ object Content {
    * @param schema Schema of the variable value.
    * @param value  Date value of the variable.
    */
-  def apply[T <: DateAndTimeCodex](schema: DateSchema[T], value: java.util.Date): Content = {
+  def apply(schema: DateSchema[Codex.DateCodex], value: java.util.Date): Content = {
     ContentImpl(schema, DateValue(value, schema.codex))
   }
 
   /**
-   * Construct a content using a date schema and value.
+   * Construct a content using a schema and value.
    *
    * @param schema Schema of the variable value.
    * @param value  The value

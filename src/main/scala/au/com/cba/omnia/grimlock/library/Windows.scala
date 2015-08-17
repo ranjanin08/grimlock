@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ trait MovingAverage[S <: Position with ExpandablePosition, R <: Position with Ex
   /** Function to extract result position. */
   val pos: Locate.WindowSize1[S, R, Q]
 
-  protected def getCollection(cell: Cell[S], rem: R, value: Double): Collection[Cell[Q]] = {
-    Collection(Cell[Q](pos(cell, rem), Content(ContinuousSchema[Codex.DoubleCodex](), value)))
+  protected def getCell(cell: Cell[S], rem: R, value: Double): Option[Cell[Q]] = {
+    Some(Cell[Q](pos(cell, rem), Content(ContinuousSchema(DoubleCodex), value)))
   }
 
   protected def getDouble(con: Content): Double = con.value.asDouble.getOrElse(Double.NaN)
@@ -54,17 +54,17 @@ trait BatchMovingAverage[S <: Position with ExpandablePosition, R <: Position wi
 
   protected val idx: Int
 
-  def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]]) = {
+  def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
     val curr = getCurrent(rem, cell.content)
 
-    (List(curr), if (all) { getCollection(cell, curr._1, curr._2) } else { Collection() })
+    (List(curr), if (all) { getCell(cell, curr._1, curr._2) } else { None })
   }
 
-  def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[Q]]) = {
+  def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
     val lst = updateList(rem, cell.content, t)
     val out = (all || lst.size == window) match {
-      case true => getCollection(cell, lst(math.min(idx, lst.size - 1))._1, compute(lst))
-      case false => Collection[Cell[Q]]()
+      case true => getCell(cell, lst(math.min(idx, lst.size - 1))._1, compute(lst))
+      case false => None
     }
 
     (lst, out)
@@ -112,16 +112,16 @@ trait OnlineMovingAverage[S <: Position with ExpandablePosition, R <: Position w
   extends MovingAverage[S, R, Q] {
   type T = (Double, Long)
 
-  def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]]) = {
+  def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
     val curr = getCurrent(rem, cell.content)
 
-    ((curr._2, 1), getCollection(cell, curr._1, curr._2))
+    ((curr._2, 1), getCell(cell, curr._1, curr._2))
   }
 
-  def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[Q]]) = {
+  def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
     val curr = compute(getDouble(cell.content), t)
 
-    ((curr, t._2 + 1), getCollection(cell, rem, curr))
+    ((curr, t._2 + 1), getCell(cell, rem, curr))
   }
 
   protected def compute(curr: Double, t: T): Double
@@ -149,28 +149,28 @@ case class CumulativeSum[S <: Position with ExpandablePosition, R <: Position wi
   pos: Locate.WindowSize1[S, R, Q], strict: Boolean = true) extends Window[S, R, Q] {
   type T = Option[Double]
 
-  val schema = ContinuousSchema[Codex.DoubleCodex]()
+  val schema = ContinuousSchema(DoubleCodex)
 
-  def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]]) = {
+  def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
     val value = (strict, cell.content.value.asDouble) match {
       case (true, None) => Some(Double.NaN)
       case (_, v) => v
     }
 
     (value, value match {
-      case Some(d) => Collection(pos(cell, rem), Content(schema, d))
-      case None => Collection()
+      case Some(d) => Some(Cell(pos(cell, rem), Content(schema, d)))
+      case None => None
     })
   }
 
-  def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[Q]]) = {
+  def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
     val position = pos(cell, rem)
 
     (strict, t, cell.content.value.asDouble) match {
-      case (true, _, None) => (Some(Double.NaN), Collection(position, Content(schema, Double.NaN)))
-      case (false, p, None) => (p, Collection())
-      case (_, None, Some(d)) => (Some(d), Collection(position, Content(schema, d)))
-      case (_, Some(p), Some(d)) => (Some(p + d), Collection(position, Content(schema, p + d)))
+      case (true, _, None) => (Some(Double.NaN), Some(Cell(position, Content(schema, Double.NaN))))
+      case (false, p, None) => (p, None)
+      case (_, None, Some(d)) => (Some(d), Some(Cell(position, Content(schema, d))))
+      case (_, Some(p), Some(d)) => (Some(p + d), Some(Cell(position, Content(schema, p + d))))
     }
   }
 }
@@ -186,26 +186,27 @@ case class BinOp[S <: Position with ExpandablePosition, R <: Position with Expan
   binop: (Double, Double) => Double, pos: Locate.WindowSize2[S, R, Q], strict: Boolean = true) extends Window[S, R, Q] {
   type T = (Option[Double], R)
 
-  def initialise(cell: Cell[S], rem: R): (T, Collection[Cell[Q]]) = {
+  def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
     val value = (strict, cell.content.value.asDouble) match {
       case (true, None) => Some(Double.NaN)
       case (_, v) => v
     }
 
-    ((value, rem), Collection())
+    ((value, rem), None)
   }
 
-  def present(cell: Cell[S], rem: R, t: T): (T, Collection[Cell[Q]]) = {
+  def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
     (strict, t, cell.content.value.asDouble) match {
       case (true, (_, c), None) => getResult(cell, rem, Double.NaN, Double.NaN, c)
-      case (false, p, None) => (p, Collection())
-      case (_, (None, _), Some(d)) => ((Some(d), rem), Collection())
+      case (false, p, None) => (p, None)
+      case (_, (None, _), Some(d)) => ((Some(d), rem), None)
       case (_, (Some(p), c), Some(d)) => getResult(cell, rem, if (p.isNaN) p else d, binop(p, d), c)
     }
   }
 
-  private def getResult(cell: Cell[S], rem: R, value: Double, result: Double, prev: R): (T, Collection[Cell[Q]]) = {
-    ((Some(value), rem), Collection(pos(cell, rem, prev), Content(ContinuousSchema[Codex.DoubleCodex](), result)))
+  private def getResult(cell: Cell[S], rem: R, value: Double, result: Double,
+    prev: R): (T, TraversableOnce[Cell[Q]]) = {
+    ((Some(value), rem), Some(Cell(pos(cell, rem, prev), Content(ContinuousSchema(DoubleCodex), result))))
   }
 }
 
@@ -227,7 +228,7 @@ case class Quantile[S <: Position with ExpandablePosition, R <: Position with Ex
   type T = (Double, Long, List[(Long, Double, String)])
   type V = W
 
-  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, Collection[Cell[S#M]]) = {
+  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[S#M]]) = {
     val state = count
       .extract(cell, ext)
       .map {
@@ -240,23 +241,22 @@ case class Quantile[S <: Position with ExpandablePosition, R <: Position with Ex
       case (false, Some(c)) => c
       case _ => Double.NaN
     }
-    val col = Collection(List(boundary(cell, ext, min, name, 0, state),
-      boundary(cell, ext, max, name, 100, state)).flatten)
+    val col = List(boundary(cell, ext, min, name, 0, state), boundary(cell, ext, max, name, 100, state)).flatten
 
     ((curr, 0, state), col)
   }
 
-  def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, Collection[Cell[S#M]]) = {
+  def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[S#M]]) = {
     val state = t._3
     val curr = (t._1.isNaN || state.isEmpty, cell.content.value.asDouble) match {
       case (false, Some(c)) => c
       case _ => Double.NaN
     }
-    val col = Collection(state.find(_._1 == t._2) match {
-      case Some((_, g, n))  => List(Cell[S#M](cell.position.append(n),
-        Content(ContinuousSchema[Codex.DoubleCodex](), (1 - g) * t._1 + g * curr)))
-      case None => List()
-    })
+    val col = state.find(_._1 == t._2) match {
+      case Some((_, g, n)) => Some(Cell[S#M](cell.position.append(n),
+        Content(ContinuousSchema(DoubleCodex), (1 - g) * t._1 + g * curr)))
+      case None => None
+    }
 
     ((curr, t._2 + 1, state), col)
   }
@@ -267,7 +267,7 @@ case class Quantile[S <: Position with ExpandablePosition, R <: Position with Ex
       .extract(cell, ext)
       .map {
         case v => Cell[S#M](cell.position.append(name.format(value)),
-          Content(ContinuousSchema[Codex.DoubleCodex](), if (state.isEmpty) Double.NaN else v))
+          Content(ContinuousSchema(DoubleCodex), if (state.isEmpty) Double.NaN else v))
       }
       .toList
   }

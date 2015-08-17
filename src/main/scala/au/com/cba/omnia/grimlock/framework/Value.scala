@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ object Value {
  * @param value A `java.util.Date`.
  * @param codex The codex used for encoding/decoding `value`.
  */
-case class DateValue(value: Date, codex: DateAndTimeCodex) extends Value {
+case class DateValue(value: Date, codex: DateCodex) extends Value {
   override def asDate = Some(value)
 }
 

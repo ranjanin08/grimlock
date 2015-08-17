@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,11 +36,11 @@ import com.twitter.scalding.typed.TypedPipe
 // Define a custom partition. If the instance is 'iid:0364354' or 'iid:0216406' then assign it to the right (test)
 // partition. In all other cases assing it to the left (train) partition.
 case class CustomPartition(dim: Dimension, left: String, right: String) extends Partitioner[Position2D, String] {
-  def assign(cell: Cell[Position2D]): Collection[String] = {
+  def assign(cell: Cell[Position2D]): TraversableOnce[String] = {
     if (cell.position(dim).toShortString == "iid:0364354" || cell.position(dim).toShortString == "iid:0216406") {
-      Collection(right)
+      Some(right)
     } else {
-      Collection(left)
+      Some(left)
     }
   }
 }
@@ -52,7 +52,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
   val output = "scalding"
 
   // Read the data. This returns a 2D matrix (instance x feature).
-  val data = load2D(s"${path}/exampleInput.txt")
+  val data = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
 
   // Perform a split of the data into a training and test set.
   val parts = data
@@ -166,7 +166,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
-      //.fill(Content(ContinuousSchema[Codex.DoubleCodex], 0))
+      //.fill(Content(ContinuousSchema(DoubleCodex), 0))
       .saveAsCSV(Over(Second), s"./demo.${output}/${key}.csv")
   }
 

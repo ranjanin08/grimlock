@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ trait Operator[S <: Position with ExpandablePosition, R <: Position with Expanda
   extends OperatorWithValue[S, R, Q] { self =>
   type V = Any
 
-  def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[Q]] = {
+  def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): TraversableOnce[Cell[Q]] = {
     compute(left, reml, right, remr)
   }
 
@@ -76,10 +76,10 @@ trait Operator[S <: Position with ExpandablePosition, R <: Position with Expanda
    * @param right The selected right cell to compute with.
    * @param remr  The right remainder coordinates.
    *
-   * @note The return value is a `Collection` to allow, for example, upper or lower triangular matrices to be returned
-   *       (this can be done by comparing the selected coordinates)
+   * @note The return value is a `TraversableOnce` to allow, for example, upper or lower triangular matrices to
+   *       be returned (this can be done by comparing the selected coordinates)
    */
-  def compute(left: Cell[S], rem: R, right: Cell[S], remr: R): Collection[Cell[Q]]
+  def compute(left: Cell[S], rem: R, right: Cell[S], remr: R): TraversableOnce[Cell[Q]]
 
   /**
    * Operator for pairwise operations and then renaming dimensions.
@@ -90,10 +90,8 @@ trait Operator[S <: Position with ExpandablePosition, R <: Position with Expanda
    */
   def andThenRename(rename: (Cell[S], R, Cell[S], R, Cell[Q]) => Q) = {
     new Operator[S, R, Q] {
-      def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
-        Collection(self.compute(left, reml, right, remr).toList.map {
-          case c => Cell(rename(left, reml, right, remr, c), c.content)
-        })
+      def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): TraversableOnce[Cell[Q]] = {
+        self.compute(left, reml, right, remr).map { case c => Cell(rename(left, reml, right, remr, c), c.content) }
       }
     }
   }
@@ -107,10 +105,8 @@ trait Operator[S <: Position with ExpandablePosition, R <: Position with Expanda
    */
   def andThenExpand[U <: Position](expand: (Cell[S], R, Cell[S], R, Cell[Q]) => U)(implicit ev: PosExpDep[Q, U]) = {
     new Operator[S, R, U] {
-      def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[U]] = {
-        Collection(self.compute(left, reml, right, remr).toList.map {
-          case c => Cell(expand(left, reml, right, remr, c), c.content)
-        })
+      def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): TraversableOnce[Cell[U]] = {
+        self.compute(left, reml, right, remr).map { case c => Cell(expand(left, reml, right, remr, c), c.content) }
       }
     }
   }
@@ -131,10 +127,10 @@ trait OperatorWithValue[S <: Position with ExpandablePosition, R <: Position wit
    * @param remr  The right remainder coordinates.
    * @param ext   The user define the value.
    *
-   * @note The return value is a `Collection` to allow, for example, upper or lower triangular matrices to be returned
-   *       (this can be done by comparing the selected coordinates)
+   * @note The return value is a `TraversableOnce` to allow, for example, upper or lower triangular matrices to
+   *       be returned (this can be done by comparing the selected coordinates).
    */
-  def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[Q]]
+  def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): TraversableOnce[Cell[Q]]
 
   /**
    * Operator for pairwise operations and then renaming dimensions.
@@ -147,10 +143,10 @@ trait OperatorWithValue[S <: Position with ExpandablePosition, R <: Position wit
     new OperatorWithValue[S, R, Q] {
       type V = self.V
 
-      def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[Q]] = {
-        Collection(self.computeWithValue(left, reml, right, remr, ext).toList.map {
+      def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): TraversableOnce[Cell[Q]] = {
+        self.computeWithValue(left, reml, right, remr, ext).map {
           case c => Cell(rename(left, reml, right, remr, ext, c), c.content)
-        })
+        }
       }
     }
   }
@@ -167,10 +163,10 @@ trait OperatorWithValue[S <: Position with ExpandablePosition, R <: Position wit
     new OperatorWithValue[S, R, U] {
       type V = self.V
 
-      def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[U]] = {
-        Collection(self.computeWithValue(left, reml, right, remr, ext).toList.map {
+      def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): TraversableOnce[Cell[U]] = {
+        self.computeWithValue(left, reml, right, remr, ext).map {
           case c => Cell(expand(left, reml, right, remr, ext, c), c.content)
-        })
+        }
       }
     }
   }
@@ -199,8 +195,8 @@ object Operable {
     new Operable[(Cell[S], R, Cell[S], R) => Cell[Q], S, R, Q] {
       def convert(t: (Cell[S], R, Cell[S], R) => Cell[Q]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {
-          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
-            Collection(t(left, reml, right, remr))
+          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): TraversableOnce[Cell[Q]] = {
+            Some(t(left, reml, right, remr))
           }
         }
       }
@@ -218,26 +214,9 @@ object Operable {
     new Operable[(Cell[S], R, Cell[S], R) => List[Cell[Q]], S, R, Q] {
       def convert(t: (Cell[S], R, Cell[S], R) => List[Cell[Q]]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {
-          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
-            Collection(t(left, reml, right, remr))
+          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): TraversableOnce[Cell[Q]] = {
+            t(left, reml, right, remr)
           }
-        }
-      }
-    }
-  }
-
-  /** Converts a `(Cell[S], R, Cell[S], R) => Collection[Cell[R#M]]` to a `Operator[S, R, R#M]`. */
-  implicit def CCSRRM2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition]: Operable[(Cell[S], R, Cell[S], R) => Collection[Cell[R#M]], S, R, R#M] = CC2O[S, R, R#M]
-
-  /** Converts a `(Cell[S], R, Cell[S], R) => Collection[Cell[Q]]` to a `Operator[S, R, Q]`. */
-  implicit def CCSRQ2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-    implicit ev: PosExpDep[R, Q]): Operable[(Cell[S], R, Cell[S], R) => Collection[Cell[Q]], S, R, Q] = CC2O[S, R, Q]
-
-  private def CC2O[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]: Operable[(Cell[S], R, Cell[S], R) => Collection[Cell[Q]], S, R, Q] = {
-    new Operable[(Cell[S], R, Cell[S], R) => Collection[Cell[Q]], S, R, Q] {
-      def convert(t: (Cell[S], R, Cell[S], R) => Collection[Cell[Q]]): Operator[S, R, Q] = {
-        new Operator[S, R, Q] {
-          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = t(left, reml, right, remr)
         }
       }
     }
@@ -263,8 +242,8 @@ object Operable {
     new Operable[List[T], S, R, Q] {
       def convert(t: List[T]): Operator[S, R, Q] = {
         new Operator[S, R, Q] {
-          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
-            Collection(t.flatMap { case s => s.compute(left, reml, right, remr).toList })
+          def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): TraversableOnce[Cell[Q]] = {
+            t.flatMap { case s => s.compute(left, reml, right, remr) }
           }
         }
       }
@@ -296,8 +275,8 @@ object OperableWithValue {
         new OperatorWithValue[S, R, Q] {
           type V = W
 
-          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: W): Collection[Cell[Q]] = {
-            Collection(t(left, reml, right, remr, ext))
+          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: W): TraversableOnce[Cell[Q]] = {
+            Some(t(left, reml, right, remr, ext))
           }
         }
       }
@@ -318,30 +297,7 @@ object OperableWithValue {
         new OperatorWithValue[S, R, Q] {
           type V = W
 
-          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: W): Collection[Cell[Q]] = {
-            Collection(t(left, reml, right, remr, ext))
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * Converts a `(Cell[S], R, Cell[S], R, W) => Collection[Cell[R#M]]` to a
-   * `OperatorWithValue[S, R, R#M] { type V >: W }`.
-   */
-  implicit def CCSRRMW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W]: OperableWithValue[(Cell[S], R, Cell[S], R, W) => Collection[Cell[R#M]], S, R, R#M, W] = CC2OWV[S, R, R#M, W]
-
-  /** Converts a `(Cell[S], R, Cell[S], R, W) => Collection[Cell[Q]]` to a `OperatorWithValue[S, R, Q] { type V >: W }`. */
-  implicit def CCSRQW2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](implicit ev: PosExpDep[R, Q]): OperableWithValue[(Cell[S], R, Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] = CC2OWV[S, R, Q, W]
-
-  private def CC2OWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W]: OperableWithValue[(Cell[S], R, Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] = {
-    new OperableWithValue[(Cell[S], R, Cell[S], R, W) => Collection[Cell[Q]], S, R, Q, W] {
-      def convert(t: (Cell[S], R, Cell[S], R, W) => Collection[Cell[Q]]): OperatorWithValue[S, R, Q] { type V >: W } = {
-        new OperatorWithValue[S, R, Q] {
-          type V = W
-
-          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: W): Collection[Cell[Q]] = {
+          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: W): TraversableOnce[Cell[Q]] = {
             t(left, reml, right, remr, ext)
           }
         }
@@ -383,8 +339,8 @@ object OperableWithValue {
         new OperatorWithValue[S, R, Q] {
           type V = W
 
-          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): Collection[Cell[Q]] = {
-            Collection(t.flatMap { case s => s.computeWithValue(left, reml, right, remr, ext).toList })
+          def computeWithValue(left: Cell[S], reml: R, right: Cell[S], remr: R, ext: V): TraversableOnce[Cell[Q]] = {
+            t.flatMap { case s => s.computeWithValue(left, reml, right, remr, ext) }
           }
         }
       }

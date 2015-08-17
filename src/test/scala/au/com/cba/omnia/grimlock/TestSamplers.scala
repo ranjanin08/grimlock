@@ -27,7 +27,7 @@ import scala.util._
 
 trait TestSample extends TestGrimlock {
 
-  val con = Content(ContinuousSchema[Codex.DoubleCodex](), 3.14)
+  val con = Content(ContinuousSchema(DoubleCodex), 3.14)
 
   def toCell[P <: Position](pos: P): Cell[P] = Cell(pos, con)
 }
@@ -79,7 +79,7 @@ class TestHashSampleToSize extends TestSample {
   "A HashSampleToSize" should "select 25% correctly" in {
     val obj = HashSampleToSize(Second,
       ExtractWithKey[Position2D, String, Content](Second.toString).andThenPresent(_.value.asDouble), 2500)
-    val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema[Codex.LongCodex](), 10000))
+    val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema(LongCodex), 10000))
 
     (1 to 10000).map {
       case i => if (obj.selectWithValue(toCell(Position2D(2 * i, i)), ext)) 1 else 0
@@ -89,7 +89,7 @@ class TestHashSampleToSize extends TestSample {
   it should "select 50% correctly" in {
     val obj = HashSampleToSize(Second,
       ExtractWithKey[Position2D, String, Content](Second.toString).andThenPresent(_.value.asDouble), 5000)
-    val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema[Codex.LongCodex](), 10000))
+    val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema(LongCodex), 10000))
 
     (1 to 10000).map {
       case i => if (obj.selectWithValue(toCell(Position2D(2 * i, i)), ext)) 1 else 0
@@ -99,7 +99,7 @@ class TestHashSampleToSize extends TestSample {
   it should "select 75% correctly" in {
     val obj = HashSampleToSize(Second,
       ExtractWithKey[Position2D, String, Content](Second.toString).andThenPresent(_.value.asDouble), 7500)
-    val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema[Codex.LongCodex](), 10000))
+    val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema(LongCodex), 10000))
 
     (1 to 10000).map {
       case i => if (obj.selectWithValue(toCell(Position2D(2 * i, i)), ext)) 1 else 0
@@ -124,7 +124,7 @@ class TestAndThenSamplerWithValue extends TestSample {
     val obj = HashSampleToSize(Second,
       ExtractWithKey[Position2D, String, Content](Second.toString).andThenPresent(_.value.asDouble), 2500)
       .andThenWithValue(HashSample(First, 1, 4))
-    val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema[Codex.LongCodex](), 10000))
+    val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema(LongCodex), 10000))
     val res = (1 to 10000).flatMap {
       case i => if (obj.selectWithValue(toCell(Position2D(i, i)), ext)) Some((i,i)) else None
     }

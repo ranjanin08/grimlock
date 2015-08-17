@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,11 +38,11 @@ trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with E
    * @param right The selected right cell to compute with.
    * @param rem   The remaining coordinates.
    */
-  def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
+  def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): TraversableOnce[Cell[Q]] = {
     (pos(left, reml, right, remr), left.content.value.asDouble, right.content.value.asDouble) match {
-      case (Some(p), Some(l), Some(r)) => Collection[Cell[Q]](Cell(p,
-        Content(ContinuousSchema[Codex.DoubleCodex](), if (inverse) compute(r, l) else compute(l, r))))
-      case _ => Collection[Cell[Q]]()
+      case (Some(p), Some(l), Some(r)) => Some[Cell[Q]](Cell(p,
+        Content(ContinuousSchema(DoubleCodex), if (inverse) compute(r, l) else compute(l, r))))
+      case _ => None
     }
   }
 
@@ -84,11 +84,11 @@ case class Divide[S <: Position with ExpandablePosition, R <: Position with Expa
  */
 case class Concatenate[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
   pos: Locate.Operator[S, R, Q], value: String = "%1$s,%2$s") extends Operator[S, R, Q] {
-  def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): Collection[Cell[Q]] = {
+  def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): TraversableOnce[Cell[Q]] = {
     pos(left, reml, right, remr) match {
-      case Some(p) => Collection[Cell[Q]](Cell(p, Content(NominalSchema[Codex.StringCodex](),
+      case Some(p) => Some[Cell[Q]](Cell(p, Content(NominalSchema(StringCodex),
         value.format(left.content.value.toShortString, right.content.value.toShortString))))
-      case None => Collection[Cell[Q]]()
+      case None => None
     }
   }
 }

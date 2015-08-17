@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Commonwealth Bank of Australia
+// Copyright 2014,2015 Commonwealth Bank of Australia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -793,10 +793,13 @@ trait Positions[P <: Position] {
   /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
   type U[_]
 
+  type NamesTuners <: OneOf
+
   /**
    * Returns the distinct position(s) (or names) for a given `slice`.
    *
    * @param slice Encapsulates the dimension(s) for which the names are to be returned.
+   * @param tuner The tuner for the job.
    *
    * @return A `U[(Slice.S, Long)]` of the distinct position(s) together with a unique index.
    *
@@ -805,8 +808,8 @@ trait Positions[P <: Position] {
    *
    * @see [[Names]]
    */
-  def names[D <: Dimension](slice: Slice[P, D])(implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D,
-    ev3: ClassTag[slice.S]): U[(slice.S, Long)]
+  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)]
 
   protected def toString(t: P, separator: String, descriptive: Boolean): String = {
     if (descriptive) { t.toString } else { t.toShortString(separator) }
@@ -827,6 +830,7 @@ trait Positionable[T, P <: Position] extends java.io.Serializable {
 object Positionable {
   /** Converts a position to a position; that is, it's a pass through. */
   implicit def P2P[T <: Position]: Positionable[T, T] = new Positionable[T, T] { def convert(t: T): T = t }
+
   /** Converts a `Valueable` to a position. */
   implicit def V2P[T](implicit ev: Valueable[T]): Positionable[T, Position1D] = {
     new Positionable[T, Position1D] { def convert(t: T): Position1D = Position1D(ev.convert(t)) }
@@ -849,6 +853,7 @@ object PositionListable {
   implicit def LP2LP[T, P <: Position](implicit ev: Positionable[T, P]): PositionListable[List[T], P] = {
     new PositionListable[List[T], P] { def convert(t: List[T]): List[P] = t.map(ev.convert(_)) }
   }
+
   /** Converts a `Positionable` to a `List[Position]`. */
   implicit def P2PL[T, P <: Position](implicit ev: Positionable[T, P]): PositionListable[T, P] = {
     new PositionListable[T, P] { def convert(t: T): List[P] = List(ev.convert(t)) }
