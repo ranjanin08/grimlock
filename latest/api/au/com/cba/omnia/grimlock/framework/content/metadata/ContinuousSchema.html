@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Schema for continuous variables.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The constructor is private to ensure a clean interface as provided by the <code>apply</code> methods of the companion
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The constructor is private to ensure a clean interface as provided by the <code>apply</code> methods of the companion
       object.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
@@ -190,14 +190,14 @@
       <a id="codex:C"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier">implicit </span>
+        <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
         <span class="name">codex</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.C">C</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">The codex used to encode/decode a variable value.</p><div class="fullcomment"><div class="comment cmt"><p>The codex used to encode/decode a variable value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
+      <p class="shortcomment cmt">The codex for the value.</p><div class="fullcomment"><div class="comment cmt"><p>The codex for the value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#decode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="decode(str:String):Option[au.com.cba.omnia.grimlock.framework.content.Content]"></a>
       <a id="decode(String):Option[Content]"></a>
@@ -328,6 +328,19 @@
       </span>
       </h4>
       <p class="shortcomment cmt">The optional minimum value.</p><div class="fullcomment"><div class="comment cmt"><p>The optional minimum value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a> → <a href="NumericalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema">NumericalSchema</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="name:String"></a>
+      <a id="name:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">name</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The name of the schema.</p><div class="fullcomment"><div class="comment cmt"><p>The name of the schema.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -367,6 +380,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema#params" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="params():String"></a>
+      <a id="params():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">params</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -395,7 +421,7 @@
       <p class="shortcomment cmt">Return a consise (terse) string representation of a schema.</p><div class="fullcomment"><div class="comment cmt"><p>Return a consise (terse) string representation of a schema.
 </p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between various fields.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
       <h4 class="signature">
@@ -407,7 +433,7 @@
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a> → AnyRef → Any</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> → AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

@@ -84,19 +84,19 @@
       </span>
       </h4>
       <p class="comment cmt">Base trait for encoding/decoding (basic) data types.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="DateAndTimeCodexextendsCodex"></a>
-      <a id="DateAndTimeCodex:DateAndTimeCodex"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DateCodexextendsCodexwithProductwithSerializable"></a>
+      <a id="DateCodex:DateCodex"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">trait</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DateAndTimeCodex.html"><span class="name">DateAndTimeCodex</span></a><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>
+        <a href="DateCodex.html"><span class="name">DateCodex</span></a><span class="params">(<span name="format">format: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;yyyy-MM-dd&quot;</span></span>)</span><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Base trait for dealing with <code>java.util.Date</code>.</p>
+      <p class="comment cmt">Codex for dealing with <code>java.util.Date</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DateValueextendsValuewithProductwithSerializable"></a>
       <a id="DateValue:DateValue"></a>
@@ -106,7 +106,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DateValue.html"><span class="name">DateValue</span></a><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codex">codex: <a href="DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex">DateAndTimeCodex</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DateValue.html"><span class="name">DateValue</span></a><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codex">codex: <a href="DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Value for when the data is of type <code>java.util.Date</code>
@@ -257,23 +257,10 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="DateCodex$.html"><span class="name">DateCodex</span></a><span class="result"> extends <a href="DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex">DateAndTimeCodex</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DateCodex$.html"><span class="name">DateCodex</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Codex for dealing with <code>java.util.Date</code> formatted as <code>yyyy-MM-dd</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateTimeCodex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="DateTimeCodex"></a>
-      <a id="DateTimeCodex:DateTimeCodex"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="DateTimeCodex$.html"><span class="name">DateTimeCodex</span></a><span class="result"> extends <a href="DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex">DateAndTimeCodex</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Codex for dealing with <code>java.util.Date</code> formatted as <code>yyyy-MM-dd hh:mm:ss</code>.</p>
+      
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DoubleCodex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DoubleCodex"></a>
       <a id="DoubleCodex:DoubleCodex"></a>

@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that represents the positions of a matrix.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that represents the positions of a matrix.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/framework/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -84,7 +84,20 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Positions.U" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Positions.NamesTuners" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="NamesTuners&lt;:au.com.cba.omnia.grimlock.framework.utility.OneOf"></a>
+      <a id="NamesTuners:NamesTuners"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">NamesTuners</span><span class="result"> &lt;: <a href="../utility/OneOf.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf">OneOf</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Positions.U" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="U[_]"></a>
       <a id="U[_]:U[_]"></a>
       <h4 class="signature">
@@ -103,19 +116,19 @@
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.position.Positions#names" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="names[D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension](slice:au.com.cba.omnia.grimlock.framework.Slice[P,D])(implicitev1:au.com.cba.omnia.grimlock.framework.position.PosDimDep[P,D],implicitev2:au.com.cba.omnia.grimlock.framework.utility.=!=[slice.S,au.com.cba.omnia.grimlock.framework.position.Position0D],implicitev3:scala.reflect.ClassTag[slice.S]):Positions.this.U[(slice.S,Long)]"></a>
-      <a id="names[D&lt;:Dimension](Slice[P,D])(PosDimDep[P,D],=!=[S,Position0D],ClassTag[S]):U[(S,Long)]"></a>
+      <a id="names[D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension,T&lt;:au.com.cba.omnia.grimlock.framework.Tuner](slice:au.com.cba.omnia.grimlock.framework.position.Slice[P,D],tuner:T)(implicitev1:au.com.cba.omnia.grimlock.framework.position.PosDimDep[P,D],implicitev2:au.com.cba.omnia.grimlock.framework.utility.=!=[slice.S,au.com.cba.omnia.grimlock.framework.position.Position0D],implicitev3:scala.reflect.ClassTag[slice.S],implicitev4:Positions.this.NamesTuners#V[T]):Positions.this.U[(slice.S,Long)]"></a>
+      <a id="names[D&lt;:Dimension,T&lt;:Tuner](Slice[P,D],T)(PosDimDep[P,D],=!=[S,Position0D],ClassTag[S],NamesTuners.V[T]):U[(S,Long)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">names</span><span class="tparams">[<span name="D">D &lt;: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="slice">slice: <a href="../Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.names.D">D</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.names.D">D</span>]</span>, <span name="ev2">ev2: <a href="../utility/$eq$bang$eq.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.=!=">=!=</a>[<a href="../Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Slice.S">S</a>, <a href="Position0D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position0D">Position0D</a>]</span>, <span name="ev3">ev3: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<a href="../Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Slice.S">S</a>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Positions.U">U</a>[(<a href="../Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Slice.S">S</a>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">names</span><span class="tparams">[<span name="D">D &lt;: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="T">T &lt;: <a href="../Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a></span>]</span><span class="params">(<span name="slice">slice: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.names.D">D</span>]</span>, <span name="tuner">tuner: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.names.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.names.D">D</span>]</span>, <span name="ev2">ev2: <a href="../utility/$eq$bang$eq.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.=!=">=!=</a>[<a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>, <a href="Position0D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position0D">Position0D</a>]</span>, <span name="ev3">ev3: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>]</span>, <span name="ev4">ev4: <span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf.V">NamesTuners.V</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.names.T">T</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Positions.U">U</a>[(<a href="Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Returns the distinct position(s) (or names) for a given <code>slice</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the distinct position(s) (or names) for a given <code>slice</code>.
-</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) for which the names are to be returned.
+</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) for which the names are to be returned.</p></dd><dt class="param">tuner</dt><dd class="cmt"><p>The tuner for the job.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(Slice.S, Long)]</code> of the distinct position(s) together with a unique index.
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The position(s) are returned with an index so the return value can be used in various <code>save</code> methods. The
       index itself is unique for each position but no ordering is defined.

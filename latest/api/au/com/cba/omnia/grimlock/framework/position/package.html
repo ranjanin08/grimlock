@@ -58,7 +58,20 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Dimension" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Along" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Along[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapAlongPosition,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsSlice[P,D]withMapable[P,D]withProductwithSerializable"></a>
+      <a id="Along[P&lt;:PositionwithReduceablePositionwithMapAlongPosition,D&lt;:Dimension]:Along[P,D]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Along.html"><span class="name">Along</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>, <span name="D">D &lt;: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="dimension">dimension: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.D">D</span></span>)</span><span class="result"> extends <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.D">D</span>] with <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.D">D</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Indicates that the selected coordinates are all except the one indexed by <code>dimension</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Dimension" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="DimensionextendsAnyRef"></a>
       <a id="Dimension:Dimension"></a>
       <h4 class="signature">
@@ -110,6 +123,19 @@
       </span>
       </h4>
       <p class="comment cmt">Trait for mapping over a position.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Mapable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Mapable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePosition,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsAnyRef"></a>
+      <a id="Mapable[P&lt;:PositionwithReduceablePosition,D&lt;:Dimension]:Mapable[P,D]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Mapable.html"><span class="name">Mapable</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a></span>, <span name="D">D &lt;: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
     </li><li name="au.com.cba.omnia.grimlock.framework.position.MapablePosition" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="MapablePosition[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T]extendsAnyRef"></a>
       <a id="MapablePosition[P&lt;:Position,T]:MapablePosition[P,T]"></a>
@@ -123,6 +149,19 @@
       </span>
       </h4>
       <p class="comment cmt">Base trait for converting a position to a <code>Map</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Over" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Over[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapOverPosition,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsSlice[P,D]withMapable[P,D]withProductwithSerializable"></a>
+      <a id="Over[P&lt;:PositionwithReduceablePositionwithMapOverPosition,D&lt;:Dimension]:Over[P,D]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Over.html"><span class="name">Over</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a></span>, <span name="D">D &lt;: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="dimension">dimension: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.D">D</span></span>)</span><span class="result"> extends <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.D">D</span>] with <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.D">D</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Indicates that the selected coordinate is indexed by <code>dimension</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PermutablePositionextendsAnyRef"></a>
       <a id="PermutablePosition:PermutablePosition"></a>
@@ -370,6 +409,19 @@
       </span>
       </h4>
       <p class="comment cmt">Trait for operations that reduce a position by one dimension.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Slice" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Slice[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsAnyRef"></a>
+      <a id="Slice[P&lt;:Position,D&lt;:Dimension]:Slice[P,D]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Slice.html"><span class="name">Slice</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Base trait that encapsulates dimension on which to operate.</p>
     </li></ol>
             </div>
 

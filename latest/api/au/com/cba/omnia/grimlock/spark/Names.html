@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>RDD[(Position, Long)]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/spark/Names.scala" target="_blank">Names.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This class represents the names along the dimensions of a matrix.
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/spark/Names.scala" target="_blank">Names.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This class represents the names along the dimensions of a matrix.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)], <a href="../framework/Names.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Names">framework.Names</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -316,15 +316,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Names#moveToBack" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="moveToBack[T](position:T)(implicitev1:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P],implicitev2:scala.reflect.ClassTag[P]):org.apache.spark.rdd.RDD[(P,Long)]"></a>
-      <a id="moveToBack[T](T)(Positionable[T,P],ClassTag[P]):RDD[(P,Long)]"></a>
+      <a id="moveToBack[T](position:T)(implicitev1:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P],implicitev2:scala.reflect.ClassTag[P]):Names.this.U[(P,Long)]"></a>
+      <a id="moveToBack[T](T)(Positionable[T,P],ClassTag[P]):U[(P,Long)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">moveToBack</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.moveToBack.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="../framework/position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.moveToBack.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>, <span name="ev2">ev2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">moveToBack</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.moveToBack.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="../framework/position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.moveToBack.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>, <span name="ev2">ev2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Renumber the indices such that <code>position</code> is last.</p><div class="fullcomment"><div class="comment cmt"><p>Renumber the indices such that <code>position</code> is last.
@@ -333,15 +333,15 @@
         their relative ordering.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.Names">Names</a> → <a href="../framework/Names.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Names">Names</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Names#moveToFront" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="moveToFront[T](position:T)(implicitev1:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P],implicitev2:scala.reflect.ClassTag[P]):org.apache.spark.rdd.RDD[(P,Long)]"></a>
-      <a id="moveToFront[T](T)(Positionable[T,P],ClassTag[P]):RDD[(P,Long)]"></a>
+      <a id="moveToFront[T](position:T)(implicitev1:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P],implicitev2:scala.reflect.ClassTag[P]):Names.this.U[(P,Long)]"></a>
+      <a id="moveToFront[T](T)(Positionable[T,P],ClassTag[P]):U[(P,Long)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">moveToFront</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.moveToFront.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="../framework/position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.moveToFront.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>, <span name="ev2">ev2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">moveToFront</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.moveToFront.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="../framework/position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.moveToFront.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>, <span name="ev2">ev2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Renumber the indices such that <code>position</code> is first.</p><div class="fullcomment"><div class="comment cmt"><p>Renumber the indices such that <code>position</code> is first.
@@ -389,15 +389,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Names#renumber" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="renumber()(implicitev:scala.reflect.ClassTag[P]):org.apache.spark.rdd.RDD[(P,Long)]"></a>
-      <a id="renumber()(ClassTag[P]):RDD[(P,Long)]"></a>
+      <a id="renumber()(implicitev:scala.reflect.ClassTag[P]):Names.this.U[(P,Long)]"></a>
+      <a id="renumber()(ClassTag[P]):U[(P,Long)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">renumber</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">renumber</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Renumber the names.</p><div class="fullcomment"><div class="comment cmt"><p>Renumber the names.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.Names">Names</a> → <a href="../framework/Names.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Names">Names</a></dd></dl></div>
@@ -418,15 +418,15 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A Spark <code>RDD[T]</code> which is this object's data.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Names#set" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="set[T](positions:Map[T,Long])(implicitev:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P]):org.apache.spark.rdd.RDD[(P,Long)]"></a>
-      <a id="set[T](Map[T,Long])(Positionable[T,P]):RDD[(P,Long)]"></a>
+      <a id="set[T](positions:Map[T,Long])(implicitev:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P]):Names.this.U[(P,Long)]"></a>
+      <a id="set[T](Map[T,Long])(Positionable[T,P]):U[(P,Long)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.set.T">T</span>, <span class="extype" name="scala.Long">Long</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../framework/position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.set.T">T</span>, <span class="extype" name="scala.Long">Long</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../framework/position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Set the index of multiple positions.</p><div class="fullcomment"><div class="comment cmt"><p>Set the index of multiple positions.
@@ -450,15 +450,15 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(P, Long)]</code> with only the index at the specified position updated.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../framework/Names.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Names">Names</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Names#slice" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="slice(keep:Boolean,f:P=&gt;Boolean)(implicitev:scala.reflect.ClassTag[P]):org.apache.spark.rdd.RDD[(P,Long)]"></a>
-      <a id="slice(Boolean,(P)⇒Boolean)(ClassTag[P]):RDD[(P,Long)]"></a>
+      <a id="slice(keep:Boolean,f:P=&gt;Boolean)(implicitev:scala.reflect.ClassTag[P]):Names.this.U[(P,Long)]"></a>
+      <a id="slice(Boolean,(P)⇒Boolean)(ClassTag[P]):U[(P,Long)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">slice</span><span class="params">(<span name="keep">keep: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">slice</span><span class="params">(<span name="keep">keep: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.Names">Names</a> → <a href="../framework/Names.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Names">Names</a></dd></dl></div>

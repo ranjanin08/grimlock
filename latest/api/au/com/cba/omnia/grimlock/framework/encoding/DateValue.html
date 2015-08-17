@@ -35,13 +35,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">DateValue</span><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codex">codex: <a href="DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex">DateAndTimeCodex</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">DateValue</span><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codex">codex: <a href="DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Value for when the data is of type <code>java.util.Date</code>
 </p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>java.util.Date</code>.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex used for encoding/decoding <code>value</code>.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Value.scala" target="_blank">Value.scala</a></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/framework/Value.scala" target="_blank">Value.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -82,7 +82,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(value:java.util.Date,codex:au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex):au.com.cba.omnia.grimlock.framework.encoding.DateValue"></a>
+      <a id="&lt;init&gt;(value:java.util.Date,codex:au.com.cba.omnia.grimlock.framework.encoding.DateCodex):au.com.cba.omnia.grimlock.framework.encoding.DateValue"></a>
       <a id="&lt;init&gt;:DateValue"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -90,7 +90,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DateValue</span><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codex">codex: <a href="DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex">DateAndTimeCodex</a></span>)</span>
+        <span class="name">DateValue</span><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codex">codex: <a href="DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>)</span>
       </span>
       </h4>
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>java.util.Date</code>.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex used for encoding/decoding <code>value</code>.
@@ -280,15 +280,15 @@
               
         </dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue#codex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="codex:au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex"></a>
-      <a id="codex:DateAndTimeCodex"></a>
+      <a id="codex:au.com.cba.omnia.grimlock.framework.encoding.DateCodex"></a>
+      <a id="codex:DateCodex"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">codex</span><span class="result">: <a href="DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex">DateAndTimeCodex</a></span>
+        <span class="name">codex</span><span class="result">: <a href="DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">The codex used for encoding/decoding <code>value</code>.</p><div class="fullcomment"><div class="comment cmt"><p>The codex used for encoding/decoding <code>value</code>.

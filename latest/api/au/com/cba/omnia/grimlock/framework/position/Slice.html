@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>Collection - au.com.cba.omnia.grimlock.framework.utility.Collection</title>
-          <meta name="description" content="Collection - au.com.cba.omnia.grimlock.framework.utility.Collection" />
-          <meta name="keywords" content="Collection au.com.cba.omnia.grimlock.framework.utility.Collection" />
+          <title>Slice - au.com.cba.omnia.grimlock.framework.position.Slice</title>
+          <meta name="description" content="Slice - au.com.cba.omnia.grimlock.framework.position.Slice" />
+          <meta name="keywords" content="Slice au.com.cba.omnia.grimlock.framework.position.Slice" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
-            var hash = 'au.com.cba.omnia.grimlock.framework.utility.Collection';
+            var hash = 'au.com.cba.omnia.grimlock.framework.position.Slice';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -24,24 +24,27 @@
         </head>
         <body class="type">
       <div id="definition">
-        <a href="Collection$.html" title="Go to companion"><img src="../../../../../../../lib/class_to_object_big.png" /></a>
-        <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility">utility</a></p>
-        <h1><a href="Collection$.html" title="Go to companion">Collection</a></h1>
+        <img src="../../../../../../../lib/trait_big.png" />
+        <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position">position</a></p>
+        <h1>Slice</h1>
       </div>
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Collection</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Either">Either</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.T">T</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.T">T</span>]]]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">Slice</span><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Collection of zero, one or more objects.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Utility.scala" target="_blank">Utility.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that encapsulates dimension on which to operate.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/framework/Slice.scala" target="_blank">Slice.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div><div class="toggleContainer block">
+          <span class="toggle">Known Subclasses</span>
+          <div class="subClasses hiddenContent"><a href="Along.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along">Along</a>, <a href="Over.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over">Over</a></div>
         </div></div>
         
 
@@ -59,7 +62,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.utility.Collection"><span>Collection</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.position.Slice"><span>Slice</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -77,30 +80,128 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.utility.Collection#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(data:Option[Either[T,List[T]]]):au.com.cba.omnia.grimlock.framework.utility.Collection[T]"></a>
-      <a id="&lt;init&gt;:Collection[T]"></a>
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Slice.C" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="C"></a>
+      <a id="C:C"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">Collection</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Either">Either</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.T">T</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.T">T</span>]]]</span>)</span>
+        <span class="name">C</span>
       </span>
       </h4>
-      
+      <p class="shortcomment cmt">Type of the content in an in-memory version of a matrix.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Slice.R" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition"></a>
+      <a id="R:R"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">R</span><span class="result"> &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Return type of the <code>remainder</code> method; a position of dimension less than <code>P</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return type of the <code>remainder</code> method; a position of dimension less than <code>P</code>.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p><code>S</code> and <code>R</code> together make <code>P</code>.
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Slice.S" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition"></a>
+      <a id="S:S"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">S</span><span class="result"> &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Return type of the <code>selected</code> method; a position of dimension less than <code>P</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return type of the <code>selected</code> method; a position of dimension less than <code>P</code>.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p><code>S</code> and <code>R</code> together make <code>P</code>.
+</p></span></dd></dl></div>
     </li></ol>
             </div>
 
-        
-
-        
+        <div id="values" class="values members">
+              <h3>Abstract Value Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Slice#combineMaps" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="combineMaps(pos:P,x:Map[Slice.this.S,Slice.this.C],y:Map[Slice.this.S,Slice.this.C]):Map[Slice.this.S,Slice.this.C]"></a>
+      <a id="combineMaps(P,Map[S,C],Map[S,C]):Map[S,C]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">combineMaps</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.P">P</span></span>, <span name="x">x: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>, <a href="#C" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.C">C</a>]</span>, <span name="y">y: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>, <a href="#C" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.C">C</a>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>, <a href="#C" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.C">C</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Combine two in-memory cells.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Slice#dimension" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="dimension:D"></a>
+      <a id="dimension:D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dimension</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.D">D</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The dimension of this slice.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Slice#remainder" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="remainder(pos:P):Slice.this.R"></a>
+      <a id="remainder(P):R"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">remainder</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.P">P</span></span>)</span><span class="result">: <a href="#R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.R">R</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns the remaining coordinate(s) for the given <code>pos</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Slice#selected" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="selected(pos:P):Slice.this.S"></a>
+      <a id="selected(P):S"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">selected</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.P">P</span></span>)</span><span class="result">: <a href="#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Returns the selected coordinate(s) for the given <code>pos</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Slice#toMap" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="toMap(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Map[Slice.this.S,Slice.this.C]"></a>
+      <a id="toMap(Cell[P]):Map[S,C]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toMap</span><span class="params">(<span name="cell">cell: <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>, <a href="#C" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.C">C</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Convert a cell to an in-memory map.</p>
+    </li></ol>
+            </div>
 
         <div id="values" class="values members">
-              <h3>Value Members</h3>
+              <h3>Concrete Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:AnyRef):Boolean"></a>
       <a id="!=(AnyRef):Boolean"></a>
@@ -198,19 +299,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.utility.Collection#data" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="data:Option[Either[T,List[T]]]"></a>
-      <a id="data:Option[Either[T,List[T]]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">data</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Either">Either</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.T">T</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.T">T</span>]]]</span>
-      </span>
-      </h4>
-      
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -224,6 +312,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a>
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -256,19 +357,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.utility.Collection#isEmpty" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="isEmpty():Boolean"></a>
-      <a id="isEmpty():Boolean"></a>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <a id="hashCode():Int"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isEmpty</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Check if the collection is empty.</p>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -334,32 +435,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.utility.Collection#toList" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="toList[U](u:U):List[(T,U)]"></a>
-      <a id="toList[U](U):List[(T,U)]"></a>
+    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <a id="toString():String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toList</span><span class="tparams">[<span name="U">U</span>]</span><span class="params">(<span name="u">u: <span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.toList.U">U</span></span>)</span><span class="result">: <span class="extype" name="scala.List">List</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.toList.U">U</span>)]</span>
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Transforms a <code>Collection[T]</code> together with a single <code>U</code> to a <code>List[(T, U)]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.utility.Collection#toList" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="toList():List[T]"></a>
-      <a id="toList():List[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toList</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.T">T</span>]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Transforms a <code>Collection[T]</code> to a <code>List[T]</code>.</p>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -426,15 +514,7 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="scala.Product">
-              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
-            </div><div class="parent" name="scala.Equals">
-              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>

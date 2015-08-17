@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Content.scala" target="_blank">Content.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/framework/Content.scala" target="_blank">Content.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -162,20 +162,20 @@
         <span class="name">apply</span><span class="tparams">[<span name="S">S &lt;: <a href="metadata/Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></span>, <span name="V">V &lt;: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>]</span><span class="params">(<span name="schema">schema: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content.apply.S">S</span></span>, <span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content.apply.V">V</span></span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a content using a date schema and value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a date schema and value.
+      <p class="shortcomment cmt">Construct a content using a schema and value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a schema and value.
 </p></div><dl class="paramcmts block"><dt class="param">schema</dt><dd class="cmt"><p>Schema of the variable value.</p></dd><dt class="param">value</dt><dd class="cmt"><p>The value
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The caller must ensure that <code>schema</code> and <code>value</code> both have the same codex.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.Content#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T&lt;:au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex](schema:au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema[T],value:java.util.Date):au.com.cba.omnia.grimlock.framework.content.Content"></a>
-      <a id="apply[T&lt;:DateAndTimeCodex](DateSchema[T],Date):Content"></a>
+      <a id="apply(schema:au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema[au.com.cba.omnia.grimlock.framework.encoding.Codex.DateCodex],value:java.util.Date):au.com.cba.omnia.grimlock.framework.content.Content"></a>
+      <a id="apply(DateSchema[DateCodex],Date):Content"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T &lt;: <a href="../encoding/DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex">DateAndTimeCodex</a></span>]</span><span class="params">(<span name="schema">schema: <a href="metadata/DateSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema">DateSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content.apply.T">T</span>]</span>, <span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>
+        <span class="name">apply</span><span class="params">(<span name="schema">schema: <a href="metadata/DateSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema">DateSchema</a>[<a href="../encoding/Codex$.html#DateCodex=au.com.cba.omnia.grimlock.framework.encoding.DateCodex" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.DateCodex">DateCodex</a>]</span>, <span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>)</span><span class="result">: <a href="Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Construct a content using a date schema and <code>java.util.Date</code> value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a content using a date schema and <code>java.util.Date</code> value.

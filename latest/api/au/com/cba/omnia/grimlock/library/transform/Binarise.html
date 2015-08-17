@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Binarise categorical variables.
 </p></div><dl class="paramcmts block"><dt class="param">presenter</dt><dd class="cmt"><p>Function that returns the updated position.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/library/Transformers.scala" target="_blank">Transformers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Binarisation is only applied to categorical variables.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/library/Transformers.scala" target="_blank">Transformers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Binarisation is only applied to categorical variables.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -412,36 +412,36 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.Binarise#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="present(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):au.com.cba.omnia.grimlock.framework.utility.Collection[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
-      <a id="present(Cell[P]):Collection[Cell[P]]"></a>
+      <a id="present(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
+      <a id="present(Cell[P]):TraversableOnce[Cell[P]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">present</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>)</span><span class="result">: <a href="../../framework/utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]]</span>
+        <span class="name">present</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to transform.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>Collection</code> of transformed cells.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TraversableOnce</code> of transformed cells.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise">Binarise</a> → <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.transform.Transformer#presentWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="presentWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Transformer.this.V):au.com.cba.omnia.grimlock.framework.utility.Collection[au.com.cba.omnia.grimlock.framework.Cell[Q]]"></a>
-      <a id="presentWithValue(Cell[P],V):Collection[Cell[P]]"></a>
+      <a id="presentWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Transformer.this.V):TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]]"></a>
+      <a id="presentWithValue(Cell[P],V):TraversableOnce[Cell[P]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">presentWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.Binarise.V">V</a></span>)</span><span class="result">: <a href="../../framework/utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]]</span>
+        <span class="name">presentWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.Binarise.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Present the transformed content(s).</p><div class="fullcomment"><div class="comment cmt"><p>Present the transformed content(s).
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to transform.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>Externally provided data needed for the transformation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>Collection</code> of transformed cells.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TraversableOnce</code> of transformed cells.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a> → <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.Binarise#presenter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="presenter:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;P"></a>

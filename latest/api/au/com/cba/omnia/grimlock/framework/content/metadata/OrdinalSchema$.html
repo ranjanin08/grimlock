@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>OrdinalSchema</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>OrdinalSchema</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -151,33 +151,35 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](domain:List[C#T])(implicitcodex:C):au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema[C]"></a>
-      <a id="apply[C&lt;:Codex](List[OrdinalSchema.apply.C.T])(C):OrdinalSchema[C]"></a>
+      <a id="apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](codex:C,domain:List[C#T]):au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema[C]"></a>
+      <a id="apply[C&lt;:Codex](C,List[OrdinalSchema.apply.C.T]):OrdinalSchema[C]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="domain">domain: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">OrdinalSchema.apply.C.T</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema.apply.C">C</span></span>)</span><span class="result">: <a href="OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema">OrdinalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema.apply.C">C</span>]</span>
+        <span class="name">apply</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema.apply.C">C</span></span>, <span name="domain">domain: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">OrdinalSchema.apply.C.T</span>]</span>)</span><span class="result">: <a href="OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema">OrdinalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema.apply.C">C</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Construct a ordinal schema.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a ordinal schema.
-</p></div><dl class="paramcmts block"><dt class="param">domain</dt><dd class="cmt"><p>A list of values the variable can take on.
+</p></div><dl class="paramcmts block"><dt class="param">codex</dt><dd class="cmt"><p>The codex for the value.</p></dd><dt class="param">domain</dt><dd class="cmt"><p>A list of values the variable can take on.
 </p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex]()(implicitcodex:C):au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema[C]"></a>
-      <a id="apply[C&lt;:Codex]()(C):OrdinalSchema[C]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](codex:C):au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema[C]"></a>
+      <a id="apply[C&lt;:Codex](C):OrdinalSchema[C]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema.apply.C">C</span></span>)</span><span class="result">: <a href="OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema">OrdinalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema.apply.C">C</span>]</span>
+        <span class="name">apply</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema.apply.C">C</span></span>)</span><span class="result">: <a href="OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema">OrdinalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema.apply.C">C</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a ordinal schema that can take on any value.</p>
+      <p class="shortcomment cmt">Construct a ordinal schema that can take on any value.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a ordinal schema that can take on any value.
+</p></div><dl class="paramcmts block"><dt class="param">codex</dt><dd class="cmt"><p>The codex for the value.
+</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -255,6 +257,23 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema#fromString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fromString[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](params:String,codex:C):Option[au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema[C]]"></a>
+      <a id="fromString[C&lt;:Codex](String,C):Option[OrdinalSchema[C]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fromString</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="params">params: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema.fromString.C">C</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="OrdinalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema">OrdinalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema.fromString.C">C</span>]]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Parse ordinal schema parameters
+</p><div class="fullcomment"><div class="comment cmt"><p>Parse ordinal schema parameters
+</p></div><dl class="paramcmts block"><dt class="param">params</dt><dd class="cmt"><p>String of comma separated values.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex to parse with.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An <code>Option</code> of <code>OrdinalSchema</code> if all parameters parse correctly, <code>None</code> otherwise.
+</p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -333,6 +352,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema#pattern" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="pattern:scala.util.matching.Regex"></a>
+      <a id="pattern:Regex"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">pattern</span><span class="result">: <span class="extype" name="scala.util.matching.Regex">Regex</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Pattern for matching short string ordinal value with parameters.</p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>

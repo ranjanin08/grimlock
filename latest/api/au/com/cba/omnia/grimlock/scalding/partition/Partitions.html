@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[(T, Cell[P])]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/scalding/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/scalding/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])], <a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])], <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">framework.partition.Partitions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -99,7 +99,20 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.IdsTuners" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="IdsTuners=au.com.cba.omnia.grimlock.framework.utility.OneOf.OneOf1[au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters.type]]"></a>
+      <a id="IdsTuners:IdsTuners"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">IdsTuners</span><span class="result"> = <a href="../../framework/utility/OneOf.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf">OneOf</a> { type V[X] = &lt;:&lt;[X,au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters.type]] }</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Specifies tuner permitted on a call to <code>ids</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Specifies tuner permitted on a call to <code>ids</code>.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions">Partitions</a> → <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">Partitions</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="U[A]=com.twitter.scalding.typed.TypedPipe[A]"></a>
       <a id="U[A]:U[A]"></a>
       <h4 class="signature">
@@ -350,18 +363,20 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions#ids" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ids()(implicitev:scala.reflect.ClassTag[T]):Partitions.this.U[T]"></a>
-      <a id="ids()(ClassTag[T]):U[T]"></a>
+      <a id="ids[N&lt;:au.com.cba.omnia.grimlock.framework.Tuner](tuner:N)(implicitev1:scala.reflect.ClassTag[T],implicitev2:&lt;:&lt;[N,au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters.type]]):Partitions.this.U[T]"></a>
+      <a id="ids[N&lt;:Tuner](N)(ClassTag[T],&lt;:&lt;[N,Default[NoParameters.type]]):U[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ids</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>)</span><span class="result">: <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>
+        <span class="name">ids</span><span class="tparams">[<span name="N">N &lt;: <a href="../../framework/Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a></span>]</span><span class="params">(<span name="tuner">tuner: <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.ids.N">N</span> = <span class="symbol"><span class="name"><a href="../../../../../../package.html">Default()</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>, <span name="ev2">ev2: <span class="extype" name="scala.Predef.&lt;:&lt;">&lt;:&lt;</span>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.ids.N">N</span>, <a href="../../framework/Default.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Default">Default</a>[<a href="../../framework/NoParameters$.html" class="extype" name="au.com.cba.omnia.grimlock.framework.NoParameters">NoParameters</a>.type]]</span>)</span><span class="result">: <a href="#U[A]=com.twitter.scalding.typed.TypedPipe[A]" class="extmbr" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.T">T</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Return the partition identifiers.</p><div class="fullcomment"><div class="comment cmt"><p>Return the partition identifiers.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions">Partitions</a> → <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">Partitions</a></dd></dl></div>
+      <p class="shortcomment cmt">Return the partition identifiers.</p><div class="fullcomment"><div class="comment cmt"><p>Return the partition identifiers.
+</p></div><dl class="paramcmts block"><dt class="param">tuner</dt><dd class="cmt"><p>The tuner for the job.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions">Partitions</a> → <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">Partitions</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>

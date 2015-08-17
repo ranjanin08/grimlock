@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>Along - au.com.cba.omnia.grimlock.framework.Along</title>
-          <meta name="description" content="Along - au.com.cba.omnia.grimlock.framework.Along" />
-          <meta name="keywords" content="Along au.com.cba.omnia.grimlock.framework.Along" />
+          <title>InMemory - au.com.cba.omnia.grimlock.framework.InMemory</title>
+          <meta name="description" content="InMemory - au.com.cba.omnia.grimlock.framework.InMemory" />
+          <meta name="keywords" content="InMemory au.com.cba.omnia.grimlock.framework.InMemory" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../index.html';
-            var hash = 'au.com.cba.omnia.grimlock.framework.Along';
+            var hash = 'au.com.cba.omnia.grimlock.framework.InMemory';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -26,7 +26,7 @@
       <div id="definition">
         <img src="../../../../../../lib/class_big.png" />
         <p id="owner"><a href="../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a></p>
-        <h1>Along</h1>
+        <h1>InMemory</h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,17 +35,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Along</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="position/ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="position/MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>, <span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="dimension">dimension: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span></span>)</span><span class="result"> extends <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span>] with <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">InMemory</span><span class="tparams">[<span name="Q">Q &lt;: <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a></span>]</span><span class="params">(<span name="parameters">parameters: <span class="extype" name="au.com.cba.omnia.grimlock.framework.InMemory.Q">Q</span> = <span class="symbol">NoParameters</span></span>)</span><span class="result"> extends <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Indicates that the selected coordinates are all except the one indexed by <code>dimension</code>. In other words, when a
-groupBy is performed, it is performed using a <code>Position</code> (type <code>ReduceablePosition.L</code>) consisting of all coordinates
-except that at index <code>dimension</code>.
-</p></div><dl class="paramcmts block"><dt class="param">dimension</dt><dd class="cmt"><p>Dimension of the coordinate to exclude.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Slice.scala" target="_blank">Slice.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Indicates that some of the data can fit in memory (permits map-side only operations).</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/framework/Tuner.scala" target="_blank">Tuner.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span>], <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -63,7 +59,7 @@ except that at index <code>dimension</code>.
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.Along"><span>Along</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Mapable"><span>Mapable</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Slice"><span>Slice</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.InMemory"><span>InMemory</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Tuner"><span>Tuner</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -83,68 +79,37 @@ except that at index <code>dimension</code>.
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.Along#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(dimension:D):au.com.cba.omnia.grimlock.framework.Along[P,D]"></a>
-      <a id="&lt;init&gt;:Along[P,D]"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.InMemory#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(parameters:Q):au.com.cba.omnia.grimlock.framework.InMemory[Q]"></a>
+      <a id="&lt;init&gt;:InMemory[Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Along</span><span class="params">(<span name="dimension">dimension: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span></span>)</span>
+        <span class="name">InMemory</span><span class="params">(<span name="parameters">parameters: <span class="extype" name="au.com.cba.omnia.grimlock.framework.InMemory.Q">Q</span> = <span class="symbol">NoParameters</span></span>)</span>
       </span>
       </h4>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">dimension</dt><dd class="cmt"><p>Dimension of the coordinate to exclude.
-</p></dd></dl></div>
+      
     </li></ol>
             </div>
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.Along.C" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="C=P#A"></a>
-      <a id="C:C"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.InMemory.P" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="P=Q"></a>
+      <a id="P:P"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">C</span><span class="result"> = <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition.A">P.A</span></span>
+        <span class="name">P</span><span class="result"> = <span class="extype" name="au.com.cba.omnia.grimlock.framework.InMemory.Q">Q</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Type of the content in an in-memory version of a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the content in an in-memory version of a matrix.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.Along">Along</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Along.R" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="R=au.com.cba.omnia.grimlock.framework.position.Position1D"></a>
-      <a id="R:R"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">type</span>
-      </span>
-      <span class="symbol">
-        <span class="name">R</span><span class="result"> = <a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Return type of the <code>remainder</code> method; a position of dimension less than <code>P</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return type of the <code>remainder</code> method; a position of dimension less than <code>P</code>.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.Along">Along</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a></dd><dt>Note</dt><dd><span class="cmt"><p><code>S</code> and <code>R</code> together make <code>P</code>.
-</p></span></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Along.S" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="S=P#L"></a>
-      <a id="S:S"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">type</span>
-      </span>
-      <span class="symbol">
-        <span class="name">S</span><span class="result"> = <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition.L">P.L</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Return type of the <code>selected</code> method; a position of dimension less than <code>P</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return type of the <code>selected</code> method; a position of dimension less than <code>P</code>.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.Along">Along</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a></dd><dt>Note</dt><dd><span class="cmt"><p><code>S</code> and <code>R</code> together make <code>P</code>.
-</p></span></dd></dl></div>
+      <p class="shortcomment cmt">Type of the parameters used with this tuner.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the parameters used with this tuner.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.InMemory">InMemory</a> → <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -249,33 +214,6 @@ except that at index <code>dimension</code>.
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Along#combineMaps" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="combineMaps(pos:P,x:Map[Along.this.S,Along.this.C],y:Map[Along.this.S,Along.this.C]):Map[Along.this.S,Along.this.C]"></a>
-      <a id="combineMaps(P,Map[S,C],Map[S,C]):Map[S,C]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">combineMaps</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span></span>, <span name="x">x: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S=P#L" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Along.S">S</a>, <a href="#C=P#A" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Along.C">C</a>]</span>, <span name="y">y: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S=P#L" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Along.S">S</a>, <a href="#C=P#A" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Along.C">C</a>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S=P#L" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Along.S">S</a>, <a href="#C=P#A" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Along.C">C</a>]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Combine two in-memory cells.</p><div class="fullcomment"><div class="comment cmt"><p>Combine two in-memory cells.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.Along">Along</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Along#dimension" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="dimension:D"></a>
-      <a id="dimension:D"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">dimension</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Dimension of the coordinate to exclude.</p><div class="fullcomment"><div class="comment cmt"><p>Dimension of the coordinate to exclude.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.Along">Along</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -373,58 +311,19 @@ except that at index <code>dimension</code>.
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Along#remainder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="remainder(pos:P):Along.this.R"></a>
-      <a id="remainder(P):R"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.InMemory#parameters" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="parameters:Q"></a>
+      <a id="parameters:Q"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">def</span>
+        <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">remainder</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span></span>)</span><span class="result">: <a href="#R=au.com.cba.omnia.grimlock.framework.position.Position1D" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Along.R">R</a></span>
+        <span class="name">parameters</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.InMemory.Q">Q</span></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Returns the remaining coordinate(s) for the given <code>pos</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the remaining coordinate(s) for the given <code>pos</code>.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.Along">Along</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Mapable#remove" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="remove(pos:P):pos.L"></a>
-      <a id="remove(P):Mapable.P.L"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">remove</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span></span>)</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition.L">Mapable.P.L</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Mapable">Mapable</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Along#selected" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="selected(pos:P):Along.this.S"></a>
-      <a id="selected(P):S"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">selected</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span></span>)</span><span class="result">: <a href="#S=P#L" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Along.S">S</a></span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Returns the selected coordinate(s) for the given <code>pos</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the selected coordinate(s) for the given <code>pos</code>.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.Along">Along</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Mapable#single" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="single(pos:P):au.com.cba.omnia.grimlock.framework.position.Position1D"></a>
-      <a id="single(P):Position1D"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">single</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span></span>)</span><span class="result">: <a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Mapable">Mapable</a></dd></dl></div>
+      <p class="shortcomment cmt">The parameters used for tuning.</p><div class="fullcomment"><div class="comment cmt"><p>The parameters used for tuning.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.InMemory">InMemory</a> → <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -438,19 +337,6 @@ except that at index <code>dimension</code>.
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Along#toMap" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toMap(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Map[Along.this.S,Along.this.C]"></a>
-      <a id="toMap(Cell[P]):Map[S,C]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toMap</span><span class="params">(<span name="cell">cell: <a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="#S=P#L" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Along.S">S</a>, <a href="#C=P#A" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Along.C">C</a>]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Convert a cell to an in-memory map.</p><div class="fullcomment"><div class="comment cmt"><p>Convert a cell to an in-memory map.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.Along">Along</a> → <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -519,16 +405,14 @@ except that at index <code>dimension</code>.
         <div id="inheritedMembers">
         <div class="parent" name="scala.Serializable">
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.Product">
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.Mapable">
-              <h3>Inherited from <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span>]</h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.Slice">
-              <h3>Inherited from <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span>]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.Tuner">
+              <h3>Inherited from <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

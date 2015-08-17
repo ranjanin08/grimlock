@@ -58,20 +58,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.Along" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Along[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapAlongPosition,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsSlice[P,D]withMapable[P,D]withProductwithSerializable"></a>
-      <a id="Along[P&lt;:PositionwithReduceablePositionwithMapAlongPosition,D&lt;:Dimension]:Along[P,D]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="Along.html"><span class="name">Along</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="position/ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="position/MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>, <span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="dimension">dimension: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span></span>)</span><span class="result"> extends <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span>] with <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Along.D">D</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Indicates that the selected coordinates are all except the one indexed by <code>dimension</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Cell" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.Cell" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Cell[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsProductwithSerializable"></a>
       <a id="Cell[P&lt;:Position]:Cell[P]"></a>
       <h4 class="signature">
@@ -84,6 +71,19 @@
       </span>
       </h4>
       <p class="comment cmt">Cell in a matrix.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Default" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Default[Q&lt;:au.com.cba.omnia.grimlock.framework.TunerParameters]extendsTunerwithProductwithSerializable"></a>
+      <a id="Default[Q&lt;:TunerParameters]:Default[Q]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Default.html"><span class="name">Default</span></a><span class="tparams">[<span name="Q">Q &lt;: <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a></span>]</span><span class="params">(<span name="parameters">parameters: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Default.Q">Q</span> = <span class="symbol">NoParameters</span></span>)</span><span class="result"> extends <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Indicates that the data is (reasonably) evenly distributed.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.ExpandableMatrix" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ExpandableMatrix[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition]extendsAnyRef"></a>
       <a id="ExpandableMatrix[P&lt;:PositionwithExpandablePosition]:ExpandableMatrix[P]"></a>
@@ -163,7 +163,7 @@
       </h4>
       <p class="comment cmt">Extract from a <code>Map[P, R]</code> using the position of the cell.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ExtractWithSelected[D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.Slice[P,D],R]extendsExtract[P,Map[S#S,R],R]withProductwithSerializable"></a>
+      <a id="ExtractWithSelected[D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Slice[P,D],R]extendsExtract[P,Map[S#S,R],R]withProductwithSerializable"></a>
       <a id="ExtractWithSelected[D&lt;:Dimension,P&lt;:Position,S&lt;:Slice[P,D],R]:ExtractWithSelected[D,P,S,R]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -171,12 +171,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ExtractWithSelected.html"><span class="name">ExtractWithSelected</span></a><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.D">D</span>]</span>, <span name="R">R</span>]</span><span class="params">(<span name="slice">slice: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.S">S</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.D">D</span>]</span>)</span><span class="result"> extends <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Slice.S">framework.ExtractWithSelected.S.S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ExtractWithSelected.html"><span class="name">ExtractWithSelected</span></a><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="position/Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.D">D</span>]</span>, <span name="R">R</span>]</span><span class="params">(<span name="slice">slice: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.S">S</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.D">D</span>]</span>)</span><span class="result"> extends <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">framework.ExtractWithSelected.S.S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Extract from a <code>Map[S#S, R]</code> using the selected position(s) of the cell.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ExtractWithSlice[D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.Slice[P,D],R]extendsExtract[P,Map[S#S,Map[S#R,R]],R]withProductwithSerializable"></a>
+      <a id="ExtractWithSlice[D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Slice[P,D],R]extendsExtract[P,Map[S#S,Map[S#R,R]],R]withProductwithSerializable"></a>
       <a id="ExtractWithSlice[D&lt;:Dimension,P&lt;:Position,S&lt;:Slice[P,D],R]:ExtractWithSlice[D,P,S,R]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -184,12 +184,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ExtractWithSlice.html"><span class="name">ExtractWithSlice</span></a><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.D">D</span>]</span>, <span name="R">R</span>]</span><span class="params">(<span name="slice">slice: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.S">S</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.D">D</span>]</span>)</span><span class="result"> extends <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Slice.S">framework.ExtractWithSlice.S.S</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Slice.R">framework.ExtractWithSlice.S.R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.R">R</span>]], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.R">R</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ExtractWithSlice.html"><span class="name">ExtractWithSlice</span></a><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="position/Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.D">D</span>]</span>, <span name="R">R</span>]</span><span class="params">(<span name="slice">slice: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.S">S</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.D">D</span>]</span>)</span><span class="result"> extends <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">framework.ExtractWithSlice.S.S</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.R">framework.ExtractWithSlice.S.R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.R">R</span>]], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSlice.R">R</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Extract from a <code>Map[S#S, Map[S#R, R]]</code> using the selected and remainder position(s) of the cell.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ExtractWithSliceAndKey[D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.Slice[P,D],T,R]extendsExtract[P,Map[S#S,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,R]],R]withProductwithSerializable"></a>
+      <a id="ExtractWithSliceAndKey[D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Slice[P,D],T,R]extendsExtract[P,Map[S#S,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,R]],R]withProductwithSerializable"></a>
       <a id="ExtractWithSliceAndKey[D&lt;:Dimension,P&lt;:Position,S&lt;:Slice[P,D],T,R]:ExtractWithSliceAndKey[D,P,S,T,R]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -197,23 +197,23 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ExtractWithSliceAndKey.html"><span class="name">ExtractWithSliceAndKey</span></a><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.D">D</span>]</span>, <span name="T">T</span>, <span name="R">R</span>]</span><span class="params">(<span name="slice">slice: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.S">S</span></span>, <span name="key">key: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.D">D</span>]</span>, <span name="ev2">ev2: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.T">T</span>, <a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>]</span>)</span><span class="result"> extends <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Slice.S">framework.ExtractWithSliceAndKey.S.S</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.R">R</span>]], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.R">R</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ExtractWithSliceAndKey.html"><span class="name">ExtractWithSliceAndKey</span></a><span class="tparams">[<span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="position/Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.D">D</span>]</span>, <span name="T">T</span>, <span name="R">R</span>]</span><span class="params">(<span name="slice">slice: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.S">S</span></span>, <span name="key">key: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="position/PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.D">D</span>]</span>, <span name="ev2">ev2: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.T">T</span>, <a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>]</span>)</span><span class="result"> extends <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">framework.ExtractWithSliceAndKey.S.S</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.R">R</span>]], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSliceAndKey.R">R</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       <p class="comment cmt">Extract from a <code>Map[S#S, Map[Position1D, R]]</code> using the selected position(s) of the cell and the provided key.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Mapable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Mapable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePosition,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsAnyRef"></a>
-      <a id="Mapable[P&lt;:PositionwithReduceablePosition,D&lt;:Dimension]:Mapable[P,D]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.InMemory" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="InMemory[Q&lt;:au.com.cba.omnia.grimlock.framework.TunerParameters]extendsTunerwithProductwithSerializable"></a>
+      <a id="InMemory[Q&lt;:TunerParameters]:InMemory[Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">trait</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Mapable.html"><span class="name">Mapable</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="position/ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a></span>, <span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="InMemory.html"><span class="name">InMemory</span></a><span class="tparams">[<span name="Q">Q &lt;: <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a></span>]</span><span class="params">(<span name="parameters">parameters: <span class="extype" name="au.com.cba.omnia.grimlock.framework.InMemory.Q">Q</span> = <span class="symbol">NoParameters</span></span>)</span><span class="result"> extends <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
-      
+      <p class="comment cmt">Indicates that some of the data can fit in memory (permits map-side only operations).</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Matrix" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Matrix[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsPersist[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
       <a id="Matrix[P&lt;:Position]:Matrix[P]"></a>
@@ -266,19 +266,6 @@
       </span>
       </h4>
       <p class="comment cmt">Base trait that represents the names along the dimensions of a matrix.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Over" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Over[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapOverPosition,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsSlice[P,D]withMapable[P,D]withProductwithSerializable"></a>
-      <a id="Over[P&lt;:PositionwithReduceablePositionwithMapOverPosition,D&lt;:Dimension]:Over[P,D]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="Over.html"><span class="name">Over</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="position/ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="position/MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a></span>, <span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="dimension">dimension: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Over.D">D</span></span>)</span><span class="result"> extends <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Over.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Over.D">D</span>] with <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Over.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Over.D">D</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Indicates that the selected coordinate is indexed by <code>dimension</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Persist" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Persist[T]extendsAnyRef"></a>
       <a id="Persist[T]:Persist[T]"></a>
@@ -292,6 +279,19 @@
       </span>
       </h4>
       <p class="comment cmt">Trait for peristing a data.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Redistribute" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RedistributeextendsTunerParameterswithProductwithSerializable"></a>
+      <a id="Redistribute:Redistribute"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Redistribute.html"><span class="name">Redistribute</span></a><span class="params">(<span name="reducers">reducers: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Redistribute the data across a number of partitions.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ReduceableMatrix[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePosition]extendsAnyRef"></a>
       <a id="ReduceableMatrix[P&lt;:PositionwithReduceablePosition]:ReduceableMatrix[P]"></a>
@@ -305,19 +305,59 @@
       </span>
       </h4>
       <p class="comment cmt">Base trait for methods that reduce the number of dimensions or that can be filled.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Slice" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Slice[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsAnyRef"></a>
-      <a id="Slice[P&lt;:Position,D&lt;:Dimension]:Slice[P,D]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Reducers" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ReducersextendsTunerParameterswithProductwithSerializable"></a>
+      <a id="Reducers:Reducers"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Reducers.html"><span class="name">Reducers</span></a><span class="params">(<span name="reducers">reducers: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Tune the number of reducers.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Sequence2" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Sequence2[F&lt;:au.com.cba.omnia.grimlock.framework.TunerParameters,S&lt;:au.com.cba.omnia.grimlock.framework.TunerParameters]extendsTunerParameterswithProductwithSerializable"></a>
+      <a id="Sequence2[F&lt;:TunerParameters,S&lt;:TunerParameters]:Sequence2[F,S]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Sequence2.html"><span class="name">Sequence2</span></a><span class="tparams">[<span name="F">F &lt;: <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a></span>, <span name="S">S &lt;: <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a></span>]</span><span class="params">(<span name="first">first: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Sequence2.F">F</span></span>, <span name="second">second: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Sequence2.S">S</span></span>)</span><span class="result"> extends <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Create a sequence of two tuner parameters
+</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Tuner" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TunerextendsSerializable"></a>
+      <a id="Tuner:Tuner"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">sealed </span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Slice.html"><span class="name">Slice</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="D">D &lt;: <a href="position/Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Tuner.html"><span class="name">Tuner</span></a><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Base trait that encapsulates dimension on which to operate.</p>
+      <p class="comment cmt">Base trait that indicates size/shape of the data for tuning.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.TunerParameters" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TunerParametersextendsSerializable"></a>
+      <a id="TunerParameters:TunerParameters"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="TunerParameters.html"><span class="name">TunerParameters</span></a><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Base trait for tuner parameters.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Type" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TypeextendsProductwithSerializable"></a>
       <a id="Type:Type"></a>
@@ -344,6 +384,19 @@
       </span>
       </h4>
       <p class="comment cmt">Base trait that represents the variable type along the dimensions of a matrix.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Unbalanced" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Unbalanced[Q&lt;:au.com.cba.omnia.grimlock.framework.TunerParameters]extendsTunerwithProductwithSerializable"></a>
+      <a id="Unbalanced[Q&lt;:TunerParameters]:Unbalanced[Q]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Unbalanced.html"><span class="name">Unbalanced</span></a><span class="tparams">[<span name="Q">Q &lt;: <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a></span>]</span><span class="params">(<span name="parameters">parameters: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Unbalanced.Q">Q</span></span>)</span><span class="result"> extends <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Indicates that the data is (heavily) skewed.</p>
     </li></ol>
             </div>
 
@@ -364,6 +417,19 @@
       </span>
       </h4>
       <p class="comment cmt">Companion object to the Cell class.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Default" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Default"></a>
+      <a id="Default:Default"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Default$.html"><span class="name">Default</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Companion object to <code>Default</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Extract" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Extract"></a>
       <a id="Extract:Extract"></a>
@@ -390,6 +456,19 @@
       </span>
       </h4>
       
+    </li><li name="au.com.cba.omnia.grimlock.framework.NoParameters" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NoParameters"></a>
+      <a id="NoParameters:NoParameters"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NoParameters$.html"><span class="name">NoParameters</span></a><span class="result"> extends <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Indicates that no special operations are to be performed.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Type" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Type"></a>
       <a id="Type:Type"></a>
@@ -403,6 +482,19 @@
       </span>
       </h4>
       <p class="comment cmt">Compantion object to <code>Type</code> class.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Unbalanced" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Unbalanced"></a>
+      <a id="Unbalanced:Unbalanced"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Unbalanced$.html"><span class="name">Unbalanced</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Companion object to <code>Unbalanced</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="aggregate"></a>
       <a id="aggregate:aggregate"></a>

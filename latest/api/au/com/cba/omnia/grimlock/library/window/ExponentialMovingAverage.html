@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Compute exponential moving average.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/library/Windows.scala" target="_blank">Windows.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Compute exponential moving average.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/library/Windows.scala" target="_blank">Windows.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="OnlineMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage">OnlineMovingAverage</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>], <a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>], <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>], <a href="../../framework/window/WindowWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue">WindowWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -349,6 +349,19 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.library.window.MovingAverage#getCell" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getCell(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,value:Double):Option[au.com.cba.omnia.grimlock.framework.Cell[Q]]"></a>
+      <a id="getCell(Cell[S],R,Double):Option[Cell[Q]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getCell</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span></span>, <span name="value">value: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>]]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -362,19 +375,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.window.MovingAverage#getCollection" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="getCollection(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,value:Double):au.com.cba.omnia.grimlock.framework.utility.Collection[au.com.cba.omnia.grimlock.framework.Cell[Q]]"></a>
-      <a id="getCollection(Cell[S],R,Double):Collection[Cell[Q]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">getCollection</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span></span>, <span name="value">value: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <a href="../../framework/utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>]]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.window.MovingAverage#getCurrent" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getCurrent(rem:R,con:au.com.cba.omnia.grimlock.framework.content.Content):(R,Double)"></a>
       <a id="getCurrent(R,Content):(R,Double)"></a>
@@ -402,15 +402,15 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage#initialise" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="initialise(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R):((Double,Long),au.com.cba.omnia.grimlock.framework.utility.Collection[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
-      <a id="initialise(Cell[S],R):((Double,Long),Collection[Cell[Q]])"></a>
+      <a id="initialise(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R):((Double,Long),TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
+      <a id="initialise(Cell[S],R):((Double,Long),TraversableOnce[Cell[Q]])"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">initialise</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span></span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <a href="../../framework/utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>]])</span>
+        <span class="name">initialise</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span></span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>]])</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Initialise the state using the first cell (ordered according to its position).</p><div class="fullcomment"><div class="comment cmt"><p>Initialise the state using the first cell (ordered according to its position).
@@ -418,15 +418,15 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>The state for this object.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="OnlineMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage">OnlineMovingAverage</a> → <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.window.Window#initialiseWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="initialiseWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,ext:Window.this.V):(Window.this.T,au.com.cba.omnia.grimlock.framework.utility.Collection[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
-      <a id="initialiseWithValue(Cell[S],R,V):((Double,Long),Collection[Cell[Q]])"></a>
+      <a id="initialiseWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,ext:Window.this.V):(Window.this.T,TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
+      <a id="initialiseWithValue(Cell[S],R,V):((Double,Long),TraversableOnce[Cell[Q]])"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">initialiseWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.V">V</a></span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <a href="../../framework/utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>]])</span>
+        <span class="name">initialiseWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.V">V</a></span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>]])</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Initialise the state using the first cell (ordered according to its position).</p><div class="fullcomment"><div class="comment cmt"><p>Initialise the state using the first cell (ordered according to its position).
@@ -499,15 +499,15 @@
       </h4>
       <p class="shortcomment cmt">Function to extract result position.</p><div class="fullcomment"><div class="comment cmt"><p>Function to extract result position.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage">ExponentialMovingAverage</a> → <a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="present(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,t:(Double,Long)):((Double,Long),au.com.cba.omnia.grimlock.framework.utility.Collection[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
-      <a id="present(Cell[S],R,(Double,Long)):((Double,Long),Collection[Cell[Q]])"></a>
+      <a id="present(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,t:(Double,Long)):((Double,Long),TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
+      <a id="present(Cell[S],R,(Double,Long)):((Double,Long),TraversableOnce[Cell[Q]])"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">present</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span></span>, <span name="t">t: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>)</span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <a href="../../framework/utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>]])</span>
+        <span class="name">present</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span></span>, <span name="t">t: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>)</span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>]])</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Update state with the current cell and, optionally, output derived data.</p><div class="fullcomment"><div class="comment cmt"><p>Update state with the current cell and, optionally, output derived data.
@@ -515,15 +515,15 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A tuple consisting of updated state together with optional derived data.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="OnlineMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage">OnlineMovingAverage</a> → <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.window.Window#presentWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="presentWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,ext:Window.this.V,t:Window.this.T):(Window.this.T,au.com.cba.omnia.grimlock.framework.utility.Collection[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
-      <a id="presentWithValue(Cell[S],R,V,(Double,Long)):((Double,Long),Collection[Cell[Q]])"></a>
+      <a id="presentWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,ext:Window.this.V,t:Window.this.T):(Window.this.T,TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
+      <a id="presentWithValue(Cell[S],R,V,(Double,Long)):((Double,Long),TraversableOnce[Cell[Q]])"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">presentWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.V">V</a></span>, <span name="t">t: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>)</span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <a href="../../framework/utility/Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>]])</span>
+        <span class="name">presentWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.R">R</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.V">V</a></span>, <span name="t">t: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>)</span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage.Q">Q</span>]])</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Update state with the current cell and, optionally, output derived data.</p><div class="fullcomment"><div class="comment cmt"><p>Update state with the current cell and, optionally, output derived data.

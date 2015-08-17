@@ -35,11 +35,11 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">DateSchema</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/DateAndTimeCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateAndTimeCodex">DateAndTimeCodex</a></span>]</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema.C">C</span></span>)</span><span class="result"> extends <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">DateSchema</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema.C">C</span></span>)</span><span class="result"> extends <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Schema for date variables.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Schema for date variables.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -80,7 +80,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;()(implicitcodex:C):au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema[C]"></a>
+      <a id="&lt;init&gt;(codex:C):au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema[C]"></a>
       <a id="&lt;init&gt;:DateSchema[C]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -88,7 +88,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">DateSchema</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema.C">C</span></span>)</span>
+        <span class="name">DateSchema</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema.C">C</span></span>)</span>
       </span>
       </h4>
       
@@ -203,7 +203,7 @@
       <a id="codex:C"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier">implicit </span>
+        <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
@@ -314,6 +314,19 @@
       </span>
       </h4>
       <p class="shortcomment cmt">The type of variable.</p><div class="fullcomment"><div class="comment cmt"><p>The type of variable.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema">DateSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="name:String"></a>
+      <a id="name:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">name</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The name of the schema.</p><div class="fullcomment"><div class="comment cmt"><p>The name of the schema.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema">DateSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -353,6 +366,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema#params" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="params():String"></a>
+      <a id="params():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">params</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema">DateSchema</a> → <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -381,7 +407,7 @@
       <p class="shortcomment cmt">Return a consise (terse) string representation of a schema.</p><div class="fullcomment"><div class="comment cmt"><p>Return a consise (terse) string representation of a schema.
 </p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between various fields.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
       <h4 class="signature">
@@ -393,7 +419,7 @@
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema">DateSchema</a> → AnyRef → Any</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> → AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

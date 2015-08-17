@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>ContinuousSchema</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>ContinuousSchema</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/framework/Schema.scala" target="_blank">Schema.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -151,33 +151,35 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](minimum:C#T,maximum:C#T)(implicitcodex:C,implicitnum:Numeric[C#T]):au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema[C]"></a>
-      <a id="apply[C&lt;:Codex](ContinuousSchema.apply.C.T,ContinuousSchema.apply.C.T)(C,Numeric[ContinuousSchema.apply.C.T]):ContinuousSchema[C]"></a>
+      <a id="apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](codex:C,minimum:C#T,maximum:C#T)(implicitnum:Numeric[C#T]):au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema[C]"></a>
+      <a id="apply[C&lt;:Codex](C,ContinuousSchema.apply.C.T,ContinuousSchema.apply.C.T)(Numeric[ContinuousSchema.apply.C.T]):ContinuousSchema[C]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="minimum">minimum: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">ContinuousSchema.apply.C.T</span></span>, <span name="maximum">maximum: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">ContinuousSchema.apply.C.T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.apply.C">C</span></span>, <span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">ContinuousSchema.apply.C.T</span>]</span>)</span><span class="result">: <a href="ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.apply.C">C</span>]</span>
+        <span class="name">apply</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.apply.C">C</span></span>, <span name="minimum">minimum: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">ContinuousSchema.apply.C.T</span></span>, <span name="maximum">maximum: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">ContinuousSchema.apply.C.T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">ContinuousSchema.apply.C.T</span>]</span>)</span><span class="result">: <a href="ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.apply.C">C</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Construct a continuous schema with bounded range.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a continuous schema with bounded range.
-</p></div><dl class="paramcmts block"><dt class="param">minimum</dt><dd class="cmt"><p>The lower bound (minimum value).</p></dd><dt class="param">maximum</dt><dd class="cmt"><p>The upper bound (maximum value).
+</p></div><dl class="paramcmts block"><dt class="param">codex</dt><dd class="cmt"><p>The codex for the value.</p></dd><dt class="param">minimum</dt><dd class="cmt"><p>The lower bound (minimum value).</p></dd><dt class="param">maximum</dt><dd class="cmt"><p>The upper bound (maximum value).
 </p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex]()(implicitcodex:C,implicitnum:Numeric[C#T]):au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema[C]"></a>
-      <a id="apply[C&lt;:Codex]()(C,Numeric[ContinuousSchema.apply.C.T]):ContinuousSchema[C]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](codex:C)(implicitnum:Numeric[C#T]):au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema[C]"></a>
+      <a id="apply[C&lt;:Codex](C)(Numeric[ContinuousSchema.apply.C.T]):ContinuousSchema[C]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.apply.C">C</span></span>, <span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">ContinuousSchema.apply.C.T</span>]</span>)</span><span class="result">: <a href="ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.apply.C">C</span>]</span>
+        <span class="name">apply</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.apply.C">C</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">ContinuousSchema.apply.C.T</span>]</span>)</span><span class="result">: <a href="ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.apply.C">C</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Construct a continuous schema with unbounded range.</p>
+      <p class="shortcomment cmt">Construct a continuous schema with unbounded range.</p><div class="fullcomment"><div class="comment cmt"><p>Construct a continuous schema with unbounded range.
+</p></div><dl class="paramcmts block"><dt class="param">codex</dt><dd class="cmt"><p>The codex for the value.
+</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -255,6 +257,23 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema#fromString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fromString[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex](lower:String,upper:String,codex:C)(implicitnum:Numeric[C#T]):Option[au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema[C]]"></a>
+      <a id="fromString[C&lt;:Codex](String,String,C)(Numeric[ContinuousSchema.fromString.C.T]):Option[ContinuousSchema[C]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fromString</span><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="params">(<span name="lower">lower: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="upper">upper: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.fromString.C">C</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="num">num: <span class="extype" name="scala.Numeric">Numeric</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">ContinuousSchema.fromString.C.T</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="ContinuousSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema">ContinuousSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema.fromString.C">C</span>]]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Parse continuous schema parameters
+</p><div class="fullcomment"><div class="comment cmt"><p>Parse continuous schema parameters
+</p></div><dl class="paramcmts block"><dt class="param">lower</dt><dd class="cmt"><p>Lower bound for the schema.</p></dd><dt class="param">upper</dt><dd class="cmt"><p>Upper bound for the schema.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex to parse with.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An <code>Option</code> of <code>ContinuousSchema</code> if all parameters parse correctly, <code>None</code> otherwise.
+</p></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -333,6 +352,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema#pattern" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="pattern:scala.util.matching.Regex"></a>
+      <a id="pattern:Regex"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">pattern</span><span class="result">: <span class="extype" name="scala.util.matching.Regex">Regex</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Pattern for matching short string continuous value with parameters.</p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>

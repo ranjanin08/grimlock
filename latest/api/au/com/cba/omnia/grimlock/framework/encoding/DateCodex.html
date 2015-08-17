@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>Collection - au.com.cba.omnia.grimlock.framework.utility.Collection</title>
-          <meta name="description" content="Collection - au.com.cba.omnia.grimlock.framework.utility.Collection" />
-          <meta name="keywords" content="Collection au.com.cba.omnia.grimlock.framework.utility.Collection" />
+          <title>DateCodex - au.com.cba.omnia.grimlock.framework.encoding.DateCodex</title>
+          <meta name="description" content="DateCodex - au.com.cba.omnia.grimlock.framework.encoding.DateCodex" />
+          <meta name="keywords" content="DateCodex au.com.cba.omnia.grimlock.framework.encoding.DateCodex" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
-            var hash = 'au.com.cba.omnia.grimlock.framework.utility.Collection$';
+            var hash = 'au.com.cba.omnia.grimlock.framework.encoding.DateCodex';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -22,26 +22,26 @@
    	  </script>
     
         </head>
-        <body class="value">
+        <body class="type">
       <div id="definition">
-        <a href="Collection.html" title="Go to companion"><img src="../../../../../../../lib/object_to_class_big.png" /></a>
-        <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility">utility</a></p>
-        <h1><a href="Collection.html" title="Go to companion">Collection</a></h1>
+        <a href="DateCodex$.html" title="Go to companion"><img src="../../../../../../../lib/class_to_object_big.png" /></a>
+        <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding">encoding</a></p>
+        <h1><a href="DateCodex$.html" title="Go to companion">DateCodex</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">object</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Collection</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">DateCodex</span><span class="params">(<span name="format">format: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;yyyy-MM-dd&quot;</span></span>)</span><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/fbc28d9797621afca2736aa1c1f896460eae129f//src/main/scala/au/com/cba/omnia/grimlock/framework/Utility.scala" target="_blank">Utility.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Codex for dealing with <code>java.util.Date</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/8cf12b5d7c9f30c7e96f5034b075c80249cb2158//src/main/scala/au/com/cba/omnia/grimlock/framework/Codex.scala" target="_blank">Codex.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -59,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.utility.Collection"><span>Collection</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex"><span>DateCodex</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.encoding.Codex"><span>Codex</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -77,9 +77,54 @@
 
       <div id="template">
         <div id="allMembers">
-        
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(format:String):au.com.cba.omnia.grimlock.framework.encoding.DateCodex"></a>
+      <a id="&lt;init&gt;:DateCodex"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">DateCodex</span><span class="params">(<span name="format">format: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;yyyy-MM-dd&quot;</span></span>)</span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex.T" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="T=java.util.Date"></a>
+      <a id="T:T"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">T</span><span class="result"> = <span class="extype" name="java.util.Date">Date</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The data type.</p><div class="fullcomment"><div class="comment cmt"><p>The data type.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a> → <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="V=au.com.cba.omnia.grimlock.framework.encoding.DateValue"></a>
+      <a id="V:V"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">V</span><span class="result"> = <a href="DateValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateValue">DateValue</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">The specific type of value.</p><div class="fullcomment"><div class="comment cmt"><p>The specific type of value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a> → <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></dd></dl></div>
+    </li></ol>
+            </div>
 
         
 
@@ -150,64 +195,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.utility.Collection#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](pos:P,con:au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.utility.Collection[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
-      <a id="apply[P&lt;:Position](P,Content):Collection[Cell[P]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.apply.P">P</span></span>, <span name="con">con: <a href="../content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.apply.P">P</span>]]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Create a collection from a position and content.</p><div class="fullcomment"><div class="comment cmt"><p>Create a collection from a position and content.
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The position.</p></dd><dt class="param">con</dt><dd class="cmt"><p>The content.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.utility.Collection#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](t:List[T]):au.com.cba.omnia.grimlock.framework.utility.Collection[T]"></a>
-      <a id="apply[T](List[T]):Collection[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.apply.T">T</span>]</span>)</span><span class="result">: <a href="Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.apply.T">T</span>]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Create a collection with a list of objects.</p><div class="fullcomment"><div class="comment cmt"><p>Create a collection with a list of objects.
-</p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>The list of objects to wrap in a collection.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.utility.Collection#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply[T](t:T):au.com.cba.omnia.grimlock.framework.utility.Collection[T]"></a>
-      <a id="apply[T](T):Collection[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.apply.T">T</span></span>)</span><span class="result">: <a href="Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.apply.T">T</span>]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Create a collection with a single object.</p><div class="fullcomment"><div class="comment cmt"><p>Create a collection with a single object.
-</p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>The object to wrap in a collection.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.utility.Collection#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="apply[T]():au.com.cba.omnia.grimlock.framework.utility.Collection[T]"></a>
-      <a id="apply[T]():Collection[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">()</span><span class="result">: <a href="Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.apply.T">T</span>]</span>
-      </span>
-      </h4>
-      <p class="shortcomment cmt">Create an empty collection.</p>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -240,19 +227,54 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.utility.Collection#empty" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="empty[T]():au.com.cba.omnia.grimlock.framework.utility.Collection[T]"></a>
-      <a id="empty[T]():Collection[T]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex#compare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="compare(x:au.com.cba.omnia.grimlock.framework.encoding.Value,y:au.com.cba.omnia.grimlock.framework.encoding.Value):Option[Int]"></a>
+      <a id="compare(Value,Value):Option[Int]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">empty</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">()</span><span class="result">: <a href="Collection.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection">Collection</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Collection.empty.T">T</span>]</span>
+        <span class="name">compare</span><span class="params">(<span name="x">x: <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="y">y: <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Create an empty collection.</p>
+      <p class="shortcomment cmt">Compare two value objects.</p><div class="fullcomment"><div class="comment cmt"><p>Compare two value objects.
+</p></div><dl class="paramcmts block"><dt class="param">x</dt><dd class="cmt"><p>The first value to compare.</p></dd><dt class="param">y</dt><dd class="cmt"><p>The second value to compare.
+</p></dd><dt>returns</dt><dd class="cmt"><p><code>Some[Int]</code> if <code>x</code> and <code>y</code> can be compared, <code>None</code> otherwise. If successful, then the returned value
+        is &lt; 0 iff x &lt; y, 0 iff x = y, &gt; 0 iff x &gt; y.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a> → <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.Codex#decode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="decode(value:String):Option[Codex.this.V]"></a>
+      <a id="decode(String):Option[V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">decode</span><span class="params">(<span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="#V=au.com.cba.omnia.grimlock.framework.encoding.DateValue" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex.V">V</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Decode a basic data type into a value.</p><div class="fullcomment"><div class="comment cmt"><p>Decode a basic data type into a value.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>String to decode into a value.
+</p></dd><dt>returns</dt><dd class="cmt"><p><code>Some[Value]</code> if the decode was successful, <code>None</code> otherwise.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.Codex#encode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="encode(value:au.com.cba.omnia.grimlock.framework.encoding.Value):String"></a>
+      <a id="encode(Value):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">encode</span><span class="params">(<span name="value">value: <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Converts a value to a consise (terse) string.</p><div class="fullcomment"><div class="comment cmt"><p>Converts a value to a consise (terse) string.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>Short string representation of the value.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -266,19 +288,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="equals(x$1:Any):Boolean"></a>
-      <a id="equals(Any):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -298,6 +307,47 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex#format" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="format:String"></a>
+      <a id="format:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">format</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex#fromString" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fromString(value:String):DateCodex.this.T"></a>
+      <a id="fromString(String):T"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fromString</span><span class="params">(<span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="#T=java.util.Date" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex.T">T</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a> → <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex#fromValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fromValue(value:au.com.cba.omnia.grimlock.framework.encoding.Value):DateCodex.this.T"></a>
+      <a id="fromValue(Value):T"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fromValue</span><span class="params">(<span name="value">value: <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result">: <a href="#T=java.util.Date" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex.T">T</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Extract a basic data type from a value.</p><div class="fullcomment"><div class="comment cmt"><p>Extract a basic data type from a value.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>Value from which to extract the data.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a> → <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -308,19 +358,6 @@
       </span>
       <span class="symbol">
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hashCode():Int"></a>
-      <a id="hashCode():Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -337,6 +374,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="name:String"></a>
+      <a id="name:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">name</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Name of the codex.</p><div class="fullcomment"><div class="comment cmt"><p>Name of the codex.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a> → <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -389,19 +439,34 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString():String"></a>
-      <a id="toString():String"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex#toString" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString(value:DateCodex.this.T):String"></a>
+      <a id="toString(T):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+        <span class="name">toString</span><span class="params">(<span name="value">value: <a href="#T=java.util.Date" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex.T">T</a></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a> → <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex#toValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toValue(value:DateCodex.this.T):DateCodex.this.V"></a>
+      <a id="toValue(T):V"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toValue</span><span class="params">(<span name="value">value: <a href="#T=java.util.Date" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex.T">T</a></span>)</span><span class="result">: <a href="#V=au.com.cba.omnia.grimlock.framework.encoding.DateValue" class="extmbr" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex.V">V</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Convert a basic data type to a value.</p><div class="fullcomment"><div class="comment cmt"><p>Convert a basic data type to a value.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>Data type to wrap in a value.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a> → <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -472,6 +537,12 @@
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.Product">
+              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
+            </div><div class="parent" name="scala.Equals">
+              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">
+              <h3>Inherited from <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
