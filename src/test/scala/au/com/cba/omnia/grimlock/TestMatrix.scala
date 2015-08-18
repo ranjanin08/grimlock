@@ -7820,19 +7820,19 @@ trait TestMatrixSlide extends TestMatrix {
 
   val ext = Map("one" -> 1, "two" -> 2)
 
-  val result1 = List(Cell(Position1D("1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position1D("1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
-    Cell(Position1D("1*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position1D("2*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 2 * (9.42 - 6.28))),
-    Cell(Position1D("2*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 2 * (3.14 - 9.42))),
-    Cell(Position1D("2*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 2 * (12.56 - 3.14))))
+  val result1 = List(Cell(Position1D("1*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position1D("1*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14)),
+    Cell(Position1D("1*(foo-qux)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 12.56)),
+    Cell(Position1D("2*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 2 * (6.28 - 9.42))),
+    Cell(Position1D("2*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 2 * (9.42 - 3.14))),
+    Cell(Position1D("2*(foo-qux)"), Content(ContinuousSchema(DoubleCodex), 2 * (3.14 - 12.56))))
 
-  val result2 = List(Cell(Position2D("bar", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("bar", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("baz", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("foo", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("foo", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("foo", "1*(4-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+  val result2 = List(Cell(Position2D("bar", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
+    Cell(Position2D("bar", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
+    Cell(Position2D("baz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
+    Cell(Position2D("foo", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
+    Cell(Position2D("foo", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position2D("foo", "1*(3-4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
 
   val result3 = List(Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
     Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
@@ -7848,20 +7848,20 @@ trait TestMatrixSlide extends TestMatrix {
     Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 18.84)),
     Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)))
 
-  val result5 = List(Cell(Position2D("bar", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("bar", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("baz", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("foo", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("foo", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("foo", "1*(4-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+  val result5 = List(Cell(Position2D("bar", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
+    Cell(Position2D("bar", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
+    Cell(Position2D("baz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
+    Cell(Position2D("foo", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
+    Cell(Position2D("foo", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position2D("foo", "1*(3-4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
 
   val result6 = List(
-    Cell(Position2D("bar", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("bar", "1*(3|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("baz", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("foo", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("foo", "1*(3|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("foo", "1*(4|xyz-3|xyz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+    Cell(Position2D("bar", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
+    Cell(Position2D("bar", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
+    Cell(Position2D("baz", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
+    Cell(Position2D("foo", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
+    Cell(Position2D("foo", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position2D("foo", "1*(3|xyz-4|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
 
   val result7 = List(
     Cell(Position3D(1, "xyz", "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
@@ -7880,23 +7880,23 @@ trait TestMatrixSlide extends TestMatrix {
     Cell(Position2D(3, "1*(foo|xyz-bar|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)))
 
   val result9 = List(
-    Cell(Position3D("bar", "xyz", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position3D("bar", "xyz", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position3D("baz", "xyz", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position3D("foo", "xyz", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position3D("foo", "xyz", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position3D("foo", "xyz", "1*(4-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+    Cell(Position3D("bar", "xyz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
+    Cell(Position3D("bar", "xyz", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
+    Cell(Position3D("baz", "xyz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
+    Cell(Position3D("foo", "xyz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
+    Cell(Position3D("foo", "xyz", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position3D("foo", "xyz", "1*(3-4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
 
   val result10 = List(
-    Cell(Position2D("xyz", "1*(bar|2-bar|1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("xyz", "1*(bar|3-bar|2)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("xyz", "1*(baz|1-bar|3)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
-    Cell(Position2D("xyz", "1*(baz|2-baz|1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("xyz", "1*(foo|1-baz|2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 18.84)),
-    Cell(Position2D("xyz", "1*(foo|2-foo|1)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("xyz", "1*(foo|3-foo|2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("xyz", "1*(foo|4-foo|3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)),
-    Cell(Position2D("xyz", "1*(qux|1-foo|4)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 12.56)))
+    Cell(Position2D("xyz", "1*(bar|1-bar|2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
+    Cell(Position2D("xyz", "1*(bar|2-bar|3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
+    Cell(Position2D("xyz", "1*(bar|3-baz|1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
+    Cell(Position2D("xyz", "1*(baz|1-baz|2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
+    Cell(Position2D("xyz", "1*(baz|2-foo|1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 3.14)),
+    Cell(Position2D("xyz", "1*(foo|1-foo|2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
+    Cell(Position2D("xyz", "1*(foo|2-foo|3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position2D("xyz", "1*(foo|3-foo|4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)),
+    Cell(Position2D("xyz", "1*(foo|4-qux|1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 12.56)))
 
   val result11 = List()
 
@@ -7907,19 +7907,19 @@ trait TestMatrixSlide extends TestMatrix {
     Cell(Position1D("2*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 2 * (3.14 - 9.42))),
     Cell(Position1D("2*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 2 * (12.56 - 3.14))))
 
-  val result13 = List(Cell(Position2D("bar", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("bar", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("baz", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("foo", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("foo", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("foo", "1*(4-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+  val result13 = List(Cell(Position2D("bar", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
+    Cell(Position2D("bar", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
+    Cell(Position2D("baz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
+    Cell(Position2D("foo", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
+    Cell(Position2D("foo", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position2D("foo", "1*(3-4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
 
-  val result14 = List(Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
-    Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 18.84)),
-    Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)))
+  val result14 = List(Cell(Position2D(1, "1*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position2D(1, "1*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14)),
+    Cell(Position2D(1, "1*(foo-qux)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 12.56)),
+    Cell(Position2D(2, "1*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
+    Cell(Position2D(2, "1*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28)),
+    Cell(Position2D(3, "1*(bar-foo)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)))
 
   val result15 = List(Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
     Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
@@ -7936,20 +7936,20 @@ trait TestMatrixSlide extends TestMatrix {
     Cell(Position2D("foo", "1*(4-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
 
   val result17 = List(
-    Cell(Position2D("bar", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("bar", "1*(3|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("baz", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("foo", "1*(2|xyz-1|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("foo", "1*(3|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("foo", "1*(4|xyz-3|xyz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+    Cell(Position2D("bar", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
+    Cell(Position2D("bar", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
+    Cell(Position2D("baz", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
+    Cell(Position2D("foo", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
+    Cell(Position2D("foo", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position2D("foo", "1*(3|xyz-4|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
 
   val result18 = List(
-    Cell(Position3D(1, "xyz", "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position3D(1, "xyz", "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
-    Cell(Position3D(1, "xyz", "1*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position3D(2, "xyz", "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position3D(2, "xyz", "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 18.84)),
-    Cell(Position3D(3, "xyz", "1*(foo-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)))
+    Cell(Position3D(1, "xyz", "1*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position3D(1, "xyz", "1*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14)),
+    Cell(Position3D(1, "xyz", "1*(foo-qux)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 12.56)),
+    Cell(Position3D(2, "xyz", "1*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
+    Cell(Position3D(2, "xyz", "1*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28)),
+    Cell(Position3D(3, "xyz", "1*(bar-foo)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)))
 
   val result19 = List(
     Cell(Position2D(1, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
@@ -7968,15 +7968,15 @@ trait TestMatrixSlide extends TestMatrix {
     Cell(Position3D("foo", "xyz", "1*(4-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
 
   val result21 = List(
-    Cell(Position2D("xyz", "1*(bar|2-bar|1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("xyz", "1*(bar|3-bar|2)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("xyz", "1*(baz|1-bar|3)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
-    Cell(Position2D("xyz", "1*(baz|2-baz|1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("xyz", "1*(foo|1-baz|2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 18.84)),
-    Cell(Position2D("xyz", "1*(foo|2-foo|1)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("xyz", "1*(foo|3-foo|2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("xyz", "1*(foo|4-foo|3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)),
-    Cell(Position2D("xyz", "1*(qux|1-foo|4)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 12.56)))
+    Cell(Position2D("xyz", "1*(bar|1-bar|2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
+    Cell(Position2D("xyz", "1*(bar|2-bar|3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
+    Cell(Position2D("xyz", "1*(bar|3-baz|1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
+    Cell(Position2D("xyz", "1*(baz|1-baz|2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
+    Cell(Position2D("xyz", "1*(baz|2-foo|1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 3.14)),
+    Cell(Position2D("xyz", "1*(foo|1-foo|2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
+    Cell(Position2D("xyz", "1*(foo|2-foo|3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
+    Cell(Position2D("xyz", "1*(foo|3-foo|4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)),
+    Cell(Position2D("xyz", "1*(foo|4-qux|1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 12.56)))
 
   val result22 = List()
 }
@@ -8031,7 +8031,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
         cells.slide(Along(First), List(TestMatrixSlide.Delta[Position0D, Position1D](1),
-          TestMatrixSlide.Delta[Position0D, Position1D](2)), Default())
+          TestMatrixSlide.Delta[Position0D, Position1D](2)), false, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -8042,7 +8042,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1), Default(Reducers(123)))
+        cells.slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -8053,7 +8053,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Along(First), TestMatrixSlide.Delta[Position1D, Position1D](1), Default())
+        cells.slide(Along(First), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -8064,7 +8064,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), Default(Reducers(123)))
+        cells.slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -8075,7 +8075,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Along(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), Default())
+        cells.slide(Along(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -8086,7 +8086,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1), Default(Reducers(123)))
+        cells.slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -8097,7 +8097,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D](1), Default())
+        cells.slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -8108,7 +8108,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1), Default(Reducers(123)))
+        cells.slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1), true, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -8119,7 +8119,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D](1), Default())
+        cells.slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D](1), false, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -8130,7 +8130,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1), Default(Reducers(123)))
+        cells.slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -8141,7 +8141,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Along(Third), TestMatrixSlide.Delta[Position2D, Position1D](1), Default())
+        cells.slide(Along(Third), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -8153,7 +8153,8 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
         cells.slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
-          TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ValuePipe(ext), Default(Reducers(123)))
+          TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ValuePipe(ext), true,
+            Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
     }
@@ -8165,7 +8166,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
-          ValuePipe(ext), Default())
+          ValuePipe(ext), false, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result13
     }
@@ -8177,7 +8178,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
-          ValuePipe(ext), Default(Reducers(123)))
+          ValuePipe(ext), false, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result14
     }
@@ -8189,7 +8190,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
-          ValuePipe(ext), Default())
+          ValuePipe(ext), true, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result15
     }
@@ -8201,7 +8202,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
         cells.slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
-          ValuePipe(ext), Default(Reducers(123)))
+          ValuePipe(ext), true, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result16
     }
@@ -8213,7 +8214,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
-          ValuePipe(ext), Default())
+          ValuePipe(ext), false, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result17
     }
@@ -8225,7 +8226,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
-          ValuePipe(ext), Default(Reducers(123)))
+          ValuePipe(ext), false, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result18
     }
@@ -8237,7 +8238,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
-          ValuePipe(ext), Default())
+          ValuePipe(ext), true, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result19
     }
@@ -8249,7 +8250,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
-          ValuePipe(ext), Default(Reducers(123)))
+          ValuePipe(ext), true, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result20
     }
@@ -8261,7 +8262,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
-          ValuePipe(ext), Default())
+          ValuePipe(ext), false, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result21
     }
@@ -8273,7 +8274,7 @@ class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
         cells.slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
-          ValuePipe(ext), Default(Reducers(123)))
+          ValuePipe(ext), false, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result22
     }
@@ -8285,135 +8286,144 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
   "A Matrix.slide" should "return its first along derived data in 1D" in {
     toRDD(num1)
       .slide(Along(First), List(TestMatrixSlide.Delta[Position0D, Position1D](1),
-        TestMatrixSlide.Delta[Position0D, Position1D](2)), Default())
+        TestMatrixSlide.Delta[Position0D, Position1D](2)), false, Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1), Default())
+      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slide(Along(First), TestMatrixSlide.Delta[Position1D, Position1D](1), Default())
+      .slide(Along(First), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), Default())
+      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
-      .slide(Along(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), Default())
+      .slide(Along(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1), Default())
+      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D](1), Default())
+      .slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1), Default())
+      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D](1), Default())
+      .slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1), Default())
+      .slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(Third), TestMatrixSlide.Delta[Position2D, Position1D](1), Default())
+      .slide(Along(Third), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.slideWithValue" should "return its first along derived data in 1D" in {
     toRDD(num1)
       .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
-        TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ext, Default())
+        TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ext, true, Default())
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, Default())
+      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, false,
+        Default())
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, Default())
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, false,
+        Default())
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, Default())
+      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, true,
+        Default())
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
       .slideWithValue(Along(Second),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, Default())
+        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, true, Default())
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext, Default())
+      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext, false,
+        Default())
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, Default())
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, false,
+        Default())
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext, Default())
+      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext, true,
+        Default())
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, Default())
+      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, true,
+        Default())
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext, Default())
+      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext, false,
+        Default())
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, Default())
+      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, false,
+        Default())
       .toList.sortBy(_.position) shouldBe result22
   }
 }

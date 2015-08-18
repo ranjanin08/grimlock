@@ -724,29 +724,32 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /**
    * Create window based derived data.
    *
-   * @param slice   Encapsulates the dimension(s) to slide over.
-   * @param windows The window functions to apply to the content.
-   * @param tuner   The tuner for the job.
+   * @param slice     Encapsulates the dimension(s) to slide over.
+   * @param windows   The window functions to apply to the content.
+   * @param ascending Indicator if the data should be sorted ascending or descending.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def slide[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], windows: F, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Windowable[F, slice.S, slice.R, Q], ev3: slice.R =!= Position0D,
+  def slide[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], windows: F, ascending: Boolean = true,
+    tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[F, slice.S, slice.R, Q], ev3: slice.R =!= Position0D,
     ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]]
 
   /**
    * Create window based derived data with a user supplied value.
    *
-   * @param slice   Encapsulates the dimension(s) to slide over.
-   * @param windows The window functions to apply to the content.
-   * @param value   A `E` holding a user supplied value.
-   * @param tuner   The tuner for the job.
+   * @param slice     Encapsulates the dimension(s) to slide over.
+   * @param windows   The window functions to apply to the content.
+   * @param value     A `E` holding a user supplied value.
+   * @param ascending Indicator if the data should be sorted ascending or descending.
+   * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
   def slideWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], windows: F, value: E[W],
-    tuner: T)(implicit ev1: PosDimDep[P, D], ev2: WindowableWithValue[F, slice.S, slice.R, Q, W],
-      ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]]
+    ascendig: Boolean = true, tuner: T)(implicit ev1: PosDimDep[P, D],
+      ev2: WindowableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
+        ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]]
 
   /**
    * Partition a matrix according to `partitioner`.
