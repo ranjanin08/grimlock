@@ -39,8 +39,14 @@ class Positions[P <: Position](val data: TypedPipe[P]) extends BasePositions[P] 
 
   type NamesTuners = OneOf1[Default[NoParameters.type]]
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)] = {
-    Names.number(data.map { case p => slice.selected(p) }.distinct(Position.Ordering[slice.S]()))
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S] = {
+    data.map { case p => slice.selected(p) }.distinct(Position.Ordering[slice.S]())
+  }
+
+  def number(): U[(P, Long)] = Names.number(data)
+
+  protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[P] = {
+    data.filter { case p => !keep ^ f(p) }
   }
 }
 

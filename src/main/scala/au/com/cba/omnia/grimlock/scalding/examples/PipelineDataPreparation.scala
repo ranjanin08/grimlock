@@ -28,6 +28,7 @@ import au.com.cba.omnia.grimlock.library.transform._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Nameable._
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
+import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.scalding.position.Positions._
 
 import com.twitter.scalding.{ Args, Job }

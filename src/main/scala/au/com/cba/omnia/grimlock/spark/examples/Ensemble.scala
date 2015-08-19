@@ -26,8 +26,8 @@ import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.library.aggregate._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
-import au.com.cba.omnia.grimlock.spark.Nameable._
 import au.com.cba.omnia.grimlock.spark.partition.Partitions._
+import au.com.cba.omnia.grimlock.spark.position.PositionDistributable._
 
 import org.apache.spark.{ SparkConf, SparkContext }
 import org.apache.spark.rdd.RDD

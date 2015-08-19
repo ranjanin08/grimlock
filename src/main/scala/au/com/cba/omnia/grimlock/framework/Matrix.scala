@@ -480,7 +480,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[P]]' with the changed contents.
    */
   def change[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, schema: Schema, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S],
+    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S],
       ev4: ChangeTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `domain`. */
@@ -536,11 +536,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
    *       index itself is unique for each position but no ordering is defined.
-   *
-   * @see [[Names]]
    */
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)]
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S]
 
   /** Specifies tuners permitted on a call to `pairwise` functions. */
   type PairwiseTuners <: OneOf
@@ -715,7 +713,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[P]]' of the remaining content.
    */
   def slice[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, keep: Boolean, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S],
+    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S],
       ev4: SliceTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `slide` functions. */
@@ -925,7 +923,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[P]' of the positions for which the content matches `predicate`.
    */
   def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, predicate: Predicate, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
+    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
       ev5: WhichTuners#V[T]): U[P]
 
   /**
@@ -940,7 +938,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[P]' of the positions for which the content matches predicates.
    */
   def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], pospred: List[(I, Predicate)], tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
+    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
       ev5: WhichTuners#V[T]): U[P]
 
   protected type TP1 = OneOf1[Default[NoParameters.type]]
