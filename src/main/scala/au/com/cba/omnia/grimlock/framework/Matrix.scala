@@ -533,9 +533,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param tuner The tuner for the job.
    *
    * @return A `U[(slice.S, Long)]` of the distinct position(s) together with a unique index.
-   *
-   * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
-   *       index itself is unique for each position but no ordering is defined.
    */
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S]
@@ -962,7 +959,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
 trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] =>
   /** Specifies tuners permitted on a call to `fill` with hetrogeneous data. */
-  type FillHetrogeneousTuners <: OneOf
+  type FillHeterogeneousTuners <: OneOf
 
   /**
    * Fill a matrix with `values` for a given `slice`.
@@ -978,7 +975,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
   // TODO: Should missing positions (in `values`) be filtered out?
   def fill[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]], tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
-      ev5: FillHetrogeneousTuners#V[T]): U[Cell[P]]
+      ev5: FillHeterogeneousTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `fill` with homogeneous data. */
   type FillHomogeneousTuners <: OneOf

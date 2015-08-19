@@ -97,6 +97,7 @@ class TestScalding2(args : Args) extends Job(args) {
   val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   (data.names(Over(First)) ++ data.names(Over(Second)) ++ data.names(Over(Third)))
+    .number
     .save("./tmp.scalding/nm0.out", descriptive = true)
 
   data
@@ -107,6 +108,7 @@ class TestScalding2(args : Args) extends Job(args) {
 
   data
     .names(Over(Second))
+    .number
     .slice("fid:M", false)
     .save("./tmp.scalding/nm2.out", descriptive = true)
 
@@ -124,6 +126,7 @@ class TestScalding2(args : Args) extends Job(args) {
 
   data
     .names(Over(Second))
+    .number
     .slice(""".*[BCD]$""".r, true, "")
     .save("./tmp.scalding/nm5.out", descriptive = true)
 }

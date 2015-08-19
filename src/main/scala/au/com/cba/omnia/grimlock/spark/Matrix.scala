@@ -489,10 +489,10 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 
   import SparkImplicits._
 
-  type FillHetrogeneousTuners = TP3
+  type FillHeterogeneousTuners = TP3
   def fill[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]], tuner: T = Default())(
     implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
-      ev5: FillHetrogeneousTuners#V[T]): U[Cell[P]] = {
+      ev5: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
     val (p1, p2) = tuner.parameters match {
       case Sequence2(f, s) => (f, s)
       case p => (NoParameters, p)
@@ -958,9 +958,6 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @param separator  Column separator to use in dictionary file.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note R's slam package has a simple triplet matrix format (which in turn is used by the tm package). This format
-   *       should be compatible.
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position2D]] = {
     saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), dictionary, separator)
@@ -978,8 +975,6 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    *
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   * @note R's slam package has a simple triplet matrix format (which in turn is used by the tm package). This format
-   *       should be compatible.
    */
   def saveAsIVWithNames[I, J](file: String, namesI: I, namesJ: J, dictionary: String = "%1$s.dict.%2$d",
     separator: String = "|")(implicit ev1: BaseNameable[I, Position2D, Position1D, Dimension.First, RDD],
@@ -1056,7 +1051,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    */
   def saveAsVW[D <: Dimension](slice: Slice[Position2D, D], labels: U[Cell[Position1D]], file: String,
     dictionary: String = "%s.dict", separator: String = ":")(
-      implicit ev1: PosDimDep[Position2D, D]): U[Cell[Position2D]] = {
+      implicit ev: PosDimDep[Position2D, D]): U[Cell[Position2D]] = {
     saveAsVWWithNames(slice, labels, file, names(Along(slice.dimension)), dictionary, separator)
   }
 

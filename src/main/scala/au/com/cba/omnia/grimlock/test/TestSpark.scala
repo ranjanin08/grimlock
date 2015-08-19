@@ -101,6 +101,7 @@ object TestSpark2 {
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     (data.names(Over(First)) ++ data.names(Over(Second)) ++ data.names(Over(Third)))
+      .number
       .save("./tmp.spark/nm0.out", descriptive = true)
 
     data
@@ -111,6 +112,7 @@ object TestSpark2 {
 
     data
       .names(Over(Second))
+      .number
       .slice("fid:M", false)
       .save("./tmp.spark/nm2.out", descriptive = true)
 
@@ -128,6 +130,7 @@ object TestSpark2 {
 
     data
       .names(Over(Second))
+      .number
       .slice(""".*[BCD]$""".r, true, "")
       .save("./tmp.spark/nm5.out", descriptive = true)
   }
