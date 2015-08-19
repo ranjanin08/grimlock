@@ -43,7 +43,7 @@ class Positions[P <: Position](val data: RDD[P]) extends BasePositions[P] with P
   type NamesTuners = OneOf2[Default[NoParameters.type], Default[Reducers]]
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S] = {
-    data.map { case p => slice.selected(p) }.tunedDistinct(tuner.parameters)
+    data.map { case p => slice.selected(p) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
   }
 
   def number(): U[(P, Long)] = Names.number(data)

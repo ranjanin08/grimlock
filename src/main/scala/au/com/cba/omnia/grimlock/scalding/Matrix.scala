@@ -66,34 +66,11 @@ import scala.io.Source
 import scala.reflect.ClassTag
 
 private[scalding] object ScaldingImplicits {
-
-  implicit def hashSetSemigroup[A] = new com.twitter.algebird.Semigroup[HashSet[A]] {
-    def plus(l: HashSet[A], r: HashSet[A]): HashSet[A] = l ++ r
-  }
-
-  implicit def mapSemigroup[K, V] = new com.twitter.algebird.Semigroup[Map[K, V]] {
-    def plus(l: Map[K, V], r: Map[K, V]): Map[K, V] = l ++ r
-  }
-
-  implicit def mapListSemigroup[K, V] = new com.twitter.algebird.Semigroup[Map[K, List[V]]] {
-    def plus(l: Map[K, List[V]], r: Map[K, List[V]]): Map[K, List[V]] = {
-      (l.toSeq ++ r.toSeq).groupBy(_._1).mapValues(_.map(_._2).toList.flatten)
-    }
-  }
-
-  implicit def cellOrdering[P <: Position] = new Ordering[Cell[P]] {
-    def compare(l: Cell[P], r: Cell[P]) = l.toString().compare(r.toString)
-  }
-
-  implicit def contentOrdering = new Ordering[Content] {
-    def compare(l: Content, r: Content) = l.toString.compare(r.toString)
-  }
-
-  implicit def serialisePosition[T <: Position](key: T): Array[Byte] = {
-    key.toShortString("|").toCharArray.map(_.toByte)
-  }
-
   implicit class GroupedTuner[K <: Position, V](grouped: Grouped[K, V]) {
+    private implicit def serialisePosition[T <: Position](key: T): Array[Byte] = {
+      key.toShortString("|").toCharArray.map(_.toByte)
+    }
+
     def redistribute(parameters: TunerParameters): TypedPipe[(K, V)] = {
       parameters match {
         case Redistribute(reducers) => grouped.withReducers(reducers).forceToReducers
@@ -132,7 +109,14 @@ private[scalding] object ScaldingImplicits {
       pipe.flatMapWithValue(value) { case (c, vo) => f(c, vo.get) }
     }
 
-    def toHashSetValue[Q](f: (P) => Q): ValuePipe[HashSet[Q]] = pipe.map { case p => HashSet(f(p)) }.sum
+    def toHashSetValue[Q](f: (P) => Q): ValuePipe[HashSet[Q]] = {
+      val semigroup = new com.twitter.algebird.Semigroup[HashSet[Q]] {
+        def plus(l: HashSet[Q], r: HashSet[Q]): HashSet[Q] = l ++ r
+      }
+
+      pipe.map { case p => HashSet(f(p)) }.sum(semigroup)
+    }
+
     def toListValue[Q](f: (P) => Q): ValuePipe[List[Q]] = pipe.map { case p => List(f(p)) }.sum
   }
 }
@@ -223,7 +207,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type NamesTuners = TP1
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S] = {
-    data.map { case c => slice.selected(c.position) }.distinct
+    data.map { case c => slice.selected(c.position) }.distinct(Position.Ordering[slice.S]())
   }
 
   type PairwiseTuners = OneOf14[InMemory[NoParameters.type],
@@ -502,20 +486,28 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   type ToMapTuners = TP2
   def toMap()(implicit ev: ClassTag[P]): E[Map[P, Content]] = {
+    val semigroup = new com.twitter.algebird.Semigroup[Map[P, Content]] {
+      def plus(l: Map[P, Content], r: Map[P, Content]): Map[P, Content] = l ++ r
+    }
+
     data
       .map { case c => Map(c.position -> c.content) }
-      .sum
+      .sum(semigroup)
   }
 
   def toMap[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ToMapTuners#V[T]): E[Map[slice.S, slice.C]] = {
+    val semigroup = new com.twitter.algebird.Semigroup[Map[slice.S, slice.C]] {
+      def plus(l: Map[slice.S, slice.C], r: Map[slice.S, slice.C]): Map[slice.S, slice.C] = l ++ r
+    }
+
     data
       .map { case c => (c.position, slice.toMap(c)) }
       .groupBy { case (p, m) => slice.selected(p) }
       .tuneReducers(tuner.parameters)
       .reduce[(P, Map[slice.S, slice.C])] { case ((lp, lm), (rp, rm)) => (lp, slice.combineMaps(lp, lm, rm)) }
       .map { case (_, (_, m)) => m }
-      .sum
+      .sum(semigroup)
   }
 
   def transform[Q <: Position, F](transformers: F)(implicit ev: Transformable[F, P, Q]): U[Cell[Q]] = {
@@ -544,17 +536,23 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type UniqueTuners = TP1
   /** @note Comparison is performed based on the string representation of the `Content`. */
   def unique[T <: Tuner](tuner: T = Default())(implicit ev: UniqueTuners#V[T]): U[Content] = {
+    val ordering = new Ordering[Content] { def compare(l: Content, r: Content) = l.toString.compare(r.toString) }
+
     data
       .map { case c => c.content }
-      .distinct
+      .distinct(ordering)
   }
 
   /** @note Comparison is performed based on the string representation of the `Content`. */
   def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
     implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[Cell[slice.S]] = {
+    val ordering = new Ordering[Cell[slice.S]] {
+      def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
+    }
+
     data
       .map { case Cell(p, c) => Cell(slice.selected(p), c) }
-      .distinct
+      .distinct(ordering)
   }
 
   type WhichTuners = TP4
@@ -577,8 +575,15 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
     tuner match {
       case InMemory(_) =>
+        val semigroup = new com.twitter.algebird.Semigroup[Map[slice.S, List[Predicate]]] {
+          def plus(l: Map[slice.S, List[Predicate]],
+            r: Map[slice.S, List[Predicate]]): Map[slice.S, List[Predicate]] = {
+            (l.toSeq ++ r.toSeq).groupBy(_._1).mapValues(_.map(_._2).toList.flatten)
+          }
+        }
+
         data
-          .mapSideJoin(pp.map { case (pos, pred) => Map(pos -> List(pred)) }.sum,
+          .mapSideJoin(pp.map { case (pos, pred) => Map(pos -> List(pred)) }.sum(semigroup),
             (c: Cell[P], v: Map[slice.S, List[Predicate]]) => v.get(slice.selected(c.position)).flatMap {
               case lst => if (lst.exists((pred) => pred(c))) { Some(c.position) } else { None }
             })
@@ -637,11 +642,18 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           case lj @ Reducers(_) => (NoParameters, NoParameters, NoParameters, lj)
           case _ => (NoParameters, NoParameters, NoParameters, NoParameters)
         }
-        val right = Grouped(rdata.map { case Cell(p, _) => (slice.selected(p), ()) }.distinct)
+        val ordering = Position.Ordering[slice.S]()
+        val right = rdata
+          .map { case Cell(p, _) => slice.selected(p) }
+          .distinct(ordering)
+          .asKeys
           .redistribute(rr)
           .map { case (p, _) => List(p) }
           .sum
-        val keys = Grouped(ldata.map { case Cell(p, _) => (slice.selected(p), ()) }.distinct)
+        val keys = ldata
+          .map { case Cell(p, _) => slice.selected(p) }
+          .distinct(ordering)
+          .asKeys
           .redistribute(lr)
           .flatMapWithValue(right) { case ((l, _), vo) => vo.get.collect { case r if comparer.keep(l, r) => (r, l) } }
           .forceToDisk // TODO: Should this be configurable?
@@ -672,9 +684,13 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
     val vals = values.groupBy { case c => c.position.asInstanceOf[slice.S] }
     val dense = tuner match {
       case InMemory(_) =>
+        val semigroup = new com.twitter.algebird.Semigroup[Map[slice.S, Content]] {
+          def plus(l: Map[slice.S, Content], r: Map[slice.S, Content]): Map[slice.S, Content] = l ++ r
+        }
+
         domain(Default())
-          .mapSideJoin(vals.map { case (p, c) => Map(p -> c.content) }.sum, (p: P, v: Map[slice.S, Content]) =>
-            v.get(slice.selected(p)).map { case c => Cell(p, c) })
+          .mapSideJoin(vals.map { case (p, c) => Map(p -> c.content) }.sum(semigroup),
+            (p: P, v: Map[slice.S, Content]) => v.get(slice.selected(p)).map { case c => Cell(p, c) })
       case _ =>
         domain(Default())
           .groupBy { case p => slice.selected(p) }

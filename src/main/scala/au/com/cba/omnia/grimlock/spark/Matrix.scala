@@ -57,9 +57,9 @@ import scala.reflect.ClassTag
 
 private[spark] object SparkImplicits {
   implicit class RDDTuner[T](rdd: RDD[T]) {
-    def tunedDistinct(parameters: TunerParameters): RDD[T] = {
+    def tunedDistinct(parameters: TunerParameters)(implicit ev: Ordering[T]): RDD[T] = {
       parameters match {
-        case Reducers(reducers) => rdd.distinct(reducers)
+        case Reducers(reducers) => rdd.distinct(reducers)(ev)
         case _ => rdd.distinct()
       }
     }
@@ -147,7 +147,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type NamesTuners = TP2
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S] = {
-    data.map { case c => slice.selected(c.position) }.tunedDistinct(tuner.parameters)
+    data.map { case c => slice.selected(c.position) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
   }
 
   type PairwiseTuners = OneOf6[Default[NoParameters.type],
@@ -243,7 +243,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def size[D <: Dimension, T <: Tuner](dim: D, distinct: Boolean, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
     ev2: SizeTuners#V[T]): U[Cell[Position1D]] = {
     val coords = data.map { case c => c.position(dim) }
-    val dist = if (distinct) { coords } else { coords.tunedDistinct(tuner.parameters) }
+    val dist = if (distinct) { coords } else { coords.tunedDistinct(tuner.parameters)(Value.Ordering) }
 
     dist
       .context
@@ -405,16 +405,22 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   type UniqueTuners = TP2
   def unique[T <: Tuner](tuner: T = Default())(implicit ev: UniqueTuners#V[T]): U[Content] = {
+    val ordering = new Ordering[Content] { def compare(l: Content, r: Content) = l.toString.compare(r.toString) }
+
     data
       .map { case c => c.content }
-      .tunedDistinct(tuner.parameters)
+      .tunedDistinct(tuner.parameters)(ordering)
   }
 
   def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
     implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[Cell[slice.S]] = {
+    val ordering = new Ordering[Cell[slice.S]] {
+      def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
+    }
+
     data
       .map { case Cell(p, c) => Cell(slice.selected(p), c) }
-      .tunedDistinct(tuner.parameters)
+      .tunedDistinct(tuner.parameters)(ordering)
   }
 
   type WhichTuners = TP2
@@ -472,9 +478,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       case lj @ Reducers(_) => (NoParameters, NoParameters, NoParameters, lj)
       case _ => (NoParameters, NoParameters, NoParameters, NoParameters)
     }
+    val ordering = Position.Ordering[slice.S]()
 
-    ldata.map { case c => slice.selected(c.position) }.tunedDistinct(lr)
-      .cartesian(rdata.map { case c => slice.selected(c.position) }.tunedDistinct(rr))
+    ldata.map { case c => slice.selected(c.position) }.tunedDistinct(lr)(ordering)
+      .cartesian(rdata.map { case c => slice.selected(c.position) }.tunedDistinct(rr)(ordering))
       .collect { case (l, r) if comparer.keep(l, r) => (l, r) }
       .keyBy { case (l, _) => l }
       .tunedJoin(lj, ldata.keyBy { case Cell(p, _) => slice.selected(p) })
