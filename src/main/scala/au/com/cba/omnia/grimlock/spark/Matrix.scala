@@ -413,7 +413,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
-    implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[Cell[slice.S]] = {
+    implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
     }
@@ -421,6 +421,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data
       .map { case Cell(p, c) => Cell(slice.selected(p), c) }
       .tunedDistinct(tuner.parameters)(ordering)
+      .map { case Cell(p, c) => (p, c) }
   }
 
   type WhichTuners = TP2

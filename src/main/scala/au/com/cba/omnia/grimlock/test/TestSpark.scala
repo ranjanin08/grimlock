@@ -271,6 +271,7 @@ object TestSpark8 {
 
     loadText(args(1) + "/mutualInputfile.txt", Cell.parse2D())
       .unique(Over[Position2D, Dimension.Second](Second))
+      .map { case (p, c) => Cell(p, c) }
       .save("./tmp.spark/uni2.out")
 
     data

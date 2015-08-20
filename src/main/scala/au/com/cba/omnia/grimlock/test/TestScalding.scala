@@ -255,6 +255,7 @@ class TestScalding8(args : Args) extends Job(args) {
 
   loadText(args("path") + "/mutualInputfile.txt", Cell.parse2D())
     .unique(Over[Position2D, Dimension.Second](Second))
+    .map { case (p, c) => Cell(p, c) }
     .save("./tmp.scalding/uni2.out")
 
   data

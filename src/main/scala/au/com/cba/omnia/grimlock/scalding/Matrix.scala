@@ -534,7 +534,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type UniqueTuners = TP1
-  /** @note Comparison is performed based on the string representation of the `Content`. */
   def unique[T <: Tuner](tuner: T = Default())(implicit ev: UniqueTuners#V[T]): U[Content] = {
     val ordering = new Ordering[Content] { def compare(l: Content, r: Content) = l.toString.compare(r.toString) }
 
@@ -543,9 +542,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .distinct(ordering)
   }
 
-  /** @note Comparison is performed based on the string representation of the `Content`. */
   def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
-    implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[Cell[slice.S]] = {
+    implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
     }
@@ -553,6 +551,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data
       .map { case Cell(p, c) => Cell(slice.selected(p), c) }
       .distinct(ordering)
+      .map { case Cell(p, c) => (p, c) }
   }
 
   type WhichTuners = TP4

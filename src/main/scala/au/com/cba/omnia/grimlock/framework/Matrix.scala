@@ -728,7 +728,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def slide[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], windows: F, ascending: Boolean = true,
     tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[F, slice.S, slice.R, Q], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]]
+      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]]
 
   /**
    * Create window based derived data with a user supplied value.
@@ -882,6 +882,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * Return the unique (distinct) contents of an entire matrix.
    *
    * @param tuner The tuner for the job.
+   *
+   * @note Comparison is performed based on the string representation of the `Content`.
    */
   def unique[T <: Tuner](tuner: T)(implicit ev: UniqueTuners#V[T]): U[Content]
 
@@ -892,10 +894,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param tuner The tuner for the job.
    *
    * @return A `U[Cell[slice.S]]` consisting of the unique values.
+   *
+   * @note Comparison is performed based on the string representation of the `slice.S` and `Content`.
    */
-  // TODO: Should this return a Cell? Coordinates are no longer unique in the matrix.
   def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: slice.S =!= Position0D,
-    ev2: UniqueTuners#V[T]): U[Cell[slice.S]]
+    ev2: UniqueTuners#V[T]): U[(slice.S, Content)]
 
   /** Specifies tuners permitted on a call to `which` functions. */
   type WhichTuners <: OneOf
@@ -970,9 +973,10 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P]]` where all missing values have been filled in.
    *
-   * @note This joins `values` onto this matrix, as such it can be used for imputing missing values.
+   * @note This joins `values` onto this matrix, as such it can be used for imputing missing values. As
+   *       the join is an inner join, any positions in the matrix that aren't in `values` are filtered
+   *       from the resulting matrix.
    */
-  // TODO: Should missing positions (in `values`) be filtered out?
   def fill[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]], tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
       ev5: FillHeterogeneousTuners#V[T]): U[Cell[P]]
