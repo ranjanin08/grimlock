@@ -10317,3 +10317,59 @@ class TestSparkMatrixPermute extends TestMatrixPermute {
   }
 }
 
+trait TestMatrixToVector extends TestMatrix {
+
+  val separator = ":"
+
+  val result1 = data2
+    .map { case Cell(Position2D(f, s), c) => Cell(Position1D(f.toShortString + separator + s.toShortString), c) }
+    .sortBy(_.position)
+
+  val result2 = data3
+    .map {
+      case Cell(Position3D(f, s, t), c) =>
+        Cell(Position1D(f.toShortString + separator + s.toShortString + separator + t.toShortString), c)
+    }
+    .sortBy(_.position)
+}
+
+class TestScaldingMatrixToVector extends TestMatrixToVector with TBddDsl {
+
+  "A Matrix.toVector" should "return its vector for 2D" in {
+    Given {
+      data2
+    } When {
+      cells: TypedPipe[Cell[Position2D]] =>
+        cells.toVector(separator)
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result1
+    }
+  }
+
+  it should "return its permutation vector for 3D" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.toVector(separator)
+    } Then {
+      _.toList.sortBy(_.position) shouldBe result2
+    }
+  }
+}
+
+class TestSparkMatrixToVector extends TestMatrixToVector {
+
+  "A Matrix.toVector" should "return its vector for 2D" in {
+    toRDD(data2)
+      .toVector(separator)
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its permutation vector for 3D" in {
+    toRDD(data3)
+      .toVector(separator)
+      .toList.sortBy(_.position) shouldBe result2
+  }
+}
+

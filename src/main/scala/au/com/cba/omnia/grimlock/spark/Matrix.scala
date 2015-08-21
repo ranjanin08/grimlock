@@ -548,6 +548,10 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
       .tunedReduce(tuner.parameters, (x: Cell[P], y: Cell[P]) => squash.reduceWithValue(dim, x, y, value))
       .map { case (p, c) => Cell(p, c.content) }
   }
+
+  def toVector(separator: String): U[Cell[Position1D]] = {
+    data.map { case Cell(p, c) => Cell(Position1D(p.coordinates.map(_.toShortString).mkString(separator)), c) }
+  }
 }
 
 /** Base trait for methods that expand the number of dimension of a matrix using a `RDD[Cell[P]]`. */

@@ -302,7 +302,7 @@ case class NominalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]
 
   protected def params(): String = {
     domain match {
-      case Some(d) => d.mkString(",")
+      case Some(d) => d.map(_.toString.replaceAll(",", "\\\\,")).mkString(",")
       case _ => ""
     }
   }
@@ -337,8 +337,7 @@ object NominalSchema {
    * @return An `Option` of `NominalSchema` if all parameters parse correctly, `None` otherwise.
    */
   def fromString[C <: Codex](params: String, codex: C): Option[NominalSchema[C]] = {
-    // TODO: This fails for values with ',' in them
-    val domain = params.split(",").map(Schema.parse(_, codex)).toList
+    val domain = params.split("(?<!\\\\),").map(Schema.parse(_, codex)).toList
 
     domain.exists(_.isEmpty) match {
       case true => None
@@ -362,7 +361,7 @@ case class OrdinalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]
 
   protected def params(): String = {
     domain match {
-      case Some(d) => d.mkString(",")
+      case Some(d) => d.map(_.toString.replaceAll(",", "\\\\,")).mkString(",")
       case _ => ""
     }
   }
@@ -397,8 +396,7 @@ object OrdinalSchema {
    * @return An `Option` of `OrdinalSchema` if all parameters parse correctly, `None` otherwise.
    */
   def fromString[C <: Codex](params: String, codex: C): Option[OrdinalSchema[C]] = {
-    // TODO: This fails for values with ',' in them
-    val domain = params.split(",").map(Schema.parse(_, codex)).toList
+    val domain = params.split("(?<!\\\\),").map(Schema.parse(_, codex)).toList
 
     domain.exists(_.isEmpty) match {
       case true => None

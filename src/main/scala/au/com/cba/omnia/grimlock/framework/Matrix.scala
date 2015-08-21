@@ -1036,6 +1036,15 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    */
   def squashWithValue[D <: Dimension, F, W, T <: Tuner](dim: D, squasher: F, value: E[W], tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: SquashTuners#V[T]): U[Cell[P#L]]
+
+  /**
+   * Merge all dimensions into a single.
+   *
+   * @param separator The separator to use when merging the coordinates.
+   *
+   * @return A `U[CellPosition1D]]` where all coordinates have been merged into a single string.
+   */
+  def toVector(separator: String = "|"): U[Cell[Position1D]]
 }
 
 /** Base trait for methods that expands the number of dimension of a matrix. */

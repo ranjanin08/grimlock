@@ -742,6 +742,10 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
       .reduce[(Cell[P], Option[W])] { case ((x, xvo), (y, yvo)) => (squash.reduceWithValue(dim, x, y, xvo.get), xvo) }
       .map { case (p, (c, _)) => Cell(p, c.content) }
   }
+
+  def toVector(separator: String): U[Cell[Position1D]] = {
+    data.map { case Cell(p, c) => Cell(Position1D(p.coordinates.map(_.toShortString).mkString(separator)), c) }
+  }
 }
 
 /** Base trait for methods that expand the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
