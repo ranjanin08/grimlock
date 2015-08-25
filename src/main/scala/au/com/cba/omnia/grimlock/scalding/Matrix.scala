@@ -16,6 +16,7 @@ package au.com.cba.omnia.grimlock.scalding
 
 import au.com.cba.omnia.grimlock.framework.{
   Cell,
+  Collate,
   Default,
   ExpandableMatrix => BaseExpandableMatrix,
   ExtractWithDimension,
@@ -105,8 +106,26 @@ private[scalding] object ScaldingImplicits {
   }
 
   implicit class PipeTuner[P](pipe: TypedPipe[P]) {
+    def collate(parameters: TunerParameters): TypedPipe[P] = {
+      parameters match {
+        case Collate => pipe.forceToDisk
+        case _ => pipe
+      }
+    }
+
     def mapSideJoin[V, Q](value: ValuePipe[V], f: (P, V) => TraversableOnce[Q]): TypedPipe[Q] = {
       pipe.flatMapWithValue(value) { case (c, vo) => f(c, vo.get) }
+    }
+
+    def redistribute(parameters: TunerParameters): TypedPipe[P] = {
+      parameters match {
+        case Redistribute(reducers) =>
+          Grouped(pipe.map { case p => (scala.util.Random.nextInt(reducers), p) })
+            .withReducers(reducers)
+            .forceToReducers
+            .values
+        case _ => pipe
+      }
     }
 
     def toHashSetValue[Q](f: (P) => Q): ValuePipe[HashSet[Q]] = {
@@ -118,6 +137,13 @@ private[scalding] object ScaldingImplicits {
     }
 
     def toListValue[Q](f: (P) => Q): ValuePipe[List[Q]] = pipe.map { case p => List(f(p)) }.sum
+
+    def tunedDistinct(parameters: TunerParameters)(implicit ev: Ordering[P]): TypedPipe[P] = {
+      parameters match {
+        case Reducers(reducers) => pipe.asKeys.withReducers(reducers).sum.keys
+        case _ => pipe.asKeys.sum.keys
+      }
+    }
   }
 }
 
@@ -204,10 +230,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     }
   }
 
-  type NamesTuners = TP1
+  type NamesTuners = TP2
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S] = {
-    data.map { case c => slice.selected(c.position) }.distinct(Position.Ordering[slice.S]())
+    data
+      .map { case c => slice.selected(c.position) }
+      .tunedDistinct(tuner.parameters)
   }
 
   type PairwiseTuners = OneOf14[InMemory[NoParameters.type],
@@ -299,18 +327,20 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case (_, (co, cn)) => cn.getOrElse(co.get) }
   }
 
-  type ShapeTuners = TP1
+  type ShapeTuners = TP2
   def shape[T <: Tuner](tuner: T = Default())(implicit ev: ShapeTuners#V[T]): U[Cell[Position1D]] = {
-    Grouped(data.flatMap { case c => c.position.coordinates.map(_.toString).zipWithIndex.map(_.swap) }.distinct)
+    Grouped(data
+      .flatMap { case c => c.position.coordinates.map(_.toString).zipWithIndex.map(_.swap) }
+      .tunedDistinct(tuner.parameters))
       .size
       .map { case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema(LongCodex), s)) }
   }
 
-  type SizeTuners = TP1
+  type SizeTuners = TP2
   def size[D <: Dimension, T <: Tuner](dim: D, distinct: Boolean, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
     ev2: SizeTuners#V[T]): U[Cell[Position1D]] = {
     val coords = data.map { case c => c.position(dim) }
-    val dist = if (distinct) { coords } else { coords.distinct(Value.Ordering) }
+    val dist = if (distinct) { coords } else { coords.tunedDistinct(tuner.parameters)(Value.Ordering) }
 
     dist
       .map { case _ => 1L }
@@ -533,13 +563,13 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case (p, t) => (p, if (specific) t else t.getGeneralisation()) }
   }
 
-  type UniqueTuners = TP1
+  type UniqueTuners = TP2
   def unique[T <: Tuner](tuner: T = Default())(implicit ev: UniqueTuners#V[T]): U[Content] = {
     val ordering = new Ordering[Content] { def compare(l: Content, r: Content) = l.toString.compare(r.toString) }
 
     data
       .map { case c => c.content }
-      .distinct(ordering)
+      .tunedDistinct(tuner.parameters)(ordering)
   }
 
   def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
@@ -550,7 +580,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
     data
       .map { case Cell(p, c) => Cell(slice.selected(p), c) }
-      .distinct(ordering)
+      .tunedDistinct(tuner.parameters)(ordering)
       .map { case Cell(p, c) => (p, c) }
   }
 

@@ -29,6 +29,11 @@ sealed trait TunerParameters extends java.io.Serializable {
   def |->[Q <: TunerParameters](parameters: Q): Sequence2[P, Q] = Sequence2(this.asInstanceOf[P], parameters)
 }
 
+/** Indicates that the data should be collated. */
+case object Collate extends TunerParameters {
+  type P = Collate.type
+}
+
 /** Indicates that no special operations are to be performed. */
 case object NoParameters extends TunerParameters {
   type P = NoParameters.type

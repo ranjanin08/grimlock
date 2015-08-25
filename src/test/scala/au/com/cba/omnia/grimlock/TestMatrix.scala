@@ -138,7 +138,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Over(First), Default()).number()
+        cells.names(Over(First), Default(Reducers(123))).number()
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
         (Position1D("qux"), 3))
@@ -162,7 +162,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Over(Second), Default()).number()
+        cells.names(Over(Second), Default(Reducers(123))).number()
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D(1), 0), (Position1D(2), 1), (Position1D(3), 2),
         (Position1D(4), 3))
@@ -186,7 +186,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(First), Default()).number()
+        cells.names(Over(First), Default(Reducers(123))).number()
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
         (Position1D("qux"), 3))
@@ -210,7 +210,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(Second), Default()).number()
+        cells.names(Over(Second), Default(Reducers(123))).number()
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D(1), 0), (Position1D(2), 1), (Position1D(3), 2),
         (Position1D(4), 3))
@@ -234,7 +234,7 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(Third), Default()).number()
+        cells.names(Over(Third), Default(Reducers(123))).number()
     } Then {
       _.toList.sortBy(_._1) shouldBe List((Position1D("xyz"), 0))
     }
@@ -836,7 +836,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.size(First, true, Default())
+        cells.size(First, true, Default(Reducers(123)))
     } Then {
       _.toList shouldBe result2
     }
@@ -858,7 +858,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(First, true, Default())
+        cells.size(First, true, Default(Reducers(123)))
     } Then {
       _.toList shouldBe result4
     }
@@ -880,7 +880,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(Second, true, Default())
+        cells.size(Second, true, Default(Reducers(123)))
     } Then {
       _.toList shouldBe result6
     }
@@ -902,7 +902,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(First, true, Default())
+        cells.size(First, true, Default(Reducers(123)))
     } Then {
       _.toList shouldBe result8
     }
@@ -924,7 +924,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(Second, true, Default())
+        cells.size(Second, true, Default(Reducers(123)))
     } Then {
       _.toList shouldBe result10
     }
@@ -946,7 +946,7 @@ class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(Third, true, Default())
+        cells.size(Third, true, Default(Reducers(123)))
     } Then {
       _.toList shouldBe result12
     }
@@ -1075,7 +1075,7 @@ class TestScaldingMatrixShape extends TestMatrixShape with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.shape(Default())
+        cells.shape(Default(Reducers(123)))
     } Then {
       _.toList shouldBe result2
     }
@@ -4865,7 +4865,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.unique(Over(First), Default())
+        cells.unique(Over(First), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result2
     }
@@ -4887,7 +4887,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Over(First), Default())
+        cells.unique(Over(First), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result4
     }
@@ -4909,7 +4909,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Over(Second), Default())
+        cells.unique(Over(Second), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result6
     }
@@ -4931,7 +4931,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Default())
+        cells.unique(Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result8
     }
@@ -4953,7 +4953,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Along(First), Default())
+        cells.unique(Along(First), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result10
     }
@@ -4975,7 +4975,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Along(Second), Default())
+        cells.unique(Along(Second), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result12
     }
@@ -4997,7 +4997,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Along(Third), Default())
+        cells.unique(Along(Third), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result14
     }
