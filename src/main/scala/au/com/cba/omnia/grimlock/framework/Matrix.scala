@@ -56,27 +56,28 @@ case class Cell[P <: Position](position: P, content: Content) {
 /** Companion object to the Cell class. */
 object Cell {
   /**
-   * Parse a line into a `Option[Cell[Position1D]]`.
+   * Parse a line into a `Cell[Position1D]`.
    *
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
    * @param line      The line to parse.
    */
-  def parse1D(separator: String = "|", first: Codex = StringCodex)(line: String): Option[Cell[Position1D]] = {
+  def parse1D(separator: String = "|", first: Codex = StringCodex)(
+    line: String): Option[Either[Cell[Position1D], String]] = {
     line.trim.split(Pattern.quote(separator), 4) match {
       case Array(r, t, e, v) =>
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(r)) match {
-            case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
-            case _ => None
+            case (Some(con), Some(c1)) => Some(Left(Cell(Position1D(c1), con)))
+            case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line data into a `Option[Cell[Position1D]]` with a dictionary.
+   * Parse a line data into a `Cell[Position1D]` with a dictionary.
    *
    * @param dict      The dictionary describing the features in the data.
    * @param separator The column separator.
@@ -84,19 +85,19 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse1DWithDictionary(dict: Map[String, Schema], separator: String = "|", first: Codex = StringCodex)(
-    line: String): Option[Cell[Position1D]] = {
+    line: String): Option[Either[Cell[Position1D], String]] = {
     line.trim.split(Pattern.quote(separator), 2) match {
       case Array(e, v) =>
         (dict(e).decode(v), first.decode(e)) match {
-          case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
-          case _ => None
+          case (Some(con), Some(c1)) => Some(Left(Cell(Position1D(c1), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position1D]]` with a schema.
+   * Parse a line into a `Cell[Position1D]` with a schema.
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
@@ -104,19 +105,19 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse1DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex)(
-    line: String): Option[Cell[Position1D]] = {
+    line: String): Option[Either[Cell[Position1D], String]] = {
     line.trim.split(Pattern.quote(separator), 2) match {
       case Array(e, v) =>
         (schema.decode(v), first.decode(e)) match {
-          case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
-          case _ => None
+          case (Some(con), Some(c1)) => Some(Left(Cell(Position1D(c1), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position2D]]`.
+   * Parse a line into a `Cell[Position2D]`.
    *
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
@@ -124,21 +125,21 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse2D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex)(
-    line: String): Option[Cell[Position2D]] = {
+    line: String): Option[Either[Cell[Position2D], String]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(r, c, t, e, v) =>
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(r), second.decode(c)) match {
-            case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
-            case _ => None
+            case (Some(con), Some(c1), Some(c2)) => Some(Left(Cell(Position2D(c1, c2), con)))
+            case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position2D]]` with a dictionary.
+   * Parse a line into a `Cell[Position2D]` with a dictionary.
    *
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
@@ -149,7 +150,7 @@ object Cell {
    */
   def parse2DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
     first: Codex = StringCodex, second: Codex = StringCodex)(line: String)(
-      implicit ev: PosDimDep[Position2D, D]): Option[Cell[Position2D]] = {
+      implicit ev: PosDimDep[Position2D, D]): Option[Either[Cell[Position2D], String]] = {
     line.trim.split(Pattern.quote(separator), 3) match {
       case Array(e, a, v) =>
         val s = dim match {
@@ -158,15 +159,15 @@ object Cell {
         }
 
         (s.decode(v), first.decode(e), second.decode(a)) match {
-          case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
-          case _ => None
+          case (Some(con), Some(c1), Some(c2)) => Some(Left(Cell(Position2D(c1, c2), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position2D]]` with a schema.
+   * Parse a line into a `Cell[Position2D]` with a schema.
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
@@ -175,19 +176,19 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse2DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
-    second: Codex = StringCodex)(line: String): Option[Cell[Position2D]] = {
+    second: Codex = StringCodex)(line: String): Option[Either[Cell[Position2D], String]] = {
     line.trim.split(Pattern.quote(separator), 3) match {
       case Array(e, a, v) =>
         (schema.decode(v), first.decode(e), second.decode(a)) match {
-          case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
-          case _ => None
+          case (Some(con), Some(c1), Some(c2)) => Some(Left(Cell(Position2D(c1, c2), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position3D]]`.
+   * Parse a line into a `Cell[Position3D]`.
    *
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
@@ -196,21 +197,21 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse3D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
-    third: Codex = StringCodex)(line: String): Option[Cell[Position3D]] = {
+    third: Codex = StringCodex)(line: String): Option[Either[Cell[Position3D], String]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(r, c, d, t, e, v) =>
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(r), second.decode(c), third.decode(d)) match {
-            case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
-            case _ => None
+            case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Left(Cell(Position3D(c1, c2, c3), con)))
+            case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position3D]]` with a dictionary.
+   * Parse a line into a `Cell[Position3D]` with a dictionary.
    *
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
@@ -222,7 +223,7 @@ object Cell {
    */
   def parse3DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
     first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex)(line: String)(
-      implicit ev: PosDimDep[Position3D, D]): Option[Cell[Position3D]] = {
+      implicit ev: PosDimDep[Position3D, D]): Option[Either[Cell[Position3D], String]] = {
     line.trim.split(Pattern.quote(separator), 4) match {
       case Array(e, a, t, v) =>
         val s = dim match {
@@ -232,15 +233,15 @@ object Cell {
         }
 
         (s.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
-          case _ => None
+          case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Left(Cell(Position3D(c1, c2, c3), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position3D]]` with a schema.
+   * Parse a line into a `Cell[Position3D]` with a schema.
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
@@ -250,19 +251,20 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse3DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
-    second: Codex = StringCodex, third: Codex = StringCodex)(line: String): Option[Cell[Position3D]] = {
+    second: Codex = StringCodex, third: Codex = StringCodex)(
+      line: String): Option[Either[Cell[Position3D], String]] = {
     line.trim.split(Pattern.quote(separator), 4) match {
       case Array(e, a, t, v) =>
         (schema.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
-          case _ => None
+          case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Left(Cell(Position3D(c1, c2, c3), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position4D]]`.
+   * Parse a line into a `Cell[Position4D]`.
    *
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
@@ -272,21 +274,23 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse4D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
-    third: Codex = StringCodex, fourth: Codex = StringCodex)(line: String): Option[Cell[Position4D]] = {
+    third: Codex = StringCodex, fourth: Codex = StringCodex)(
+      line: String): Option[Either[Cell[Position4D], String]] = {
     line.trim.split(Pattern.quote(separator), 7) match {
       case Array(a, b, c, d, t, e, v) =>
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
-            case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
-            case _ => None
+            case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) =>
+              Some(Left(Cell(Position4D(c1, c2, c3, c4), con)))
+            case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position4D]]` with a dictionary.
+   * Parse a line into a `Cell[Position4D]` with a dictionary.
    *
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
@@ -299,7 +303,7 @@ object Cell {
    */
   def parse4DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
     first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex)(
-      line: String)(implicit ev: PosDimDep[Position4D, D]): Option[Cell[Position4D]] = {
+      line: String)(implicit ev: PosDimDep[Position4D, D]): Option[Either[Cell[Position4D], String]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(a, b, c, d, v) =>
         val s = dim match {
@@ -310,15 +314,15 @@ object Cell {
         }
 
         (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
-          case _ => None
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Left(Cell(Position4D(c1, c2, c3, c4), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position4D]]` with a schema.
+   * Parse a line into a `Cell[Position4D]` with a schema.
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
@@ -330,19 +334,19 @@ object Cell {
    */
   def parse4DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex)(
-      line: String): Option[Cell[Position4D]] = {
+      line: String): Option[Either[Cell[Position4D], String]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(a, b, c, d, v) =>
         (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
-          case _ => None
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Left(Cell(Position4D(c1, c2, c3, c4), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position5D]]`.
+   * Parse a line into a `Cell[Position5D]`.
    *
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
@@ -354,23 +358,23 @@ object Cell {
    */
   def parse5D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
     third: Codex = StringCodex, fourth: Codex = StringCodex, fifth: Codex = StringCodex)(
-      line: String): Option[Cell[Position5D]] = {
+      line: String): Option[Either[Cell[Position5D], String]] = {
     line.trim.split(Pattern.quote(separator), 8) match {
       case Array(a, b, c, d, f, t, e, v) =>
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
             fifth.decode(f)) match {
               case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
-                Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
-              case _ => None
+                Some(Left(Cell(Position5D(c1, c2, c3, c4, c5), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
             }
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position5D]]` with a dictionary.
+   * Parse a line into a `Cell[Position5D]` with a dictionary.
    *
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
@@ -384,7 +388,8 @@ object Cell {
    */
   def parse5DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
     first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex,
-      fifth: Codex = StringCodex)(line: String)(implicit ev: PosDimDep[Position5D, D]): Option[Cell[Position5D]] = {
+      fifth: Codex = StringCodex)(line: String)(
+        implicit ev: PosDimDep[Position5D, D]): Option[Either[Cell[Position5D], String]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(a, b, c, d, e, v) =>
         val s = dim match {
@@ -397,10 +402,10 @@ object Cell {
 
         (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d), fifth.decode(e)) match {
           case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
-            Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
-          case _ => None
+            Some(Left(Cell(Position5D(c1, c2, c3, c4, c5), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
@@ -418,16 +423,16 @@ object Cell {
    */
   def parse5DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex, fifth: Codex = StringCodex)(
-      line: String): Option[Cell[Position5D]] = {
+      line: String): Option[Either[Cell[Position5D], String]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(a, b, c, d, e, v) =>
         (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
           fifth.decode(e)) match {
             case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
-              Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
-            case _ => None
+              Some(Left(Cell(Position5D(c1, c2, c3, c4, c5), con)))
+            case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
-      case _ => None
+      case _ => Some(Right("Unable to split input: '" + line + "'"))
     }
   }
 
@@ -440,13 +445,16 @@ object Cell {
    * @param line      The line to parse.
    */
   def parseTable(columns: List[(String, Schema)], pkeyIndex: Int = 0, separator: String = "\u0001")(
-    line: String): List[Cell[Position2D]] = {
+    line: String): List[Either[Cell[Position2D], String]] = {
     val parts = line.trim.split(Pattern.quote(separator), columns.length)
     val pkey = parts(pkeyIndex)
 
     columns.zipWithIndex.flatMap {
       case ((name, schema), idx) if (idx != pkeyIndex) =>
-        schema.decode(parts(idx).trim).map { case c => Cell(Position2D(pkey, name), c) }
+        schema.decode(parts(idx).trim) match {
+          case Some(con) => Some(Left(Cell(Position2D(pkey, name), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
+        }
       case _ => None
     }
   }
@@ -780,7 +788,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *       contained script. Lastly, `parser` functions are provided on the `Cell` object.
    */
   def stream[Q <: Position](command: String, script: String, separator: String,
-    parser: String => TraversableOnce[Cell[Q]]): U[Cell[Q]]
+    parser: String => TraversableOnce[Either[Cell[Q], String]]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `summarise` functions. */
   type SummariseTuners <: OneOf

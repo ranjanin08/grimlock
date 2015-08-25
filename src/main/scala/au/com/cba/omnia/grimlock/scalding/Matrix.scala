@@ -424,7 +424,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def stream[Q <: Position](command: String, script: String, separator: String,
-    parser: String => TraversableOnce[Cell[Q]]): U[Cell[Q]] = {
+    parser: String => TraversableOnce[Either[Cell[Q], String]]): U[Cell[Q]] = {
     val lines = Source.fromFile(script).getLines.toList
     val smfn = (k: Unit, itr: Iterator[String]) => {
       val tmp = File.createTempFile("grimlock-", "-" + Paths.get(script).getFileName().toString())
@@ -473,6 +473,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .mapGroup(smfn)
       .values
       .flatMap(parser(_))
+      .collect { case Left(c) => c }
   }
 
   type SummariseTuners = TP2
@@ -956,9 +957,17 @@ object Matrix {
    *
    * @param file   The text file to read from.
    * @param parser The parser that converts a single line to a cell.
+   * @param errors The filename for any parsing errors.
    */
-  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Cell[P]]): TypedPipe[Cell[P]] = {
-    TypedPipe.from(TextLine(file)).flatMap { parser(_) }
+  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]],
+    errors: String = null)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[P]] = {
+    val pipe = TypedPipe.from(TextLine(file)).flatMap { parser(_) }
+
+    if (errors != null) {
+      pipe.collect { case Right(e) => e }.write(TypedSink(TextLine(errors)))
+    }
+
+    pipe.collect { case Left(c) => c }
   }
 
   /** Conversion from `TypedPipe[Cell[Position1D]]` to a Scalding `Matrix1D`. */

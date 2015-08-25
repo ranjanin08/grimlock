@@ -928,3 +928,12 @@ object TestSpark30 {
   }
 }
 
+object TestSpark31 {
+  def main(args: Array[String]) {
+    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+
+    loadText(args(1) + "/badInputfile.txt", Cell.parse3D(third = DateCodex()), "./tmp.spark/nok.out")
+      .save("./tmp.spark/yok.out", descriptive = true)
+  }
+}
+

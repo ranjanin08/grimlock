@@ -175,7 +175,7 @@ object ContinuousSchema {
   }
 
   /** Pattern for matching short string continuous value with parameters. */
-  val pattern = (Type.Continuous + """\((.*),(.*)\)""").r
+  val pattern = (Type.Continuous.name + """\((.*),(.*)\)""").r
 
   /**
    * Parse continuous schema parameters
@@ -252,7 +252,7 @@ object DiscreteSchema {
     implicit int: Integral[C#T]): DiscreteSchema[C] = DiscreteSchema(codex, Some(minimum), Some(maximum), Some(step))
 
   /** Pattern for matching short string discrete value with parameters. */
-  val pattern = (Type.Discrete + """\((.*),(.*),(.*)\)""").r
+  val pattern = (Type.Discrete.name + """\((.*),(.*),(.*)\)""").r
 
   /**
    * Parse discrete schema parameters
@@ -326,7 +326,7 @@ object NominalSchema {
   def apply[C <: Codex](codex: C, domain: List[C#T]): NominalSchema[C] = NominalSchema(codex, Some(domain))
 
   /** Pattern for matching short string nominal value with parameters. */
-  val pattern = (Type.Nominal + """\((.*)\)""").r
+  val pattern = (Type.Nominal.name + """\((.*)\)""").r
 
   /**
    * Parse nominal schema parameters
@@ -385,7 +385,7 @@ object OrdinalSchema {
   def apply[C <: Codex](codex: C, domain: List[C#T]): OrdinalSchema[C] = OrdinalSchema(codex, Some(domain))
 
   /** Pattern for matching short string ordinal value with parameters. */
-  val pattern = (Type.Ordinal + """\((.*)\)""").r
+  val pattern = (Type.Ordinal.name + """\((.*)\)""").r
 
   /**
    * Parse ordinal schema parameters

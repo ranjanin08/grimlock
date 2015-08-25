@@ -864,3 +864,9 @@ class TestScalding30(args: Args) extends Job(args) {
     .save("./tmp.scalding/strm.out")
 }
 
+class TestScalding31(args: Args) extends Job(args) {
+
+  loadText(args("path") + "/badInputfile.txt", Cell.parse3D(third = DateCodex()), "./tmp.scalding/nok.out")
+    .save("./tmp.scalding/yok.out", descriptive = true)
+}
+

@@ -323,11 +323,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def stream[Q <: Position](command: String, script: String, separator: String,
-    parser: String => TraversableOnce[Cell[Q]]): U[Cell[Q]] = {
+    parser: String => TraversableOnce[Either[Cell[Q], String]]): U[Cell[Q]] = {
     data
       .map(_.toString(separator, false))
       .pipe(command + " " + script)
       .flatMap(parser(_))
+      .collect { case Left(c) => c }
   }
 
   type SummariseTuners = TP2
@@ -730,9 +731,18 @@ object Matrix {
    *
    * @param file   The text file to read from.
    * @param parser The parser that converts a single line to a cell.
+   * @param errors The filename for any parsing errors.
    */
-  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Cell[P]])(
-    implicit sc: SparkContext): RDD[Cell[P]] = sc.textFile(file).flatMap { parser(_) }
+  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]],
+    errors: String = null)(implicit sc: SparkContext): RDD[Cell[P]] = {
+    val rdd = sc.textFile(file).flatMap { parser(_) }
+
+    if (errors != null) {
+      rdd.collect { case Right(e) => e }.saveAsTextFile(errors)
+    }
+
+    rdd.collect { case Left(c) => c }
+  }
 
   /** Conversion from `RDD[Cell[Position1D]]` to a Spark `Matrix1D`. */
   implicit def RDD2M1(data: RDD[Cell[Position1D]]): Matrix1D = new Matrix1D(data)
