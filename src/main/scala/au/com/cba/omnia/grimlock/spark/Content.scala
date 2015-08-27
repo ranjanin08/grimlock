@@ -27,6 +27,10 @@ import org.apache.spark.rdd.RDD
  */
 class Contents(val data: RDD[Content]) extends BaseContents with Persist[Content] {
   type U[A] = RDD[A]
+
+  def saveAsText(file: String, writer: (Content) => TraversableOnce[String] = Content.toString()): U[Content] = {
+    saveText(file, writer)
+  }
 }
 
 /** Companion object for the Spark `Contents` class. */

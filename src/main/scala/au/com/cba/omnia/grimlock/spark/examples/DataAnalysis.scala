@@ -51,9 +51,9 @@ object DataAnalysis {
     //  4/ Save the moments.
     data
       .summarise(Over(First), Count[Position2D, Position1D]())
-      .save(s"./demo.${output}/feature_count.out")
+      .saveAsText(s"./demo.${output}/feature_count.out")
       .summarise(Along(First), moments)
-      .save(s"./demo.${output}/feature_density.out")
+      .saveAsText(s"./demo.${output}/feature_density.out")
 
     // For the features:
     //  1/ Compute the number of instance that have a value for each features;
@@ -62,9 +62,9 @@ object DataAnalysis {
     //  4/ Save the moments.
     data
       .summarise(Over(Second), Count[Position2D, Position1D]())
-      .save(s"./demo.${output}/instance_count.out")
+      .saveAsText(s"./demo.${output}/instance_count.out")
       .summarise(Along(First), moments)
-      .save(s"./demo.${output}/instance_density.out")
+      .saveAsText(s"./demo.${output}/instance_density.out")
   }
 }
 

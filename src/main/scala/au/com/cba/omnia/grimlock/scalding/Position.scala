@@ -25,6 +25,8 @@ import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.scalding._
 
+import cascading.flow.FlowDef
+import com.twitter.scalding.Mode
 import com.twitter.scalding.typed.{ IterablePipe, TypedPipe }
 
 import scala.reflect.ClassTag
@@ -44,6 +46,9 @@ class Positions[P <: Position](val data: TypedPipe[P]) extends BasePositions[P] 
   }
 
   def number(): U[(P, Long)] = Names.number(data)
+
+  def saveAsText(file: String, writer: (P) => TraversableOnce[String] = Position.toString())(implicit flow: FlowDef,
+    mode: Mode): U[P] = saveText(file, writer)
 
   protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[P] = {
     data.filter { case p => !keep ^ f(p) }

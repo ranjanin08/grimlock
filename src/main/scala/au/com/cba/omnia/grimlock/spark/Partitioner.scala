@@ -15,7 +15,7 @@
 package au.com.cba.omnia.grimlock.spark.partition
 
 import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner }
-import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => BasePartitions }
+import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => BasePartitions }
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
@@ -58,6 +58,11 @@ class Partitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) extend
   def merge(ids: List[T]): U[Cell[P]] = data.collect { case (t, c) if (ids.contains(t)) => c }
 
   def remove(id: T): U[(T, Cell[P])] = data.filter { case (t, c) => t != id }
+
+  def saveAsText(file: String,
+    writer: ((T, Cell[P])) => TraversableOnce[String] = Partition.toString()): U[(T, Cell[P])] = {
+    saveText(file, writer)
+  }
 }
 
 /** Companion object for the Spark `Partitions` class. */

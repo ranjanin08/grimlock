@@ -15,13 +15,15 @@
 package au.com.cba.omnia.grimlock.scalding.partition
 
 import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Tuner }
-import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => BasePartitions }
+import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => BasePartitions }
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.scalding._
 
+import cascading.flow.FlowDef
+import com.twitter.scalding.Mode
 import com.twitter.scalding.typed.{ Grouped, TypedPipe }
 
 import scala.reflect.ClassTag
@@ -57,6 +59,9 @@ class Partitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cell[P])]) 
   def merge(ids: List[T]): U[Cell[P]] = data.collect { case (t, c) if (ids.contains(t)) => c }
 
   def remove(id: T): U[(T, Cell[P])] = data.filter { case (t, c) => t != id }
+
+  def saveAsText(file: String, writer: ((T, Cell[P])) => TraversableOnce[String] = Partition.toString())(
+    implicit flow: FlowDef, mode: Mode): U[(T, Cell[P])] = saveText(file, writer)
 }
 
 /** Companion object for the Scalding `Partitions` class. */

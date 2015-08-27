@@ -17,6 +17,8 @@ package au.com.cba.omnia.grimlock.scalding
 import au.com.cba.omnia.grimlock.framework.{ Type, Types => BaseTypes }
 import au.com.cba.omnia.grimlock.framework.position._
 
+import cascading.flow.FlowDef
+import com.twitter.scalding.Mode
 import com.twitter.scalding.typed.TypedPipe
 
 /**
@@ -28,6 +30,9 @@ import com.twitter.scalding.typed.TypedPipe
  */
 class Types[P <: Position](val data: TypedPipe[(P, Type)]) extends BaseTypes[P] with Persist[(P, Type)] {
   type U[A] = TypedPipe[A]
+
+  def saveAsText(file: String, writer: ((P, Type)) => TraversableOnce[String] = Type.toString())(
+    implicit flow: FlowDef, mode: Mode): U[(P, Type)] = saveText(file, writer)
 }
 
 /** Companion object for the Scalding `Types` class. */

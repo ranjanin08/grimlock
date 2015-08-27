@@ -214,6 +214,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.filter { case c => sampler.selectWithValue(c, value) }
   }
 
+  def saveAsText(file: String, writer: (Cell[P]) => TraversableOnce[String] = Cell.toString()): U[Cell[P]] = {
+    saveText(file, writer)
+  }
+
   type SetTuners = TP2
   def set[I, T <: Tuner](positions: I, value: Content, tuner: T = Default())(
     implicit ev1: PositionDistributable[I, P, RDD], ev2: ClassTag[P], ev3: SetTuners#V[T]): U[Cell[P]] = {
@@ -325,7 +329,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def stream[Q <: Position](command: String, script: String, separator: String,
     parser: String => TraversableOnce[Either[Cell[Q], String]]): U[Cell[Q]] = {
     data
-      .map(_.toString(separator, false))
+      .map(_.toString(separator, false, true))
       .pipe(command + " " + script)
       .flatMap(parser(_))
       .collect { case Left(c) => c }

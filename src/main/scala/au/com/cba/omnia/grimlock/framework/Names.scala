@@ -98,11 +98,21 @@ trait Names[P <: Position] {
   }
 
   protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[(P, Long)]
+}
 
-  protected def toString(t: (P, Long), separator: String, descriptive: Boolean): String = {
-    descriptive match {
-      case true => t._1.toString + separator + t._2.toString
-      case false => t._1.toShortString(separator) + separator + t._2.toString
+/** Object for `Name` functions. */
+object Name {
+  /**
+   * Return function that returns a string representation of a name.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   */
+  def toString[P <: Position](separator: String = "|",
+    descriptive: Boolean = false): ((P, Long)) => TraversableOnce[String] = {
+    (t: (P, Long)) => descriptive match {
+      case true => Some(t._1.toString + separator + t._2.toString)
+      case false => Some(t._1.toShortString(separator) + separator + t._2.toString)
     }
   }
 }

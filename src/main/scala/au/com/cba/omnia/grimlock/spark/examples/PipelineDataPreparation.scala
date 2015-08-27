@@ -113,7 +113,7 @@ object PipelineDataPreparation {
 
     // Combine all statistics and write result to file
     val stats = (descriptive ++ histogram ++ summary)
-      .save(s"./demo.${output}/stats.out")
+      .saveAsText(s"./demo.${output}/stats.out")
 
     // Determine which features to filter based on statistics. In this case remove all features that occur for 2 or
     // fewer instances. These are removed first to prevent indicator features from being created.

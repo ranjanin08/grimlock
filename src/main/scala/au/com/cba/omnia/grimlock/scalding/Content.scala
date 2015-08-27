@@ -18,7 +18,9 @@ import au.com.cba.omnia.grimlock.framework.content.{ Contents => BaseContents, _
 
 import au.com.cba.omnia.grimlock.scalding._
 
-import com.twitter.scalding.TypedPipe
+import cascading.flow.FlowDef
+import com.twitter.scalding.Mode
+import com.twitter.scalding.typed.TypedPipe
 
 /**
  * Rich wrapper around a `TypedPipe[Content]`.
@@ -27,6 +29,9 @@ import com.twitter.scalding.TypedPipe
  */
 class Contents(val data: TypedPipe[Content]) extends BaseContents with Persist[Content] {
   type U[A] = TypedPipe[A]
+
+  def saveAsText(file: String, writer: (Content) => TraversableOnce[String] = Content.toString())(
+    implicit flow: FlowDef, mode: Mode): U[Content] = saveText(file, writer)
 }
 
 /** Companion object for the Scalding `Contents` class. */

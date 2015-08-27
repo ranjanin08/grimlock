@@ -83,6 +83,6 @@ class LabelWeighting(args: Args) extends Job(args) {
   // Re-read labels and add the computed weight.
   loadText(s"${path}/exampleLabels.txt", Cell.parse2DWithSchema(ContinuousSchema(DoubleCodex)))
     .transformWithValue(AddWeight(), weights)
-    .save(s"./demo.${output}/weighted.out")
+    .saveAsText(s"./demo.${output}/weighted.out")
 }
 

@@ -57,6 +57,8 @@ class TestCell extends TestGrimlock {
       "Position2D(StringValue(foo),LongValue(123)).Content(ContinuousSchema(DoubleCodex),DoubleValue(3.14))"
     Cell(Position2D("foo", 123), Content(ContinuousSchema(DoubleCodex), 3.14)).toString(".", false) shouldBe
       "foo.123.continuous.double.3.14"
+    Cell(Position2D("foo", 123), Content(ContinuousSchema(DoubleCodex), 3.14)).toString(".", false, false) shouldBe
+      "foo.123.3.14"
   }
 }
 

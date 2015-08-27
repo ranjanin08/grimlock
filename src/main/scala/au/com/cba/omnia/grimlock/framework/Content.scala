@@ -29,6 +29,13 @@ trait Content {
   /**
    * Converts the content to a consise (terse) string.
    *
+   * @return Short string representation.
+   */
+  def toShortString(): String = value.toShortString
+
+  /**
+   * Converts the content to a consise (terse) string.
+   *
    * @param separator The separator to use between the fields.
    *
    * @return Short string representation.
@@ -171,6 +178,10 @@ object Content {
    */
   // TODO: Is is possible to enforce that both codex have to be the same?
   def apply[S <: Schema, V <: Value](schema: S, value: V): Content = ContentImpl(schema, value)
+
+  def toString(separator: String = "|", descriptive: Boolean = false): (Content) => TraversableOnce[String] = {
+    (t: Content) => if (descriptive) { Some(t.toString) } else { Some(t.toShortString(separator)) }
+  }
 }
 
 private[content] case class ContentImpl(schema: Schema, value: Value) extends Content
@@ -179,9 +190,5 @@ private[content] case class ContentImpl(schema: Schema, value: Value) extends Co
 trait Contents {
   /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
   type U[_]
-
-  protected def toString(t: Content, separator: String, descriptive: Boolean): String = {
-    if (descriptive) { t.toString } else { t.toShortString(separator) }
-  }
 }
 

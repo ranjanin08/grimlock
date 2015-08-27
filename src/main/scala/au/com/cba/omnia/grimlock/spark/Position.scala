@@ -48,6 +48,10 @@ class Positions[P <: Position](val data: RDD[P]) extends BasePositions[P] with P
 
   def number(): U[(P, Long)] = Names.number(data)
 
+  def saveAsText(file: String, writer: (P) => TraversableOnce[String] = Position.toString()): U[P] = {
+    saveText(file, writer)
+  }
+
   protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[P] = {
     data.filter { case p => !keep ^ f(p) }
   }

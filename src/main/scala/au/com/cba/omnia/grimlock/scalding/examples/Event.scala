@@ -179,6 +179,6 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
     //    .andThenPresent(_.value.asDouble)),
     //  tf.summarise(Along(Second), Max[Position2D, Position1D]()).toMap(Over(First)))
     .transformWithValue(TfIdf(extractIdf), idf)
-    .save(s"./demo.${output}/tfidf_entity.out")
+    .saveAsText(s"./demo.${output}/tfidf_entity.out")
 }
 

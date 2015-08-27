@@ -96,7 +96,7 @@ class Conditional(args: Args) extends Job(args) {
   heg
     .summarise(Along(First), Sum[Position3D, Position2D]())
     .transformWithValue(Fraction(extractor), gcount)
-    .save(s"./demo.${output}/eye.out")
+    .saveAsText(s"./demo.${output}/eye.out")
 
   // Get hair color conditional on gender.
   // 1/ Sum out eye color.
@@ -104,6 +104,6 @@ class Conditional(args: Args) extends Job(args) {
   heg
     .summarise(Along(Second), Sum[Position3D, Position2D]())
     .transformWithValue(Fraction(extractor), gcount)
-    .save(s"./demo.${output}/hair.out")
+    .saveAsText(s"./demo.${output}/hair.out")
 }
 

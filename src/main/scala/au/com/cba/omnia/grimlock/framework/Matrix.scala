@@ -44,11 +44,13 @@ case class Cell[P <: Position](position: P, content: Content) {
    *
    * @param separator   The separator to use between various fields.
    * @param descriptive Indicator if descriptive string is required or not.
+   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */
-  def toString(separator: String, descriptive: Boolean): String = {
-    descriptive match {
-      case true => position.toString + separator + content.toString
-      case false => position.toShortString(separator) + separator + content.toShortString(separator)
+  def toString(separator: String, descriptive: Boolean, schema: Boolean = true): String = {
+    (descriptive, schema) match {
+      case (true, _) => position.toString + separator + content.toString
+      case (false, true) => position.toShortString(separator) + separator + content.toShortString(separator)
+      case (false, false) => position.toShortString(separator) + separator + content.toShortString()
     }
   }
 }
@@ -458,10 +460,22 @@ object Cell {
       case _ => None
     }
   }
+
+  /**
+   * Return function that returns a string representation of a cell.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
+   */
+  def toString[P <: Position](separator: String = "|", descriptive: Boolean = false,
+    schema: Boolean = true): (Cell[P]) => TraversableOnce[String] = {
+    (t: Cell[P]) => Some(t.toString(separator, descriptive, schema))
+  }
 }
 
 /** Base trait for matrix operations. */
-trait Matrix[P <: Position] extends Persist[Cell[P]] {
+trait Matrix[P <: Position] {
   /** Type of the underlying data structure. */
   type U[_]
 
@@ -952,10 +966,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   protected type TP1 = OneOf1[Default[NoParameters.type]]
   protected type TP2 = OneOf2[Default[NoParameters.type], Default[Reducers]]
   protected type TP3 = OneOf3[Default[NoParameters.type], Default[Reducers], Default[Sequence2[Reducers, Reducers]]]
-
-  protected def toString(t: Cell[P], separator: String, descriptive: Boolean): String = {
-    t.toString(separator, descriptive)
-  }
 
   protected implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
 

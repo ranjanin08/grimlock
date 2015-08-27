@@ -76,6 +76,6 @@ class DerivedData(args: Args) extends Job(args) {
   loadText(s"${path}/exampleDerived.txt", Cell.parse3D(third = DateCodex()))
     .slide(Along(Third), Gradient(First))
     .melt(Third, Second, ".from.")
-    .save(s"./demo.${output}/gradient.out")
+    .saveAsText(s"./demo.${output}/gradient.out")
 }
 

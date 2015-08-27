@@ -72,18 +72,25 @@ object Type {
     else if (rt.isSpecialisationOf(lt.getGeneralisation())) { lt.getGeneralisation() }
     else { Type.Mixed }
   }
+
+  /**
+   * Return function that returns a string representation of a type.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   */
+  def toString[P <: Position](separator: String = "|",
+    descriptive: Boolean = false): ((P, Type)) => TraversableOnce[String] = {
+    (t: (P, Type)) => descriptive match {
+      case true => Some(t._1.toString + separator + t._2.toString)
+      case false => Some(t._1.toShortString(separator) + separator + t._2.name)
+    }
+  }
 }
 
 /** Base trait that represents the variable type along the dimensions of a matrix. */
 trait Types[P <: Position] {
   /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
   type U[_]
-
-  protected def toString(t: (P, Type), separator: String, descriptive: Boolean): String = {
-    descriptive match {
-      case true => t._1.toString + separator + t._2.toString
-      case false => t._1.toShortString(separator) + separator + t._2.name
-    }
-  }
 }
 

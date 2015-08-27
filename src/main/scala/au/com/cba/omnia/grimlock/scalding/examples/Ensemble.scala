@@ -119,7 +119,7 @@ class Ensemble(args: Args) extends Job(args) {
     .forEach(scripts, trainAndScore)
     .merge(scripts)
     .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
-    .save(s"./demo.${output}/ensemble.scores.out")
+    .saveAsText(s"./demo.${output}/ensemble.scores.out")
     .toMap(Over(First))
 
   // Rename instance id (first dimension) with its score
@@ -138,6 +138,6 @@ class Ensemble(args: Args) extends Job(args) {
     .sampleWithValue(SampleByScore(), scores)
     .renameWithValue(renameWithScore, scores)
     .gini(Over(Second))
-    .save(s"./demo.${output}/ensemble.gini.out")
+    .saveAsText(s"./demo.${output}/ensemble.gini.out")
 }
 

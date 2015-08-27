@@ -114,9 +114,20 @@ trait Partitions[T, P <: Position] {
    * @return A `U[(T, Cell[P])]` with the selected parition removed.
    */
   def remove(id: T): U[(T, Cell[P])]
+}
 
-  protected def toString(t: (T, Cell[P]), separator: String, descriptive: Boolean): String = {
-    t._1.toString + separator + t._2.toString(separator, descriptive)
+/** Object for `Partition` functions. */
+object Partition {
+  /**
+   * Return function that returns a string representation of a partition.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
+   */
+  def toString[T, P <: Position](separator: String = "|", descriptive: Boolean = false,
+    schema: Boolean = true): ((T, Cell[P])) => TraversableOnce[String] = {
+    (t: (T, Cell[P])) => Some(t._1.toString + separator + t._2.toString(separator, descriptive, schema))
   }
 }
 

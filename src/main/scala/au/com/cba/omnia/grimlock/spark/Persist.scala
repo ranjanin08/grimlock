@@ -14,27 +14,26 @@
 
 package au.com.cba.omnia.grimlock.spark
 
-import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist }
-
 import org.apache.spark.rdd.RDD
 
 /** Trait for peristing a Spark `RDD`. */
-trait Persist[T] extends BasePersist[T] with java.io.Serializable {
+trait Persist[T] extends java.io.Serializable {
   /** The data to persist. */
   val data: RDD[T]
 
   /**
    * Persist to disk.
    *
-   * @param file        Name of the output file.
-   * @param separator   Separator to use between the fields.
-   * @param descriptive Indicates if the output should be descriptive.
+   * @param file   Name of the output file.
+   * @param writer Writer that converts `T` to string.
    *
    * @return A Spark `RDD[T]` which is this object's data.
    */
-  def save(file: String, separator: String = "|", descriptive: Boolean = false): RDD[T] = {
+  def saveAsText(file: String, writer: (T) => TraversableOnce[String]): RDD[T]
+
+  protected def saveText(file: String, writer: (T) => TraversableOnce[String]): RDD[T] = {
     data
-      .map(toString(_, separator, descriptive))
+      .flatMap(writer(_))
       .saveAsTextFile(file)
 
     data

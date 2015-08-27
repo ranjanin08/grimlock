@@ -42,27 +42,27 @@ object BasicOperations {
     // Get the number of rows.
     data
       .size(First)
-      .save(s"./demo.${output}/row_size.out")
+      .saveAsText(s"./demo.${output}/row_size.out")
 
     // Get all dimensions of the matrix.
     data
       .shape()
-      .save(s"./demo.${output}/matrix_shape.out")
+      .saveAsText(s"./demo.${output}/matrix_shape.out")
 
     // Get the column names.
     data
       .names(Over(Second))
-      .save(s"./demo.${output}/column_names.out")
+      .saveAsText(s"./demo.${output}/column_names.out")
 
     // Get the type of variables of each column.
     data
       .types(Over(Second), true)
-      .save(s"./demo.${output}/column_types.txt")
+      .saveAsText(s"./demo.${output}/column_types.txt")
 
     // Transpose the matrix.
     data
       .permute(Second, First)
-      .save(s"./demo.${output}/transposed.out")
+      .saveAsText(s"./demo.${output}/transposed.out")
 
     // Construct a simple query
     def simpleQuery(cell: Cell[Position2D]) = (cell.content.value gtr 995) || (cell.content.value equ "F")
@@ -70,18 +70,18 @@ object BasicOperations {
     // Find all co-ordinates that match the above simple query.
     val coords = data
       .which(simpleQuery)
-      .save(s"./demo.${output}/query.txt")
+      .saveAsText(s"./demo.${output}/query.txt")
 
     // Get the data for the above coordinates.
     data
       .get(coords)
-      .save(s"./demo.${output}/values.txt")
+      .saveAsText(s"./demo.${output}/values.txt")
 
     // Keep columns A and B, and remove row 0221707
     data
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), "iid:0221707", false)
-      .save(s"./demo.${output}/sliced.txt")
+      .saveAsText(s"./demo.${output}/sliced.txt")
   }
 }
 

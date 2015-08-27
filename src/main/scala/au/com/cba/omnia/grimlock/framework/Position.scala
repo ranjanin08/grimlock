@@ -95,6 +95,17 @@ object Position {
     new Ordering[T] { def compare(x: T, y: T): Int = x.compare(y) * (if (ascending) { 1 } else { -1 }) }
   }
 
+  /**
+   * Return function that returns a string representation of a position.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   */
+  def toString[P <: Position](separator: String = "|",
+    descriptive: Boolean = false): (P) => TraversableOnce[String] = {
+    (t: P) => if (descriptive) { Some(t.toString) } else { Some(t.toShortString(separator)) }
+  }
+
   /** `MapablePosition` object for `PositionND` (N > 1) with `Along`. */
   case object MapAlong extends MapMapablePosition[Position1D] {}
 
@@ -842,10 +853,6 @@ trait Positions[P <: Position] {
   }
 
   protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[P]
-
-  protected def toString(t: P, separator: String, descriptive: Boolean): String = {
-    if (descriptive) { t.toString } else { t.toShortString(separator) }
-  }
 }
 
 /** Type class for transforming a type `T` into a `Position`. */
