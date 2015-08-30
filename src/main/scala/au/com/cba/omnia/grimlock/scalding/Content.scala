@@ -30,8 +30,8 @@ import com.twitter.scalding.typed.TypedPipe
 class Contents(val data: TypedPipe[Content]) extends BaseContents with Persist[Content] {
   type U[A] = TypedPipe[A]
 
-  def saveAsText(file: String, writer: (Content) => TraversableOnce[String] = Content.toString())(
-    implicit flow: FlowDef, mode: Mode): U[Content] = saveText(file, writer)
+  def saveAsText(file: String, writer: TextWriter = Content.toString())(implicit flow: FlowDef,
+    mode: Mode): U[Content] = saveText(file, writer)
 }
 
 /** Companion object for the Scalding `Contents` class. */

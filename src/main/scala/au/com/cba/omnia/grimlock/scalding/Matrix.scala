@@ -79,13 +79,6 @@ private[scalding] object ScaldingImplicits {
       }
     }
 
-    def tuneReducers(parameters: TunerParameters): Grouped[K, V] = {
-      parameters match {
-        case Reducers(reducers) => grouped.withReducers(reducers)
-        case _ => grouped
-      }
-    }
-
     def tunedJoin[W](tuner: Tuner, parameters: TunerParameters, smaller: TypedPipe[(K, W)])(
       implicit ev: Ordering[K]): TypedPipe[(K, (V, W))] = {
       (tuner, parameters) match {
@@ -101,6 +94,13 @@ private[scalding] object ScaldingImplicits {
         case (Default(_), Reducers(reducers)) => grouped.withReducers(reducers).leftJoin(Grouped(smaller))
         case (Unbalanced(_), Reducers(reducers)) => grouped.sketch(reducers).leftJoin(smaller)
         case _ => grouped.leftJoin(Grouped(smaller))
+      }
+    }
+
+    def tuneReducers(parameters: TunerParameters): Grouped[K, V] = {
+      parameters match {
+        case Reducers(reducers) => grouped.withReducers(reducers)
+        case _ => grouped
       }
     }
   }
@@ -312,8 +312,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.filterWithValue(value) { case (c, vo) => sampler.selectWithValue(c, vo.get) }
   }
 
-  def saveAsText(file: String, writer: (Cell[P]) => TraversableOnce[String] = Cell.toString())(
-    implicit flow: FlowDef, mode: Mode): U[Cell[P]] = saveText(file, writer)
+  def saveAsText(file: String, writer: TextWriter = Cell.toString())(implicit flow: FlowDef,
+    mode: Mode): U[Cell[P]] = saveText(file, writer)
 
   type SetTuners = TP2
   def set[I, T <: Tuner](positions: I, value: Content, tuner: T = Default())(

@@ -29,9 +29,7 @@ import org.apache.spark.rdd.RDD
 class Types[P <: Position](val data: RDD[(P, Type)]) extends BaseTypes[P] with Persist[(P, Type)] {
   type U[A] = RDD[A]
 
-  def saveAsText(file: String, writer: ((P, Type)) => TraversableOnce[String] = Type.toString()): U[(P, Type)] = {
-    saveText(file, writer)
-  }
+  def saveAsText(file: String, writer: TextWriter = Type.toString()): U[(P, Type)] = saveText(file, writer)
 }
 
 /** Companion object for the Spark `Types` class. */

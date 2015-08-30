@@ -15,7 +15,7 @@
 package au.com.cba.omnia.grimlock.framework
 
 /** Base trait for tuner parameters. */
-sealed trait TunerParameters extends java.io.Serializable {
+trait TunerParameters extends java.io.Serializable {
   /** Type of these parameters. */
   type P <: TunerParameters
 

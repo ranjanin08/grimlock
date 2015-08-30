@@ -31,8 +31,8 @@ import com.twitter.scalding.typed.TypedPipe
 class Types[P <: Position](val data: TypedPipe[(P, Type)]) extends BaseTypes[P] with Persist[(P, Type)] {
   type U[A] = TypedPipe[A]
 
-  def saveAsText(file: String, writer: ((P, Type)) => TraversableOnce[String] = Type.toString())(
-    implicit flow: FlowDef, mode: Mode): U[(P, Type)] = saveText(file, writer)
+  def saveAsText(file: String, writer: TextWriter = Type.toString())(implicit flow: FlowDef,
+    mode: Mode): U[(P, Type)] = saveText(file, writer)
 }
 
 /** Companion object for the Scalding `Types` class. */

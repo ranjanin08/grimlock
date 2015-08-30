@@ -24,12 +24,14 @@ import au.com.cba.omnia.grimlock.framework.utility._
 
 import au.com.cba.omnia.grimlock.library.partition._
 
+import au.com.cba.omnia.grimlock.scalding._
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
 
 import au.com.cba.omnia.grimlock.spark.partition.Partitions._
 
-import com.twitter.scalding._
 import com.twitter.scalding.bdd._
+import com.twitter.scalding.{ Args, Config, Mode }
+import com.twitter.scalding.typed.TypedPipe
 
 import java.util.Date
 
@@ -283,8 +285,8 @@ object TestPartitions {
     }
   }
 
-  def double(key: String, pipe: TypedPipe[Cell[Position1D]]): TypedPipe[Cell[Position1D]] = pipe.flatMap { double(_) }
-  def double(key: String, pipe: RDD[Cell[Position1D]]): RDD[Cell[Position1D]] = pipe.flatMap { double(_) }
+  def doubleT(key: String, pipe: TypedPipe[Cell[Position1D]]): TypedPipe[Cell[Position1D]] = pipe.flatMap { double(_) }
+  def doubleR(key: String, pipe: RDD[Cell[Position1D]]): RDD[Cell[Position1D]] = pipe.flatMap { double(_) }
 }
 
 class TestScaldingPartitions extends TestPartitions with TBddDsl {
@@ -340,7 +342,10 @@ class TestScaldingPartitions extends TestPartitions with TBddDsl {
       data
     } When {
       parts: TypedPipe[(String, Cell[Position1D])] =>
-        parts.forEach(List("test", "valid", "not.there"), TestPartitions.double)
+        implicit val config = Config.default
+        implicit val mode = Mode(Args("--local"), null)
+
+        parts.forEach(TestPartitions.doubleT, List("train", "not.there"), Default(Execution()))
     } Then {
       _.toList.sortBy(_._2.content.value.toShortString) shouldBe result5
     }
@@ -375,7 +380,7 @@ class TestSparkPartitions extends TestPartitions {
 
   it should "foreach should apply to selected partitions" in {
     toRDD(data)
-      .forEach(List("test", "valid", "not.there"), TestPartitions.double)
+      .forEach(TestPartitions.doubleR, List("train", "not.there"), Default(NoParameters))
       .toList.sortBy(_._2.content.value.toShortString) shouldBe result5
   }
 }

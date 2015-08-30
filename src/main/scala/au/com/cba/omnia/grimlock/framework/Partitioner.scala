@@ -54,7 +54,7 @@ trait PartitionerWithValue[P <: Position, T] {
 }
 
 /** Base trait that represents the partitions of matrices */
-trait Partitions[T, P <: Position] {
+trait Partitions[I, P <: Position] {
   /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
   type U[_]
 
@@ -64,19 +64,24 @@ trait Partitions[T, P <: Position] {
    * @param id        The partition identifier.
    * @param partition The partition to add.
    *
-   * @return A `U[(T, Cell[P])]` containing existing and new paritions.
+   * @return A `U[(I, Cell[P])]` containing existing and new paritions.
    */
-  def add(id: T, partition: U[Cell[P]]): U[(T, Cell[P])]
+  def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])]
+
+  /** Specifies tuners permitted on a call to `forEach`. */
+  type ForEachTuners <: OneOf
 
   /**
    * Apply function `fn` to each partition in `ids`.
    *
-   * @param ids The list of partitions to apply `fn` to.
-   * @param fn  The function to apply to each partition.
+   * @param fn      The function to apply to each partition.
+   * @param exclude List of partitions to exclude.
+   * @param tuner   The tuner for the job.
    *
-   * @return A `U[(T, Cell[Q])]` containing the paritions in `ids` with `fn` applied to them.
+   * @return A `U[(I, Cell[Q])]` containing the paritions in `ids` with `fn` applied to them.
    */
-  def forEach[Q <: Position](ids: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])]
+  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I] = List.empty,
+    tuner: T)(implicit ev1: ClassTag[I], ev2: ForEachTuners#V[T]): U[(I, Cell[Q])]
 
   /**
    * Return the data for the partition `id`.
@@ -85,9 +90,9 @@ trait Partitions[T, P <: Position] {
    *
    * @return A `U[Cell[P]]`; that is a matrix.
    */
-  def get(id: T): U[Cell[P]]
+  def get(id: I): U[Cell[P]]
 
-  /** Specifies tuner permitted on a call to `ids`. */
+  /** Specifies tuners permitted on a call to `ids`. */
   type IdsTuners <: OneOf
 
   /**
@@ -95,7 +100,7 @@ trait Partitions[T, P <: Position] {
    *
    * @param tuner The tuner for the job.
    */
-  def ids[N <: Tuner](tuner: N)(implicit ev1: ClassTag[T], ev2: IdsTuners#V[N]): U[T]
+  def ids[T <: Tuner](tuner: T)(implicit ev1: ClassTag[I], ev2: IdsTuners#V[T]): U[I]
 
   /**
    * Merge partitions into a single matrix.
@@ -104,16 +109,16 @@ trait Partitions[T, P <: Position] {
    *
    * @return A `U[Cell[P]]` containing the merge partitions.
    */
-  def merge(ids: List[T]): U[Cell[P]]
+  def merge(ids: List[I]): U[Cell[P]]
 
   /**
    * Remove a partition.
    *
    * @param id The identifier for the partition to remove.
    *
-   * @return A `U[(T, Cell[P])]` with the selected parition removed.
+   * @return A `U[(I, Cell[P])]` with the selected parition removed.
    */
-  def remove(id: T): U[(T, Cell[P])]
+  def remove(id: I): U[(I, Cell[P])]
 }
 
 /** Object for `Partition` functions. */
@@ -125,9 +130,9 @@ object Partition {
    * @param descriptive Indicator if descriptive string is required or not.
    * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */
-  def toString[T, P <: Position](separator: String = "|", descriptive: Boolean = false,
-    schema: Boolean = true): ((T, Cell[P])) => TraversableOnce[String] = {
-    (t: (T, Cell[P])) => Some(t._1.toString + separator + t._2.toString(separator, descriptive, schema))
+  def toString[I, P <: Position](separator: String = "|", descriptive: Boolean = false,
+    schema: Boolean = true): ((I, Cell[P])) => TraversableOnce[String] = {
+    (p: (I, Cell[P])) => Some(p._1.toString + separator + p._2.toString(separator, descriptive, schema))
   }
 }
 

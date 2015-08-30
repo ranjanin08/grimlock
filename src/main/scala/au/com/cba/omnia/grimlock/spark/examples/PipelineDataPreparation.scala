@@ -17,6 +17,8 @@ package au.com.cba.omnia.grimlock.spark.examples
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
@@ -177,7 +179,7 @@ object PipelineDataPreparation {
 
     // Prepare each partition.
     parts
-      .forEach(List("train", "test"), prepare)
+      .forEach(prepare)
   }
 }
 

@@ -35,6 +35,7 @@ import au.com.cba.omnia.grimlock.library.squash._
 import au.com.cba.omnia.grimlock.library.transform._
 import au.com.cba.omnia.grimlock.library.window._
 
+import au.com.cba.omnia.grimlock.scalding._
 import au.com.cba.omnia.grimlock.scalding.content.Contents._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Nameable._
@@ -602,7 +603,7 @@ class TestScalding19(args : Args) extends Job(args) {
   }
 
   parts
-    .forEach(List("train", "test"), cb)
+    .forEach(cb, tuner = Default(Execution()))
 }
 
 class TestScalding20(args : Args) extends Job(args) {

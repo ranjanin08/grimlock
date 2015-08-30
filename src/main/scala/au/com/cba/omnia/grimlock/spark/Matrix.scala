@@ -214,9 +214,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.filter { case c => sampler.selectWithValue(c, value) }
   }
 
-  def saveAsText(file: String, writer: (Cell[P]) => TraversableOnce[String] = Cell.toString()): U[Cell[P]] = {
-    saveText(file, writer)
-  }
+  def saveAsText(file: String, writer: TextWriter = Cell.toString()): U[Cell[P]] = saveText(file, writer)
 
   type SetTuners = TP2
   def set[I, T <: Tuner](positions: I, value: Content, tuner: T = Default())(

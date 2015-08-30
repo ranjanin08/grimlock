@@ -14,12 +14,14 @@
 
 package au.com.cba.omnia.grimlock.scalding
 
+import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist }
+
 import cascading.flow.FlowDef
 import com.twitter.scalding.{ Mode, TextLine }
 import com.twitter.scalding.typed.{ TypedPipe, TypedSink }
 
 /** Trait for peristing a Scalding `TypedPipe`. */
-trait Persist[T] {
+trait Persist[T] extends BasePersist[T] {
   /** The data to persist. */
   val data: TypedPipe[T]
 
@@ -31,11 +33,9 @@ trait Persist[T] {
    *
    * @return A Scalding `TypedPipe[T]` which is this object's data.
    */
-  def saveAsText(file: String, writer: (T) => TraversableOnce[String])(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[T]
+  def saveAsText(file: String, writer: TextWriter)(implicit flow: FlowDef, mode: Mode): TypedPipe[T]
 
-  protected def saveText(file: String, writer: (T) => TraversableOnce[String])(implicit flow: FlowDef,
-    mode: Mode): TypedPipe[T] = {
+  protected def saveText(file: String, writer: TextWriter)(implicit flow: FlowDef, mode: Mode): TypedPipe[T] = {
     data
       .flatMap(writer(_))
       .write(TypedSink(TextLine(file)))
