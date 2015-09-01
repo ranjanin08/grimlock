@@ -24,14 +24,12 @@ import au.com.cba.omnia.grimlock.framework.utility._
 
 import au.com.cba.omnia.grimlock.library.partition._
 
-import au.com.cba.omnia.grimlock.scalding._
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
 
 import au.com.cba.omnia.grimlock.spark.partition.Partitions._
 
+import com.twitter.scalding._
 import com.twitter.scalding.bdd._
-import com.twitter.scalding.{ Args, Config, Mode }
-import com.twitter.scalding.typed.TypedPipe
 
 import java.util.Date
 
@@ -342,10 +340,7 @@ class TestScaldingPartitions extends TestPartitions with TBddDsl {
       data
     } When {
       parts: TypedPipe[(String, Cell[Position1D])] =>
-        implicit val config = Config.default
-        implicit val mode = Mode(Args("--local"), null)
-
-        parts.forEach(TestPartitions.doubleT, List("train", "not.there"), Default(Execution()))
+        parts.forEach(TestPartitions.doubleT, List("test", "valid", "not.there"), Default())
     } Then {
       _.toList.sortBy(_._2.content.value.toShortString) shouldBe result5
     }
@@ -380,7 +375,7 @@ class TestSparkPartitions extends TestPartitions {
 
   it should "foreach should apply to selected partitions" in {
     toRDD(data)
-      .forEach(TestPartitions.doubleR, List("train", "not.there"), Default(NoParameters))
+      .forEach(TestPartitions.doubleR, List("test", "valid", "not.there"), Default())
       .toList.sortBy(_._2.content.value.toShortString) shouldBe result5
   }
 }

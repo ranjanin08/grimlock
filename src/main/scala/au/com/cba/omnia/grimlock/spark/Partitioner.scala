@@ -40,14 +40,19 @@ class Partitions[I: Ordering, P <: Position](val data: RDD[(I, Cell[P])]) extend
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
   type ForEachTuners = OneOf1[Default[NoParameters.type]]
-  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T = Default())(
+  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], ids: List[I], tuner: T = Default())(
     implicit ev1: ClassTag[I], ev2: ForEachTuners#V[T]): U[(I, Cell[Q])] = {
-    // TODO: This reads the data |{ids}| times. Is there a way to read it only once?
+/*
     data
       .keys
       .distinct
       .toLocalIterator
       .collect { case k if (!exclude.contains(k)) => fn(k, get(k)).map { case c => (k, c) } }
+      .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
+*/
+    // TODO: This reads the data ids.length times. Is there a way to read it only once?
+    ids
+      .map { case i => fn(i, get(i)).map { case c => (i, c) } }
       .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
   }
 

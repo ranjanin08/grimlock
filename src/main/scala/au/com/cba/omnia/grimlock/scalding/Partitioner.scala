@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.scalding.partition
 
-import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Sequence2, Tuner }
+import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner }
 import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => BasePartitions }
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
@@ -24,10 +24,9 @@ import au.com.cba.omnia.grimlock.scalding._
 
 import cascading.flow.FlowDef
 import com.twitter.scalding.Mode
-import com.twitter.scalding.typed.{ Grouped, IterablePipe, TypedPipe }
+import com.twitter.scalding.typed.{ Grouped, TypedPipe }
 
 import scala.reflect.ClassTag
-import scala.util.Success
 
 /**
  * Rich wrapper around a `TypedPipe[(I, Cell[P])]`.
@@ -40,18 +39,22 @@ class Partitions[I: Ordering, P <: Position](val data: TypedPipe[(I, Cell[P])]) 
 
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  type ForEachTuners = OneOf2[Default[Execution], Default[Sequence2[Execution, Reducers]]]
-  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T)(
+  type ForEachTuners = OneOf1[Default[NoParameters.type]]
+  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], ids: List[I], tuner: T = Default())(
     implicit ev1: ClassTag[I], ev2: ForEachTuners#V[T]): U[(I, Cell[Q])] = {
 /*
+    // This bit of code does do things in parallel, but it doesn't support a `saveAs...` call withing
+    // `fn`. It also has problems with joining onto other typed pipes. In addition, it executes the
+    // graph for each `get` after a `forEach`.
+
     val (config, mode) = tuner.parameters match {
       case Execution(cfg, md) => (cfg, md)
     }
     val f = (t: I, c: Iterator[Cell[P]]) => {
-      fn(t, IterablePipe(c.toIterable))
+      fn(t, com.twitter.scalding.typed.IterablePipe(c.toIterable))
         .toIterableExecution
         .waitFor(config, mode) match {
-          case Success(itr) => itr.toIterator
+          case scala.util.Success(itr) => itr.toIterator
           case _ => Iterator.empty
         }
       }
@@ -59,29 +62,35 @@ class Partitions[I: Ordering, P <: Position](val data: TypedPipe[(I, Cell[P])]) 
     Grouped(data.filter { case (i, _) => !exclude.contains(i) })
       .mapGroup(f)
 */
+/*
+    // This reads the data `keys` times. It can be parallelised further by using a `forceToDiskExecution` inside
+    // `collect` and then zipping together the pipes in `reduce`. However, for some reason scalatest fails
+    // because `keys` is empty - but it works outside of scalatest.
+
     val keys = tuner.parameters match {
-      case Sequence2(_, r @ Reducers(_)) => ids(Default(r))
+      case au.com.cba.omnia.grimlock.framework.Sequence2(_, r @ Reducers(_)) => ids(Default(r))
       case _ => ids(Default(NoParameters))
     }
 
     val (config, mode) = tuner.parameters match {
       case Execution(cfg, md) => (cfg, md)
-      case Sequence2(Execution(cfg, md), _) => (cfg, md)
+      case au.com.cba.omnia.grimlock.framework.Sequence2(Execution(cfg, md), _) => (cfg, md)
     }
 
-    // TODO: This reads the data |{ids}| times. Is there a way to read it only once?
-    //       The above bit of code does do things in parallel, but it doesn't support a `save` call withing `fn`.
-    //       Also, it executes the graph for each `get` after a `forEach`. The below bit might be parallelised by
-    //       using a `forceToDiskExecution` inside `collect` and then zipping together the pipes in `reduce`.
     (keys
       .map { case k => List(k) }
       .sum
       .getExecution
       .waitFor(config, mode) match {
-        case Success(list) => list
+        case scala.util.Success(list) => list
         case _ => List.empty
       })
       .collect { case k if (!exclude.contains(k)) => fn(k, get(k)).map { case c => (k, c) } }
+      .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
+*/
+    // TODO: This reads the data ids.length times. Is there a way to read it only once?
+    ids
+      .map { case i => fn(i, get(i)).map { case c => (i, c) } }
       .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
   }
 

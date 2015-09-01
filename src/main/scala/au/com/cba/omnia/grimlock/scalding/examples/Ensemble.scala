@@ -25,7 +25,6 @@ import au.com.cba.omnia.grimlock.framework.utility._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
 
-import au.com.cba.omnia.grimlock.scalding._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
 import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
@@ -117,7 +116,7 @@ class Ensemble(args: Args) extends Job(args) {
   val scores = data
     .expand((cell: Cell[Position2D]) => cell.position.append(math.abs(cell.position(First).hashCode % 10)))
     .split(EnsembleSplit(scripts(0), scripts(1), scripts(2)))
-    .forEach(trainAndScore, tuner = Default(Execution()))
+    .forEach(trainAndScore, scripts)
     .merge(scripts)
     .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
     .saveAsText(s"./demo.${output}/ensemble.scores.out")

@@ -27,7 +27,6 @@ import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
-import au.com.cba.omnia.grimlock.scalding._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Nameable._
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
@@ -176,6 +175,6 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
   // Prepare each partition.
   parts
-    .forEach(prepare, tuner = Default(Execution()))
+    .forEach(prepare, List("train", "test"))
 }
 

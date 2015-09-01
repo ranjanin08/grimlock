@@ -74,14 +74,14 @@ trait Partitions[I, P <: Position] {
   /**
    * Apply function `fn` to each partition in `ids`.
    *
-   * @param fn      The function to apply to each partition.
-   * @param exclude List of partitions to exclude.
-   * @param tuner   The tuner for the job.
+   * @param fn    The function to apply to each partition.
+   * @param ids   List of partition ids to apply `fn` to.
+   * @param tuner The tuner for the job.
    *
-   * @return A `U[(I, Cell[Q])]` containing the paritions in `ids` with `fn` applied to them.
+   * @return A `U[(I, Cell[Q])]` containing the paritions with `fn` applied to them.
    */
-  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I] = List.empty,
-    tuner: T)(implicit ev1: ClassTag[I], ev2: ForEachTuners#V[T]): U[(I, Cell[Q])]
+  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], ids: List[I], tuner: T)(
+    implicit ev1: ClassTag[I], ev2: ForEachTuners#V[T]): U[(I, Cell[Q])]
 
   /**
    * Return the data for the partition `id`.

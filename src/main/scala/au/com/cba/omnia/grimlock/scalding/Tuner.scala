@@ -20,7 +20,7 @@ import com.twitter.scalding.{ Config, Mode }
 
 trait Execution extends TunerParameters {
   type P = Execution
- 
+
   val config: Config
   val mode: Mode
 }
