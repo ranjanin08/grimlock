@@ -74,7 +74,7 @@ object Cell {
             case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -90,11 +90,15 @@ object Cell {
     line: String): Option[Either[Cell[Position1D], String]] = {
     line.trim.split(Pattern.quote(separator), 2) match {
       case Array(e, v) =>
-        (dict(e).decode(v), first.decode(e)) match {
-          case (Some(con), Some(c1)) => Some(Left(Cell(Position1D(c1), con)))
-          case _ => Some(Right("Unable to decode: '" + line + "'"))
+        dict.get(e) match {
+          case Some(schema) =>
+            (schema.decode(v), first.decode(e)) match {
+              case (Some(con), Some(c1)) => Some(Left(Cell(Position1D(c1), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => Some(Right("Missing schema for: '" + line + "'"))
         }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -114,7 +118,7 @@ object Cell {
           case (Some(con), Some(c1)) => Some(Left(Cell(Position1D(c1), con)))
           case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -136,7 +140,7 @@ object Cell {
             case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -155,16 +159,18 @@ object Cell {
       implicit ev: PosDimDep[Position2D, D]): Option[Either[Cell[Position2D], String]] = {
     line.trim.split(Pattern.quote(separator), 3) match {
       case Array(e, a, v) =>
-        val s = dim match {
-          case First => dict(e)
-          case Second => dict(a)
+        (dim match {
+          case First => dict.get(e)
+          case Second => dict.get(a)
+        }) match {
+          case Some(schema) =>
+            (schema.decode(v), first.decode(e), second.decode(a)) match {
+              case (Some(con), Some(c1), Some(c2)) => Some(Left(Cell(Position2D(c1, c2), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => Some(Right("Missing schema for: '" + line + "'"))
         }
-
-        (s.decode(v), first.decode(e), second.decode(a)) match {
-          case (Some(con), Some(c1), Some(c2)) => Some(Left(Cell(Position2D(c1, c2), con)))
-          case _ => Some(Right("Unable to decode: '" + line + "'"))
-        }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -185,7 +191,7 @@ object Cell {
           case (Some(con), Some(c1), Some(c2)) => Some(Left(Cell(Position2D(c1, c2), con)))
           case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -208,7 +214,7 @@ object Cell {
             case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -228,17 +234,19 @@ object Cell {
       implicit ev: PosDimDep[Position3D, D]): Option[Either[Cell[Position3D], String]] = {
     line.trim.split(Pattern.quote(separator), 4) match {
       case Array(e, a, t, v) =>
-        val s = dim match {
-          case First => dict(e)
-          case Second => dict(a)
-          case Third => dict(t)
+        (dim match {
+          case First => dict.get(e)
+          case Second => dict.get(a)
+          case Third => dict.get(t)
+        }) match {
+          case Some(schema) =>
+            (schema.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
+              case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Left(Cell(Position3D(c1, c2, c3), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => Some(Right("Missing schema for: '" + line + "'"))
         }
-
-        (s.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Left(Cell(Position3D(c1, c2, c3), con)))
-          case _ => Some(Right("Unable to decode: '" + line + "'"))
-        }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -261,7 +269,7 @@ object Cell {
           case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Left(Cell(Position3D(c1, c2, c3), con)))
           case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -287,7 +295,7 @@ object Cell {
             case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -308,18 +316,21 @@ object Cell {
       line: String)(implicit ev: PosDimDep[Position4D, D]): Option[Either[Cell[Position4D], String]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(a, b, c, d, v) =>
-        val s = dim match {
-          case First => dict(a)
-          case Second => dict(b)
-          case Third => dict(c)
-          case Fourth => dict(d)
+        (dim match {
+          case First => dict.get(a)
+          case Second => dict.get(b)
+          case Third => dict.get(c)
+          case Fourth => dict.get(d)
+        }) match {
+          case Some(schema) =>
+            (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
+              case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) =>
+                Some(Left(Cell(Position4D(c1, c2, c3, c4), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => Some(Right("Missing schema for: '" + line + "'"))
         }
-
-        (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Left(Cell(Position4D(c1, c2, c3, c4), con)))
-          case _ => Some(Right("Unable to decode: '" + line + "'"))
-        }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -343,7 +354,7 @@ object Cell {
           case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Left(Cell(Position4D(c1, c2, c3, c4), con)))
           case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -371,7 +382,7 @@ object Cell {
               case _ => Some(Right("Unable to decode: '" + line + "'"))
             }
         }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -394,25 +405,28 @@ object Cell {
         implicit ev: PosDimDep[Position5D, D]): Option[Either[Cell[Position5D], String]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(a, b, c, d, e, v) =>
-        val s = dim match {
-          case First => dict(a)
-          case Second => dict(b)
-          case Third => dict(c)
-          case Fourth => dict(d)
-          case Fifth => dict(e)
+        (dim match {
+          case First => dict.get(a)
+          case Second => dict.get(b)
+          case Third => dict.get(c)
+          case Fourth => dict.get(d)
+          case Fifth => dict.get(e)
+        }) match {
+          case Some(schema) =>
+            (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
+              fifth.decode(e)) match {
+              case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
+                Some(Left(Cell(Position5D(c1, c2, c3, c4, c5), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => Some(Right("Missing schema for: '" + line + "'"))
         }
-
-        (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d), fifth.decode(e)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
-            Some(Left(Cell(Position5D(c1, c2, c3, c4, c5), con)))
-          case _ => Some(Right("Unable to decode: '" + line + "'"))
-        }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position5D]]` with a schema.
+   * Parse a line into a `Cell[Position5D]` with a schema.
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
@@ -434,7 +448,7 @@ object Cell {
               Some(Left(Cell(Position5D(c1, c2, c3, c4, c5), con)))
             case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
-      case _ => Some(Right("Unable to split input: '" + line + "'"))
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -449,15 +463,20 @@ object Cell {
   def parseTable(columns: List[(String, Schema)], pkeyIndex: Int = 0, separator: String = "\u0001")(
     line: String): List[Either[Cell[Position2D], String]] = {
     val parts = line.trim.split(Pattern.quote(separator), columns.length)
-    val pkey = parts(pkeyIndex)
 
-    columns.zipWithIndex.flatMap {
-      case ((name, schema), idx) if (idx != pkeyIndex) =>
-        schema.decode(parts(idx).trim) match {
-          case Some(con) => Some(Left(Cell(Position2D(pkey, name), con)))
-          case _ => Some(Right("Unable to decode: '" + line + "'"))
+    (parts.length == columns.length) match {
+      case true =>
+        val pkey = parts(pkeyIndex)
+
+        columns.zipWithIndex.flatMap {
+          case ((name, schema), idx) if (idx != pkeyIndex) =>
+            schema.decode(parts(idx)) match {
+              case Some(con) => Some(Left(Cell(Position2D(pkey, name), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => None
         }
-      case _ => None
+      case _ => List(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -971,7 +990,7 @@ trait Matrix[P <: Position] {
 
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations
-  // TODO: Add read/write[CSV|Hive|VW|LibSVM] operations
+  // TODO: Add read/write[CSV|Hive|HBase|VW|LibSVM] operations
   // TODO: Add statistics/dictionary into memory (from HDFS) operations
   // TODO: Is there a way not to use asInstanceOf[] as much?
   // TODO: Add machine learning operations (SVD/finding cliques/etc.) - use Spark instead?
