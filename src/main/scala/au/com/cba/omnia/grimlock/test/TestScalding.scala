@@ -46,9 +46,9 @@ import au.com.cba.omnia.grimlock.scalding.transform._
 import au.com.cba.omnia.grimlock.scalding.Types._
 
 import cascading.flow.FlowDef
-import com.twitter.scalding.{ Args, Job, Mode, TypedPsv }
+import com.twitter.scalding.{ Args, Job, Mode, TextLine, TypedPsv }
 import com.twitter.scalding.TDsl.sourceToTypedPipe
-import com.twitter.scalding.typed.{ IterablePipe, TypedPipe, ValuePipe }
+import com.twitter.scalding.typed.{ IterablePipe, TypedPipe, TypedSink, ValuePipe }
 
 object TestScaldingReader {
   def load4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
@@ -89,6 +89,7 @@ class TestScalding1(args : Args) extends Job(args) {
     .saveAsText("./tmp.scalding/dat2.out", Cell.toString(descriptive = true))
 
   loadText(args("path") + "/smallInputfile.txt", Cell.parse3D(third = DateCodex()))
+    .data
     .saveAsText("./tmp.scalding/dat3.out", Cell.toString(descriptive = true))
 }
 
@@ -254,6 +255,7 @@ class TestScalding8(args : Args) extends Job(args) {
     .saveAsText("./tmp.scalding/uniq.out", Content.toString(descriptive = true))
 
   loadText(args("path") + "/mutualInputfile.txt", Cell.parse2D())
+    .data
     .unique(Over[Position2D, Dimension.Second](Second))
     .map { case (p, c) => Cell(p, c) }
     .saveAsText("./tmp.scalding/uni2.out")
@@ -607,8 +609,10 @@ class TestScalding19(args : Args) extends Job(args) {
 
 class TestScalding20(args : Args) extends Job(args) {
 
-  loadText(args("path") + "/ivoryInputfile1.txt",
-      Cell.parse3DWithDictionary(Dictionary.load(args("path") + "/dict.txt"), Second, third = DateCodex()))
+  val (dictionary, _) = Dictionary.load(args("path") + "/dict.txt")
+
+  loadText(args("path") + "/ivoryInputfile1.txt", Cell.parse3DWithDictionary(dictionary, Second, third = DateCodex()))
+    .data
     .saveAsText("./tmp.scalding/ivr1.out")
 }
 
@@ -635,7 +639,7 @@ class TestScalding21(args : Args) extends Job(args) {
 
 class TestScalding22(args : Args) extends Job(args) {
 
-  val data = loadText(args("path") + "/numericInputfile.txt", Cell.parse2D())
+  val (data, _) = loadText(args("path") + "/numericInputfile.txt", Cell.parse2D())
 
   case class Diff() extends Window[Position1D, Position1D, Position2D] {
     type T = Cell[Position1D]
@@ -666,7 +670,7 @@ class TestScalding22(args : Args) extends Job(args) {
 
 class TestScalding23(args : Args) extends Job(args) {
 
-  val data = loadText(args("path") + "/somePairwise.txt", Cell.parse2D())
+  val (data, _) = loadText(args("path") + "/somePairwise.txt", Cell.parse2D())
 
   case class DiffSquared() extends Operator[Position1D, Position1D, Position2D] {
     def compute(left: Cell[Position1D], reml: Position1D, right: Cell[Position1D],
@@ -695,7 +699,7 @@ class TestScalding24(args: Args) extends Job(args) {
   val schema = List(("day", NominalSchema(StringCodex)),
                     ("temperature", ContinuousSchema(DoubleCodex)),
                     ("sales", DiscreteSchema(LongCodex)))
-  val data = loadText(args("path") + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
+  val (data, _) = loadText(args("path") + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
 
   data
     .correlation(Over(Second))
@@ -705,7 +709,7 @@ class TestScalding24(args: Args) extends Job(args) {
                      ("temperature", ContinuousSchema(DoubleCodex)),
                      ("sales", DiscreteSchema(LongCodex)),
                      ("neg.sales", DiscreteSchema(LongCodex)))
-  val data2 = loadText(args("path") + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
+  val (data2, _) = loadText(args("path") + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
 
   data2
     .correlation(Over(Second))
@@ -715,14 +719,15 @@ class TestScalding24(args: Args) extends Job(args) {
 class TestScalding25(args: Args) extends Job(args) {
 
   loadText(args("path") + "/mutualInputfile.txt", Cell.parse2D())
+    .data
     .mutualInformation(Over(Second))
     .saveAsText("./tmp.scalding/mi.out")
 }
 
 class TestScalding26(args: Args) extends Job(args) {
 
-  val left = loadText(args("path") + "/algebraInputfile1.txt", Cell.parse2D())
-  val right = loadText(args("path") + "/algebraInputfile2.txt", Cell.parse2D())
+  val (left, _) = loadText(args("path") + "/algebraInputfile1.txt", Cell.parse2D())
+  val (right, _) = loadText(args("path") + "/algebraInputfile2.txt", Cell.parse2D())
 
   left
     .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
@@ -733,32 +738,39 @@ class TestScalding27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
   loadText(args("path") + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+    .data
     .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
     .saveAsText("./tmp.scalding/sma1.out")
 
   loadText(args("path") + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+    .data
     .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all = true))
     .saveAsText("./tmp.scalding/sma2.out")
 
   loadText(args("path") + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+    .data
     .slide(Over(Second), CenteredMovingAverage(2, Locate.WindowDimension[Position1D, Position1D](First)))
     .saveAsText("./tmp.scalding/tma.out")
 
   loadText(args("path") + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+    .data
     .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
     .saveAsText("./tmp.scalding/wma1.out")
 
   loadText(args("path") + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+    .data
     .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all = true))
     .saveAsText("./tmp.scalding/wma2.out")
 
   // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
   loadText(args("path") + "/cumMovAvgInputfile.txt", Cell.parse1D())
+    .data
     .slide(Along(First), CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First)))
     .saveAsText("./tmp.scalding/cma.out")
 
   // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
   loadText(args("path") + "/expMovAvgInputfile.txt", Cell.parse1D())
+    .data
     .slide(Along(First), ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First)))
     .saveAsText("./tmp.scalding/ema.out")
 }
@@ -861,12 +873,15 @@ class TestScalding30(args: Args) extends Job(args) {
 
   data
     .stream("Rscript", "double.R", "|", Cell.parse2D("#", StringCodex, LongCodex))
+    .data
     .saveAsText("./tmp.scalding/strm.out")
 }
 
 class TestScalding31(args: Args) extends Job(args) {
 
-  loadText(args("path") + "/badInputfile.txt", Cell.parse3D(third = DateCodex()), "./tmp.scalding/nok.out")
-    .saveAsText("./tmp.scalding/yok.out", Cell.toString(descriptive = true))
+  val (data, errors) = loadText(args("path") + "/badInputfile.txt", Cell.parse3D(third = DateCodex()))
+
+  data.saveAsText("./tmp.scalding/yok.out", Cell.toString(descriptive = true))
+  errors.write(TypedSink(TextLine("./tmp.scalding/nok.out")))
 }
 

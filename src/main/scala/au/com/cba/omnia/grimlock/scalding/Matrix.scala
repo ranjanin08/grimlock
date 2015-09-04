@@ -25,6 +25,7 @@ import au.com.cba.omnia.grimlock.framework.{
   Locate,
   Matrix => BaseMatrix,
   Matrixable => BaseMatrixable,
+  MatrixWithParseErrors,
   Nameable => BaseNameable,
   NoParameters,
   Redistribute,
@@ -427,7 +428,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def stream[Q <: Position](command: String, script: String, separator: String,
-    parser: String => TraversableOnce[Either[Cell[Q], String]]): U[Cell[Q]] = {
+    parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String]) = {
     val lines = Source.fromFile(script).getLines.toList
     val smfn = (k: Unit, itr: Iterator[String]) => {
       val tmp = File.createTempFile("grimlock-", "-" + Paths.get(script).getFileName().toString())
@@ -470,13 +471,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
     }
 
-    data
+    val result = data
       .map(_.toString(separator, false, true))
       .groupAll
       .mapGroup(smfn)
       .values
       .flatMap(parser(_))
-      .collect { case Left(c) => c }
+
+    (result.collect { case Left(c) => c }, result.collect { case Right(e) => e })
   }
 
   type SummariseTuners = TP2
@@ -960,17 +962,12 @@ object Matrix {
    *
    * @param file   The text file to read from.
    * @param parser The parser that converts a single line to a cell.
-   * @param errors The filename for any parsing errors.
    */
-  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]],
-    errors: String = null)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[P]] = {
+  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]])(
+    implicit flow: FlowDef, mode: Mode): (TypedPipe[Cell[P]], TypedPipe[String]) = {
     val pipe = TypedPipe.from(TextLine(file)).flatMap { parser(_) }
 
-    if (errors != null) {
-      pipe.collect { case Right(e) => e }.write(TypedSink(TextLine(errors)))
-    }
-
-    pipe.collect { case Left(c) => c }
+    (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
   }
 
   /** Conversion from `TypedPipe[Cell[Position1D]]` to a Scalding `Matrix1D`. */
@@ -1053,6 +1050,12 @@ object Matrix {
     new Matrix9D(new IterablePipe(list.map {
       case (r, s, t, u, v, w, x, y, z, c) => Cell(Position9D(r, s, t, u, v, w, x, y, z), c)
     }))
+  }
+
+  /** Conversion from matrix with errors tuple to `MatrixWithParseErrors`. */
+  implicit def TP2MWPE[P <: Position](
+    t: (TypedPipe[Cell[P]], TypedPipe[String])): MatrixWithParseErrors[P, TypedPipe] = {
+    MatrixWithParseErrors(t._1, t._2)
   }
 }
 

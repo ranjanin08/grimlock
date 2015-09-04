@@ -88,6 +88,7 @@ object Codex {
       case StringCodex.name => Some(StringCodex)
       case DoubleCodex.name => Some(DoubleCodex)
       case LongCodex.name => Some(LongCodex)
+      case LongCodex.alias => Some(LongCodex)
       case BooleanCodex.name => Some(BooleanCodex)
       case _ => None
     }
@@ -172,6 +173,7 @@ case object DoubleCodex extends Codex {
 /** Codex for dealing with `Long`. */
 case object LongCodex extends Codex {
   val name = "long"
+  val alias = "int"
 
   type T = Long
   type V = LongValue

@@ -91,6 +91,7 @@ object TestSpark1 {
       .saveAsText("./tmp.spark/dat2.out", Cell.toString(descriptive = true))
 
     loadText(args(1) + "/smallInputfile.txt", Cell.parse3D(third = DateCodex()))
+      .data
       .saveAsText("./tmp.spark/dat3.out", Cell.toString(descriptive = true))
   }
 }
@@ -270,6 +271,7 @@ object TestSpark8 {
       .saveAsText("./tmp.spark/uniq.out", Content.toString(descriptive = true))
 
     loadText(args(1) + "/mutualInputfile.txt", Cell.parse2D())
+      .data
       .unique(Over[Position2D, Dimension.Second](Second))
       .map { case (p, c) => Cell(p, c) }
       .saveAsText("./tmp.spark/uni2.out")
@@ -648,8 +650,10 @@ object TestSpark20 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
-    loadText(args(1) + "/ivoryInputfile1.txt",
-        Cell.parse3DWithDictionary(Dictionary.load(args(1) + "/dict.txt"), Second, third = DateCodex()))
+    val (dictionary, _) = Dictionary.load(args(1) + "/dict.txt")
+
+    loadText(args(1) + "/ivoryInputfile1.txt", Cell.parse3DWithDictionary(dictionary, Second, third = DateCodex()))
+      .data
       .saveAsText("./tmp.spark/ivr1.out")
   }
 }
@@ -680,7 +684,7 @@ object TestSpark21 {
 object TestSpark22 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = loadText(args(1) + "/numericInputfile.txt", Cell.parse2D())
+    val (data, _) = loadText(args(1) + "/numericInputfile.txt", Cell.parse2D())
 
     case class Diff() extends Window[Position1D, Position1D, Position2D] {
       type T = Cell[Position]
@@ -713,7 +717,7 @@ object TestSpark22 {
 object TestSpark23 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = loadText(args(1) + "/somePairwise.txt", Cell.parse2D())
+    val (data, _) = loadText(args(1) + "/somePairwise.txt", Cell.parse2D())
 
     case class DiffSquared() extends Operator[Position1D, Position1D, Position2D] {
       def compute(left: Cell[Position1D], reml: Position1D, right: Cell[Position1D],
@@ -744,7 +748,7 @@ object TestSpark24 {
     val schema = List(("day", NominalSchema(StringCodex)),
                       ("temperature", ContinuousSchema(DoubleCodex)),
                       ("sales", DiscreteSchema(LongCodex)))
-    val data = loadText(args(1) + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
+    val (data, _) = loadText(args(1) + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
 
     data
       .correlation(Over(Second))
@@ -754,7 +758,7 @@ object TestSpark24 {
                        ("temperature", ContinuousSchema(DoubleCodex)),
                        ("sales", DiscreteSchema(LongCodex)),
                        ("neg.sales", DiscreteSchema(LongCodex)))
-    val data2 = loadText(args(1) + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
+    val (data2, _) = loadText(args(1) + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
 
     data2
       .correlation(Over(Second))
@@ -767,6 +771,7 @@ object TestSpark25 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
     loadText(args(1) + "/mutualInputfile.txt", Cell.parse2D())
+      .data
       .mutualInformation(Over(Second))
       .saveAsText("./tmp.spark/mi.out")
   }
@@ -775,8 +780,8 @@ object TestSpark25 {
 object TestSpark26 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val left = loadText(args(1) + "/algebraInputfile1.txt", Cell.parse2D())
-    val right = loadText(args(1) + "/algebraInputfile2.txt", Cell.parse2D())
+    val (left, _) = loadText(args(1) + "/algebraInputfile1.txt", Cell.parse2D())
+    val (right, _) = loadText(args(1) + "/algebraInputfile2.txt", Cell.parse2D())
 
     left
       .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
@@ -790,32 +795,39 @@ object TestSpark27 {
 
     // http://www.statisticshowto.com/moving-average/
     loadText(args(1) + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+      .data
       .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
       .saveAsText("./tmp.spark/sma1.out")
 
     loadText(args(1) + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+      .data
       .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all = true))
       .saveAsText("./tmp.spark/sma2.out")
 
     loadText(args(1) + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+      .data
       .slide(Over(Second), CenteredMovingAverage(2, Locate.WindowDimension[Position1D, Position1D](First)))
       .saveAsText("./tmp.spark/tma.out")
 
     loadText(args(1) + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+      .data
       .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
       .saveAsText("./tmp.spark/wma1.out")
 
     loadText(args(1) + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+      .data
       .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all = true))
       .saveAsText("./tmp.spark/wma2.out")
 
     // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
     loadText(args(1) + "/cumMovAvgInputfile.txt", Cell.parse1D())
+      .data
       .slide(Along(First), CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First)))
       .saveAsText("./tmp.spark/cma.out")
 
     // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
     loadText(args(1) + "/expMovAvgInputfile.txt", Cell.parse1D())
+      .data
       .slide(Along(First), ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First)))
       .saveAsText("./tmp.spark/ema.out")
   }
@@ -924,6 +936,7 @@ object TestSpark30 {
 
     data
       .stream("Rscript", "double.R", "|", Cell.parse2D("#", StringCodex, LongCodex))
+      .data
       .saveAsText("./tmp.spark/strm.out")
   }
 }
@@ -932,8 +945,10 @@ object TestSpark31 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
-    loadText(args(1) + "/badInputfile.txt", Cell.parse3D(third = DateCodex()), "./tmp.spark/nok.out")
-      .saveAsText("./tmp.spark/yok.out", Cell.toString(descriptive = true))
+    val (data, errors) = loadText(args(1) + "/badInputfile.txt", Cell.parse3D(third = DateCodex()))
+
+    data.saveAsText("./tmp.spark/yok.out", Cell.toString(descriptive = true))
+    errors.saveAsTextFile("./tmp.spark/nok.out")
   }
 }
 

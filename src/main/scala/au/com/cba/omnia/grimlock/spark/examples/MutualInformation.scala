@@ -55,13 +55,18 @@ object MutualInformation {
     val path = if (args.length > 1) args(1) else "../../data"
     val output = "spark"
 
+    // Read in the dictionary (ignoring errors).
+    val (dictionary, _) = Dictionary.load(s"${path}/exampleDictionary.txt")
+
     // Read the data.
     // 1/ Read the data using the supplied dictionary. This returns a 3D matrix (instance x feature x date).
-    // 2/ Squash the 3rd dimension, keeping values with minimum (earlier) coordinates. The result is a 2D matrix
+    // 2/ Proceed with only the data (ignoring errors).
+    // 3/ Squash the 3rd dimension, keeping values with minimum (earlier) coordinates. The result is a 2D matrix
     //    (instance x feature).
-    // 3/ Bucket all continuous variables by rounding them.
+    // 4/ Bucket all continuous variables by rounding them.
     val data = loadText(s"${path}/exampleMutual.txt",
-        Cell.parse3DWithDictionary(Dictionary.load(s"${path}/exampleDictionary.txt"), Second, third = DateCodex()))
+        Cell.parse3DWithDictionary(dictionary, Second, third = DateCodex()))
+      .data
       .squash(Third, PreservingMinPosition[Position3D]())
       .transform(CeilingBucketing())
 

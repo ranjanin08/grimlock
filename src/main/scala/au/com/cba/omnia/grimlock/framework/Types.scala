@@ -81,10 +81,11 @@ object Type {
    */
   def toString[P <: Position](separator: String = "|",
     descriptive: Boolean = false): ((P, Type)) => TraversableOnce[String] = {
-    (t: (P, Type)) => descriptive match {
-      case true => Some(t._1.toString + separator + t._2.toString)
-      case false => Some(t._1.toShortString(separator) + separator + t._2.name)
-    }
+    (t: (P, Type)) =>
+      descriptive match {
+        case true => Some(t._1.toString + separator + t._2.toString)
+        case false => Some(t._1.toShortString(separator) + separator + t._2.name)
+      }
   }
 }
 

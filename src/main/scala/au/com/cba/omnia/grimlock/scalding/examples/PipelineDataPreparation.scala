@@ -54,8 +54,8 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
   val path = args.getOrElse("path", "../../data")
   val output = "scalding"
 
-  // Read the data. This returns a 2D matrix (instance x feature).
-  val data = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
+  // Read the data (ignoring errors). This returns a 2D matrix (instance x feature).
+  val (data, _) = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
 
   // Perform a split of the data into a training and test set.
   val parts = data

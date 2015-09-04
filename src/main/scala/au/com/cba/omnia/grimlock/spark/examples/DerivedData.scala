@@ -73,11 +73,13 @@ object DerivedData {
 
     // Generate gradient features:
     // 1/ Read the data as 3D matrix (instance x feature x date).
-    // 2/ Compute gradients along the date axis. The result is a 3D matrix (instance x feature x gradient).
-    // 3/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
+    // 2/ Proceed with only the data (ignoring errors).
+    // 3/ Compute gradients along the date axis. The result is a 3D matrix (instance x feature x gradient).
+    // 4/ Melt third dimension (gradients) into second dimension. The result is a 2D matrix (instance x
     //    feature.from.gradient)
-    // 4/ Persist 2D gradient features.
+    // 5/ Persist 2D gradient features.
     loadText(s"${path}/exampleDerived.txt", Cell.parse3D(third = DateCodex()))
+      .data
       .slide(Along(Third), Gradient(First))
       .melt(Third, Second, ".from.")
       .saveAsText(s"./demo.${output}/gradient.out")

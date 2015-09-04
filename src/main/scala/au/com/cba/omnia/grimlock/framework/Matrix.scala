@@ -815,13 +815,13 @@ trait Matrix[P <: Position] {
    * @param separator The separator to convert a cell to string.
    * @param parser    Function that parses the resulting string back to a cell.
    *
-   * @return a `U[Cell[Q]]` with the new data.
+   * @return A `U[Cell[Q]]` with the new data as well as a `U[String]` with any parse errors.
    *
    * @note The `command` must be installed on each node of the cluster. Also, `script` must be a single self
    *       contained script. Lastly, `parser` functions are provided on the `Cell` object.
    */
   def stream[Q <: Position](command: String, script: String, separator: String,
-    parser: String => TraversableOnce[Either[Cell[Q], String]]): U[Cell[Q]]
+    parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String])
 
   /** Specifies tuners permitted on a call to `summarise` functions. */
   type SummariseTuners <: OneOf
@@ -1106,6 +1106,14 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
   def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => Q, value: E[W])(
     implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
 }
+
+/**
+ * Convenience type for access results from `load` methods that return the data and any parse errors.
+ *
+ * @param data   The parsed matrix.
+ * @param errors Any parse errors.
+ */
+case class MatrixWithParseErrors[P <: Position, U[_]](data: U[Cell[P]], errors: U[String])
 
 /** Type class for transforming a type `T` into a `U[Cell[P]]`. */
 trait Matrixable[T, P <: Position, U[_]] {

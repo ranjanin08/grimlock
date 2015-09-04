@@ -23,6 +23,7 @@ import au.com.cba.omnia.grimlock.framework.{
   Locate,
   Matrix => BaseMatrix,
   Matrixable => BaseMatrixable,
+  MatrixWithParseErrors,
   Nameable => BaseNameable,
   NoParameters,
   ReduceableMatrix => BaseReduceableMatrix,
@@ -325,12 +326,13 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def stream[Q <: Position](command: String, script: String, separator: String,
-    parser: String => TraversableOnce[Either[Cell[Q], String]]): U[Cell[Q]] = {
-    data
+    parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String]) = {
+    val result = data
       .map(_.toString(separator, false, true))
       .pipe(command + " " + script)
       .flatMap(parser(_))
-      .collect { case Left(c) => c }
+
+    (result.collect { case Left(c) => c }, result.collect { case Right(e) => e })
   }
 
   type SummariseTuners = TP2
@@ -733,17 +735,12 @@ object Matrix {
    *
    * @param file   The text file to read from.
    * @param parser The parser that converts a single line to a cell.
-   * @param errors The filename for any parsing errors.
    */
-  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]],
-    errors: String = null)(implicit sc: SparkContext): RDD[Cell[P]] = {
+  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]])(
+    implicit sc: SparkContext): (RDD[Cell[P]], RDD[String]) = {
     val rdd = sc.textFile(file).flatMap { parser(_) }
 
-    if (errors != null) {
-      rdd.collect { case Right(e) => e }.saveAsTextFile(errors)
-    }
-
-    rdd.collect { case Left(c) => c }
+    (rdd.collect { case Left(c) => c }, rdd.collect { case Right(e) => e })
   }
 
   /** Conversion from `RDD[Cell[Position1D]]` to a Spark `Matrix1D`. */
@@ -826,6 +823,11 @@ object Matrix {
     new Matrix9D(sc.parallelize(list.map {
       case (r, s, t, u, v, w, x, y, z, c) => Cell(Position9D(r, s, t, u, v, w, x, y, z), c)
     }))
+  }
+
+  /** Conversion from matrix with errors tuple to `MatrixWithParseErrors`. */
+  implicit def RDD2MWPE[P <: Position](t: (RDD[Cell[P]], RDD[String])): MatrixWithParseErrors[P, RDD] = {
+    MatrixWithParseErrors(t._1, t._2)
   }
 }
 
