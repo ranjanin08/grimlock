@@ -188,7 +188,7 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 The next step is to read in data (be sure to change <path to> to the correct path to the Grimlock repo):
 
 ```
-scala> val data = loadText("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt", Cell.parse2D())
+scala> val (data, _) = loadText("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt", Cell.parse2D())
 ```
 
 The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used in the REPL, use Grimlock's `save` API for writing to disk:
@@ -320,7 +320,7 @@ scala> implicit val context = sc
 The next step is to read in data (be sure to change <path to> to the correct path to the Grimlock repo):
 
 ```
-scala> val data = loadText("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt", Cell.parse2D())
+scala> val (data, _) = loadText("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt", Cell.parse2D())
 ```
 
 The returned `data` is a 2 dimensional matrix. To investigate it's content Spark's `foreach` command can be used in the REPL, use the Grimlock's `save` API for writing to disk:
