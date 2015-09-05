@@ -283,8 +283,8 @@ object TestPartitions {
     }
   }
 
-  def double(key: String, pipe: TypedPipe[Cell[Position1D]]): TypedPipe[Cell[Position1D]] = pipe.flatMap { double(_) }
-  def double(key: String, pipe: RDD[Cell[Position1D]]): RDD[Cell[Position1D]] = pipe.flatMap { double(_) }
+  def doubleT(key: String, pipe: TypedPipe[Cell[Position1D]]): TypedPipe[Cell[Position1D]] = pipe.flatMap { double(_) }
+  def doubleR(key: String, pipe: RDD[Cell[Position1D]]): RDD[Cell[Position1D]] = pipe.flatMap { double(_) }
 }
 
 class TestScaldingPartitions extends TestPartitions with TBddDsl {
@@ -340,7 +340,7 @@ class TestScaldingPartitions extends TestPartitions with TBddDsl {
       data
     } When {
       parts: TypedPipe[(String, Cell[Position1D])] =>
-        parts.forEach(List("test", "valid", "not.there"), TestPartitions.double)
+        parts.forEach(TestPartitions.doubleT, List("test", "valid", "not.there"), Default())
     } Then {
       _.toList.sortBy(_._2.content.value.toShortString) shouldBe result5
     }
@@ -375,7 +375,7 @@ class TestSparkPartitions extends TestPartitions {
 
   it should "foreach should apply to selected partitions" in {
     toRDD(data)
-      .forEach(List("test", "valid", "not.there"), TestPartitions.double)
+      .forEach(TestPartitions.doubleR, List("test", "valid", "not.there"), Default())
       .toList.sortBy(_._2.content.value.toShortString) shouldBe result5
   }
 }

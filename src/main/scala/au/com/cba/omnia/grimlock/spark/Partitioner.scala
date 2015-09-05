@@ -15,7 +15,7 @@
 package au.com.cba.omnia.grimlock.spark.partition
 
 import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner }
-import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => BasePartitions }
+import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => BasePartitions }
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
@@ -27,37 +27,47 @@ import org.apache.spark.rdd.RDD
 import scala.reflect.ClassTag
 
 /**
- * Rich wrapper around a `RDD[(T, Cell[P])]`.
+ * Rich wrapper around a `RDD[(I, Cell[P])]`.
  *
- * @param data The `RDD[(T, Cell[P])]`.
+ * @param data The `RDD[(I, Cell[P])]`.
  */
-class Partitions[T: Ordering, P <: Position](val data: RDD[(T, Cell[P])]) extends BasePartitions[T, P]
-  with Persist[(T, Cell[P])] {
+class Partitions[I: Ordering, P <: Position](val data: RDD[(I, Cell[P])]) extends BasePartitions[I, P]
+  with Persist[(I, Cell[P])] {
   type U[A] = RDD[A]
 
   import SparkImplicits._
 
-  def add(id: T, partition: U[Cell[P]]): U[(T, Cell[P])] = data ++ (partition.map { case c => (id, c) })
+  def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  def forEach[Q <: Position](ids: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])] = {
-    import Partitions._
-
+  type ForEachTuners = OneOf1[Default[NoParameters.type]]
+  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], ids: List[I], tuner: T = Default())(
+    implicit ev1: ClassTag[I], ev2: ForEachTuners#V[T]): U[(I, Cell[Q])] = {
+/*
+    data
+      .keys
+      .distinct
+      .toLocalIterator
+      .collect { case k if (!exclude.contains(k)) => fn(k, get(k)).map { case c => (k, c) } }
+      .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
+*/
     // TODO: This reads the data ids.length times. Is there a way to read it only once?
     ids
-      .map { case k => fn(k, data.get(k)).map { case c => (k, c) } }
-      .reduce[U[(T, Cell[Q])]]((x, y) => x ++ y)
+      .map { case i => fn(i, get(i)).map { case c => (i, c) } }
+      .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
   }
 
-  def get(id: T): U[Cell[P]] = data.collect { case (t, pc) if (id == t) => pc }
+  def get(id: I): U[Cell[P]] = data.collect { case (i, c) if (id == i) => c }
 
   type IdsTuners = OneOf2[Default[NoParameters.type], Default[Reducers]]
-  def ids[N <: Tuner](tuner: N = Default())(implicit ev1: ClassTag[T], ev2: IdsTuners#V[N]): U[T] = {
+  def ids[T <: Tuner](tuner: T = Default())(implicit ev1: ClassTag[I], ev2: IdsTuners#V[T]): U[I] = {
     data.keys.tunedDistinct(tuner.parameters)
   }
 
-  def merge(ids: List[T]): U[Cell[P]] = data.collect { case (t, c) if (ids.contains(t)) => c }
+  def merge(ids: List[I]): U[Cell[P]] = data.collect { case (i, c) if (ids.contains(i)) => c }
 
-  def remove(id: T): U[(T, Cell[P])] = data.filter { case (t, c) => t != id }
+  def remove(id: I): U[(I, Cell[P])] = data.filter { case (i, _) => i != id }
+
+  def saveAsText(file: String, writer: TextWriter = Partition.toString()): U[(I, Cell[P])] = saveText(file, writer)
 }
 
 /** Companion object for the Spark `Partitions` class. */

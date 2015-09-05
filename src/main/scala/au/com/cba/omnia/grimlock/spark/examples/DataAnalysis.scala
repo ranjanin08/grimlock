@@ -34,8 +34,8 @@ object DataAnalysis {
     val path = if (args.length > 1) args(1) else "../../data"
     val output = "spark"
 
-    // Read the data. This returns a 2D matrix (instance x feature).
-    val data = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
+    // Read the data (ignoring errors). This returns a 2D matrix (instance x feature).
+    val (data, _) = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
 
     // Define moments to compute.
     val moments: List[Aggregator[Position1D, Position0D, Position1D]] = List(
@@ -51,9 +51,9 @@ object DataAnalysis {
     //  4/ Save the moments.
     data
       .summarise(Over(First), Count[Position2D, Position1D]())
-      .save(s"./demo.${output}/feature_count.out")
+      .saveAsText(s"./demo.${output}/feature_count.out")
       .summarise(Along(First), moments)
-      .save(s"./demo.${output}/feature_density.out")
+      .saveAsText(s"./demo.${output}/feature_density.out")
 
     // For the features:
     //  1/ Compute the number of instance that have a value for each features;
@@ -62,9 +62,9 @@ object DataAnalysis {
     //  4/ Save the moments.
     data
       .summarise(Over(Second), Count[Position2D, Position1D]())
-      .save(s"./demo.${output}/instance_count.out")
+      .saveAsText(s"./demo.${output}/instance_count.out")
       .summarise(Along(First), moments)
-      .save(s"./demo.${output}/instance_density.out")
+      .saveAsText(s"./demo.${output}/instance_density.out")
   }
 }
 

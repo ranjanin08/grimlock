@@ -12,11 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package au.com.cba.omnia.grimlock.framework
+package au.com.cba.omnia.grimlock.scalding
 
-/** Base trait for persisting data. */
-trait Persist[T] {
-  /** Shorthand type for converting a `T` to string. */
-  type TextWriter = (T) => TraversableOnce[String]
+import au.com.cba.omnia.grimlock.framework.TunerParameters
+
+import com.twitter.scalding.{ Config, Mode }
+
+trait Execution extends TunerParameters {
+  type P = Execution
+
+  val config: Config
+  val mode: Mode
+}
+
+object Execution {
+  def apply()(implicit cfg: Config, md: Mode): Execution = {
+    new Execution {
+      val config = cfg
+      val mode = md
+    }
+  }
+
+  def unapply(e: Execution): Option[(Config, Mode)] = Some((e.config, e.mode))
 }
 

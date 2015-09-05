@@ -37,8 +37,8 @@ object Conditional {
     val output = "spark"
 
     // Read the data.
-    // 1/ Read the data, this returns a 2D matrix (row x feature).
-    val data = loadText(s"${path}/exampleConditional.txt", Cell.parse2D())
+    // 1/ Read the data (ignoring errors), this returns a 2D matrix (row x feature).
+    val (data, _) = loadText(s"${path}/exampleConditional.txt", Cell.parse2D())
 
     // Get map of row id -> hair color
     // 1/ Squash the matrix keeping only hair column.
@@ -100,7 +100,7 @@ object Conditional {
     heg
       .summarise(Along(First), Sum[Position3D, Position2D]())
       .transformWithValue(Fraction(extractor), gcount)
-      .save(s"./demo.${output}/eye.out")
+      .saveAsText(s"./demo.${output}/eye.out")
 
     // Get hair color conditional on gender.
     // 1/ Sum out eye color.
@@ -108,7 +108,7 @@ object Conditional {
     heg
       .summarise(Along(Second), Sum[Position3D, Position2D]())
       .transformWithValue(Fraction(extractor), gcount)
-      .save(s"./demo.${output}/hair.out")
+      .saveAsText(s"./demo.${output}/hair.out")
   }
 }
 

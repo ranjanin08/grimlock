@@ -46,9 +46,9 @@ import au.com.cba.omnia.grimlock.scalding.transform._
 import au.com.cba.omnia.grimlock.scalding.Types._
 
 import cascading.flow.FlowDef
-import com.twitter.scalding.{ Args, Job, Mode, TypedPsv }
+import com.twitter.scalding.{ Args, Job, Mode, TextLine, TypedPsv }
 import com.twitter.scalding.TDsl.sourceToTypedPipe
-import com.twitter.scalding.typed.{ IterablePipe, TypedPipe, ValuePipe }
+import com.twitter.scalding.typed.{ IterablePipe, TypedPipe, TypedSink, ValuePipe }
 
 object TestScaldingReader {
   def load4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
@@ -80,16 +80,17 @@ class TestScalding1(args : Args) extends Job(args) {
   val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   data
-    .save("./tmp.scalding/dat1.out", descriptive = true)
+    .saveAsText("./tmp.scalding/dat1.out", Cell.toString(descriptive = true))
 
   data
     .set(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
       Content(ContinuousSchema(LongCodex), 1234))
     .slice(Over(First), "iid:1548763", true)
-    .save("./tmp.scalding/dat2.out", descriptive = true)
+    .saveAsText("./tmp.scalding/dat2.out", Cell.toString(descriptive = true))
 
   loadText(args("path") + "/smallInputfile.txt", Cell.parse3D(third = DateCodex()))
-    .save("./tmp.scalding/dat3.out", descriptive = true)
+    .data
+    .saveAsText("./tmp.scalding/dat3.out", Cell.toString(descriptive = true))
 }
 
 class TestScalding2(args : Args) extends Job(args) {
@@ -97,33 +98,38 @@ class TestScalding2(args : Args) extends Job(args) {
   val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   (data.names(Over(First)) ++ data.names(Over(Second)) ++ data.names(Over(Third)))
-    .renumber
-    .save("./tmp.scalding/nm0.out", descriptive = true)
+    .number
+    .saveAsText("./tmp.scalding/nm0.out", Name.toString(descriptive = true))
 
   data
     .names(Over(Second))
+    .number
     .moveToFront("fid:Z")
-    .save("./tmp.scalding/nm1.out", descriptive = true)
+    .saveAsText("./tmp.scalding/nm1.out", Name.toString(descriptive = true))
 
   data
     .names(Over(Second))
+    .number
     .slice("fid:M", false)
-    .save("./tmp.scalding/nm2.out", descriptive = true)
+    .saveAsText("./tmp.scalding/nm2.out", Name.toString(descriptive = true))
 
   data
     .names(Over(Second))
+    .number
     .set(Map("fid:A" -> 100L, "fid:C" -> 200L))
-    .save("./tmp.scalding/nm3.out", descriptive = true)
+    .saveAsText("./tmp.scalding/nm3.out", Name.toString(descriptive = true))
 
   data
     .names(Over(Second))
+    .number
     .moveToBack("fid:B")
-    .save("./tmp.scalding/nm4.out", descriptive = true)
+    .saveAsText("./tmp.scalding/nm4.out", Name.toString(descriptive = true))
 
   data
     .names(Over(Second))
+    .number
     .slice(""".*[BCD]$""".r, true, "")
-    .save("./tmp.scalding/nm5.out", descriptive = true)
+    .saveAsText("./tmp.scalding/nm5.out", Name.toString(descriptive = true))
 }
 
 class TestScalding3(args : Args) extends Job(args) {
@@ -131,10 +137,10 @@ class TestScalding3(args : Args) extends Job(args) {
   val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   (data.types(Over(First)) ++ data.types(Over(Second)) ++ data.types(Over(Third)))
-    .save("./tmp.scalding/typ1.out", descriptive = true)
+    .saveAsText("./tmp.scalding/typ1.out", Type.toString(descriptive = true))
 
   (data.types(Over(First), true) ++ data.types(Over(Second), true) ++ data.types(Over(Third), true))
-    .save("./tmp.scalding/typ2.out", descriptive = true)
+    .saveAsText("./tmp.scalding/typ2.out", Type.toString(descriptive = true))
 }
 
 class TestScalding4(args : Args) extends Job(args) {
@@ -143,18 +149,18 @@ class TestScalding4(args : Args) extends Job(args) {
 
   data
     .slice(Over(Second), "fid:B", true)
-    .save("./tmp.scalding/scl0.out", descriptive = true)
+    .saveAsText("./tmp.scalding/scl0.out", Cell.toString(descriptive = true))
 
   data
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", true)
-    .save("./tmp.scalding/scl1.out", descriptive = true)
+    .saveAsText("./tmp.scalding/scl1.out", Cell.toString(descriptive = true))
 
   val rem = List("fid:B", "fid:D", "fid:F", "fid:H", "fid:J", "fid:L", "fid:N",
                  "fid:P", "fid:R", "fid:T", "fid:V", "fid:X", "fid:Z")
   data
     .slice(Over(Second), data.names(Over(Second)).slice(rem, false), false)
-    .save("./tmp.scalding/scl2.out", descriptive = true)
+    .saveAsText("./tmp.scalding/scl2.out", Cell.toString(descriptive = true))
 }
 
 class TestScalding5(args : Args) extends Job(args) {
@@ -165,11 +171,11 @@ class TestScalding5(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), "iid:0221707", true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .save("./tmp.scalding/sqs1.out", descriptive = true)
+    .saveAsText("./tmp.scalding/sqs1.out", Cell.toString(descriptive = true))
 
   data
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .save("./tmp.scalding/sqs2.out", descriptive = true)
+    .saveAsText("./tmp.scalding/sqs2.out", Cell.toString(descriptive = true))
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -191,20 +197,20 @@ class TestScalding6(args : Args) extends Job(args) {
 
   data
     .which((c: Cell[Position3D]) => c.content.schema.kind.isSpecialisationOf(Numerical))
-    .save("./tmp.scalding/whc1.out", descriptive = true)
+    .saveAsText("./tmp.scalding/whc1.out", Position.toString(descriptive = true))
 
   data
     .which((c: Cell[Position3D]) => ! c.content.value.isInstanceOf[StringValue])
-    .save("./tmp.scalding/whc2.out", descriptive = true)
+    .saveAsText("./tmp.scalding/whc2.out", Position.toString(descriptive = true))
 
   data
     .get(data.which((c: Cell[Position3D]) =>
       (c.content.value equ 666) || (c.content.value leq 11.0) || (c.content.value equ "KQUPKFEH")))
-    .save("./tmp.scalding/whc3.out", descriptive = true)
+    .saveAsText("./tmp.scalding/whc3.out", Cell.toString(descriptive = true))
 
   data
     .which((c: Cell[Position3D]) => c.content.value.isInstanceOf[LongValue])
-    .save("./tmp.scalding/whc4.out", descriptive = true)
+    .saveAsText("./tmp.scalding/whc4.out", Position.toString(descriptive = true))
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
     Count().andThenExpand(_.position.append("count")),
@@ -221,7 +227,7 @@ class TestScalding6(args : Args) extends Job(args) {
     .summarise(Along(First), aggregators)
     .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
                               ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
-    .save("./tmp.scalding/whc5.out", descriptive = true)
+    .saveAsText("./tmp.scalding/whc5.out", Position.toString(descriptive = true))
 }
 
 class TestScalding7(args : Args) extends Job(args) {
@@ -230,12 +236,12 @@ class TestScalding7(args : Args) extends Job(args) {
 
   data
     .get(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get))
-    .save("./tmp.scalding/get1.out", descriptive = true)
+    .saveAsText("./tmp.scalding/get1.out", Cell.toString(descriptive = true))
 
   data
     .get(List(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
               Position3D("iid:1303823", "fid:A", DateCodex().decode("2014-05-05").get)))
-    .save("./tmp.scalding/get2.out", descriptive = true)
+    .saveAsText("./tmp.scalding/get2.out", Cell.toString(descriptive = true))
 }
 
 class TestScalding8(args : Args) extends Job(args) {
@@ -246,11 +252,13 @@ class TestScalding8(args : Args) extends Job(args) {
     .slice(Over(Second), "fid:B", true)
     .squash(Third, PreservingMaxPosition[Position3D]())
     .unique()
-    .save("./tmp.scalding/uniq.out", descriptive = true)
+    .saveAsText("./tmp.scalding/uniq.out", Content.toString(descriptive = true))
 
   loadText(args("path") + "/mutualInputfile.txt", Cell.parse2D())
+    .data
     .unique(Over[Position2D, Dimension.Second](Second))
-    .save("./tmp.scalding/uni2.out")
+    .map { case (p, c) => Cell(p, c) }
+    .saveAsText("./tmp.scalding/uni2.out")
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
@@ -264,13 +272,13 @@ class TestScalding8(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
     .permute(Second, First)
-    .save("./tmp.scalding/trs1.out", descriptive = true)
+    .saveAsText("./tmp.scalding/trs1.out", Cell.toString(descriptive = true))
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .save("./tmp.scalding/data.txt")
+    .saveAsText("./tmp.scalding/data.txt")
 }
 
 class TestScalding9(args : Args) extends Job(args) {
@@ -293,7 +301,7 @@ class TestScalding9(args : Args) extends Job(args) {
     .split(StringPartitioner(Second))
 
   prt1
-    .save("./tmp.scalding/prt1.out", descriptive = true)
+    .saveAsText("./tmp.scalding/prt1.out", Partition.toString(descriptive = true))
 
   case class IntTuplePartitioner(dim: Dimension) extends Partitioner[Position2D, (Int, Int, Int)] {
     def assign(cell: Cell[Position2D]): TraversableOnce[(Int, Int, Int)] = {
@@ -309,19 +317,19 @@ class TestScalding9(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
     .split[(Int, Int, Int), IntTuplePartitioner](IntTuplePartitioner(Second))
-    .save("./tmp.scalding/prt2.out", descriptive = true)
+    .saveAsText("./tmp.scalding/prt2.out", Partition.toString(descriptive = true))
 
   prt1
     .get("training")
-    .save("./tmp.scalding/train.out", descriptive = true)
+    .saveAsText("./tmp.scalding/train.out", Cell.toString(descriptive = true))
 
   prt1
     .get("testing")
-    .save("./tmp.scalding/test.out", descriptive = true)
+    .saveAsText("./tmp.scalding/test.out", Cell.toString(descriptive = true))
 
   prt1
     .get("scoring")
-    .save("./tmp.scalding/score.out", descriptive = true)
+    .saveAsText("./tmp.scalding/score.out", Cell.toString(descriptive = true))
 }
 
 class TestScalding10(args : Args) extends Job(args) {
@@ -365,7 +373,7 @@ class TestScalding11(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .transform(Indicator[Position3D]() andThenRename Transformer.rename(Second, "%1$s.ind"))
-    .save("./tmp.scalding/trn2.out", descriptive = true)
+    .saveAsText("./tmp.scalding/trn2.out", Cell.toString(descriptive = true))
 
   data
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
@@ -388,7 +396,7 @@ class TestScalding12(args : Args) extends Job(args) {
 
   data
     .fill(Content(ContinuousSchema(LongCodex), 0))
-    .save("./tmp.scalding/fll3.out", descriptive = true)
+    .saveAsText("./tmp.scalding/fll3.out", Cell.toString(descriptive = true))
 }
 
 class TestScalding13(args : Args) extends Job(args) {
@@ -424,7 +432,7 @@ class TestScalding14(args : Args) extends Job(args) {
 
   data
     .change(Over(Second), "fid:A", NominalSchema(LongCodex))
-    .save("./tmp.scalding/chg1.out", descriptive = true)
+    .saveAsText("./tmp.scalding/chg1.out", Cell.toString(descriptive = true))
 }
 
 class TestScalding15(args : Args) extends Job(args) {
@@ -465,7 +473,7 @@ class TestScalding16(args : Args) extends Job(args) {
 
   data
     .sample(HashSample())
-    .save("./tmp.scalding/smp1.out")
+    .saveAsText("./tmp.scalding/smp1.out")
 }
 
 class TestScalding17(args : Args) extends Job(args) {
@@ -596,14 +604,16 @@ class TestScalding19(args : Args) extends Job(args) {
   }
 
   parts
-    .forEach(List("train", "test"), cb)
+    .forEach(cb, List("train", "test"))
 }
 
 class TestScalding20(args : Args) extends Job(args) {
 
-  loadText(args("path") + "/ivoryInputfile1.txt",
-      Cell.parse3DWithDictionary(Dictionary.load(args("path") + "/dict.txt"), Second, third = DateCodex()))
-    .save("./tmp.scalding/ivr1.out")
+  val (dictionary, _) = Dictionary.load(args("path") + "/dict.txt")
+
+  loadText(args("path") + "/ivoryInputfile1.txt", Cell.parse3DWithDictionary(dictionary, Second, third = DateCodex()))
+    .data
+    .saveAsText("./tmp.scalding/ivr1.out")
 }
 
 class TestScalding21(args : Args) extends Job(args) {
@@ -612,24 +622,24 @@ class TestScalding21(args : Args) extends Job(args) {
 
   data
     .shape()
-    .save("./tmp.scalding/siz0.out")
+    .saveAsText("./tmp.scalding/siz0.out")
 
   data
     .size(First)
-    .save("./tmp.scalding/siz1.out")
+    .saveAsText("./tmp.scalding/siz1.out")
 
   data
     .size(Second)
-    .save("./tmp.scalding/siz2.out")
+    .saveAsText("./tmp.scalding/siz2.out")
 
   data
     .size(Third)
-    .save("./tmp.scalding/siz3.out")
+    .saveAsText("./tmp.scalding/siz3.out")
 }
 
 class TestScalding22(args : Args) extends Job(args) {
 
-  val data = loadText(args("path") + "/numericInputfile.txt", Cell.parse2D())
+  val (data, _) = loadText(args("path") + "/numericInputfile.txt", Cell.parse2D())
 
   case class Diff() extends Window[Position1D, Position1D, Position2D] {
     type T = Cell[Position1D]
@@ -650,17 +660,17 @@ class TestScalding22(args : Args) extends Job(args) {
 
   data
     .slide(Over(First), Diff())
-    .save("./tmp.scalding/dif1.out")
+    .saveAsText("./tmp.scalding/dif1.out")
 
   data
     .slide(Over(Second), Diff())
     .permute(Second, First)
-    .save("./tmp.scalding/dif2.out")
+    .saveAsText("./tmp.scalding/dif2.out")
 }
 
 class TestScalding23(args : Args) extends Job(args) {
 
-  val data = loadText(args("path") + "/somePairwise.txt", Cell.parse2D())
+  val (data, _) = loadText(args("path") + "/somePairwise.txt", Cell.parse2D())
 
   case class DiffSquared() extends Operator[Position1D, Position1D, Position2D] {
     def compute(left: Cell[Position1D], reml: Position1D, right: Cell[Position1D],
@@ -679,7 +689,7 @@ class TestScalding23(args : Args) extends Job(args) {
 
   data
     .pairwise(Over(Second), Upper, DiffSquared())
-    .save("./tmp.scalding/pws1.out")
+    .saveAsText("./tmp.scalding/pws1.out")
 }
 
 class TestScalding24(args: Args) extends Job(args) {
@@ -689,72 +699,80 @@ class TestScalding24(args: Args) extends Job(args) {
   val schema = List(("day", NominalSchema(StringCodex)),
                     ("temperature", ContinuousSchema(DoubleCodex)),
                     ("sales", DiscreteSchema(LongCodex)))
-  val data = loadText(args("path") + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
+  val (data, _) = loadText(args("path") + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
 
   data
     .correlation(Over(Second))
-    .save("./tmp.scalding/pws2.out")
+    .saveAsText("./tmp.scalding/pws2.out")
 
   val schema2 = List(("day", NominalSchema(StringCodex)),
                      ("temperature", ContinuousSchema(DoubleCodex)),
                      ("sales", DiscreteSchema(LongCodex)),
                      ("neg.sales", DiscreteSchema(LongCodex)))
-  val data2 = loadText(args("path") + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
+  val (data2, _) = loadText(args("path") + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
 
   data2
     .correlation(Over(Second))
-    .save("./tmp.scalding/pws3.out")
+    .saveAsText("./tmp.scalding/pws3.out")
 }
 
 class TestScalding25(args: Args) extends Job(args) {
 
   loadText(args("path") + "/mutualInputfile.txt", Cell.parse2D())
+    .data
     .mutualInformation(Over(Second))
-    .save("./tmp.scalding/mi.out")
+    .saveAsText("./tmp.scalding/mi.out")
 }
 
 class TestScalding26(args: Args) extends Job(args) {
 
-  val left = loadText(args("path") + "/algebraInputfile1.txt", Cell.parse2D())
-  val right = loadText(args("path") + "/algebraInputfile2.txt", Cell.parse2D())
+  val (left, _) = loadText(args("path") + "/algebraInputfile1.txt", Cell.parse2D())
+  val (right, _) = loadText(args("path") + "/algebraInputfile2.txt", Cell.parse2D())
 
   left
     .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
-    .save("./tmp.scalding/alg.out")
+    .saveAsText("./tmp.scalding/alg.out")
 }
 
 class TestScalding27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
   loadText(args("path") + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+    .data
     .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
-    .save("./tmp.scalding/sma1.out")
+    .saveAsText("./tmp.scalding/sma1.out")
 
   loadText(args("path") + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+    .data
     .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all = true))
-    .save("./tmp.scalding/sma2.out")
+    .saveAsText("./tmp.scalding/sma2.out")
 
   loadText(args("path") + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+    .data
     .slide(Over(Second), CenteredMovingAverage(2, Locate.WindowDimension[Position1D, Position1D](First)))
-    .save("./tmp.scalding/tma.out")
+    .saveAsText("./tmp.scalding/tma.out")
 
   loadText(args("path") + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+    .data
     .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
-    .save("./tmp.scalding/wma1.out")
+    .saveAsText("./tmp.scalding/wma1.out")
 
   loadText(args("path") + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+    .data
     .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all = true))
-    .save("./tmp.scalding/wma2.out")
+    .saveAsText("./tmp.scalding/wma2.out")
 
   // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
   loadText(args("path") + "/cumMovAvgInputfile.txt", Cell.parse1D())
+    .data
     .slide(Along(First), CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First)))
-    .save("./tmp.scalding/cma.out")
+    .saveAsText("./tmp.scalding/cma.out")
 
   // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
   loadText(args("path") + "/expMovAvgInputfile.txt", Cell.parse1D())
+    .data
     .slide(Along(First), ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First)))
-    .save("./tmp.scalding/ema.out")
+    .saveAsText("./tmp.scalding/ema.out")
 }
 
 class TestScalding28(args: Args) extends Job(args) {
@@ -780,37 +798,37 @@ class TestScalding28(args: Args) extends Job(args) {
 
   data
     .transformWithValue(Cut(extractor), CutRules.fixed(stats, "min", "max", 4))
-    .save("./tmp.scalding/cut1.out")
+    .saveAsText("./tmp.scalding/cut1.out")
 
   data
     .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.square")),
       CutRules.squareRootChoice(stats, "count", "min", "max"))
-    .save("./tmp.scalding/cut2.out")
+    .saveAsText("./tmp.scalding/cut2.out")
 
   data
     .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.sturges")),
       CutRules.sturgesFormula(stats, "count", "min", "max"))
-    .save("./tmp.scalding/cut3.out")
+    .saveAsText("./tmp.scalding/cut3.out")
 
   data
     .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.rice")),
       CutRules.riceRule(stats, "count", "min", "max"))
-    .save("./tmp.scalding/cut4.out")
+    .saveAsText("./tmp.scalding/cut4.out")
 
   data
     .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.doane")),
       CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
-    .save("./tmp.scalding/cut5.out")
+    .saveAsText("./tmp.scalding/cut5.out")
 
   data
     .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.scott")),
       CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
-    .save("./tmp.scalding/cut6.out")
+    .saveAsText("./tmp.scalding/cut6.out")
 
   data
     .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.break")),
       CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
-    .save("./tmp.scalding/cut7.out")
+    .saveAsText("./tmp.scalding/cut7.out")
 }
 
 class TestScalding29(args: Args) extends Job(args) {
@@ -833,12 +851,12 @@ class TestScalding29(args: Args) extends Job(args) {
 
   data
     .gini(Over(First))
-    .save("./tmp.scalding/gini.out")
+    .saveAsText("./tmp.scalding/gini.out")
 
   data
     .map { case (a, b, c) => (b, a, c) }
     .gini(Along(First))
-    .save("./tmp.scalding/inig.out")
+    .saveAsText("./tmp.scalding/inig.out")
 }
 
 class TestScalding30(args: Args) extends Job(args) {
@@ -855,6 +873,15 @@ class TestScalding30(args: Args) extends Job(args) {
 
   data
     .stream("Rscript", "double.R", "|", Cell.parse2D("#", StringCodex, LongCodex))
-    .save("./tmp.scalding/strm.out")
+    .data
+    .saveAsText("./tmp.scalding/strm.out")
+}
+
+class TestScalding31(args: Args) extends Job(args) {
+
+  val (data, errors) = loadText(args("path") + "/badInputfile.txt", Cell.parse3D(third = DateCodex()))
+
+  data.saveAsText("./tmp.scalding/yok.out", Cell.toString(descriptive = true))
+  errors.write(TypedSink(TextLine("./tmp.scalding/nok.out")))
 }
 

@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock.spark
 import au.com.cba.omnia.grimlock.framework.{
   Default,
   Matrix => BaseMatrix,
+  Name,
   Names => BaseNames,
   Nameable => BaseNameable,
   NoParameters
@@ -53,6 +54,8 @@ class Names[P <: Position](val data: RDD[(P, Long)]) extends BaseNames[P] with P
   }
 
   def renumber()(implicit ev: ClassTag[P]): U[(P, Long)] = Names.number(data.map { case (p, _) => p })
+
+  def saveAsText(file: String, writer: TextWriter = Name.toString()): U[(P, Long)] = saveText(file, writer)
 
   def set[T](positions: Map[T, Long])(implicit ev: Positionable[T, P]): U[(P, Long)] = {
     val converted = positions.map { case (k, v) => ev.convert(k) -> v }

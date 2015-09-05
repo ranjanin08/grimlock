@@ -44,11 +44,13 @@ case class Cell[P <: Position](position: P, content: Content) {
    *
    * @param separator   The separator to use between various fields.
    * @param descriptive Indicator if descriptive string is required or not.
+   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
    */
-  def toString(separator: String, descriptive: Boolean): String = {
-    descriptive match {
-      case true => position.toString + separator + content.toString
-      case false => position.toShortString(separator) + separator + content.toShortString(separator)
+  def toString(separator: String, descriptive: Boolean, schema: Boolean = true): String = {
+    (descriptive, schema) match {
+      case (true, _) => position.toString + separator + content.toString
+      case (false, true) => position.toShortString(separator) + separator + content.toShortString(separator)
+      case (false, false) => position.toShortString(separator) + separator + content.toShortString()
     }
   }
 }
@@ -56,27 +58,28 @@ case class Cell[P <: Position](position: P, content: Content) {
 /** Companion object to the Cell class. */
 object Cell {
   /**
-   * Parse a line into a `Option[Cell[Position1D]]`.
+   * Parse a line into a `Cell[Position1D]`.
    *
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
    * @param line      The line to parse.
    */
-  def parse1D(separator: String = "|", first: Codex = StringCodex)(line: String): Option[Cell[Position1D]] = {
+  def parse1D(separator: String = "|", first: Codex = StringCodex)(
+    line: String): Option[Either[Cell[Position1D], String]] = {
     line.trim.split(Pattern.quote(separator), 4) match {
       case Array(r, t, e, v) =>
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(r)) match {
-            case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
-            case _ => None
+            case (Some(con), Some(c1)) => Some(Left(Cell(Position1D(c1), con)))
+            case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line data into a `Option[Cell[Position1D]]` with a dictionary.
+   * Parse a line data into a `Cell[Position1D]` with a dictionary.
    *
    * @param dict      The dictionary describing the features in the data.
    * @param separator The column separator.
@@ -84,19 +87,23 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse1DWithDictionary(dict: Map[String, Schema], separator: String = "|", first: Codex = StringCodex)(
-    line: String): Option[Cell[Position1D]] = {
+    line: String): Option[Either[Cell[Position1D], String]] = {
     line.trim.split(Pattern.quote(separator), 2) match {
       case Array(e, v) =>
-        (dict(e).decode(v), first.decode(e)) match {
-          case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
-          case _ => None
+        dict.get(e) match {
+          case Some(schema) =>
+            (schema.decode(v), first.decode(e)) match {
+              case (Some(con), Some(c1)) => Some(Left(Cell(Position1D(c1), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => Some(Right("Missing schema for: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position1D]]` with a schema.
+   * Parse a line into a `Cell[Position1D]` with a schema.
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
@@ -104,19 +111,19 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse1DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex)(
-    line: String): Option[Cell[Position1D]] = {
+    line: String): Option[Either[Cell[Position1D], String]] = {
     line.trim.split(Pattern.quote(separator), 2) match {
       case Array(e, v) =>
         (schema.decode(v), first.decode(e)) match {
-          case (Some(con), Some(c1)) => Some(Cell(Position1D(c1), con))
-          case _ => None
+          case (Some(con), Some(c1)) => Some(Left(Cell(Position1D(c1), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position2D]]`.
+   * Parse a line into a `Cell[Position2D]`.
    *
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
@@ -124,21 +131,21 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse2D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex)(
-    line: String): Option[Cell[Position2D]] = {
+    line: String): Option[Either[Cell[Position2D], String]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(r, c, t, e, v) =>
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(r), second.decode(c)) match {
-            case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
-            case _ => None
+            case (Some(con), Some(c1), Some(c2)) => Some(Left(Cell(Position2D(c1, c2), con)))
+            case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position2D]]` with a dictionary.
+   * Parse a line into a `Cell[Position2D]` with a dictionary.
    *
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
@@ -149,24 +156,26 @@ object Cell {
    */
   def parse2DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
     first: Codex = StringCodex, second: Codex = StringCodex)(line: String)(
-      implicit ev: PosDimDep[Position2D, D]): Option[Cell[Position2D]] = {
+      implicit ev: PosDimDep[Position2D, D]): Option[Either[Cell[Position2D], String]] = {
     line.trim.split(Pattern.quote(separator), 3) match {
       case Array(e, a, v) =>
-        val s = dim match {
-          case First => dict(e)
-          case Second => dict(a)
+        (dim match {
+          case First => dict.get(e)
+          case Second => dict.get(a)
+        }) match {
+          case Some(schema) =>
+            (schema.decode(v), first.decode(e), second.decode(a)) match {
+              case (Some(con), Some(c1), Some(c2)) => Some(Left(Cell(Position2D(c1, c2), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => Some(Right("Missing schema for: '" + line + "'"))
         }
-
-        (s.decode(v), first.decode(e), second.decode(a)) match {
-          case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
-          case _ => None
-        }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position2D]]` with a schema.
+   * Parse a line into a `Cell[Position2D]` with a schema.
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
@@ -175,19 +184,19 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse2DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
-    second: Codex = StringCodex)(line: String): Option[Cell[Position2D]] = {
+    second: Codex = StringCodex)(line: String): Option[Either[Cell[Position2D], String]] = {
     line.trim.split(Pattern.quote(separator), 3) match {
       case Array(e, a, v) =>
         (schema.decode(v), first.decode(e), second.decode(a)) match {
-          case (Some(con), Some(c1), Some(c2)) => Some(Cell(Position2D(c1, c2), con))
-          case _ => None
+          case (Some(con), Some(c1), Some(c2)) => Some(Left(Cell(Position2D(c1, c2), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position3D]]`.
+   * Parse a line into a `Cell[Position3D]`.
    *
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
@@ -196,21 +205,21 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse3D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
-    third: Codex = StringCodex)(line: String): Option[Cell[Position3D]] = {
+    third: Codex = StringCodex)(line: String): Option[Either[Cell[Position3D], String]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(r, c, d, t, e, v) =>
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(r), second.decode(c), third.decode(d)) match {
-            case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
-            case _ => None
+            case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Left(Cell(Position3D(c1, c2, c3), con)))
+            case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position3D]]` with a dictionary.
+   * Parse a line into a `Cell[Position3D]` with a dictionary.
    *
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
@@ -222,25 +231,27 @@ object Cell {
    */
   def parse3DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
     first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex)(line: String)(
-      implicit ev: PosDimDep[Position3D, D]): Option[Cell[Position3D]] = {
+      implicit ev: PosDimDep[Position3D, D]): Option[Either[Cell[Position3D], String]] = {
     line.trim.split(Pattern.quote(separator), 4) match {
       case Array(e, a, t, v) =>
-        val s = dim match {
-          case First => dict(e)
-          case Second => dict(a)
-          case Third => dict(t)
+        (dim match {
+          case First => dict.get(e)
+          case Second => dict.get(a)
+          case Third => dict.get(t)
+        }) match {
+          case Some(schema) =>
+            (schema.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
+              case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Left(Cell(Position3D(c1, c2, c3), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => Some(Right("Missing schema for: '" + line + "'"))
         }
-
-        (s.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
-          case _ => None
-        }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position3D]]` with a schema.
+   * Parse a line into a `Cell[Position3D]` with a schema.
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
@@ -250,19 +261,20 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse3DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
-    second: Codex = StringCodex, third: Codex = StringCodex)(line: String): Option[Cell[Position3D]] = {
+    second: Codex = StringCodex, third: Codex = StringCodex)(
+      line: String): Option[Either[Cell[Position3D], String]] = {
     line.trim.split(Pattern.quote(separator), 4) match {
       case Array(e, a, t, v) =>
         (schema.decode(v), first.decode(e), second.decode(a), third.decode(t)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Cell(Position3D(c1, c2, c3), con))
-          case _ => None
+          case (Some(con), Some(c1), Some(c2), Some(c3)) => Some(Left(Cell(Position3D(c1, c2, c3), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position4D]]`.
+   * Parse a line into a `Cell[Position4D]`.
    *
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
@@ -272,21 +284,23 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse4D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
-    third: Codex = StringCodex, fourth: Codex = StringCodex)(line: String): Option[Cell[Position4D]] = {
+    third: Codex = StringCodex, fourth: Codex = StringCodex)(
+      line: String): Option[Either[Cell[Position4D], String]] = {
     line.trim.split(Pattern.quote(separator), 7) match {
       case Array(a, b, c, d, t, e, v) =>
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
-            case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
-            case _ => None
+            case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) =>
+              Some(Left(Cell(Position4D(c1, c2, c3, c4), con)))
+            case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
         }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position4D]]` with a dictionary.
+   * Parse a line into a `Cell[Position4D]` with a dictionary.
    *
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
@@ -299,26 +313,29 @@ object Cell {
    */
   def parse4DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
     first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex)(
-      line: String)(implicit ev: PosDimDep[Position4D, D]): Option[Cell[Position4D]] = {
+      line: String)(implicit ev: PosDimDep[Position4D, D]): Option[Either[Cell[Position4D], String]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(a, b, c, d, v) =>
-        val s = dim match {
-          case First => dict(a)
-          case Second => dict(b)
-          case Third => dict(c)
-          case Fourth => dict(d)
+        (dim match {
+          case First => dict.get(a)
+          case Second => dict.get(b)
+          case Third => dict.get(c)
+          case Fourth => dict.get(d)
+        }) match {
+          case Some(schema) =>
+            (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
+              case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) =>
+                Some(Left(Cell(Position4D(c1, c2, c3, c4), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => Some(Right("Missing schema for: '" + line + "'"))
         }
-
-        (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
-          case _ => None
-        }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position4D]]` with a schema.
+   * Parse a line into a `Cell[Position4D]` with a schema.
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
@@ -330,19 +347,19 @@ object Cell {
    */
   def parse4DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex)(
-      line: String): Option[Cell[Position4D]] = {
+      line: String): Option[Either[Cell[Position4D], String]] = {
     line.trim.split(Pattern.quote(separator), 5) match {
       case Array(a, b, c, d, v) =>
         (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Cell(Position4D(c1, c2, c3, c4), con))
-          case _ => None
+          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4)) => Some(Left(Cell(Position4D(c1, c2, c3, c4), con)))
+          case _ => Some(Right("Unable to decode: '" + line + "'"))
         }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position5D]]`.
+   * Parse a line into a `Cell[Position5D]`.
    *
    * @param separator The column separator.
    * @param first     The codex for decoding the first dimension.
@@ -354,23 +371,23 @@ object Cell {
    */
   def parse5D(separator: String = "|", first: Codex = StringCodex, second: Codex = StringCodex,
     third: Codex = StringCodex, fourth: Codex = StringCodex, fifth: Codex = StringCodex)(
-      line: String): Option[Cell[Position5D]] = {
+      line: String): Option[Either[Cell[Position5D], String]] = {
     line.trim.split(Pattern.quote(separator), 8) match {
       case Array(a, b, c, d, f, t, e, v) =>
         Schema.fromString(e, t).flatMap {
           case s => (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
             fifth.decode(f)) match {
               case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
-                Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
-              case _ => None
+                Some(Left(Cell(Position5D(c1, c2, c3, c4, c5), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
             }
         }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position5D]]` with a dictionary.
+   * Parse a line into a `Cell[Position5D]` with a dictionary.
    *
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
@@ -384,28 +401,32 @@ object Cell {
    */
   def parse5DWithDictionary[D <: Dimension](dict: Map[String, Schema], dim: D, separator: String = "|",
     first: Codex = StringCodex, second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex,
-      fifth: Codex = StringCodex)(line: String)(implicit ev: PosDimDep[Position5D, D]): Option[Cell[Position5D]] = {
+      fifth: Codex = StringCodex)(line: String)(
+        implicit ev: PosDimDep[Position5D, D]): Option[Either[Cell[Position5D], String]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(a, b, c, d, e, v) =>
-        val s = dim match {
-          case First => dict(a)
-          case Second => dict(b)
-          case Third => dict(c)
-          case Fourth => dict(d)
-          case Fifth => dict(e)
+        (dim match {
+          case First => dict.get(a)
+          case Second => dict.get(b)
+          case Third => dict.get(c)
+          case Fourth => dict.get(d)
+          case Fifth => dict.get(e)
+        }) match {
+          case Some(schema) =>
+            (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
+              fifth.decode(e)) match {
+              case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
+                Some(Left(Cell(Position5D(c1, c2, c3, c4, c5), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => Some(Right("Missing schema for: '" + line + "'"))
         }
-
-        (s.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d), fifth.decode(e)) match {
-          case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
-            Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
-          case _ => None
-        }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
   /**
-   * Parse a line into a `Option[Cell[Position5D]]` with a schema.
+   * Parse a line into a `Cell[Position5D]` with a schema.
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
@@ -418,16 +439,16 @@ object Cell {
    */
   def parse5DWithSchema(schema: Schema, separator: String = "|", first: Codex = StringCodex,
     second: Codex = StringCodex, third: Codex = StringCodex, fourth: Codex = StringCodex, fifth: Codex = StringCodex)(
-      line: String): Option[Cell[Position5D]] = {
+      line: String): Option[Either[Cell[Position5D], String]] = {
     line.trim.split(Pattern.quote(separator), 6) match {
       case Array(a, b, c, d, e, v) =>
         (schema.decode(v), first.decode(a), second.decode(b), third.decode(c), fourth.decode(d),
           fifth.decode(e)) match {
             case (Some(con), Some(c1), Some(c2), Some(c3), Some(c4), Some(c5)) =>
-              Some(Cell(Position5D(c1, c2, c3, c4, c5), con))
-            case _ => None
+              Some(Left(Cell(Position5D(c1, c2, c3, c4, c5), con)))
+            case _ => Some(Right("Unable to decode: '" + line + "'"))
           }
-      case _ => None
+      case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
 
@@ -440,20 +461,40 @@ object Cell {
    * @param line      The line to parse.
    */
   def parseTable(columns: List[(String, Schema)], pkeyIndex: Int = 0, separator: String = "\u0001")(
-    line: String): List[Cell[Position2D]] = {
+    line: String): List[Either[Cell[Position2D], String]] = {
     val parts = line.trim.split(Pattern.quote(separator), columns.length)
-    val pkey = parts(pkeyIndex)
 
-    columns.zipWithIndex.flatMap {
-      case ((name, schema), idx) if (idx != pkeyIndex) =>
-        schema.decode(parts(idx).trim).map { case c => Cell(Position2D(pkey, name), c) }
-      case _ => None
+    (parts.length == columns.length) match {
+      case true =>
+        val pkey = parts(pkeyIndex)
+
+        columns.zipWithIndex.flatMap {
+          case ((name, schema), idx) if (idx != pkeyIndex) =>
+            schema.decode(parts(idx)) match {
+              case Some(con) => Some(Left(Cell(Position2D(pkey, name), con)))
+              case _ => Some(Right("Unable to decode: '" + line + "'"))
+            }
+          case _ => None
+        }
+      case _ => List(Right("Unable to split: '" + line + "'"))
     }
+  }
+
+  /**
+   * Return function that returns a string representation of a cell.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
+   */
+  def toString[P <: Position](separator: String = "|", descriptive: Boolean = false,
+    schema: Boolean = true): (Cell[P]) => TraversableOnce[String] = {
+    (t: Cell[P]) => Some(t.toString(separator, descriptive, schema))
   }
 }
 
 /** Base trait for matrix operations. */
-trait Matrix[P <: Position] extends Persist[Cell[P]] {
+trait Matrix[P <: Position] {
   /** Type of the underlying data structure. */
   type U[_]
 
@@ -480,7 +521,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[P]]' with the changed contents.
    */
   def change[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, schema: Schema, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S],
+    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S],
       ev4: ChangeTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `domain`. */
@@ -533,14 +574,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param tuner The tuner for the job.
    *
    * @return A `U[(slice.S, Long)]` of the distinct position(s) together with a unique index.
-   *
-   * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
-   *       index itself is unique for each position but no ordering is defined.
-   *
-   * @see [[Names]]
    */
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)]
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S]
 
   /** Specifies tuners permitted on a call to `pairwise` functions. */
   type PairwiseTuners <: OneOf
@@ -715,7 +751,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[P]]' of the remaining content.
    */
   def slice[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, keep: Boolean, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S],
+    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S],
       ev4: SliceTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `slide` functions. */
@@ -733,7 +769,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def slide[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], windows: F, ascending: Boolean = true,
     tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[F, slice.S, slice.R, Q], ev3: slice.R =!= Position0D,
-    ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]]
+      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]]
 
   /**
    * Create window based derived data with a user supplied value.
@@ -779,13 +815,13 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param separator The separator to convert a cell to string.
    * @param parser    Function that parses the resulting string back to a cell.
    *
-   * @return a `U[Cell[Q]]` with the new data.
+   * @return A `U[Cell[Q]]` with the new data as well as a `U[String]` with any parse errors.
    *
    * @note The `command` must be installed on each node of the cluster. Also, `script` must be a single self
    *       contained script. Lastly, `parser` functions are provided on the `Cell` object.
    */
   def stream[Q <: Position](command: String, script: String, separator: String,
-    parser: String => TraversableOnce[Cell[Q]]): U[Cell[Q]]
+    parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String])
 
   /** Specifies tuners permitted on a call to `summarise` functions. */
   type SummariseTuners <: OneOf
@@ -887,6 +923,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * Return the unique (distinct) contents of an entire matrix.
    *
    * @param tuner The tuner for the job.
+   *
+   * @note Comparison is performed based on the string representation of the `Content`.
    */
   def unique[T <: Tuner](tuner: T)(implicit ev: UniqueTuners#V[T]): U[Content]
 
@@ -897,10 +935,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @param tuner The tuner for the job.
    *
    * @return A `U[Cell[slice.S]]` consisting of the unique values.
+   *
+   * @note Comparison is performed based on the string representation of the `slice.S` and `Content`.
    */
-  // TODO: Should this return a Cell? Coordinates are no longer unique in the matrix.
   def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: slice.S =!= Position0D,
-    ev2: UniqueTuners#V[T]): U[Cell[slice.S]]
+    ev2: UniqueTuners#V[T]): U[(slice.S, Content)]
 
   /** Specifies tuners permitted on a call to `which` functions. */
   type WhichTuners <: OneOf
@@ -925,7 +964,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[P]' of the positions for which the content matches `predicate`.
    */
   def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, predicate: Predicate, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
+    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
       ev5: WhichTuners#V[T]): U[P]
 
   /**
@@ -940,22 +979,18 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[P]' of the positions for which the content matches predicates.
    */
   def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], pospred: List[(I, Predicate)], tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Nameable[I, P, slice.S, D, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
+    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
       ev5: WhichTuners#V[T]): U[P]
 
   protected type TP1 = OneOf1[Default[NoParameters.type]]
   protected type TP2 = OneOf2[Default[NoParameters.type], Default[Reducers]]
   protected type TP3 = OneOf3[Default[NoParameters.type], Default[Reducers], Default[Sequence2[Reducers, Reducers]]]
 
-  protected def toString(t: Cell[P], separator: String, descriptive: Boolean): String = {
-    t.toString(separator, descriptive)
-  }
-
   protected implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
 
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations
-  // TODO: Add read/write[CSV|Hive|VW|LibSVM] operations
+  // TODO: Add read/write[CSV|Hive|HBase|VW|LibSVM] operations
   // TODO: Add statistics/dictionary into memory (from HDFS) operations
   // TODO: Is there a way not to use asInstanceOf[] as much?
   // TODO: Add machine learning operations (SVD/finding cliques/etc.) - use Spark instead?
@@ -964,7 +999,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
 trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] =>
   /** Specifies tuners permitted on a call to `fill` with hetrogeneous data. */
-  type FillHetrogeneousTuners <: OneOf
+  type FillHeterogeneousTuners <: OneOf
 
   /**
    * Fill a matrix with `values` for a given `slice`.
@@ -975,12 +1010,13 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P]]` where all missing values have been filled in.
    *
-   * @note This joins `values` onto this matrix, as such it can be used for imputing missing values.
+   * @note This joins `values` onto this matrix, as such it can be used for imputing missing values. As
+   *       the join is an inner join, any positions in the matrix that aren't in `values` are filtered
+   *       from the resulting matrix.
    */
-  // TODO: Should missing positions (in `values`) be filtered out?
   def fill[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]], tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
-      ev5: FillHetrogeneousTuners#V[T]): U[Cell[P]]
+      ev5: FillHeterogeneousTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `fill` with homogeneous data. */
   type FillHomogeneousTuners <: OneOf
@@ -1037,6 +1073,15 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    */
   def squashWithValue[D <: Dimension, F, W, T <: Tuner](dim: D, squasher: F, value: E[W], tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: SquashTuners#V[T]): U[Cell[P#L]]
+
+  /**
+   * Merge all dimensions into a single.
+   *
+   * @param separator The separator to use when merging the coordinates.
+   *
+   * @return A `U[CellPosition1D]]` where all coordinates have been merged into a single string.
+   */
+  def toVector(separator: String = "|"): U[Cell[Position1D]]
 }
 
 /** Base trait for methods that expands the number of dimension of a matrix. */
@@ -1061,6 +1106,14 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
   def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => Q, value: E[W])(
     implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
 }
+
+/**
+ * Convenience type for access results from `load` methods that return the data and any parse errors.
+ *
+ * @param data   The parsed matrix.
+ * @param errors Any parse errors.
+ */
+case class MatrixWithParseErrors[P <: Position, U[_]](data: U[Cell[P]], errors: U[String])
 
 /** Type class for transforming a type `T` into a `U[Cell[P]]`. */
 trait Matrixable[T, P <: Position, U[_]] {

@@ -870,7 +870,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position1D(s) }
     } When {
       positions: TypedPipe[Position1D] =>
-        positions.names(Over(First), Default())
+        positions.names(Over(First), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
     }
@@ -881,7 +881,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position2D(s, i) }
     } When {
       positions: TypedPipe[Position2D] =>
-        positions.names(Over(First), Default())
+        positions.names(Over(First), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
     }
@@ -892,7 +892,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position2D(s, i) }
     } When {
       positions: TypedPipe[Position2D] =>
-        positions.names(Over(Second), Default())
+        positions.names(Over(Second), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
     }
@@ -903,7 +903,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position2D(s, i) }
     } When {
       positions: TypedPipe[Position2D] =>
-        positions.names(Along(First), Default())
+        positions.names(Along(First), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
     }
@@ -914,7 +914,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position2D(s, i) }
     } When {
       positions: TypedPipe[Position2D] =>
-        positions.names(Along(Second), Default())
+        positions.names(Along(Second), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
     }
@@ -925,7 +925,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Over(First), Default())
+        positions.names(Over(First), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
     }
@@ -936,7 +936,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Over(Second), Default())
+        positions.names(Over(Second), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
     }
@@ -947,7 +947,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Over(Third), Default())
+        positions.names(Over(Third), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i + 1), i) }
     }
@@ -958,7 +958,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Along(First), Default())
+        positions.names(Along(First), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position2D(i, i + 1), i) }
     }
@@ -969,7 +969,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Along(Second), Default())
+        positions.names(Along(Second), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position2D(s, i + 1), i) }
     }
@@ -980,7 +980,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Along(Third), Default())
+        positions.names(Along(Third), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position2D(s, i), i) }
     }
@@ -991,7 +991,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Over(First), Default())
+        positions.names(Over(First), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
     }
@@ -1002,7 +1002,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Over(Second), Default())
+        positions.names(Over(Second), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
     }
@@ -1013,7 +1013,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Over(Third), Default())
+        positions.names(Over(Third), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i + 1), i) }
     }
@@ -1024,7 +1024,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Over(Fourth), Default())
+        positions.names(Over(Fourth), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i + 2), i) }
     }
@@ -1035,7 +1035,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Along(First), Default())
+        positions.names(Along(First), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position3D(i, i + 1, i + 2), i) }
     }
@@ -1046,7 +1046,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Along(Second), Default())
+        positions.names(Along(Second), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position3D(s, i + 1, i + 2), i) }
     }
@@ -1057,7 +1057,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Along(Third), Default())
+        positions.names(Along(Third), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position3D(s, i, i + 2), i) }
     }
@@ -1068,7 +1068,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Along(Fourth), Default())
+        positions.names(Along(Fourth), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position3D(s, i, i + 1), i) }
     }
@@ -1079,7 +1079,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Over(First), Default())
+        positions.names(Over(First), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
     }
@@ -1090,7 +1090,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Over(Second), Default())
+        positions.names(Over(Second), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
     }
@@ -1101,7 +1101,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Over(Third), Default())
+        positions.names(Over(Third), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i + 1), i) }
     }
@@ -1112,7 +1112,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Over(Fourth), Default())
+        positions.names(Over(Fourth), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i + 2), i) }
     }
@@ -1123,7 +1123,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Over(Fifth), Default())
+        positions.names(Over(Fifth), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position1D(i + 3), i) }
     }
@@ -1134,7 +1134,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Along(First), Default())
+        positions.names(Along(First), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position4D(i, i + 1, i + 2, i + 3), i) }
     }
@@ -1145,7 +1145,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Along(Second), Default())
+        positions.names(Along(Second), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position4D(s, i + 1, i + 2, i + 3), i) }
     }
@@ -1156,7 +1156,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Along(Third), Default())
+        positions.names(Along(Third), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position4D(s, i, i + 2, i + 3), i) }
     }
@@ -1167,7 +1167,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Along(Fourth), Default())
+        positions.names(Along(Fourth), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position4D(s, i, i + 1, i + 3), i) }
     }
@@ -1178,7 +1178,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Along(Fifth), Default())
+        positions.names(Along(Fifth), Default()).number()
     } Then {
       _.toList shouldBe data.map { case (s, i) => (Position4D(s, i, i + 1, i + 2), i) }
     }
@@ -1190,7 +1190,7 @@ class TestSparkPositions extends TestPositions {
   "A Positions of Position1D" should "return its First over names" in {
     toRDD(data)
       .map { case (s, i) => Position1D(s) }
-      .names(Over(First), Default())
+      .names(Over(First), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 1), (Position1D("fid:B"), 0), (Position1D("fid:C"), 5),
         (Position1D("fid:D"), 4), (Position1D("fid:E"), 2), (Position1D("fid:F"), 3))
   }
@@ -1198,7 +1198,7 @@ class TestSparkPositions extends TestPositions {
   "A Positions of Position2D" should "return its First over names" in {
     toRDD(data)
       .map { case (s, i) => Position2D(s, i) }
-      .names(Over(First), Default(Reducers(12)))
+      .names(Over(First), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 0), (Position1D("fid:B"), 5), (Position1D("fid:C"), 3),
         (Position1D("fid:D"), 1), (Position1D("fid:E"), 2), (Position1D("fid:F"), 4))
   }
@@ -1206,7 +1206,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Second over names" in {
     toRDD(data)
       .map { case (s, i) => Position2D(s, i) }
-      .names(Over(Second), Default())
+      .names(Over(Second), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
         (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2))
   }
@@ -1214,7 +1214,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its First along names" in {
     toRDD(data)
       .map { case (s, i) => Position2D(s, i) }
-      .names(Along(First), Default(Reducers(12)))
+      .names(Along(First), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(0), 2), (Position1D(1), 5), (Position1D(2), 4),
         (Position1D(3), 3), (Position1D(4), 0), (Position1D(5), 1))
   }
@@ -1222,7 +1222,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Second along names" in {
     toRDD(data)
       .map { case (s, i) => Position2D(s, i) }
-      .names(Along(Second), Default())
+      .names(Along(Second), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 1), (Position1D("fid:B"), 0), (Position1D("fid:C"), 5),
         (Position1D("fid:D"), 4), (Position1D("fid:E"), 2), (Position1D("fid:F"), 3))
   }
@@ -1230,7 +1230,7 @@ class TestSparkPositions extends TestPositions {
   "A Positions of Position3D" should "return its First over names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Over(First), Default(Reducers(12)))
+      .names(Over(First), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 0), (Position1D("fid:B"), 5), (Position1D("fid:C"), 3),
         (Position1D("fid:D"), 1), (Position1D("fid:E"), 2), (Position1D("fid:F"), 4))
   }
@@ -1238,7 +1238,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Second over names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Over(Second), Default())
+      .names(Over(Second), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
         (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2))
   }
@@ -1246,7 +1246,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Third over names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Over(Third), Default(Reducers(12)))
+      .names(Over(Third), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(1), 5), (Position1D(2), 4), (Position1D(3), 3),
         (Position1D(4), 0), (Position1D(5), 2), (Position1D(6), 1))
   }
@@ -1254,7 +1254,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its First along names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Along(First), Default())
+      .names(Along(First), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position2D(0, 1), 0), (Position2D(1, 2), 2), (Position2D(2,3), 3),
         (Position2D(3, 4), 4), (Position2D(4, 5), 1), (Position2D(5, 6), 5))
   }
@@ -1262,7 +1262,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Second along names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Along(Second), Default(Reducers(12)))
+      .names(Along(Second), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position2D("fid:A", 1), 3), (Position2D("fid:B", 2), 5),
         (Position2D("fid:C", 3), 1), (Position2D("fid:D", 4), 0), (Position2D("fid:E", 5), 4),
         (Position2D("fid:F", 6), 2))
@@ -1271,7 +1271,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Third along names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Along(Third), Default())
+      .names(Along(Third), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position2D("fid:A", 0), 0), (Position2D("fid:B", 1), 3),
         (Position2D("fid:C", 2), 4), (Position2D("fid:D", 3), 2), (Position2D("fid:E", 4), 1),
         (Position2D("fid:F", 5), 5))
@@ -1280,7 +1280,7 @@ class TestSparkPositions extends TestPositions {
   "A Positions of Position4D" should "return its First over names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Over(First), Default(Reducers(12)))
+      .names(Over(First), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 0), (Position1D("fid:B"), 5), (Position1D("fid:C"), 3),
         (Position1D("fid:D"), 1), (Position1D("fid:E"), 2), (Position1D("fid:F"), 4))
   }
@@ -1288,7 +1288,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Second over names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Over(Second), Default())
+      .names(Over(Second), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
         (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2))
   }
@@ -1296,7 +1296,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Third over names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Over(Third), Default(Reducers(12)))
+      .names(Over(Third), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(1), 5), (Position1D(2), 4), (Position1D(3), 3),
         (Position1D(4), 0), (Position1D(5), 2), (Position1D(6), 1))
   }
@@ -1304,7 +1304,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Fourth over names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Over(Fourth), Default())
+      .names(Over(Fourth), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(2), 0), (Position1D(3), 1), (Position1D(4), 3),
         (Position1D(5), 2), (Position1D(6), 4), (Position1D(7), 5))
   }
@@ -1312,7 +1312,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its First along names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Along(First), Default(Reducers(12)))
+      .names(Along(First), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position3D(0, 1, 2), 1), (Position3D(1, 2, 3), 4), (Position3D(2, 3, 4), 3),
         (Position3D(3, 4, 5), 2), (Position3D(4, 5, 6), 0), (Position3D(5, 6, 7), 5))
   }
@@ -1320,7 +1320,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Second along names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Along(Second), Default())
+      .names(Along(Second), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position3D("fid:A", 1, 2), 0), (Position3D("fid:B", 2, 3), 5),
         (Position3D("fid:C", 3, 4), 2), (Position3D("fid:D", 4, 5), 4), (Position3D("fid:E", 5, 6), 3),
         (Position3D("fid:F", 6, 7), 1))
@@ -1329,7 +1329,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Third along names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Along(Third), Default(Reducers(12)))
+      .names(Along(Third), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position3D("fid:A", 0, 2), 2), (Position3D("fid:B", 1, 3), 1),
         (Position3D("fid:C", 2, 4), 5), (Position3D("fid:D", 3, 5), 4), (Position3D("fid:E", 4, 6), 3),
         (Position3D("fid:F", 5, 7), 0))
@@ -1338,7 +1338,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Fourth along names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Along(Fourth), Default())
+      .names(Along(Fourth), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position3D("fid:A", 0, 1), 5), (Position3D("fid:B", 1, 2), 3),
         (Position3D("fid:C", 2, 3), 2), (Position3D("fid:D", 3, 4), 1), (Position3D("fid:E", 4, 5), 0),
         (Position3D("fid:F", 5, 6), 4))
@@ -1347,7 +1347,7 @@ class TestSparkPositions extends TestPositions {
   "A Positions of Position5D" should "return its First over names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Over(First), Default(Reducers(12)))
+      .names(Over(First), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 0), (Position1D("fid:B"), 5), (Position1D("fid:C"), 3),
         (Position1D("fid:D"), 1), (Position1D("fid:E"), 2), (Position1D("fid:F"), 4))
   }
@@ -1355,7 +1355,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Second over names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Over(Second), Default())
+      .names(Over(Second), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
         (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2))
   }
@@ -1363,7 +1363,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Third over names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Over(Third), Default(Reducers(12)))
+      .names(Over(Third), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(1), 5), (Position1D(2), 4), (Position1D(3), 3),
         (Position1D(4), 0), (Position1D(5), 2), (Position1D(6), 1))
   }
@@ -1371,7 +1371,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Fourth over names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Over(Fourth), Default())
+      .names(Over(Fourth), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(2), 0), (Position1D(3), 1), (Position1D(4), 3),
         (Position1D(5), 2), (Position1D(6), 4), (Position1D(7), 5))
   }
@@ -1379,7 +1379,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Fifth over names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Over(Fifth), Default(Reducers(12)))
+      .names(Over(Fifth), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position1D(3), 4), (Position1D(4), 0), (Position1D(5), 3),
         (Position1D(6), 2), (Position1D(7), 1), (Position1D(8), 5))
   }
@@ -1387,7 +1387,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its First along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Along(First), Default())
+      .names(Along(First), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position4D(0, 1, 2, 3), 0), (Position4D(1, 2, 3, 4), 3),
         (Position4D(2, 3, 4, 5), 4), (Position4D(3, 4, 5, 6), 2), (Position4D(4, 5, 6, 7), 1),
         (Position4D(5, 6, 7, 8), 5))
@@ -1396,7 +1396,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Second along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Along(Second), Default(Reducers(12)))
+      .names(Along(Second), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position4D("fid:A", 1, 2, 3), 2), (Position4D("fid:B", 2, 3, 4), 0),
         (Position4D("fid:C", 3, 4, 5), 5), (Position4D("fid:D", 4, 5, 6), 4), (Position4D("fid:E", 5, 6, 7), 1),
         (Position4D("fid:F", 6, 7, 8), 3))
@@ -1405,7 +1405,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Third along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Along(Third), Default())
+      .names(Along(Third), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position4D("fid:A", 0, 2, 3), 5), (Position4D("fid:B", 1, 3, 4), 1),
         (Position4D("fid:C", 2, 4, 5), 3), (Position4D("fid:D", 3, 5, 6), 2), (Position4D("fid:E", 4, 6, 7), 0),
         (Position4D("fid:F", 5, 7, 8), 4))
@@ -1414,7 +1414,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Fourth along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Along(Fourth), Default(Reducers(12)))
+      .names(Along(Fourth), Default(Reducers(12))).number()
       .toList.sortBy(_._1) shouldBe List((Position4D("fid:A", 0, 1, 3) ,4), (Position4D("fid:B", 1, 2, 4), 5),
         (Position4D("fid:C", 2, 3, 5), 3), (Position4D("fid:D", 3, 4, 6), 0), (Position4D("fid:E", 4, 5, 7), 1),
         (Position4D("fid:F", 5, 6, 8), 2))
@@ -1423,7 +1423,7 @@ class TestSparkPositions extends TestPositions {
   it should "return its Fifth along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Along(Fifth), Default())
+      .names(Along(Fifth), Default()).number()
       .toList.sortBy(_._1) shouldBe List((Position4D("fid:A", 0, 1, 2), 1), (Position4D("fid:B", 1, 2, 3), 5),
         (Position4D("fid:C", 2, 3, 4), 3), (Position4D("fid:D", 3, 4, 5), 2), (Position4D("fid:E", 4, 5, 6), 0),
         (Position4D("fid:F", 5, 6, 7), 4))

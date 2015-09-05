@@ -14,19 +14,39 @@
 
 package au.com.cba.omnia.grimlock.framework.content.metadata
 
+import scala.io.Source
+
 object Dictionary {
   /**
-   * Placeholder for reading in a dictionary.
+   * Load a dictionary from file.
    *
-   * @param file File containing dictionary data.
+   * @param file      File containing dictionary data.
+   * @param separator Separator for splitting dictionary into data fields.
+   * @param key       Index (into data fields) for schema key.
+   * @param encoding  Index (into data fields) for the encoding identifier.
+   * @param schema    Index (into data fields) for the schema identifier
    *
-   * @return A dictionary object.
+   * @return A tuple consisting of the dictionary object and an iterator containing parse errors.
    */
-  def load(file: String, separator: String = "|"): Map[String, Schema] = {
-    (for (line <- scala.io.Source.fromFile(file).getLines()) yield {
-      val parts = line.split(java.util.regex.Pattern.quote(separator))
-      (parts(0), Schema.fromString(parts(1), parts(2)).get)
-    }).toMap
+  def load(file: String, separator: String = "|", key: Int = 0, encoding: Int = 1,
+    schema: Int = 2): (Map[String, Schema], Iterator[String]) = {
+    val result = Source.fromFile(file)
+      .getLines()
+      .map {
+        case line =>
+          val parts = line.split(java.util.regex.Pattern.quote(separator))
+
+          List(key, encoding, schema).exists(_ >= parts.length) match {
+            case true => Right("unable to parse: '" + line + "'")
+            case false =>
+              Schema.fromString(parts(encoding), parts(schema)) match {
+                case Some(s) => Left((parts(key), s))
+                case None => Right("unable to decode '" + line + "'")
+              }
+          }
+      }
+
+    (result.collect { case Left(entry) => entry }.toMap, result.collect { case Right(error) => error })
   }
 }
 

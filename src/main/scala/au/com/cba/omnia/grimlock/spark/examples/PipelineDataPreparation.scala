@@ -17,6 +17,8 @@ package au.com.cba.omnia.grimlock.spark.examples
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
@@ -28,6 +30,7 @@ import au.com.cba.omnia.grimlock.library.transform._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 import au.com.cba.omnia.grimlock.spark.Nameable._
 import au.com.cba.omnia.grimlock.spark.partition.Partitions._
+import au.com.cba.omnia.grimlock.spark.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.spark.position.Positions._
 
 import org.apache.spark.{ SparkConf, SparkContext }
@@ -55,8 +58,8 @@ object PipelineDataPreparation {
     val path = if (args.length > 1) args(1) else "../../data"
     val output = "spark"
 
-    // Read the data. This returns a 2D matrix (instance x feature).
-    val data = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
+    // Read the data (ignoring errors). This returns a 2D matrix (instance x feature).
+    val (data, _) = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
 
     // Perform a split of the data into a training and test set.
     val parts = data
@@ -112,7 +115,7 @@ object PipelineDataPreparation {
 
     // Combine all statistics and write result to file
     val stats = (descriptive ++ histogram ++ summary)
-      .save(s"./demo.${output}/stats.out")
+      .saveAsText(s"./demo.${output}/stats.out")
 
     // Determine which features to filter based on statistics. In this case remove all features that occur for 2 or
     // fewer instances. These are removed first to prevent indicator features from being created.
@@ -176,7 +179,7 @@ object PipelineDataPreparation {
 
     // Prepare each partition.
     parts
-      .forEach(List("train", "test"), prepare)
+      .forEach(prepare, List("train", "test"))
   }
 }
 

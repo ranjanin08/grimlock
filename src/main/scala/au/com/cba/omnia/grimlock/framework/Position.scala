@@ -20,6 +20,7 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.utility._
 
 import scala.reflect.ClassTag
+import scala.util.matching.Regex
 
 /** Base trait for dealing with positions. */
 trait Position {
@@ -92,6 +93,17 @@ object Position {
   /** Define an ordering between 2 position. Only use with position of the same type coordinates. */
   def Ordering[T <: Position](ascending: Boolean = true): Ordering[T] = {
     new Ordering[T] { def compare(x: T, y: T): Int = x.compare(y) * (if (ascending) { 1 } else { -1 }) }
+  }
+
+  /**
+   * Return function that returns a string representation of a position.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   */
+  def toString[P <: Position](separator: String = "|",
+    descriptive: Boolean = false): (P) => TraversableOnce[String] = {
+    (t: P) => if (descriptive) { Some(t.toString) } else { Some(t.toShortString(separator)) }
   }
 
   /** `MapablePosition` object for `PositionND` (N > 1) with `Along`. */
@@ -805,15 +817,42 @@ trait Positions[P <: Position] {
    *
    * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
    *       index itself is unique for each position but no ordering is defined.
-   *
-   * @see [[Names]]
    */
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[(slice.S, Long)]
+    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S]
 
-  protected def toString(t: P, separator: String, descriptive: Boolean): String = {
-    if (descriptive) { t.toString } else { t.toShortString(separator) }
+  /** Number the positions. */
+  def number(): U[(P, Long)]
+
+  /**
+   * Slice the positions using a regular expression.
+   *
+   * @param regex     The regular expression to match on.
+   * @param keep      Indicator if the matched positions should be kept or removed.
+   * @param spearator Separator used to convert each position to string.
+   *
+   * @return A `U[P]` with only the positions of interest.
+   *
+   * @note The matching is done by converting each position to its short string reprensentation and then applying the
+   *       regular expression.
+   */
+  def slice(regex: Regex, keep: Boolean, separator: String)(implicit ev: ClassTag[P]): U[P] = {
+    slice(keep, p => regex.pattern.matcher(p.toShortString(separator)).matches)
   }
+
+  /**
+   * Slice the positions using one or more positions.
+   *
+   * @param positions The positions to slice on.
+   * @param keep      Indicator if the matched positions should be kept or removed.
+   *
+   * @return A `U[P]` with only the positions of interest.
+   */
+  def slice[T](positions: T, keep: Boolean)(implicit ev1: PositionListable[T, P], ev2: ClassTag[P]): U[P] = {
+    slice(keep, p => ev1.convert(positions).contains(p))
+  }
+
+  protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[P]
 }
 
 /** Type class for transforming a type `T` into a `Position`. */

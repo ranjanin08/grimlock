@@ -82,16 +82,17 @@ object TestSpark1 {
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     data
-      .save("./tmp.spark/dat1.out", descriptive = true)
+      .saveAsText("./tmp.spark/dat1.out", Cell.toString(descriptive = true))
 
     data
       .set(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
         Content(ContinuousSchema(LongCodex), 1234))
       .slice(Over(First), "iid:1548763", true)
-      .save("./tmp.spark/dat2.out", descriptive = true)
+      .saveAsText("./tmp.spark/dat2.out", Cell.toString(descriptive = true))
 
     loadText(args(1) + "/smallInputfile.txt", Cell.parse3D(third = DateCodex()))
-      .save("./tmp.spark/dat3.out", descriptive = true)
+      .data
+      .saveAsText("./tmp.spark/dat3.out", Cell.toString(descriptive = true))
   }
 }
 
@@ -101,33 +102,38 @@ object TestSpark2 {
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     (data.names(Over(First)) ++ data.names(Over(Second)) ++ data.names(Over(Third)))
-      .renumber
-      .save("./tmp.spark/nm0.out", descriptive = true)
+      .number
+      .saveAsText("./tmp.spark/nm0.out", Name.toString(descriptive = true))
 
     data
       .names(Over(Second))
+      .number
       .moveToFront("fid:Z")
-      .save("./tmp.spark/nm1.out", descriptive = true)
+      .saveAsText("./tmp.spark/nm1.out", Name.toString(descriptive = true))
 
     data
       .names(Over(Second))
+      .number
       .slice("fid:M", false)
-      .save("./tmp.spark/nm2.out", descriptive = true)
+      .saveAsText("./tmp.spark/nm2.out", Name.toString(descriptive = true))
 
     data
       .names(Over(Second))
+      .number
       .set(Map("fid:A" -> 100L, "fid:C" -> 200L))
-      .save("./tmp.spark/nm3.out", descriptive = true)
+      .saveAsText("./tmp.spark/nm3.out", Name.toString(descriptive = true))
 
     data
       .names(Over(Second))
+      .number
       .moveToBack("fid:B")
-      .save("./tmp.spark/nm4.out", descriptive = true)
+      .saveAsText("./tmp.spark/nm4.out", Name.toString(descriptive = true))
 
     data
       .names(Over(Second))
+      .number
       .slice(""".*[BCD]$""".r, true, "")
-      .save("./tmp.spark/nm5.out", descriptive = true)
+      .saveAsText("./tmp.spark/nm5.out", Name.toString(descriptive = true))
   }
 }
 
@@ -137,10 +143,10 @@ object TestSpark3 {
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     (data.types(Over(First)) ++ data.types(Over(Second)) ++ data.types(Over(Third)))
-      .save("./tmp.spark/typ1.out", descriptive = true)
+      .saveAsText("./tmp.spark/typ1.out", Type.toString(descriptive = true))
 
     (data.types(Over(First), true) ++ data.types(Over(Second), true) ++ data.types(Over(Third), true))
-      .save("./tmp.spark/typ2.out", descriptive = true)
+      .saveAsText("./tmp.spark/typ2.out", Type.toString(descriptive = true))
   }
 }
 
@@ -151,18 +157,18 @@ object TestSpark4 {
 
     data
       .slice(Over(Second), "fid:B", true)
-      .save("./tmp.spark/scl0.out", descriptive = true)
+      .saveAsText("./tmp.spark/scl0.out", Cell.toString(descriptive = true))
 
     data
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), "iid:0221707", true)
-      .save("./tmp.spark/scl1.out", descriptive = true)
+      .saveAsText("./tmp.spark/scl1.out", Cell.toString(descriptive = true))
 
     val rem = List("fid:B", "fid:D", "fid:F", "fid:H", "fid:J", "fid:L", "fid:N",
                    "fid:P", "fid:R", "fid:T", "fid:V", "fid:X", "fid:Z")
     data
       .slice(Over(Second), data.names(Over(Second)).slice(rem, false), false)
-      .save("./tmp.spark/scl2.out", descriptive = true)
+      .saveAsText("./tmp.spark/scl2.out", Cell.toString(descriptive = true))
   }
 }
 
@@ -175,11 +181,11 @@ object TestSpark5 {
       .slice(Over(Second), List("fid:A", "fid:B"), true)
       .slice(Over(First), "iid:0221707", true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .save("./tmp.spark/sqs1.out", descriptive = true)
+      .saveAsText("./tmp.spark/sqs1.out", Cell.toString(descriptive = true))
 
     data
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .save("./tmp.spark/sqs2.out", descriptive = true)
+      .saveAsText("./tmp.spark/sqs2.out", Cell.toString(descriptive = true))
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -203,20 +209,20 @@ object TestSpark6 {
 
     data
       .which((c: Cell[Position3D]) => c.content.schema.kind.isSpecialisationOf(Numerical))
-      .save("./tmp.spark/whc1.out", descriptive = true)
+      .saveAsText("./tmp.spark/whc1.out", Position.toString(descriptive = true))
 
     data
       .which((c: Cell[Position3D]) => ! c.content.value.isInstanceOf[StringValue])
-      .save("./tmp.spark/whc2.out", descriptive = true)
+      .saveAsText("./tmp.spark/whc2.out", Position.toString(descriptive = true))
 
     data
       .get(data.which((c: Cell[Position3D]) =>
         (c.content.value equ 666) || (c.content.value leq 11.0) || (c.content.value equ "KQUPKFEH")))
-      .save("./tmp.spark/whc3.out", descriptive = true)
+      .saveAsText("./tmp.spark/whc3.out", Cell.toString(descriptive = true))
 
     data
       .which((c: Cell[Position3D]) => c.content.value.isInstanceOf[LongValue])
-      .save("./tmp.spark/whc4.out", descriptive = true)
+      .saveAsText("./tmp.spark/whc4.out", Position.toString(descriptive = true))
 
     val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
       Count().andThenExpand(_.position.append("count")),
@@ -233,7 +239,7 @@ object TestSpark6 {
       .summarise(Along(First), aggregators)
       .which(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
                                 ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
-      .save("./tmp.spark/whc5.out", descriptive = true)
+      .saveAsText("./tmp.spark/whc5.out", Position.toString(descriptive = true))
   }
 }
 
@@ -244,12 +250,12 @@ object TestSpark7 {
 
     data
       .get(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get))
-      .save("./tmp.spark/get1.out", descriptive = true)
+      .saveAsText("./tmp.spark/get1.out", Cell.toString(descriptive = true))
 
     data
       .get(List(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
                 Position3D("iid:1303823", "fid:A", DateCodex().decode("2014-05-05").get)))
-      .save("./tmp.spark/get2.out", descriptive = true)
+      .saveAsText("./tmp.spark/get2.out", Cell.toString(descriptive = true))
   }
 }
 
@@ -262,11 +268,13 @@ object TestSpark8 {
       .slice(Over(Second), "fid:B", true)
       .squash(Third, PreservingMaxPosition[Position3D]())
       .unique()
-      .save("./tmp.spark/uniq.out", descriptive = true)
+      .saveAsText("./tmp.spark/uniq.out", Content.toString(descriptive = true))
 
     loadText(args(1) + "/mutualInputfile.txt", Cell.parse2D())
+      .data
       .unique(Over[Position2D, Dimension.Second](Second))
-      .save("./tmp.spark/uni2.out")
+      .map { case (p, c) => Cell(p, c) }
+      .saveAsText("./tmp.spark/uni2.out")
 
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
@@ -280,13 +288,13 @@ object TestSpark8 {
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
       .permute(Second, First)
-      .save("./tmp.spark/trs1.out", descriptive = true)
+      .saveAsText("./tmp.spark/trs1.out", Cell.toString(descriptive = true))
 
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .save("./tmp.spark/data.txt")
+      .saveAsText("./tmp.spark/data.txt")
   }
 }
 
@@ -311,7 +319,7 @@ object TestSpark9 {
       .split(StringPartitioner(Second))
 
     prt1
-      .save("./tmp.spark/prt1.out", descriptive = true)
+      .saveAsText("./tmp.spark/prt1.out", Partition.toString(descriptive = true))
 
     case class IntTuplePartitioner(dim: Dimension) extends Partitioner[Position2D, (Int, Int, Int)] {
       def assign(cell: Cell[Position2D]): TraversableOnce[(Int, Int, Int)] = {
@@ -327,19 +335,19 @@ object TestSpark9 {
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
       .split[(Int, Int, Int), IntTuplePartitioner](IntTuplePartitioner(Second))
-      .save("./tmp.spark/prt2.out", descriptive = true)
+      .saveAsText("./tmp.spark/prt2.out", Partition.toString(descriptive = true))
 
     prt1
       .get("training")
-      .save("./tmp.spark/train.out", descriptive = true)
+      .saveAsText("./tmp.spark/train.out", Cell.toString(descriptive = true))
 
     prt1
       .get("testing")
-      .save("./tmp.spark/test.out", descriptive = true)
+      .saveAsText("./tmp.spark/test.out", Cell.toString(descriptive = true))
 
     prt1
       .get("scoring")
-      .save("./tmp.spark/score.out", descriptive = true)
+      .saveAsText("./tmp.spark/score.out", Cell.toString(descriptive = true))
   }
 }
 
@@ -387,7 +395,7 @@ object TestSpark11 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .transform(Indicator[Position3D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
-      .save("./tmp.spark/trn2.out", descriptive = true)
+      .saveAsText("./tmp.spark/trn2.out", Cell.toString(descriptive = true))
 
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
@@ -412,7 +420,7 @@ object TestSpark12 {
 
     data
       .fill(Content(ContinuousSchema(LongCodex), 0))
-      .save("./tmp.spark/fll3.out", descriptive = true)
+      .saveAsText("./tmp.spark/fll3.out", Cell.toString(descriptive = true))
   }
 }
 
@@ -452,7 +460,7 @@ object TestSpark14 {
 
     data
       .change(Over(Second), "fid:A", NominalSchema(LongCodex))
-      .save("./tmp.spark/chg1.out", descriptive = true)
+      .saveAsText("./tmp.spark/chg1.out", Cell.toString(descriptive = true))
   }
 }
 
@@ -497,7 +505,7 @@ object TestSpark16 {
 
     data
       .sample(HashSample())
-      .save("./tmp.spark/smp1.out")
+      .saveAsText("./tmp.spark/smp1.out")
   }
 }
 
@@ -634,7 +642,7 @@ object TestSpark19 {
     }
 
     parts
-      .forEach(List("train", "test"), cb)
+      .forEach(cb, List("train", "test"))
   }
 }
 
@@ -642,9 +650,11 @@ object TestSpark20 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
-    loadText(args(1) + "/ivoryInputfile1.txt",
-        Cell.parse3DWithDictionary(Dictionary.load(args(1) + "/dict.txt"), Second, third = DateCodex()))
-      .save("./tmp.spark/ivr1.out")
+    val (dictionary, _) = Dictionary.load(args(1) + "/dict.txt")
+
+    loadText(args(1) + "/ivoryInputfile1.txt", Cell.parse3DWithDictionary(dictionary, Second, third = DateCodex()))
+      .data
+      .saveAsText("./tmp.spark/ivr1.out")
   }
 }
 
@@ -655,26 +665,26 @@ object TestSpark21 {
 
     data
       .shape()
-      .save("./tmp.spark/siz0.out")
+      .saveAsText("./tmp.spark/siz0.out")
 
     data
       .size(First)
-      .save("./tmp.spark/siz1.out")
+      .saveAsText("./tmp.spark/siz1.out")
 
     data
       .size(Second)
-      .save("./tmp.spark/siz2.out")
+      .saveAsText("./tmp.spark/siz2.out")
 
     data
       .size(Third)
-      .save("./tmp.spark/siz3.out")
+      .saveAsText("./tmp.spark/siz3.out")
   }
 }
 
 object TestSpark22 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = loadText(args(1) + "/numericInputfile.txt", Cell.parse2D())
+    val (data, _) = loadText(args(1) + "/numericInputfile.txt", Cell.parse2D())
 
     case class Diff() extends Window[Position1D, Position1D, Position2D] {
       type T = Cell[Position]
@@ -695,19 +705,19 @@ object TestSpark22 {
 
     data
       .slide(Over(First), Diff())
-      .save("./tmp.spark/dif1.out")
+      .saveAsText("./tmp.spark/dif1.out")
 
     data
       .slide(Over(Second), Diff())
       .permute(Second, First)
-      .save("./tmp.spark/dif2.out")
+      .saveAsText("./tmp.spark/dif2.out")
   }
 }
 
 object TestSpark23 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val data = loadText(args(1) + "/somePairwise.txt", Cell.parse2D())
+    val (data, _) = loadText(args(1) + "/somePairwise.txt", Cell.parse2D())
 
     case class DiffSquared() extends Operator[Position1D, Position1D, Position2D] {
       def compute(left: Cell[Position1D], reml: Position1D, right: Cell[Position1D],
@@ -726,7 +736,7 @@ object TestSpark23 {
 
     data
       .pairwise(Over(Second), Upper, DiffSquared())
-      .save("./tmp.spark/pws1.out")
+      .saveAsText("./tmp.spark/pws1.out")
   }
 }
 
@@ -738,21 +748,21 @@ object TestSpark24 {
     val schema = List(("day", NominalSchema(StringCodex)),
                       ("temperature", ContinuousSchema(DoubleCodex)),
                       ("sales", DiscreteSchema(LongCodex)))
-    val data = loadText(args(1) + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
+    val (data, _) = loadText(args(1) + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
 
     data
       .correlation(Over(Second))
-      .save("./tmp.spark/pws2.out")
+      .saveAsText("./tmp.spark/pws2.out")
 
     val schema2 = List(("day", NominalSchema(StringCodex)),
                        ("temperature", ContinuousSchema(DoubleCodex)),
                        ("sales", DiscreteSchema(LongCodex)),
                        ("neg.sales", DiscreteSchema(LongCodex)))
-    val data2 = loadText(args(1) + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
+    val (data2, _) = loadText(args(1) + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
 
     data2
       .correlation(Over(Second))
-      .save("./tmp.spark/pws3.out")
+      .saveAsText("./tmp.spark/pws3.out")
   }
 }
 
@@ -761,20 +771,21 @@ object TestSpark25 {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
     loadText(args(1) + "/mutualInputfile.txt", Cell.parse2D())
+      .data
       .mutualInformation(Over(Second))
-      .save("./tmp.spark/mi.out")
+      .saveAsText("./tmp.spark/mi.out")
   }
 }
 
 object TestSpark26 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
-    val left = loadText(args(1) + "/algebraInputfile1.txt", Cell.parse2D())
-    val right = loadText(args(1) + "/algebraInputfile2.txt", Cell.parse2D())
+    val (left, _) = loadText(args(1) + "/algebraInputfile1.txt", Cell.parse2D())
+    val (right, _) = loadText(args(1) + "/algebraInputfile2.txt", Cell.parse2D())
 
     left
       .pairwiseBetween(Over(First), All, right, Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")))
-      .save("./tmp.spark/alg.out")
+      .saveAsText("./tmp.spark/alg.out")
   }
 }
 
@@ -784,34 +795,41 @@ object TestSpark27 {
 
     // http://www.statisticshowto.com/moving-average/
     loadText(args(1) + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+      .data
       .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
-      .save("./tmp.spark/sma1.out")
+      .saveAsText("./tmp.spark/sma1.out")
 
     loadText(args(1) + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+      .data
       .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all = true))
-      .save("./tmp.spark/sma2.out")
+      .saveAsText("./tmp.spark/sma2.out")
 
     loadText(args(1) + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+      .data
       .slide(Over(Second), CenteredMovingAverage(2, Locate.WindowDimension[Position1D, Position1D](First)))
-      .save("./tmp.spark/tma.out")
+      .saveAsText("./tmp.spark/tma.out")
 
     loadText(args(1) + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+      .data
       .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
-      .save("./tmp.spark/wma1.out")
+      .saveAsText("./tmp.spark/wma1.out")
 
     loadText(args(1) + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+      .data
       .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all = true))
-      .save("./tmp.spark/wma2.out")
+      .saveAsText("./tmp.spark/wma2.out")
 
     // http://stackoverflow.com/questions/11074665/how-to-calculate-the-cumulative-average-for-some-numbers
     loadText(args(1) + "/cumMovAvgInputfile.txt", Cell.parse1D())
+      .data
       .slide(Along(First), CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First)))
-      .save("./tmp.spark/cma.out")
+      .saveAsText("./tmp.spark/cma.out")
 
     // http://www.incrediblecharts.com/indicators/exponential_moving_average.php
     loadText(args(1) + "/expMovAvgInputfile.txt", Cell.parse1D())
+      .data
       .slide(Along(First), ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First)))
-      .save("./tmp.spark/ema.out")
+      .saveAsText("./tmp.spark/ema.out")
   }
 }
 
@@ -839,37 +857,37 @@ object TestSpark28 {
 
     data
       .transformWithValue(Cut(extractor), CutRules.fixed(stats, "min", "max", 4))
-      .save("./tmp.spark/cut1.out")
+      .saveAsText("./tmp.spark/cut1.out")
 
     data
       .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.square")),
         CutRules.squareRootChoice(stats, "count", "min", "max"))
-      .save("./tmp.spark/cut2.out")
+      .saveAsText("./tmp.spark/cut2.out")
 
     data
       .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.sturges")),
         CutRules.sturgesFormula(stats, "count", "min", "max"))
-      .save("./tmp.spark/cut3.out")
+      .saveAsText("./tmp.spark/cut3.out")
 
     data
       .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.rice")),
         CutRules.riceRule(stats, "count", "min", "max"))
-      .save("./tmp.spark/cut4.out")
+      .saveAsText("./tmp.spark/cut4.out")
 
     data
       .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.doane")),
         CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
-      .save("./tmp.spark/cut5.out")
+      .saveAsText("./tmp.spark/cut5.out")
 
     data
       .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.scott")),
         CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
-      .save("./tmp.spark/cut6.out")
+      .saveAsText("./tmp.spark/cut6.out")
 
     data
       .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.break")),
         CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
-      .save("./tmp.spark/cut7.out")
+      .saveAsText("./tmp.spark/cut7.out")
   }
 }
 
@@ -894,12 +912,12 @@ object TestSpark29 {
 
     data
       .gini(Over(First))
-      .save("./tmp.spark/gini.out")
+      .saveAsText("./tmp.spark/gini.out")
 
   data
     .map { case (a, b, c) => (b, a, c) }
     .gini(Along(First))
-    .save("./tmp.spark/inig.out")
+    .saveAsText("./tmp.spark/inig.out")
   }
 }
 
@@ -918,7 +936,19 @@ object TestSpark30 {
 
     data
       .stream("Rscript", "double.R", "|", Cell.parse2D("#", StringCodex, LongCodex))
-      .save("./tmp.spark/strm.out")
+      .data
+      .saveAsText("./tmp.spark/strm.out")
+  }
+}
+
+object TestSpark31 {
+  def main(args: Array[String]) {
+    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+
+    val (data, errors) = loadText(args(1) + "/badInputfile.txt", Cell.parse3D(third = DateCodex()))
+
+    data.saveAsText("./tmp.spark/yok.out", Cell.toString(descriptive = true))
+    errors.saveAsTextFile("./tmp.spark/nok.out")
   }
 }
 

@@ -53,6 +53,7 @@ object LabelWeighting {
 
     // Read labels and melt the date into the instance id to generate a 1D matrix.
     val labels = loadText(s"${path}/exampleLabels.txt", Cell.parse2DWithSchema(ContinuousSchema(DoubleCodex)))
+      .data // Keep only the data (ignoring errors).
       .melt(Second, First, ":")
 
     // Compute histogram over the label values.
@@ -86,8 +87,9 @@ object LabelWeighting {
 
     // Re-read labels and add the computed weight.
     loadText(s"${path}/exampleLabels.txt", Cell.parse2DWithSchema(ContinuousSchema(DoubleCodex)))
+      .data // Keep only the data (ignoring errors).
       .transformWithValue(AddWeight(), weights)
-      .save(s"./demo.${output}/weighted.out")
+      .saveAsText(s"./demo.${output}/weighted.out")
   }
 }
 

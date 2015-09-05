@@ -80,16 +80,11 @@ case class HashSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Int, Int)
   base: Int = 100) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
     val hash = math.abs(cell.position(dim).hashCode % base)
-    val parts = ranges.flatMap {
-      case (k, (l, u)) if (hash > l && hash <= u) => Some(k)
-      case _ => None
-    }.toList
-
-    parts.size match {
-      case 0 => None
-      case 1 => Some(parts.head)
-      case _ => parts
-    }
+    ranges
+      .flatMap {
+        case (k, (l, u)) if (hash > l && hash <= u) => Some(k)
+        case _ => None
+      }
   }
 }
 
@@ -150,20 +145,15 @@ case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper
 case class DateSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Date, Date)],
   codex: DateCodex) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
-    val parts = ranges.flatMap {
-      case (k, (lower, upper)) =>
-        (codex.compare(cell.position(dim), codex.toValue(lower)),
-          codex.compare(cell.position(dim), codex.toValue(upper))) match {
-            case (Some(l), Some(u)) if (l > 0 && u <= 0) => Some(k)
-            case _ => None
-          }
-    }.toList
-
-    parts.size match {
-      case 0 => None
-      case 1 => Some(parts.head)
-      case _ => parts
-    }
+    ranges
+      .flatMap {
+        case (k, (lower, upper)) =>
+          (codex.compare(cell.position(dim), codex.toValue(lower)),
+            codex.compare(cell.position(dim), codex.toValue(upper))) match {
+              case (Some(l), Some(u)) if (l > 0 && u <= 0) => Some(k)
+              case _ => None
+            }
+      }
   }
 }
 

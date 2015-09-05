@@ -15,7 +15,7 @@
 package au.com.cba.omnia.grimlock.framework
 
 /** Base trait for tuner parameters. */
-sealed trait TunerParameters extends java.io.Serializable {
+trait TunerParameters extends java.io.Serializable {
   /** Type of these parameters. */
   type P <: TunerParameters
 
@@ -27,6 +27,11 @@ sealed trait TunerParameters extends java.io.Serializable {
    * @return A sequence of `this` followed by `parameters`.
    */
   def |->[Q <: TunerParameters](parameters: Q): Sequence2[P, Q] = Sequence2(this.asInstanceOf[P], parameters)
+}
+
+/** Indicates that the data should be collated. */
+case object Collate extends TunerParameters {
+  type P = Collate.type
 }
 
 /** Indicates that no special operations are to be performed. */

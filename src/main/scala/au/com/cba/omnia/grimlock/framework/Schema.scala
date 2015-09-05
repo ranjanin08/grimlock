@@ -81,22 +81,30 @@ object Schema {
     (kind, codex) match {
       case (Type.Continuous.name, DoubleCodex.name) => Some(ContinuousSchema(DoubleCodex))
       case (Type.Continuous.name, LongCodex.name) => Some(ContinuousSchema(LongCodex))
+      case (Type.Continuous.name, LongCodex.alias) => Some(ContinuousSchema(LongCodex))
       case (Type.Discrete.name, LongCodex.name) => Some(DiscreteSchema(LongCodex))
+      case (Type.Discrete.name, LongCodex.alias) => Some(DiscreteSchema(LongCodex))
       case (Type.Nominal.name, StringCodex.name) => Some(NominalSchema(StringCodex))
       case (Type.Nominal.name, DoubleCodex.name) => Some(NominalSchema(DoubleCodex))
       case (Type.Nominal.name, LongCodex.name) => Some(NominalSchema(LongCodex))
+      case (Type.Nominal.name, LongCodex.alias) => Some(NominalSchema(LongCodex))
       case (Type.Ordinal.name, StringCodex.name) => Some(OrdinalSchema(StringCodex))
       case (Type.Ordinal.name, DoubleCodex.name) => Some(OrdinalSchema(DoubleCodex))
       case (Type.Ordinal.name, LongCodex.name) => Some(OrdinalSchema(LongCodex))
+      case (Type.Ordinal.name, LongCodex.alias) => Some(OrdinalSchema(LongCodex))
       case (ContinuousSchema.pattern(l, u), DoubleCodex.name) => ContinuousSchema.fromString(l, u, DoubleCodex)
       case (ContinuousSchema.pattern(l, u), LongCodex.name) => ContinuousSchema.fromString(l, u, LongCodex)
+      case (ContinuousSchema.pattern(l, u), LongCodex.alias) => ContinuousSchema.fromString(l, u, LongCodex)
       case (DiscreteSchema.pattern(l, u, s), LongCodex.name) => DiscreteSchema.fromString(l, u, s, LongCodex)
+      case (DiscreteSchema.pattern(l, u, s), LongCodex.alias) => DiscreteSchema.fromString(l, u, s, LongCodex)
       case (NominalSchema.pattern(p), StringCodex.name) => NominalSchema.fromString(p, StringCodex)
       case (NominalSchema.pattern(p), DoubleCodex.name) => NominalSchema.fromString(p, DoubleCodex)
       case (NominalSchema.pattern(p), LongCodex.name) => NominalSchema.fromString(p, LongCodex)
+      case (NominalSchema.pattern(p), LongCodex.alias) => NominalSchema.fromString(p, LongCodex)
       case (OrdinalSchema.pattern(p), StringCodex.name) => OrdinalSchema.fromString(p, StringCodex)
       case (OrdinalSchema.pattern(p), DoubleCodex.name) => OrdinalSchema.fromString(p, DoubleCodex)
       case (OrdinalSchema.pattern(p), LongCodex.name) => OrdinalSchema.fromString(p, LongCodex)
+      case (OrdinalSchema.pattern(p), LongCodex.alias) => OrdinalSchema.fromString(p, LongCodex)
       case (Type.Date.name, DateCodex.pattern(format)) => Some(DateSchema(DateCodex(format)))
       case _ => None
     }
@@ -175,7 +183,7 @@ object ContinuousSchema {
   }
 
   /** Pattern for matching short string continuous value with parameters. */
-  val pattern = (Type.Continuous + """\((.*),(.*)\)""").r
+  val pattern = (Type.Continuous.name + """\((.*),(.*)\)""").r
 
   /**
    * Parse continuous schema parameters
@@ -252,7 +260,7 @@ object DiscreteSchema {
     implicit int: Integral[C#T]): DiscreteSchema[C] = DiscreteSchema(codex, Some(minimum), Some(maximum), Some(step))
 
   /** Pattern for matching short string discrete value with parameters. */
-  val pattern = (Type.Discrete + """\((.*),(.*),(.*)\)""").r
+  val pattern = (Type.Discrete.name + """\((.*),(.*),(.*)\)""").r
 
   /**
    * Parse discrete schema parameters
@@ -302,7 +310,7 @@ case class NominalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]
 
   protected def params(): String = {
     domain match {
-      case Some(d) => d.mkString(",")
+      case Some(d) => d.map(_.toString.replaceAll(",", "\\\\,")).mkString(",")
       case _ => ""
     }
   }
@@ -326,7 +334,7 @@ object NominalSchema {
   def apply[C <: Codex](codex: C, domain: List[C#T]): NominalSchema[C] = NominalSchema(codex, Some(domain))
 
   /** Pattern for matching short string nominal value with parameters. */
-  val pattern = (Type.Nominal + """\((.*)\)""").r
+  val pattern = (Type.Nominal.name + """\((.*)\)""").r
 
   /**
    * Parse nominal schema parameters
@@ -337,8 +345,7 @@ object NominalSchema {
    * @return An `Option` of `NominalSchema` if all parameters parse correctly, `None` otherwise.
    */
   def fromString[C <: Codex](params: String, codex: C): Option[NominalSchema[C]] = {
-    // TODO: This fails for values with ',' in them
-    val domain = params.split(",").map(Schema.parse(_, codex)).toList
+    val domain = params.split("(?<!\\\\),").map(Schema.parse(_, codex)).toList
 
     domain.exists(_.isEmpty) match {
       case true => None
@@ -362,7 +369,7 @@ case class OrdinalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]
 
   protected def params(): String = {
     domain match {
-      case Some(d) => d.mkString(",")
+      case Some(d) => d.map(_.toString.replaceAll(",", "\\\\,")).mkString(",")
       case _ => ""
     }
   }
@@ -386,7 +393,7 @@ object OrdinalSchema {
   def apply[C <: Codex](codex: C, domain: List[C#T]): OrdinalSchema[C] = OrdinalSchema(codex, Some(domain))
 
   /** Pattern for matching short string ordinal value with parameters. */
-  val pattern = (Type.Ordinal + """\((.*)\)""").r
+  val pattern = (Type.Ordinal.name + """\((.*)\)""").r
 
   /**
    * Parse ordinal schema parameters
@@ -397,8 +404,7 @@ object OrdinalSchema {
    * @return An `Option` of `OrdinalSchema` if all parameters parse correctly, `None` otherwise.
    */
   def fromString[C <: Codex](params: String, codex: C): Option[OrdinalSchema[C]] = {
-    // TODO: This fails for values with ',' in them
-    val domain = params.split(",").map(Schema.parse(_, codex)).toList
+    val domain = params.split("(?<!\\\\),").map(Schema.parse(_, codex)).toList
 
     domain.exists(_.isEmpty) match {
       case true => None

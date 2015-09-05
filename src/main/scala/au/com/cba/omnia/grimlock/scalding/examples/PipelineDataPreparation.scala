@@ -17,6 +17,8 @@ package au.com.cba.omnia.grimlock.scalding.examples
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
@@ -28,6 +30,7 @@ import au.com.cba.omnia.grimlock.library.transform._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Nameable._
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
+import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.scalding.position.Positions._
 
 import com.twitter.scalding.{ Args, Job }
@@ -51,8 +54,8 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
   val path = args.getOrElse("path", "../../data")
   val output = "scalding"
 
-  // Read the data. This returns a 2D matrix (instance x feature).
-  val data = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
+  // Read the data (ignoring errors). This returns a 2D matrix (instance x feature).
+  val (data, _) = loadText(s"${path}/exampleInput.txt", Cell.parse2D())
 
   // Perform a split of the data into a training and test set.
   val parts = data
@@ -108,7 +111,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
   // Combine all statistics and write result to file
   val stats = (descriptive ++ histogram ++ summary)
-    .save(s"./demo.${output}/stats.out")
+    .saveAsText(s"./demo.${output}/stats.out")
 
   // Determine which features to filter based on statistics. In this case remove all features that occur for 2 or
   // fewer instances. These are removed first to prevent indicator features from being created.
@@ -172,6 +175,6 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
   // Prepare each partition.
   parts
-    .forEach(List("train", "test"), prepare)
+    .forEach(prepare, List("train", "test"))
 }
 

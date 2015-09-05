@@ -14,49 +14,104 @@
 
 package au.com.cba.omnia.grimlock.scalding.partition
 
-import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Tuner }
-import au.com.cba.omnia.grimlock.framework.partition.{ Partitions => BasePartitions }
+import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner }
+import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => BasePartitions }
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.scalding._
 
+import cascading.flow.FlowDef
+import com.twitter.scalding.Mode
 import com.twitter.scalding.typed.{ Grouped, TypedPipe }
 
 import scala.reflect.ClassTag
 
 /**
- * Rich wrapper around a `TypedPipe[(T, Cell[P])]`.
+ * Rich wrapper around a `TypedPipe[(I, Cell[P])]`.
  *
- * @param data The `TypedPipe[(T, Cell[P])]`.
+ * @param data The `TypedPipe[(I, Cell[P])]`.
  */
-class Partitions[T: Ordering, P <: Position](val data: TypedPipe[(T, Cell[P])]) extends BasePartitions[T, P]
-  with Persist[(T, Cell[P])] {
+class Partitions[I: Ordering, P <: Position](val data: TypedPipe[(I, Cell[P])]) extends BasePartitions[I, P]
+  with Persist[(I, Cell[P])] {
   type U[A] = TypedPipe[A]
 
-  def add(id: T, partition: U[Cell[P]]): U[(T, Cell[P])] = data ++ (partition.map { case c => (id, c) })
+  def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  def forEach[Q <: Position](ids: List[T], fn: (T, U[Cell[P]]) => U[Cell[Q]]): U[(T, Cell[Q])] = {
-    import Partitions._
+  type ForEachTuners = OneOf1[Default[NoParameters.type]]
+  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], ids: List[I], tuner: T = Default())(
+    implicit ev1: ClassTag[I], ev2: ForEachTuners#V[T]): U[(I, Cell[Q])] = {
+/*
+    // This bit of code does do things in parallel, but it doesn't support a `saveAs...` call withing
+    // `fn`. It also has problems with joining onto other typed pipes. In addition, it executes the
+    // graph for each `get` after a `forEach`.
 
+    val (config, mode) = tuner.parameters match {
+      case Execution(cfg, md) => (cfg, md)
+    }
+    val f = (t: I, c: Iterator[Cell[P]]) => {
+      fn(t, com.twitter.scalding.typed.IterablePipe(c.toIterable))
+        .toIterableExecution
+        .waitFor(config, mode) match {
+          case scala.util.Success(itr) => itr.toIterator
+          case _ => Iterator.empty
+        }
+      }
+
+    Grouped(data.filter { case (i, _) => !exclude.contains(i) })
+      .mapGroup(f)
+*/
+/*
+    // This reads the data `keys` times. It can be parallelised further by using a `forceToDiskExecution` inside
+    // `collect` and then zipping together the pipes in `reduce`. However, for some reason scalatest fails
+    // because `keys` is empty - but it works outside of scalatest.
+
+    val keys = tuner.parameters match {
+      case au.com.cba.omnia.grimlock.framework.Sequence2(_, r @ Reducers(_)) => ids(Default(r))
+      case _ => ids(Default(NoParameters))
+    }
+
+    val (config, mode) = tuner.parameters match {
+      case Execution(cfg, md) => (cfg, md)
+      case au.com.cba.omnia.grimlock.framework.Sequence2(Execution(cfg, md), _) => (cfg, md)
+    }
+
+    (keys
+      .map { case k => List(k) }
+      .sum
+      .getExecution
+      .waitFor(config, mode) match {
+        case scala.util.Success(list) => list
+        case _ => List.empty
+      })
+      .collect { case k if (!exclude.contains(k)) => fn(k, get(k)).map { case c => (k, c) } }
+      .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
+*/
     // TODO: This reads the data ids.length times. Is there a way to read it only once?
-    //       Perhaps with Grouped.mapGroup and Execution[T]?
     ids
-      .map { case k => fn(k, data.get(k)).map { case c => (k, c) } }
-      .reduce[U[(T, Cell[Q])]]((x, y) => x ++ y)
+      .map { case i => fn(i, get(i)).map { case c => (i, c) } }
+      .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
   }
 
-  def get(id: T): U[Cell[P]] = data.collect { case (t, pc) if (id == t) => pc }
+  def get(id: I): U[Cell[P]] = data.collect { case (i, c) if (id == i) => c }
 
-  type IdsTuners = OneOf1[Default[NoParameters.type]]
-  def ids[N <: Tuner](tuner: N = Default())(implicit ev1: ClassTag[T], ev2: IdsTuners#V[N]): U[T] = {
-    Grouped(data).keys.distinct
+  type IdsTuners = OneOf2[Default[NoParameters.type], Default[Reducers]]
+  def ids[T <: Tuner](tuner: T = Default())(implicit ev1: ClassTag[I], ev2: IdsTuners#V[T]): U[I] = {
+    val keys = Grouped(data.map { case (i, _) => (i, ()) })
+
+    tuner.parameters match {
+      case Reducers(reducers) => keys.withReducers(reducers).sum.keys
+      case _ => keys.sum.keys
+    }
   }
 
-  def merge(ids: List[T]): U[Cell[P]] = data.collect { case (t, c) if (ids.contains(t)) => c }
+  def merge(ids: List[I]): U[Cell[P]] = data.collect { case (i, c) if (ids.contains(i)) => c }
 
-  def remove(id: T): U[(T, Cell[P])] = data.filter { case (t, c) => t != id }
+  def remove(id: I): U[(I, Cell[P])] = data.filter { case (i, _) => i != id }
+
+  def saveAsText(file: String, writer: TextWriter = Partition.toString())(implicit flow: FlowDef,
+    mode: Mode): U[(I, Cell[P])] = saveText(file, writer)
 }
 
 /** Companion object for the Scalding `Partitions` class. */
