@@ -40,7 +40,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>RDD[Content]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/da060cb14bd8d364f3dbb5f39291f38cadb7e669//src/main/scala/au/com/cba/omnia/grimlock/spark/Content.scala" target="_blank">Content.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6fa75d5d2208ca24d3425cbcf760a7b2b7fdf09f//src/main/scala/au/com/cba/omnia/grimlock/spark/Content.scala" target="_blank">Content.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[<a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[<a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>], <a href="../../framework/content/Contents.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Contents">framework.content.Contents</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -99,7 +99,20 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.spark.content.Contents.U" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.Persist.TextWriter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TextWriter=T=&gt;TraversableOnce[String]"></a>
+      <a id="TextWriter:(Content)⇒TraversableOnce[String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TextWriter</span><span class="result"> = (<a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Shorthand type for converting a <code>T</code> to string.</p><div class="fullcomment"><div class="comment cmt"><p>Shorthand type for converting a <code>T</code> to string.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.spark.content.Contents.U" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="U[A]=org.apache.spark.rdd.RDD[A]"></a>
       <a id="U[A]:U[A]"></a>
       <h4 class="signature">
@@ -353,22 +366,35 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.spark.Persist#save" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="save(file:String,separator:String,descriptive:Boolean):org.apache.spark.rdd.RDD[T]"></a>
-      <a id="save(String,String,Boolean):RDD[Content]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.spark.content.Contents#saveAsText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="saveAsText(file:String,writer:au.com.cba.omnia.grimlock.framework.content.Content=&gt;TraversableOnce[String]):Contents.this.U[au.com.cba.omnia.grimlock.framework.content.Content]"></a>
+      <a id="saveAsText(String,(Content)⇒TraversableOnce[String]):U[Content]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">save</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;|&quot;</span></span>, <span name="descriptive">descriptive: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>]</span>
+        <span class="name">saveAsText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: (<a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol"><span class="name"><a href="../../../../../../package.html">Content.toString()</a></span></span></span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.content.Contents.U">U</a>[<a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Persist to disk.</p><div class="fullcomment"><div class="comment cmt"><p>Persist to disk.
-</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">separator</dt><dd class="cmt"><p>Separator to use between the fields.</p></dd><dt class="param">descriptive</dt><dd class="cmt"><p>Indicates if the output should be descriptive.
+</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">writer</dt><dd class="cmt"><p>Writer that converts <code>T</code> to string.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A Spark <code>RDD[T]</code> which is this object's data.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a></dd></dl></div>
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.content.Contents">Contents</a> → <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.spark.Persist#saveText" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="saveText(file:String,writer:T=&gt;TraversableOnce[String]):org.apache.spark.rdd.RDD[T]"></a>
+      <a id="saveText(String,(Content)⇒TraversableOnce[String]):RDD[Content]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">saveText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: (<a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -382,19 +408,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.Contents#toString" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString(t:au.com.cba.omnia.grimlock.framework.content.Content,separator:String,descriptive:Boolean):String"></a>
-      <a id="toString(Content,String,Boolean):String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toString</span><span class="params">(<span name="t">t: <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="descriptive">descriptive: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="../../framework/content/Contents.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Contents">Contents</a></dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>

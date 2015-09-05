@@ -41,7 +41,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Cell in a matrix.
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position of the cell in the matri.</p></dd><dt class="param">content</dt><dd class="cmt"><p>The contents of the cell.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/da060cb14bd8d364f3dbb5f39291f38cadb7e669//src/main/scala/au/com/cba/omnia/grimlock/framework/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6fa75d5d2208ca24d3425cbcf760a7b2b7fdf09f//src/main/scala/au/com/cba/omnia/grimlock/framework/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -338,19 +338,19 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.Cell#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString(separator:String,descriptive:Boolean):String"></a>
-      <a id="toString(String,Boolean):String"></a>
+      <a id="toString(separator:String,descriptive:Boolean,schema:Boolean):String"></a>
+      <a id="toString(String,Boolean,Boolean):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toString</span><span class="params">(<span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="descriptive">descriptive: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">toString</span><span class="params">(<span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="descriptive">descriptive: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="schema">schema: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Return string representation of a cell.</p><div class="fullcomment"><div class="comment cmt"><p>Return string representation of a cell.
-</p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>The separator to use between various fields.</p></dd><dt class="param">descriptive</dt><dd class="cmt"><p>Indicator if descriptive string is required or not.
+</p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>The separator to use between various fields.</p></dd><dt class="param">descriptive</dt><dd class="cmt"><p>Indicator if descriptive string is required or not.</p></dd><dt class="param">schema</dt><dd class="cmt"><p>Indicator if schema is required or not (only used if descriptive is <code>false</code>).
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>

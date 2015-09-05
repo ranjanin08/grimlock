@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/da060cb14bd8d364f3dbb5f39291f38cadb7e669//src/main/scala/au/com/cba/omnia/grimlock/scalding/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6fa75d5d2208ca24d3425cbcf760a7b2b7fdf09f//src/main/scala/au/com/cba/omnia/grimlock/scalding/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -375,6 +375,19 @@ Valueable, Content)]</code> to a Scalding <code>Matrix9D</code>.</p>
       </span>
       </h4>
       <p class="shortcomment cmt">Conversion from <code>TypedPipe[Cell[Position9D]]</code> to a Scalding <code>Matrix9D</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.scalding.Matrix#TP2MWPE" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TP2MWPE[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:(com.twitter.scalding.typed.TypedPipe[au.com.cba.omnia.grimlock.framework.Cell[P]],com.twitter.scalding.typed.TypedPipe[String])):au.com.cba.omnia.grimlock.framework.MatrixWithParseErrors[P,com.twitter.scalding.typed.TypedPipe]"></a>
+      <a id="TP2MWPE[P&lt;:Position]((TypedPipe[Cell[P]],TypedPipe[String])):MatrixWithParseErrors[P,TypedPipe]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TP2MWPE</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="t">t: (<span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix.TP2MWPE.P">P</span>]], <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[<span class="extype" name="scala.Predef.String">String</span>])</span>)</span><span class="result">: <a href="../framework/MatrixWithParseErrors.html" class="extype" name="au.com.cba.omnia.grimlock.framework.MatrixWithParseErrors">MatrixWithParseErrors</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix.TP2MWPE.P">P</span>, <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Conversion from matrix with errors tuple to <code>MatrixWithParseErrors</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.scalding.Matrix#TP2TM4" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TP2TM4(data:com.twitter.scalding.typed.TypedPipe[au.com.cba.omnia.grimlock.framework.Cell[au.com.cba.omnia.grimlock.framework.position.Position4D]]):au.com.cba.omnia.grimlock.scalding.Matrix4D"></a>
       <a id="TP2TM4(TypedPipe[Cell[Position4D]]):Matrix4D"></a>
@@ -505,15 +518,15 @@ Valueable, Content)]</code> to a Scalding <code>Matrix9D</code>.</p>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.scalding.Matrix#loadText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="loadText[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](file:String,parser:String=&gt;TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[P]]):com.twitter.scalding.typed.TypedPipe[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
-      <a id="loadText[P&lt;:Position](String,(String)⇒TraversableOnce[Cell[P]]):TypedPipe[Cell[P]]"></a>
+      <a id="loadText[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](file:String,parser:String=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]])(implicitflow:cascading.flow.FlowDef,implicitmode:com.twitter.scalding.Mode):(com.twitter.scalding.typed.TypedPipe[au.com.cba.omnia.grimlock.framework.Cell[P]],com.twitter.scalding.typed.TypedPipe[String])"></a>
+      <a id="loadText[P&lt;:Position](String,(String)⇒TraversableOnce[Either[Cell[P],String]])(FlowDef,Mode):(TypedPipe[Cell[P]],TypedPipe[String])"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">loadText</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parser">parser: (<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix.loadText.P">P</span>]]</span>)</span><span class="result">: <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix.loadText.P">P</span>]]</span>
+        <span class="name">loadText</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parser">parser: (<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Either">Either</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix.loadText.P">P</span>], <span class="extype" name="scala.Predef.String">String</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="flow">flow: <span class="extype" name="cascading.flow.FlowDef">FlowDef</span></span>, <span name="mode">mode: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>)</span><span class="result">: (<span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix.loadText.P">P</span>]], <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[<span class="extype" name="scala.Predef.String">String</span>])</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Read column oriented, pipe separated matrix text data into a <code>TypedPipe[Cell[P]]</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Read column oriented, pipe separated matrix text data into a <code>TypedPipe[Cell[P]]</code>.

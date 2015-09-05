@@ -35,11 +35,11 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Partitions</span><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">Partitions</span><span class="tparams">[<span name="I">I</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that represents the partitions of matrices</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/da060cb14bd8d364f3dbb5f39291f38cadb7e669//src/main/scala/au/com/cba/omnia/grimlock/framework/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that represents the partitions of matrices</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6fa75d5d2208ca24d3425cbcf760a7b2b7fdf09f//src/main/scala/au/com/cba/omnia/grimlock/framework/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -84,7 +84,20 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions.IdsTuners" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions.ForEachTuners" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ForEachTuners&lt;:au.com.cba.omnia.grimlock.framework.utility.OneOf"></a>
+      <a id="ForEachTuners:ForEachTuners"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ForEachTuners</span><span class="result"> &lt;: <a href="../utility/OneOf.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf">OneOf</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Specifies tuners permitted on a call to <code>forEach</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions.IdsTuners" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="IdsTuners&lt;:au.com.cba.omnia.grimlock.framework.utility.OneOf"></a>
       <a id="IdsTuners:IdsTuners"></a>
       <h4 class="signature">
@@ -96,7 +109,7 @@
         <span class="name">IdsTuners</span><span class="result"> &lt;: <a href="../utility/OneOf.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf">OneOf</a></span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Specifies tuner permitted on a call to <code>ids</code>.</p>
+      <p class="shortcomment cmt">Specifies tuners permitted on a call to <code>ids</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="U[_]"></a>
       <a id="U[_]:U[_]"></a>
@@ -116,47 +129,47 @@
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions#add" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="add(id:T,partition:Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]):Partitions.this.U[(T,au.com.cba.omnia.grimlock.framework.Cell[P])]"></a>
-      <a id="add(T,U[Cell[P]]):U[(T,Cell[P])]"></a>
+      <a id="add(id:I,partition:Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]):Partitions.this.U[(I,au.com.cba.omnia.grimlock.framework.Cell[P])]"></a>
+      <a id="add(I,U[Cell[P]]):U[(I,Cell[P])]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">add</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span></span>, <span name="partition">partition: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>]]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])]</span>
+        <span class="name">add</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span></span>, <span name="partition">partition: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>]]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Add a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Add a partition.
 </p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>The partition identifier.</p></dd><dt class="param">partition</dt><dd class="cmt"><p>The partition to add.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(T, Cell[P])]</code> containing existing and new paritions.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(I, Cell[P])]</code> containing existing and new paritions.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions#forEach" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="forEach[Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position](ids:List[T],fn:(T,Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]])=&gt;Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[Q]]):Partitions.this.U[(T,au.com.cba.omnia.grimlock.framework.Cell[Q])]"></a>
-      <a id="forEach[Q&lt;:Position](List[T],(T,U[Cell[P]])⇒U[Cell[Q]]):U[(T,Cell[Q])]"></a>
+      <a id="forEach[Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.Tuner](fn:(I,Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]])=&gt;Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[Q]],ids:List[I],tuner:T)(implicitev1:scala.reflect.ClassTag[I],implicitev2:Partitions.this.ForEachTuners#V[T]):Partitions.this.U[(I,au.com.cba.omnia.grimlock.framework.Cell[Q])]"></a>
+      <a id="forEach[Q&lt;:Position,T&lt;:Tuner]((I,U[Cell[P]])⇒U[Cell[Q]],List[I],T)(ClassTag[I],ForEachTuners.V[T]):U[(I,Cell[Q])]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">forEach</span><span class="tparams">[<span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="ids">ids: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span>]</span>, <span name="fn">fn: (<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span>, <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>]]) ⇒ <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.forEach.Q">Q</span>]]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.forEach.Q">Q</span>])]</span>
+        <span class="name">forEach</span><span class="tparams">[<span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="../Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a></span>]</span><span class="params">(<span name="fn">fn: (<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>]]) ⇒ <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.forEach.Q">Q</span>]]</span>, <span name="ids">ids: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>]</span>, <span name="tuner">tuner: <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.forEach.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>]</span>, <span name="ev2">ev2: <span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf.V">ForEachTuners.V</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.forEach.T">T</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.forEach.Q">Q</span>])]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Apply function <code>fn</code> to each partition in <code>ids</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Apply function <code>fn</code> to each partition in <code>ids</code>.
-</p></div><dl class="paramcmts block"><dt class="param">ids</dt><dd class="cmt"><p>The list of partitions to apply <code>fn</code> to.</p></dd><dt class="param">fn</dt><dd class="cmt"><p>The function to apply to each partition.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(T, Cell[Q])]</code> containing the paritions in <code>ids</code> with <code>fn</code> applied to them.
+</p></div><dl class="paramcmts block"><dt class="param">fn</dt><dd class="cmt"><p>The function to apply to each partition.</p></dd><dt class="param">ids</dt><dd class="cmt"><p>List of partition ids to apply <code>fn</code> to.</p></dd><dt class="param">tuner</dt><dd class="cmt"><p>The tuner for the job.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(I, Cell[Q])]</code> containing the paritions with <code>fn</code> applied to them.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions#get" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="get(id:T):Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
-      <a id="get(T):U[Cell[P]]"></a>
+      <a id="get(id:I):Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
+      <a id="get(I):U[Cell[P]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">get</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span></span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>]]</span>
+        <span class="name">get</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span></span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Return the data for the partition <code>id</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Return the data for the partition <code>id</code>.
@@ -164,30 +177,30 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[Cell[P]]</code>; that is a matrix.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions#ids" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="ids[N&lt;:au.com.cba.omnia.grimlock.framework.Tuner](tuner:N)(implicitev1:scala.reflect.ClassTag[T],implicitev2:Partitions.this.IdsTuners#V[N]):Partitions.this.U[T]"></a>
-      <a id="ids[N&lt;:Tuner](N)(ClassTag[T],IdsTuners.V[N]):U[T]"></a>
+      <a id="ids[T&lt;:au.com.cba.omnia.grimlock.framework.Tuner](tuner:T)(implicitev1:scala.reflect.ClassTag[I],implicitev2:Partitions.this.IdsTuners#V[T]):Partitions.this.U[I]"></a>
+      <a id="ids[T&lt;:Tuner](T)(ClassTag[I],IdsTuners.V[T]):U[I]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ids</span><span class="tparams">[<span name="N">N &lt;: <a href="../Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a></span>]</span><span class="params">(<span name="tuner">tuner: <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.ids.N">N</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span>]</span>, <span name="ev2">ev2: <span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf.V">IdsTuners.V</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.ids.N">N</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span>]</span>
+        <span class="name">ids</span><span class="tparams">[<span name="T">T &lt;: <a href="../Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a></span>]</span><span class="params">(<span name="tuner">tuner: <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.ids.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>]</span>, <span name="ev2">ev2: <span class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf.V">IdsTuners.V</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.ids.T">T</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Return the partition identifiers.</p><div class="fullcomment"><div class="comment cmt"><p>Return the partition identifiers.
 </p></div><dl class="paramcmts block"><dt class="param">tuner</dt><dd class="cmt"><p>The tuner for the job.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions#merge" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="merge(ids:List[T]):Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
-      <a id="merge(List[T]):U[Cell[P]]"></a>
+      <a id="merge(ids:List[I]):Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
+      <a id="merge(List[I]):U[Cell[P]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">merge</span><span class="params">(<span name="ids">ids: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>]]</span>
+        <span class="name">merge</span><span class="params">(<span name="ids">ids: <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Merge partitions into a single matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Merge partitions into a single matrix.
@@ -195,20 +208,20 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[Cell[P]]</code> containing the merge partitions.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions#remove" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="remove(id:T):Partitions.this.U[(T,au.com.cba.omnia.grimlock.framework.Cell[P])]"></a>
-      <a id="remove(T):U[(T,Cell[P])]"></a>
+      <a id="remove(id:I):Partitions.this.U[(I,au.com.cba.omnia.grimlock.framework.Cell[P])]"></a>
+      <a id="remove(I):U[(I,Cell[P])]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">remove</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span></span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])]</span>
+        <span class="name">remove</span><span class="params">(<span name="id">id: <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span></span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Remove a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Remove a partition.
 </p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>The identifier for the partition to remove.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(T, Cell[P])]</code> with the selected parition removed.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(I, Cell[P])]</code> with the selected parition removed.
 </p></dd></dl></div>
     </li></ol>
             </div>
@@ -448,19 +461,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions#toString" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString(t:(T,au.com.cba.omnia.grimlock.framework.Cell[P]),separator:String,descriptive:Boolean):String"></a>
-      <a id="toString((T,Cell[P]),String,Boolean):String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toString</span><span class="params">(<span name="t">t: (<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.T">T</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])</span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="descriptive">descriptive: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>

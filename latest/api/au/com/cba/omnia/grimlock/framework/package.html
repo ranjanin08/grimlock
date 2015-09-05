@@ -215,7 +215,7 @@
       </h4>
       <p class="comment cmt">Indicates that some of the data can fit in memory (permits map-side only operations).</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Matrix" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Matrix[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsPersist[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
+      <a id="Matrix[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef"></a>
       <a id="Matrix[P&lt;:Position]:Matrix[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -223,10 +223,23 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Matrix.html"><span class="name">Matrix</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix.P">P</span>]]</span>
+        <a href="Matrix.html"><span class="name">Matrix</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       <p class="comment cmt">Base trait for matrix operations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.MatrixWithParseErrors" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MatrixWithParseErrors[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,U[_]]extendsProductwithSerializable"></a>
+      <a id="MatrixWithParseErrors[P&lt;:Position,U[_]]:MatrixWithParseErrors[P,U]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="MatrixWithParseErrors.html"><span class="name">MatrixWithParseErrors</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="U">U<span class="tparams">[<span name="_">_</span>]</span></span>]</span><span class="params">(<span name="data">data: <span class="extype" name="au.com.cba.omnia.grimlock.framework.MatrixWithParseErrors.U">U</span>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.MatrixWithParseErrors.P">P</span>]]</span>, <span name="errors">errors: <span class="extype" name="au.com.cba.omnia.grimlock.framework.MatrixWithParseErrors.U">U</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Convenience type for access results from <code>load</code> methods that return the data and any parse errors.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Matrixable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Matrixable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,U[_]]extendsAnyRef"></a>
       <a id="Matrixable[T,P&lt;:Position,U[_]]:Matrixable[T,P,U]"></a>
@@ -278,7 +291,7 @@
         <a href="Persist.html"><span class="name">Persist</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Trait for peristing a data.</p>
+      <p class="comment cmt">Base trait for persisting data.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Redistribute" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="RedistributeextendsTunerParameterswithProductwithSerializable"></a>
       <a id="Redistribute:Redistribute"></a>
@@ -350,7 +363,7 @@
       <a id="TunerParameters:TunerParameters"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier">sealed </span>
+        <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
@@ -417,6 +430,19 @@
       </span>
       </h4>
       <p class="comment cmt">Companion object to the Cell class.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Collate" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Collate"></a>
+      <a id="Collate:Collate"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Collate$.html"><span class="name">Collate</span></a><span class="result"> extends <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Indicates that the data should be collated.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Default" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Default"></a>
       <a id="Default:Default"></a>
@@ -456,6 +482,19 @@
       </span>
       </h4>
       
+    </li><li name="au.com.cba.omnia.grimlock.framework.Name" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Name"></a>
+      <a id="Name:Name"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Name$.html"><span class="name">Name</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Object for <code>Name</code> functions.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.NoParameters" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="NoParameters"></a>
       <a id="NoParameters:NoParameters"></a>

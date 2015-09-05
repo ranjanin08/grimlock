@@ -39,7 +39,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for methods that reduce the number of dimensions or that can be filled using a <code>RDD[Cell[P]]</code>.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix">ReduceableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/da060cb14bd8d364f3dbb5f39291f38cadb7e669//src/main/scala/au/com/cba/omnia/grimlock/spark/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for methods that reduce the number of dimensions or that can be filled using a <code>RDD[Cell[P]]</code>.</p></div><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix">ReduceableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix.P">P</span>] with <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix">Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix.P">P</span>]</dd><dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6fa75d5d2208ca24d3425cbcf760a7b2b7fdf09f//src/main/scala/au/com/cba/omnia/grimlock/spark/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="../framework/ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">framework.ReduceableMatrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix.P">P</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
@@ -84,16 +84,16 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix.FillHetrogeneousTuners" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="FillHetrogeneousTuners=ReduceableMatrix.this.TP3"></a>
-      <a id="FillHetrogeneousTuners:(ReduceableMatrix.this)#FillHetrogeneousTuners"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix.FillHeterogeneousTuners" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="FillHeterogeneousTuners=ReduceableMatrix.this.TP3"></a>
+      <a id="FillHeterogeneousTuners:(ReduceableMatrix.this)#FillHeterogeneousTuners"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">FillHetrogeneousTuners</span><span class="result"> = <a href="../framework/utility/OneOf.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf">OneOf</a> { type V[X] = &lt;:&lt;[(X =&gt; Nothing) =&gt; Nothing,au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters.type] =&gt; Nothing with au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers] =&gt; Nothing with au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Sequence2[au.com.cba.omnia.grimlock.framework.Reducers,au.com.cba.omnia.grimlock.framework.Reducers]] =&gt; Nothing =&gt; Nothing] }</span>
+        <span class="name">FillHeterogeneousTuners</span><span class="result"> = <a href="../framework/utility/OneOf.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf">OneOf</a> { type V[X] = &lt;:&lt;[(X =&gt; Nothing) =&gt; Nothing,au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters.type] =&gt; Nothing with au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers] =&gt; Nothing with au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Sequence2[au.com.cba.omnia.grimlock.framework.Reducers,au.com.cba.omnia.grimlock.framework.Reducers]] =&gt; Nothing =&gt; Nothing] }</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Specifies tuners permitted on a call to <code>fill</code> with hetrogeneous data.</p><div class="fullcomment"><div class="comment cmt"><p>Specifies tuners permitted on a call to <code>fill</code> with hetrogeneous data.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix">ReduceableMatrix</a> → <a href="../framework/ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a></dd></dl></div>
@@ -284,7 +284,9 @@
       <p class="shortcomment cmt">Fill a matrix with <code>values</code> for a given <code>slice</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Fill a matrix with <code>values</code> for a given <code>slice</code>.
 </p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>Encapsulates the dimension(s) on which to fill.</p></dd><dt class="param">values</dt><dd class="cmt"><p>The content to fill a matrix with.</p></dd><dt class="param">tuner</dt><dd class="cmt"><p>The tuner for the job.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[Cell[P]]</code> where all missing values have been filled in.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix">ReduceableMatrix</a> → <a href="../framework/ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a></dd><dt>Note</dt><dd><span class="cmt"><p>This joins <code>values</code> onto this matrix, as such it can be used for imputing missing values.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix">ReduceableMatrix</a> → <a href="../framework/ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a></dd><dt>Note</dt><dd><span class="cmt"><p>This joins <code>values</code> onto this matrix, as such it can be used for imputing missing values. As
+      the join is an inner join, any positions in the matrix that aren't in <code>values</code> are filtered
+      from the resulting matrix.
 </p></span></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -459,6 +461,22 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix#toVector" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toVector(separator:String):ReduceableMatrix.this.U[au.com.cba.omnia.grimlock.framework.Cell[au.com.cba.omnia.grimlock.framework.position.Position1D]]"></a>
+      <a id="toVector(String):(ReduceableMatrix.this)#U[Cell[Position1D]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toVector</span><span class="params">(<span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix">ReduceableMatrix</a>.this)#<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.U">U</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<a href="../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>]]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Merge all dimensions into a single.</p><div class="fullcomment"><div class="comment cmt"><p>Merge all dimensions into a single.
+</p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>The separator to use when merging the coordinates.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[CellPosition1D]]</code> where all coordinates have been merged into a single string.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.ReduceableMatrix">ReduceableMatrix</a> → <a href="../framework/ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
