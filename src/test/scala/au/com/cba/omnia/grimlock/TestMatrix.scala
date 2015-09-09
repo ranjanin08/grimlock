@@ -22,7 +22,6 @@ import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.position.Positionable._
-import au.com.cba.omnia.grimlock.framework.position.PositionListable._
 import au.com.cba.omnia.grimlock.framework.sample._
 import au.com.cba.omnia.grimlock.framework.squash._
 import au.com.cba.omnia.grimlock.framework.transform._
@@ -38,13 +37,11 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Matrixable._
 import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.scalding.position.Positions._
-import au.com.cba.omnia.grimlock.scalding.Predicateable._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
 import au.com.cba.omnia.grimlock.spark.Matrixable._
 import au.com.cba.omnia.grimlock.spark.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.spark.position.Positions._
-import au.com.cba.omnia.grimlock.spark.Predicateable._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._
@@ -2009,6 +2006,8 @@ object TestMatrixWhich {
 
 class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
 
+  import au.com.cba.omnia.grimlock.scalding.Predicateable._
+
   "A Matrix.which" should "return its coordinates in 1D" in {
     Given {
       data1
@@ -2209,8 +2208,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichPositions(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
-          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default())
+        cells.whichPositions(Along(Second), (List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
+          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default())
     } Then {
       _.toList.sorted shouldBe result17
     }
@@ -2233,8 +2232,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichPositions(Along(Third), List(Position2D("bar", 2), Position2D("qux", 1)),
-          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Unbalanced(Reducers(123)))
+        cells.whichPositions(Along(Third), (List(Position2D("bar", 2), Position2D("qux", 1)),
+          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Unbalanced(Reducers(123)))
     } Then {
       _.toList.sorted shouldBe result19
     }
@@ -2321,6 +2320,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
 }
 
 class TestSparkMatrixWhich extends TestMatrixWhich {
+
+  import au.com.cba.omnia.grimlock.spark.Predicateable._
 
   "A Matrix.which" should "return its coordinates in 1D" in {
     toRDD(data1)
@@ -7539,7 +7540,8 @@ class TestScaldingMatrixSet extends TestMatrixSet with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.set(List("foo", "quxx"), Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(123)))
+        cells.set(List("foo", "quxx")
+          .map { case pos => Cell(Position1D(pos), Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -7574,8 +7576,8 @@ class TestScaldingMatrixSet extends TestMatrixSet with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.set(List(Position2D("foo", 2), Position2D("quxx", 5)),
-          Content(ContinuousSchema(DoubleCodex), 1), Default())
+        cells.set(List(Position2D("foo", 2), Position2D("quxx", 5))
+          .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -7610,8 +7612,8 @@ class TestScaldingMatrixSet extends TestMatrixSet with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc")),
-          Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(123)))
+        cells.set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc"))
+          .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -7641,7 +7643,8 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   it should "return its updated and added data in 1D" in {
     toRDD(data1)
-      .set(List("foo", "quxx"), Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(12)))
+      .set(List("foo", "quxx").map { case pos => Cell(Position1D(pos), Content(ContinuousSchema(DoubleCodex), 1)) },
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -7659,7 +7662,8 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   it should "return its updated and added data in 2D" in {
     toRDD(data2)
-      .set(List(Position2D("foo", 2), Position2D("quxx", 5)), Content(ContinuousSchema(DoubleCodex), 1), Default())
+      .set(List(Position2D("foo", 2), Position2D("quxx", 5))
+        .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
@@ -7677,8 +7681,8 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   it should "return its updated and added data in 3D" in {
     toRDD(data3)
-      .set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc")),
-        Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(12)))
+      .set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc"))
+        .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 

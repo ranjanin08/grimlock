@@ -100,10 +100,10 @@ class TestPosition1D extends TestGrimlock {
   }
 
   it should "throw an exception for an invalid update dimension" in {
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Second, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Third, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fourth, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fifth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Second, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Third, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fourth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fifth, 123) }
   }
 
   val con1 = Content(ContinuousSchema(LongCodex), 1)
@@ -207,9 +207,9 @@ class TestPosition2D extends TestGrimlock {
   }
 
   it should "throw an exception for an invalid update dimension" in {
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Third, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fourth, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fifth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Third, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fourth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fifth, 123) }
   }
 
   it should "permute" in {
@@ -340,8 +340,8 @@ class TestPosition3D extends TestGrimlock {
   }
 
   it should "throw an exception for an invalid update dimension" in {
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fourth, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fifth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fourth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fifth, 123) }
   }
 
   it should "permute" in {
@@ -489,7 +489,7 @@ class TestPosition4D extends TestGrimlock {
   }
 
   it should "throw an exception for an invalid update dimension" in {
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fifth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fifth, 123) }
   }
 
   it should "permute" in {

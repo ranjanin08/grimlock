@@ -306,7 +306,7 @@ SQL context available as sqlContext.
 scala>
 ```
 
-Note, for readability, the REPL info is supressed from now on.
+Note, for readability, the REPL info is suppressed from now on.
 
 ### Getting started
 

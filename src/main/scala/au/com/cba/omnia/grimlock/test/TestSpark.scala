@@ -994,11 +994,11 @@ object TestSpark29 {
       .saveAsText("./tmp.spark/gini.out")
       .toUnit
 
-  data
-    .map { case (a, b, c) => (b, a, c) }
-    .gini(Along(First))
-    .saveAsText("./tmp.spark/inig.out")
-    .toUnit
+    data
+      .map { case (a, b, c) => (b, a, c) }
+      .gini(Along(First))
+      .saveAsText("./tmp.spark/inig.out")
+      .toUnit
   }
 }
 
