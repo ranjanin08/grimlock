@@ -916,14 +916,14 @@ trait Matrix[P <: Position] {
   /**
    * Return the unique (distinct) contents along a dimension.
    *
-   * @param slice Encapsulates the dimension(s) along which to join.
+   * @param slice Encapsulates the dimension(s) along which to find unique contents.
    * @param tuner The tuner for the job.
    *
    * @return A `U[Cell[slice.S]]` consisting of the unique values.
    *
    * @note Comparison is performed based on the string representation of the `slice.S` and `Content`.
    */
-  def uniquePositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: slice.S =!= Position0D,
+  def uniqueByPositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: slice.S =!= Position0D,
     ev2: UniqueTuners#V[T]): U[(slice.S, Content)]
 
   /** Specifies tuners permitted on a call to `which` functions. */
@@ -934,7 +934,7 @@ trait Matrix[P <: Position] {
    *
    * @param predicate The predicate used to filter the contents.
    *
-   * @return A `U[P]' of the positions for which the content matches `predicate`.
+   * @return A `U[P]` of the positions for which the content matches `predicate`.
    */
   def which(predicate: Matrix.Predicate[P])(implicit ev: ClassTag[P]): U[P]
 
@@ -947,9 +947,15 @@ trait Matrix[P <: Position] {
    *                   filter the contents.
    * @param tuner      The tuner for the job.
    *
-   * @return A `U[P]' of the positions for which the content matches predicates.
+   * @return A `U[P]` of the positions for which the content matches predicates.
+   *
+   * @note `predicates` can be anything that can be converted to a `List[(U[slice.S], Matrix.Predicate[P])]`.
+   *       Supported conversions include (see `Predicateable` type classes for full list):
+   *       `(Valueable[T], Matrix.Predicate[P])`, `(List[Valueable[T]], Matrix.Predicate[P])`,
+   *       `(U[slice.S], Matrix.Predicate[P])`, `List[(Valueable[T], Matrix.Predicate[P])]`,
+   *       `List[(List[Valueable[T]], Matrix.Predicate[P])]`, `List[(U[slice.S], Matrix.Predicate[P])]`.
    */
-  def whichPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T)(
+  def whichByPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: Predicateable[I, P, slice.S, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
       ev5: WhichTuners#V[T]): U[P]
 
@@ -967,13 +973,10 @@ trait Matrix[P <: Position] {
   // TODO: Add machine learning operations (SVD/finding cliques/etc.) - use Spark instead?
 }
 
+/** Companion object to `Matrix` trait. */
 object Matrix {
   /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
   type Predicate[P <: Position] = Cell[P] => Boolean
-}
-
-trait Predicateable[T, P <: Position, S <: Position, U[_]] {
-  def convert(t: T): List[(U[S], Matrix.Predicate[P])]
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
@@ -1104,5 +1107,15 @@ trait Matrixable[T, P <: Position, U[_]] {
    * @param t Object that can be converted to a `U[Cell[P]]`.
    */
   def convert(t: T): U[Cell[P]]
+}
+
+/** Type class for transforming a type `T` to a `List[(U[S], Matrix.Predicate[P])]`. */
+trait Predicateable[T, P <: Position, S <: Position, U[_]] {
+  /**
+   * Returns a `List[(U[S], Matrix.Predicate[P])]` for type `T`.
+   *
+   * @param t Object that can be converted to a `List[(U[S], Matrix.Predicate[P])]`.
+   */
+  def convert(t: T): List[(U[S], Matrix.Predicate[P])]
 }
 

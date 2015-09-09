@@ -412,7 +412,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .tunedDistinct(tuner.parameters)(ordering)
   }
 
-  def uniquePositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
+  def uniqueByPositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
     implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
@@ -429,7 +429,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.collect { case c if predicate(c) => c.position }
   }
 
-  def whichPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T = Default())(
+  def whichByPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T = Default())(
     implicit ev1: PosDimDep[P, D], ev2: BasePredicateable[I, P, slice.S, RDD], ev3: ClassTag[slice.S],
       ev4: ClassTag[P], ev5: WhichTuners#V[T]): U[P] = {
     val pp = ev2.convert(predicates)
@@ -483,24 +483,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .keyBy { case (_, ((_, r),  _)) => r }
       .tunedJoin(rj, rdata.keyBy { case Cell(p, _) => slice.selected(p) })
       .map { case (_, ((_, (_, lc)), rc)) => (toTuple(lc), toTuple(rc)) }
-  }
-}
-
-object Predicateable {
-  implicit def PDPT2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, RDD]): BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, RDD] = {
-    new BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, RDD] {
-      def convert(t: (I, BaseMatrix.Predicate[P])): List[(RDD[S], BaseMatrix.Predicate[P])] = {
-        List((ev.convert(t._1), t._2))
-      }
-    }
-  }
-
-  implicit def LPDP2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, RDD]): BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, RDD] = {
-    new BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, RDD] {
-      def convert(t: List[(I, BaseMatrix.Predicate[P])]): List[(RDD[S], BaseMatrix.Predicate[P])] = {
-        t.map { case (i, p) => (ev.convert(i), p) }
-      }
-    }
   }
 }
 
@@ -1840,7 +1822,7 @@ class Matrix9D(val data: RDD[Cell[Position9D]]) extends Matrix[Position9D] with 
   }
 }
 
-/** Spark Companion object for the `Matrixable` type class. */
+/** Spark companion object for the `Matrixable` type class. */
 object Matrixable {
   /** Converts a `RDD[Cell[P]]` into a `RDD[Cell[P]]`; that is, it is a  pass through. */
   implicit def RDDC2RDDM[P <: Position]: BaseMatrixable[RDD[Cell[P]], P, RDD] = {
@@ -1856,6 +1838,32 @@ object Matrixable {
   /** Converts a `Cell[P]` into a `RDD[Cell[P]]`. */
   implicit def C2RDDM[P <: Position](implicit sc: SparkContext, ct: ClassTag[P]): BaseMatrixable[Cell[P], P, RDD] = {
     new BaseMatrixable[Cell[P], P, RDD] { def convert(t: Cell[P]): RDD[Cell[P]] = sc.parallelize(List(t)) }
+  }
+}
+
+/** Spark companion object for the `Predicateable` type class. */
+object Predicateable {
+  /**
+   * Converts a `List[(PositionDistributable[I, S, U], Matrix.Predicate[P])]` to a
+   * `List[(U[S], BaseMatrix.Predicate[P])]`.
+   */
+  implicit def PDPT2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, RDD]): BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, RDD] = {
+    new BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, RDD] {
+      def convert(t: (I, BaseMatrix.Predicate[P])): List[(RDD[S], BaseMatrix.Predicate[P])] = {
+        List((ev.convert(t._1), t._2))
+      }
+    }
+  }
+
+  /**
+   * Converts a `(PositionDistributable[I, S, U], Matrix.Predicate[P])` to a `List[(U[S], BaseMatrix.Predicate[P])]`.
+   */
+  implicit def LPDP2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, RDD]): BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, RDD] = {
+    new BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, RDD] {
+      def convert(t: List[(I, BaseMatrix.Predicate[P])]): List[(RDD[S], BaseMatrix.Predicate[P])] = {
+        t.map { case (i, p) => (ev.convert(i), p) }
+      }
+    }
   }
 }
 

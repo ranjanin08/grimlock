@@ -573,7 +573,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .tunedDistinct(tuner.parameters)(ordering)
   }
 
-  def uniquePositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
+  def uniqueByPositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
     implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
@@ -590,7 +590,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.collect { case c if predicate(c) => c.position }
   }
 
-  def whichPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T = InMemory())(
+  def whichByPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T = InMemory())(
     implicit ev1: PosDimDep[P, D], ev2: BasePredicateable[I, P, slice.S, TypedPipe], ev3: ClassTag[slice.S],
       ev4: ClassTag[P], ev5: WhichTuners#V[T]): U[P] = {
     val pp = ev2.convert(predicates)
@@ -689,24 +689,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           .map {
             case (_, (lc, rc)) => (toTuple(lc), toTuple(rc))
           }
-    }
-  }
-}
-
-object Predicateable {
-  implicit def PDPT2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, TypedPipe] = {
-    new BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, TypedPipe] {
-      def convert(t: (I, BaseMatrix.Predicate[P])): List[(TypedPipe[S], BaseMatrix.Predicate[P])] = {
-        List((ev.convert(t._1), t._2))
-      }
-    }
-  }
-
-  implicit def LPDP2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, TypedPipe] = {
-    new BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, TypedPipe] {
-      def convert(t: List[(I, BaseMatrix.Predicate[P])]): List[(TypedPipe[S], BaseMatrix.Predicate[P])] = {
-        t.map { case (i, p) => (ev.convert(i), p) }
-      }
     }
   }
 }
@@ -2086,7 +2068,7 @@ class Matrix9D(val data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D]
   }
 }
 
-/** Scalding Companion object for the `Matrixable` type class. */
+/** Scalding companion object for the `Matrixable` type class. */
 object Matrixable {
   /** Converts a `TypedPipe[Cell[P]]` into a `TypedPipe[Cell[P]]`; that is, it is a  pass through. */
   implicit def TPC2TPM[P <: Position]: BaseMatrixable[TypedPipe[Cell[P]], P, TypedPipe] = {
@@ -2104,6 +2086,32 @@ object Matrixable {
   implicit def C2TPM[P <: Position]: BaseMatrixable[Cell[P], P, TypedPipe] = {
     new BaseMatrixable[Cell[P], P, TypedPipe] {
       def convert(t: Cell[P]): TypedPipe[Cell[P]] = new IterablePipe(List(t))
+    }
+  }
+}
+
+/** Scalding companion object for the `Predicateable` type class. */
+object Predicateable {
+  /**
+   * Converts a `List[(PositionDistributable[I, S, U], Matrix.Predicate[P])]` to a
+   * `List[(U[S], BaseMatrix.Predicate[P])]`.
+   */
+  implicit def PDPT2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, TypedPipe] = {
+    new BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, TypedPipe] {
+      def convert(t: (I, BaseMatrix.Predicate[P])): List[(TypedPipe[S], BaseMatrix.Predicate[P])] = {
+        List((ev.convert(t._1), t._2))
+      }
+    }
+  }
+
+  /**
+   * Converts a `(PositionDistributable[I, S, U], Matrix.Predicate[P])` to a `List[(U[S], BaseMatrix.Predicate[P])]`.
+   */
+  implicit def LPDP2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, TypedPipe] = {
+    new BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, TypedPipe] {
+      def convert(t: List[(I, BaseMatrix.Predicate[P])]): List[(TypedPipe[S], BaseMatrix.Predicate[P])] = {
+        t.map { case (i, p) => (ev.convert(i), p) }
+      }
     }
   }
 }

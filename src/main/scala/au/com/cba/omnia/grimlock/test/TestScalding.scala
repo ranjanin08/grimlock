@@ -247,8 +247,8 @@ class TestScalding6(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
     .summarise(Along(First), aggregators)
-    .whichPositions(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
-                                       ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
+    .whichByPositions(Over(Second), List(("count", (c: Cell[Position2D]) => c.content.value leq 2),
+                                         ("min", (c: Cell[Position2D]) => c.content.value equ 107)))
     .saveAsText("./tmp.scalding/whc5.out", Position.toString(descriptive = true))
     .toUnit
 }
@@ -282,7 +282,7 @@ class TestScalding8(args : Args) extends Job(args) {
 
   loadText(args("path") + "/mutualInputfile.txt", Cell.parse2D())
     .data
-    .uniquePositions(Over[Position2D, Dimension.Second](Second))
+    .uniqueByPositions(Over[Position2D, Dimension.Second](Second))
     .map { case (p, c) => Cell(p, c) }
     .saveAsText("./tmp.scalding/uni2.out")
     .toUnit
@@ -595,7 +595,7 @@ class TestScalding18(args : Args) extends Job(args) {
     .summarise(Along(First), aggregators)
 
   val rem = stats
-    .whichPositions(Over(Second), ("count", (c: Cell[Position2D]) => c.content.value leq 2))
+    .whichByPositions(Over(Second), ("count", (c: Cell[Position2D]) => c.content.value leq 2))
     .names(Over(First))
 
   data
