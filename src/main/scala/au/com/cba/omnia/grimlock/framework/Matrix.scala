@@ -504,9 +504,6 @@ trait Matrix[P <: Position] {
   /** Self-type of a specific implementation of this API. */
   type S <: Matrix[P]
 
-  /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
-  type Predicate = Cell[P] => Boolean
-
   /** Specifies tuners permitted on a call to `change`. */
   type ChangeTuners <: OneOf
 
@@ -684,18 +681,6 @@ trait Matrix[P <: Position] {
 
   /** Specifies tuners permitted on a call to `set` functions. */
   type SetTuners <: OneOf
-
-  /**
-   * Set `value` as the content for all `positions` in a matrix.
-   *
-   * @param positions The positions for which to set the contents.
-   * @param value     The value to set.
-   * @param tuner     The tuner for the job.
-   *
-   * @return A `U[Cell[P]]' where the `positions` have `value` as their content.
-   */
-  def set[I, T <: Tuner](positions: I, value: Content, tuner: T)(implicit ev1: PositionDistributable[I, P, U],
-    ev2: ClassTag[P], ev3: SetTuners#V[T]): U[Cell[P]]
 
   /**
    * Set the `values` in a matrix.
@@ -938,7 +923,7 @@ trait Matrix[P <: Position] {
    *
    * @note Comparison is performed based on the string representation of the `slice.S` and `Content`.
    */
-  def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: slice.S =!= Position0D,
+  def uniquePositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: slice.S =!= Position0D,
     ev2: UniqueTuners#V[T]): U[(slice.S, Content)]
 
   /** Specifies tuners permitted on a call to `which` functions. */
@@ -951,35 +936,21 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[P]' of the positions for which the content matches `predicate`.
    */
-  def which(predicate: Predicate)(implicit ev: ClassTag[P]): U[P]
-
-  /**
-   * Query the contents of the `positions` of a matrix and return the positions of those that match the predicate.
-   *
-   * @param slice     Encapsulates the dimension(s) to query.
-   * @param positions The position(s) within the dimension(s) to query.
-   * @param predicate The predicate used to filter the contents.
-   * @param tuner     The tuner for the job.
-   *
-   * @return A `U[P]' of the positions for which the content matches `predicate`.
-   */
-  def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, predicate: Predicate, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
-      ev5: WhichTuners#V[T]): U[P]
+  def which(predicate: Matrix.Predicate[P])(implicit ev: ClassTag[P]): U[P]
 
   /**
    * Query the contents of one of more positions of a matrix and return the positions of those that match the
    * corresponding predicates.
    *
-   * @param slice   Encapsulates the dimension(s) to query.
-   * @param pospred The list of position(s) within the dimension(s) to query together with the predicates used to
-   *                filter the contents.
-   * @param tuner   The tuner for the job.
+   * @param slice      Encapsulates the dimension(s) to query.
+   * @param predicates The position(s) within the dimension(s) to query together with the predicates used to
+   *                   filter the contents.
+   * @param tuner      The tuner for the job.
    *
    * @return A `U[P]' of the positions for which the content matches predicates.
    */
-  def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], pospred: List[(I, Predicate)], tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
+  def whichPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T)(
+    implicit ev1: PosDimDep[P, D], ev2: Predicateable[I, P, slice.S, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
       ev5: WhichTuners#V[T]): U[P]
 
   protected type TP1 = OneOf1[Default[NoParameters.type]]
@@ -994,6 +965,15 @@ trait Matrix[P <: Position] {
   // TODO: Add statistics/dictionary into memory (from HDFS) operations
   // TODO: Is there a way not to use asInstanceOf[] as much?
   // TODO: Add machine learning operations (SVD/finding cliques/etc.) - use Spark instead?
+}
+
+object Matrix {
+  /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
+  type Predicate[P <: Position] = Cell[P] => Boolean
+}
+
+trait Predicateable[T, P <: Position, S <: Position, U[_]] {
+  def convert(t: T): List[(U[S], Matrix.Predicate[P])]
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
@@ -1014,7 +994,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *       the join is an inner join, any positions in the matrix that aren't in `values` are filtered
    *       from the resulting matrix.
    */
-  def fill[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]], tuner: T)(
+  def fillHeterogeneous[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]], tuner: T)(
     implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
       ev5: FillHeterogeneousTuners#V[T]): U[Cell[P]]
 
@@ -1029,7 +1009,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P]]` where all missing values have been filled in.
    */
-  def fill[T <: Tuner](value: Content, tuner: T)(implicit ev1: ClassTag[P], ev2: FillHomogeneousTuners#V[T]): U[Cell[P]]
+  def fillHomogeneous[T <: Tuner](value: Content, tuner: T)(implicit ev1: ClassTag[P],
+    ev2: FillHomogeneousTuners#V[T]): U[Cell[P]]
 
   /**
    * Melt one dimension of a matrix into another.

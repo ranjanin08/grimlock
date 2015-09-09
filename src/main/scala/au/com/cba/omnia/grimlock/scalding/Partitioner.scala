@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.scalding.partition
 import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner }
 import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => BasePartitions }
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.scalding._

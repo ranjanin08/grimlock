@@ -21,7 +21,6 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.sample._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
 
@@ -140,5 +139,6 @@ class Ensemble(args: Args) extends Job(args) {
     .renameWithValue(renameWithScore, scores)
     .gini(Over(Second))
     .saveAsText(s"./demo.${output}/ensemble.gini.out")
+    .toUnit
 }
 

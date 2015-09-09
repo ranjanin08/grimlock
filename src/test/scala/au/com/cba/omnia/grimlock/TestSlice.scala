@@ -111,11 +111,11 @@ class TestOverPosition2D extends TestSlicePosition2D {
   val list = List((Over[Position2D, First.type](First), First), (Over[Position2D, Second.type](Second), Second))
 
   "A Over[Position2D]" should "return a Position1D for the selected dimension" in {
-    list.map { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
+    list.foreach { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
   }
 
   it should "return a Position1D for the remainder" in {
-    list.map { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
+    list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
   }
 
   it should "throw an exception for an invalid dimension" in {
@@ -125,13 +125,13 @@ class TestOverPosition2D extends TestSlicePosition2D {
   }
 
   it should "return a map" in {
-    list.map {
+    list.foreach {
       case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
     }
   }
 
   it should "combine two maps" in {
-    list.map {
+    list.foreach {
       case (o, _) =>
         o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos2, con2))) shouldBe
           Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1), o.selected(pos2) -> Map(o.remainder(pos2) -> con2))
@@ -146,11 +146,11 @@ class TestAlongPosition2D extends TestSlicePosition2D {
   val list = List((Along[Position2D, First.type](First), First), (Along[Position2D, Second.type](Second), Second))
 
   "A Along[Position2D]" should "return a Position1D for the selected dimension" in {
-    list.map { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
+    list.foreach { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
   }
 
   it should "return a Position1D for the remainder" in {
-    list.map { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
+    list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
   }
 
   it should "throw an exception for an invalid dimension" in {
@@ -160,13 +160,13 @@ class TestAlongPosition2D extends TestSlicePosition2D {
   }
 
   it should "return a map" in {
-    list.map {
+    list.foreach {
       case (a, _) => a.toMap(Cell(pos1, con1)) shouldBe Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
     }
   }
 
   it should "combine two maps" in {
-    list.map {
+    list.foreach {
       case (a, _) =>
         a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos2, con2))) shouldBe
           Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1), a.selected(pos2) -> Map(a.remainder(pos2) -> con2))
@@ -187,11 +187,11 @@ class TestOverPosition3D extends TestSlicePosition3D {
     (Over[Position3D, Third.type](Third), Third))
 
   "A Over[Position3D]" should "return a Position1D for the selected dimension" in {
-    list.map { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
+    list.foreach { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
   }
 
   it should "return a Position2D for the remainder" in {
-    list.map { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
+    list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
   }
 
   it should "throw an exception for an invalid dimension" in {
@@ -200,13 +200,13 @@ class TestOverPosition3D extends TestSlicePosition3D {
   }
 
   it should "return a map" in {
-    list.map {
+    list.foreach {
       case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
     }
   }
 
   it should "combine two maps" in {
-    list.map {
+    list.foreach {
       case (o, _) =>
         o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos2, con2))) shouldBe
           Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1), o.selected(pos2) -> Map(o.remainder(pos2) -> con2))
@@ -222,11 +222,11 @@ class TestAlongPosition3D extends TestSlicePosition3D {
     (Along[Position3D, Third.type](Third), Third))
 
   "A Along[Position3D]" should "return a Position2D for the selected dimension" in {
-    list.map { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
+    list.foreach { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
   }
 
   it should "return a Position1D for the remainder" in {
-    list.map { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
+    list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
   }
 
   it should "throw an exception for an invalid dimension" in {
@@ -235,13 +235,13 @@ class TestAlongPosition3D extends TestSlicePosition3D {
   }
 
   it should "return a map" in {
-    list.map {
+    list.foreach {
       case (a, _) => a.toMap(Cell(pos1, con1)) shouldBe Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
     }
   }
 
   it should "combine two maps" in {
-    list.map {
+    list.foreach {
       case (a, _) =>
         a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos2, con2))) shouldBe
           Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1), a.selected(pos2) -> Map(a.remainder(pos2) -> con2))
@@ -262,11 +262,11 @@ class TestOverPosition4D extends TestSlicePosition4D {
     (Over[Position4D, Third.type](Third), Third), (Over[Position4D, Fourth.type](Fourth), Fourth))
 
   "A Over[Position4D]" should "return a Position1D for the selected dimension" in {
-    list.map { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
+    list.foreach { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
   }
 
   it should "return a Position3D for the remainder" in {
-    list.map { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
+    list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
   }
 
   it should "throw an exception for an invalid dimension" in {
@@ -274,13 +274,13 @@ class TestOverPosition4D extends TestSlicePosition4D {
   }
 
   it should "return a map" in {
-    list.map {
+    list.foreach {
       case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
     }
   }
 
   it should "combine two maps" in {
-    list.map {
+    list.foreach {
       case (o, _) =>
         o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos2, con2))) shouldBe
           Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1), o.selected(pos2) -> Map(o.remainder(pos2) -> con2))
@@ -296,11 +296,11 @@ class TestAlongPosition4D extends TestSlicePosition4D {
     (Along[Position4D, Third.type](Third), Third), (Along[Position4D, Fourth.type](Fourth), Fourth))
 
   "A Along[Position4D]" should "return a Position3D for the selected dimension" in {
-    list.map { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
+    list.foreach { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
   }
 
   it should "return a Position1D for the remainder" in {
-    list.map { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
+    list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
   }
 
   it should "throw an exception for an invalid dimension" in {
@@ -308,13 +308,13 @@ class TestAlongPosition4D extends TestSlicePosition4D {
   }
 
   it should "return a map" in {
-    list.map {
+    list.foreach {
       case (a, _) => a.toMap(Cell(pos1, con1)) shouldBe Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
     }
   }
 
   it should "combine two maps" in {
-    list.map {
+    list.foreach {
       case (a, _) =>
         a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos2, con2))) shouldBe
           Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1), a.selected(pos2) -> Map(a.remainder(pos2) -> con2))
@@ -336,21 +336,21 @@ class TestOverPosition5D extends TestSlicePosition5D {
     (Over[Position5D, Fifth.type](Fifth), Fifth))
 
   "A Over[Position5D]" should "return a Position1D for the selected dimension" in {
-    list.map { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
+    list.foreach { case (o, d) => o.selected(pos1) shouldBe Position1D(pos1(d)) }
   }
 
   it should "return a Position4D for the remainder" in {
-    list.map { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
+    list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
   }
 
   it should "return a map" in {
-    list.map {
+    list.foreach {
       case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
     }
   }
 
   it should "combine two maps" in {
-    list.map {
+    list.foreach {
       case (o, _) =>
         o.combineMaps(pos1, o.toMap(Cell(pos1, con1)), o.toMap(Cell(pos2, con2))) shouldBe
           Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1), o.selected(pos2) -> Map(o.remainder(pos2) -> con2))
@@ -367,21 +367,21 @@ class TestAlongPosition5D extends TestSlicePosition5D {
     (Along[Position5D, Fifth.type](Fifth), Fifth))
 
   "A Along[Position5D]" should "return a Position4D for the selected dimension" in {
-    list.map { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
+    list.foreach { case (a, d) => a.selected(pos1) shouldBe pos1.remove(d) }
   }
 
   it should "return a Position1D for the remainder" in {
-    list.map { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
+    list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
   }
 
   it should "return a map" in {
-    list.map {
+    list.foreach {
       case (a, _) => a.toMap(Cell(pos1, con1)) shouldBe Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1))
     }
   }
 
   it should "combine two maps" in {
-    list.map {
+    list.foreach {
       case (a, _) =>
         a.combineMaps(pos1, a.toMap(Cell(pos1, con1)), a.toMap(Cell(pos2, con2))) shouldBe
           Map(a.selected(pos1) -> Map(a.remainder(pos1) -> con1), a.selected(pos2) -> Map(a.remainder(pos2) -> con2))

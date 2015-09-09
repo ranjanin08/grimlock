@@ -24,7 +24,7 @@ Grimlock has default implementations for many of the above tasks. It also has a 
 * Supports wide variety of variable types;
 * Is easily extensible;
 * Can operate in multiple dimensions (currently up to 9);
-* Supports hetrogeneous data;
+* Supports heterogeneous data;
 * Can be used in the Scalding/Spark REPL;
 * Supports basic as well as structured data types.
 
@@ -43,7 +43,7 @@ The basic data structure in Grimlock is a N-dimensional sparse __Matrix__ (N=1..
   (Position, Content)
 ```
 
-The position is, essentialy, a list of N coordinates (__Value__). The content consists of a __Schema__ together with a __Value__. The value contains the actual value of the cell, while the schema defines what type of variable is in the cell, and (optionally) what it's legal values are.
+The position is, essentially, a list of N coordinates (__Value__). The content consists of a __Schema__ together with a __Value__. The value contains the actual value of the cell, while the schema defines what type of variable is in the cell, and (optionally) what it's legal values are.
 
 ```
    Position              Content
@@ -140,9 +140,23 @@ Usage - Scalding
 The examples below are executed in the Scalding REPL. To use Grimlock in the REPL follow the following steps:
 
 1. Install Scalding; follow [these](https://github.com/twitter/scalding/wiki/Getting-Started) instructions.
-2. Check out tag (0.12.0); git checkout 0.12.0.
-3. In scalding-repl/src/main/scala add symlinks to Grimlock's framework, library and scalding folders.
-4. Start REPL; ./sbt scalding-repl/console.
+2. Check out tag (0.13.1); git checkout 0.13.1.
+3. Update the `project/Build.scala` of the scalding project.
+    * Update the `scalaVersion` under `sharedSettings` to `2.11`.
+        + eg: `scalaVersion := "2.11.6"`
+    * For the module `scaldingRepl`, Add `grimlock` as a dependency.
+        + Under the `libraryDependencies` add,
+            `"au.com.cba.omnia" %% "grimlock" % "<version-string>"`
+4. Update `project/plugins.sbt` to add the 'commbank-ext' repository.
+
+    ```
+    resolvers ++= Seq(
+      "jgit-repo" at "http://download.eclipse.org/jgit/maven",
+      "sonatype-releases"  at "https://oss.sonatype.org/content/repositories/releases"
+      "commbank-ext" at "http://commbank.artifactoryonline.com/commbank/ext-releases-local-ivy"
+    )
+    ```
+5. Start REPL; ./sbt scalding-repl/console.
 
 After the last command, the console should appear as follows:
 
@@ -166,7 +180,7 @@ Type :help for more information.
 scala>
 ```
 
-Note, for readability, the REPL info is supressed from now on.
+Note, for readability, the REPL info is suppressed from now on.
 
 ### Getting started
 
@@ -230,7 +244,7 @@ Position2D(StringValue(iid:0216406),StringValue(fid:E))
 Position2D(StringValue(iid:0444510),StringValue(fid:D))
 ```
 
-Now for something a little more intersting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
+Now for something a little more interesting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
 
 ```
 scala> val counts = data.summarise(Over(First), Count[Position2D, Position1D]())
@@ -270,7 +284,7 @@ The examples below are executed in the Spark REPL. To use Grimlock in the REPL f
 
 1. Download the latest release for Spark from [here](http://spark.apache.org/downloads.html).
 2. Start REPL; ./bin/spark-shell --master local --jars <path to>/grimlock.jar
-3. You can, optionally, surpress much of the console INFO output. Follow [these](http://stackoverflow.com/questions/28189408/how-to-reduce-the-verbosity-of-sparks-runtime-output) instructions.
+3. You can, optionally, suppress much of the console INFO output. Follow [these](http://stackoverflow.com/questions/28189408/how-to-reduce-the-verbosity-of-sparks-runtime-output) instructions.
 
 After the last command, the console should appear as follows:
 
@@ -362,7 +376,7 @@ Position2D(StringValue(iid:0216406),StringValue(fid:E))
 Position2D(StringValue(iid:0444510),StringValue(fid:D))
 ```
 
-Now for something a little more intersting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
+Now for something a little more interesting. Let's compute the number of features for each instance and then compute the moments of the distribution of counts:
 
 ```
 scala> val counts = data.summarise(Over(First), Count[Position2D, Position1D]())

@@ -14,10 +14,6 @@
 
 package au.com.cba.omnia.grimlock.framework.utility
 
-import au.com.cba.omnia.grimlock.framework._
-import au.com.cba.omnia.grimlock.framework.content._
-import au.com.cba.omnia.grimlock.framework.position._
-
 /** Base trait for ecaping special characters in a string. */
 trait Escape {
   /**

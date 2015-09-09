@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.framework.transform
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 /** Base trait for transformations from `P` to `Q`. */
 trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, Q] { self =>

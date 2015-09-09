@@ -17,18 +17,14 @@ package au.com.cba.omnia.grimlock.spark.examples
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
-import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
-import au.com.cba.omnia.grimlock.spark.Nameable._
 import au.com.cba.omnia.grimlock.spark.partition.Partitions._
 import au.com.cba.omnia.grimlock.spark.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.spark.position.Positions._
@@ -173,13 +169,14 @@ object PipelineDataPreparation {
         .slice(Over(Second), rem3, false)
 
       (ind ++ csb)
-        //.fill(Content(ContinuousSchema(DoubleCodex), 0))
+        //.fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0))
         .saveAsCSV(Over(Second), s"./demo.${output}/${key}.csv")
     }
 
     // Prepare each partition.
     parts
       .forEach(prepare, List("train", "test"))
+      .toUnit
   }
 }
 

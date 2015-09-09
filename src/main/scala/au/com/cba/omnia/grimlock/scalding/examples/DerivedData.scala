@@ -19,7 +19,6 @@ import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.window._
 
 import au.com.cba.omnia.grimlock.scalding.Matrix._
@@ -79,5 +78,6 @@ class DerivedData(args: Args) extends Job(args) {
     .slide(Along(Third), Gradient(First))
     .melt(Third, Second, ".from.")
     .saveAsText(s"./demo.${output}/gradient.out")
+    .toUnit
 }
 
