@@ -47,7 +47,7 @@ object build extends Build {
         ++ Seq(
             noHadoop("com.twitter"        % "parquet-scrooge"     % depend.versions.parquet)
               exclude("com.twitter", "scrooge-core_2.9.2"),
-            noHadoop("org.apache.spark"   %% "spark-core"         % "1.3.1")
+            noHadoop("org.apache.spark"   %% "spark-core"         % "1.5.0")
               exclude("com.twitter", "chill-java")
               exclude("com.twitter", "chill_2.11"),
             "org.scalatest"               %% "scalatest"          % "2.2.4" % "test"
@@ -56,10 +56,7 @@ object build extends Build {
     }),
     dependencyOverrides ++= Set(
       "org.scala-lang.modules" %% "scala-parser-combinators"      % "1.0.3",
-      "org.scala-lang.modules" %% "scala-xml"                     % "1.0.3",
-      //Overriding `snappy-java` in order to maintain `Spark` compatibility and
-      //workaround for a bug in snappy 1.0.4.1 - https://github.com/xerial/snappy-java/issues/39
-      "org.xerial.snappy"      % "snappy-java"                    % "1.1.1.7"
+      "org.scala-lang.modules" %% "scala-xml"                     % "1.0.3"
     )
   )
 }

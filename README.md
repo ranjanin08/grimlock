@@ -137,16 +137,17 @@ Usage - Scalding
 
 ### Setting up REPL
 
-The examples below are executed in the Scalding REPL. To use Grimlock in the REPL follow the following steps:
+The examples below are executed in the Scalding REPL. Note that the Scalding REPL only works on local mode for scala 2.11. To use Grimlock in the REPL follow the following steps:
 
 1. Install Scalding; follow [these](https://github.com/twitter/scalding/wiki/Getting-Started) instructions.
 2. Check out tag (0.13.1); git checkout 0.13.1.
-3. Update the `project/Build.scala` of the scalding project.
-    * Update the `scalaVersion` under `sharedSettings` to `2.11`.
-        + eg: `scalaVersion := "2.11.6"`
-    * For the module `scaldingRepl`, Add `grimlock` as a dependency.
+3. Update `project/Build.scala` of the scalding project:
+    * Update the `scalaVersion` under `sharedSettings` to `scalaVersion := "2.11.5"`;
+    * For the module `scaldingRepl`, comment out `skip in compile := !isScala210x(scalaVersion.value),`;
+    * For the module `scaldingRepl`, Add `grimlock` as a dependency:
         + Under the `libraryDependencies` add,
-            `"au.com.cba.omnia" %% "grimlock" % "<version-string>"`
+            `"au.com.cba.omnia" %% "grimlock" % "<version-string>"`;
+    * Optionally uncomment `test in assembly := {}`.
 4. Update `project/plugins.sbt` to add the 'commbank-ext' repository.
 
     ```
@@ -162,18 +163,13 @@ After the last command, the console should appear as follows:
 
 ```
 > ./sbt scalding-repl/console
-[info] Loading project definition from <path to>/scalding/project
-[info] Set current project to scalding (in build file:<path to>/scalding/)
-[info] Formatting 2 Scala sources {file:<path to>/scalding/}scalding-repl(compile) ...
-[info] Compiling 2 Scala sources to <path to>/scalding/scalding-repl/target/scala-2.10/classes...
-[warn] there were 7 feature warning(s); re-run with -feature for details
-[warn] one warning found
+...
 [info] Starting scala interpreter...
 [info] 
 import com.twitter.scalding._
 import com.twitter.scalding.ReplImplicits._
 import com.twitter.scalding.ReplImplicitContext._
-Welcome to Scala version 2.10.4 (Java HotSpot(TM) 64-Bit Server VM, Java 1.6.0_65).
+Welcome to Scala version 2.11.5 (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_75).
 Type in expressions to have them evaluated.
 Type :help for more information.
 
@@ -282,7 +278,8 @@ Usage - Spark
 
 The examples below are executed in the Spark REPL. To use Grimlock in the REPL follow the following steps:
 
-1. Download the latest release for Spark from [here](http://spark.apache.org/downloads.html).
+1. Download the latest source code release for Spark from [here](http://spark.apache.org/downloads.html).
+2. Compile Spark for Scala 2.11, see [here](http://spark.apache.org/docs/latest/building-spark.html#building-for-scala-211). Note that if mvn (maven) is not installed then one can use the mvn binary in the build directory.
 2. Start REPL; ./bin/spark-shell --master local --jars <path to>/grimlock.jar
 3. You can, optionally, suppress much of the console INFO output. Follow [these](http://stackoverflow.com/questions/28189408/how-to-reduce-the-verbosity-of-sparks-runtime-output) instructions.
 
@@ -290,18 +287,19 @@ After the last command, the console should appear as follows:
 
 ```
 > ./bin/spark-shell --master local --jars <path to>/grimlock.jar
+...
+Spark context available as sc.
+SQL context available as sqlContext.
 Welcome to
       ____              __
      / __/__  ___ _____/ /__
     _\ \/ _ \/ _ `/ __/  '_/
-   /___/ .__/\_,_/_/ /_/\_\   version 1.3.1
+   /___/ .__/\_,_/_/ /_/\_\   version 1.5.0
       /_/
 
-Using Scala version 2.10.4 (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_75)
+Using Scala version 2.11.7 (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_75)
 Type in expressions to have them evaluated.
 Type :help for more information.
-Spark context available as sc.
-SQL context available as sqlContext.
 
 scala>
 ```

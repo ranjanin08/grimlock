@@ -114,8 +114,11 @@ private[scalding] object ScaldingImplicits {
       }
     }
 
-    def mapSideJoin[V, Q](value: ValuePipe[V], f: (P, V) => TraversableOnce[Q]): TypedPipe[Q] = {
-      pipe.flatMapWithValue(value) { case (c, vo) => f(c, vo.get) }
+    def mapSideJoin[V, Q](value: ValuePipe[V], f: (P, V) => TraversableOnce[Q], empty: V): TypedPipe[Q] = {
+      pipe.flatMapWithValue(value) {
+        case (c, Some(v)) => f(c, v)
+        case (c, None) => f(c, empty)
+      }
     }
 
     def redistribute(parameters: TunerParameters): TypedPipe[P] = {
@@ -174,7 +177,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       case InMemory(_) =>
         data
           .mapSideJoin(pos.toHashSetValue((p: slice.S) => p), (c: Cell[P], v: HashSet[slice.S]) =>
-            update(v.contains(slice.selected(c.position)), c))
+            update(v.contains(slice.selected(c.position)), c), HashSet.empty[slice.S])
       case _ =>
         data
           .groupBy { case c => slice.selected(c.position) }
@@ -194,7 +197,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       case InMemory(_) =>
         data
           .mapSideJoin(pos.toHashSetValue((p: P) => p), (c: Cell[P], v: HashSet[P]) =>
-            if (v.contains(c.position)) { Some(c) } else { None })
+            if (v.contains(c.position)) { Some(c) } else { None }, HashSet.empty[P])
       case _ =>
         data
           .groupBy { case c => c.position }
@@ -222,7 +225,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       case InMemory(_) =>
         (data ++ that.data)
           .mapSideJoin(keep.toHashSetValue[slice.S](_._1), (c: Cell[P], v: HashSet[slice.S]) =>
-            if (v.contains(slice.selected(c.position))) { Some(c) } else { None })
+            if (v.contains(slice.selected(c.position))) { Some(c) } else { None }, HashSet.empty[slice.S])
       case _ =>
         (data ++ that.data)
           .groupBy { case c => slice.selected(c.position) }
@@ -357,7 +360,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       case InMemory(_) =>
         data
           .mapSideJoin(pos.toHashSetValue((p: slice.S) => p), (c: Cell[P], v: HashSet[slice.S]) =>
-            if (v.contains(slice.selected(c.position)) == keep) { Some(c) } else { None })
+            if (v.contains(slice.selected(c.position)) == keep) { Some(c) } else { None }, HashSet.empty[slice.S])
       case _ =>
         data
           .groupBy { case c => slice.selected(c.position) }
@@ -608,7 +611,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           .mapSideJoin(pp.map { case (pos, pred) => Map(pos -> List(pred)) }.sum(semigroup),
             (c: Cell[P], v: M) => v.get(slice.selected(c.position)).flatMap {
               case lst => if (lst.exists((pred) => pred(c))) { Some(c.position) } else { None }
-            })
+            }, Map.empty[slice.S, List[BaseMatrix.Predicate[P]]])
       case _ =>
         data
           .groupBy { case c => slice.selected(c.position) }
@@ -649,7 +652,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
             (lc: Cell[P], v: List[Cell[P]]) => v.collect {
               case rc if comparer.keep(slice.selected(lc.position), slice.selected(rc.position)) =>
                 (toTuple(lc), toTuple(rc))
-            })
+            }, List.empty[Cell[P]])
       case _ =>
         val (rr, rj, lr, lj) = tuner.parameters match {
           case Sequence2(Sequence2(rr, rj), Sequence2(lr, lj)) => (rr, rj, lr, lj)
@@ -712,7 +715,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 
         domain(Default())
           .mapSideJoin(vals.map { case (p, c) => Map(p -> c.content) }.sum(semigroup),
-            (p: P, v: Map[slice.S, Content]) => v.get(slice.selected(p)).map { case c => Cell(p, c) })
+            (p: P, v: Map[slice.S, Content]) => v.get(slice.selected(p)).map { case c => Cell(p, c) },
+              Map.empty[slice.S, Content])
       case _ =>
         domain(Default())
           .groupBy { case p => slice.selected(p) }

@@ -48,25 +48,25 @@ then
       rm -rf demo.spark/*
     fi
 
-    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+    $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.BasicOperations $JAR local ../data
-    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+    $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.Conditional $JAR local ../data
-    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+    $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.PipelineDataPreparation $JAR local ../data
-    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+    $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.Scoring $JAR local ../data
-    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+    $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.DataAnalysis $JAR local ../data
-    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+    $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.LabelWeighting $JAR local ../data
-    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+    $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.InstanceCentricTfIdf $JAR local ../data
-    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+    $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.MutualInformation $JAR local ../data
-    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+    $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.DerivedData $JAR local ../data
-    $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+    $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.Ensemble $JAR local ../data
 
     if [ -d "demo.old" ]
@@ -103,7 +103,7 @@ then
 
     for i in $(seq 1 ${NUM_TEST})
     do
-      $BASE_DIR/../spark-1.3.1-bin-hadoop2.6/bin/spark-submit --master local \
+      $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
         --class au.com.cba.omnia.grimlock.test.TestSpark${i} $JAR local .
     done
 
