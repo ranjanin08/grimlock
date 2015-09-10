@@ -137,14 +137,14 @@ Usage - Scalding
 
 ### Setting up REPL
 
-The examples below are executed in the Scalding REPL. Note that the Scalding REPL only works on local mode for scala 2.11. To use Grimlock in the REPL follow the following steps:
+The examples below are executed in the Scalding REPL. Note that the Scalding REPL only works in [local](https://github.com/twitter/scalding/issues/1195) mode for scala 2.11. To use Grimlock in the REPL follow the following steps:
 
 1. Install Scalding; follow [these](https://github.com/twitter/scalding/wiki/Getting-Started) instructions.
 2. Check out tag (0.13.1); git checkout 0.13.1.
 3. Update `project/Build.scala` of the scalding project:
     * Update the `scalaVersion` under `sharedSettings` to `scalaVersion := "2.11.5"`;
     * For the module `scaldingRepl`, comment out `skip in compile := !isScala210x(scalaVersion.value),`;
-    * For the module `scaldingRepl`, Add `grimlock` as a dependency:
+    * For the module `scaldingRepl`, add `grimlock` as a dependency:
         + Under the `libraryDependencies` add,
             `"au.com.cba.omnia" %% "grimlock" % "<version-string>"`;
     * Optionally uncomment `test in assembly := {}`.
@@ -201,7 +201,7 @@ The next step is to read in data (be sure to change <path to> to the correct pat
 scala> val (data, _) = loadText("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt", Cell.parse2D())
 ```
 
-The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used in the REPL, use Grimlock's `save` API for writing to disk:
+The returned `data` is a 2 dimensional matrix. To investigate it's content Scalding's `dump` command can be used in the REPL, use Grimlock's `saveAsText` API for writing to disk:
 
 ```
 scala> data.dump
@@ -263,10 +263,10 @@ scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = L
      | Kurtosis().andThenExpand(_.position.append("kurtosis")))
 
 scala> counts.summarise(Along(First), aggregators).dump
-Cell(Position1D(StringValue(mean)),Content(ContinuousSchema(DoubleCodex),DoubleValue(4.0,DoubleCodex)))
-Cell(Position1D(StringValue(sd)),Content(ContinuousSchema(DoubleCodex),DoubleValue(1.5634719199411433,DoubleCodex)))
-Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema(DoubleCodex),DoubleValue(0.348873899490999,DoubleCodex)))
-Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema(DoubleCodex),DoubleValue(-0.8057851239669427,DoubleCodex)))
+Cell(Position1D(StringValue(mean)),Content(ContinuousSchema(DoubleCodex),DoubleValue(4.0)))
+Cell(Position1D(StringValue(sd)),Content(ContinuousSchema(DoubleCodex),DoubleValue(1.5634719199411433)))
+Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema(DoubleCodex),DoubleValue(0.348873899490999)))
+Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema(DoubleCodex),DoubleValue(-0.8057851239669427)))
 ```
 
 For more examples see [BasicOperations.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/BasicOperations.scala), [Conditional.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Conditional.scala), [DataAnalysis.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DataAnalysis.scala), [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/DerivedData.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Ensemble.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Event.scala), [LabelWeighting.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/LabelWeighting.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/MutualInformation.scala), [PipelineDataPreparation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/PipelineDataPreparation.scala) or [Scoring.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/scalding/examples/Scoring.scala).
@@ -279,9 +279,9 @@ Usage - Spark
 The examples below are executed in the Spark REPL. To use Grimlock in the REPL follow the following steps:
 
 1. Download the latest source code release for Spark from [here](http://spark.apache.org/downloads.html).
-2. Compile Spark for Scala 2.11, see [here](http://spark.apache.org/docs/latest/building-spark.html#building-for-scala-211). Note that if mvn (maven) is not installed then one can use the mvn binary in the build directory.
-2. Start REPL; ./bin/spark-shell --master local --jars <path to>/grimlock.jar
+2. Compile Spark for Scala 2.11, see [here](http://spark.apache.org/docs/latest/building-spark.html#building-for-scala-211). Note that if `mvn` (maven) is not installed then one can use the `build/mvn` binary in the build directory.
 3. You can, optionally, suppress much of the console INFO output. Follow [these](http://stackoverflow.com/questions/28189408/how-to-reduce-the-verbosity-of-sparks-runtime-output) instructions.
+4. Start REPL; ./bin/spark-shell --master local --jars <path to>/grimlock.jar
 
 After the last command, the console should appear as follows:
 
@@ -335,7 +335,7 @@ The next step is to read in data (be sure to change <path to> to the correct pat
 scala> val (data, _) = loadText("<path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt", Cell.parse2D())
 ```
 
-The returned `data` is a 2 dimensional matrix. To investigate it's content Spark's `foreach` command can be used in the REPL, use the Grimlock's `save` API for writing to disk:
+The returned `data` is a 2 dimensional matrix. To investigate it's content Spark's `foreach` command can be used in the REPL, use the Grimlock's `saveAsText` API for writing to disk:
 
 ```
 scala> data.foreach(println)
@@ -397,10 +397,10 @@ scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = L
      | Kurtosis().andThenExpand(_.position.append("kurtosis")))
 
 scala> counts.summarise(Along(First), aggregators).foreach(println)
-Cell(Position1D(StringValue(mean)),Content(ContinuousSchema(DoubleCodex),DoubleValue(4.0,DoubleCodex)))
-Cell(Position1D(StringValue(sd)),Content(ContinuousSchema(DoubleCodex),DoubleValue(1.5634719199411433,DoubleCodex)))
-Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema(DoubleCodex),DoubleValue(0.348873899490999,DoubleCodex)))
-Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema(DoubleCodex),DoubleValue(-0.8057851239669427,DoubleCodex)))
+Cell(Position1D(StringValue(mean)),Content(ContinuousSchema(DoubleCodex),DoubleValue(4.0)))
+Cell(Position1D(StringValue(sd)),Content(ContinuousSchema(DoubleCodex),DoubleValue(1.5634719199411433)))
+Cell(Position1D(StringValue(skewness)),Content(ContinuousSchema(DoubleCodex),DoubleValue(0.348873899490999)))
+Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema(DoubleCodex),DoubleValue(-0.8057851239669427)))
 ```
 
 For more examples see [BasicOperations.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/BasicOperations.scala), [Conditional.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Conditional.scala), [DataAnalysis.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DataAnalysis.scala), [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DerivedData.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Ensemble.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Event.scala), [LabelWeighting.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/LabelWeighting.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/MutualInformation.scala), [PipelineDataPreparation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/PipelineDataPreparation.scala) or [Scoring.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Scoring.scala).
