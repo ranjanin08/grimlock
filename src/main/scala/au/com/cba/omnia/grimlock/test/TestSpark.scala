@@ -298,7 +298,7 @@ object TestSpark8 {
 
     loadText(args(1) + "/mutualInputfile.txt", Cell.parse2D())
       .data
-      .uniqueByPositions(Over[Position2D, Dimension.Second](Second))
+      .uniqueByPositions(Over(Second))
       .map { case (p, c) => Cell(p, c) }
       .saveAsText("./tmp.spark/uni2.out")
       .toUnit
@@ -487,8 +487,7 @@ object TestSpark13 {
       .toUnit
 
     data
-      .fillHeterogeneous(Over[Position2D, Dimension.Second](Second),
-        all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
+      .fillHeterogeneous(Over(Second), all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
       .join(Over(First), inds)
       .saveAsCSV(Over(Second), "./tmp.spark/fll4.out")
       .toUnit
@@ -688,7 +687,7 @@ object TestSpark19 {
     def cb(key: String, pipe: RDD[Cell[Position2D]]): RDD[Cell[Position2D]] = {
       pipe
         .slice(Over(Second), rem, false)
-        .transformWithValue(transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
+        .transformWithValue(transforms, stats.toMap(Over(First)))
         .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
         .saveAsCSV(Over(Second), "./tmp.spark/pln_" + key + ".csv")
     }

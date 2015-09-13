@@ -161,7 +161,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
     val csb = d
       .slice(Over(Second), rem2, false)
-      .transformWithValue(transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
+      .transformWithValue(transforms, stats.toMap(Over(First)))
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)

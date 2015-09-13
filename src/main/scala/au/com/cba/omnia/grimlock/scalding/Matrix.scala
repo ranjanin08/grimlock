@@ -680,7 +680,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           .distinct(ordering)
           .asKeys
           .redistribute(lr)
-          .flatMapWithValue(right) { case ((l, _), vo) => vo.get.collect { case r if comparer.keep(l, r) => (r, l) } }
+          .flatMapWithValue(right) {
+            case ((l, _), Some(v)) => v.collect { case r if comparer.keep(l, r) => (r, l) }
+            case _ => None
+          }
           .forceToDisk // TODO: Should this be configurable?
 
         ldata

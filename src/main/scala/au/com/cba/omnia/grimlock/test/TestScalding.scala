@@ -282,7 +282,7 @@ class TestScalding8(args : Args) extends Job(args) {
 
   loadText(args("path") + "/mutualInputfile.txt", Cell.parse2D())
     .data
-    .uniqueByPositions(Over[Position2D, Dimension.Second](Second))
+    .uniqueByPositions(Over(Second))
     .map { case (p, c) => Cell(p, c) }
     .saveAsText("./tmp.scalding/uni2.out")
     .toUnit
@@ -461,8 +461,7 @@ class TestScalding13(args : Args) extends Job(args) {
     .toUnit
 
   data
-    .fillHeterogeneous(Over[Position2D, Dimension.Second](Second),
-      all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
+    .fillHeterogeneous(Over(Second), all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
     .join(Over(First), inds)
     .saveAsCSV(Over(Second), "./tmp.scalding/fll4.out")
     .toUnit
@@ -650,7 +649,7 @@ class TestScalding19(args : Args) extends Job(args) {
   def cb(key: String, pipe: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {
     pipe
       .slice(Over(Second), rem, false)
-      .transformWithValue(transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
+      .transformWithValue(transforms, stats.toMap(Over(First)))
       .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
       .saveAsCSV(Over(Second), "./tmp.scalding/pln_" + key + ".csv")
   }
