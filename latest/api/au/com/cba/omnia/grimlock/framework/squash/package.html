@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>squash - au.com.cba.omnia.grimlock.framework.squash</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
@@ -26,7 +30,11 @@
       <div id="definition">
         <img src="../../../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a></p>
-        <h1>squash</h1>
+        <h1>squash</h1><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -67,10 +75,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Squashable.html"><span class="name">Squashable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Squashable.html"><span class="name">Squashable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Squasher[P]</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@Squashable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>Squasher[P]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.squash.SquashableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="SquashableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef"></a>
       <a id="SquashableWithValue[T,P&lt;:Position,W]:SquashableWithValue[T,P,W]"></a>
@@ -80,10 +92,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="SquashableWithValue.html"><span class="name">SquashableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="SquashableWithValue.html"><span class="name">SquashableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>SquasherWithValue[P]</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@SquashableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>SquasherWithValue[P]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.squash.Squasher" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Squasher[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSquasherWithValue[P]"></a>
       <a id="Squasher[P&lt;:Position]:Squasher[P]"></a>
@@ -95,8 +111,12 @@
       <span class="symbol">
         <a href="Squasher.html"><span class="name">Squasher</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="SquasherWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.squash.SquasherWithValue">SquasherWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.squash.Squasher.P">P</span>]</span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for squashing a dimension.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@Squasher[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSquasherWithValue[P]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for squashing a dimension.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.squash.SquasherWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="SquasherWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
       <a id="SquasherWithValue[P&lt;:Position]:SquasherWithValue[P]"></a>
@@ -108,8 +128,12 @@
       <span class="symbol">
         <a href="SquasherWithValue.html"><span class="name">SquasherWithValue</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for squashing a dimension with a user provided value.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@SquasherWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for squashing a dimension with a user provided value.</p>
     </li></ol>
             </div>
 
@@ -128,8 +152,12 @@
       <span class="symbol">
         <a href="Squashable$.html"><span class="name">Squashable</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object for the <code>Squashable</code> type class.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@Squashable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object for the <code>Squashable</code> type class.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.squash.SquashableWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="SquashableWithValue"></a>
       <a id="SquashableWithValue:SquashableWithValue"></a>
@@ -141,8 +169,12 @@
       <span class="symbol">
         <a href="SquashableWithValue$.html"><span class="name">SquashableWithValue</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object for the <code>SquashableWithValue</code> type class.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@SquashableWithValue" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object for the <code>SquashableWithValue</code> type class.</p>
     </li></ol>
             </div>
 
@@ -168,6 +200,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

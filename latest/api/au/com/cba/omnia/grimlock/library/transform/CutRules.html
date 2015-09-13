@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>CutRules - au.com.cba.omnia.grimlock.library.transform.CutRules</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
@@ -26,7 +30,13 @@
       <div id="definition">
         <img src="../../../../../../../lib/trait_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.library">library</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.transform">transform</a></p>
-        <h1>CutRules</h1>
+        <h1>CutRules</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.transform">package transform</a>
+          </div></span></h3><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,17 +45,17 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">CutRules</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">CutRules</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that defined various rules for cutting continuous data.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6fa75d5d2208ca24d3425cbcf760a7b2b7fdf09f//src/main/scala/au/com/cba/omnia/grimlock/library/Transformers.scala" target="_blank">Transformers.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that defined various rules for cutting continuous data.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(9c34e3227f437072274b7608ce98cd966fabd44c)//src/main/scala/au/com/cba/omnia/grimlock/library/Transformers.scala" target="_blank">Transformers.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
-          <span class="toggle">Known Subclasses</span>
-          <div class="subClasses hiddenContent"><a href="../../spark/transform/CutRules$.html" class="extype" name="au.com.cba.omnia.grimlock.spark.transform.CutRules">CutRules</a>, <a href="../../scalding/transform/CutRules$.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.transform.CutRules">CutRules</a></div>
-        </div></div>
+            <span class="toggle">Known Subclasses</span>
+            <div class="subClasses hiddenContent"><a href="../../spark/transform/CutRules$.html" class="extype" name="au.com.cba.omnia.grimlock.spark.transform.CutRules">CutRules</a>, <a href="../../scalding/transform/CutRules$.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.transform.CutRules">CutRules</a></div>
+          </div></div>
         
 
       <div id="mbrsel">
@@ -95,7 +105,11 @@
       <span class="symbol">
         <span class="name">E</span><span class="tparams">[<span name="_">_</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@E[_]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Type of 'wrapper' around user defined data.</p>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]"></a>
@@ -106,9 +120,13 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">Stats</span><span class="result"> = <span class="extype" name="scala.collection.immutable.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>]]</span>
+        <span class="name">Stats</span><span class="result"> = <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.collection.immutable.Map" class="extype" target="_top">Map</a>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Type of statistics data from which the number of bins is comuted.</p>
     </li></ol>
             </div>
@@ -124,9 +142,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">breaks</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="range">range: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.breaks.V">V</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.breaks.V">V</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]]</span>
+        <span class="name">breaks</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="range">range: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.breaks.V">V</span>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.breaks.V">V</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@breaks[V](range:Map[V,List[Double]])(implicitevidence$39:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V]):CutRules.this.E[Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Return a <code>E</code> holding the user defined break values.</p><div class="fullcomment"><div class="comment cmt"><p>Return a <code>E</code> holding the user defined break values.
 </p></div><dl class="paramcmts block"><dt class="param">range</dt><dd class="cmt"><p>A map (holding for each key) the bins range of that feature.
 </p></dd></dl></div>
@@ -139,9 +161,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">doanesFormula</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>, <span name="Y">Y</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.X">X</span></span>, <span name="skewness">skewness: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.Y">Y</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.X">X</span>]</span>, <span name="arg3">arg3: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.Y">Y</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]]</span>
+        <span class="name">doanesFormula</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>, <span name="Y">Y</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.X">X</span></span>, <span name="skewness">skewness: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.Y">Y</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.X">X</span>]</span>, <span name="arg3">arg3: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormula.Y">Y</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@doanesFormula[V,W,X,Y](ext:CutRules.this.E[CutRules.this.Stats],count:V,min:W,max:X,skewness:Y)(implicitevidence$23:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$24:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$25:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X],implicitevidence$26:au.com.cba.omnia.grimlock.framework.encoding.Valueable[Y]):CutRules.this.E[Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Define range of bins based on Doane's formula.</p><div class="fullcomment"><div class="comment cmt"><p>Define range of bins based on Doane's formula.
 </p></div><dl class="paramcmts block"><dt class="param">ext</dt><dd class="cmt"><p>A <code>E</code> containing the feature statistics.</p></dd><dt class="param">count</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the number of features.</p></dd><dt class="param">min</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the minimum value.</p></dd><dt class="param">max</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the maximum value.</p></dd><dt class="param">skewness</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the skewwness.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>E</code> holding the break values.
@@ -155,9 +181,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">fixed</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixed.V">V</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixed.W">W</span></span>, <span name="k">k: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixed.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixed.W">W</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]]</span>
+        <span class="name">fixed</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixed.V">V</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixed.W">W</span></span>, <span name="k">k: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixed.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixed.W">W</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@fixed[V,W](ext:CutRules.this.E[CutRules.this.Stats],min:V,max:W,k:Long)(implicitevidence$1:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$2:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W]):CutRules.this.E[Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Define range of <code>k</code> approximately equal size bins.</p><div class="fullcomment"><div class="comment cmt"><p>Define range of <code>k</code> approximately equal size bins.
 </p></div><dl class="paramcmts block"><dt class="param">ext</dt><dd class="cmt"><p>A <code>E</code> containing the feature statistics.</p></dd><dt class="param">min</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the minimum value.</p></dd><dt class="param">max</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the maximum value.</p></dd><dt class="param">k</dt><dd class="cmt"><p>The number of bins.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>E</code> holding the break values.
@@ -171,9 +201,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">riceRule</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.X">X</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]]</span>
+        <span class="name">riceRule</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRule.X">X</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@riceRule[V,W,X](ext:CutRules.this.E[CutRules.this.Stats],count:V,min:W,max:X)(implicitevidence$17:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$18:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$19:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X]):CutRules.this.E[Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Define range of bins based on the Rice rule.</p><div class="fullcomment"><div class="comment cmt"><p>Define range of bins based on the Rice rule.
 </p></div><dl class="paramcmts block"><dt class="param">ext</dt><dd class="cmt"><p>A <code>E</code> containing the feature statistics.</p></dd><dt class="param">count</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the number of features.</p></dd><dt class="param">min</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the minimum value.</p></dd><dt class="param">max</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the maximum value.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>E</code> holding the break values.
@@ -187,9 +221,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">scottsNormalReferenceRule</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>, <span name="Y">Y</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.X">X</span></span>, <span name="sd">sd: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.Y">Y</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.X">X</span>]</span>, <span name="arg3">arg3: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.Y">Y</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]]</span>
+        <span class="name">scottsNormalReferenceRule</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>, <span name="Y">Y</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.X">X</span></span>, <span name="sd">sd: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.Y">Y</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.X">X</span>]</span>, <span name="arg3">arg3: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRule.Y">Y</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@scottsNormalReferenceRule[V,W,X,Y](ext:CutRules.this.E[CutRules.this.Stats],count:V,min:W,max:X,sd:Y)(implicitevidence$31:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$32:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$33:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X],implicitevidence$34:au.com.cba.omnia.grimlock.framework.encoding.Valueable[Y]):CutRules.this.E[Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Define range of bins based on Scott's normal reference rule.</p><div class="fullcomment"><div class="comment cmt"><p>Define range of bins based on Scott's normal reference rule.
 </p></div><dl class="paramcmts block"><dt class="param">ext</dt><dd class="cmt"><p>A <code>E</code> containing the feature statistics.</p></dd><dt class="param">count</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the number of features.</p></dd><dt class="param">min</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the minimum value.</p></dd><dt class="param">max</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the maximum value.</p></dd><dt class="param">sd</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the standard deviation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>E</code> holding the break values.
@@ -203,9 +241,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">squareRootChoice</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.X">X</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]]</span>
+        <span class="name">squareRootChoice</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoice.X">X</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@squareRootChoice[V,W,X](ext:CutRules.this.E[CutRules.this.Stats],count:V,min:W,max:X)(implicitevidence$5:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$6:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$7:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X]):CutRules.this.E[Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Define range of bins based on the square-root choice.</p><div class="fullcomment"><div class="comment cmt"><p>Define range of bins based on the square-root choice.
 </p></div><dl class="paramcmts block"><dt class="param">ext</dt><dd class="cmt"><p>A <code>E</code> containing the feature statistics.</p></dd><dt class="param">count</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the number of features.</p></dd><dt class="param">min</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the minimum value.</p></dd><dt class="param">max</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the maximum value.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>E</code> holding the break values.
@@ -219,9 +261,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">sturgesFormula</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.X">X</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]]</span>
+        <span class="name">sturgesFormula</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="ext">ext: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a>]</span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormula.X">X</span>]</span>)</span><span class="result">: <a href="#E[_]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.E">E</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@sturgesFormula[V,W,X](ext:CutRules.this.E[CutRules.this.Stats],count:V,min:W,max:X)(implicitevidence$11:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$12:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$13:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X]):CutRules.this.E[Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Define range of bins based on Sturges' formula.</p><div class="fullcomment"><div class="comment cmt"><p>Define range of bins based on Sturges' formula.
 </p></div><dl class="paramcmts block"><dt class="param">ext</dt><dd class="cmt"><p>A <code>E</code> containing the feature statistics.</p></dd><dt class="param">count</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the number of features.</p></dd><dt class="param">min</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the minimum value.</p></dd><dt class="param">max</dt><dd class="cmt"><p>Key (into <code>ext</code>) that identifies the maximum value.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>E</code> holding the break values.
@@ -232,19 +278,6 @@
         <div id="values" class="values members">
               <h3>Concrete Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="!=(x$1:AnyRef):Boolean"></a>
-      <a id="!=(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a>
       <a id="!=(Any):Boolean"></a>
       <h4 class="signature">
@@ -253,10 +286,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <a id="##():Int"></a>
@@ -266,24 +303,15 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@##():Int" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="==(x$1:AnyRef):Boolean"></a>
-      <a id="==(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a>
       <a id="==(Any):Boolean"></a>
       <h4 class="signature">
@@ -292,10 +320,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -307,7 +339,11 @@
       <span class="symbol">
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.CutRules#breaksFromMap" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="breaksFromMap[V](range:Map[V,List[Double]])(implicitevidence$40:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]"></a>
@@ -318,9 +354,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">breaksFromMap</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="range">range: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.breaksFromMap.V">V</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.breaksFromMap.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]</span>
+        <span class="name">breaksFromMap</span><span class="tparams">[<span name="V">V</span>]</span><span class="params">(<span name="range">range: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.breaksFromMap.V">V</span>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.breaksFromMap.V">V</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@breaksFromMap[V](range:Map[V,List[Double]])(implicitevidence$40:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
@@ -331,9 +371,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -350,9 +394,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">doanesFormulaFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>, <span name="Y">Y</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.X">X</span></span>, <span name="skewness">skewness: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.Y">Y</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.X">X</span>]</span>, <span name="arg3">arg3: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.Y">Y</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]</span>
+        <span class="name">doanesFormulaFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>, <span name="Y">Y</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.X">X</span></span>, <span name="skewness">skewness: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.Y">Y</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.X">X</span>]</span>, <span name="arg3">arg3: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.doanesFormulaFromStats.Y">Y</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@doanesFormulaFromStats[V,W,X,Y](stats:CutRules.this.Stats,count:V,min:W,max:X,skewness:Y)(implicitevidence$27:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$28:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$29:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X],implicitevidence$30:au.com.cba.omnia.grimlock.framework.encoding.Valueable[Y]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
@@ -363,9 +411,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="equals(x$1:Any):Boolean"></a>
@@ -376,9 +428,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -389,9 +445,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -408,9 +468,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">fixedFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixedFromStats.V">V</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixedFromStats.W">W</span></span>, <span name="k">k: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixedFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixedFromStats.W">W</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]</span>
+        <span class="name">fixedFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixedFromStats.V">V</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixedFromStats.W">W</span></span>, <span name="k">k: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixedFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.fixedFromStats.W">W</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@fixedFromStats[V,W](stats:CutRules.this.Stats,min:V,max:W,k:Long)(implicitevidence$3:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$4:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
@@ -423,7 +487,11 @@
       <span class="symbol">
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
@@ -434,9 +502,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -447,9 +519,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
@@ -460,9 +536,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
@@ -473,9 +553,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
@@ -486,9 +570,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.CutRules#riceRuleFromStats" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="riceRuleFromStats[V,W,X](stats:CutRules.this.Stats,count:V,min:W,max:X)(implicitevidence$20:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$21:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$22:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]"></a>
@@ -499,9 +587,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">riceRuleFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.X">X</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]</span>
+        <span class="name">riceRuleFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.riceRuleFromStats.X">X</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@riceRuleFromStats[V,W,X](stats:CutRules.this.Stats,count:V,min:W,max:X)(implicitevidence$20:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$21:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$22:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.CutRules#scottsNormalReferenceRuleFromStats" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="scottsNormalReferenceRuleFromStats[V,W,X,Y](stats:CutRules.this.Stats,count:V,min:W,max:X,sd:Y)(implicitevidence$35:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$36:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$37:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X],implicitevidence$38:au.com.cba.omnia.grimlock.framework.encoding.Valueable[Y]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]"></a>
@@ -512,9 +604,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">scottsNormalReferenceRuleFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>, <span name="Y">Y</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.X">X</span></span>, <span name="sd">sd: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.Y">Y</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.X">X</span>]</span>, <span name="arg3">arg3: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.Y">Y</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]</span>
+        <span class="name">scottsNormalReferenceRuleFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>, <span name="Y">Y</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.X">X</span></span>, <span name="sd">sd: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.Y">Y</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.X">X</span>]</span>, <span name="arg3">arg3: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.scottsNormalReferenceRuleFromStats.Y">Y</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@scottsNormalReferenceRuleFromStats[V,W,X,Y](stats:CutRules.this.Stats,count:V,min:W,max:X,sd:Y)(implicitevidence$35:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$36:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$37:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X],implicitevidence$38:au.com.cba.omnia.grimlock.framework.encoding.Valueable[Y]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.CutRules#squareRootChoiceFromStats" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="squareRootChoiceFromStats[V,W,X](stats:CutRules.this.Stats,count:V,min:W,max:X)(implicitevidence$8:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$9:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$10:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]"></a>
@@ -525,9 +621,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">squareRootChoiceFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.X">X</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]</span>
+        <span class="name">squareRootChoiceFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.squareRootChoiceFromStats.X">X</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@squareRootChoiceFromStats[V,W,X](stats:CutRules.this.Stats,count:V,min:W,max:X)(implicitevidence$8:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$9:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$10:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.CutRules#sturgesFormulaFromStats" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sturgesFormulaFromStats[V,W,X](stats:CutRules.this.Stats,count:V,min:W,max:X)(implicitevidence$14:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$15:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$16:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]"></a>
@@ -538,9 +638,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">sturgesFormulaFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.X">X</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Double">Double</span>]]</span>
+        <span class="name">sturgesFormulaFromStats</span><span class="tparams">[<span name="V">V</span>, <span name="W">W</span>, <span name="X">X</span>]</span><span class="params">(<span name="stats">stats: <a href="#Stats=Map[au.com.cba.omnia.grimlock.framework.position.Position1D,Map[au.com.cba.omnia.grimlock.framework.position.Position1D,au.com.cba.omnia.grimlock.framework.content.Content]]" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.CutRules.Stats">Stats</a></span>, <span name="count">count: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.V">V</span></span>, <span name="min">min: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.W">W</span></span>, <span name="max">max: <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.X">X</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.V">V</span>]</span>, <span name="arg1">arg1: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.W">W</span>]</span>, <span name="arg2">arg2: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.CutRules.sturgesFormulaFromStats.X">X</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<a href="../../framework/position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>, <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@sturgesFormulaFromStats[V,W,X](stats:CutRules.this.Stats,count:V,min:W,max:X)(implicitevidence$14:au.com.cba.omnia.grimlock.framework.encoding.Valueable[V],implicitevidence$15:au.com.cba.omnia.grimlock.framework.encoding.Valueable[W],implicitevidence$16:au.com.cba.omnia.grimlock.framework.encoding.Valueable[X]):Map[au.com.cba.omnia.grimlock.framework.position.Position1D,List[Double]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
@@ -553,7 +657,11 @@
       <span class="symbol">
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
@@ -566,7 +674,11 @@
       <span class="symbol">
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@toString():String" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
@@ -577,9 +689,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -596,9 +712,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -615,9 +735,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.CutRules@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -635,9 +759,9 @@
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
             </div>
         
         </div>
@@ -654,6 +778,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

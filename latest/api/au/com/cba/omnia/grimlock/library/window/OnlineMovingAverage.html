@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>OnlineMovingAverage - au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
@@ -26,7 +30,13 @@
       <div id="definition">
         <img src="../../../../../../../lib/trait_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.library">library</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.window">window</a></p>
-        <h1>OnlineMovingAverage</h1>
+        <h1>OnlineMovingAverage</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.window">package window</a>
+          </div></span></h3><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -39,13 +49,13 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for computing moving average in online mode.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6fa75d5d2208ca24d3425cbcf760a7b2b7fdf09f//src/main/scala/au/com/cba/omnia/grimlock/library/Windows.scala" target="_blank">Windows.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for computing moving average in online mode.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(9c34e3227f437072274b7608ce98cd966fabd44c)//src/main/scala/au/com/cba/omnia/grimlock/library/Windows.scala" target="_blank">Windows.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>], <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>], <a href="../../framework/window/WindowWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue">WindowWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>], <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>], <a href="../../framework/window/WindowWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue">WindowWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
-          <span class="toggle">Known Subclasses</span>
-          <div class="subClasses hiddenContent"><a href="CumulativeMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.CumulativeMovingAverage">CumulativeMovingAverage</a>, <a href="ExponentialMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage">ExponentialMovingAverage</a></div>
-        </div></div>
+            <span class="toggle">Known Subclasses</span>
+            <div class="subClasses hiddenContent"><a href="CumulativeMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.CumulativeMovingAverage">CumulativeMovingAverage</a>, <a href="ExponentialMovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.ExponentialMovingAverage">ExponentialMovingAverage</a></div>
+          </div></div>
         
 
       <div id="mbrsel">
@@ -86,16 +96,20 @@
               <h3>Type Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.T" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="T=(Double,Long)"></a>
-      <a id="T:(Double,Long)"></a>
+      <a id="T:T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">T</span><span class="result"> = (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>)</span>
+        <span class="name">T</span><span class="result"> = (<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@T=(Double,Long)" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Type of the state.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage">OnlineMovingAverage</a> → <a href="../../framework/window/WindowWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue">WindowWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.window.Window.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="V=Any"></a>
@@ -106,9 +120,13 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">V</span><span class="result"> = <span class="extype" name="scala.Any">Any</span></span>
+        <span class="name">V</span><span class="result"> = <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@V=Any" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a> → <a href="../../framework/window/WindowWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue">WindowWithValue</a></dd></dl></div>
     </li></ol>
             </div>
@@ -116,30 +134,38 @@
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage#compute" visbl="prt" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="compute(curr:Double,t:(Double,Long)):Double"></a>
-      <a id="compute(Double,(Double,Long)):Double"></a>
+      <a id="compute(curr:Double,t:OnlineMovingAverage.this.T):Double"></a>
+      <a id="compute(Double,T):Double"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">compute</span><span class="params">(<span name="curr">curr: <span class="extype" name="scala.Double">Double</span></span>, <span name="t">t: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>)</span>)</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+        <span class="name">compute</span><span class="params">(<span name="curr">curr: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="t">t: <a href="#T=(Double,Long)" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.T">T</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@compute(curr:Double,t:OnlineMovingAverage.this.T):Double" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.window.MovingAverage#pos" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="pos:(au.com.cba.omnia.grimlock.framework.Cell[S],R)=&gt;Q"></a>
-      <a id="pos:(Cell[S],R)⇒Q"></a>
+      <a id="pos:au.com.cba.omnia.grimlock.framework.Locate.WindowSize1[S,R,Q]"></a>
+      <a id="pos:WindowSize1[S,R,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">pos</span><span class="result">: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span></span>
+        <span class="name">pos</span><span class="result">: <a href="../../framework/Locate$.html#WindowSize1[S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=(au.com.cba.omnia.grimlock.framework.Cell[S],R)=&gt;Q" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.WindowSize1">WindowSize1</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@pos:au.com.cba.omnia.grimlock.framework.Locate.WindowSize1[S,R,Q]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Function to extract result position.</p><div class="fullcomment"><div class="comment cmt"><p>Function to extract result position.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a></dd></dl></div>
     </li></ol>
             </div>
@@ -147,19 +173,6 @@
         <div id="values" class="values members">
               <h3>Concrete Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="!=(x$1:AnyRef):Boolean"></a>
-      <a id="!=(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a>
       <a id="!=(Any):Boolean"></a>
       <h4 class="signature">
@@ -168,10 +181,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <a id="##():Int"></a>
@@ -181,24 +198,15 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@##():Int" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="==(x$1:AnyRef):Boolean"></a>
-      <a id="==(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a>
       <a id="==(Any):Boolean"></a>
       <h4 class="signature">
@@ -207,22 +215,30 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.window.Window#andThenExpand" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="andThenExpand[U&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[S],R,au.com.cba.omnia.grimlock.framework.Cell[Q])=&gt;U)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,U]):au.com.cba.omnia.grimlock.framework.window.Window[S,R,U]{typeT=Window.this.T}"></a>
-      <a id="andThenExpand[U&lt;:Position]((Cell[S],R,Cell[Q])⇒U)(PosExpDep[Q,U]):Window[S,R,U]{typeT=(Double,Long)}"></a>
+      <a id="andThenExpand[U&lt;:Position]((Cell[S],R,Cell[Q])⇒U)(PosExpDep[Q,U]):Window[S,R,U]{typeT=OnlineMovingAverage.this.T}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenExpand</span><span class="tparams">[<span name="U">U &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window.andThenExpand.U">U</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window.andThenExpand.U">U</span>]</span>)</span><span class="result">: <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window.andThenExpand.U">U</span>] { type T = (Double, Long) }</span>
+        <span class="name">andThenExpand</span><span class="tparams">[<span name="U">U &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window.andThenExpand.U">U</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window.andThenExpand.U">U</span>]</span>)</span><span class="result">: <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window.andThenExpand.U">U</span>] { type T = OnlineMovingAverage.this.T }</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@andThenExpand[U&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[S],R,au.com.cba.omnia.grimlock.framework.Cell[Q])=&gt;U)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,U]):au.com.cba.omnia.grimlock.framework.window.Window[S,R,U]{typeT=Window.this.T}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Operator for generating derived data and then expanding dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for generating derived data and then expanding dimensions.
 </p></div><dl class="paramcmts block"><dt class="param">expand</dt><dd class="cmt"><p>The expansion to apply after the derived data has been generated.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A window that runs <code>this</code> and then expands the resulting dimensions.
@@ -238,23 +254,31 @@
       <span class="symbol">
         <span class="name">andThenExpandWithValue</span><span class="tparams">[<span name="U">U &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.V">V</a>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue.andThenExpandWithValue.U">U</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue.andThenExpandWithValue.U">U</span>]</span>)</span><span class="result">: <a href="../../framework/window/WindowWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue">WindowWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue.andThenExpandWithValue.U">U</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@andThenExpandWithValue[U&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[S],R,WindowWithValue.this.V,au.com.cba.omnia.grimlock.framework.Cell[Q])=&gt;U)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,U]):au.com.cba.omnia.grimlock.framework.window.WindowWithValue[S,R,U]{typeV=WindowWithValue.this.V;typeT=WindowWithValue.this.T}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Operator for generating derived data and then expanding dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for generating derived data and then expanding dimensions.
 </p></div><dl class="paramcmts block"><dt class="param">expand</dt><dd class="cmt"><p>The expansion to apply after the derived data has been generated.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A window that runs <code>this</code> and then expands the resulting dimensions.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/window/WindowWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue">WindowWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.window.Window#andThenRename" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="andThenRename(rename:(au.com.cba.omnia.grimlock.framework.Cell[S],R,au.com.cba.omnia.grimlock.framework.Cell[Q])=&gt;Q):au.com.cba.omnia.grimlock.framework.window.Window[S,R,Q]{typeT=Window.this.T}"></a>
-      <a id="andThenRename((Cell[S],R,Cell[Q])⇒Q):Window[S,R,Q]{typeT=(Double,Long)}"></a>
+      <a id="andThenRename((Cell[S],R,Cell[Q])⇒Q):Window[S,R,Q]{typeT=OnlineMovingAverage.this.T}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenRename</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span></span>)</span><span class="result">: <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>] { type T = (Double, Long) }</span>
+        <span class="name">andThenRename</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span></span>)</span><span class="result">: <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>] { type T = OnlineMovingAverage.this.T }</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@andThenRename(rename:(au.com.cba.omnia.grimlock.framework.Cell[S],R,au.com.cba.omnia.grimlock.framework.Cell[Q])=&gt;Q):au.com.cba.omnia.grimlock.framework.window.Window[S,R,Q]{typeT=Window.this.T}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Operator for generating derived data and then renaming dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for generating derived data and then renaming dimensions.
 </p></div><dl class="paramcmts block"><dt class="param">rename</dt><dd class="cmt"><p>The rename to apply after the derived data has been generated.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A window that runs <code>this</code> and then renames the resulting dimension(s).
@@ -270,7 +294,11 @@
       <span class="symbol">
         <span class="name">andThenRenameWithValue</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.V">V</a>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span></span>)</span><span class="result">: <a href="../../framework/window/WindowWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.WindowWithValue">WindowWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@andThenRenameWithValue(rename:(au.com.cba.omnia.grimlock.framework.Cell[S],R,WindowWithValue.this.V,au.com.cba.omnia.grimlock.framework.Cell[Q])=&gt;Q):au.com.cba.omnia.grimlock.framework.window.WindowWithValue[S,R,Q]{typeV=WindowWithValue.this.V;typeT=WindowWithValue.this.T}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Operator for generating derived data and then renaming dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for generating derived data and then renaming dimensions.
 </p></div><dl class="paramcmts block"><dt class="param">rename</dt><dd class="cmt"><p>The rename to apply after the derived data has been generated.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A window that runs <code>this</code> and then renames the resulting dimension(s).
@@ -286,7 +314,11 @@
       <span class="symbol">
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
@@ -297,9 +329,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -316,9 +352,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="equals(x$1:Any):Boolean"></a>
@@ -329,9 +369,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -342,9 +386,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -361,9 +409,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getCell</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>, <span name="value">value: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]]</span>
+        <span class="name">getCell</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>, <span name="value">value: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@getCell(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,value:Double):Option[au.com.cba.omnia.grimlock.framework.Cell[Q]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
@@ -376,7 +428,11 @@
       <span class="symbol">
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.window.MovingAverage#getCurrent" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getCurrent(rem:R,con:au.com.cba.omnia.grimlock.framework.content.Content):(R,Double)"></a>
@@ -387,9 +443,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getCurrent</span><span class="params">(<span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>, <span name="con">con: <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: (<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <span class="extype" name="scala.Double">Double</span>)</span>
+        <span class="name">getCurrent</span><span class="params">(<span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>, <span name="con">con: <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: (<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@getCurrent(rem:R,con:au.com.cba.omnia.grimlock.framework.content.Content):(R,Double)" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.window.MovingAverage#getDouble" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getDouble(con:au.com.cba.omnia.grimlock.framework.content.Content):Double"></a>
@@ -400,9 +460,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getDouble</span><span class="params">(<span name="con">con: <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+        <span class="name">getDouble</span><span class="params">(<span name="con">con: <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@getDouble(con:au.com.cba.omnia.grimlock.framework.content.Content):Double" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="MovingAverage.html" class="extype" name="au.com.cba.omnia.grimlock.library.window.MovingAverage">MovingAverage</a></dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
@@ -413,38 +477,50 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage#initialise" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="initialise(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R):((Double,Long),TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
-      <a id="initialise(Cell[S],R):((Double,Long),TraversableOnce[Cell[Q]])"></a>
+      <a id="initialise(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R):(OnlineMovingAverage.this.T,TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
+      <a id="initialise(Cell[S],R):(T,TraversableOnce[Cell[Q]])"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">initialise</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]])</span>
+        <span class="name">initialise</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>)</span><span class="result">: (<a href="#T=(Double,Long)" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.T">T</a>, <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]])</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@initialise(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R):(OnlineMovingAverage.this.T,TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Initialise the state using the first cell (ordered according to its position).</p><div class="fullcomment"><div class="comment cmt"><p>Initialise the state using the first cell (ordered according to its position).
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to initialise with.</p></dd><dt class="param">rem</dt><dd class="cmt"><p>The remaining coordinates of the cell.
 </p></dd><dt>returns</dt><dd class="cmt"><p>The state for this object.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage">OnlineMovingAverage</a> → <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.window.Window#initialiseWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="initialiseWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,ext:Window.this.V):(Window.this.T,TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
-      <a id="initialiseWithValue(Cell[S],R,V):((Double,Long),TraversableOnce[Cell[Q]])"></a>
+      <a id="initialiseWithValue(Cell[S],R,V):(T,TraversableOnce[Cell[Q]])"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">initialiseWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.V">V</a></span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]])</span>
+        <span class="name">initialiseWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.V">V</a></span>)</span><span class="result">: (<a href="#T=(Double,Long)" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.T">T</a>, <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]])</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@initialiseWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,ext:Window.this.V):(Window.this.T,TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Initialise the state using the first cell (ordered according to its position).</p><div class="fullcomment"><div class="comment cmt"><p>Initialise the state using the first cell (ordered according to its position).
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to initialise with.</p></dd><dt class="param">rem</dt><dd class="cmt"><p>The remaining coordinates of the cell.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user define the value.
 </p></dd><dt>returns</dt><dd class="cmt"><p>The state for this object.
@@ -458,9 +534,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
@@ -471,9 +551,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
@@ -484,9 +568,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
@@ -497,38 +585,50 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="present(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,t:(Double,Long)):((Double,Long),TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
-      <a id="present(Cell[S],R,(Double,Long)):((Double,Long),TraversableOnce[Cell[Q]])"></a>
+      <a id="present(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,t:OnlineMovingAverage.this.T):(OnlineMovingAverage.this.T,TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
+      <a id="present(Cell[S],R,T):(T,TraversableOnce[Cell[Q]])"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">present</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>, <span name="t">t: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>)</span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]])</span>
+        <span class="name">present</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>, <span name="t">t: <a href="#T=(Double,Long)" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.T">T</a></span>)</span><span class="result">: (<a href="#T=(Double,Long)" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.T">T</a>, <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]])</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@present(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,t:OnlineMovingAverage.this.T):(OnlineMovingAverage.this.T,TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Update state with the current cell and, optionally, output derived data.</p><div class="fullcomment"><div class="comment cmt"><p>Update state with the current cell and, optionally, output derived data.
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The selected cell to derive from.</p></dd><dt class="param">rem</dt><dd class="cmt"><p>The remaining coordinates of the cell.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The state.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A tuple consisting of updated state together with optional derived data.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage">OnlineMovingAverage</a> → <a href="../../framework/window/Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.window.Window#presentWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="presentWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,ext:Window.this.V,t:Window.this.T):(Window.this.T,TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])"></a>
-      <a id="presentWithValue(Cell[S],R,V,(Double,Long)):((Double,Long),TraversableOnce[Cell[Q]])"></a>
+      <a id="presentWithValue(Cell[S],R,V,T):(T,TraversableOnce[Cell[Q]])"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">presentWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.V">V</a></span>, <span name="t">t: (<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>)</span>)</span><span class="result">: ((<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Long">Long</span>), <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]])</span>
+        <span class="name">presentWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.S">S</span>]</span>, <span name="rem">rem: <span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.R">R</span></span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.V">V</a></span>, <span name="t">t: <a href="#T=(Double,Long)" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.T">T</a></span>)</span><span class="result">: (<a href="#T=(Double,Long)" class="extmbr" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.T">T</a>, <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage.Q">Q</span>]])</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@presentWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[S],rem:R,ext:Window.this.V,t:Window.this.T):(Window.this.T,TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[Q]])" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Update state with the current cell and, optionally, output derived data.</p><div class="fullcomment"><div class="comment cmt"><p>Update state with the current cell and, optionally, output derived data.
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The selected cell to derive from.</p></dd><dt class="param">rem</dt><dd class="cmt"><p>The remaining coordinates of the cell.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user define the value.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The state.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A tuple consisting of updated state together with optional derived data.
@@ -544,7 +644,11 @@
       <span class="symbol">
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
@@ -557,7 +661,11 @@
       <span class="symbol">
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@toString():String" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
@@ -568,9 +676,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -587,9 +699,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -606,9 +722,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.window.OnlineMovingAverage@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -634,9 +754,9 @@
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
             </div>
         
         </div>
@@ -653,6 +773,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

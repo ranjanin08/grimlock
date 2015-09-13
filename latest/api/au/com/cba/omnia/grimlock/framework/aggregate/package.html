@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>aggregate - au.com.cba.omnia.grimlock.framework.aggregate</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
@@ -26,7 +30,11 @@
       <div id="definition">
         <img src="../../../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a></p>
-        <h1>aggregate</h1>
+        <h1>aggregate</h1><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -67,10 +75,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Aggregatable.html"><span class="name">Aggregatable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Aggregatable.html"><span class="name">Aggregatable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>List[Aggregator[P, S, Q]]</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@Aggregatable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>List[Aggregator[P, S, Q]]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="AggregatableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef"></a>
       <a id="AggregatableWithValue[T,P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position,W]:AggregatableWithValue[T,P,S,Q,W]"></a>
@@ -80,10 +92,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="AggregatableWithValue.html"><span class="name">AggregatableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="AggregatableWithValue.html"><span class="name">AggregatableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a 'List[AggregatorWithValue[P S, Q] { type V &gt;: W }]<code>.</code></p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@AggregatableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a 'List[AggregatorWithValue[P S, Q] { type V &gt;: W }]<code>.</code></p>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Aggregator[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAggregatorWithValue[P,S,Q]"></a>
       <a id="Aggregator[P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position]:Aggregator[P,S,Q]"></a>
@@ -95,8 +111,12 @@
       <span class="symbol">
         <a href="Aggregator.html"><span class="name">Aggregator</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.Q">Q</span>]</span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for aggregations.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@Aggregator[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAggregatorWithValue[P,S,Q]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for aggregations.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="AggregatorWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
       <a id="AggregatorWithValue[P&lt;:Position,S&lt;:PositionwithExpandablePosition,Q&lt;:Position]:AggregatorWithValue[P,S,Q]"></a>
@@ -108,8 +128,12 @@
       <span class="symbol">
         <a href="AggregatorWithValue.html"><span class="name">AggregatorWithValue</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for aggregations with a user supplied value.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@AggregatorWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for aggregations with a user supplied value.</p>
     </li></ol>
             </div>
 
@@ -128,8 +152,12 @@
       <span class="symbol">
         <a href="Aggregatable$.html"><span class="name">Aggregatable</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object for the <code>Aggregatable</code> type class.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@Aggregatable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object for the <code>Aggregatable</code> type class.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatableWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="AggregatableWithValue"></a>
       <a id="AggregatableWithValue:AggregatableWithValue"></a>
@@ -141,8 +169,12 @@
       <span class="symbol">
         <a href="AggregatableWithValue$.html"><span class="name">AggregatableWithValue</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object for the <code>AggregatableWithValue</code> type class.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.aggregate.package@AggregatableWithValue" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object for the <code>AggregatableWithValue</code> type class.</p>
     </li></ol>
             </div>
 
@@ -168,6 +200,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

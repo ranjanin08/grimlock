@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>Names - au.com.cba.omnia.grimlock.framework.Names</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../index.html';
@@ -26,7 +30,13 @@
       <div id="definition">
         <img src="../../../../../../lib/trait_big.png" />
         <p id="owner"><a href="../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a></p>
-        <h1>Names</h1>
+        <h1>Names</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">package framework</a>
+          </div></span></h3><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,17 +45,17 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Names</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">Names</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that represents the names along the dimensions of a matrix.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6fa75d5d2208ca24d3425cbcf760a7b2b7fdf09f//src/main/scala/au/com/cba/omnia/grimlock/framework/Names.scala" target="_blank">Names.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that represents the names along the dimensions of a matrix.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(9c34e3227f437072274b7608ce98cd966fabd44c)//src/main/scala/au/com/cba/omnia/grimlock/framework/Names.scala" target="_blank">Names.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
-          <span class="toggle">Known Subclasses</span>
-          <div class="subClasses hiddenContent"><a href="../spark/Names.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Names">Names</a>, <a href="../scalding/Names.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Names">Names</a></div>
-        </div></div>
+            <span class="toggle">Known Subclasses</span>
+            <div class="subClasses hiddenContent"><a href="../spark/Names.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Names">Names</a>, <a href="../scalding/Names.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Names">Names</a></div>
+          </div></div>
         
 
       <div id="mbrsel">
@@ -95,8 +105,12 @@
       <span class="symbol">
         <span class="name">U</span><span class="tparams">[<span name="_">_</span>]</span>
       </span>
-      </h4>
-      <p class="shortcomment cmt">Type of the underlying data structure (i.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying data structure (i.e. TypedPipe or RDD).</p></div></div>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@U[_]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of the underlying data structure (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying data structure (i.e. TypedPipe or RDD).</p></div></div>
     </li></ol>
             </div>
 
@@ -111,9 +125,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">moveToBack</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.moveToBack.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.moveToBack.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>, <span name="ev2">ev2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">moveToBack</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.moveToBack.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.moveToBack.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>, <span name="ev2">ev2: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@moveToBack[T](position:T)(implicitev1:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P],implicitev2:scala.reflect.ClassTag[P]):Names.this.U[(P,Long)]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Renumber the indices such that <code>position</code> is last.</p><div class="fullcomment"><div class="comment cmt"><p>Renumber the indices such that <code>position</code> is last.
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position to move to the back.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(P, Long)]</code> with <code>position</code> at the greatest index and all others renumbered but preserving
@@ -128,9 +146,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">moveToFront</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.moveToFront.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.moveToFront.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>, <span name="ev2">ev2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">moveToFront</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.moveToFront.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.moveToFront.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>, <span name="ev2">ev2: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@moveToFront[T](position:T)(implicitev1:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P],implicitev2:scala.reflect.ClassTag[P]):Names.this.U[(P,Long)]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Renumber the indices such that <code>position</code> is first.</p><div class="fullcomment"><div class="comment cmt"><p>Renumber the indices such that <code>position</code> is first.
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position to move to the front.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(P, Long)]</code> with <code>position</code> at index 0 and all others renumbered but preserving their
@@ -145,9 +167,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">renumber</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">renumber</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@renumber()(implicitev:scala.reflect.ClassTag[P]):Names.this.U[(P,Long)]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Renumber the names.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Names#set" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="set[T](positions:Map[T,Long])(implicitev:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P]):Names.this.U[(P,Long)]"></a>
@@ -158,9 +184,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.set.T">T</span>, <span class="extype" name="scala.Long">Long</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.set.T">T</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@set[T](positions:Map[T,Long])(implicitev:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P]):Names.this.U[(P,Long)]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Set the index of multiple positions.</p><div class="fullcomment"><div class="comment cmt"><p>Set the index of multiple positions.
 </p></div><dl class="paramcmts block"><dt class="param">positions</dt><dd class="cmt"><p>A <code>Map</code> of positions (together with their new index) whose index is to be set.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(P, Long)]</code> with only the indices at the specified positions updated.
@@ -174,9 +204,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">slice</span><span class="params">(<span name="keep">keep: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>) ⇒ <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">slice</span><span class="params">(<span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@slice(keep:Boolean,f:P=&gt;Boolean)(implicitev:scala.reflect.ClassTag[P]):Names.this.U[(P,Long)]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li></ol>
             </div>
@@ -184,19 +218,6 @@
         <div id="values" class="values members">
               <h3>Concrete Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="!=(x$1:AnyRef):Boolean"></a>
-      <a id="!=(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a>
       <a id="!=(Any):Boolean"></a>
       <h4 class="signature">
@@ -205,10 +226,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <a id="##():Int"></a>
@@ -218,24 +243,15 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@##():Int" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="==(x$1:AnyRef):Boolean"></a>
-      <a id="==(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a>
       <a id="==(Any):Boolean"></a>
       <h4 class="signature">
@@ -244,10 +260,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -259,7 +279,11 @@
       <span class="symbol">
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
@@ -270,9 +294,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -289,9 +317,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="equals(x$1:Any):Boolean"></a>
@@ -302,9 +334,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -315,9 +351,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -336,7 +376,11 @@
       <span class="symbol">
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
@@ -347,9 +391,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -360,9 +408,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
@@ -373,9 +425,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
@@ -386,9 +442,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
@@ -399,9 +459,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.Names#set" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="set[T](position:T,index:Long)(implicitev:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P]):Names.this.U[(P,Long)]"></a>
@@ -412,9 +476,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.set.T">T</span></span>, <span name="index">index: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">set</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="position">position: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.set.T">T</span></span>, <span name="index">index: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="position/Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.set.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@set[T](position:T,index:Long)(implicitev:au.com.cba.omnia.grimlock.framework.position.Positionable[T,P]):Names.this.U[(P,Long)]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Set the index of a single position.</p><div class="fullcomment"><div class="comment cmt"><p>Set the index of a single position.
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position whose index is to be set.</p></dd><dt class="param">index</dt><dd class="cmt"><p>The new index.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(P, Long)]</code> with only the index at the specified position updated.
@@ -428,9 +496,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">slice</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.slice.T">T</span></span>, <span name="keep">keep: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="position/PositionListable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PositionListable">PositionListable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.slice.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>, <span name="ev2">ev2: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">slice</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.slice.T">T</span></span>, <span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="position/PositionListable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PositionListable">PositionListable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.slice.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>, <span name="ev2">ev2: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@slice[T](positions:T,keep:Boolean)(implicitev1:au.com.cba.omnia.grimlock.framework.position.PositionListable[T,P],implicitev2:scala.reflect.ClassTag[P]):Names.this.U[(P,Long)]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Slice the names using one or more positions.</p><div class="fullcomment"><div class="comment cmt"><p>Slice the names using one or more positions.
 </p></div><dl class="paramcmts block"><dt class="param">positions</dt><dd class="cmt"><p>The positions to slice on.</p></dd><dt class="param">keep</dt><dd class="cmt"><p>Indicator if the matched names should be kept or removed.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(P, Long)]</code> with only the names of interest.
@@ -444,9 +516,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">slice</span><span class="params">(<span name="regex">regex: <span class="extype" name="scala.util.matching.Regex">Regex</span></span>, <span name="keep">keep: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <span class="extype" name="scala.Long">Long</span>)]</span>
+        <span class="name">slice</span><span class="params">(<span name="regex">regex: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.util.matching.Regex" class="extype" target="_top">Regex</a></span>, <span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Names.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Names.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>)]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@slice(regex:scala.util.matching.Regex,keep:Boolean,separator:String)(implicitev:scala.reflect.ClassTag[P]):Names.this.U[(P,Long)]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Slice the names using a regular expression.</p><div class="fullcomment"><div class="comment cmt"><p>Slice the names using a regular expression.
 </p></div><dl class="paramcmts block"><dt class="param">regex</dt><dd class="cmt"><p>The regular expression to match on.</p></dd><dt class="param">keep</dt><dd class="cmt"><p>Indicator if the matched names should be kept or removed.</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(P, Long)]</code> with only the names of interest.
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The matching is done by converting each position to its short string reprensentation and then applying the
@@ -463,7 +539,11 @@
       <span class="symbol">
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
@@ -476,7 +556,11 @@
       <span class="symbol">
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@toString():String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
@@ -487,9 +571,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -506,9 +594,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -525,9 +617,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Names@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -545,9 +641,9 @@
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
             </div>
         
         </div>
@@ -564,6 +660,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>transform - au.com.cba.omnia.grimlock.framework.transform</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
@@ -26,7 +30,11 @@
       <div id="definition">
         <img src="../../../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a></p>
-        <h1>transform</h1>
+        <h1>transform</h1><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.package" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -67,10 +75,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Transformable.html"><span class="name">Transformable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Transformable.html"><span class="name">Transformable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Transformer[P, Q]</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.package@Transformable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>Transformer[P, Q]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="TransformableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef"></a>
       <a id="TransformableWithValue[T,P&lt;:Position,Q&lt;:Position,W]:TransformableWithValue[T,P,Q,W]"></a>
@@ -80,10 +92,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="TransformableWithValue.html"><span class="name">TransformableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="TransformableWithValue.html"><span class="name">TransformableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>TransformerWithValue[P, Q]</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.package@TransformableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>TransformerWithValue[P, Q]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.transform.Transformer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Transformer[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsTransformerWithValue[P,Q]"></a>
       <a id="Transformer[P&lt;:Position,Q&lt;:Position]:Transformer[P,Q]"></a>
@@ -95,8 +111,12 @@
       <span class="symbol">
         <a href="Transformer.html"><span class="name">Transformer</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer.Q">Q</span>]</span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for transformations from <code>P</code> to <code>Q</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.package@Transformer[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsTransformerWithValue[P,Q]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for transformations from <code>P</code> to <code>Q</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="TransformerWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
       <a id="TransformerWithValue[P&lt;:Position,Q&lt;:Position]:TransformerWithValue[P,Q]"></a>
@@ -108,8 +128,12 @@
       <span class="symbol">
         <a href="TransformerWithValue.html"><span class="name">TransformerWithValue</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for transformations from <code>P</code> to <code>Q</code> that use a user supplied value.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.package@TransformerWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for transformations from <code>P</code> to <code>Q</code> that use a user supplied value.</p>
     </li></ol>
             </div>
 
@@ -128,8 +152,12 @@
       <span class="symbol">
         <a href="Transformable$.html"><span class="name">Transformable</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object for the <code>Transformable</code> type class.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.package@Transformable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object for the <code>Transformable</code> type class.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TransformableWithValue"></a>
       <a id="TransformableWithValue:TransformableWithValue"></a>
@@ -141,8 +169,12 @@
       <span class="symbol">
         <a href="TransformableWithValue$.html"><span class="name">TransformableWithValue</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object for the <code>TransformableWithValue</code> type class.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.package@TransformableWithValue" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object for the <code>TransformableWithValue</code> type class.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.transform.Transformer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Transformer"></a>
       <a id="Transformer:Transformer"></a>
@@ -152,10 +184,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Transformer$.html"><span class="name">Transformer</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Transformer$.html"><span class="name">Transformer</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object to the <code>Transformer</code> trait.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.package@Transformer" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to the <code>Transformer</code> trait.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TransformerWithValue"></a>
       <a id="TransformerWithValue:TransformerWithValue"></a>
@@ -165,10 +201,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="TransformerWithValue$.html"><span class="name">TransformerWithValue</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="TransformerWithValue$.html"><span class="name">TransformerWithValue</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object to the <code>TransformerWithValue</code> trait.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.package@TransformerWithValue" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to the <code>TransformerWithValue</code> trait.</p>
     </li></ol>
             </div>
 
@@ -194,6 +234,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

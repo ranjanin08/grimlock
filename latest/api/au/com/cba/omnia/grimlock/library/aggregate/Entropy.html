@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>Entropy - au.com.cba.omnia.grimlock.library.aggregate.Entropy</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
@@ -26,7 +30,13 @@
       <div id="definition">
         <img src="../../../../../../../lib/class_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.library">library</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate">aggregate</a></p>
-        <h1>Entropy</h1>
+        <h1>Entropy</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate">package aggregate</a>
+          </div></span></h3><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,7 +45,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Entropy</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../../framework/position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="count">count: <a href="../../framework/Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.W">W</span>, <span class="extype" name="scala.Double">Double</span>]</span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="negate">negate: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="log">log: (<span class="extype" name="scala.Double">Double</span>) ⇒ <span class="extype" name="scala.Double">Double</span> = <span class="defval" name="((x: Double) =&gt; scala.math.`package`.log(x)./(scala.math.`package`.log(2)))">...</span></span>)</span><span class="result"> extends <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">Entropy</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../../framework/position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="count">count: <a href="../../framework/Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.W">W</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>, <span name="strict">strict: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="nan">nan: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">false</span></span>, <span name="negate">negate: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">false</span></span>, <span name="log">log: (<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a> = <span class="defval" name="(x: Double) =&gt; math.log(x) / math.log(2)">...</span></span>)</span><span class="result"> extends <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
@@ -43,9 +53,9 @@
 </p></div><dl class="paramcmts block"><dt class="param">count</dt><dd class="cmt"><p>Object that will extract, for <code>cell</code>, its corresponding count.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
               data).</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.</p></dd><dt class="param">log</dt><dd class="cmt"><p>The log function to use.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/6fa75d5d2208ca24d3425cbcf760a7b2b7fdf09f//src/main/scala/au/com/cba/omnia/grimlock/library/Aggregators.scala" target="_blank">Aggregators.scala</a></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(9c34e3227f437072274b7608ce98cd966fabd44c)//src/main/scala/au/com/cba/omnia/grimlock/library/Aggregators.scala" target="_blank">Aggregators.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -92,9 +102,13 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Entropy</span><span class="params">(<span name="count">count: <a href="../../framework/Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.W">W</span>, <span class="extype" name="scala.Double">Double</span>]</span>, <span name="strict">strict: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="nan">nan: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="negate">negate: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">false</span></span>, <span name="log">log: (<span class="extype" name="scala.Double">Double</span>) ⇒ <span class="extype" name="scala.Double">Double</span> = <span class="defval" name="((x: Double) =&gt; scala.math.`package`.log(x)./(scala.math.`package`.log(2)))">...</span></span>)</span>
+        <span class="name">Entropy</span><span class="params">(<span name="count">count: <a href="../../framework/Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.W">W</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>, <span name="strict">strict: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="nan">nan: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">false</span></span>, <span name="negate">negate: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">false</span></span>, <span name="log">log: (<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a> = <span class="defval" name="(x: Double) =&gt; math.log(x) / math.log(2)">...</span></span>)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@&lt;init&gt;(count:au.com.cba.omnia.grimlock.framework.Extract[P,W,Double],strict:Boolean,nan:Boolean,negate:Boolean,log:Double=&gt;Double):au.com.cba.omnia.grimlock.library.aggregate.Entropy[P,S,W]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">count</dt><dd class="cmt"><p>Object that will extract, for <code>cell</code>, its corresponding count.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
               data).</p></dd><dt class="param">negate</dt><dd class="cmt"><p>Indicator if negative entropy should be returned.</p></dd><dt class="param">log</dt><dd class="cmt"><p>The log function to use.
@@ -106,16 +120,20 @@
               <h3>Type Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.T" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="T=(Long,Double)"></a>
-      <a id="T:(Long,Double)"></a>
+      <a id="T:T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">T</span><span class="result"> = (<span class="extype" name="scala.Long">Long</span>, <span class="extype" name="scala.Double">Double</span>)</span>
+        <span class="name">T</span><span class="result"> = (<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>)</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@T=(Long,Double)" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Type of the state being aggregated.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the state being aggregated.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy">Entropy</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.V" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="V=W"></a>
@@ -128,7 +146,11 @@
       <span class="symbol">
         <span class="name">V</span><span class="result"> = <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.W">W</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@V=W" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Type of the external value.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the external value.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy">Entropy</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li></ol>
             </div>
@@ -138,19 +160,6 @@
         <div id="values" class="values members">
               <h3>Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="!=(x$1:AnyRef):Boolean"></a>
-      <a id="!=(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a>
       <a id="!=(Any):Boolean"></a>
       <h4 class="signature">
@@ -159,10 +168,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <a id="##():Int"></a>
@@ -172,24 +185,15 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@##():Int" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="==(x$1:AnyRef):Boolean"></a>
-      <a id="==(AnyRef):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a>
       <a id="==(Any):Boolean"></a>
       <h4 class="signature">
@@ -198,10 +202,14 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenExpandWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="andThenExpandWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
       <a id="andThenExpandWithValue[R&lt;:Position]((Cell[S],V)⇒R)(PosExpDep[S,R]):AggregatorWithValue[P,S,R]{.../*2definitionsintyperefinement*/}"></a>
@@ -213,7 +221,11 @@
       <span class="symbol">
         <span class="name">andThenExpandWithValue</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>], <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.V">V</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@andThenExpandWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Operator for aggregating and then expanding dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then expanding dimensions.
 </p></div><dl class="paramcmts block"><dt class="param">expand</dt><dd class="cmt"><p>The expansion to apply after the aggregation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then expands the resulting dimensions.
@@ -229,7 +241,11 @@
       <span class="symbol">
         <span class="name">andThenRenameWithValue</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>], <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.V">V</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@andThenRenameWithValue(rename:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;Q):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Operator for aggregating and then renaming dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then renaming dimensions.
 </p></div><dl class="paramcmts block"><dt class="param">rename</dt><dd class="cmt"><p>The rename to apply after the aggregation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then renames the resulting dimension(s).
@@ -245,7 +261,11 @@
       <span class="symbol">
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
@@ -256,9 +276,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -275,9 +299,13 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">count</span><span class="result">: <a href="../../framework/Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.W">W</span>, <span class="extype" name="scala.Double">Double</span>]</span>
+        <span class="name">count</span><span class="result">: <a href="../../framework/Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.W">W</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@count:au.com.cba.omnia.grimlock.framework.Extract[P,W,Double]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Object that will extract, for <code>cell</code>, its corresponding count.</p>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
@@ -288,9 +316,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -301,9 +333,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -322,7 +358,11 @@
       <span class="symbol">
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -333,9 +373,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.Entropy#log" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="log:Double=&gt;Double"></a>
@@ -346,9 +390,13 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">log</span><span class="result">: (<span class="extype" name="scala.Double">Double</span>) ⇒ <span class="extype" name="scala.Double">Double</span></span>
+        <span class="name">log</span><span class="result">: (<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@log:Double=&gt;Double" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">The log function to use.</p>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.Entropy#nan" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="nan:Boolean"></a>
@@ -359,9 +407,13 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">nan</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">nan</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@nan:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
               data).</p>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -373,9 +425,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.Entropy#negate" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="negate:Boolean"></a>
@@ -386,9 +442,13 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">negate</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">negate</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@negate:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Indicator if negative entropy should be returned.</p>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
@@ -399,9 +459,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
@@ -412,38 +476,50 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.Entropy#prepareWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Entropy.this.V):(Long,Double)"></a>
-      <a id="prepareWithValue(Cell[P],V):(Long,Double)"></a>
+      <a id="prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Entropy.this.V):Entropy.this.T"></a>
+      <a id="prepareWithValue(Cell[P],V):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepareWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>]</span>, <span name="ext">ext: <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.V">V</a></span>)</span><span class="result">: (<span class="extype" name="scala.Long">Long</span>, <span class="extype" name="scala.Double">Double</span>)</span>
+        <span class="name">prepareWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>]</span>, <span name="ext">ext: <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.V">V</a></span>)</span><span class="result">: <a href="#T=(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.T">T</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Entropy.this.V):Entropy.this.T" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be aggregated. Note that its position is prior to <code>slice.selected</code> being applied.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for preparation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy">Entropy</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.Entropy#presentWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="presentWithValue(pos:S,t:(Long,Double),ext:Entropy.this.V):Option[au.com.cba.omnia.grimlock.framework.Cell[S]]"></a>
-      <a id="presentWithValue(S,(Long,Double),V):Option[Cell[S]]"></a>
+      <a id="presentWithValue(pos:S,t:Entropy.this.T,ext:Entropy.this.V):Option[au.com.cba.omnia.grimlock.framework.Cell[S]]"></a>
+      <a id="presentWithValue(S,T,V):Option[Cell[S]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">presentWithValue</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span></span>, <span name="t">t: (<span class="extype" name="scala.Long">Long</span>, <span class="extype" name="scala.Double">Double</span>)</span>, <span name="ext">ext: <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>]]</span>
+        <span class="name">presentWithValue</span><span class="params">(<span name="pos">pos: <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span></span>, <span name="t">t: <a href="#T=(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.T">T</a></span>, <span name="ext">ext: <a href="#V=W" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.V">V</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>]]</span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@presentWithValue(pos:S,t:Entropy.this.T,ext:Entropy.this.V):Option[au.com.cba.omnia.grimlock.framework.Cell[S]]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Present the reduced content.</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content.
 </p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for presentation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell where the position is <code>pos</code> and the content is derived from <code>t</code>.
@@ -453,17 +529,21 @@
       the types of variables of their data.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.Entropy#reduce" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="reduce(lt:(Long,Double),rt:(Long,Double)):(Long,Double)"></a>
-      <a id="reduce((Long,Double),(Long,Double)):(Long,Double)"></a>
+      <a id="reduce(lt:Entropy.this.T,rt:Entropy.this.T):Entropy.this.T"></a>
+      <a id="reduce(T,T):T"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">reduce</span><span class="params">(<span name="lt">lt: (<span class="extype" name="scala.Long">Long</span>, <span class="extype" name="scala.Double">Double</span>)</span>, <span name="rt">rt: (<span class="extype" name="scala.Long">Long</span>, <span class="extype" name="scala.Double">Double</span>)</span>)</span><span class="result">: (<span class="extype" name="scala.Long">Long</span>, <span class="extype" name="scala.Double">Double</span>)</span>
+        <span class="name">reduce</span><span class="params">(<span name="lt">lt: <a href="#T=(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.T">T</a></span>, <span name="rt">rt: <a href="#T=(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.T">T</a></span>)</span><span class="result">: <a href="#T=(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.T">T</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@reduce(lt:Entropy.this.T,rt:Entropy.this.T):Entropy.this.T" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Standard reduce method.</p><div class="fullcomment"><div class="comment cmt"><p>Standard reduce method.
 </p></div><dl class="paramcmts block"><dt class="param">lt</dt><dd class="cmt"><p>Left state to reduce.</p></dd><dt class="param">rt</dt><dd class="cmt"><p>Right state to reduce.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Reduced state
@@ -477,9 +557,13 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">strict</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">strict</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@strict:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <p class="shortcomment cmt">Indicates if strict data handling is required.</p><div class="fullcomment"><div class="comment cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></div></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -493,7 +577,11 @@
       <span class="symbol">
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
@@ -504,9 +592,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -523,9 +615,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -542,9 +638,13 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.Entropy@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
@@ -562,19 +662,19 @@
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
             </div><div class="parent" name="scala.Product">
-              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a></h3>
             </div><div class="parent" name="scala.Equals">
-              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">
               <h3>Inherited from <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.Entropy.S">S</span>]</h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
             </div>
         
         </div>
@@ -591,6 +691,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

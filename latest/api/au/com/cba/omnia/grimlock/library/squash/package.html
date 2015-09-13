@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>squash - au.com.cba.omnia.grimlock.library.squash</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
@@ -26,7 +30,11 @@
       <div id="definition">
         <img src="../../../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.library">library</a></p>
-        <h1>squash</h1>
+        <h1>squash</h1><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.squash.package" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -67,10 +75,14 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="KeepSlice.html"><span class="name">KeepSlice</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="V">V</span>]</span><span class="params">(<span name="keep">keep: <span class="extype" name="au.com.cba.omnia.grimlock.library.squash.KeepSlice.V">V</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.squash.KeepSlice.V">V</span>]</span>)</span><span class="result"> extends <a href="../../framework/squash/Squasher.html" class="extype" name="au.com.cba.omnia.grimlock.framework.squash.Squasher">Squasher</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.squash.KeepSlice.P">P</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="KeepSlice.html"><span class="name">KeepSlice</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="V">V</span>]</span><span class="params">(<span name="keep">keep: <span class="extype" name="au.com.cba.omnia.grimlock.library.squash.KeepSlice.V">V</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.squash.KeepSlice.V">V</span>]</span>)</span><span class="result"> extends <a href="../../framework/squash/Squasher.html" class="extype" name="au.com.cba.omnia.grimlock.framework.squash.Squasher">Squasher</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.squash.KeepSlice.P">P</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Reduce two cells preserving the cell whose coordinate matches <code>keep</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.squash.package@KeepSlice[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,V]extendsSquasher[P]withProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Reduce two cells preserving the cell whose coordinate matches <code>keep</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.library.squash.PreservingMaxPosition" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PreservingMaxPosition[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSquasher[P]withProductwithSerializable"></a>
       <a id="PreservingMaxPosition[P&lt;:Position]:PreservingMaxPosition[P]"></a>
@@ -80,10 +92,14 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="PreservingMaxPosition.html"><span class="name">PreservingMaxPosition</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">()</span><span class="result"> extends <a href="../../framework/squash/Squasher.html" class="extype" name="au.com.cba.omnia.grimlock.framework.squash.Squasher">Squasher</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.squash.PreservingMaxPosition.P">P</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="PreservingMaxPosition.html"><span class="name">PreservingMaxPosition</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">()</span><span class="result"> extends <a href="../../framework/squash/Squasher.html" class="extype" name="au.com.cba.omnia.grimlock.framework.squash.Squasher">Squasher</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.squash.PreservingMaxPosition.P">P</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Reduce two cells preserving the cell with maximal value for the coordinate of the dimension being squashed.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.squash.package@PreservingMaxPosition[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSquasher[P]withProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Reduce two cells preserving the cell with maximal value for the coordinate of the dimension being squashed.</p>
     </li><li name="au.com.cba.omnia.grimlock.library.squash.PreservingMinPosition" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PreservingMinPosition[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSquasher[P]withProductwithSerializable"></a>
       <a id="PreservingMinPosition[P&lt;:Position]:PreservingMinPosition[P]"></a>
@@ -93,10 +109,14 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="PreservingMinPosition.html"><span class="name">PreservingMinPosition</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">()</span><span class="result"> extends <a href="../../framework/squash/Squasher.html" class="extype" name="au.com.cba.omnia.grimlock.framework.squash.Squasher">Squasher</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.squash.PreservingMinPosition.P">P</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="PreservingMinPosition.html"><span class="name">PreservingMinPosition</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">()</span><span class="result"> extends <a href="../../framework/squash/Squasher.html" class="extype" name="au.com.cba.omnia.grimlock.framework.squash.Squasher">Squasher</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.squash.PreservingMinPosition.P">P</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Reduce two cells preserving the cell with minimal value for the coordinate of the dimension being squashed.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.squash.package@PreservingMinPosition[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSquasher[P]withProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Reduce two cells preserving the cell with minimal value for the coordinate of the dimension being squashed.</p>
     </li></ol>
             </div>
 
@@ -126,6 +146,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

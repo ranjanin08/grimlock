@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>metadata - au.com.cba.omnia.grimlock.framework.content.metadata</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../../index.html';
@@ -26,7 +30,11 @@
       <div id="definition">
         <img src="../../../../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content">content</a></p>
-        <h1>metadata</h1>
+        <h1>metadata</h1><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -69,9 +77,13 @@
       <span class="symbol">
         <a href="CategoricalSchema.html"><span class="name">CategoricalSchema</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for schemas for categorical variables.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@CategoricalSchema[T]extendsSchema" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for schemas for categorical variables.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.ContinuousSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ContinuousSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex]extendsNumericalSchema[C#T]withProductwithSerializable"></a>
       <a id="ContinuousSchema[C&lt;:Codex]:ContinuousSchema[C]"></a>
       <h4 class="signature">
@@ -80,10 +92,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="ContinuousSchema.html"><span class="name">ContinuousSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="result"> extends <a href="NumericalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema">NumericalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">metadata.ContinuousSchema.C.T</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ContinuousSchema.html"><span class="name">ContinuousSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="result"> extends <a href="NumericalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema">NumericalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">metadata.ContinuousSchema.C.T</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Schema for continuous variables.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@ContinuousSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex]extendsNumericalSchema[C#T]withProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Schema for continuous variables.</p><div class="fullcomment"><div class="comment cmt"><p>Schema for continuous variables.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The constructor is private to ensure a clean interface as provided by the <code>apply</code> methods of the companion
+      object.
+</p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DateSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.DateCodex]extendsSchemawithProductwithSerializable"></a>
       <a id="DateSchema[C&lt;:DateCodex]:DateSchema[C]"></a>
@@ -93,11 +112,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DateSchema.html"><span class="name">DateSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema.C">C</span></span>)</span><span class="result"> extends <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DateSchema.html"><span class="name">DateSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.DateSchema.C">C</span></span>)</span><span class="result"> extends <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Schema for date variables.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@DateSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.DateCodex]extendsSchemawithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Schema for date variables.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="DiscreteSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex]extendsNumericalSchema[C#T]withProductwithSerializable"></a>
       <a id="DiscreteSchema[C&lt;:Codex]:DiscreteSchema[C]"></a>
       <h4 class="signature">
@@ -106,10 +129,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DiscreteSchema.html"><span class="name">DiscreteSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="result"> extends <a href="NumericalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema">NumericalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">metadata.DiscreteSchema.C.T</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DiscreteSchema.html"><span class="name">DiscreteSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="result"> extends <a href="NumericalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema">NumericalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">metadata.DiscreteSchema.C.T</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Schema for discrete variables.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@DiscreteSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex]extendsNumericalSchema[C#T]withProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Schema for discrete variables.</p><div class="fullcomment"><div class="comment cmt"><p>Schema for discrete variables.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The constructor is private to ensure a clean interface as provided by the <code>apply</code> methods of the companion
+      object.
+</p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.EventSchema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="EventSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.EventCodex]extendsSchemawithProductwithSerializable"></a>
       <a id="EventSchema[C&lt;:EventCodex]:EventSchema[C]"></a>
@@ -119,11 +149,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="EventSchema.html"><span class="name">EventSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/EventCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.EventCodex">EventCodex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.EventSchema.C">C</span></span>)</span><span class="result"> extends <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="EventSchema.html"><span class="name">EventSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/EventCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.EventCodex">EventCodex</a></span>]</span><span class="params">(<span name="codex">codex: <span class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.EventSchema.C">C</span></span>)</span><span class="result"> extends <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Schema for event variables.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.NominalSchema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@EventSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.EventCodex]extendsSchemawithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Schema for event variables.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.NominalSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="NominalSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex]extendsCategoricalSchema[C#T]withProductwithSerializable"></a>
       <a id="NominalSchema[C&lt;:Codex]:NominalSchema[C]"></a>
       <h4 class="signature">
@@ -132,10 +166,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="NominalSchema.html"><span class="name">NominalSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="result"> extends <a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.CategoricalSchema">CategoricalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">metadata.NominalSchema.C.T</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="NominalSchema.html"><span class="name">NominalSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="result"> extends <a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.CategoricalSchema">CategoricalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">metadata.NominalSchema.C.T</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Schema for nominal variables.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@NominalSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex]extendsCategoricalSchema[C#T]withProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Schema for nominal variables.</p><div class="fullcomment"><div class="comment cmt"><p>Schema for nominal variables.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The constructor is private to ensure a clean interface as provided by the <code>apply</code> methods of the companion
+      object.
+</p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.NumericalSchema" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="NumericalSchema[T]extendsSchema"></a>
       <a id="NumericalSchema[T]:NumericalSchema[T]"></a>
@@ -147,9 +188,13 @@
       <span class="symbol">
         <a href="NumericalSchema.html"><span class="name">NumericalSchema</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="Schema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema">Schema</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for schemas for numerical variables.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@NumericalSchema[T]extendsSchema" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for schemas for numerical variables.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="OrdinalSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex]extendsCategoricalSchema[C#T]withProductwithSerializable"></a>
       <a id="OrdinalSchema[C&lt;:Codex]:OrdinalSchema[C]"></a>
       <h4 class="signature">
@@ -158,10 +203,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="OrdinalSchema.html"><span class="name">OrdinalSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="result"> extends <a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.CategoricalSchema">CategoricalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">metadata.OrdinalSchema.C.T</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="OrdinalSchema.html"><span class="name">OrdinalSchema</span></a><span class="tparams">[<span name="C">C &lt;: <a href="../../encoding/Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>]</span><span class="result"> extends <a href="CategoricalSchema.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.metadata.CategoricalSchema">CategoricalSchema</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex.T">metadata.OrdinalSchema.C.T</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Schema for ordinal variables.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@OrdinalSchema[C&lt;:au.com.cba.omnia.grimlock.framework.encoding.Codex]extendsCategoricalSchema[C#T]withProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Schema for ordinal variables.</p><div class="fullcomment"><div class="comment cmt"><p>Schema for ordinal variables.
+</p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>The constructor is private to ensure a clean interface as provided by the <code>apply</code> methods of the companion
+      object.
+</p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="SchemaextendsAnyRef"></a>
       <a id="Schema:Schema"></a>
@@ -171,10 +223,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Schema.html"><span class="name">Schema</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Schema.html"><span class="name">Schema</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for variable schemas.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@SchemaextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for variable schemas.</p>
     </li></ol>
             </div>
 
@@ -191,10 +247,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="ContinuousSchema$.html"><span class="name">ContinuousSchema</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ContinuousSchema$.html"><span class="name">ContinuousSchema</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object to <code>ContinuousSchema</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@ContinuousSchema" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to <code>ContinuousSchema</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Dictionary" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Dictionary"></a>
       <a id="Dictionary:Dictionary"></a>
@@ -206,7 +266,11 @@
       <span class="symbol">
         <a href="Dictionary$.html"><span class="name">Dictionary</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@Dictionary" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.DiscreteSchema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DiscreteSchema"></a>
@@ -217,10 +281,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="DiscreteSchema$.html"><span class="name">DiscreteSchema</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DiscreteSchema$.html"><span class="name">DiscreteSchema</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object to <code>DiscreteSchema</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@DiscreteSchema" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to <code>DiscreteSchema</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.NominalSchema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="NominalSchema"></a>
       <a id="NominalSchema:NominalSchema"></a>
@@ -230,10 +298,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="NominalSchema$.html"><span class="name">NominalSchema</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="NominalSchema$.html"><span class="name">NominalSchema</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object to <code>NominalSchema</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@NominalSchema" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to <code>NominalSchema</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.OrdinalSchema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="OrdinalSchema"></a>
       <a id="OrdinalSchema:OrdinalSchema"></a>
@@ -243,10 +315,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="OrdinalSchema$.html"><span class="name">OrdinalSchema</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="OrdinalSchema$.html"><span class="name">OrdinalSchema</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object to <code>OrdinalSchema</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@OrdinalSchema" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to <code>OrdinalSchema</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.content.metadata.Schema" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Schema"></a>
       <a id="Schema:Schema"></a>
@@ -258,7 +334,11 @@
       <span class="symbol">
         <a href="Schema$.html"><span class="name">Schema</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.content.metadata.package@Schema" title="Permalink" target="_top">
+        <img src="../../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       
     </li></ol>
             </div>
@@ -285,6 +365,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

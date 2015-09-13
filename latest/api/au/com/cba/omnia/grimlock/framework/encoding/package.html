@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>encoding - au.com.cba.omnia.grimlock.framework.encoding</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
@@ -26,7 +30,11 @@
       <div id="definition">
         <img src="../../../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a></p>
-        <h1>encoding</h1>
+        <h1>encoding</h1><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -58,7 +66,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.encoding.BooleanValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="BooleanValueextendsValuewithProductwithSerializable"></a>
       <a id="BooleanValue:BooleanValue"></a>
       <h4 class="signature">
@@ -67,10 +75,16 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="BooleanValue.html"><span class="name">BooleanValue</span></a><span class="params">(<span name="value">value: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="BooleanValue.html"><span class="name">BooleanValue</span></a><span class="params">(<span name="value">value: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Value for when the data is of type <code>Boolean</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@BooleanValueextendsValuewithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Value for when the data is of type <code>Boolean</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Value for when the data is of type <code>Boolean</code>.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>Boolean</code>.
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.Codex" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="CodexextendsAnyRef"></a>
       <a id="Codex:Codex"></a>
@@ -80,10 +94,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Codex.html"><span class="name">Codex</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Codex.html"><span class="name">Codex</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for encoding/decoding (basic) data types.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@CodexextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for encoding/decoding (basic) data types.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DateCodexextendsCodexwithProductwithSerializable"></a>
       <a id="DateCodex:DateCodex"></a>
@@ -93,11 +111,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DateCodex.html"><span class="name">DateCodex</span></a><span class="params">(<span name="format">format: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;yyyy-MM-dd&quot;</span></span>)</span><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DateCodex.html"><span class="name">DateCodex</span></a><span class="params">(<span name="format">format: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;yyyy-MM-dd&quot;</span></span>)</span><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Codex for dealing with <code>java.util.Date</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@DateCodexextendsCodexwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Codex for dealing with <code>java.util.Date</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="DateValueextendsValuewithProductwithSerializable"></a>
       <a id="DateValue:DateValue"></a>
       <h4 class="signature">
@@ -106,12 +128,18 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DateValue.html"><span class="name">DateValue</span></a><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codex">codex: <a href="DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DateValue.html"><span class="name">DateValue</span></a><span class="params">(<span name="value">value: <span class="extype" name="java.util.Date">Date</span></span>, <span name="codex">codex: <a href="DateCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex">DateCodex</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Value for when the data is of type <code>java.util.Date</code>
-</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DoubleValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@DateValueextendsValuewithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Value for when the data is of type <code>java.util.Date</code>
+</p><div class="fullcomment"><div class="comment cmt"><p>Value for when the data is of type <code>java.util.Date</code>
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>java.util.Date</code>.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex used for encoding/decoding <code>value</code>.
+</p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DoubleValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="DoubleValueextendsValuewithProductwithSerializable"></a>
       <a id="DoubleValue:DoubleValue"></a>
       <h4 class="signature">
@@ -120,10 +148,16 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="DoubleValue.html"><span class="name">DoubleValue</span></a><span class="params">(<span name="value">value: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DoubleValue.html"><span class="name">DoubleValue</span></a><span class="params">(<span name="value">value: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Value for when the data is of type <code>Double</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@DoubleValueextendsValuewithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Value for when the data is of type <code>Double</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Value for when the data is of type <code>Double</code>.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>Double</code>.
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.Event" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="EventextendsAnyRef"></a>
       <a id="Event:Event"></a>
@@ -133,10 +167,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Event.html"><span class="name">Event</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Event.html"><span class="name">Event</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for representing events.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@EventextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for representing events.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.EventCodex" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="EventCodexextendsCodex"></a>
       <a id="EventCodex:EventCodex"></a>
@@ -148,9 +186,13 @@
       <span class="symbol">
         <a href="EventCodex.html"><span class="name">EventCodex</span></a><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for dealing with events.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.EventValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@EventCodexextendsCodex" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for dealing with events.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.EventValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="EventValue[T&lt;:au.com.cba.omnia.grimlock.framework.encoding.Event]extendsValuewithProductwithSerializable"></a>
       <a id="EventValue[T&lt;:Event]:EventValue[T]"></a>
       <h4 class="signature">
@@ -159,11 +201,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="EventValue.html"><span class="name">EventValue</span></a><span class="tparams">[<span name="T">T &lt;: <a href="Event.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Event">Event</a></span>]</span><span class="params">(<span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.EventValue.T">T</span></span>, <span name="codex">codex: <a href="EventCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.EventCodex">EventCodex</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="EventValue.html"><span class="name">EventValue</span></a><span class="tparams">[<span name="T">T &lt;: <a href="Event.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Event">Event</a></span>]</span><span class="params">(<span name="value">value: <span class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.EventValue.T">T</span></span>, <span name="codex">codex: <a href="EventCodex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.EventCodex">EventCodex</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Value for when the data is an event type.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.LongValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@EventValue[T&lt;:au.com.cba.omnia.grimlock.framework.encoding.Event]extendsValuewithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Value for when the data is an event type.</p><div class="fullcomment"><div class="comment cmt"><p>Value for when the data is an event type.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>An event.</p></dd><dt class="param">codex</dt><dd class="cmt"><p>The codex used for encoding/decoding <code>value</code>.
+</p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.LongValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="LongValueextendsValuewithProductwithSerializable"></a>
       <a id="LongValue:LongValue"></a>
       <h4 class="signature">
@@ -172,11 +220,17 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="LongValue.html"><span class="name">LongValue</span></a><span class="params">(<span name="value">value: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="LongValue.html"><span class="name">LongValue</span></a><span class="params">(<span name="value">value: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Value for when the data is of type <code>Long</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.StringValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@LongValueextendsValuewithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Value for when the data is of type <code>Long</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Value for when the data is of type <code>Long</code>.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>Long</code>.
+</p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.encoding.StringValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="StringValueextendsValuewithProductwithSerializable"></a>
       <a id="StringValue:StringValue"></a>
       <h4 class="signature">
@@ -185,10 +239,16 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="StringValue.html"><span class="name">StringValue</span></a><span class="params">(<span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="StringValue.html"><span class="name">StringValue</span></a><span class="params">(<span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Value for when the data is of type <code>String</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@StringValueextendsValuewithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Value for when the data is of type <code>String</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Value for when the data is of type <code>String</code>.
+</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>A <code>String</code>.
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.Value" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ValueextendsAnyRef"></a>
       <a id="Value:Value"></a>
@@ -198,10 +258,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Value.html"><span class="name">Value</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Value.html"><span class="name">Value</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for variable values.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@ValueextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for variable values.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.Valueable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Valueable[T]extendsSerializable"></a>
       <a id="Valueable[T]:Valueable[T]"></a>
@@ -213,8 +277,12 @@
       <span class="symbol">
         <a href="Valueable.html"><span class="name">Valueable</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> into a <code>Value</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@Valueable[T]extendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> into a <code>Value</code>.</p>
     </li></ol>
             </div>
 
@@ -231,10 +299,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="BooleanCodex$.html"><span class="name">BooleanCodex</span></a><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="BooleanCodex$.html"><span class="name">BooleanCodex</span></a><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Codex for dealing with <code>Boolean</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@BooleanCodex" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Codex for dealing with <code>Boolean</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.Codex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Codex"></a>
       <a id="Codex:Codex"></a>
@@ -246,7 +318,11 @@
       <span class="symbol">
         <a href="Codex$.html"><span class="name">Codex</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@Codex" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DateCodex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DateCodex"></a>
@@ -257,9 +333,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="DateCodex$.html"><span class="name">DateCodex</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DateCodex$.html"><span class="name">DateCodex</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@DateCodex" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.DoubleCodex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="DoubleCodex"></a>
@@ -270,10 +350,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="DoubleCodex$.html"><span class="name">DoubleCodex</span></a><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="DoubleCodex$.html"><span class="name">DoubleCodex</span></a><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Codex for dealing with <code>Double</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@DoubleCodex" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Codex for dealing with <code>Double</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.LongCodex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="LongCodex"></a>
       <a id="LongCodex:LongCodex"></a>
@@ -283,10 +367,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="LongCodex$.html"><span class="name">LongCodex</span></a><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="LongCodex$.html"><span class="name">LongCodex</span></a><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Codex for dealing with <code>Long</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@LongCodex" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Codex for dealing with <code>Long</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.StringCodex" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="StringCodex"></a>
       <a id="StringCodex:StringCodex"></a>
@@ -296,10 +384,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="StringCodex$.html"><span class="name">StringCodex</span></a><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="StringCodex$.html"><span class="name">StringCodex</span></a><span class="result"> extends <a href="Codex.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Codex">Codex</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Codex for dealing with <code>String</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@StringCodex" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Codex for dealing with <code>String</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.Value" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Value"></a>
       <a id="Value:Value"></a>
@@ -311,7 +403,11 @@
       <span class="symbol">
         <a href="Value$.html"><span class="name">Value</span></a>
       </span>
-      </h4>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@Value" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       
     </li><li name="au.com.cba.omnia.grimlock.framework.encoding.Valueable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Valueable"></a>
@@ -322,10 +418,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Valueable$.html"><span class="name">Valueable</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Valueable$.html"><span class="name">Valueable</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object for the <code>Valueable</code> type class.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.encoding.package@Valueable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object for the <code>Valueable</code> type class.</p>
     </li></ol>
             </div>
 
@@ -351,6 +451,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

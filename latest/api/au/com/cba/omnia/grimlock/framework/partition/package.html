@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>partition - au.com.cba.omnia.grimlock.framework.partition</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
@@ -26,7 +30,11 @@
       <div id="definition">
         <img src="../../../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a></p>
-        <h1>partition</h1>
+        <h1>partition</h1><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.package" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -67,10 +75,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Partitionable.html"><span class="name">Partitionable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Partitionable.html"><span class="name">Partitionable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>Partitioner[P, S]</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.package@Partitionable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>Partitioner[P, S]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.PartitionableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PartitionableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S,W]extendsAnyRef"></a>
       <a id="PartitionableWithValue[T,P&lt;:Position,S,W]:PartitionableWithValue[T,P,S,W]"></a>
@@ -80,10 +92,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="PartitionableWithValue.html"><span class="name">PartitionableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="PartitionableWithValue.html"><span class="name">PartitionableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>, <span name="W">W</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Type class for transforming a type <code>T</code> to a <code>PartitionerWithValue[P, S]</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.package@PartitionableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S,W]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>PartitionerWithValue[P, S]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitioner" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Partitioner[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T]extendsPartitionerWithValue[P,T]"></a>
       <a id="Partitioner[P&lt;:Position,T]:Partitioner[P,T]"></a>
@@ -95,8 +111,12 @@
       <span class="symbol">
         <a href="Partitioner.html"><span class="name">Partitioner</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T</span>]</span><span class="result"> extends <a href="PartitionerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.PartitionerWithValue">PartitionerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner.T">T</span>]</span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for partitioners.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.package@Partitioner[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T]extendsPartitionerWithValue[P,T]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for partitioners.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.PartitionerWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PartitionerWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T]extendsAnyRef"></a>
       <a id="PartitionerWithValue[P&lt;:Position,T]:PartitionerWithValue[P,T]"></a>
@@ -106,10 +126,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="PartitionerWithValue.html"><span class="name">PartitionerWithValue</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="PartitionerWithValue.html"><span class="name">PartitionerWithValue</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait for partitioners that use a user supplied value.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.package@PartitionerWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for partitioners that use a user supplied value.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Partitions[I,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef"></a>
       <a id="Partitions[I,P&lt;:Position]:Partitions[I,P]"></a>
@@ -119,10 +143,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Partitions.html"><span class="name">Partitions</span></a><span class="tparams">[<span name="I">I</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Partitions.html"><span class="name">Partitions</span></a><span class="tparams">[<span name="I">I</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Base trait that represents the partitions of matrices</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.package@Partitions[I,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait that represents the partitions of matrices</p>
     </li></ol>
             </div>
 
@@ -141,8 +169,12 @@
       <span class="symbol">
         <a href="Partition$.html"><span class="name">Partition</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Object for <code>Partition</code> functions.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.package@Partition" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Object for <code>Partition</code> functions.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Partitionable"></a>
       <a id="Partitionable:Partitionable"></a>
@@ -154,8 +186,12 @@
       <span class="symbol">
         <a href="Partitionable$.html"><span class="name">Partitionable</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object for the <code>Partitionable</code> type class.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.package@Partitionable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object for the <code>Partitionable</code> type class.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.PartitionableWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PartitionableWithValue"></a>
       <a id="PartitionableWithValue:PartitionableWithValue"></a>
@@ -167,8 +203,12 @@
       <span class="symbol">
         <a href="PartitionableWithValue$.html"><span class="name">PartitionableWithValue</span></a>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object for the <code>PartitionableWithValue</code> type class.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.package@PartitionableWithValue" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object for the <code>PartitionableWithValue</code> type class.</p>
     </li></ol>
             </div>
 
@@ -194,6 +234,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>

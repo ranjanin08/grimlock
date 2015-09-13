@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html >
 <html>
         <head>
           <title>partition - au.com.cba.omnia.grimlock.spark.partition</title>
@@ -9,6 +8,11 @@
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
       <link href="../../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../../lib/tools.tooltip.js"></script>
+      
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
@@ -26,7 +30,11 @@
       <div id="definition">
         <img src="../../../../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.spark">spark</a></p>
-        <h1>partition</h1>
+        <h1>partition</h1><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.partition.package" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
       </div>
 
       <h4 id="signature" class="signature">
@@ -69,8 +77,12 @@
       <span class="symbol">
         <a href="Partitions.html"><span class="name">Partitions</span></a><span class="tparams">[<span name="I">I</span>, <span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">framework.partition.Partitions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.I">I</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.P">P</span>] with <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.I">I</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.P">P</span>])]</span>
       </span>
-      </h4>
-      <p class="comment cmt">Rich wrapper around a <code>RDD[(I, Cell[P])]</code>.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.partition.package@Partitions[I,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsPartitions[I,P]withPersist[(I,au.com.cba.omnia.grimlock.framework.Cell[P])]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Rich wrapper around a <code>RDD[(I, Cell[P])]</code>.</p>
     </li></ol>
             </div>
 
@@ -87,10 +99,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Partitions$.html"><span class="name">Partitions</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="Partitions$.html"><span class="name">Partitions</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
-      </h4>
-      <p class="comment cmt">Companion object for the Spark <code>Partitions</code> class.</p>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.partition.package@Partitions" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object for the Spark <code>Partitions</code> class.</p>
     </li></ol>
             </div>
 
@@ -116,6 +132,7 @@
       <div id="tooltip"></div>
 
       <div id="footer">  </div>
-      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../../../lib/template.js"></script>
+
+
     </body>
       </html>
