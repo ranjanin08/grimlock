@@ -16,7 +16,6 @@ package au.com.cba.omnia.grimlock.framework.pairwise
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 /** Base trait for comparing two positions to determine if pairwise operation is to be applied. */
 trait Comparer {

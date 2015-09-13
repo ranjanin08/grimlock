@@ -14,7 +14,6 @@
 
 package au.com.cba.omnia.grimlock
 
-import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 

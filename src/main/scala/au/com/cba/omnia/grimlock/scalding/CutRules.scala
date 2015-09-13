@@ -17,7 +17,7 @@ package au.com.cba.omnia.grimlock.scalding.transform
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
-import au.com.cba.omnia.grimlock.library.transform.{ CutRules => BaseCutRules, _ }
+import au.com.cba.omnia.grimlock.library.transform.{ CutRules => BaseCutRules }
 
 import com.twitter.scalding.typed.{ LiteralValue, ValuePipe }
 

@@ -17,18 +17,14 @@ package au.com.cba.omnia.grimlock.scalding.examples
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
-import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
 import au.com.cba.omnia.grimlock.scalding.Matrix._
-import au.com.cba.omnia.grimlock.scalding.Nameable._
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
 import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.scalding.position.Positions._
@@ -165,16 +161,17 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
     val csb = d
       .slice(Over(Second), rem2, false)
-      .transformWithValue(transforms, stats.toMap(Over[Position2D, Dimension.First](First)))
+      .transformWithValue(transforms, stats.toMap(Over(First)))
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
-      //.fill(Content(ContinuousSchema(DoubleCodex), 0))
+      //.fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0))
       .saveAsCSV(Over(Second), s"./demo.${output}/${key}.csv")
   }
 
   // Prepare each partition.
   parts
     .forEach(prepare, List("train", "test"))
+    .toUnit
 }
 

@@ -101,6 +101,7 @@ object Conditional {
       .summarise(Along(First), Sum[Position3D, Position2D]())
       .transformWithValue(Fraction(extractor), gcount)
       .saveAsText(s"./demo.${output}/eye.out")
+      .toUnit
 
     // Get hair color conditional on gender.
     // 1/ Sum out eye color.
@@ -109,6 +110,7 @@ object Conditional {
       .summarise(Along(Second), Sum[Position3D, Position2D]())
       .transformWithValue(Fraction(extractor), gcount)
       .saveAsText(s"./demo.${output}/hair.out")
+      .toUnit
   }
 }
 

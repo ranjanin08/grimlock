@@ -16,7 +16,6 @@ package au.com.cba.omnia.grimlock.framework.window
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 /**
  * Base trait for generating windowed data.

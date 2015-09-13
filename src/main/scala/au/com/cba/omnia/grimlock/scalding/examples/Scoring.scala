@@ -69,5 +69,6 @@ class Scoring(args: Args) extends Job(args) {
     .transformWithValue(transforms, stats)
     .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
     .saveAsText(s"./demo.${output}/scores.out")
+    .toUnit
 }
 

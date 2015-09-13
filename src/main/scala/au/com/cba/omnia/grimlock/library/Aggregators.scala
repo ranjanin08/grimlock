@@ -20,8 +20,6 @@ import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.Type._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 /** Count reductions. */
 case class Count[P <: Position, S <: Position with ExpandablePosition]() extends Aggregator[P, S, S] {

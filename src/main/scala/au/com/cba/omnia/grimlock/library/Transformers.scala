@@ -21,7 +21,6 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.Type._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 private[transform] object Transform {
   def checkType[P <: Position](cell: Cell[P], typ: Type): Boolean = cell.content.schema.kind.isSpecialisationOf(typ)

@@ -15,14 +15,12 @@
 package au.com.cba.omnia.grimlock.spark.examples
 
 import au.com.cba.omnia.grimlock.framework._
-import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.pairwise._
@@ -120,6 +118,7 @@ object MutualInformation {
     (marginal ++ joint)
       .summarise(Over(First), Sum[Position2D, Position1D]())
       .saveAsText(s"./demo.${output}/mi.out")
+      .toUnit
   }
 }
 

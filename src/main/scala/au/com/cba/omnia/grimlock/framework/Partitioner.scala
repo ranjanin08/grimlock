@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.framework.partition
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
-import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import scala.reflect.ClassTag
 

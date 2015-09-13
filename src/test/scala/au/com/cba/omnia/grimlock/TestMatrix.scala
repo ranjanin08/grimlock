@@ -15,18 +15,17 @@
 package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.framework._
-import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
+import au.com.cba.omnia.grimlock.framework.position.Positionable._
 import au.com.cba.omnia.grimlock.framework.sample._
 import au.com.cba.omnia.grimlock.framework.squash._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.Type._
-import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.window._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
@@ -38,13 +37,11 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Matrixable._
 import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.scalding.position.Positions._
-import au.com.cba.omnia.grimlock.scalding.Nameable._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
 import au.com.cba.omnia.grimlock.spark.Matrixable._
 import au.com.cba.omnia.grimlock.spark.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.spark.position.Positions._
-import au.com.cba.omnia.grimlock.spark.Nameable._
 
 import com.twitter.scalding._
 import com.twitter.scalding.bdd._
@@ -1806,6 +1803,50 @@ class TestScaldingMatrixSlice extends TestMatrixSlice with TBddDsl {
       _.toList.sortBy(_.position) shouldBe result22
     }
   }
+
+  it should "return empty data - InMemory" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.slice(Along(Third), List.empty[Position2D], true, InMemory())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe List()
+    }
+  }
+
+  it should "return all data - InMemory" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.slice(Along(Third), List.empty[Position2D], false, InMemory())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
+    }
+  }
+
+  it should "return empty data - Default" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.slice(Along(Third), List.empty[Position2D], true, Default())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe List()
+    }
+  }
+
+  it should "return all data - Default" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.slice(Along(Third), List.empty[Position2D], false, Default())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
+    }
+  }
 }
 
 class TestSparkMatrixSlice extends TestMatrixSlice {
@@ -1941,6 +1982,18 @@ class TestSparkMatrixSlice extends TestMatrixSlice {
       .slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result22
   }
+
+  it should "return empty data - Default" in {
+    toRDD(data3)
+      .slice(Along(Third), List.empty[Position2D], true, Default())
+      .toList.sortBy(_.position) shouldBe List()
+  }
+
+  it should "return all data - Default" in {
+    toRDD(data3)
+      .slice(Along(Third), List.empty[Position2D], false, Default())
+      .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
+  }
 }
 
 trait TestMatrixWhich extends TestMatrix {
@@ -2009,6 +2062,8 @@ object TestMatrixWhich {
 
 class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
 
+  import au.com.cba.omnia.grimlock.scalding.Predicateable._
+
   "A Matrix.which" should "return its coordinates in 1D" in {
     Given {
       data1
@@ -2025,7 +2080,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.which(Over(First), List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c), InMemory())
+        cells.whichByPositions(Over(First),
+          (List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c)), InMemory())
     } Then {
       _.toList.sorted shouldBe result2
     }
@@ -2036,7 +2092,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.which(Over[Position1D, Dimension.First](First), List(
+        cells.whichByPositions(Over(First), List(
           (List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c)),
           (List("foo"), (c: Cell[Position1D]) => !TestMatrixWhich.predicate(c))), Default())
     } Then {
@@ -2060,8 +2116,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.which(Over(First), List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c),
-          Default(Reducers(123)))
+        cells.whichByPositions(Over(First),
+          (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)), Default(Reducers(123)))
     } Then {
       _.toList.sorted shouldBe result5
     }
@@ -2072,7 +2128,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.which(Along(First), List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c),
+        cells.whichByPositions(Along(First), (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
           Unbalanced(Reducers(123)))
     } Then {
       _.toList.sorted shouldBe result6
@@ -2084,7 +2140,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.which(Over(Second), List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c), InMemory())
+        cells.whichByPositions(Over(Second), (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+          InMemory())
     } Then {
       _.toList.sorted shouldBe result7
     }
@@ -2095,8 +2152,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.which(Along(Second), List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c),
-          Default())
+        cells.whichByPositions(Along(Second),
+          (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)), Default())
     } Then {
       _.toList.sorted shouldBe result8
     }
@@ -2107,7 +2164,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.which(Over[Position2D, Dimension.First](First), List(
+        cells.whichByPositions(Over(First), List(
           (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
           (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(123)))
     } Then {
@@ -2120,7 +2177,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.which(Along[Position2D, Dimension.First](First), List(
+        cells.whichByPositions(Along(First), List(
           (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
           (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Unbalanced(Reducers(123)))
     } Then {
@@ -2133,7 +2190,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.which(Over[Position2D, Dimension.Second](Second), List(
+        cells.whichByPositions(Over(Second), List(
           (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
           (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), InMemory())
     } Then {
@@ -2146,7 +2203,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.which(Along[Position2D, Dimension.Second](Second), List(
+        cells.whichByPositions(Along(Second), List(
           (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
           (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default())
     } Then {
@@ -2170,8 +2227,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Over(First), List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c),
-          Default(Reducers(123)))
+        cells.whichByPositions(Over(First),
+          (List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default(Reducers(123)))
     } Then {
       _.toList.sorted shouldBe result14
     }
@@ -2182,8 +2239,9 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Along(First), List(Position2D(2, "xyz"), Position2D(4, "xyz")),
-          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Unbalanced(Reducers(123)))
+        cells.whichByPositions(Along(First),
+          (List(Position2D(2, "xyz"), Position2D(4, "xyz")), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+            Unbalanced(Reducers(123)))
     } Then {
       _.toList.sorted shouldBe result15
     }
@@ -2194,7 +2252,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Over(Second), List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), InMemory())
+        cells.whichByPositions(Over(Second), (List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+          InMemory())
     } Then {
       _.toList.sorted shouldBe result16
     }
@@ -2205,8 +2264,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
-          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default())
+        cells.whichByPositions(Along(Second), (List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
+          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default())
     } Then {
       _.toList.sorted shouldBe result17
     }
@@ -2217,7 +2276,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Over(Third), "xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default(Reducers(123)))
+        cells.whichByPositions(Over(Third), ("xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+          Default(Reducers(123)))
     } Then {
       _.toList.sorted shouldBe result18
     }
@@ -2228,8 +2288,8 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Along(Third), List(Position2D("bar", 2), Position2D("qux", 1)),
-          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Unbalanced(Reducers(123)))
+        cells.whichByPositions(Along(Third), (List(Position2D("bar", 2), Position2D("qux", 1)),
+          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Unbalanced(Reducers(123)))
     } Then {
       _.toList.sorted shouldBe result19
     }
@@ -2240,7 +2300,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Over[Position3D, Dimension.First](First), List(
+        cells.whichByPositions(Over(First), List(
           (List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
           (List("foo"), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
     } Then {
@@ -2253,7 +2313,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Along[Position3D, Dimension.First](First), List(
+        cells.whichByPositions(Along(First), List(
           (List(Position2D(2, "xyz"), Position2D(4, "xyz")), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
           (List(Position2D(2, "xyz")), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
     } Then {
@@ -2266,7 +2326,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Over[Position3D, Dimension.Second](Second), List(
+        cells.whichByPositions(Over(Second), List(
           (List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
           (List(2), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(123)))
     } Then {
@@ -2279,7 +2339,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Along[Position3D, Dimension.Second](Second), List(
+        cells.whichByPositions(Along(Second), List(
           (List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
           (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), (List(Position2D("foo", "xyz")),
           (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Unbalanced(Reducers(123)))
@@ -2293,7 +2353,7 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Over[Position3D, Dimension.Third](Third), List(
+        cells.whichByPositions(Over(Third), List(
           ("xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
           ("xyz", (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
     } Then {
@@ -2306,16 +2366,42 @@ class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(Along[Position3D, Dimension.Third](Third), List(
+        cells.whichByPositions(Along(Third), List(
           (List(Position2D("foo", 1), Position2D("qux", 1)), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
           (List(Position2D("foo", 2)), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
     } Then {
       _.toList.sorted shouldBe result25
     }
   }
+
+  it should "return empty data - InMemory" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.whichByPositions(Along(Third), List(
+          (List.empty[Position2D], (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
+    } Then {
+      _.toList.sorted shouldBe List()
+    }
+  }
+
+  it should "return empty data - Default" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.whichByPositions(Along(Third), List(
+          (List.empty[Position2D], (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
+    } Then {
+      _.toList.sorted shouldBe List()
+    }
+  }
 }
 
 class TestSparkMatrixWhich extends TestMatrixWhich {
+
+  import au.com.cba.omnia.grimlock.spark.Predicateable._
 
   "A Matrix.which" should "return its coordinates in 1D" in {
     toRDD(data1)
@@ -2325,13 +2411,14 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its first over coordinates in 1D" in {
     toRDD(data1)
-      .which(Over(First), List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c), Default())
+      .whichByPositions(Over(First), (List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c)),
+        Default())
       .toList.sorted shouldBe result2
   }
 
   it should "return its first over multiple coordinates in 1D" in {
     toRDD(data1)
-      .which(Over[Position1D, Dimension.First](First), List(
+      .whichByPositions(Over(First), List(
         (List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c)),
         (List("foo"), (c: Cell[Position1D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result3
@@ -2345,32 +2432,34 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its first over coordinates in 2D" in {
     toRDD(data2)
-      .which(Over(First), List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c), Default())
+      .whichByPositions(Over(First), (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        Default())
       .toList.sorted shouldBe result5
   }
 
   it should "return its first along coordinates in 2D" in {
     toRDD(data2)
-      .which(Along(First), List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c), Default(Reducers(12)))
+      .whichByPositions(Along(First), (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        Default(Reducers(12)))
       .toList.sorted shouldBe result6
   }
 
   it should "return its second over coordinates in 2D" in {
     toRDD(data2)
-      .which(Over(Second), List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c), Default())
+      .whichByPositions(Over(Second), (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)), Default())
       .toList.sorted shouldBe result7
   }
 
   it should "return its second along coordinates in 2D" in {
     toRDD(data2)
-      .which(Along(Second), List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c),
+      .whichByPositions(Along(Second), (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
         Default(Reducers(12)))
       .toList.sorted shouldBe result8
   }
 
   it should "return its first over multiple coordinates in 2D" in {
     toRDD(data2)
-      .which(Over[Position2D, Dimension.First](First), List(
+      .whichByPositions(Over(First), List(
         (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
         (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default())
       .toList.sorted shouldBe result9
@@ -2378,7 +2467,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its first along multiple coordinates in 2D" in {
     toRDD(data2)
-      .which(Along[Position2D, Dimension.First](First), List(
+      .whichByPositions(Along(First), List(
         (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
         (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result10
@@ -2386,7 +2475,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its second over multiple coordinates in 2D" in {
     toRDD(data2)
-      .which(Over[Position2D, Dimension.Second](Second), List(
+      .whichByPositions(Over(Second), List(
         (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
         (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default())
       .toList.sorted shouldBe result11
@@ -2394,7 +2483,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its second along multiple coordinates in 2D" in {
     toRDD(data2)
-      .which(Along[Position2D, Dimension.Second](Second), List(
+      .whichByPositions(Along(Second), List(
         (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
         (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result12
@@ -2408,46 +2497,48 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its first over coordinates in 3D" in {
     toRDD(data3)
-      .which(Over(First), List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default())
+      .whichByPositions(Over(First), (List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+        Default())
       .toList.sorted shouldBe result14
   }
 
   it should "return its first along coordinates in 3D" in {
     toRDD(data3)
-      .which(Along(First), List(Position2D(2, "xyz"), Position2D(4, "xyz")),
-        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default(Reducers(12)))
+      .whichByPositions(Along(First),
+        (List(Position2D(2, "xyz"), Position2D(4, "xyz")), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+          Default(Reducers(12)))
       .toList.sorted shouldBe result15
   }
 
   it should "return its second over coordinates in 3D" in {
     toRDD(data3)
-      .which(Over(Second), List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default())
+      .whichByPositions(Over(Second), (List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default())
       .toList.sorted shouldBe result16
   }
 
   it should "return its second along coordinates in 3D" in {
     toRDD(data3)
-      .which(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
-        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default(Reducers(12)))
+      .whichByPositions(Along(Second), (List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default(Reducers(12)))
       .toList.sorted shouldBe result17
   }
 
   it should "return its third over coordinates in 3D" in {
     toRDD(data3)
-      .which(Over(Third), "xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default())
+      .whichByPositions(Over(Third), ("xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default())
       .toList.sorted shouldBe result18
   }
 
   it should "return its third along coordinates in 3D" in {
     toRDD(data3)
-      .which(Along(Third), List(Position2D("bar", 2), Position2D("qux", 1)),
-        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c), Default(Reducers(12)))
+      .whichByPositions(Along(Third), (List(Position2D("bar", 2), Position2D("qux", 1)),
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default(Reducers(12)))
       .toList.sorted shouldBe result19
   }
 
   it should "return its first over multiple coordinates in 3D" in {
     toRDD(data3)
-      .which(Over[Position3D, Dimension.First](First), List(
+      .whichByPositions(Over(First), List(
         (List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
         (List("foo"), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
       .toList.sorted shouldBe result20
@@ -2455,7 +2546,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its first along multiple coordinates in 3D" in {
     toRDD(data3)
-      .which(Along[Position3D, Dimension.First](First), List(
+      .whichByPositions(Along(First), List(
         (List(Position2D(2, "xyz"), Position2D(4, "xyz")), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
         (List(Position2D(2, "xyz")), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result21
@@ -2463,7 +2554,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its second over multiple coordinates in 3D" in {
     toRDD(data3)
-      .which(Over[Position3D, Dimension.Second](Second), List(
+      .whichByPositions(Over(Second), List(
         (List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
         (List(2), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
       .toList.sorted shouldBe result22
@@ -2471,7 +2562,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its second along multiple coordinates in 3D" in {
     toRDD(data3)
-      .which(Along[Position3D, Dimension.Second](Second), List(
+      .whichByPositions(Along(Second), List(
         (List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
         (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), (List(Position2D("foo", "xyz")),
         (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
@@ -2480,7 +2571,7 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its third over multiple coordinates in 3D" in {
     toRDD(data3)
-      .which(Over[Position3D, Dimension.Third](Third), List(
+      .whichByPositions(Over(Third), List(
         ("xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
         ("xyz", (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
       .toList.sorted shouldBe result24
@@ -2488,10 +2579,17 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
   it should "return its third along multiple coordinates in 3D" in {
     toRDD(data3)
-      .which(Along[Position3D, Dimension.Third](Third), List(
+      .whichByPositions(Along(Third), List(
         (List(Position2D("foo", 1), Position2D("qux", 1)), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
         (List(Position2D("foo", 2)), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(12)))
       .toList.sorted shouldBe result25
+  }
+
+  it should "return empty data - Default" in {
+    toRDD(data3)
+      .whichByPositions(Along(Third), List(
+        (List.empty[Position2D], (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
+      .toList.sorted shouldBe List()
   }
 }
 
@@ -2541,6 +2639,28 @@ class TestScaldingMatrixGet extends TestMatrixGet with TBddDsl {
       _.toList.sortBy(_.position) shouldBe result3
     }
   }
+
+  it should "return empty data - InMemory" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.get(List.empty[Position3D], InMemory())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe List()
+    }
+  }
+
+  it should "return empty data - Default" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.get(List.empty[Position3D], Default())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe List()
+    }
+  }
 }
 
 class TestSparkMatrixGet extends TestMatrixGet {
@@ -2562,6 +2682,12 @@ class TestSparkMatrixGet extends TestMatrixGet {
       .get(List(Position3D("foo", 3, "xyz"), Position3D("qux", 1, "xyz"), Position3D("baz", 4, "xyz")),
         Default())
       .toList.sortBy(_.position) shouldBe result3
+  }
+
+  it should "return empty data - Default" in {
+    toRDD(data3)
+      .get(List.empty[Position3D], Default())
+      .toList.sortBy(_.position) shouldBe List()
   }
 }
 
@@ -4944,6 +5070,28 @@ class TestScaldingMatrixJoin extends TestMatrixJoin with TBddDsl {
       _.toList.sortBy(_.position) shouldBe result10
     }
   }
+
+  it should "return empty data - InMemory" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.join(Along(Third), TypedPipe.empty, InMemory())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe List()
+    }
+  }
+
+  it should "return empty data - Default" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.join(Along(Third), TypedPipe.empty, Default())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe List()
+    }
+  }
 }
 
 class TestSparkMatrixJoin extends TestMatrixJoin {
@@ -5006,6 +5154,12 @@ class TestSparkMatrixJoin extends TestMatrixJoin {
     toRDD(data3)
       .join(Along(Third), toRDD(dataJ), Default())
       .toList.sortBy(_.position) shouldBe result10
+  }
+
+  it should "return empty data - Default" in {
+    toRDD(data3)
+      .join(Along(Third), toRDD(List.empty[Cell[Position3D]]), Default())
+      .toList.sortBy(_.position) shouldBe List()
   }
 }
 
@@ -5184,7 +5338,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.unique(Over(First), Default(Reducers(123)))
+        cells.uniqueByPositions(Over(First), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result2
     }
@@ -5206,7 +5360,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Over(First), Default(Reducers(123)))
+        cells.uniqueByPositions(Over(First), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result4
     }
@@ -5217,7 +5371,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Along(First), Default())
+        cells.uniqueByPositions(Along(First), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result5
     }
@@ -5228,7 +5382,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Over(Second), Default(Reducers(123)))
+        cells.uniqueByPositions(Over(Second), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result6
     }
@@ -5239,7 +5393,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Along(Second), Default())
+        cells.uniqueByPositions(Along(Second), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result7
     }
@@ -5261,7 +5415,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Over(First), Default())
+        cells.uniqueByPositions(Over(First), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result9
     }
@@ -5272,7 +5426,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Along(First), Default(Reducers(123)))
+        cells.uniqueByPositions(Along(First), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result10
     }
@@ -5283,7 +5437,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Over(Second), Default())
+        cells.uniqueByPositions(Over(Second), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result11
     }
@@ -5294,7 +5448,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Along(Second), Default(Reducers(123)))
+        cells.uniqueByPositions(Along(Second), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result12
     }
@@ -5305,7 +5459,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Over(Third), Default())
+        cells.uniqueByPositions(Over(Third), Default())
     } Then {
       _.toList.sortBy(_.toString) shouldBe result13
     }
@@ -5316,7 +5470,7 @@ class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Along(Third), Default(Reducers(123)))
+        cells.uniqueByPositions(Along(Third), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.toString) shouldBe result14
     }
@@ -5333,7 +5487,7 @@ class TestSparkMatrixUnique extends TestMatrixUnique {
 
   it should "return its first over content in 1D" in {
     toRDD(data1)
-      .unique(Over(First), Default(Reducers(12)))
+      .uniqueByPositions(Over(First), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result2
   }
 
@@ -5345,25 +5499,25 @@ class TestSparkMatrixUnique extends TestMatrixUnique {
 
   it should "return its first over content in 2D" in {
     toRDD(data2)
-      .unique(Over(First), Default(Reducers(12)))
+      .uniqueByPositions(Over(First), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result4
   }
 
   it should "return its first along content in 2D" in {
     toRDD(data2)
-      .unique(Along(First), Default())
+      .uniqueByPositions(Along(First), Default())
       .toList.sortBy(_.toString) shouldBe result5
   }
 
   it should "return its second over content in 2D" in {
     toRDD(data2)
-      .unique(Over(Second), Default(Reducers(12)))
+      .uniqueByPositions(Over(Second), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result6
   }
 
   it should "return its second along content in 2D" in {
     toRDD(data2)
-      .unique(Along(Second), Default())
+      .uniqueByPositions(Along(Second), Default())
       .toList.sortBy(_.toString) shouldBe result7
   }
 
@@ -5375,37 +5529,37 @@ class TestSparkMatrixUnique extends TestMatrixUnique {
 
   it should "return its first over content in 3D" in {
     toRDD(data3)
-      .unique(Over(First), Default())
+      .uniqueByPositions(Over(First), Default())
       .toList.sortBy(_.toString) shouldBe result9
   }
 
   it should "return its first along content in 3D" in {
     toRDD(data3)
-      .unique(Along(First), Default(Reducers(12)))
+      .uniqueByPositions(Along(First), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result10
   }
 
   it should "return its second over content in 3D" in {
     toRDD(data3)
-      .unique(Over(Second), Default())
+      .uniqueByPositions(Over(Second), Default())
       .toList.sortBy(_.toString) shouldBe result11
   }
 
   it should "return its second along content in 3D" in {
     toRDD(data3)
-      .unique(Along(Second), Default(Reducers(12)))
+      .uniqueByPositions(Along(Second), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result12
   }
 
   it should "return its third over content in 3D" in {
     toRDD(data3)
-      .unique(Over(Third), Default())
+      .uniqueByPositions(Over(Third), Default())
       .toList.sortBy(_.toString) shouldBe result13
   }
 
   it should "return its third along content in 3D" in {
     toRDD(data3)
-      .unique(Along(Third), Default(Reducers(12)))
+      .uniqueByPositions(Along(Third), Default(Reducers(12)))
       .toList.sortBy(_.toString) shouldBe result14
   }
 }
@@ -6777,6 +6931,30 @@ class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
       _.toList.sortBy(_.position) shouldBe result44
     }
   }
+
+  it should "return empty data - InMemory" in {
+    Given {
+      num3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.pairwiseBetween(Along(Third), Lower, TypedPipe.empty,
+          Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), InMemory())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe List()
+    }
+  }
+
+  it should "return empty data - Default" in {
+    Given {
+      num3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.pairwiseBetween(Along(Third), Lower, TypedPipe.empty,
+          Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), Default())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe List()
+    }
+  }
 }
 
 class TestSparkMatrixPairwise extends TestMatrixPairwise {
@@ -7100,6 +7278,13 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
         ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result44
   }
+
+  it should "return empty data - Default" in {
+    toRDD(num3)
+      .pairwiseBetween(Along(Third), Lower, toRDD(List.empty[Cell[Position3D]]),
+        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), Default())
+      .toList.sortBy(_.position) shouldBe List()
+  }
 }
 
 trait TestMatrixChange extends TestMatrix {
@@ -7335,6 +7520,28 @@ class TestScaldingMatrixChange extends TestMatrixChange with TBddDsl {
       _.toList.sortBy(_.position) shouldBe result11
     }
   }
+
+  it should "return with empty data - InMemory" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.change(Over(First), List.empty[Position1D], ContinuousSchema(DoubleCodex), InMemory())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
+    }
+  }
+
+  it should "return with empty data - Default" in {
+    Given {
+      data3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.change(Over(First), List.empty[Position1D], ContinuousSchema(DoubleCodex), Default())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
+    }
+  }
 }
 
 class TestSparkMatrixChange extends TestMatrixChange {
@@ -7403,6 +7610,12 @@ class TestSparkMatrixChange extends TestMatrixChange {
     toRDD(data3)
       .change(Along(Third), Position2D("foo", 1), ContinuousSchema(DoubleCodex), Default())
       .toList.sortBy(_.position) shouldBe result11
+  }
+
+  it should "return with empty data - Default" in {
+    toRDD(data3)
+      .change(Over(First), List.empty[Position1D], ContinuousSchema(DoubleCodex), Default())
+      .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 }
 
@@ -7518,7 +7731,7 @@ class TestScaldingMatrixSet extends TestMatrixSet with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.set("foo", Content(ContinuousSchema(DoubleCodex), 1), Default())
+        cells.set(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -7529,7 +7742,8 @@ class TestScaldingMatrixSet extends TestMatrixSet with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.set(List("foo", "quxx"), Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(123)))
+        cells.set(List("foo", "quxx")
+          .map { case pos => Cell(Position1D(pos), Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -7553,7 +7767,7 @@ class TestScaldingMatrixSet extends TestMatrixSet with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.set(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(123)))
+        cells.set(Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1)), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -7564,8 +7778,8 @@ class TestScaldingMatrixSet extends TestMatrixSet with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.set(List(Position2D("foo", 2), Position2D("quxx", 5)),
-          Content(ContinuousSchema(DoubleCodex), 1), Default())
+        cells.set(List(Position2D("foo", 2), Position2D("quxx", 5))
+          .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -7589,7 +7803,7 @@ class TestScaldingMatrixSet extends TestMatrixSet with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.set(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1), Default())
+        cells.set(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -7600,8 +7814,8 @@ class TestScaldingMatrixSet extends TestMatrixSet with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc")),
-          Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(123)))
+        cells.set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc"))
+          .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -7625,13 +7839,14 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   "A Matrix.set" should "return its updated data in 1D" in {
     toRDD(data1)
-      .set("foo", Content(ContinuousSchema(DoubleCodex), 1), Default())
+      .set(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its updated and added data in 1D" in {
     toRDD(data1)
-      .set(List("foo", "quxx"), Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(12)))
+      .set(List("foo", "quxx").map { case pos => Cell(Position1D(pos), Content(ContinuousSchema(DoubleCodex), 1)) },
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -7643,13 +7858,14 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   it should "return its updated data in 2D" in {
     toRDD(data2)
-      .set(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(12)))
+      .set(Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1)), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its updated and added data in 2D" in {
     toRDD(data2)
-      .set(List(Position2D("foo", 2), Position2D("quxx", 5)), Content(ContinuousSchema(DoubleCodex), 1), Default())
+      .set(List(Position2D("foo", 2), Position2D("quxx", 5))
+        .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
@@ -7661,14 +7877,14 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   it should "return its updated data in 3D" in {
     toRDD(data3)
-      .set(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1), Default())
+      .set(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its updated and added data in 3D" in {
     toRDD(data3)
-      .set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc")),
-        Content(ContinuousSchema(DoubleCodex), 1), Default(Reducers(12)))
+      .set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc"))
+        .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -8963,7 +9179,7 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.fill(Content(ContinuousSchema(DoubleCodex), 0), Default())
+        cells.fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result1
     }
@@ -8974,7 +9190,7 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Content(ContinuousSchema(DoubleCodex), 0), Default(Reducers(123)))
+        cells.fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result2
     }
@@ -8985,8 +9201,7 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.fill(Over[Position2D, Dimension.First](First),
-          cells.summarise(Over(First), Mean[Position2D, Position1D]()), InMemory())
+        cells.fillHeterogeneous(Over(First), cells.summarise(Over(First), Mean[Position2D, Position1D]()), InMemory())
     } Then {
       _.toList.sortBy(_.position) shouldBe result3
     }
@@ -8997,8 +9212,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.fill(Along[Position2D, Dimension.First](First),
-          cells.summarise(Along(First), Mean[Position2D, Position1D]()), InMemory(Reducers(123)))
+        cells.fillHeterogeneous(Along(First), cells.summarise(Along(First), Mean[Position2D, Position1D]()),
+          InMemory(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result4
     }
@@ -9009,8 +9224,7 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.fill(Over[Position2D, Dimension.Second](Second),
-          cells.summarise(Over(Second), Mean[Position2D, Position1D]()), Default())
+        cells.fillHeterogeneous(Over(Second), cells.summarise(Over(Second), Mean[Position2D, Position1D]()), Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result5
     }
@@ -9021,8 +9235,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.fill(Along[Position2D, Dimension.Second](Second),
-          cells.summarise(Along(Second), Mean[Position2D, Position1D]()), Default(Reducers(123)))
+        cells.fillHeterogeneous(Along(Second), cells.summarise(Along(Second), Mean[Position2D, Position1D]()),
+          Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result6
     }
@@ -9033,8 +9247,7 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Over[Position3D, Dimension.First](First),
-          cells.summarise(Over(First), Mean[Position3D, Position1D]()), InMemory())
+        cells.fillHeterogeneous(Over(First), cells.summarise(Over(First), Mean[Position3D, Position1D]()), InMemory())
     } Then {
       _.toList.sortBy(_.position) shouldBe result7
     }
@@ -9045,8 +9258,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Along[Position3D, Dimension.First](First),
-          cells.summarise(Along(First), Mean[Position3D, Position2D]()), InMemory(Reducers(123)))
+        cells.fillHeterogeneous(Along(First), cells.summarise(Along(First), Mean[Position3D, Position2D]()),
+          InMemory(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result8
     }
@@ -9057,8 +9270,7 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Over[Position3D, Dimension.Second](Second),
-          cells.summarise(Over(Second), Mean[Position3D, Position1D]()), Default())
+        cells.fillHeterogeneous(Over(Second), cells.summarise(Over(Second), Mean[Position3D, Position1D]()), Default())
     } Then {
       _.toList.sortBy(_.position) shouldBe result9
     }
@@ -9069,8 +9281,8 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Along[Position3D, Dimension.Second](Second),
-          cells.summarise(Along(Second), Mean[Position3D, Position2D]()), Default(Reducers(123)))
+        cells.fillHeterogeneous(Along(Second), cells.summarise(Along(Second), Mean[Position3D, Position2D]()),
+          Default(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result10
     }
@@ -9081,8 +9293,7 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Over[Position3D, Dimension.Third](Third),
-          cells.summarise(Over(Third), Mean[Position3D, Position1D]()), InMemory())
+        cells.fillHeterogeneous(Over(Third), cells.summarise(Over(Third), Mean[Position3D, Position1D]()), InMemory())
     } Then {
       _.toList.sortBy(_.position) shouldBe result11
     }
@@ -9093,10 +9304,32 @@ class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
       num3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.fill(Along[Position3D, Dimension.Third](Third),
-          cells.summarise(Along(Third), Mean[Position3D, Position2D]()), InMemory(Reducers(123)))
+        cells.fillHeterogeneous(Along(Third), cells.summarise(Along(Third), Mean[Position3D, Position2D]()),
+          InMemory(Reducers(123)))
     } Then {
       _.toList.sortBy(_.position) shouldBe result12
+    }
+  }
+
+  it should "return empty data - InMemory" in {
+    Given {
+      num3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.fillHeterogeneous(Along(Third), TypedPipe.empty, InMemory())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe List()
+    }
+  }
+
+  it should "return empty data - Default" in {
+    Given {
+      num3
+    } When {
+      cells: TypedPipe[Cell[Position3D]] =>
+        cells.fillHeterogeneous(Along(Third), TypedPipe.empty, Default())
+    } Then {
+      _.toList.sortBy(_.position) shouldBe List()
     }
   }
 }
@@ -9105,13 +9338,13 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
   "A Matrix.fill" should "return its filled data in 2D" in {
     toRDD(num2)
-      .fill(Content(ContinuousSchema(DoubleCodex), 0), Default())
+      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its filled data in 3D" in {
     toRDD(num3)
-      .fill(Content(ContinuousSchema(DoubleCodex), 0), Default(Reducers(12)))
+      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -9119,8 +9352,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num2)
 
     cells
-      .fill(Over[Position2D, Dimension.First](First),
-        cells.summarise(Over(First), Mean[Position2D, Position1D]()), Default())
+      .fillHeterogeneous(Over(First), cells.summarise(Over(First), Mean[Position2D, Position1D]()), Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
@@ -9128,8 +9360,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num2)
 
     cells
-      .fill(Along[Position2D, Dimension.First](First),
-        cells.summarise(Along(First), Mean[Position2D, Position1D]()), Default(Reducers(12)))
+      .fillHeterogeneous(Along(First), cells.summarise(Along(First), Mean[Position2D, Position1D]()),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
@@ -9137,8 +9369,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num2)
 
     cells
-      .fill(Over[Position2D, Dimension.Second](Second),
-        cells.summarise(Over(Second), Mean[Position2D, Position1D]()), Default(Reducers(12), Reducers(23)))
+      .fillHeterogeneous(Over(Second), cells.summarise(Over(Second), Mean[Position2D, Position1D]()),
+        Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result5
   }
 
@@ -9146,8 +9378,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num2)
 
     cells
-      .fill(Along[Position2D, Dimension.Second](Second),
-        cells.summarise(Along(Second), Mean[Position2D, Position1D]()), Default())
+      .fillHeterogeneous(Along(Second), cells.summarise(Along(Second), Mean[Position2D, Position1D]()), Default())
       .toList.sortBy(_.position) shouldBe result6
   }
 
@@ -9155,8 +9386,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Over[Position3D, Dimension.First](First),
-        cells.summarise(Over(First), Mean[Position3D, Position1D]()), Default(Reducers(12)))
+      .fillHeterogeneous(Over(First), cells.summarise(Over(First), Mean[Position3D, Position1D]()),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result7
   }
 
@@ -9164,8 +9395,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Along[Position3D, Dimension.First](First),
-        cells.summarise(Along(First), Mean[Position3D, Position2D]()), Default(Reducers(12), Reducers(23)))
+      .fillHeterogeneous(Along(First), cells.summarise(Along(First), Mean[Position3D, Position2D]()),
+        Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -9173,8 +9404,7 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Over[Position3D, Dimension.Second](Second),
-        cells.summarise(Over(Second), Mean[Position3D, Position1D]()), Default())
+      .fillHeterogeneous(Over(Second), cells.summarise(Over(Second), Mean[Position3D, Position1D]()), Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
@@ -9182,8 +9412,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Along[Position3D, Dimension.Second](Second),
-        cells.summarise(Along(Second), Mean[Position3D, Position2D]()), Default(Reducers(12)))
+      .fillHeterogeneous(Along(Second), cells.summarise(Along(Second), Mean[Position3D, Position2D]()),
+        Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
@@ -9191,8 +9421,8 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Over[Position3D, Dimension.Third](Third),
-        cells.summarise(Over(Third), Mean[Position3D, Position1D]()), Default(Reducers(12), Reducers(23)))
+      .fillHeterogeneous(Over(Third), cells.summarise(Over(Third), Mean[Position3D, Position1D]()),
+        Default(Reducers(12), Reducers(23)))
       .toList.sortBy(_.position) shouldBe result11
   }
 
@@ -9200,9 +9430,14 @@ class TestSparkMatrixFill extends TestMatrixFill {
     val cells = toRDD(num3)
 
     cells
-      .fill(Along[Position3D, Dimension.Third](Third),
-        cells.summarise(Along(Third), Mean[Position3D, Position2D]()), Default())
+      .fillHeterogeneous(Along(Third), cells.summarise(Along(Third), Mean[Position3D, Position2D]()), Default())
       .toList.sortBy(_.position) shouldBe result12
+  }
+
+  it should "return empty data - Default" in {
+    toRDD(num3)
+      .fillHeterogeneous(Along(Third), toRDD(List.empty[Cell[Position2D]]), Default())
+      .toList.sortBy(_.position) shouldBe List()
   }
 }
 

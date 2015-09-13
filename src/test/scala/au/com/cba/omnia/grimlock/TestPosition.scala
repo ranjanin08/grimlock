@@ -100,10 +100,10 @@ class TestPosition1D extends TestGrimlock {
   }
 
   it should "throw an exception for an invalid update dimension" in {
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Second, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Third, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fourth, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fifth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Second, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Third, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fourth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fifth, 123) }
   }
 
   val con1 = Content(ContinuousSchema(LongCodex), 1)
@@ -207,9 +207,9 @@ class TestPosition2D extends TestGrimlock {
   }
 
   it should "throw an exception for an invalid update dimension" in {
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Third, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fourth, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fifth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Third, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fourth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fifth, 123) }
   }
 
   it should "permute" in {
@@ -340,8 +340,8 @@ class TestPosition3D extends TestGrimlock {
   }
 
   it should "throw an exception for an invalid update dimension" in {
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fourth, 123) }
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fifth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fourth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fifth, 123) }
   }
 
   it should "permute" in {
@@ -489,7 +489,7 @@ class TestPosition4D extends TestGrimlock {
   }
 
   it should "throw an exception for an invalid update dimension" in {
-    a [UnsupportedOperationException] shouldBe thrownBy { pos.update(Fifth, 123) }
+    a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fifth, 123) }
   }
 
   it should "permute" in {
@@ -870,9 +870,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position1D(s) }
     } When {
       positions: TypedPipe[Position1D] =>
-        positions.names(Over(First), Default()).number()
+        positions.names(Over(First), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
+      _.toList shouldBe data.map { case (s, i) => Position1D(s) }
     }
   }
 
@@ -914,9 +914,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position2D(s, i) }
     } When {
       positions: TypedPipe[Position2D] =>
-        positions.names(Along(Second), Default()).number()
+        positions.names(Along(Second), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
+      _.toList shouldBe data.map { case (s, i) => Position1D(s) }
     }
   }
 
@@ -1178,9 +1178,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Along(Fifth), Default()).number()
+        positions.names(Along(Fifth), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position4D(s, i, i + 1, i + 2), i) }
+      _.toList shouldBe data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     }
   }
 }
@@ -1190,9 +1190,9 @@ class TestSparkPositions extends TestPositions {
   "A Positions of Position1D" should "return its First over names" in {
     toRDD(data)
       .map { case (s, i) => Position1D(s) }
-      .names(Over(First), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 1), (Position1D("fid:B"), 0), (Position1D("fid:C"), 5),
-        (Position1D("fid:D"), 4), (Position1D("fid:E"), 2), (Position1D("fid:F"), 3))
+      .names(Over(First), Default())
+      .toList.sorted shouldBe List(Position1D("fid:A"), Position1D("fid:B"), Position1D("fid:C"),
+        Position1D("fid:D"), Position1D("fid:E"), Position1D("fid:F"))
   }
 
   "A Positions of Position2D" should "return its First over names" in {
@@ -1222,9 +1222,9 @@ class TestSparkPositions extends TestPositions {
   it should "return its Second along names" in {
     toRDD(data)
       .map { case (s, i) => Position2D(s, i) }
-      .names(Along(Second), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 1), (Position1D("fid:B"), 0), (Position1D("fid:C"), 5),
-        (Position1D("fid:D"), 4), (Position1D("fid:E"), 2), (Position1D("fid:F"), 3))
+      .names(Along(Second), Default())
+      .toList.sorted shouldBe List(Position1D("fid:A"), Position1D("fid:B"), Position1D("fid:C"),
+        Position1D("fid:D"), Position1D("fid:E"), Position1D("fid:F"))
   }
 
   "A Positions of Position3D" should "return its First over names" in {
@@ -1423,10 +1423,10 @@ class TestSparkPositions extends TestPositions {
   it should "return its Fifth along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Along(Fifth), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position4D("fid:A", 0, 1, 2), 1), (Position4D("fid:B", 1, 2, 3), 5),
-        (Position4D("fid:C", 2, 3, 4), 3), (Position4D("fid:D", 3, 4, 5), 2), (Position4D("fid:E", 4, 5, 6), 0),
-        (Position4D("fid:F", 5, 6, 7), 4))
+      .names(Along(Fifth), Default())
+      .toList.sorted shouldBe List(Position4D("fid:A", 0, 1, 2), Position4D("fid:B", 1, 2, 3),
+        Position4D("fid:C", 2, 3, 4), Position4D("fid:D", 3, 4, 5), Position4D("fid:E", 4, 5, 6),
+        Position4D("fid:F", 5, 6, 7))
   }
 }
 

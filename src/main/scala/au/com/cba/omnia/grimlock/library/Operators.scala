@@ -20,7 +20,6 @@ import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 /** Convenience trait for operators that apply to `Double` values. */
 trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]

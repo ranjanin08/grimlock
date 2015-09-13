@@ -54,6 +54,7 @@ object DataAnalysis {
       .saveAsText(s"./demo.${output}/feature_count.out")
       .summarise(Along(First), moments)
       .saveAsText(s"./demo.${output}/feature_density.out")
+      .toUnit
 
     // For the features:
     //  1/ Compute the number of instance that have a value for each features;
@@ -65,6 +66,7 @@ object DataAnalysis {
       .saveAsText(s"./demo.${output}/instance_count.out")
       .summarise(Along(First), moments)
       .saveAsText(s"./demo.${output}/instance_density.out")
+      .toUnit
   }
 }
 

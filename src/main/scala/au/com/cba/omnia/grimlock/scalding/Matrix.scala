@@ -28,6 +28,7 @@ import au.com.cba.omnia.grimlock.framework.{
   MatrixWithParseErrors,
   Nameable => BaseNameable,
   NoParameters,
+  Predicateable => BasePredicateable,
   Redistribute,
   ReduceableMatrix => BaseReduceableMatrix,
   Reducers,
@@ -52,7 +53,6 @@ import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 import au.com.cba.omnia.grimlock.framework.window._
 
 import au.com.cba.omnia.grimlock.scalding.Matrix._
-import au.com.cba.omnia.grimlock.scalding.Matrixable._
 import au.com.cba.omnia.grimlock.scalding.Nameable._
 
 import cascading.flow.FlowDef
@@ -114,8 +114,11 @@ private[scalding] object ScaldingImplicits {
       }
     }
 
-    def mapSideJoin[V, Q](value: ValuePipe[V], f: (P, V) => TraversableOnce[Q]): TypedPipe[Q] = {
-      pipe.flatMapWithValue(value) { case (c, vo) => f(c, vo.get) }
+    def mapSideJoin[V, Q](value: ValuePipe[V], f: (P, V) => TraversableOnce[Q], empty: V): TypedPipe[Q] = {
+      pipe.flatMapWithValue(value) {
+        case (c, Some(v)) => f(c, v)
+        case (c, None) => f(c, empty)
+      }
     }
 
     def redistribute(parameters: TunerParameters): TypedPipe[P] = {
@@ -174,7 +177,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       case InMemory(_) =>
         data
           .mapSideJoin(pos.toHashSetValue((p: slice.S) => p), (c: Cell[P], v: HashSet[slice.S]) =>
-            update(v.contains(slice.selected(c.position)), c))
+            update(v.contains(slice.selected(c.position)), c), HashSet.empty[slice.S])
       case _ =>
         data
           .groupBy { case c => slice.selected(c.position) }
@@ -194,7 +197,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       case InMemory(_) =>
         data
           .mapSideJoin(pos.toHashSetValue((p: P) => p), (c: Cell[P], v: HashSet[P]) =>
-            if (v.contains(c.position)) { Some(c) } else { None })
+            if (v.contains(c.position)) { Some(c) } else { None }, HashSet.empty[P])
       case _ =>
         data
           .groupBy { case c => c.position }
@@ -222,7 +225,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       case InMemory(_) =>
         (data ++ that.data)
           .mapSideJoin(keep.toHashSetValue[slice.S](_._1), (c: Cell[P], v: HashSet[slice.S]) =>
-            if (v.contains(slice.selected(c.position))) { Some(c) } else { None })
+            if (v.contains(slice.selected(c.position))) { Some(c) } else { None }, HashSet.empty[slice.S])
       case _ =>
         (data ++ that.data)
           .groupBy { case c => slice.selected(c.position) }
@@ -317,11 +320,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     mode: Mode): U[Cell[P]] = saveText(file, writer)
 
   type SetTuners = TP2
-  def set[I, T <: Tuner](positions: I, value: Content, tuner: T = Default())(
-    implicit ev1: PositionDistributable[I, P, TypedPipe], ev2: ClassTag[P], ev3: SetTuners#V[T]): U[Cell[P]] = {
-    set(ev1.convert(positions).map { case p => Cell(p, value) }, tuner)
-  }
-
   def set[M, T <: Tuner](values: M, tuner: T = Default())(implicit ev1: BaseMatrixable[M, P, TypedPipe],
     ev2: ClassTag[P], ev3: SetTuners#V[T]): U[Cell[P]] = {
     data
@@ -362,7 +360,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       case InMemory(_) =>
         data
           .mapSideJoin(pos.toHashSetValue((p: slice.S) => p), (c: Cell[P], v: HashSet[slice.S]) =>
-            if (v.contains(slice.selected(c.position)) == keep) { Some(c) } else { None })
+            if (v.contains(slice.selected(c.position)) == keep) { Some(c) } else { None }, HashSet.empty[slice.S])
       case _ =>
         data
           .groupBy { case c => slice.selected(c.position) }
@@ -578,7 +576,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .tunedDistinct(tuner.parameters)(ordering)
   }
 
-  def unique[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
+  def uniqueByPositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
     implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
@@ -591,37 +589,29 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type WhichTuners = TP4
-  def which(predicate: Predicate)(implicit ev: ClassTag[P]): U[P] = {
+  def which(predicate: BaseMatrix.Predicate[P])(implicit ev: ClassTag[P]): U[P] = {
     data.collect { case c if predicate(c) => c.position }
   }
 
-  def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, predicate: Predicate,
-    tuner: T = InMemory())(implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, TypedPipe],
-      ev3: ClassTag[slice.S], ev4: ClassTag[P], ev5: WhichTuners#V[T]): U[P] = {
-    which(slice, List((positions, predicate)), tuner)
-  }
-
-  def which[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], pospred: List[(I, Predicate)], tuner: T = InMemory())(
-    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, TypedPipe], ev3: ClassTag[slice.S],
+  def whichByPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T = InMemory())(
+    implicit ev1: PosDimDep[P, D], ev2: BasePredicateable[I, P, slice.S, TypedPipe], ev3: ClassTag[slice.S],
       ev4: ClassTag[P], ev5: WhichTuners#V[T]): U[P] = {
-    val pp = pospred
-      .map { case (pos, pred) => ev2.convert(pos).map { case p => (p, pred) } }
+    val pp = ev2.convert(predicates)
+      .map { case (pos, pred) => pos.map { case p => (p, pred) } }
       .reduce((l, r) => l ++ r)
 
     tuner match {
       case InMemory(_) =>
-        val semigroup = new com.twitter.algebird.Semigroup[Map[slice.S, List[Predicate]]] {
-          def plus(l: Map[slice.S, List[Predicate]],
-            r: Map[slice.S, List[Predicate]]): Map[slice.S, List[Predicate]] = {
-            (l.toSeq ++ r.toSeq).groupBy(_._1).mapValues(_.map(_._2).toList.flatten)
-          }
+        type M = Map[slice.S, List[BaseMatrix.Predicate[P]]]
+        val semigroup = new com.twitter.algebird.Semigroup[M] {
+          def plus(l: M, r: M): M = { (l.toSeq ++ r.toSeq).groupBy(_._1).mapValues(_.map(_._2).toList.flatten) }
         }
 
         data
           .mapSideJoin(pp.map { case (pos, pred) => Map(pos -> List(pred)) }.sum(semigroup),
-            (c: Cell[P], v: Map[slice.S, List[Predicate]]) => v.get(slice.selected(c.position)).flatMap {
+            (c: Cell[P], v: M) => v.get(slice.selected(c.position)).flatMap {
               case lst => if (lst.exists((pred) => pred(c))) { Some(c.position) } else { None }
-            })
+            }, Map.empty[slice.S, List[BaseMatrix.Predicate[P]]])
       case _ =>
         data
           .groupBy { case c => slice.selected(c.position) }
@@ -662,7 +652,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
             (lc: Cell[P], v: List[Cell[P]]) => v.collect {
               case rc if comparer.keep(slice.selected(lc.position), slice.selected(rc.position)) =>
                 (toTuple(lc), toTuple(rc))
-            })
+            }, List.empty[Cell[P]])
       case _ =>
         val (rr, rj, lr, lj) = tuner.parameters match {
           case Sequence2(Sequence2(rr, rj), Sequence2(lr, lj)) => (rr, rj, lr, lj)
@@ -690,7 +680,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           .distinct(ordering)
           .asKeys
           .redistribute(lr)
-          .flatMapWithValue(right) { case ((l, _), vo) => vo.get.collect { case r if comparer.keep(l, r) => (r, l) } }
+          .flatMapWithValue(right) {
+            case ((l, _), Some(v)) => v.collect { case r if comparer.keep(l, r) => (r, l) }
+            case _ => None
+          }
           .forceToDisk // TODO: Should this be configurable?
 
         ldata
@@ -713,8 +706,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 
   type FillHeterogeneousTuners = OneOf4[InMemory[NoParameters.type], InMemory[Reducers],
                                         Default[NoParameters.type], Default[Reducers]]
-  def fill[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]], tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
+  def fillHeterogeneous[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]],
+    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
       ev5: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
     val vals = values.groupBy { case c => c.position.asInstanceOf[slice.S] }
     val dense = tuner match {
@@ -725,7 +718,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 
         domain(Default())
           .mapSideJoin(vals.map { case (p, c) => Map(p -> c.content) }.sum(semigroup),
-            (p: P, v: Map[slice.S, Content]) => v.get(slice.selected(p)).map { case c => Cell(p, c) })
+            (p: P, v: Map[slice.S, Content]) => v.get(slice.selected(p)).map { case c => Cell(p, c) },
+              Map.empty[slice.S, Content])
       case _ =>
         domain(Default())
           .groupBy { case p => slice.selected(p) }
@@ -741,7 +735,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
   }
 
   type FillHomogeneousTuners = TP2
-  def fill[T <: Tuner](value: Content, tuner: T = Default())(implicit ev1: ClassTag[P],
+  def fillHomogeneous[T <: Tuner](value: Content, tuner: T = Default())(implicit ev1: ClassTag[P],
     ev2: FillHomogeneousTuners#V[T]): U[Cell[P]] = {
     domain(Default())
       .asKeys
@@ -2081,7 +2075,7 @@ class Matrix9D(val data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D]
   }
 }
 
-/** Scalding Companion object for the `Matrixable` type class. */
+/** Scalding companion object for the `Matrixable` type class. */
 object Matrixable {
   /** Converts a `TypedPipe[Cell[P]]` into a `TypedPipe[Cell[P]]`; that is, it is a  pass through. */
   implicit def TPC2TPM[P <: Position]: BaseMatrixable[TypedPipe[Cell[P]], P, TypedPipe] = {
@@ -2099,6 +2093,32 @@ object Matrixable {
   implicit def C2TPM[P <: Position]: BaseMatrixable[Cell[P], P, TypedPipe] = {
     new BaseMatrixable[Cell[P], P, TypedPipe] {
       def convert(t: Cell[P]): TypedPipe[Cell[P]] = new IterablePipe(List(t))
+    }
+  }
+}
+
+/** Scalding companion object for the `Predicateable` type class. */
+object Predicateable {
+  /**
+   * Converts a `List[(PositionDistributable[I, S, U], Matrix.Predicate[P])]` to a
+   * `List[(U[S], BaseMatrix.Predicate[P])]`.
+   */
+  implicit def PDPT2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, TypedPipe] = {
+    new BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, TypedPipe] {
+      def convert(t: (I, BaseMatrix.Predicate[P])): List[(TypedPipe[S], BaseMatrix.Predicate[P])] = {
+        List((ev.convert(t._1), t._2))
+      }
+    }
+  }
+
+  /**
+   * Converts a `(PositionDistributable[I, S, U], Matrix.Predicate[P])` to a `List[(U[S], BaseMatrix.Predicate[P])]`.
+   */
+  implicit def LPDP2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, TypedPipe] = {
+    new BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, TypedPipe] {
+      def convert(t: List[(I, BaseMatrix.Predicate[P])]): List[(TypedPipe[S], BaseMatrix.Predicate[P])] = {
+        t.map { case (i, p) => (ev.convert(i), p) }
+      }
     }
   }
 }

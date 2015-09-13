@@ -16,6 +16,14 @@ package au.com.cba.omnia.grimlock.framework
 
 /** Base trait for persisting data. */
 trait Persist[T] {
+  /**
+   *   Convenience function for suppressing ‘Discarded non-unit value’ compiler warnings.
+   *
+   *   These occur when the output of a function is not assigned to a variable (for a non-unit return).
+   *   This function ensures that such warnings are suppressed, it does not affect the flow or outcome.
+   */
+  def toUnit(): Unit = ()
+
   /** Shorthand type for converting a `T` to string. */
   type TextWriter = (T) => TraversableOnce[String]
 }
