@@ -861,6 +861,36 @@ class TestPosition5D extends TestGrimlock {
 trait TestPositions extends TestGrimlock {
 
   val data = List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F").zipWithIndex
+
+  val result1 = data.map { case (s, i) => Position1D(s) }.sorted
+  val result2 = data.map { case (s, i) => Position1D(s) }.sorted
+  val result3 = data.map { case (s, i) => Position1D(i) }.sorted
+  val result4 = data.map { case (s, i) => Position1D(i) }.sorted
+  val result5 = data.map { case (s, i) => Position1D(s) }.sorted
+  val result6 = data.map { case (s, i) => Position1D(s) }.sorted
+  val result7 = data.map { case (s, i) => Position1D(i) }.sorted
+  val result8 = data.map { case (s, i) => Position1D(i + 1) }.sorted
+  val result9 = data.map { case (s, i) => Position2D(i, i + 1) }.sorted
+  val result10 = data.map { case (s, i) => Position2D(s, i + 1) }.sorted
+  val result11 = data.map { case (s, i) => Position2D(s, i) }.sorted
+  val result12 = data.map { case (s, i) => Position1D(s) }.sorted
+  val result13 = data.map { case (s, i) => Position1D(i) }.sorted
+  val result14 = data.map { case (s, i) => Position1D(i + 1) }.sorted
+  val result15 = data.map { case (s, i) => Position1D(i + 2) }.sorted
+  val result16 = data.map { case (s, i) => Position3D(i, i + 1, i + 2) }.sorted
+  val result17 = data.map { case (s, i) => Position3D(s, i + 1, i + 2) }.sorted
+  val result18 = data.map { case (s, i) => Position3D(s, i, i + 2) }.sorted
+  val result19 = data.map { case (s, i) => Position3D(s, i, i + 1) }.sorted
+  val result20 = data.map { case (s, i) => Position1D(s) }.sorted
+  val result21 = data.map { case (s, i) => Position1D(i) }.sorted
+  val result22 = data.map { case (s, i) => Position1D(i + 1) }.sorted
+  val result23 = data.map { case (s, i) => Position1D(i + 2) }.sorted
+  val result24 = data.map { case (s, i) => Position1D(i + 3) }.sorted
+  val result25 = data.map { case (s, i) => Position4D(i, i + 1, i + 2, i + 3) }.sorted
+  val result26 = data.map { case (s, i) => Position4D(s, i + 1, i + 2, i + 3) }.sorted
+  val result27 = data.map { case (s, i) => Position4D(s, i, i + 2, i + 3) }.sorted
+  val result28 = data.map { case (s, i) => Position4D(s, i, i + 1, i + 3) }.sorted
+  val result29 = data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }.sorted
 }
 
 class TestScaldingPositions extends TestPositions with TBddDsl {
@@ -872,7 +902,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       positions: TypedPipe[Position1D] =>
         positions.names(Over(First), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => Position1D(s) }
+      _.toList.sorted shouldBe result1
     }
   }
 
@@ -881,9 +911,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position2D(s, i) }
     } When {
       positions: TypedPipe[Position2D] =>
-        positions.names(Over(First), Default()).number()
+        positions.names(Over(First), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
+      _.toList.sorted shouldBe result2
     }
   }
 
@@ -892,9 +922,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position2D(s, i) }
     } When {
       positions: TypedPipe[Position2D] =>
-        positions.names(Over(Second), Default()).number()
+        positions.names(Over(Second), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
+      _.toList.sorted shouldBe result3
     }
   }
 
@@ -903,9 +933,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position2D(s, i) }
     } When {
       positions: TypedPipe[Position2D] =>
-        positions.names(Along(First), Default()).number()
+        positions.names(Along(First), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
+      _.toList.sorted shouldBe result4
     }
   }
 
@@ -916,7 +946,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       positions: TypedPipe[Position2D] =>
         positions.names(Along(Second), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => Position1D(s) }
+      _.toList.sorted shouldBe result5
     }
   }
 
@@ -925,9 +955,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Over(First), Default()).number()
+        positions.names(Over(First), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
+      _.toList.sorted shouldBe result6
     }
   }
 
@@ -936,9 +966,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Over(Second), Default()).number()
+        positions.names(Over(Second), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
+      _.toList.sorted shouldBe result7
     }
   }
 
@@ -947,9 +977,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Over(Third), Default()).number()
+        positions.names(Over(Third), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i + 1), i) }
+      _.toList.sorted shouldBe result8
     }
   }
 
@@ -958,9 +988,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Along(First), Default()).number()
+        positions.names(Along(First), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position2D(i, i + 1), i) }
+      _.toList.sorted shouldBe result9
     }
   }
 
@@ -969,9 +999,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Along(Second), Default()).number()
+        positions.names(Along(Second), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position2D(s, i + 1), i) }
+      _.toList.sorted shouldBe result10
     }
   }
 
@@ -980,9 +1010,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position3D(s, i, i + 1) }
     } When {
       positions: TypedPipe[Position3D] =>
-        positions.names(Along(Third), Default()).number()
+        positions.names(Along(Third), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position2D(s, i), i) }
+      _.toList.sorted shouldBe result11
     }
   }
 
@@ -991,9 +1021,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Over(First), Default()).number()
+        positions.names(Over(First), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
+      _.toList.sorted shouldBe result12
     }
   }
 
@@ -1002,9 +1032,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Over(Second), Default()).number()
+        positions.names(Over(Second), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
+      _.toList.sorted shouldBe result13
     }
   }
 
@@ -1013,9 +1043,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Over(Third), Default()).number()
+        positions.names(Over(Third), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i + 1), i) }
+      _.toList.sorted shouldBe result14
     }
   }
 
@@ -1024,9 +1054,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Over(Fourth), Default()).number()
+        positions.names(Over(Fourth), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i + 2), i) }
+      _.toList.sorted shouldBe result15
     }
   }
 
@@ -1035,9 +1065,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Along(First), Default()).number()
+        positions.names(Along(First), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position3D(i, i + 1, i + 2), i) }
+      _.toList.sorted shouldBe result16
     }
   }
 
@@ -1046,9 +1076,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Along(Second), Default()).number()
+        positions.names(Along(Second), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position3D(s, i + 1, i + 2), i) }
+      _.toList.sorted shouldBe result17
     }
   }
 
@@ -1057,9 +1087,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Along(Third), Default()).number()
+        positions.names(Along(Third), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position3D(s, i, i + 2), i) }
+      _.toList.sorted shouldBe result18
     }
   }
 
@@ -1068,9 +1098,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
     } When {
       positions: TypedPipe[Position4D] =>
-        positions.names(Along(Fourth), Default()).number()
+        positions.names(Along(Fourth), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position3D(s, i, i + 1), i) }
+      _.toList.sorted shouldBe result19
     }
   }
 
@@ -1079,9 +1109,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Over(First), Default()).number()
+        positions.names(Over(First), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(s), i) }
+      _.toList.sorted shouldBe result20
     }
   }
 
@@ -1090,9 +1120,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Over(Second), Default()).number()
+        positions.names(Over(Second), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i), i) }
+      _.toList.sorted shouldBe result21
     }
   }
 
@@ -1101,9 +1131,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Over(Third), Default()).number()
+        positions.names(Over(Third), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i + 1), i) }
+      _.toList.sorted shouldBe result22
     }
   }
 
@@ -1112,9 +1142,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Over(Fourth), Default()).number()
+        positions.names(Over(Fourth), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i + 2), i) }
+      _.toList.sorted shouldBe result23
     }
   }
 
@@ -1123,9 +1153,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Over(Fifth), Default()).number()
+        positions.names(Over(Fifth), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position1D(i + 3), i) }
+      _.toList.sorted shouldBe result24
     }
   }
 
@@ -1134,9 +1164,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Along(First), Default()).number()
+        positions.names(Along(First), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position4D(i, i + 1, i + 2, i + 3), i) }
+      _.toList.sorted shouldBe result25
     }
   }
 
@@ -1145,9 +1175,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Along(Second), Default()).number()
+        positions.names(Along(Second), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position4D(s, i + 1, i + 2, i + 3), i) }
+      _.toList.sorted shouldBe result26
     }
   }
 
@@ -1156,9 +1186,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Along(Third), Default()).number()
+        positions.names(Along(Third), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position4D(s, i, i + 2, i + 3), i) }
+      _.toList.sorted shouldBe result27
     }
   }
 
@@ -1167,9 +1197,9 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
     } When {
       positions: TypedPipe[Position5D] =>
-        positions.names(Along(Fourth), Default()).number()
+        positions.names(Along(Fourth), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => (Position4D(s, i, i + 1, i + 3), i) }
+      _.toList.sorted shouldBe result28
     }
   }
 
@@ -1180,7 +1210,7 @@ class TestScaldingPositions extends TestPositions with TBddDsl {
       positions: TypedPipe[Position5D] =>
         positions.names(Along(Fifth), Default())
     } Then {
-      _.toList shouldBe data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+      _.toList.sorted shouldBe result29
     }
   }
 }
@@ -1191,242 +1221,203 @@ class TestSparkPositions extends TestPositions {
     toRDD(data)
       .map { case (s, i) => Position1D(s) }
       .names(Over(First), Default())
-      .toList.sorted shouldBe List(Position1D("fid:A"), Position1D("fid:B"), Position1D("fid:C"),
-        Position1D("fid:D"), Position1D("fid:E"), Position1D("fid:F"))
+      .toList.sorted shouldBe result1
   }
 
   "A Positions of Position2D" should "return its First over names" in {
     toRDD(data)
       .map { case (s, i) => Position2D(s, i) }
-      .names(Over(First), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 0), (Position1D("fid:B"), 5), (Position1D("fid:C"), 3),
-        (Position1D("fid:D"), 1), (Position1D("fid:E"), 2), (Position1D("fid:F"), 4))
+      .names(Over(First), Default(Reducers(12)))
+      .toList.sorted shouldBe result2
   }
 
   it should "return its Second over names" in {
     toRDD(data)
       .map { case (s, i) => Position2D(s, i) }
-      .names(Over(Second), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
-        (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2))
+      .names(Over(Second), Default())
+      .toList.sorted shouldBe result3
   }
 
   it should "return its First along names" in {
     toRDD(data)
       .map { case (s, i) => Position2D(s, i) }
-      .names(Along(First), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(0), 2), (Position1D(1), 5), (Position1D(2), 4),
-        (Position1D(3), 3), (Position1D(4), 0), (Position1D(5), 1))
+      .names(Along(First), Default(Reducers(12)))
+      .toList.sorted shouldBe result4
   }
 
   it should "return its Second along names" in {
     toRDD(data)
       .map { case (s, i) => Position2D(s, i) }
       .names(Along(Second), Default())
-      .toList.sorted shouldBe List(Position1D("fid:A"), Position1D("fid:B"), Position1D("fid:C"),
-        Position1D("fid:D"), Position1D("fid:E"), Position1D("fid:F"))
+      .toList.sorted shouldBe result5
   }
 
   "A Positions of Position3D" should "return its First over names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Over(First), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 0), (Position1D("fid:B"), 5), (Position1D("fid:C"), 3),
-        (Position1D("fid:D"), 1), (Position1D("fid:E"), 2), (Position1D("fid:F"), 4))
+      .names(Over(First), Default(Reducers(12)))
+      .toList.sorted shouldBe result6
   }
 
   it should "return its Second over names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Over(Second), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
-        (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2))
+      .names(Over(Second), Default())
+      .toList.sorted shouldBe result7
   }
 
   it should "return its Third over names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Over(Third), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(1), 5), (Position1D(2), 4), (Position1D(3), 3),
-        (Position1D(4), 0), (Position1D(5), 2), (Position1D(6), 1))
+      .names(Over(Third), Default(Reducers(12)))
+      .toList.sorted shouldBe result8
   }
 
   it should "return its First along names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Along(First), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position2D(0, 1), 0), (Position2D(1, 2), 2), (Position2D(2,3), 3),
-        (Position2D(3, 4), 4), (Position2D(4, 5), 1), (Position2D(5, 6), 5))
+      .names(Along(First), Default())
+      .toList.sorted shouldBe result9
   }
 
   it should "return its Second along names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Along(Second), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position2D("fid:A", 1), 3), (Position2D("fid:B", 2), 5),
-        (Position2D("fid:C", 3), 1), (Position2D("fid:D", 4), 0), (Position2D("fid:E", 5), 4),
-        (Position2D("fid:F", 6), 2))
+      .names(Along(Second), Default(Reducers(12)))
+      .toList.sorted shouldBe result10
   }
 
   it should "return its Third along names" in {
     toRDD(data)
       .map { case (s, i) => Position3D(s, i, i + 1) }
-      .names(Along(Third), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position2D("fid:A", 0), 0), (Position2D("fid:B", 1), 3),
-        (Position2D("fid:C", 2), 4), (Position2D("fid:D", 3), 2), (Position2D("fid:E", 4), 1),
-        (Position2D("fid:F", 5), 5))
+      .names(Along(Third), Default())
+      .toList.sorted shouldBe result11
   }
 
   "A Positions of Position4D" should "return its First over names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Over(First), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 0), (Position1D("fid:B"), 5), (Position1D("fid:C"), 3),
-        (Position1D("fid:D"), 1), (Position1D("fid:E"), 2), (Position1D("fid:F"), 4))
+      .names(Over(First), Default(Reducers(12)))
+      .toList.sorted shouldBe result12
   }
 
   it should "return its Second over names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Over(Second), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
-        (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2))
+      .names(Over(Second), Default())
+      .toList.sorted shouldBe result13
   }
 
   it should "return its Third over names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Over(Third), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(1), 5), (Position1D(2), 4), (Position1D(3), 3),
-        (Position1D(4), 0), (Position1D(5), 2), (Position1D(6), 1))
+      .names(Over(Third), Default(Reducers(12)))
+      .toList.sorted shouldBe result14
   }
 
   it should "return its Fourth over names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Over(Fourth), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(2), 0), (Position1D(3), 1), (Position1D(4), 3),
-        (Position1D(5), 2), (Position1D(6), 4), (Position1D(7), 5))
+      .names(Over(Fourth), Default())
+      .toList.sorted shouldBe result15
   }
 
   it should "return its First along names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Along(First), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position3D(0, 1, 2), 1), (Position3D(1, 2, 3), 4), (Position3D(2, 3, 4), 3),
-        (Position3D(3, 4, 5), 2), (Position3D(4, 5, 6), 0), (Position3D(5, 6, 7), 5))
+      .names(Along(First), Default(Reducers(12)))
+      .toList.sorted shouldBe result16
   }
 
   it should "return its Second along names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Along(Second), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position3D("fid:A", 1, 2), 0), (Position3D("fid:B", 2, 3), 5),
-        (Position3D("fid:C", 3, 4), 2), (Position3D("fid:D", 4, 5), 4), (Position3D("fid:E", 5, 6), 3),
-        (Position3D("fid:F", 6, 7), 1))
+      .names(Along(Second), Default())
+      .toList.sorted shouldBe result17
   }
 
   it should "return its Third along names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Along(Third), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position3D("fid:A", 0, 2), 2), (Position3D("fid:B", 1, 3), 1),
-        (Position3D("fid:C", 2, 4), 5), (Position3D("fid:D", 3, 5), 4), (Position3D("fid:E", 4, 6), 3),
-        (Position3D("fid:F", 5, 7), 0))
+      .names(Along(Third), Default(Reducers(12)))
+      .toList.sorted shouldBe result18
   }
 
   it should "return its Fourth along names" in {
     toRDD(data)
       .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-      .names(Along(Fourth), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position3D("fid:A", 0, 1), 5), (Position3D("fid:B", 1, 2), 3),
-        (Position3D("fid:C", 2, 3), 2), (Position3D("fid:D", 3, 4), 1), (Position3D("fid:E", 4, 5), 0),
-        (Position3D("fid:F", 5, 6), 4))
+      .names(Along(Fourth), Default())
+      .toList.sorted shouldBe result19
   }
 
   "A Positions of Position5D" should "return its First over names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Over(First), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D("fid:A"), 0), (Position1D("fid:B"), 5), (Position1D("fid:C"), 3),
-        (Position1D("fid:D"), 1), (Position1D("fid:E"), 2), (Position1D("fid:F"), 4))
+      .names(Over(First), Default(Reducers(12)))
+      .toList.sorted shouldBe result20
   }
 
   it should "return its Second over names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Over(Second), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(0), 3), (Position1D(1), 5), (Position1D(2), 0),
-        (Position1D(3), 1), (Position1D(4), 4), (Position1D(5), 2))
+      .names(Over(Second), Default())
+      .toList.sorted shouldBe result21
   }
 
   it should "return its Third over names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Over(Third), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(1), 5), (Position1D(2), 4), (Position1D(3), 3),
-        (Position1D(4), 0), (Position1D(5), 2), (Position1D(6), 1))
+      .names(Over(Third), Default(Reducers(12)))
+      .toList.sorted shouldBe result22
   }
 
   it should "return its Fourth over names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Over(Fourth), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(2), 0), (Position1D(3), 1), (Position1D(4), 3),
-        (Position1D(5), 2), (Position1D(6), 4), (Position1D(7), 5))
+      .names(Over(Fourth), Default())
+      .toList.sorted shouldBe result23
   }
 
   it should "return its Fifth over names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Over(Fifth), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position1D(3), 4), (Position1D(4), 0), (Position1D(5), 3),
-        (Position1D(6), 2), (Position1D(7), 1), (Position1D(8), 5))
+      .names(Over(Fifth), Default(Reducers(12)))
+      .toList.sorted shouldBe result24
   }
 
   it should "return its First along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Along(First), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position4D(0, 1, 2, 3), 0), (Position4D(1, 2, 3, 4), 3),
-        (Position4D(2, 3, 4, 5), 4), (Position4D(3, 4, 5, 6), 2), (Position4D(4, 5, 6, 7), 1),
-        (Position4D(5, 6, 7, 8), 5))
+      .names(Along(First), Default())
+      .toList.sorted shouldBe result25
   }
 
   it should "return its Second along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Along(Second), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position4D("fid:A", 1, 2, 3), 2), (Position4D("fid:B", 2, 3, 4), 0),
-        (Position4D("fid:C", 3, 4, 5), 5), (Position4D("fid:D", 4, 5, 6), 4), (Position4D("fid:E", 5, 6, 7), 1),
-        (Position4D("fid:F", 6, 7, 8), 3))
+      .names(Along(Second), Default(Reducers(12)))
+      .toList.sorted shouldBe result26
   }
 
   it should "return its Third along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Along(Third), Default()).number()
-      .toList.sortBy(_._1) shouldBe List((Position4D("fid:A", 0, 2, 3), 5), (Position4D("fid:B", 1, 3, 4), 1),
-        (Position4D("fid:C", 2, 4, 5), 3), (Position4D("fid:D", 3, 5, 6), 2), (Position4D("fid:E", 4, 6, 7), 0),
-        (Position4D("fid:F", 5, 7, 8), 4))
+      .names(Along(Third), Default())
+      .toList.sorted shouldBe result27
   }
 
   it should "return its Fourth along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-      .names(Along(Fourth), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) shouldBe List((Position4D("fid:A", 0, 1, 3) ,4), (Position4D("fid:B", 1, 2, 4), 5),
-        (Position4D("fid:C", 2, 3, 5), 3), (Position4D("fid:D", 3, 4, 6), 0), (Position4D("fid:E", 4, 5, 7), 1),
-        (Position4D("fid:F", 5, 6, 8), 2))
+      .names(Along(Fourth), Default(Reducers(12)))
+      .toList.sorted shouldBe result28
   }
 
   it should "return its Fifth along names" in {
     toRDD(data)
       .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
       .names(Along(Fifth), Default())
-      .toList.sorted shouldBe List(Position4D("fid:A", 0, 1, 2), Position4D("fid:B", 1, 2, 3),
-        Position4D("fid:C", 2, 3, 4), Position4D("fid:D", 3, 4, 5), Position4D("fid:E", 4, 5, 6),
-        Position4D("fid:F", 5, 6, 7))
+      .toList.sorted shouldBe result29
   }
 }
 

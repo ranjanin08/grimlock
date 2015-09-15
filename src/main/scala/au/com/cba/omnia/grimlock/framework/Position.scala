@@ -821,9 +821,6 @@ trait Positions[P <: Position] {
   def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
     ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S]
 
-  /** Number the positions. */
-  def number(): U[(P, Long)]
-
   /**
    * Slice the positions using a regular expression.
    *

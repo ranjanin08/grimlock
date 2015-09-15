@@ -45,8 +45,6 @@ class Positions[P <: Position](val data: TypedPipe[P]) extends BasePositions[P] 
     data.map { case p => slice.selected(p) }.distinct(Position.Ordering[slice.S]())
   }
 
-  def number(): U[(P, Long)] = Names.number(data)
-
   def saveAsText(file: String, writer: TextWriter = Position.toString())(implicit flow: FlowDef,
     mode: Mode): U[P] = saveText(file, writer)
 

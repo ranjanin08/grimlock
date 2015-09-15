@@ -26,7 +26,6 @@ import au.com.cba.omnia.grimlock.framework.{
   Matrix => BaseMatrix,
   Matrixable => BaseMatrixable,
   MatrixWithParseErrors,
-  Nameable => BaseNameable,
   NoParameters,
   Predicateable => BasePredicateable,
   Redistribute,
@@ -53,7 +52,6 @@ import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 import au.com.cba.omnia.grimlock.framework.window._
 
 import au.com.cba.omnia.grimlock.scalding.Matrix._
-import au.com.cba.omnia.grimlock.scalding.Nameable._
 
 import cascading.flow.FlowDef
 import com.twitter.scalding.{ Mode, TextLine, WritableSequenceFile }
@@ -624,22 +622,18 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   val data: U[Cell[P]]
 
-  protected def saveDictionary(names: U[(Position1D, Long)], file: String, dictionary: String, separator: String)(
-    implicit flow: FlowDef, mode: Mode) = {
-    names
-      .map { case (p, i) => p.toShortString(separator) + separator + i }
-      .write(TypedSink(TextLine(dictionary.format(file))))
+  protected def saveDictionary[D <: Dimension](slice: Slice[P, D], file: String, dictionary: String,
+    separator: String)(implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S], flow: FlowDef, mode: Mode) = {
+    val numbered = names(slice)
+      .groupAll
+      .mapValueStream { _.zipWithIndex }
+      .map { case (_, (p, i)) => (p, i) }
 
-    Grouped(names)
-  }
+    numbered
+      .map { case (Position1D(c), i) => c.toShortString + separator + i }
+      .write(TypedSink(TextLine(dictionary.format(file, slice.dimension.index))))
 
-  protected def saveDictionary(names: U[(Position1D, Long)], file: String, dictionary: String, separator: String,
-    dim: Dimension)(implicit flow: FlowDef, mode: Mode) = {
-    names
-      .map { case (p, i) => p.toShortString(separator) + separator + i }
-      .write(TypedSink(TextLine(dictionary.format(file, dim.index))))
-
-    Grouped(names)
+    Grouped(numbered)
   }
 
   private def pairwiseTuples[D <: Dimension, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
@@ -1088,27 +1082,9 @@ class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D]
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
     mode: Mode): U[Cell[Position1D]] = {
-    saveAsIVWithNames(file, names(Over(First)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix1D` as sparse matrix file (index, value).
-   *
-   * @param file       File to write to.
-   * @param names      The names to use for the first dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position1D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I](file: String, names: I, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-    implicit ev: BaseNameable[I, Position1D, Position1D, Dimension.First, TypedPipe], flow: FlowDef,
-      mode: Mode): U[Cell[Position1D]] = {
     data
       .groupBy { case c => c.position }
-      .join(saveDictionary(ev.convert(this, Over(First), names), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .map { case (_, (c, i)) => i + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
@@ -1156,53 +1132,30 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    */
   def saveAsCSV[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
-    escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
-      rowId: String = "id")(implicit ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S], flow: FlowDef,
+    escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
+      rowId: String = "id")(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], flow: FlowDef,
         mode: Mode): U[Cell[Position2D]] = {
-    saveAsCSVWithNames(slice, file, names(slice), separator, escapee, writeHeader, header, writeRowId, rowId)
-  }
-
-  /**
-   * Persist a `Matrix2D` as a CSV file.
-   *
-   * @param slice       Encapsulates the dimension that makes up the columns.
-   * @param file        File to write to.
-   * @param names       The names to use for the columns (according to their ordering).
-   * @param separator   Column separator to use.
-   * @param escapee     The method for escaping the separator character.
-   * @param writeHeader Indicator of the header should be written to a separate file.
-   * @param header      Postfix for the header file name.
-   * @param writeRowId  Indicator if row names should be written.
-   * @param rowId       Column name of row names.
-   *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsCSVWithNames[D <: Dimension, I](slice: Slice[Position2D, D], file: String, names: I,
-    separator: String = "|", escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header",
-    writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: BaseNameable[I, Position2D, slice.S, D, TypedPipe],
-      ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S], flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
-    // Note: Usage of .toShortString should be safe as data is written as string anyways. It does assume that all
-    //       indices have unique short string representations.
-    val columns = ev1.convert(this, slice, names)
-      .map { List(_) }
-      .sum
-      .map { _.sortBy(_._2).map { case (p, i) => escapee.escape(p.toShortString("")) } }
+    val escape = (str: String) => escapee.escape(str)
+    val semigroup = new com.twitter.algebird.Semigroup[HashSet[String]] {
+      def plus(l: HashSet[String], r: HashSet[String]): HashSet[String] = l ++ r
+    }
+    val columns = data
+      .map { case c => HashSet(escape(slice.remainder(c.position)(First).toShortString)) }
+      .sum(semigroup)
+      .map { _.toList.sorted }
 
     if (writeHeader) {
       columns
         .map {
-          case lst => (if (writeRowId) escapee.escape(rowId) + separator else "") + lst.mkString(separator)
+          case lst => (if (writeRowId) escape(rowId) + separator else "") + lst.mkString(separator)
         }
         .write(TypedSink(TextLine(header.format(file))))
     }
 
     data
-      .groupBy { case c => slice.remainder(c.position).toShortString("") }
+      .groupBy { case c => slice.selected(c.position)(First).toShortString }
       .mapValues {
-        case Cell(p, c) => Map(escapee.escape(slice.selected(p).toShortString("")) ->
-          escapee.escape(c.value.toShortString))
+        case Cell(p, c) => Map(escape(slice.remainder(p)(First).toShortString) -> escape(c.value.toShortString))
       }
       .sum
       .flatMapWithValue(columns) {
@@ -1211,7 +1164,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
         }
       }
       .map {
-        case (i, lst) => (if (writeRowId) escapee.escape(i) + separator else "") + lst.mkString(separator)
+        case (i, lst) => (if (writeRowId) escape(i) + separator else "") + lst.mkString(separator)
       }
       .write(TypedSink(TextLine(file)))
 
@@ -1229,32 +1182,12 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
     mode: Mode): U[Cell[Position2D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix2D` as sparse matrix file (index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J](file: String, namesI: I, namesJ: J, dictionary: String = "%1$s.dict.%2$d",
-    separator: String = "|")(implicit ev1: BaseNameable[I, Position2D, Position1D, Dimension.First, TypedPipe],
-      ev2: BaseNameable[J, Position2D, Position1D, Dimension.Second, TypedPipe], flow: FlowDef,
-        mode: Mode): U[Cell[Position2D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => i + separator + j + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
@@ -1262,94 +1195,108 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
   }
 
   /**
-   * Persist a `Matrix2D` as a LDA file.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   * @param addId      Indicator if each line should start with the row id followed by `separator`.
-   *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
-   */
-  def saveAsLDA[D <: Dimension](slice: Slice[Position2D, D], file: String, dictionary: String = "%s.dict",
-    separator: String = "|", addId: Boolean = false)(implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
-      mode: Mode): U[Cell[Position2D]] = {
-    saveAsLDAWithNames(slice, file, names(Along(slice.dimension)), dictionary, separator, addId)
-  }
-
-  /**
-   * Persist a `Matrix2D` as a LDA file.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param names      The names to use for the columns (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   * @param addId      Indicator if each line should start with the row id followed by `separator`.
-   *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsLDAWithNames[D <: Dimension, I](slice: Slice[Position2D, D], file: String, names: I,
-    dictionary: String = "%s.dict", separator: String = "|", addId: Boolean = false)(
-      implicit ev1: PosDimDep[Position2D, D], ev2: BaseNameable[I, Position2D, Position1D, D, TypedPipe],
-        flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
-    data
-      .groupBy { case c => slice.remainder(c.position).asInstanceOf[Position1D] }
-      .join(saveDictionary(ev2.convert(this, Along(slice.dimension), names), file, dictionary, separator))
-      .map { case (_, (Cell(p, c), i)) => (p, " " + i + ":" + c.value.toShortString, 1L) }
-      .groupBy { case (p, ics, m) => slice.selected(p) }
-      .reduce[(Position2D, String, Long)] { case ((p, ls, lm), (_, rs, rm)) => (p, ls + rs, lm + rm) }
-      .map { case (p, (_, ics, m)) => if (addId) p.toShortString(separator) + separator + m + ics else m + ics }
-      .write(TypedSink(TextLine(file)))
-
-    data
-  }
-
-  /**
    * Persist a `Matrix2D` as a Vowpal Wabbit file.
    *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param labels     The labels to write with.
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
+   * @param slice Encapsulates the dimension that makes up the columns.
+   * @param file  File to write to.
+   * @param tag   Indicator if the selected position should be added as a tag.
    *
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    */
-  def saveAsVW[D <: Dimension](slice: Slice[Position2D, D], labels: U[Cell[Position1D]], file: String,
-    dictionary: String = "%s.dict", separator: String = ":")(implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
-      mode: Mode): U[Cell[Position2D]] = {
-    saveAsVWWithNames(slice, labels, file, names(Along(slice.dimension)), dictionary, separator)
+  def saveAsVW[D <: Dimension](slice: Slice[Position2D, D], file: String, tag: Boolean = false)(
+    implicit ev: PosDimDep[Position2D, D], flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, None, None, tag)
   }
 
   /**
-   * Persist a `Matrix2D` as a Vowpal Wabbit file.
+   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels.
    *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param labels     The labels to write with.
-   * @param file       File to write to.
-   * @param names      The names to use for the columns (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
+   * @param slice  Encapsulates the dimension that makes up the columns.
+   * @param file   File to write to.
+   * @param labels The labels.
+   * @param tag    Indicator if the selected position should be added as a tag.
    *
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
+   * @note The labels are joined to the data keeping only those examples for which data and a label are available.
    */
-  def saveAsVWWithNames[D <: Dimension, I](slice: Slice[Position2D, D], labels: U[Cell[Position1D]], file: String,
-    names: I, dictionary: String = "%s.dict", separator: String = ":")(implicit ev: PosDimDep[Position2D, D],
-      ev2: BaseNameable[I, Position2D, Position1D, D, TypedPipe], flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
-    data
-      .groupBy { case c => slice.remainder(c.position).asInstanceOf[Position1D] }
-      .join(saveDictionary(ev2.convert(this, Along(slice.dimension), names), file, dictionary, separator))
-      .map { case (_, (Cell(p, c), i)) => (p, " " + i + ":" + c.value.toShortString) }
-      .groupBy { case (p, ics) => slice.selected(p).asInstanceOf[Position1D] }
-      .reduce[(Position2D, String)] { case ((p, ls), (_, rs)) => (p, ls + rs) }
-      .join(labels.groupBy { case c => c.position })
-      .map { case (p, ((_, ics), c)) => c.content.value.toShortString + " " + p.toShortString(separator) + "|" + ics }
+  def saveAsVWWithLabels[D <: Dimension](slice: Slice[Position2D, D], file: String, labels: U[Cell[Position1D]],
+    tag: Boolean = false)(implicit ev: PosDimDep[Position2D, D], flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, Some(labels), None, tag)
+  }
+
+  /**
+   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided importance weights.
+   *
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param importance The importance weights.
+   * @param tag        Indicator if the selected position should be added as a tag.
+   *
+   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   *
+   * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
+   */
+  def saveAsVWWithImportance[D <: Dimension](slice: Slice[Position2D, D], file: String, importance: U[Cell[Position1D]],
+    tag: Boolean = false)(implicit ev: PosDimDep[Position2D, D], flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, None, Some(importance), tag)
+  }
+
+  /**
+   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels and importance weights.
+   *
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param labels     The labels.
+   * @param importance The importance weights.
+   * @param tag        Indicator if the selected position should be added as a tag.
+   *
+   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   *
+   * @note The labels and weights are joined to the data keeping only those examples for which data and a label
+   *       and weight are available.
+   */
+  def saveAsVWWithLabelsAndImportance[D <: Dimension](slice: Slice[Position2D, D], file: String,
+    labels: U[Cell[Position1D]], importance: U[Cell[Position1D]], tag: Boolean = false)(
+      implicit ev: PosDimDep[Position2D, D], flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, Some(labels), Some(importance), tag)
+  }
+
+  private def saveAsVW[D <: Dimension](slice: Slice[Position2D, D], file: String, labels: Option[U[Cell[Position1D]]],
+    importance: Option[U[Cell[Position1D]]], tag: Boolean)(implicit ev: PosDimDep[Position2D, D], flow: FlowDef,
+      mode: Mode): U[Cell[Position2D]] = {
+    val features = data
+      .flatMap {
+        case c =>
+          c.content.value.asDouble.map {
+            case v => (slice.selected(c.position), slice.remainder(c.position)(First).toShortString + ":" + v)
+          }
+      }
+      .group
+      .sortBy { case s => s }
+      .foldLeft("|") { case (b, v) => b + " " + v }
+
+    val tagged = tag match {
+      case true => features.map { case (p, s) => (p, p(First).toShortString + s) }
+      case false => features.toTypedPipe
+    }
+
+    val weighted = importance match {
+      case Some(imp) => tagged
+        .join(imp.groupBy { case c => c.position.asInstanceOf[slice.S] })
+        .flatMap { case (p, (s, c)) => c.content.value.asDouble.map { case i => (p, i + " " + s) } }
+      case None => tagged
+    }
+
+    val examples = labels match {
+      case Some(lab) => weighted
+        .join(lab.groupBy { case c => c.position.asInstanceOf[slice.S] })
+        .flatMap { case (p, (s, c)) => c.content.value.asDouble.map { case l => (p, l + " " + s) } }
+      case None => weighted
+    }
+
+    examples
+      .map { case (p, s) => s }
       .write(TypedSink(TextLine(file)))
 
     data
@@ -1395,37 +1342,15 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
     mode: Mode): U[Cell[Position3D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix3D` as sparse matrix file (index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position3D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K](file: String, namesI: I, namesJ: J, namesK: K, dictionary: String = "%1$s.dict.%2$d",
-    separator: String = "|")(implicit ev1: BaseNameable[I, Position3D, Position1D, Dimension.First, TypedPipe],
-      ev2: BaseNameable[J, Position3D, Position1D, Dimension.Second, TypedPipe],
-        ev3: BaseNameable[K, Position3D, Position1D, Dimension.Third, TypedPipe], flow: FlowDef,
-          mode: Mode): U[Cell[Position3D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => i + separator + j + separator + k + separator + c.content.value.toShortString }
       .write(TypedSink(TextLine(file)))
 
@@ -1474,44 +1399,18 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
     mode: Mode): U[Cell[Position4D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix4D` as sparse matrix file (index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position4D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L](file: String, namesI: I, namesJ: J, namesK: K, namesL: L,
-    dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position4D, Position1D, Dimension.First, TypedPipe],
-        ev2: BaseNameable[J, Position4D, Position1D, Dimension.Second, TypedPipe],
-          ev3: BaseNameable[K, Position4D, Position1D, Dimension.Third, TypedPipe],
-            ev4: BaseNameable[L, Position4D, Position1D, Dimension.Fourth, TypedPipe], flow: FlowDef,
-              mode: Mode): U[Cell[Position4D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k), l)) =>
           i + separator + j + separator + k + separator + l + separator + c.content.value.toShortString
@@ -1566,49 +1465,21 @@ class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D]
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
     mode: Mode): U[Cell[Position5D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      names(Over(Fifth)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix5D` as sparse matrix file (index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param namesM     The names to use for the fifth dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position5D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L, M](file: String, namesI: I, namesJ: J, namesK: K, namesL: L, namesM: M,
-    dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position5D, Position1D, Dimension.First, TypedPipe],
-        ev2: BaseNameable[J, Position5D, Position1D, Dimension.Second, TypedPipe],
-          ev3: BaseNameable[K, Position5D, Position1D, Dimension.Third, TypedPipe],
-            ev4: BaseNameable[L, Position5D, Position1D, Dimension.Fourth, TypedPipe],
-              ev5: BaseNameable[M, Position5D, Position1D, Dimension.Fifth, TypedPipe], flow: FlowDef,
-                mode: Mode): U[Cell[Position5D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(ev5.convert(this, Over(Fifth), namesM), file, dictionary, separator, Fifth))
+      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l), m)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator + c.content.value.toShortString
@@ -1666,54 +1537,24 @@ class Matrix6D(val data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D]
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
     mode: Mode): U[Cell[Position6D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      names(Over(Fifth)), names(Over(Sixth)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix6D` as sparse matrix file (index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param namesM     The names to use for the fifth dimension (according to their ordering).
-   * @param namesN     The names to use for the sixth dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position6D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L, M, N](file: String, namesI: I, namesJ: J, namesK: K, namesL: L, namesM: M,
-    namesN: N, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position6D, Position1D, Dimension.First, TypedPipe],
-        ev2: BaseNameable[J, Position6D, Position1D, Dimension.Second, TypedPipe],
-          ev3: BaseNameable[K, Position6D, Position1D, Dimension.Third, TypedPipe],
-            ev4: BaseNameable[L, Position6D, Position1D, Dimension.Fourth, TypedPipe],
-              ev5: BaseNameable[M, Position6D, Position1D, Dimension.Fifth, TypedPipe],
-                ev6: BaseNameable[N, Position6D, Position1D, Dimension.Sixth, TypedPipe], flow: FlowDef,
-                  mode: Mode): U[Cell[Position6D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(ev5.convert(this, Over(Fifth), namesM), file, dictionary, separator, Fifth))
+      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .groupBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(ev6.convert(this, Over(Sixth), namesN), file, dictionary, separator, Sixth))
+      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m), n)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
@@ -1774,59 +1615,27 @@ class Matrix7D(val data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D]
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
     mode: Mode): U[Cell[Position7D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      names(Over(Fifth)), names(Over(Sixth)), names(Over(Seventh)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix7D` as sparse matrix file (index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param namesM     The names to use for the fifth dimension (according to their ordering).
-   * @param namesN     The names to use for the sixth dimension (according to their ordering).
-   * @param namesO     The names to use for the seventh dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position7D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L, M, N, O](file: String, namesI: I, namesJ: J, namesK: K, namesL: L, namesM: M,
-    namesN: N, namesO: O, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position7D, Position1D, Dimension.First, TypedPipe],
-        ev2: BaseNameable[J, Position7D, Position1D, Dimension.Second, TypedPipe],
-          ev3: BaseNameable[K, Position7D, Position1D, Dimension.Third, TypedPipe],
-            ev4: BaseNameable[L, Position7D, Position1D, Dimension.Fourth, TypedPipe],
-              ev5: BaseNameable[M, Position7D, Position1D, Dimension.Fifth, TypedPipe],
-                ev6: BaseNameable[N, Position7D, Position1D, Dimension.Sixth, TypedPipe],
-                  ev7: BaseNameable[O, Position7D, Position1D, Dimension.Seventh, TypedPipe], flow: FlowDef,
-                    mode: Mode): U[Cell[Position7D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(ev5.convert(this, Over(Fifth), namesM), file, dictionary, separator, Fifth))
+      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .groupBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(ev6.convert(this, Over(Sixth), namesN), file, dictionary, separator, Sixth))
+      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
       .groupBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
-      .join(saveDictionary(ev7.convert(this, Over(Seventh), namesO), file, dictionary, separator, Seventh))
+      .join(saveDictionary(Over(Seventh), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m, n), o)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
@@ -1892,64 +1701,30 @@ class Matrix8D(val data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D]
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
     mode: Mode): U[Cell[Position8D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      names(Over(Fifth)), names(Over(Sixth)), names(Over(Seventh)), names(Over(Eighth)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix8D` as sparse matrix file (index, index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param namesM     The names to use for the fifth dimension (according to their ordering).
-   * @param namesN     The names to use for the sixth dimension (according to their ordering).
-   * @param namesO     The names to use for the seventh dimension (according to their ordering).
-   * @param namesQ     The names to use for the eighth dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position8D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L, M, N, O, Q](file: String, namesI: I, namesJ: J, namesK: K, namesL: L, namesM: M,
-    namesN: N, namesO: O, namesQ: Q, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position8D, Position1D, Dimension.First, TypedPipe],
-        ev2: BaseNameable[J, Position8D, Position1D, Dimension.Second, TypedPipe],
-          ev3: BaseNameable[K, Position8D, Position1D, Dimension.Third, TypedPipe],
-            ev4: BaseNameable[L, Position8D, Position1D, Dimension.Fourth, TypedPipe],
-              ev5: BaseNameable[M, Position8D, Position1D, Dimension.Fifth, TypedPipe],
-                ev6: BaseNameable[N, Position8D, Position1D, Dimension.Sixth, TypedPipe],
-                  ev7: BaseNameable[O, Position8D, Position1D, Dimension.Seventh, TypedPipe],
-                    ev8: BaseNameable[Q, Position8D, Position1D, Dimension.Eighth, TypedPipe], flow: FlowDef,
-                      mode: Mode): U[Cell[Position8D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(ev5.convert(this, Over(Fifth), namesM), file, dictionary, separator, Fifth))
+      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .groupBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(ev6.convert(this, Over(Sixth), namesN), file, dictionary, separator, Sixth))
+      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
       .groupBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
-      .join(saveDictionary(ev7.convert(this, Over(Seventh), namesO), file, dictionary, separator, Seventh))
+      .join(saveDictionary(Over(Seventh), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m, n), o)) => (c, i, j, k, l, m, n, o) }
       .groupBy { case (c, i, j, k, l, m, n, o) => Position1D(c.position(Eighth)) }
-      .join(saveDictionary(ev8.convert(this, Over(Eighth), namesQ), file, dictionary, separator, Eighth))
+      .join(saveDictionary(Over(Eighth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m, n, o), p)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
@@ -2016,70 +1791,33 @@ class Matrix9D(val data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D]
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
     mode: Mode): U[Cell[Position9D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      names(Over(Fifth)), names(Over(Sixth)), names(Over(Seventh)), names(Over(Eighth)), names(Over(Ninth)),
-      dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix9D` as sparse matrix file (index, index, index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param namesM     The names to use for the fifth dimension (according to their ordering).
-   * @param namesN     The names to use for the sixth dimension (according to their ordering).
-   * @param namesO     The names to use for the seventh dimension (according to their ordering).
-   * @param namesQ     The names to use for the eighth dimension (according to their ordering).
-   * @param namesR     The names to use for the ninth dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position9D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L, M, N, O, Q, R](file: String, namesI: I, namesJ: J, namesK: K, namesL: L, namesM: M,
-    namesN: N, namesO: O, namesQ: Q, namesR: R, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position9D, Position1D, Dimension.First, TypedPipe],
-        ev2: BaseNameable[J, Position9D, Position1D, Dimension.Second, TypedPipe],
-          ev3: BaseNameable[K, Position9D, Position1D, Dimension.Third, TypedPipe],
-            ev4: BaseNameable[L, Position9D, Position1D, Dimension.Fourth, TypedPipe],
-              ev5: BaseNameable[M, Position9D, Position1D, Dimension.Fifth, TypedPipe],
-                ev6: BaseNameable[N, Position9D, Position1D, Dimension.Sixth, TypedPipe],
-                  ev7: BaseNameable[O, Position9D, Position1D, Dimension.Seventh, TypedPipe],
-                    ev8: BaseNameable[Q, Position9D, Position1D, Dimension.Eighth, TypedPipe],
-                      ev9: BaseNameable[R, Position9D, Position1D, Dimension.Ninth, TypedPipe], flow: FlowDef,
-                        mode: Mode): U[Cell[Position9D]] = {
     data
       .groupBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .groupBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .groupBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .groupBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .groupBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(ev5.convert(this, Over(Fifth), namesM), file, dictionary, separator, Fifth))
+      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .groupBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(ev6.convert(this, Over(Sixth), namesN), file, dictionary, separator, Sixth))
+      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
       .groupBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
-      .join(saveDictionary(ev7.convert(this, Over(Seventh), namesO), file, dictionary, separator, Seventh))
+      .join(saveDictionary(Over(Seventh), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m, n), o)) => (c, i, j, k, l, m, n, o) }
       .groupBy { case (c, i, j, k, l, m, n, o) => Position1D(c.position(Eighth)) }
-      .join(saveDictionary(ev8.convert(this, Over(Eighth), namesQ), file, dictionary, separator, Eighth))
+      .join(saveDictionary(Over(Eighth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m, n, o), p)) => (c, i, j, k, l, m, n, o, p) }
       .groupBy { case (c, i, j, k, l, m, n, o, p) => Position1D(c.position(Ninth)) }
-      .join(saveDictionary(ev9.convert(this, Over(Ninth), namesR), file, dictionary, separator, Ninth))
+      .join(saveDictionary(Over(Ninth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m, n, o, p), q)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +

@@ -37,7 +37,6 @@ import au.com.cba.omnia.grimlock.library.window._
 import au.com.cba.omnia.grimlock.scalding.content.Contents._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Matrixable._
-import au.com.cba.omnia.grimlock.scalding.Names._
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
 import au.com.cba.omnia.grimlock.scalding.position.Positions._
 import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
@@ -103,43 +102,19 @@ class TestScalding2(args : Args) extends Job(args) {
   val data = TestScaldingReader.load4TupleDataAddDate(args("path") + "/someInputfile3.txt")
 
   (data.names(Over(First)) ++ data.names(Over(Second)) ++ data.names(Over(Third)))
-    .number
-    .saveAsText("./tmp.scalding/nm0.out", Name.toString(descriptive = true))
+    .saveAsText("./tmp.scalding/nm0.out", Position.toString(descriptive = true))
     .toUnit
 
   data
     .names(Over(Second))
-    .number
-    .moveToFront("fid:Z")
-    .saveAsText("./tmp.scalding/nm1.out", Name.toString(descriptive = true))
-    .toUnit
-
-  data
-    .names(Over(Second))
-    .number
     .slice("fid:M", false)
-    .saveAsText("./tmp.scalding/nm2.out", Name.toString(descriptive = true))
+    .saveAsText("./tmp.scalding/nm2.out", Position.toString(descriptive = true))
     .toUnit
 
   data
     .names(Over(Second))
-    .number
-    .set(Map("fid:A" -> 100L, "fid:C" -> 200L))
-    .saveAsText("./tmp.scalding/nm3.out", Name.toString(descriptive = true))
-    .toUnit
-
-  data
-    .names(Over(Second))
-    .number
-    .moveToBack("fid:B")
-    .saveAsText("./tmp.scalding/nm4.out", Name.toString(descriptive = true))
-    .toUnit
-
-  data
-    .names(Over(Second))
-    .number
     .slice(""".*[BCD]$""".r, true, "")
-    .saveAsText("./tmp.scalding/nm5.out", Name.toString(descriptive = true))
+    .saveAsText("./tmp.scalding/nm5.out", Position.toString(descriptive = true))
     .toUnit
 }
 
@@ -199,7 +174,7 @@ class TestScalding5(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .saveAsCSV(Over(First), "./tmp.scalding/sqs3.out")
+    .saveAsCSV(Over(Second), "./tmp.scalding/sqs3.out")
     .toUnit
 
   data
@@ -207,7 +182,7 @@ class TestScalding5(args : Args) extends Job(args) {
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .saveAsCSV(Over(First), "./tmp.scalding/sqs4.out")
+    .saveAsCSV(Over(Second), "./tmp.scalding/sqs4.out")
     .toUnit
 }
 
@@ -293,8 +268,8 @@ class TestScalding8(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .saveAsCSV(Over(Second), "./tmp.scalding/test.csv")
-    .saveAsCSV(Over(First), "./tmp.scalding/tset.csv", writeHeader = false, separator = ",")
+    .saveAsCSV(Over(First), "./tmp.scalding/test.csv")
+    .saveAsCSV(Over(Second), "./tmp.scalding/tset.csv", writeHeader = false, separator = ",")
     .toUnit
 
   data
@@ -375,7 +350,7 @@ class TestScalding10(args : Args) extends Job(args) {
 
   data
     .summarise(Over(Second), Mean[Position3D, Position1D](true, true).andThenExpand(_.position.append("mean")))
-    .saveAsCSV(Over(Second), "./tmp.scalding/agg1.csv")
+    .saveAsCSV(Over(First), "./tmp.scalding/agg1.csv")
     .toUnit
 
   data
@@ -383,7 +358,7 @@ class TestScalding10(args : Args) extends Job(args) {
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
     .summarise(Along(Second), Count[Position2D, Position1D]().andThenExpand(_.position.append("count")))
-    .saveAsCSV(Over(Second), "./tmp.scalding/agg2.csv")
+    .saveAsCSV(Over(First), "./tmp.scalding/agg2.csv")
     .toUnit
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
@@ -401,7 +376,7 @@ class TestScalding10(args : Args) extends Job(args) {
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
     .summarise(Along(First), aggregators)
-    .saveAsCSV(Over(Second), "./tmp.scalding/agg3.csv")
+    .saveAsCSV(Over(First), "./tmp.scalding/agg3.csv")
     .toUnit
 }
 
@@ -421,7 +396,7 @@ class TestScalding11(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
     .transform(Binarise[Position2D](Binarise.rename(Second)))
-    .saveAsCSV(Over(Second), "./tmp.scalding/trn3.out")
+    .saveAsCSV(Over(First), "./tmp.scalding/trn3.out")
     .toUnit
 }
 
@@ -434,7 +409,7 @@ class TestScalding12(args : Args) extends Job(args) {
   data
     .squash(Third, PreservingMaxPosition[Position3D]())
     .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
-    .saveAsCSV(Over(Second), "./tmp.scalding/fll1.out")
+    .saveAsCSV(Over(First), "./tmp.scalding/fll1.out")
     .toUnit
 
   data
@@ -459,13 +434,13 @@ class TestScalding13(args : Args) extends Job(args) {
   data
     .join(Over(First), inds)
     .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
-    .saveAsCSV(Over(Second), "./tmp.scalding/fll2.out")
+    .saveAsCSV(Over(First), "./tmp.scalding/fll2.out")
     .toUnit
 
   data
     .fillHeterogeneous(Over(Second), all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
     .join(Over(First), inds)
-    .saveAsCSV(Over(Second), "./tmp.scalding/fll4.out")
+    .saveAsCSV(Over(First), "./tmp.scalding/fll4.out")
     .toUnit
 }
 
@@ -490,7 +465,7 @@ class TestScalding15(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .summarise(Along(Third), Sum[Position3D, Position2D]().andThenExpand(_.position.append("sum")))
     .melt(Third, Second)
-    .saveAsCSV(Over(Second), "./tmp.scalding/rsh1.out")
+    .saveAsCSV(Over(First), "./tmp.scalding/rsh1.out")
     .toUnit
 
   val inds = data
@@ -499,7 +474,7 @@ class TestScalding15(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
     .transform(Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
-    .saveAsCSV(Over(Second), "./tmp.scalding/trn1.csv")
+    .saveAsCSV(Over(First), "./tmp.scalding/trn1.csv")
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -507,7 +482,7 @@ class TestScalding15(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
     .join(Over(First), inds)
-    .saveAsCSV(Over(Second), "./tmp.scalding/jn1.csv")
+    .saveAsCSV(Over(First), "./tmp.scalding/jn1.csv")
     .toUnit
 }
 
@@ -547,7 +522,7 @@ class TestScalding17(args : Args) extends Job(args) {
   data
     .transformWithValue(Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second,
       "max.abs").andThenPresent(_.value.asDouble)), stats)
-    .saveAsCSV(Over(Second), "./tmp.scalding/trn6.csv")
+    .saveAsCSV(Over(First), "./tmp.scalding/trn6.csv")
     .toUnit
 
   case class Sample500() extends Sampler[Position2D] {
@@ -556,7 +531,7 @@ class TestScalding17(args : Args) extends Job(args) {
 
   data
     .sample(Sample500())
-    .saveAsCSV(Over(Second), "./tmp.scalding/flt1.csv")
+    .saveAsCSV(Over(First), "./tmp.scalding/flt1.csv")
     .toUnit
 
   case class RemoveGreaterThanMean(dim: Dimension) extends SamplerWithValue[Position2D] {
@@ -573,7 +548,7 @@ class TestScalding17(args : Args) extends Job(args) {
 
   data
     .sampleWithValue(RemoveGreaterThanMean(Second), stats)
-    .saveAsCSV(Over(Second), "./tmp.scalding/flt2.csv")
+    .saveAsCSV(Over(First), "./tmp.scalding/flt2.csv")
     .toUnit
 }
 
@@ -601,7 +576,7 @@ class TestScalding18(args : Args) extends Job(args) {
 
   data
     .slice(Over(Second), rem, false)
-    .saveAsCSV(Over(Second), "./tmp.scalding/flt3.csv")
+    .saveAsCSV(Over(First), "./tmp.scalding/flt3.csv")
     .toUnit
 }
 
@@ -653,7 +628,7 @@ class TestScalding19(args : Args) extends Job(args) {
       .slice(Over(Second), rem, false)
       .transformWithValue(transforms, stats.toMap(Over(First)))
       .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
-      .saveAsCSV(Over(Second), "./tmp.scalding/pln_" + key + ".csv")
+      .saveAsCSV(Over(First), "./tmp.scalding/pln_" + key + ".csv")
   }
 
   parts

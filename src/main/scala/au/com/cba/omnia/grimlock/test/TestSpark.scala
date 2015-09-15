@@ -37,7 +37,6 @@ import au.com.cba.omnia.grimlock.library.window._
 import au.com.cba.omnia.grimlock.spark.content.Contents._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 import au.com.cba.omnia.grimlock.spark.Matrixable._
-import au.com.cba.omnia.grimlock.spark.Names._
 import au.com.cba.omnia.grimlock.spark.partition.Partitions._
 import au.com.cba.omnia.grimlock.spark.position.Positions._
 import au.com.cba.omnia.grimlock.spark.position.PositionDistributable._
@@ -107,43 +106,19 @@ object TestSpark2 {
     val data = TestSparkReader.load4TupleDataAddDate(args(1) + "/someInputfile3.txt")
 
     (data.names(Over(First)) ++ data.names(Over(Second)) ++ data.names(Over(Third)))
-      .number
-      .saveAsText("./tmp.spark/nm0.out", Name.toString(descriptive = true))
+      .saveAsText("./tmp.spark/nm0.out", Position.toString(descriptive = true))
       .toUnit
 
     data
       .names(Over(Second))
-      .number
-      .moveToFront("fid:Z")
-      .saveAsText("./tmp.spark/nm1.out", Name.toString(descriptive = true))
-      .toUnit
-
-    data
-      .names(Over(Second))
-      .number
       .slice("fid:M", false)
-      .saveAsText("./tmp.spark/nm2.out", Name.toString(descriptive = true))
+      .saveAsText("./tmp.spark/nm2.out", Position.toString(descriptive = true))
       .toUnit
 
     data
       .names(Over(Second))
-      .number
-      .set(Map("fid:A" -> 100L, "fid:C" -> 200L))
-      .saveAsText("./tmp.spark/nm3.out", Name.toString(descriptive = true))
-      .toUnit
-
-    data
-      .names(Over(Second))
-      .number
-      .moveToBack("fid:B")
-      .saveAsText("./tmp.spark/nm4.out", Name.toString(descriptive = true))
-      .toUnit
-
-    data
-      .names(Over(Second))
-      .number
       .slice(""".*[BCD]$""".r, true, "")
-      .saveAsText("./tmp.spark/nm5.out", Name.toString(descriptive = true))
+      .saveAsText("./tmp.spark/nm5.out", Position.toString(descriptive = true))
       .toUnit
   }
 }
@@ -209,7 +184,7 @@ object TestSpark5 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .saveAsCSV(Over(First), "./tmp.spark/sqs3.out")
+      .saveAsCSV(Over(Second), "./tmp.spark/sqs3.out")
       .toUnit
 
     data
@@ -217,7 +192,7 @@ object TestSpark5 {
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .saveAsCSV(Over(First), "./tmp.spark/sqs4.out")
+      .saveAsCSV(Over(Second), "./tmp.spark/sqs4.out")
       .toUnit
   }
 }
@@ -309,8 +284,8 @@ object TestSpark8 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .saveAsCSV(Over(Second), "./tmp.spark/test.csv")
-      .saveAsCSV(Over(First), "./tmp.spark/tset.csv", writeHeader = false, separator = ",")
+      .saveAsCSV(Over(First), "./tmp.spark/test.csv")
+      .saveAsCSV(Over(Second), "./tmp.spark/tset.csv", writeHeader = false, separator = ",")
       .toUnit
 
     data
@@ -395,7 +370,7 @@ object TestSpark10 {
 
     data
       .summarise(Over(Second), Mean[Position3D, Position1D](true, true).andThenExpand(_.position.append("mean")))
-      .saveAsCSV(Over(Second), "./tmp.spark/agg1.csv")
+      .saveAsCSV(Over(First), "./tmp.spark/agg1.csv")
       .toUnit
 
     data
@@ -403,7 +378,7 @@ object TestSpark10 {
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
       .summarise(Along(Second), Count[Position2D, Position1D]().andThenExpand(_.position.append("count")))
-      .saveAsCSV(Over(Second), "./tmp.spark/agg2.csv")
+      .saveAsCSV(Over(First), "./tmp.spark/agg2.csv")
       .toUnit
 
     val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
@@ -421,7 +396,7 @@ object TestSpark10 {
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
       .summarise(Along(First), aggregators)
-      .saveAsCSV(Over(Second), "./tmp.spark/agg3.csv")
+      .saveAsCSV(Over(First), "./tmp.spark/agg3.csv")
       .toUnit
   }
 }
@@ -443,7 +418,7 @@ object TestSpark11 {
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
       .transform(Binarise[Position2D](Binarise.rename(Second)))
-      .saveAsCSV(Over(Second), "./tmp.spark/trn3.out")
+      .saveAsCSV(Over(First), "./tmp.spark/trn3.out")
       .toUnit
   }
 }
@@ -458,7 +433,7 @@ object TestSpark12 {
     data
       .squash(Third, PreservingMaxPosition[Position3D]())
       .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
-      .saveAsCSV(Over(Second), "./tmp.spark/fll1.out")
+      .saveAsCSV(Over(First), "./tmp.spark/fll1.out")
       .toUnit
 
     data
@@ -485,13 +460,13 @@ object TestSpark13 {
     data
       .join(Over(First), inds)
       .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
-      .saveAsCSV(Over(Second), "./tmp.spark/fll2.out")
+      .saveAsCSV(Over(First), "./tmp.spark/fll2.out")
       .toUnit
 
     data
       .fillHeterogeneous(Over(Second), all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
       .join(Over(First), inds)
-      .saveAsCSV(Over(Second), "./tmp.spark/fll4.out")
+      .saveAsCSV(Over(First), "./tmp.spark/fll4.out")
       .toUnit
   }
 }
@@ -520,7 +495,7 @@ object TestSpark15 {
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .summarise(Along(Third), Sum[Position3D, Position2D]().andThenExpand(_.position.append("sum")))
       .melt(Third, Second)
-      .saveAsCSV(Over(Second), "./tmp.spark/rsh1.out")
+      .saveAsCSV(Over(First), "./tmp.spark/rsh1.out")
       .toUnit
 
     val inds = data
@@ -529,7 +504,7 @@ object TestSpark15 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
       .transform(Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
-      .saveAsCSV(Over(Second), "./tmp.spark/trn1.csv")
+      .saveAsCSV(Over(First), "./tmp.spark/trn1.csv")
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -537,7 +512,7 @@ object TestSpark15 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
       .join(Over(First), inds)
-      .saveAsCSV(Over(Second), "./tmp.spark/jn1.csv")
+      .saveAsCSV(Over(First), "./tmp.spark/jn1.csv")
       .toUnit
   }
 }
@@ -581,7 +556,7 @@ object TestSpark17 {
     data
       .transformWithValue(Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second,
         "max.abs").andThenPresent(_.value.asDouble)), stats)
-      .saveAsCSV(Over(Second), "./tmp.spark/trn6.csv")
+      .saveAsCSV(Over(First), "./tmp.spark/trn6.csv")
       .toUnit
 
     case class Sample500() extends Sampler[Position2D] {
@@ -590,7 +565,7 @@ object TestSpark17 {
 
     data
       .sample(Sample500())
-      .saveAsCSV(Over(Second), "./tmp.spark/flt1.csv")
+      .saveAsCSV(Over(First), "./tmp.spark/flt1.csv")
       .toUnit
 
     case class RemoveGreaterThanMean(dim: Dimension) extends SamplerWithValue[Position2D] {
@@ -607,7 +582,7 @@ object TestSpark17 {
 
     data
       .sampleWithValue(RemoveGreaterThanMean(Second), stats)
-      .saveAsCSV(Over(Second), "./tmp.spark/flt2.csv")
+      .saveAsCSV(Over(First), "./tmp.spark/flt2.csv")
       .toUnit
   }
 }
@@ -637,7 +612,7 @@ object TestSpark18 {
 
     data
       .slice(Over(Second), rem, false)
-      .saveAsCSV(Over(Second), "./tmp.spark/flt3.csv")
+      .saveAsCSV(Over(First), "./tmp.spark/flt3.csv")
       .toUnit
   }
 }
@@ -691,7 +666,7 @@ object TestSpark19 {
         .slice(Over(Second), rem, false)
         .transformWithValue(transforms, stats.toMap(Over(First)))
         .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
-        .saveAsCSV(Over(Second), "./tmp.spark/pln_" + key + ".csv")
+        .saveAsCSV(Over(First), "./tmp.spark/pln_" + key + ".csv")
     }
 
     parts

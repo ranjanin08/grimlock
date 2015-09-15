@@ -166,7 +166,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
     (ind ++ csb)
       //.fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0))
-      .saveAsCSV(Over(Second), s"./demo.${output}/${key}.csv")
+      .saveAsCSV(Over(First), s"./demo.${output}/${key}.csv")
   }
 
   // Prepare each partition.
