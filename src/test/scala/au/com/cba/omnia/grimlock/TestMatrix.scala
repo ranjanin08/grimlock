@@ -442,10 +442,9 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.names(Over(First), Default()).number()
+        cells.names(Over(First), Default())
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
-        (Position1D("qux"), 3))
+      _.toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
     }
   }
 
@@ -454,10 +453,9 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Over(First), Default(Reducers(123))).number()
+        cells.names(Over(First), Default(Reducers(123)))
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
-        (Position1D("qux"), 3))
+      _.toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
     }
   }
 
@@ -466,10 +464,9 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Along(First), Default()).number()
+        cells.names(Along(First), Default())
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position1D(1), 0), (Position1D(2), 1), (Position1D(3), 2),
-        (Position1D(4), 3))
+      _.toList.sorted shouldBe List(Position1D(1), Position1D(2), Position1D(3), Position1D(4))
     }
   }
 
@@ -478,10 +475,9 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Over(Second), Default(Reducers(123))).number()
+        cells.names(Over(Second), Default(Reducers(123)))
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position1D(1), 0), (Position1D(2), 1), (Position1D(3), 2),
-        (Position1D(4), 3))
+      _.toList.sorted shouldBe List(Position1D(1), Position1D(2), Position1D(3), Position1D(4))
     }
   }
 
@@ -490,10 +486,9 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Along(Second), Default()).number()
+        cells.names(Along(Second), Default())
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
-        (Position1D("qux"), 3))
+      _.toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
     }
   }
 
@@ -502,10 +497,9 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(First), Default(Reducers(123))).number()
+        cells.names(Over(First), Default(Reducers(123)))
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
-        (Position1D("qux"), 3))
+      _.toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
     }
   }
 
@@ -514,10 +508,10 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Along(First), Default()).number()
+        cells.names(Along(First), Default())
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position2D(1, "xyz"), 0), (Position2D(2, "xyz"), 1),
-        (Position2D(3, "xyz"), 2), (Position2D(4, "xyz"), 3))
+      _.toList.sorted shouldBe List(Position2D(1, "xyz"), Position2D(2, "xyz"), Position2D(3, "xyz"),
+        Position2D(4, "xyz"))
     }
   }
 
@@ -526,10 +520,9 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(Second), Default(Reducers(123))).number()
+        cells.names(Over(Second), Default(Reducers(123)))
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position1D(1), 0), (Position1D(2), 1), (Position1D(3), 2),
-        (Position1D(4), 3))
+      _.toList.sorted shouldBe List(Position1D(1), Position1D(2), Position1D(3), Position1D(4))
     }
   }
 
@@ -538,10 +531,10 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Along(Second), Default()).number()
+        cells.names(Along(Second), Default())
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position2D("bar", "xyz"), 0), (Position2D("baz", "xyz"), 1),
-        (Position2D("foo", "xyz"), 2), (Position2D("qux", "xyz"), 3))
+      _.toList.sorted shouldBe List(Position2D("bar", "xyz"), Position2D("baz", "xyz"), Position2D("foo", "xyz"),
+        Position2D("qux", "xyz"))
     }
   }
 
@@ -550,9 +543,9 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(Third), Default(Reducers(123))).number()
+        cells.names(Over(Third), Default(Reducers(123)))
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position1D("xyz"), 0))
+      _.toList.sorted shouldBe List(Position1D("xyz"))
     }
   }
 
@@ -561,11 +554,11 @@ class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Along(Third), Default()).number()
+        cells.names(Along(Third), Default())
     } Then {
-      _.toList.sortBy(_._1) shouldBe List((Position2D("bar", 1), 0), (Position2D("bar", 2), 1),
-        (Position2D("bar", 3), 2), (Position2D("baz", 1), 3), (Position2D("baz", 2), 4), (Position2D("foo", 1), 5),
-        (Position2D("foo", 2), 6), (Position2D("foo", 3), 7), (Position2D("foo", 4), 8), (Position2D("qux", 1), 9))
+      _.toList.sorted shouldBe List(Position2D("bar", 1), Position2D("bar", 2), Position2D("bar", 3),
+        Position2D("baz", 1), Position2D("baz", 2), Position2D("foo", 1), Position2D("foo", 2), Position2D("foo", 3),
+        Position2D("foo", 4), Position2D("qux", 1))
     }
   }
 }
@@ -574,79 +567,72 @@ class TestSparkMatrixNames extends TestMatrix {
 
   "A Matrix.names" should "return its first over names in 1D" in {
     toRDD(data1)
-      .names(Over(First), Default()).number()
-      .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
-        (Position1D("qux"), 3)))
+      .names(Over(First), Default())
+      .toList.sorted should be (List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux")))
   }
 
   it should "return its first over names in 2D" in {
     toRDD(data2)
-      .names(Over(First), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) should be (List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
-        (Position1D("qux"), 3)))
+      .names(Over(First), Default(Reducers(12)))
+      .toList.sorted should be (List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux")))
   }
 
   it should "return its first along names in 2D" in {
     toRDD(data2)
-      .names(Along(First), Default()).number()
-      .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 0), (Position1D(3), 1),
-        (Position1D(4), 2)))
+      .names(Along(First), Default())
+      .toList.sorted should be (List(Position1D(1), Position1D(2), Position1D(3), Position1D(4)))
   }
 
   it should "return its second over names in 2D" in {
     toRDD(data2)
-      .names(Over(Second), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 2), (Position1D(3), 1),
-        (Position1D(4), 0)))
+      .names(Over(Second), Default(Reducers(12)))
+      .toList.sorted should be (List(Position1D(1), Position1D(2), Position1D(3), Position1D(4)))
   }
 
   it should "return its second along names in 2D" in {
     toRDD(data2)
-      .names(Along(Second), Default()).number()
-      .toList.sortBy(_._1) should be (List((Position1D("bar"), 2), (Position1D("baz"), 1), (Position1D("foo"), 0),
-        (Position1D("qux"), 3)))
+      .names(Along(Second), Default())
+      .toList.sorted should be (List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux")))
   }
 
   it should "return its first over names in 3D" in {
     toRDD(data3)
-      .names(Over(First), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) should be (List((Position1D("bar"), 0), (Position1D("baz"), 1), (Position1D("foo"), 2),
-        (Position1D("qux"), 3)))
+      .names(Over(First), Default(Reducers(12)))
+      .toList.sorted should be (List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux")))
   }
 
   it should "return its first along names in 3D" in {
     toRDD(data3)
-      .names(Along(First), Default()).number()
-      .toList.sortBy(_._1) should be (List((Position2D(1, "xyz"), 3), (Position2D(2, "xyz"), 2),
-        (Position2D(3, "xyz"), 1), (Position2D(4, "xyz"), 0)))
+      .names(Along(First), Default())
+      .toList.sorted should be (List(Position2D(1, "xyz"), Position2D(2, "xyz"), Position2D(3, "xyz"),
+        Position2D(4, "xyz")))
   }
 
   it should "return its second over names in 3D" in {
     toRDD(data3)
-      .names(Over(Second), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) should be (List((Position1D(1), 3), (Position1D(2), 2), (Position1D(3), 1),
-        (Position1D(4), 0)))
+      .names(Over(Second), Default(Reducers(12)))
+      .toList.sorted should be (List(Position1D(1), Position1D(2), Position1D(3), Position1D(4)))
   }
 
   it should "return its second along names in 3D" in {
     toRDD(data3)
-      .names(Along(Second), Default()).number()
-      .toList.sortBy(_._1) should be (List((Position2D("bar", "xyz"), 2), (Position2D("baz", "xyz"), 1),
-        (Position2D("foo", "xyz"), 0), (Position2D("qux", "xyz"), 3)))
+      .names(Along(Second), Default())
+      .toList.sorted should be (List(Position2D("bar", "xyz"), Position2D("baz", "xyz"), Position2D("foo", "xyz"),
+        Position2D("qux", "xyz")))
   }
 
   it should "return its third over names in 3D" in {
     toRDD(data3)
-      .names(Over(Third), Default(Reducers(12))).number()
-      .toList.sortBy(_._1) should be (List((Position1D("xyz"), 0)))
+      .names(Over(Third), Default(Reducers(12)))
+      .toList.sorted should be (List(Position1D("xyz")))
   }
 
   it should "return its third along names in 3D" in {
     toRDD(data3)
-      .names(Along(Third), Default()).number()
-      .toList.sortBy(_._1) should be (List((Position2D("bar", 1), 1), (Position2D("bar", 2), 6),
-        (Position2D("bar", 3), 2), (Position2D("baz", 1), 9), (Position2D("baz", 2), 4), (Position2D("foo", 1), 0),
-        (Position2D("foo", 2), 3), (Position2D("foo", 3), 8), (Position2D("foo", 4), 5), (Position2D("qux", 1), 7)))
+      .names(Along(Third), Default())
+      .toList.sorted should be (List(Position2D("bar", 1), Position2D("bar", 2), Position2D("bar", 3),
+        Position2D("baz", 1), Position2D("baz", 2), Position2D("foo", 1), Position2D("foo", 2), Position2D("foo", 3),
+        Position2D("foo", 4), Position2D("qux", 1)))
   }
 }
 
