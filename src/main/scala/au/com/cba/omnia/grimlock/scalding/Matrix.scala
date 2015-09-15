@@ -1132,7 +1132,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    */
   def saveAsCSV[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
-    escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
+    escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
       rowId: String = "id")(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], flow: FlowDef,
         mode: Mode): U[Cell[Position2D]] = {
     val escape = (str: String) => escapee.escape(str)

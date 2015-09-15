@@ -900,7 +900,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
   def saveAsCSV[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
     escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
       rowId: String = "id")(implicit ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    val escape = (str: String) => escapee.escape(str, separator)
+    val escape = (str: String) => escapee.escape(str)
     val columns = data
       .map { case c => ((), HashSet(escape(slice.remainder(c.position)(First).toShortString))) }
       .reduceByKey(_ ++ _)
