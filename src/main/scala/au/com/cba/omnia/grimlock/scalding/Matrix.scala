@@ -56,12 +56,14 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Nameable._
 
 import cascading.flow.FlowDef
-import com.twitter.scalding.{ Mode, TextLine }
+import com.twitter.scalding.{ Mode, TextLine, WritableSequenceFile }
 import com.twitter.scalding.typed.{ IterablePipe, Grouped, TypedPipe, TypedSink, ValuePipe }
 
 import java.io.{ File, PrintWriter }
 import java.lang.{ ProcessBuilder, Thread }
 import java.nio.file.Paths
+
+import org.apache.hadoop.io.Writable
 
 import scala.collection.immutable.HashSet
 import scala.io.Source
@@ -960,6 +962,20 @@ object Matrix {
   def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]])(
     implicit flow: FlowDef, mode: Mode): (TypedPipe[Cell[P]], TypedPipe[String]) = {
     val pipe = TypedPipe.from(TextLine(file)).flatMap { parser(_) }
+
+    (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
+  }
+
+  /**
+   * Read binary key-value (sequence) matrix data into a `TypedPipe[Cell[P]]`.
+   *
+   * @param file   The text file to read from.
+   * @param parser The parser that converts a single key-value to a cell.
+   */
+  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String,
+    parser: (K, V) => TraversableOnce[Either[Cell[P], String]])(implicit ev1: Manifest[K],
+      ev2: Manifest[V]): (TypedPipe[Cell[P]], TypedPipe[String]) = {
+    val pipe = TypedPipe.from(WritableSequenceFile[K, V](file)).flatMap { case (k, v) => parser(k, v) }
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
   }

@@ -51,6 +51,8 @@ import au.com.cba.omnia.grimlock.framework.window._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 import au.com.cba.omnia.grimlock.spark.Nameable._
 
+import org.apache.hadoop.io.Writable
+
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
@@ -730,6 +732,20 @@ object Matrix {
     val rdd = sc.textFile(file).flatMap { parser(_) }
 
     (rdd.collect { case Left(c) => c }, rdd.collect { case Right(e) => e })
+  }
+
+  /**
+   * Read binary key-value (sequence) matrix data into a `RDD[Cell[P]]`.
+   *
+   * @param file   The text file to read from.
+   * @param parser The parser that converts a single key-value to a cell.
+   */
+  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String,
+    parser: (K, V) => TraversableOnce[Either[Cell[P], String]])(implicit sc: SparkContext, ev1: ClassTag[K],
+      ev2: ClassTag[V]): (RDD[Cell[P]], RDD[String]) = {
+    val pipe = sc.sequenceFile[K, V](file).flatMap { case (k, v) => parser(k, v) }
+
+    (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
   }
 
   /** Conversion from `RDD[Cell[Position1D]]` to a Spark `Matrix1D`. */
