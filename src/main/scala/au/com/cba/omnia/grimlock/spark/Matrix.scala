@@ -921,7 +921,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    */
   def saveAsCSV[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
-    escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
+    escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
       rowId: String = "id")(implicit ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S]): U[Cell[Position2D]] = {
     saveAsCSVWithNames(slice, file, names(slice), separator, escapee, writeHeader, header, writeRowId, rowId)
   }
@@ -944,20 +944,20 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
    */
   def saveAsCSVWithNames[D <: Dimension, I](slice: Slice[Position2D, D], file: String, names: I,
-    separator: String = "|", escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header",
+    separator: String = "|", escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header",
       writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: BaseNameable[I, Position2D, slice.S, D, RDD],
         ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S]): U[Cell[Position2D]] = {
     // Note: Usage of .toShortString should be safe as data is written as string anyways. It does assume that all
     //       indices have unique short string representations.
     val columns = ev1.convert(this, slice, names)
-      .map { case (p, i) => (0, List((escapee.escape(p.toShortString(""), separator), i))) }
+      .map { case (p, i) => (0, List((escapee.escape(p.toShortString("")), i))) }
       .reduceByKey(_ ++ _)
       .map { case (_, l) => l.sortBy(_._2).map(_._1) }
 
     if (writeHeader) {
       columns
         .map {
-          case lst => (if (writeRowId) escapee.escape(rowId, separator) + separator else "") + lst.mkString(separator)
+          case lst => (if (writeRowId) escapee.escape(rowId) + separator else "") + lst.mkString(separator)
         }
         .saveAsTextFile(header.format(file))
     }
@@ -968,12 +968,12 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
     data
       .map {
         case Cell(p, c) => (slice.remainder(p).toShortString(""),
-          Map(escapee.escape(slice.selected(p).toShortString(""), separator) ->
-            escapee.escape(c.value.toShortString, separator)))
+          Map(escapee.escape(slice.selected(p).toShortString("")) ->
+            escapee.escape(c.value.toShortString)))
       }
       .reduceByKey(_ ++ _)
       .map {
-        case (key, values) => (if (writeRowId) escapee.escape(key, separator) + separator else "") +
+        case (key, values) => (if (writeRowId) escapee.escape(key) + separator else "") +
           cols.map { case c => values.getOrElse(c, "") }.mkString(separator)
       }
       .saveAsTextFile(file)
