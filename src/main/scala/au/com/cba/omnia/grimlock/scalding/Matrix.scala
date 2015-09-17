@@ -56,12 +56,14 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Nameable._
 
 import cascading.flow.FlowDef
-import com.twitter.scalding.{ Mode, TextLine }
+import com.twitter.scalding.{ Mode, TextLine, WritableSequenceFile }
 import com.twitter.scalding.typed.{ IterablePipe, Grouped, TypedPipe, TypedSink, ValuePipe }
 
 import java.io.{ File, PrintWriter }
 import java.lang.{ ProcessBuilder, Thread }
 import java.nio.file.Paths
+
+import org.apache.hadoop.io.Writable
 
 import scala.collection.immutable.HashSet
 import scala.io.Source
@@ -964,6 +966,20 @@ object Matrix {
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
   }
 
+  /**
+   * Read binary key-value (sequence) matrix data into a `TypedPipe[Cell[P]]`.
+   *
+   * @param file   The text file to read from.
+   * @param parser The parser that converts a single key-value to a cell.
+   */
+  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String,
+    parser: (K, V) => TraversableOnce[Either[Cell[P], String]])(implicit ev1: Manifest[K],
+      ev2: Manifest[V]): (TypedPipe[Cell[P]], TypedPipe[String]) = {
+    val pipe = TypedPipe.from(WritableSequenceFile[K, V](file)).flatMap { case (k, v) => parser(k, v) }
+
+    (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
+  }
+
   /** Conversion from `TypedPipe[Cell[Position1D]]` to a Scalding `Matrix1D`. */
   implicit def TP2M1(data: TypedPipe[Cell[Position1D]]): Matrix1D = new Matrix1D(data)
   /** Conversion from `TypedPipe[Cell[Position2D]]` to a Scalding `Matrix2D`. */
@@ -1140,7 +1156,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    */
   def saveAsCSV[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
-    escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
+    escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
       rowId: String = "id")(implicit ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S], flow: FlowDef,
         mode: Mode): U[Cell[Position2D]] = {
     saveAsCSVWithNames(slice, file, names(slice), separator, escapee, writeHeader, header, writeRowId, rowId)
@@ -1164,7 +1180,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
    */
   def saveAsCSVWithNames[D <: Dimension, I](slice: Slice[Position2D, D], file: String, names: I,
-    separator: String = "|", escapee: Escape = Quote(), writeHeader: Boolean = true, header: String = "%s.header",
+    separator: String = "|", escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header",
     writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: BaseNameable[I, Position2D, slice.S, D, TypedPipe],
       ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S], flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
     // Note: Usage of .toShortString should be safe as data is written as string anyways. It does assume that all
@@ -1172,12 +1188,12 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     val columns = ev1.convert(this, slice, names)
       .map { List(_) }
       .sum
-      .map { _.sortBy(_._2).map { case (p, i) => escapee.escape(p.toShortString(""), separator) } }
+      .map { _.sortBy(_._2).map { case (p, i) => escapee.escape(p.toShortString("")) } }
 
     if (writeHeader) {
       columns
         .map {
-          case lst => (if (writeRowId) escapee.escape(rowId, separator) + separator else "") + lst.mkString(separator)
+          case lst => (if (writeRowId) escapee.escape(rowId) + separator else "") + lst.mkString(separator)
         }
         .write(TypedSink(TextLine(header.format(file))))
     }
@@ -1185,8 +1201,8 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
     data
       .groupBy { case c => slice.remainder(c.position).toShortString("") }
       .mapValues {
-        case Cell(p, c) => Map(escapee.escape(slice.selected(p).toShortString(""), separator) ->
-          escapee.escape(c.value.toShortString, separator))
+        case Cell(p, c) => Map(escapee.escape(slice.selected(p).toShortString("")) ->
+          escapee.escape(c.value.toShortString))
       }
       .sum
       .flatMapWithValue(columns) {
@@ -1195,7 +1211,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
         }
       }
       .map {
-        case (i, lst) => (if (writeRowId) escapee.escape(i, separator) + separator else "") + lst.mkString(separator)
+        case (i, lst) => (if (writeRowId) escapee.escape(i) + separator else "") + lst.mkString(separator)
       }
       .write(TypedSink(TextLine(file)))
 

@@ -147,9 +147,9 @@ case class ContinuousSchema[C <: Codex] private (codex: C, minimum: Option[C#T],
   def isValid[V <: Value](value: V): Boolean = {
     import num._
 
-    (codex.fromValue(value), minimum, maximum) match {
-      case (v, Some(l), Some(u)) => (v >= l && v <= u)
-      case (v, None, None) => true
+    (value.codex.name == codex.name, minimum, maximum) match {
+      case (true, Some(l), Some(u)) => val v = codex.fromValue(value); (v >= l && v <= u)
+      case (true, None, None) => true
       case _ => false
     }
   }
@@ -222,9 +222,9 @@ case class DiscreteSchema[C <: Codex] private (codex: C, minimum: Option[C#T], m
   def isValid[V <: Value](value: V): Boolean = {
     import int._
 
-    (codex.fromValue(value), minimum, maximum, step) match {
-      case (v, Some(l), Some(u), Some(s)) => (v >= l && v <= u && (v % s) == 0)
-      case (v, None, None, None) => true
+    (value.codex.name == codex.name, minimum, maximum, step) match {
+      case (true, Some(l), Some(u), Some(s)) => val v = codex.fromValue(value); (v >= l && v <= u && (v % s) == 0)
+      case (true, None, None, None) => true
       case _ => false
     }
   }
@@ -282,14 +282,14 @@ object DiscreteSchema {
 }
 
 /** Base trait for schemas for categorical variables. */
-trait CategoricalSchema[T] extends Schema {
+trait CategoricalSchema[C <: Codex] extends Schema {
   /** Optional values the variable can take. */
-  val domain: Option[List[T]]
+  val domain: Option[List[C#T]]
 
   def isValid[V <: Value](value: V): Boolean = {
-    (codex.fromValue(value), domain) match {
-      case (v, Some(d)) => d.contains(v)
-      case (v, None) => true
+    (value.codex.name == codex.name, domain) match {
+      case (true, Some(d)) => d.contains(codex.fromValue(value))
+      case (true, None) => true
       case _ => false
     }
   }
@@ -304,7 +304,7 @@ trait CategoricalSchema[T] extends Schema {
  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
  *       object.
  */
-case class NominalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]]) extends CategoricalSchema[C#T] {
+case class NominalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]]) extends CategoricalSchema[C] {
   val kind = Type.Nominal
   val name = "NominalSchema"
 
@@ -363,7 +363,7 @@ object NominalSchema {
  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
  *       object.
  */
-case class OrdinalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]]) extends CategoricalSchema[C#T] {
+case class OrdinalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]]) extends CategoricalSchema[C] {
   val kind = Type.Ordinal
   val name = "OrdinalSchema"
 
@@ -418,7 +418,7 @@ case class DateSchema[C <: DateCodex](codex: C) extends Schema {
   val kind = Type.Date
   val name = "DateSchema"
 
-  def isValid[V <: Value](value: V): Boolean = codex.fromValue(value).isInstanceOf[java.util.Date]
+  def isValid[V <: Value](value: V): Boolean = value.codex.name == codex.name
 
   protected def params(): String = ""
 }
@@ -428,7 +428,7 @@ case class EventSchema[C <: EventCodex](codex: C) extends Schema {
   val kind = Type.Event
   val name = "EventSchema"
 
-  def isValid[V <: Value](value: V): Boolean = codex.fromValue(value).isInstanceOf[Event]
+  def isValid[V <: Value](value: V): Boolean = value.codex.name == codex.name
 
   protected def params(): String = ""
 }

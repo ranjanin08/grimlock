@@ -19,38 +19,38 @@ import au.com.cba.omnia.grimlock.framework.utility._
 class TestQuote extends TestGrimlock {
 
   "A Quote" should "escape a special character" in {
-    Quote().escape("foo,bar,baz", ",") shouldBe "\"foo,bar,baz\""
+    Quote(",").escape("foo,bar,baz") shouldBe "\"foo,bar,baz\""
   }
 
   it should "not escape regular characters" in {
-    Quote().escape("foo;bar;baz", ",") shouldBe "foo;bar;baz"
+    Quote(",").escape("foo;bar;baz") shouldBe "foo;bar;baz"
   }
 
   it should "always escape a special character" in {
-    Quote(true).escape("foo,bar,baz", ",") shouldBe "\"foo,bar,baz\""
+    Quote(",", all=true).escape("foo,bar,baz") shouldBe "\"foo,bar,baz\""
   }
 
   it should "always escape regular characters" in {
-    Quote(true).escape("foo;bar;baz", ",") shouldBe "\"foo;bar;baz\""
+    Quote(",", all=true).escape("foo;bar;baz") shouldBe "\"foo;bar;baz\""
   }
 }
 
 class TestReplace extends TestGrimlock {
 
   "A Replace" should "escape a special character" in {
-    Replace().escape("foo,bar,baz", ",") shouldBe "foo\\,bar\\,baz"
+    Replace(",").escape("foo,bar,baz") shouldBe "foo\\,bar\\,baz"
   }
 
   it should "not escape regular characters" in {
-    Replace().escape("foo;bar;baz", ",") shouldBe "foo;bar;baz"
+    Replace(",").escape("foo;bar;baz") shouldBe "foo;bar;baz"
   }
 
   it should "substitute a special character" in {
-    Replace("|").escape("foo,bar,baz", ",") shouldBe "foo|bar|baz"
+    Replace(",", "|").escape("foo,bar,baz") shouldBe "foo|bar|baz"
   }
 
   it should "not substitute regular characters" in {
-    Replace("|").escape("foo;bar;baz", ",") shouldBe "foo;bar;baz"
+    Replace(",", "|").escape("foo;bar;baz") shouldBe "foo;bar;baz"
   }
 }
 

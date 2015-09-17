@@ -44,16 +44,11 @@ class TestContinuousSchema extends TestGrimlock {
     ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).isValid(LongValue(-4)) shouldBe false
   }
 
-  it should "throw an exception for an invalid value" in {
-    a [ClassCastException] should be thrownBy { ContinuousSchema(DoubleCodex).isValid(StringValue("a")) }
-    a [ClassCastException] should be thrownBy {
-      ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).isValid(StringValue("a"))
-    }
-
-    a [ClassCastException] should be thrownBy { ContinuousSchema(LongCodex).isValid(StringValue("a")) }
-    a [ClassCastException] should be thrownBy {
-      ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).isValid(StringValue("a"))
-    }
+  it should "not validate an invalid value" in {
+    ContinuousSchema(DoubleCodex).isValid(StringValue("a")) shouldBe false
+    ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).isValid(StringValue("a")) shouldBe false
+    ContinuousSchema(LongCodex).isValid(StringValue("a")) shouldBe false
+    ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).isValid(StringValue("a")) shouldBe false
   }
 
   it should "decode a correct value" in {
@@ -97,15 +92,11 @@ class TestDiscreteSchema extends TestGrimlock {
     DiscreteSchema[Codex.LongCodex](LongCodex, -4, 4, 2).isValid(LongValue(3)) shouldBe false
   }
 
-  it should "throw an exception for an invalid value" in {
-    a [ClassCastException] should be thrownBy { DiscreteSchema(LongCodex).isValid(DoubleValue(1)) }
-    a [ClassCastException] should be thrownBy {
-      DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).isValid(DoubleValue(1))
-    }
-    a [ClassCastException] should be thrownBy { DiscreteSchema(LongCodex).isValid(StringValue("a")) }
-    a [ClassCastException] should be thrownBy {
-      DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).isValid(StringValue("a"))
-    }
+  it should "not validate an invalid value" in {
+    DiscreteSchema(LongCodex).isValid(DoubleValue(1)) shouldBe false
+    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).isValid(DoubleValue(1)) shouldBe false
+    DiscreteSchema(LongCodex).isValid(StringValue("a")) shouldBe false
+    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).isValid(StringValue("a")) shouldBe false
   }
 
   it should "decode a correct value" in {
@@ -157,33 +148,21 @@ class TestNominalSchema extends TestGrimlock {
     NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(StringValue("d")) shouldBe false
   }
 
-  it should "throw an exception for an invalid value" in {
-    a [ClassCastException] should be thrownBy { NominalSchema(LongCodex).isValid(DoubleValue(1)) }
-    a [ClassCastException] should be thrownBy {
-      NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(DoubleValue(1))
-    }
-    a [ClassCastException] should be thrownBy { NominalSchema(LongCodex).isValid(StringValue("a")) }
-    a [ClassCastException] should be thrownBy {
-      NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(StringValue("a"))
-    }
+  it should "not validate an invalid value" in {
+    NominalSchema(LongCodex).isValid(DoubleValue(1)) shouldBe false
+    NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(DoubleValue(1)) shouldBe false
+    NominalSchema(LongCodex).isValid(StringValue("a")) shouldBe false
+    NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(StringValue("a")) shouldBe false
 
-    a [ClassCastException] should be thrownBy { NominalSchema(DoubleCodex).isValid(LongValue(1)) }
-    a [ClassCastException] should be thrownBy {
-      NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(LongValue(1))
-    }
-    a [ClassCastException] should be thrownBy { NominalSchema(DoubleCodex).isValid(StringValue("a")) }
-    a [ClassCastException] should be thrownBy {
-      NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(StringValue("a"))
-    }
+    NominalSchema(DoubleCodex).isValid(LongValue(1)) shouldBe false
+    NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(LongValue(1)) shouldBe false
+    NominalSchema(DoubleCodex).isValid(StringValue("a")) shouldBe false
+    NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(StringValue("a")) shouldBe false
 
-    a [ClassCastException] should be thrownBy { NominalSchema(StringCodex).isValid(LongValue(1)) }
-    a [ClassCastException] should be thrownBy {
-      NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(LongValue(1))
-    }
-    a [ClassCastException] should be thrownBy { NominalSchema(StringCodex).isValid(DoubleValue(1)) }
-    a [ClassCastException] should be thrownBy {
-      NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(DoubleValue(1))
-    }
+    NominalSchema(StringCodex).isValid(LongValue(1)) shouldBe false
+    NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(LongValue(1)) shouldBe false
+    NominalSchema(StringCodex).isValid(DoubleValue(1)) shouldBe false
+    NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(DoubleValue(1)) shouldBe false
   }
 
   it should "decode a correct value" in {
@@ -248,33 +227,21 @@ class TestOrdinalSchema extends TestGrimlock {
     OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(StringValue("d")) shouldBe false
   }
 
-  it should "throw an exception for an invalid value" in {
-    a [ClassCastException] should be thrownBy { OrdinalSchema(LongCodex).isValid(DoubleValue(1)) }
-    a [ClassCastException] should be thrownBy {
-      OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(DoubleValue(1))
-    }
-    a [ClassCastException] should be thrownBy { OrdinalSchema(LongCodex).isValid(StringValue("a")) }
-    a [ClassCastException] should be thrownBy {
-      OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(StringValue("a"))
-    }
+  it should "not validate an invalid value" in {
+    OrdinalSchema(LongCodex).isValid(DoubleValue(1)) shouldBe false
+    OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(DoubleValue(1)) shouldBe false
+    OrdinalSchema(LongCodex).isValid(StringValue("a")) shouldBe false
+    OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(StringValue("a")) shouldBe false
 
-    a [ClassCastException] should be thrownBy { OrdinalSchema(DoubleCodex).isValid(LongValue(1)) }
-    a [ClassCastException] should be thrownBy {
-      OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(LongValue(1))
-    }
-    a [ClassCastException] should be thrownBy { OrdinalSchema(DoubleCodex).isValid(StringValue("a")) }
-    a [ClassCastException] should be thrownBy {
-      OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(StringValue("a"))
-    }
+    OrdinalSchema(DoubleCodex).isValid(LongValue(1)) shouldBe false
+    OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(LongValue(1)) shouldBe false
+    OrdinalSchema(DoubleCodex).isValid(StringValue("a")) shouldBe false
+    OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(StringValue("a")) shouldBe false
 
-    a [ClassCastException] should be thrownBy { OrdinalSchema(StringCodex).isValid(LongValue(1)) }
-    a [ClassCastException] should be thrownBy {
-      OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(LongValue(1))
-    }
-    a [ClassCastException] should be thrownBy { OrdinalSchema(StringCodex).isValid(DoubleValue(1)) }
-    a [ClassCastException] should be thrownBy {
-      OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(DoubleValue(1))
-    }
+    OrdinalSchema(StringCodex).isValid(LongValue(1)) shouldBe false
+    OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(LongValue(1)) shouldBe false
+    OrdinalSchema(StringCodex).isValid(DoubleValue(1)) shouldBe false
+    OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(DoubleValue(1)) shouldBe false
   }
 
   it should "decode a correct value" in {
@@ -322,9 +289,9 @@ class TestDateSchema extends TestGrimlock {
       .isValid(DateValue(dtfmt.parse("2001-01-01 01:02:02"), DateCodex("yyyy-MM-dd hh:mm:ss"))) shouldBe true
   }
 
-  it should "throw an exception for an invalid value" in {
-    a [ClassCastException] should be thrownBy { DateSchema(DateCodex("yyyy-MM-dd")).isValid(LongValue(1)) }
-    a [ClassCastException] should be thrownBy { DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")).isValid(LongValue(1)) }
+  it should "not validate an invalid value" in {
+    DateSchema(DateCodex("yyyy-MM-dd")).isValid(LongValue(1)) shouldBe false
+    DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")).isValid(LongValue(1)) shouldBe false
   }
 
   it should "decode a correct value" in {

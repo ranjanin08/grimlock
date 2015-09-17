@@ -16,25 +16,28 @@ package au.com.cba.omnia.grimlock.framework.utility
 
 /** Base trait for ecaping special characters in a string. */
 trait Escape {
+  /** The special character to escape. */
+  val special: String
+
   /**
    * Escape a string.
    *
-   * @param str     The string to escape.
-   * @param special The special character to escape.
+   * @param str The string to escape.
    *
    * @return The escaped string.
    */
-  def escape(str: String, special: String): String
+  def escape(str: String): String
 }
 
 /**
  * Escape a string by enclosing it in quotes.
  *
- * @param all   Indicator if all strings should be quoted.
- * @param quote The quoting character to use.
+ * @param special The special character to quote.
+ * @param quote   The quoting character to use.
+ * @param all     Indicator if all strings should be quoted.
  */
-case class Quote(all: Boolean = false, quote: String = "\"") extends Escape {
-  def escape(str: String, special: String): String = {
+case class Quote(special: String, quote: String = "\"", all: Boolean = false) extends Escape {
+  def escape(str: String): String = {
     if (all || str.contains(special)) { quote + str + quote } else { str }
   }
 }
@@ -42,10 +45,11 @@ case class Quote(all: Boolean = false, quote: String = "\"") extends Escape {
 /**
  * Escape a string by replacing the special character.
  *
+ * @param special The special character to replace.
  * @param pattern The escape pattern to use. Use `%1$``s` to substitute the special character.
  */
-case class Replace(pattern: String = "\\%1$s") extends Escape {
-  def escape(str: String, special: String): String = str.replaceAllLiterally(special, pattern.format(special))
+case class Replace(special: String, pattern: String = "\\%1$s") extends Escape {
+  def escape(str: String): String = str.replaceAllLiterally(special, pattern.format(special))
 }
 
 /**
