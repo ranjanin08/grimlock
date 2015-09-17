@@ -45,13 +45,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Replace</span><span class="params">(<span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;\\%1$s&quot;</span></span>)</span><span class="result"> extends <a href="Escape.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Escape">Escape</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">Replace</span><span class="params">(<span name="special">special: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;\\%1$s&quot;</span></span>)</span><span class="result"> extends <a href="Escape.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Escape">Escape</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Escape a string by replacing the special character.
-</p></div><dl class="paramcmts block"><dt class="param">pattern</dt><dd class="cmt"><p>The escape pattern to use. Use <code>%1$</code><code>s</code> to substitute the special character.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(295bae7c7348170731b7977298f70f8168236f75)//src/main/scala/au/com/cba/omnia/grimlock/framework/Utility.scala" target="_blank">Utility.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">special</dt><dd class="cmt"><p>The special character to replace.</p></dd><dt class="param">pattern</dt><dd class="cmt"><p>The escape pattern to use. Use <code>%1$</code><code>s</code> to substitute the special character.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(48d29006184a611c8c31c50164f36f5f4a3728e8)//src/main/scala/au/com/cba/omnia/grimlock/framework/Utility.scala" target="_blank">Utility.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="Escape.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Escape">Escape</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -92,7 +92,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.utility.Replace#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(pattern:String):au.com.cba.omnia.grimlock.framework.utility.Replace"></a>
+      <a id="&lt;init&gt;(special:String,pattern:String):au.com.cba.omnia.grimlock.framework.utility.Replace"></a>
       <a id="&lt;init&gt;:Replace"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -100,14 +100,14 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Replace</span><span class="params">(<span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;\\%1$s&quot;</span></span>)</span>
+        <span class="name">Replace</span><span class="params">(<span name="special">special: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="pattern">pattern: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;\\%1$s&quot;</span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.utility.Replace@&lt;init&gt;(pattern:String):au.com.cba.omnia.grimlock.framework.utility.Replace" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.utility.Replace@&lt;init&gt;(special:String,pattern:String):au.com.cba.omnia.grimlock.framework.utility.Replace" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">pattern</dt><dd class="cmt"><p>The escape pattern to use. Use <code>%1$</code><code>s</code> to substitute the special character.
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">special</dt><dd class="cmt"><p>The special character to replace.</p></dd><dt class="param">pattern</dt><dd class="cmt"><p>The escape pattern to use. Use <code>%1$</code><code>s</code> to substitute the special character.
 </p></dd></dl></div>
     </li></ol>
             </div>
@@ -227,23 +227,23 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.utility.Replace#escape" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="escape(str:String,special:String):String"></a>
-      <a id="escape(String,String):String"></a>
+      <a id="escape(str:String):String"></a>
+      <a id="escape(String):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">escape</span><span class="params">(<span name="str">str: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="special">special: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">escape</span><span class="params">(<span name="str">str: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.utility.Replace@escape(str:String,special:String):String" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.utility.Replace@escape(str:String):String" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Escape a string.</p><div class="fullcomment"><div class="comment cmt"><p>Escape a string.
-</p></div><dl class="paramcmts block"><dt class="param">str</dt><dd class="cmt"><p>The string to escape.</p></dd><dt class="param">special</dt><dd class="cmt"><p>The special character to escape.
+</p></div><dl class="paramcmts block"><dt class="param">str</dt><dd class="cmt"><p>The string to escape.
 </p></dd><dt>returns</dt><dd class="cmt"><p>The escaped string.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Replace">Replace</a> → <a href="Escape.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Escape">Escape</a></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -372,6 +372,23 @@
     </span>
       <p class="shortcomment cmt">The escape pattern to use.</p><div class="fullcomment"><div class="comment cmt"><p>The escape pattern to use. Use <code>%1$</code><code>s</code> to substitute the special character.
 </p></div></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.utility.Replace#special" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="special:String"></a>
+      <a id="special:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">special</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.utility.Replace@special:String" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The special character to replace.</p><div class="fullcomment"><div class="comment cmt"><p>The special character to replace.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Replace">Replace</a> → <a href="Escape.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.Escape">Escape</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>

@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(295bae7c7348170731b7977298f70f8168236f75)//src/main/scala/au/com/cba/omnia/grimlock/spark/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(48d29006184a611c8c31c50164f36f5f4a3728e8)//src/main/scala/au/com/cba/omnia/grimlock/spark/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -623,6 +623,25 @@ Valueable, Content)]</code> to a Spark <code>Matrix9D</code>.</p>
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.spark.Matrix#loadSequence" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="loadSequence[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](file:String,parser:(K,V)=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]])(implicitsc:org.apache.spark.SparkContext,implicitev1:scala.reflect.ClassTag[K],implicitev2:scala.reflect.ClassTag[V]):(org.apache.spark.rdd.RDD[au.com.cba.omnia.grimlock.framework.Cell[P]],org.apache.spark.rdd.RDD[String])"></a>
+      <a id="loadSequence[K&lt;:Writable,V&lt;:Writable,P&lt;:Position](String,(K,V)⇒TraversableOnce[Either[Cell[P],String]])(SparkContext,ClassTag[K],ClassTag[V]):(RDD[Cell[P]],RDD[String])"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">loadSequence</span><span class="tparams">[<span name="K">K &lt;: <span class="extype" name="org.apache.hadoop.io.Writable">Writable</span></span>, <span name="V">V &lt;: <span class="extype" name="org.apache.hadoop.io.Writable">Writable</span></span>, <span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="parser">parser: (<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.loadSequence.K">K</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.loadSequence.V">V</span>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Either">Either</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.loadSequence.P">P</span>], <span class="extype" name="scala.Predef.String">String</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>, <span name="ev1">ev1: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.loadSequence.K">K</span>]</span>, <span name="ev2">ev2: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.loadSequence.V">V</span>]</span>)</span><span class="result">: (<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.loadSequence.P">P</span>]], <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="scala.Predef.String">String</span>])</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrix$@loadSequence[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](file:String,parser:(K,V)=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]])(implicitsc:org.apache.spark.SparkContext,implicitev1:scala.reflect.ClassTag[K],implicitev2:scala.reflect.ClassTag[V]):(org.apache.spark.rdd.RDD[au.com.cba.omnia.grimlock.framework.Cell[P]],org.apache.spark.rdd.RDD[String])" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Read binary key-value (sequence) matrix data into a <code>RDD[Cell[P]]</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Read binary key-value (sequence) matrix data into a <code>RDD[Cell[P]]</code>.
+</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>The text file to read from.</p></dd><dt class="param">parser</dt><dd class="cmt"><p>The parser that converts a single key-value to a cell.
+</p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Matrix#loadText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="loadText[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](file:String,parser:String=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]])(implicitsc:org.apache.spark.SparkContext):(org.apache.spark.rdd.RDD[au.com.cba.omnia.grimlock.framework.Cell[P]],org.apache.spark.rdd.RDD[String])"></a>
       <a id="loadText[P&lt;:Position](String,(String)⇒TraversableOnce[Either[Cell[P],String]])(SparkContext):(RDD[Cell[P]],RDD[String])"></a>
