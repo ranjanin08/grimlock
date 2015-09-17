@@ -282,13 +282,13 @@ object DiscreteSchema {
 }
 
 /** Base trait for schemas for categorical variables. */
-trait CategoricalSchema[T] extends Schema {
+trait CategoricalSchema[C <: Codex] extends Schema {
   /** Optional values the variable can take. */
-  val domain: Option[List[T]]
+  val domain: Option[List[C#T]]
 
   def isValid[V <: Value](value: V): Boolean = {
     (value.codex.name == codex.name, domain) match {
-      case (true, Some(d)) => val v = codex.fromValue(value); d.contains(v)
+      case (true, Some(d)) => d.contains(codex.fromValue(value))
       case (true, None) => true
       case _ => false
     }
@@ -304,7 +304,7 @@ trait CategoricalSchema[T] extends Schema {
  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
  *       object.
  */
-case class NominalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]]) extends CategoricalSchema[C#T] {
+case class NominalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]]) extends CategoricalSchema[C] {
   val kind = Type.Nominal
   val name = "NominalSchema"
 
@@ -363,7 +363,7 @@ object NominalSchema {
  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
  *       object.
  */
-case class OrdinalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]]) extends CategoricalSchema[C#T] {
+case class OrdinalSchema[C <: Codex] private (codex: C, domain: Option[List[C#T]]) extends CategoricalSchema[C] {
   val kind = Type.Ordinal
   val name = "OrdinalSchema"
 
