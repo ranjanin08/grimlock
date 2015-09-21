@@ -1146,9 +1146,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
 
     if (writeHeader) {
       columns
-        .map {
-          case lst => (if (writeRowId) escape(rowId) + separator else "") + lst.mkString(separator)
-        }
+        .map { case lst => (if (writeRowId) escape(rowId) + separator else "") + lst.mkString(separator) }
         .write(TypedSink(TextLine(header.format(file))))
     }
 
@@ -1163,9 +1161,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
           case cols => (key, cols.map { case c => values.getOrElse(c, "") })
         }
       }
-      .map {
-        case (i, lst) => (if (writeRowId) escape(i) + separator else "") + lst.mkString(separator)
-      }
+      .map { case (i, lst) => (if (writeRowId) escape(i) + separator else "") + lst.mkString(separator) }
       .write(TypedSink(TextLine(file)))
 
     data

@@ -908,9 +908,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
 
     if (writeHeader) {
       columns
-        .map {
-          case lst => (if (writeRowId) escape(rowId) + separator else "") + lst.mkString(separator)
-        }
+        .map { case lst => (if (writeRowId) escape(rowId) + separator else "") + lst.mkString(separator) }
         .saveAsTextFile(header.format(file))
     }
 
