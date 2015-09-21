@@ -14,11 +14,14 @@
 
 package au.com.cba.omnia.grimlock.scalding
 
-import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist }
-
 import cascading.flow.FlowDef
 import com.twitter.scalding.{ Mode, TextLine }
 import com.twitter.scalding.typed.{ TypedPipe, TypedSink }
+import com.twitter.scrooge.ThriftStruct
+
+import au.com.cba.omnia.ebenezer.scrooge.ParquetScroogeSource
+
+import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist }
 
 /** Trait for peristing a Scalding `TypedPipe`. */
 trait Persist[T] extends BasePersist[T] {
@@ -39,6 +42,23 @@ trait Persist[T] extends BasePersist[T] {
     data
       .flatMap(writer(_))
       .write(TypedSink(TextLine(file)))
+
+    data
+  }
+
+  /**
+   * Persist to disk as parquet file.
+   *
+   * @param file        Name of the output file.
+   * @param f           Function that converts type T to thrift struct of type U.
+   *
+   * @return A Scalding `TypedPipe[T]` which is this object's data.
+   */
+  def saveAsParquet[U <: ThriftStruct](file: String, f: T => U)(implicit flow: FlowDef,
+                                                                mode: Mode, m: Manifest[U]): TypedPipe[T] = {
+    data
+      .map(f(_))
+      .write(ParquetScroogeSource[U](file))
 
     data
   }

@@ -55,15 +55,18 @@ import au.com.cba.omnia.grimlock.framework.window._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Nameable._
 
+import au.com.cba.omnia.ebenezer.scrooge.ParquetScroogeSource
+
 import cascading.flow.FlowDef
 import com.twitter.scalding.{ Mode, TextLine, WritableSequenceFile }
-import com.twitter.scalding.typed.{ IterablePipe, Grouped, TypedPipe, TypedSink, ValuePipe }
+import com.twitter.scalding.typed._, TDsl._
+import com.twitter.scrooge.ThriftStruct
+
+import org.apache.hadoop.io.Writable
 
 import java.io.{ File, PrintWriter }
 import java.lang.{ ProcessBuilder, Thread }
 import java.nio.file.Paths
-
-import org.apache.hadoop.io.Writable
 
 import scala.collection.immutable.HashSet
 import scala.io.Source
@@ -976,6 +979,20 @@ object Matrix {
     parser: (K, V) => TraversableOnce[Either[Cell[P], String]])(implicit ev1: Manifest[K],
       ev2: Manifest[V]): (TypedPipe[Cell[P]], TypedPipe[String]) = {
     val pipe = TypedPipe.from(WritableSequenceFile[K, V](file)).flatMap { case (k, v) => parser(k, v) }
+
+    (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
+  }
+
+  /**
+   * Read parquet matrix text data into a `TypedPipe[Cell[P]]`.
+   *
+   * @param file   The parquet file(s) to read from.
+   * @param parser The parser that converts a thrift struct to a cell.
+   */
+  def loadParquet[P <: Position, T <: ThriftStruct](file: String,
+        parser: T => Either[Cell[P], String])(implicit flow: FlowDef, mode: Mode,
+        manifest: Manifest[T]): (TypedPipe[Cell[P]], TypedPipe[String]) = {
+    val pipe = ParquetScroogeSource[T](file).map(parser(_))
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
   }

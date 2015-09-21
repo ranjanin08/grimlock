@@ -42,6 +42,7 @@ object build extends Build {
     scalaVersion.apply(scalaVersion => {
      (depend.hadoopClasspath
         ++ depend.scalding()
+        ++ depend.omnia("ebenezer","0.18.5-20150814060245-db099a2")
         ++ Seq(
             noHadoop("org.apache.spark"   %% "spark-core"         % "1.5.0")
               exclude("com.twitter", "chill-java")

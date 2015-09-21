@@ -45,10 +45,17 @@ import au.com.cba.omnia.grimlock.scalding.Predicateable._
 import au.com.cba.omnia.grimlock.scalding.transform._
 import au.com.cba.omnia.grimlock.scalding.Types._
 
+import au.com.cba.omnia.grimlock.{DateT, FValue, PositionT3D}
+import au.com.cba.omnia.grimlock.FValue._
+
 import cascading.flow.FlowDef
 import com.twitter.scalding.{ Args, Job, Mode, TextLine, TypedPsv }
 import com.twitter.scalding.TDsl.sourceToTypedPipe
-import com.twitter.scalding.typed.{ IterablePipe, TypedPipe, TypedSink, ValuePipe }
+import com.twitter.scalding.typed.{ TypedPipe, TypedSink }
+import com.twitter.scrooge.ThriftStruct
+
+import java.text.SimpleDateFormat
+
 
 object TestScaldingReader {
   def load4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
@@ -968,3 +975,88 @@ class TestScalding31(args: Args) extends Job(args) {
   errors.write(TypedSink(TextLine("./tmp.scalding/nok.out")))
 }
 
+class TestScalding32(args: Args) extends Job(args) {
+  //TODO: There are lot of bits that are hacky now, this is evolving.
+  //Invokes TestScalding33 as well. (Seperate jobs since the same sink is used as source)
+  val longSchema    = DiscreteSchema(LongCodex)
+  val data = List(("iid:A", "2", "3", Content(longSchema, 0)),
+                  ("iid:B", "2", "3", Content(longSchema, 1)),
+                  ("iid:C", "2", "3", Content(longSchema, 2)),
+                  ("iid:D", "2", "3", Content(longSchema, 3)),
+                  ("iid:E", "2", "3", Content(longSchema, 4)),
+                  ("iid:F", "2", "3", Content(ContinuousSchema(DoubleCodex), 5.5)),
+                  ("iid:G", "2", "3", Content(NominalSchema(StringCodex), "xyz")),
+                  ("iid:H", "2", "3", Content(DateSchema(DateCodex("yyyy-MM-dd")),
+                                                DateValue(new SimpleDateFormat("yyyy-MM-dd").parse("2015-01-01"),
+                                                  DateCodex("yyyy-MM-dd"))
+                                              )
+                  ))
+
+  def toParquet[T <: ThriftStruct, U <: Cell[_]](x: Cell[Position3D]): PositionT3D = {
+    x.position.coordinates.map(_.toShortString) match {
+      case List(first: String, second: String, third: String) =>
+        PositionT3D(StringVal(first), StringVal(second), StringVal(third), contentToFValue(x.content.value))
+    }
+  }
+
+  def contentToFValue(x: Value): Option[FValue] = {
+    x match {
+      case StringValue(z)                   => Some(StringVal(z))
+      case LongValue(z)                     => Some(LongVal(z))
+      case DoubleValue(z)                   => Some(DoubleVal(z))
+      case BooleanValue(z)                  => Some(BooleanVal(z))
+      case DateValue(z, y)                  => Some(DateVal(DateT(new SimpleDateFormat(y.format).format(z), y.format)))
+      case EventValue(z, _)                 => None
+    }
+  }
+
+  data
+    .saveAsText("./tmp.scalding/yok_txt")
+    .toUnit
+
+  data
+    .saveAsParquet("./tmp.scalding/yok_parquet", toParquet)
+    .toUnit
+
+  override def next = Option(new TestScalding33(args))
+}
+
+class TestScalding33(args: Args) extends Job(args) {
+  def fValueToContent(x: Option[FValue]): Option[Content] = {
+    x.map {
+      _ match {
+        case StringVal(z)           => Content(NominalSchema(StringCodex), z)
+        case IntegerVal(z)          => Content(DiscreteSchema(LongCodex), z)
+        case LongVal(z)             => Content(DiscreteSchema(LongCodex), z)
+        case DoubleVal(z)           => Content(ContinuousSchema(DoubleCodex), z)
+        case BooleanVal(z)          => Content(NominalSchema(BooleanCodex), z)
+        case DateVal(z)             => Content(DateSchema(DateCodex(z.format)),
+                                        DateValue(new SimpleDateFormat(z.format).parse(z.dateVal),
+                                            DateCodex(z.format)
+                                          )
+                                        )
+        case a @ UnknownUnionField(_)  => throw new Exception(s"Unknown type ${a}")
+      }
+    }
+  }
+
+  def getAsString(x: FValue) : String = {
+    x match {
+      case StringVal(z)       => z
+      case IntegerVal(z)      => z.toString
+      case LongVal(z)         => z.toString
+      case DoubleVal(z)       => z.toString
+      case BooleanVal(z)      => z.toString
+      case DateVal(z)         => z.toString
+    }
+  }
+
+  def parquetToCell[T <: ThriftStruct, U <: Cell[_]](x: PositionT3D): Either[Cell[Position3D], String] = {
+    Left(Cell(Position3D(getAsString(x._1), getAsString(x._2), getAsString(x._3)), fValueToContent(x._4).get))
+  }
+
+  loadParquet("./tmp.scalding/yok_parquet/*", parquetToCell)
+    .data
+    .saveAsText("./tmp.scalding/yok_parquet_txt")
+    .toUnit
+}
