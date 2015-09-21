@@ -50,6 +50,8 @@ import com.twitter.scalding.{ Args, Job, Mode, TextLine, TypedPsv }
 import com.twitter.scalding.TDsl.sourceToTypedPipe
 import com.twitter.scalding.typed.{ IterablePipe, TypedPipe, TypedSink, ValuePipe }
 
+import scala.io.Source
+
 object TestScaldingReader {
   def load4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
     def hashDate(v: String) = {
@@ -661,7 +663,7 @@ class TestScalding19(args : Args) extends Job(args) {
 
 class TestScalding20(args : Args) extends Job(args) {
 
-  val (dictionary, _) = Dictionary.load(args("path") + "/dict.txt")
+  val (dictionary, _) = Dictionary.load(Source.fromFile(args("path") + "/dict.txt"))
 
   loadText(args("path") + "/ivoryInputfile1.txt", Cell.parse3DWithDictionary(dictionary, Second, third = DateCodex()))
     .data

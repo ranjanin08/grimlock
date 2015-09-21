@@ -48,6 +48,8 @@ import au.com.cba.omnia.grimlock.spark.Types._
 import org.apache.spark.{ SparkContext, SparkConf }
 import org.apache.spark.rdd.RDD
 
+import scala.io.Source
+
 object TestSparkReader {
   def load4TupleDataAddDate(file: String)(implicit sc: SparkContext): RDD[Cell[Position3D]] = {
     def hashDate(v: String) = {
@@ -702,7 +704,7 @@ object TestSpark20 {
   def main(args: Array[String]) {
     implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
 
-    val (dictionary, _) = Dictionary.load(args(1) + "/dict.txt")
+    val (dictionary, _) = Dictionary.load(Source.fromFile(args(1) + "/dict.txt"))
 
     loadText(args(1) + "/ivoryInputfile1.txt", Cell.parse3DWithDictionary(dictionary, Second, third = DateCodex()))
       .data

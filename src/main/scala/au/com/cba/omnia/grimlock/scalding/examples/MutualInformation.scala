@@ -30,6 +30,8 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 
 import com.twitter.scalding.{ Args, Job }
 
+import scala.io.Source
+
 // Simple bucketing implementation. For numerical values it generates categorical values that are the rounded up
 // value. All other values are passed through.
 case class CeilingBucketing() extends Transformer[Position2D, Position2D] {
@@ -50,7 +52,7 @@ class MutualInformation(args: Args) extends Job(args) {
   val output = "scalding"
 
   // Read in the dictionary (ignoring errors).
-  val (dictionary, _) = Dictionary.load(s"${path}/exampleDictionary.txt")
+  val (dictionary, _) = Dictionary.load(Source.fromFile(s"${path}/exampleDictionary.txt"))
 
   // Read the data.
   // 1/ Read the data using the supplied dictionary. This returns a 3D matrix (instance x feature x date).

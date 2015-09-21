@@ -20,7 +20,7 @@ object Dictionary {
   /**
    * Load a dictionary from file.
    *
-   * @param file      File containing dictionary data.
+   * @param source    Source to read dictionary data from.
    * @param separator Separator for splitting dictionary into data fields.
    * @param key       Index (into data fields) for schema key.
    * @param encoding  Index (into data fields) for the encoding identifier.
@@ -28,9 +28,9 @@ object Dictionary {
    *
    * @return A tuple consisting of the dictionary object and an iterator containing parse errors.
    */
-  def load(file: String, separator: String = "|", key: Int = 0, encoding: Int = 1,
+  def load(source: Source, separator: String = "|", key: Int = 0, encoding: Int = 1,
     schema: Int = 2): (Map[String, Schema], Iterator[String]) = {
-    val result = Source.fromFile(file)
+    val result = source
       .getLines()
       .map {
         case line =>
