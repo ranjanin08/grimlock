@@ -955,32 +955,35 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
   /**
    * Persist a `Matrix2D` as a Vowpal Wabbit file.
    *
-   * @param slice Encapsulates the dimension that makes up the columns.
-   * @param file  File to write to.
-   * @param tag   Indicator if the selected position should be added as a tag.
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
+   * @param tag        Indicator if the selected position should be added as a tag.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    */
-  def saveAsVW[D <: Dimension](slice: Slice[Position2D, D], file: String, tag: Boolean = false)(
-    implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    saveAsVW(slice, file, None, None, tag)
+  def saveAsVW[D <: Dimension](slice: Slice[Position2D, D], file: String, dictionary: String = "%s.dict",
+    tag: Boolean = false)(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, None, None, tag, dictionary)
   }
 
   /**
    * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels.
    *
-   * @param slice  Encapsulates the dimension that makes up the columns.
-   * @param file   File to write to.
-   * @param labels The labels.
-   * @param tag    Indicator if the selected position should be added as a tag.
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param labels     The labels.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
+   * @param tag        Indicator if the selected position should be added as a tag.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    *
    * @note The labels are joined to the data keeping only those examples for which data and a label are available.
    */
   def saveAsVWWithLabels[D <: Dimension](slice: Slice[Position2D, D], file: String, labels: U[Cell[Position1D]],
-    tag: Boolean = false)(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    saveAsVW(slice, file, Some(labels), None, tag)
+    dictionary: String = "%s.dict", tag: Boolean = false)(implicit ev1: PosDimDep[Position2D, D],
+      ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, Some(labels), None, tag, dictionary)
   }
 
   /**
@@ -989,6 +992,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @param slice      Encapsulates the dimension that makes up the columns.
    * @param file       File to write to.
    * @param importance The importance weights.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
    * @param tag        Indicator if the selected position should be added as a tag.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
@@ -996,8 +1000,9 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
    */
   def saveAsVWWithImportance[D <: Dimension](slice: Slice[Position2D, D], file: String, importance: U[Cell[Position1D]],
-    tag: Boolean = false)(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    saveAsVW(slice, file, None, Some(importance), tag)
+    dictionary: String = "%s.dict", tag: Boolean = false)(implicit ev1: PosDimDep[Position2D, D],
+      ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, None, Some(importance), tag, dictionary)
   }
 
   /**
@@ -1007,6 +1012,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @param file       File to write to.
    * @param labels     The labels.
    * @param importance The importance weights.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
    * @param tag        Indicator if the selected position should be added as a tag.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
@@ -1015,27 +1021,34 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    *       and weight are available.
    */
   def saveAsVWWithLabelsAndImportance[D <: Dimension](slice: Slice[Position2D, D], file: String,
-    labels: U[Cell[Position1D]], importance: U[Cell[Position1D]], tag: Boolean = false)(
-      implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    saveAsVW(slice, file, Some(labels), Some(importance), tag)
+    labels: U[Cell[Position1D]], importance: U[Cell[Position1D]], dictionary: String = "%s.dict",
+      tag: Boolean = false)(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, Some(labels), Some(importance), tag, dictionary)
   }
 
   private def saveAsVW[D <: Dimension](slice: Slice[Position2D, D], file: String, labels: Option[U[Cell[Position1D]]],
-    importance: Option[U[Cell[Position1D]]], tag: Boolean)(implicit ev1: PosDimDep[Position2D, D],
+    importance: Option[U[Cell[Position1D]]], tag: Boolean, dictionary: String)(implicit ev1: PosDimDep[Position2D, D],
       ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    val dict = data
+      .map { c => slice.remainder(c.position)(First).toShortString }
+      .distinct
+      .zipWithIndex
+
+    dict
+      .saveAsTextFile(dictionary.format(file))
+
     val features = data
+      .keyBy { c => slice.remainder(c.position)(First).toShortString }
+      .join(dict)
       .flatMap {
-        case c =>
-          c.content.value.asDouble.map {
-            case v => (slice.selected(c.position), slice.remainder(c.position)(First).toShortString + ":" + v)
-          }
+        case (_, (c, i)) => c.content.value.asDouble.map { case v => (slice.selected(c.position), (i, v)) }
       }
       .groupByKey
       .map {
         case (p, itr) => (p, itr
           .toList
-          .sorted
-          .foldLeft("|") { case (b, v) => b + " " + v })
+          .sortBy { case (i, _) => i }
+          .foldLeft("|") { case (b, (i, v)) => b + " " + i + ":" + v })
       }
 
     val tagged = tag match {
