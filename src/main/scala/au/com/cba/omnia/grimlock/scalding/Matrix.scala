@@ -959,8 +959,8 @@ object Matrix {
    * @param file   The text file to read from.
    * @param parser The parser that converts a single line to a cell.
    */
-  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]])(
-    implicit flow: FlowDef, mode: Mode): (TypedPipe[Cell[P]], TypedPipe[String]) = {
+  def loadText[P <: Position](file: String,
+    parser: (String) => TraversableOnce[Either[Cell[P], String]]): (TypedPipe[Cell[P]], TypedPipe[String]) = {
     val pipe = TypedPipe.from(TextLine(file)).flatMap { parser(_) }
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
