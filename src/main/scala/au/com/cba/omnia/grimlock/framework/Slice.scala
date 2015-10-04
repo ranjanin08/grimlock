@@ -17,7 +17,7 @@ package au.com.cba.omnia.grimlock.framework.position
 import au.com.cba.omnia.grimlock.framework._
 
 /** Base trait that encapsulates dimension on which to operate. */
-sealed trait Slice[P <: Position, D <: Dimension] {
+sealed trait Slice[P <: Position] {
   /**
    * Return type of the `selected` method; a position of dimension less than `P`.
    *
@@ -33,7 +33,7 @@ sealed trait Slice[P <: Position, D <: Dimension] {
   type R <: Position with ExpandablePosition
 
   /** The dimension of this slice. */
-  val dimension: D
+  val dimension: Dimension
 
   /** Returns the selected coordinate(s) for the given `pos`. */
   def selected(pos: P): S
@@ -50,7 +50,7 @@ sealed trait Slice[P <: Position, D <: Dimension] {
   def combineMaps(pos: P, x: Map[S, C], y: Map[S, C]): Map[S, C]
 }
 
-trait Mapable[P <: Position with ReduceablePosition, D <: Dimension] { self: Slice[P, D] =>
+trait Mapable[P <: Position with ReduceablePosition] { self: Slice[P] =>
   protected def remove(pos: P): pos.L = pos.remove(dimension)
   protected def single(pos: P): Position1D = Position1D(pos(dimension))
 }
@@ -62,7 +62,7 @@ trait Mapable[P <: Position with ReduceablePosition, D <: Dimension] { self: Sli
  * @param dimension Dimension of the selected coordinate.
  */
 case class Over[P <: Position with ReduceablePosition with MapOverPosition, D <: Dimension](
-  dimension: D) extends Slice[P, D] with Mapable[P, D] {
+  dimension: D)(implicit ev: PosDimDep[P, D]) extends Slice[P] with Mapable[P] {
   type S = Position1D
   type R = P#L
   type C = P#O
@@ -88,7 +88,7 @@ case class Over[P <: Position with ReduceablePosition with MapOverPosition, D <:
  * @param dimension Dimension of the coordinate to exclude.
  */
 case class Along[P <: Position with ReduceablePosition with MapAlongPosition, D <: Dimension](
-  dimension: D) extends Slice[P, D] with Mapable[P, D] {
+  dimension: D)(implicit ev: PosDimDep[P, D]) extends Slice[P] with Mapable[P] {
   type S = P#L
   type R = Position1D
   type C = P#A

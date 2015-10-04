@@ -43,18 +43,6 @@ class TestOverPosition1D extends TestSlicePosition1D {
     over.remainder(pos1) shouldBe pos1.remove(First)
   }
 
-  it should "throw an exception for an invalid dimension" in {
-    a [IndexOutOfBoundsException] should be thrownBy { Over(Second).selected(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Over(Third).selected(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Over(Fourth).selected(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Over(Fifth).selected(pos1) }
-
-    a [UnsupportedOperationException] should be thrownBy { Over(Second).remainder(pos1) }
-    a [UnsupportedOperationException] should be thrownBy { Over(Third).remainder(pos1) }
-    a [UnsupportedOperationException] should be thrownBy { Over(Fourth).remainder(pos1) }
-    a [UnsupportedOperationException] should be thrownBy { Over(Fifth).remainder(pos1) }
-  }
-
   it should "return a map" in {
     over.toMap(Cell(pos1, con1)) shouldBe Map(over.selected(pos1) -> con1)
   }
@@ -77,18 +65,6 @@ class TestAlongPosition1D extends TestSlicePosition1D {
 
   it should "return a Position1D for the remainder" in {
     along.remainder(pos1) shouldBe Position1D(pos1(First))
-  }
-
-  it should "throw an exception for an invalid dimension" in {
-    a [UnsupportedOperationException] should be thrownBy { Along(Second).selected(pos1) }
-    a [UnsupportedOperationException] should be thrownBy { Along(Third).selected(pos1) }
-    a [UnsupportedOperationException] should be thrownBy { Along(Fourth).selected(pos1) }
-    a [UnsupportedOperationException] should be thrownBy { Along(Fifth).selected(pos1) }
-
-    a [IndexOutOfBoundsException] should be thrownBy { Along(Second).remainder(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Along(Third).remainder(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Along(Fourth).remainder(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Along(Fifth).remainder(pos1) }
   }
 
   it should "throw an exception for returning a map" in {
@@ -118,12 +94,6 @@ class TestOverPosition2D extends TestSlicePosition2D {
     list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
   }
 
-  it should "throw an exception for an invalid dimension" in {
-    a [IndexOutOfBoundsException] should be thrownBy { Over(Third).selected(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Over(Fourth).selected(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Over(Fifth).selected(pos1) }
-  }
-
   it should "return a map" in {
     list.foreach {
       case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
@@ -151,12 +121,6 @@ class TestAlongPosition2D extends TestSlicePosition2D {
 
   it should "return a Position1D for the remainder" in {
     list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
-  }
-
-  it should "throw an exception for an invalid dimension" in {
-    a [IndexOutOfBoundsException] should be thrownBy { Along(Third).remainder(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Along(Fourth).remainder(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Along(Fifth).remainder(pos1) }
   }
 
   it should "return a map" in {
@@ -194,11 +158,6 @@ class TestOverPosition3D extends TestSlicePosition3D {
     list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
   }
 
-  it should "throw an exception for an invalid dimension" in {
-    a [IndexOutOfBoundsException] should be thrownBy { Over(Fourth).selected(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Over(Fifth).selected(pos1) }
-  }
-
   it should "return a map" in {
     list.foreach {
       case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
@@ -227,11 +186,6 @@ class TestAlongPosition3D extends TestSlicePosition3D {
 
   it should "return a Position1D for the remainder" in {
     list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
-  }
-
-  it should "throw an exception for an invalid dimension" in {
-    a [IndexOutOfBoundsException] should be thrownBy { Along(Fourth).remainder(pos1) }
-    a [IndexOutOfBoundsException] should be thrownBy { Along(Fifth).remainder(pos1) }
   }
 
   it should "return a map" in {
@@ -269,10 +223,6 @@ class TestOverPosition4D extends TestSlicePosition4D {
     list.foreach { case (o, d) => o.remainder(pos1) shouldBe pos1.remove(d) }
   }
 
-  it should "throw an exception for an invalid dimension" in {
-    a [IndexOutOfBoundsException] should be thrownBy { Over(Fifth).selected(pos1) }
-  }
-
   it should "return a map" in {
     list.foreach {
       case (o, _) => o.toMap(Cell(pos1, con1)) shouldBe Map(o.selected(pos1) -> Map(o.remainder(pos1) -> con1))
@@ -301,10 +251,6 @@ class TestAlongPosition4D extends TestSlicePosition4D {
 
   it should "return a Position1D for the remainder" in {
     list.foreach { case (a, d) => a.remainder(pos1) shouldBe Position1D(pos1(d)) }
-  }
-
-  it should "throw an exception for an invalid dimension" in {
-    a [IndexOutOfBoundsException] should be thrownBy { Along(Fifth).remainder(pos1) }
   }
 
   it should "return a map" in {

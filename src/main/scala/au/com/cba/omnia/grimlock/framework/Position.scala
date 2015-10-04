@@ -818,8 +818,8 @@ trait Positions[P <: Position] {
    * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
    *       index itself is unique for each position but no ordering is defined.
    */
-  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S]
+  def names[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: ClassTag[slice.S],
+    ev3: NamesTuners#V[T]): U[slice.S]
 
   /**
    * Slice the positions using a regular expression.

@@ -107,12 +107,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   import SparkImplicits._
 
   type ChangeTuners = TP2
-  def change[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, schema: Schema, tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, RDD], ev3: ClassTag[slice.S],
-      ev4: ChangeTuners#V[T]): U[Cell[P]] = {
+  def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Schema, tuner: T = Default())(
+    implicit ev1: PositionDistributable[I, slice.S, RDD], ev2: ClassTag[slice.S],
+      ev3: ChangeTuners#V[T]): U[Cell[P]] = {
     data
       .keyBy { case c => slice.selected(c.position) }
-      .tunedLeftJoin(tuner.parameters, ev2.convert(positions).keyBy { case p => p })
+      .tunedLeftJoin(tuner.parameters, ev1.convert(positions).keyBy { case p => p })
       .flatMap {
         case (_, (c, po)) => po match {
           case Some(_) => schema.decode(c.content.value.toShortString).map { case con => Cell(c.position, con) }
@@ -133,8 +133,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type JoinTuners = TP3
-  def join[D <: Dimension, T <: Tuner](slice: Slice[P, D], that: S, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: P =!= Position1D, ev3: ClassTag[slice.S], ev4: JoinTuners#V[T]): U[Cell[P]] = {
+  def join[T <: Tuner](slice: Slice[P], that: S, tuner: T = Default())(implicit ev1: P =!= Position1D,
+    ev2: ClassTag[slice.S], ev3: JoinTuners#V[T]): U[Cell[P]] = {
     val (p1, p2) = tuner.parameters match {
       case Sequence2(f, s) => (f, s)
       case p => (NoParameters, p)
@@ -147,8 +147,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type NamesTuners = TP2
-  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S] = {
+  def names[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S], ev3: NamesTuners#V[T]): U[slice.S] = {
     data.map { case c => slice.selected(c.position) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
   }
 
@@ -158,41 +158,39 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
                                Default[Sequence2[Reducers, Sequence2[Reducers, Reducers]]],
                                Default[Sequence2[Sequence2[Reducers, Reducers], Reducers]],
                                Default[Sequence2[Sequence2[Reducers, Reducers], Sequence2[Reducers, Reducers]]]]
-  def pairwise[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], comparer: Comparer, operators: F,
-    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q],
-      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R],
-        ev6: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev2.convert(operators)
+  def pairwise[Q <: Position, F, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: F, tuner: T = Default())(
+    implicit ev1: Operable[F, slice.S, slice.R, Q], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S],
+      ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+    val operator = ev1.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, data)
       .flatMap { case ((lc, lr), (rc, rr)) => operator.compute(lc, lr, rc, rr) }
   }
 
-  def pairwiseWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
-    operators: F, value: E[W], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-      ev2: OperableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-        ev5: ClassTag[slice.R], ev6: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev2.convert(operators)
+  def pairwiseWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: F,
+    value: E[W], tuner: T = Default())(implicit ev1: OperableWithValue[F, slice.S, slice.R, Q, W],
+      ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
+        ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+    val operator = ev1.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, data)
       .flatMap { case ((lc, lr), (rc, rr)) => operator.computeWithValue(lc, lr, rc, rr, value) }
   }
 
-  def pairwiseBetween[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], comparer: Comparer, that: S,
-    operators: F, tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q],
-      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R],
-        ev6: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev2.convert(operators)
+  def pairwiseBetween[Q <: Position, F, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S, operators: F,
+    tuner: T = Default())(implicit ev1: Operable[F, slice.S, slice.R, Q], ev2: slice.S =!= Position0D,
+      ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+    val operator = ev1.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, that.data)
       .flatMap { case ((lc, lr), (rc, rr)) => operator.compute(lc, lr, rc, rr) }
   }
 
-  def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
-    that: S, operators: F, value: E[W], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-      ev2: OperableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-        ev5: ClassTag[slice.R], ev6: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev2.convert(operators)
+  def pairwiseBetweenWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S,
+    operators: F, value: E[W], tuner: T = Default())(implicit ev1: OperableWithValue[F, slice.S, slice.R, Q, W],
+      ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
+        ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+    val operator = ev1.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, that.data)
       .flatMap { case ((lc, lr), (rc, rr)) => operator.computeWithValue(lc, lr, rc, rr, value) }
@@ -250,21 +248,20 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type SliceTuners = TP2
-  def slice[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, keep: Boolean, tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, RDD], ev3: ClassTag[slice.S],
-      ev4: SliceTuners#V[T]): U[Cell[P]] = {
+  def slice[I, T <: Tuner](slice: Slice[P], positions: I, keep: Boolean, tuner: T = Default())(
+    implicit ev1: PositionDistributable[I, slice.S, RDD], ev2: ClassTag[slice.S],
+      ev3: SliceTuners#V[T]): U[Cell[P]] = {
     data
       .keyBy { case c => slice.selected(c.position) }
-      .tunedLeftJoin(tuner.parameters, ev2.convert(positions).map { case p => (p, ()) })
+      .tunedLeftJoin(tuner.parameters, ev1.convert(positions).map { case p => (p, ()) })
       .collect { case (_, (c, o)) if (o.isEmpty != keep) => c }
   }
 
   type SlideTuners = TP1
-  def slide[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], windows: F, ascending: Boolean,
-    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: Windowable[F, slice.S, slice.R, Q],
-      ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R],
-        ev6: SlideTuners#V[T]): U[Cell[Q]] = {
-    val window = ev2.convert(windows)
+  def slide[Q <: Position, F, T <: Tuner](slice: Slice[P], windows: F, ascending: Boolean, tuner: T = Default())(
+    implicit ev1: Windowable[F, slice.S, slice.R, Q], ev2: slice.R =!= Position0D, ev3: ClassTag[slice.S],
+      ev4: ClassTag[slice.R], ev5: SlideTuners#V[T]): U[Cell[Q]] = {
+    val window = ev1.convert(windows)
 
     data
       .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
@@ -284,11 +281,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def slideWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], windows: F, value: E[W],
-    ascending: Boolean, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-      ev2: WindowableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
-        ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]] = {
-    val window = ev2.convert(windows)
+  def slideWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], windows: F, value: E[W], ascending: Boolean,
+    tuner: T = Default())(implicit ev1: WindowableWithValue[F, slice.S, slice.R, Q, W], ev2: slice.R =!= Position0D,
+      ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: SlideTuners#V[T]): U[Cell[Q]] = {
+    val window = ev1.convert(windows)
 
     data
       .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
@@ -332,10 +328,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type SummariseTuners = TP2
-  def summarise[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], aggregators: F,
-    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: Aggregatable[F, P, slice.S, Q], ev3: ClassTag[slice.S],
-      ev4: SummariseTuners#V[T]): U[Cell[Q]] = {
-    val aggregator = ev2.convert(aggregators)
+  def summarise[Q <: Position, F, T <: Tuner](slice: Slice[P], aggregators: F, tuner: T = Default())(
+    implicit ev1: Aggregatable[F, P, slice.S, Q], ev2: ClassTag[slice.S], ev3: SummariseTuners#V[T]): U[Cell[Q]] = {
+    val aggregator = ev1.convert(aggregators)
 
     data
       .map { case c => (slice.selected(c.position), aggregator.map { case a => a.prepare(c) }) }
@@ -346,10 +341,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def summariseWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], aggregators: F,
-    value: E[W], tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[F, P, slice.S, Q, W],
-      ev3: ClassTag[slice.S], ev4: SummariseTuners#V[T]): U[Cell[Q]] = {
-    val aggregator = ev2.convert(aggregators)
+  def summariseWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], aggregators: F, value: E[W],
+    tuner: T = Default())(implicit ev1: AggregatableWithValue[F, P, slice.S, Q, W], ev2: ClassTag[slice.S],
+      ev3: SummariseTuners#V[T]): U[Cell[Q]] = {
+    val aggregator = ev1.convert(aggregators)
 
     data
       .map { case c => (slice.selected(c.position), aggregator.map { case a => a.prepareWithValue(c, value) }) }
@@ -370,8 +365,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .toMap
   }
 
-  def toMap[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ToMapTuners#V[T]): E[Map[slice.S, slice.C]] = {
+  def toMap[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S], ev3: ToMapTuners#V[T]): E[Map[slice.S, slice.C]] = {
     data
       .map { case c => (c.position, slice.toMap(c)) }
       .keyBy { case (p, m) => slice.selected(p) }
@@ -395,9 +390,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type TypesTuners = TP2
-  def types[D <: Dimension, T <: Tuner](slice: Slice[P, D], specific: Boolean, tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S],
-      ev4: TypesTuners#V[T]): U[(slice.S, Type)] = {
+  def types[T <: Tuner](slice: Slice[P], specific: Boolean, tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S], ev3: TypesTuners#V[T]): U[(slice.S, Type)] = {
     data
       .map { case Cell(p, c) => (slice.selected(p), c.schema.kind) }
       .tunedReduce(tuner.parameters, (lt: Type, rt: Type) => Type.getCommonType(lt, rt))
@@ -413,8 +407,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .tunedDistinct(tuner.parameters)(ordering)
   }
 
-  def uniqueByPositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
-    implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[(slice.S, Content)] = {
+  def uniqueByPositions[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: UniqueTuners#V[T]): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
     }
@@ -430,10 +424,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.collect { case c if predicate(c) => c.position }
   }
 
-  def whichByPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: BasePredicateable[I, P, slice.S, RDD], ev3: ClassTag[slice.S],
-      ev4: ClassTag[P], ev5: WhichTuners#V[T]): U[P] = {
-    val pp = ev2.convert(predicates)
+  def whichByPositions[I, T <: Tuner](slice: Slice[P], predicates: I, tuner: T = Default())(
+    implicit ev1: BasePredicateable[I, P, slice.S, RDD], ev2: ClassTag[slice.S], ev3: ClassTag[P],
+      ev4: WhichTuners#V[T]): U[P] = {
+    val pp = ev1.convert(predicates)
       .map { case (pos, pred) => pos.map { case p => (p, pred) } }
       .reduce((l, r) => l ++ r)
 
@@ -445,8 +439,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   val data: U[Cell[P]]
 
-  protected def saveDictionary[D <: Dimension](slice: Slice[P, D], file: String, dictionary: String,
-    separator: String)(implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S]) = {
+  protected def saveDictionary(slice: Slice[P], file: String, dictionary: String, separator: String)(
+    implicit ev: ClassTag[slice.S]) = {
     val numbered = names(slice)
       .zipWithIndex
 
@@ -457,9 +451,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     numbered
   }
 
-  private def pairwiseTuples[D <: Dimension, T <: Tuner](slice: Slice[P, D], comparer: Comparer, tuner: T)(
-    ldata: U[Cell[P]], rdata: U[Cell[P]])(implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S],
-      ev3: ClassTag[slice.R]): U[((Cell[slice.S], slice.R), (Cell[slice.S], slice.R))] = {
+  private def pairwiseTuples[T <: Tuner](slice: Slice[P], comparer: Comparer, tuner: T)(ldata: U[Cell[P]],
+    rdata: U[Cell[P]])(implicit ev1: ClassTag[slice.S],
+      ev2: ClassTag[slice.R]): U[((Cell[slice.S], slice.R), (Cell[slice.S], slice.R))] = {
     val toTuple = (c: Cell[P]) => (Cell(slice.selected(c.position), c.content), slice.remainder(c.position))
     val (rr, rj, lr, lj) = tuner.parameters match {
       case Sequence2(Sequence2(rr, rj), Sequence2(lr, lj)) => (rr, rj, lr, lj)
@@ -488,9 +482,9 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
   import SparkImplicits._
 
   type FillHeterogeneousTuners = TP3
-  def fillHeterogeneous[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]],
-    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
-      ev5: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
+  def fillHeterogeneous[Q <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[Q]], tuner: T = Default())(
+    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= Q,
+      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
     val (p1, p2) = tuner.parameters match {
       case Sequence2(f, s) => (f, s)
       case p => (NoParameters, p)
@@ -572,9 +566,9 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    *
    * @return A `U[Cell[Position1D]]` with all pairwise correlations.
    */
-  def correlation[D <: Dimension, ST <: Tuner, PT <: Tuner](slice: Slice[Position2D, D], stuner: ST = Default(),
-    ptuner: PT = Default())(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R],
-      ev4: SummariseTuners#V[ST], ev5: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
+  def correlation[ST <: Tuner, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(), ptuner: PT = Default())(
+    implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R], ev3: SummariseTuners#V[ST],
+      ev4: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
@@ -582,9 +576,11 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
       .summarise(slice, Mean[Position2D, slice.S](), stuner)
       .toMap(Over(First))
 
+    implicit object P2D extends PosDimDep[Position2D, slice.dimension.type]
+
     val centered = data
-      .transformWithValue(Subtract(ExtractWithDimension(slice.dimension)
-        .andThenPresent((con: Content) => con.value.asDouble)), mean)
+      .transformWithValue(Subtract(ExtractWithDimension[slice.dimension.type, Position2D, Content](slice.dimension)
+        .andThenPresent(_.value.asDouble)), mean)
 
     val denom = centered
       .transform(Power[Position2D](2))
@@ -609,9 +605,9 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    *
    * @return A `U[Cell[Position1D]]` with all pairwise mutual information.
    */
-  def mutualInformation[D <: Dimension, ST <: Tuner, PT <: Tuner](slice: Slice[Position2D, D], stuner: ST = Default(),
-    ptuner: PT = Default())(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R],
-      ev4: SummariseTuners#V[ST], ev5: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
+  def mutualInformation[ST <: Tuner, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(),
+    ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R], ev3: SummariseTuners#V[ST],
+      ev4: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
     val dim = slice match {
@@ -668,10 +664,9 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    *
    * @return A `U[Cell[Position1D]]` with all pairwise Gini indices.
    */
-  def gini[D <: Dimension, ST <: Tuner, WT <: Tuner, PT <: Tuner](slice: Slice[Position2D, D], stuner: ST = Default(),
-    wtuner: WT = Default(), ptuner: PT = Default())(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S],
-      ev3: ClassTag[slice.R], ev4: SummariseTuners#V[ST], ev5: SlideTuners#V[WT],
-        ev6: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
+  def gini[ST <: Tuner, WT <: Tuner, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(),
+    wtuner: WT = Default(), ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R],
+      ev3: SummariseTuners#V[ST], ev4: SlideTuners#V[WT], ev5: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
@@ -897,9 +892,9 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    */
-  def saveAsCSV[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
-    escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
-      rowId: String = "id")(implicit ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S]): U[Cell[Position2D]] = {
+  def saveAsCSV(slice: Slice[Position2D], file: String, separator: String = "|", escapee: Escape = Quote("|"),
+    writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true, rowId: String = "id")(
+      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
     val escape = (str: String) => escapee.escape(str)
     val columns = data
       .map { case c => ((), HashSet(escape(slice.remainder(c.position)(First).toShortString))) }
@@ -962,10 +957,8 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    */
-  def saveAsVW[D <: Dimension](slice: Slice[Position2D, D], file: String, dictionary: String = "%s.dict",
-    tag: Boolean = false)(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    saveAsVW(slice, file, None, None, tag, dictionary)
-  }
+  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String = "%s.dict", tag: Boolean = false)(
+    implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = saveAsVW(slice, file, None, None, tag, dictionary)
 
   /**
    * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels.
@@ -980,9 +973,8 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    *
    * @note The labels are joined to the data keeping only those examples for which data and a label are available.
    */
-  def saveAsVWWithLabels[D <: Dimension](slice: Slice[Position2D, D], file: String, labels: U[Cell[Position1D]],
-    dictionary: String = "%s.dict", tag: Boolean = false)(implicit ev1: PosDimDep[Position2D, D],
-      ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
+  def saveAsVWWithLabels(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
+    dictionary: String = "%s.dict", tag: Boolean = false)(implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
     saveAsVW(slice, file, Some(labels), None, tag, dictionary)
   }
 
@@ -999,9 +991,8 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    *
    * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
    */
-  def saveAsVWWithImportance[D <: Dimension](slice: Slice[Position2D, D], file: String, importance: U[Cell[Position1D]],
-    dictionary: String = "%s.dict", tag: Boolean = false)(implicit ev1: PosDimDep[Position2D, D],
-      ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
+  def saveAsVWWithImportance(slice: Slice[Position2D], file: String, importance: U[Cell[Position1D]],
+    dictionary: String = "%s.dict", tag: Boolean = false)(implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
     saveAsVW(slice, file, None, Some(importance), tag, dictionary)
   }
 
@@ -1020,15 +1011,15 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @note The labels and weights are joined to the data keeping only those examples for which data and a label
    *       and weight are available.
    */
-  def saveAsVWWithLabelsAndImportance[D <: Dimension](slice: Slice[Position2D, D], file: String,
-    labels: U[Cell[Position1D]], importance: U[Cell[Position1D]], dictionary: String = "%s.dict",
-      tag: Boolean = false)(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
+  def saveAsVWWithLabelsAndImportance(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
+    importance: U[Cell[Position1D]], dictionary: String = "%s.dict", tag: Boolean = false)(
+      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
     saveAsVW(slice, file, Some(labels), Some(importance), tag, dictionary)
   }
 
-  private def saveAsVW[D <: Dimension](slice: Slice[Position2D, D], file: String, labels: Option[U[Cell[Position1D]]],
-    importance: Option[U[Cell[Position1D]]], tag: Boolean, dictionary: String)(implicit ev1: PosDimDep[Position2D, D],
-      ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
+  private def saveAsVW(slice: Slice[Position2D], file: String, labels: Option[U[Cell[Position1D]]],
+    importance: Option[U[Cell[Position1D]]], tag: Boolean, dictionary: String)(
+      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
     val dict = data
       .map { c => slice.remainder(c.position)(First).toShortString }
       .distinct
