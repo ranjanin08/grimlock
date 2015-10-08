@@ -17,7 +17,7 @@
 set -vx
 
 JAR=grimlock.jar
-NUM_TEST=31
+NUM_TEST=32
 DO_BUILD=true
 DO_CLEANUP=true
 DO_INIT=false
@@ -69,9 +69,9 @@ then
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.Ensemble --local --path ../data
 
-    if [ -d "demo.old" ]
+    if [ -d "demo.scalding.old" ]
     then
-      diff -r demo.scalding demo.old
+      diff -r demo.scalding demo.scalding.old
     fi
   fi
 
@@ -137,9 +137,9 @@ then
         au.com.cba.omnia.grimlock.test.TestScalding${i} --local --path .
     done
 
-    if [ -d "tmp.old" ]
+    if [ -d "tmp.scalding.old" ]
     then
-      diff -r tmp.scalding tmp.old
+      diff -r tmp.scalding tmp.scalding.old
     fi
   fi
 

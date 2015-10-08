@@ -17,7 +17,7 @@
 set -vx
 
 JAR=grimlock.jar
-NUM_TEST=31
+NUM_TEST=32
 DO_BUILD=true
 DO_CLEANUP=true
 DO_INIT=false
@@ -69,20 +69,9 @@ then
     $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.Ensemble $JAR local ../data
 
-    if [ -d "demo.old" ]
+    if [ -d "demo.spark.old" ]
     then
-      set +x
-      for f in $(ls demo.spark demo.old | sed '/:$/d' |sort | uniq)
-      do
-        echo $f
-        cat demo.old/$f | sort | while read line; do
-          echo $line | tr '|' '\n' | sort | awk '{line=line "|" $0} END {print line}'; done > demo.x
-        cat demo.spark/$f/part* | sort | while read line; do
-          echo $line | tr '|' '\n' | sort | awk '{line=line "|" $0} END {print line}'; done > demo.y
-        diff demo.x demo.y
-      done
-      rm demo.x demo.y
-      set -x
+      diff -r demo.spark demo.spark.old
     fi
   fi
 fi
@@ -107,20 +96,9 @@ then
         --class au.com.cba.omnia.grimlock.test.TestSpark${i} $JAR local .
     done
 
-    if [ -d "tmp.old" ]
+    if [ -d "tmp.spark.old" ]
     then
-      set +x
-      for f in $(ls tmp.spark tmp.old | sed '/:$/d' |sort | uniq)
-      do
-        echo $f
-        cat tmp.old/$f | sort | while read line; do
-          echo $line | tr '|' '\n' | sort | awk '{line=line "|" $0} END {print line}'; done > tmp.x
-        cat tmp.spark/$f/part* | sort | while read line; do
-          echo $line | tr '|' '\n' | sort | awk '{line=line "|" $0} END {print line}'; done > tmp.y
-        diff tmp.x tmp.y
-      done
-      rm tmp.x tmp.y
-      set -x
+      diff -r tmp.spark tmp.spark.old
     fi
   fi
 fi
