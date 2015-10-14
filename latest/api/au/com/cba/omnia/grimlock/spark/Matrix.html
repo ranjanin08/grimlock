@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for matrix operations using a <code>RDD[Cell[P]]</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(e427843311fdfa4a66b617ecefa627ca33cb1867)//src/main/scala/au/com/cba/omnia/grimlock/spark/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for matrix operations using a <code>RDD[Cell[P]]</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(66f57c038f8a5a4846ab91ba0c26062e88899506)//src/main/scala/au/com/cba/omnia/grimlock/spark/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>]], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>]], <a href="../framework/Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">framework.Matrix</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>], <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
@@ -961,18 +961,18 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[Cell[slice.R#M]]</code> where the content contains the pairwise values.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix">Matrix</a> → <a href="../framework/Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Matrix#rename" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="rename(renamer:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;P):Matrix.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
-      <a id="rename((Cell[P])⇒P):U[Cell[P]]"></a>
+      <a id="rename(renamer:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[P]):Matrix.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
+      <a id="rename((Cell[P])⇒Option[P]):U[Cell[P]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">rename</span><span class="params">(<span name="renamer">renamer: (<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span></span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Matrix.U">U</a>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>]]</span>
+        <span class="name">rename</span><span class="params">(<span name="renamer">renamer: (<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>]) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Matrix.U">U</a>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrix@rename(renamer:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;P):Matrix.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrix@rename(renamer:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[P]):Matrix.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -981,18 +981,18 @@
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[Cell[P]]</code> where the position has been renamed.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix">Matrix</a> → <a href="../framework/Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Matrix#renameWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="renameWithValue[W](renamer:(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;P,value:Matrix.this.E[W]):Matrix.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
-      <a id="renameWithValue[W]((Cell[P],W)⇒P,E[W]):U[Cell[P]]"></a>
+      <a id="renameWithValue[W](renamer:(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;Option[P],value:Matrix.this.E[W]):Matrix.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
+      <a id="renameWithValue[W]((Cell[P],W)⇒Option[P],E[W]):U[Cell[P]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">renameWithValue</span><span class="tparams">[<span name="W">W</span>]</span><span class="params">(<span name="renamer">renamer: (<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.renameWithValue.W">W</span>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span></span>, <span name="value">value: <a href="#E[B]=B" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Matrix.E">E</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.renameWithValue.W">W</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Matrix.U">U</a>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>]]</span>
+        <span class="name">renameWithValue</span><span class="tparams">[<span name="W">W</span>]</span><span class="params">(<span name="renamer">renamer: (<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.renameWithValue.W">W</span>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>]</span>, <span name="value">value: <a href="#E[B]=B" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Matrix.E">E</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.renameWithValue.W">W</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Matrix.U">U</a>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix.P">P</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrix@renameWithValue[W](renamer:(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;P,value:Matrix.this.E[W]):Matrix.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrix@renameWithValue[W](renamer:(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;Option[P],value:Matrix.this.E[W]):Matrix.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
