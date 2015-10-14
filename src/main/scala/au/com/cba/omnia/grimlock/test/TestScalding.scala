@@ -1099,3 +1099,45 @@ class TestScalding32(args: Args) extends Job(args) {
     .toUnit
 }
 
+class TestScalding33(args: Args) extends Job(args) {
+
+  val tool = "scalding"
+
+  val data = List(("a", "one", Content(ContinuousSchema(DoubleCodex), 3.14)),
+    ("a", "two", Content(NominalSchema(StringCodex), "foo")),
+    ("a", "three", Content(DiscreteSchema(LongCodex), 42)),
+    ("b", "one", Content(ContinuousSchema(DoubleCodex), 6.28)),
+    ("b", "two", Content(DiscreteSchema(LongCodex), 123)),
+    ("b", "three", Content(ContinuousSchema(DoubleCodex), 9.42)),
+    ("c", "two", Content(NominalSchema(StringCodex), "bar")),
+    ("c", "three", Content(ContinuousSchema(DoubleCodex), 12.56)))
+
+  val labels = new IterablePipe(
+    List(Cell(Position1D("a"), Content(DiscreteSchema(LongCodex), 1)),
+      Cell(Position1D("b"), Content(DiscreteSchema(LongCodex), 2))))
+
+  val importance = new IterablePipe(
+    List(Cell(Position1D("a"), Content(ContinuousSchema(DoubleCodex), 0.5)),
+      Cell(Position1D("b"), Content(ContinuousSchema(DoubleCodex), 0.75))))
+
+  data
+    .saveAsVW(Over(First), s"./tmp.${tool}/vw0.out", tag=false)
+    .toUnit
+
+  data
+    .saveAsVW(Over(First), s"./tmp.${tool}/vw1.out", tag=true)
+    .toUnit
+
+  data
+    .saveAsVWWithLabels(Over(First), s"./tmp.${tool}/vw2.out", labels, tag=false)
+    .toUnit
+
+  data
+    .saveAsVWWithImportance(Over(First), s"./tmp.${tool}/vw3.out", importance, tag=true)
+    .toUnit
+
+  data
+    .saveAsVWWithLabelsAndImportance(Over(First), s"./tmp.${tool}/vw4.out", labels, importance, tag=false)
+    .toUnit
+}
+

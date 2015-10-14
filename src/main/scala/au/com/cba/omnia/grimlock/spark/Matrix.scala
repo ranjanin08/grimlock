@@ -954,11 +954,14 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @param file       File to write to.
    * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
    * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    */
-  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String = "%s.dict", tag: Boolean = false)(
-    implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = saveAsVW(slice, file, None, None, tag, dictionary)
+  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String = "%s.dict", tag: Boolean = false,
+    separator: String = "|")(implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, None, None, tag, dictionary, separator)
+  }
 
   /**
    * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels.
@@ -968,14 +971,16 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @param labels     The labels.
    * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
    * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    *
    * @note The labels are joined to the data keeping only those examples for which data and a label are available.
    */
   def saveAsVWWithLabels(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
-    dictionary: String = "%s.dict", tag: Boolean = false)(implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    saveAsVW(slice, file, Some(labels), None, tag, dictionary)
+    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(
+      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, Some(labels), None, tag, dictionary, separator)
   }
 
   /**
@@ -986,14 +991,16 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @param importance The importance weights.
    * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
    * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    *
    * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
    */
   def saveAsVWWithImportance(slice: Slice[Position2D], file: String, importance: U[Cell[Position1D]],
-    dictionary: String = "%s.dict", tag: Boolean = false)(implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    saveAsVW(slice, file, None, Some(importance), tag, dictionary)
+    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(
+      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, None, Some(importance), tag, dictionary, separator)
   }
 
   /**
@@ -1005,6 +1012,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @param importance The importance weights.
    * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
    * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    *
@@ -1012,13 +1020,13 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    *       and weight are available.
    */
   def saveAsVWWithLabelsAndImportance(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
-    importance: U[Cell[Position1D]], dictionary: String = "%s.dict", tag: Boolean = false)(
+    importance: U[Cell[Position1D]], dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(
       implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    saveAsVW(slice, file, Some(labels), Some(importance), tag, dictionary)
+    saveAsVW(slice, file, Some(labels), Some(importance), tag, dictionary, separator)
   }
 
   private def saveAsVW(slice: Slice[Position2D], file: String, labels: Option[U[Cell[Position1D]]],
-    importance: Option[U[Cell[Position1D]]], tag: Boolean, dictionary: String)(
+    importance: Option[U[Cell[Position1D]]], tag: Boolean, dictionary: String, separator: String)(
       implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
     val dict = data
       .map { c => slice.remainder(c.position)(First).toShortString }
@@ -1026,6 +1034,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
       .zipWithIndex
 
     dict
+      .map { case (s, i) => s + separator + i }
       .saveAsTextFile(dictionary.format(file))
 
     val features = data

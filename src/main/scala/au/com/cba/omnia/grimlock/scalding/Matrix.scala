@@ -620,7 +620,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     implicit ev1: ClassTag[slice.S], flow: FlowDef, mode: Mode) = {
     val numbered = names(slice)
       .groupAll
-      .mapValueStream { _.zipWithIndex }
+      .mapGroup { case (_, itr) => itr.zipWithIndex }
       .map { case (_, (p, i)) => (p, i) }
 
     numbered
@@ -1191,11 +1191,14 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @param file       File to write to.
    * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
    * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
    *
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    */
-  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String = "%s.dict", tag: Boolean = false)(
-    implicit flow: FlowDef, mode: Mode): U[Cell[Position2D]] = saveAsVW(slice, file, None, None, tag, dictionary)
+  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String = "%s.dict", tag: Boolean = false,
+    separator: String = "|")(implicit flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, None, None, tag, dictionary, separator)
+  }
 
   /**
    * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels.
@@ -1205,15 +1208,15 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @param labels     The labels.
    * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
    * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
    *
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    *
    * @note The labels are joined to the data keeping only those examples for which data and a label are available.
    */
   def saveAsVWWithLabels(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
-    dictionary: String = "%s.dict", tag: Boolean = false)(implicit flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
-    saveAsVW(slice, file, Some(labels), None, tag, dictionary)
-  }
+    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(implicit flow: FlowDef,
+      mode: Mode): U[Cell[Position2D]] = saveAsVW(slice, file, Some(labels), None, tag, dictionary, separator)
 
   /**
    * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided importance weights.
@@ -1223,15 +1226,15 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @param importance The importance weights.
    * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
    * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
    *
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    *
    * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
    */
   def saveAsVWWithImportance(slice: Slice[Position2D], file: String, importance: U[Cell[Position1D]],
-    dictionary: String = "%s.dict", tag: Boolean = false)(implicit flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
-    saveAsVW(slice, file, None, Some(importance), tag, dictionary)
-  }
+    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(implicit flow: FlowDef,
+      mode: Mode): U[Cell[Position2D]] = saveAsVW(slice, file, None, Some(importance), tag, dictionary, separator)
 
   /**
    * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels and importance weights.
@@ -1242,6 +1245,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    * @param importance The importance weights.
    * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
    * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
    *
    * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
    *
@@ -1249,21 +1253,25 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
    *       and weight are available.
    */
   def saveAsVWWithLabelsAndImportance(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
-    importance: U[Cell[Position1D]], dictionary: String = "%s.dict", tag: Boolean = false)(implicit flow: FlowDef,
-      mode: Mode): U[Cell[Position2D]] = saveAsVW(slice, file, Some(labels), Some(importance), tag, dictionary)
+    importance: U[Cell[Position1D]], dictionary: String = "%s.dict", tag: Boolean = false,
+      separator: String = "|")(implicit flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, Some(labels), Some(importance), tag, dictionary, separator)
+  }
 
   private def saveAsVW(slice: Slice[Position2D], file: String, labels: Option[U[Cell[Position1D]]],
-    importance: Option[U[Cell[Position1D]]], tag: Boolean, dictionary: String)(implicit flow: FlowDef,
-      mode: Mode): U[Cell[Position2D]] = {
+    importance: Option[U[Cell[Position1D]]], tag: Boolean, dictionary: String, separator: String)(
+      implicit flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
     val dict = data
       .map { c => (slice.remainder(c.position)(First).toShortString, ()) }
+      .group
       .sum
       .map(_.swap)
       .group
-      .mapValueStream(_.zipWithIndex)
+      .mapGroup { case (_, itr) => itr.zipWithIndex }
       .map { case (_, si) => si }
 
     dict
+      .map { case (s, i) => s + separator + i }
       .write(TypedSink(TextLine(dictionary.format(file))))
 
     val features = data
