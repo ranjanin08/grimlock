@@ -185,7 +185,7 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[P]]` where the position has been renamed.
    */
-  def rename(renamer: (Cell[P]) => P): U[Cell[P]]
+  def rename(renamer: (Cell[P]) => Option[P]): U[Cell[P]]
 
   /**
    * Rename the coordinates of a dimension using user a suplied value.
@@ -195,7 +195,7 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[P]]` where the position has been renamed.
    */
-  def renameWithValue[W](renamer: (Cell[P], W) => P, value: E[W]): U[Cell[P]]
+  def renameWithValue[W](renamer: (Cell[P], W) => Option[P], value: E[W]): U[Cell[P]]
 
   /**
    * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
@@ -615,7 +615,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
-  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
+  def expand[Q <: Position](expander: Cell[P] => TraversableOnce[Q])(implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
 
   /**
    * Expand a matrix with extra dimension(s) using a user supplied value.
@@ -625,7 +625,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
-  def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => Q, value: E[W])(
+  def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => TraversableOnce[Q], value: E[W])(
     implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
 }
 

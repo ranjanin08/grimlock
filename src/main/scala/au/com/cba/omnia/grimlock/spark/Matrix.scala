@@ -199,10 +199,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .flatMap { case ((lc, lr), (rc, rr)) => operator.computeWithValue(lc, lr, rc, rr, value) }
   }
 
-  def rename(renamer: (Cell[P]) => P): U[Cell[P]] = data.map { case c => Cell(renamer(c), c.content) }
+  def rename(renamer: (Cell[P]) => Option[P]): U[Cell[P]] = {
+    data.flatMap { case c => renamer(c).map { Cell(_, c.content) } }
+  }
 
-  def renameWithValue[W](renamer: (Cell[P], W) => P, value: E[W]): U[Cell[P]] = {
-    data.map { case c => Cell(renamer(c, value), c.content) }
+  def renameWithValue[W](renamer: (Cell[P], W) => Option[P], value: E[W]): U[Cell[P]] = {
+    data.flatMap { case c => renamer(c, value).map { Cell(_, c.content) } }
   }
 
   def sample[F](samplers: F)(implicit ev: Sampleable[F, P]): U[Cell[P]] = {
@@ -553,12 +555,14 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 /** Base trait for methods that expand the number of dimension of a matrix using a `RDD[Cell[P]]`. */
 trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
 
-  def expand[Q <: Position](expander: Cell[P] => Q)(implicit ev: PosExpDep[P, Q]): RDD[Cell[Q]] = {
-    data.map { case c => Cell(expander(c), c.content) }
+  def expand[Q <: Position](expander: Cell[P] => TraversableOnce[Q])(implicit ev: PosExpDep[P, Q]): RDD[Cell[Q]] = {
+    data.flatMap { case c => expander(c).map { Cell(_, c.content) } }
   }
 
-  def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => Q, value: W)(
-    implicit ev: PosExpDep[P, Q]): RDD[Cell[Q]] = data.map { case c => Cell(expander(c, value), c.content) }
+  def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => TraversableOnce[Q], value: W)(
+    implicit ev: PosExpDep[P, Q]): RDD[Cell[Q]] = {
+    data.flatMap { case c => expander(c, value).map { Cell(_, c.content) } }
+  }
 }
 
 // TODO: Make this work on more than 2D matrices and share with Scalding
@@ -634,8 +638,8 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First)
       .andThenPresent(_.value.asDouble)
 
-    val mhist = new Matrix2D(data)
-      .expand((c: Cell[Position2D]) => c.position.append(c.content.value.toShortString))
+    val mhist = data
+      .expand(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along[Position3D, dim.type](dim), Count[Position3D, Position2D](), stuner)
 
     val mcount = mhist
@@ -647,9 +651,9 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
         .andThenExpandWithValue((cell, _) => cell.position.append("marginal")), mcount, stuner)
       .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position1D, Position1D]("%s,%s")), ptuner)
 
-    val jhist = new Matrix2D(data)
+    val jhist = data
       .pairwise(slice, Upper, Concatenate(Locate.OperatorString[slice.S, slice.R]("%s,%s")), ptuner)
-      .expand((c: Cell[Position2D]) => c.position.append(c.content.value.toShortString))
+      .expand(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(Second), Count[Position3D, Position2D](), stuner)
 
     val jcount = jhist

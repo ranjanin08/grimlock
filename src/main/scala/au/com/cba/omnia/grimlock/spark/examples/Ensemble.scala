@@ -20,7 +20,6 @@ import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.sample._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
 
@@ -52,13 +51,6 @@ case class EnsembleSplit(gbm: String, rf: String, lr: String) extends Partitione
       }
       .getOrElse(List())
   }
-}
-
-// Sample/Filter a cell if its instance id exists in the map `ext`.
-case class SampleByScore() extends SamplerWithValue[Position2D] {
-  type V = Map[Position1D, Content]
-
-  def selectWithValue(cell: Cell[Position2D], ext: V): Boolean = ext.contains(Position1D(cell.position(First)))
 }
 
 // Simple ensemble(-like) model learning
@@ -102,7 +94,7 @@ object Ensemble {
       partition
         .stream("Rscript", key, "|", Cell.parse1D("|", StringCodex))
         .data // Keep only the data (ignoring errors).
-        .expand((cell: Cell[Position1D]) => cell.position.append(key))
+        .expand((cell: Cell[Position1D]) => Some(cell.position.append(key)))
     }
 
     // Define extractor to get weight out of weights map.
@@ -118,7 +110,7 @@ object Ensemble {
     // 6/ Persist the final scores.
     // 7/ Collect the scores in a Map so they can be used to compute the Gini index with.
     val scores = data
-      .expand((cell: Cell[Position2D]) => cell.position.append(math.abs(cell.position(First).hashCode % 10)))
+      .expand((cell: Cell[Position2D]) => Some(cell.position.append(math.abs(cell.position(First).hashCode % 10))))
       .split(EnsembleSplit(scripts(0), scripts(1), scripts(2)))
       .forEach(trainAndScore, scripts)
       .merge(scripts)
@@ -127,19 +119,17 @@ object Ensemble {
       .toMap(Over(First))
 
     // Rename instance id (first dimension) with its score
-    def renameWithScore(cell: Cell[Position2D], ext: Map[Position1D, Content]): Position2D = {
-      Position2D(ext(Position1D(cell.position(First))).value, cell.position(Second))
+    def renameWithScore(cell: Cell[Position2D], ext: Map[Position1D, Content]): Option[Position2D] = {
+      ext.get(Position1D(cell.position(First))).map { case con => Position2D(con.value, cell.position(Second)) }
     }
 
     // Compute Gini Index on ensemble scores:
     // 1/ Keep only 'label' column, results in 2D matrix (instance x label) with 1 column;
-    // 2/ Filter rows to only keep instances for which a score is available;
-    // 3/ Rename instance id with score;
-    // 4/ Compute Gini Index (this sorts the labels by score as its a dimension);
-    // 5/ Persist the Gini Index to file.
+    // 2/ Filter rows to only keep instances for which a score is available and rename instance id with score;
+    // 3/ Compute Gini Index (this sorts the labels by score as its a dimension);
+    // 4/ Persist the Gini Index to file.
     data
       .slice(Over(Second), "label", true)
-      .sampleWithValue(SampleByScore(), scores)
       .renameWithValue(renameWithScore, scores)
       .gini(Over(Second))
       .saveAsText(s"./demo.${output}/ensemble.gini.out")

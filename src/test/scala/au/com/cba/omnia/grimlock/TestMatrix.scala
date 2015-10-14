@@ -9578,12 +9578,12 @@ trait TestMatrixRename extends TestMatrix {
 
 object TestMatrixRename {
 
-  def renamer[P <: Position](dim: Dimension)(cell: Cell[P]): P = {
-    cell.position.update(dim, cell.position(dim).toShortString + ".new")
+  def renamer[P <: Position](dim: Dimension)(cell: Cell[P]): Option[P] = {
+    Some(cell.position.update(dim, cell.position(dim).toShortString + ".new"))
   }
 
-  def renamerWithValue[P <: Position](dim: Dimension)(cell: Cell[P], ext: String): P = {
-    cell.position.update(dim, cell.position(dim).toShortString + ext)
+  def renamerWithValue[P <: Position](dim: Dimension)(cell: Cell[P], ext: String): Option[P] = {
+    Some(cell.position.update(dim, cell.position(dim).toShortString + ext))
   }
 }
 
@@ -10400,15 +10400,14 @@ object TestMatrixExpand {
 
   type PwE = Position with ExpandablePosition
 
-  def expander1D[P <: PwE](cell: Cell[P]): P#M = cell.position.append("abc")
-  def expander2D[P <: PwE, Q <: PwE](cell: Cell[P])(implicit ev: P#M =:= Q): Q#M = {
-    cell.position.append("abc").append("def")
+  def expander1D[P <: PwE](cell: Cell[P]): TraversableOnce[P#M] = Some(cell.position.append("abc"))
+  def expander2D[P <: PwE, Q <: PwE](cell: Cell[P])(implicit ev: P#M =:= Q): TraversableOnce[Q#M] = {
+    Some(cell.position.append("abc").append("def"))
   }
-  def expander3D[P <: PwE, Q <: PwE, R <: PwE](cell: Cell[P])(implicit ev1: P#M =:= Q, ev2: Q#M =:= R): R#M = {
-    cell.position.append("abc").append("def").append("ghi")
-  }
+  def expander3D[P <: PwE, Q <: PwE, R <: PwE](cell: Cell[P])(implicit ev1: P#M =:= Q,
+    ev2: Q#M =:= R): TraversableOnce[R#M] = Some(cell.position.append("abc").append("def").append("ghi"))
   def expander4D[P <: PwE, Q <: PwE, R <: PwE, S <: PwE](cell: Cell[P])(implicit ev1: P#M =:= Q, ev2: Q#M =:= R,
-    ev3: R#M =:= S): S#M = cell.position.append("abc").append("def").append("ghi").append("jkl")
+    ev3: R#M =:= S): TraversableOnce[S#M] = Some(cell.position.append("abc").append("def").append("ghi").append("jkl"))
 
   val expand1D2D = expander1D[Position1D] _
   val expand1D3D = expander2D[Position1D, Position2D] _
@@ -10422,14 +10421,15 @@ object TestMatrixExpand {
   val expand3D4D = expander1D[Position3D] _
   val expand3D5D = expander2D[Position3D, Position4D] _
 
-  def expander1DWithValue[P <: PwE](cell: Cell[P], ext: String): P#M = cell.position.append(ext)
-  def expander2DWithValue[P <: PwE, Q <: PwE](cell: Cell[P], ext: String)(implicit ev: P#M =:= Q): Q#M = {
-    cell.position.append(ext).append("def")
-  }
+  def expander1DWithValue[P <: PwE](cell: Cell[P], ext: String): TraversableOnce[P#M] = Some(cell.position.append(ext))
+  def expander2DWithValue[P <: PwE, Q <: PwE](cell: Cell[P], ext: String)(
+    implicit ev: P#M =:= Q): TraversableOnce[Q#M] = Some(cell.position.append(ext).append("def"))
   def expander3DWithValue[P <: PwE, Q <: PwE, R <: PwE](cell: Cell[P], ext: String)(implicit ev1: P#M =:= Q,
-    ev2: Q#M =:= R): R#M = cell.position.append(ext).append("def").append("ghi")
+    ev2: Q#M =:= R): TraversableOnce[R#M] = Some(cell.position.append(ext).append("def").append("ghi"))
   def expander4DWithValue[P <: PwE, Q <: PwE, R <: PwE, S <: PwE](cell: Cell[P], ext: String)(implicit ev1: P#M =:= Q,
-    ev2: Q#M =:= R, ev3: R#M =:= S): S#M = cell.position.append(ext).append("def").append("ghi").append("jkl")
+    ev2: Q#M =:= R, ev3: R#M =:= S): TraversableOnce[S#M] = {
+    Some(cell.position.append(ext).append("def").append("ghi").append("jkl"))
+  }
 
   val expand1D2DWithValue = expander1DWithValue[Position1D] _
   val expand1D3DWithValue = expander2DWithValue[Position1D, Position2D] _
