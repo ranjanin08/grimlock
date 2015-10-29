@@ -320,8 +320,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMap { case c => partitioner.assignWithValue(c, value).map { case q => (q, c) } }
   }
 
-  def stream[Q <: Position](command: String, files: List[String] = List(),
-    writer: Cell[P] => TraversableOnce[String] = (c) => Some(c.toString("|", false, true)),
+  def stream[Q <: Position](command: String, files: List[String], writer: Cell[P] => TraversableOnce[String],
     parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String]) = {
     val result = data
       .flatMap(writer(_))
