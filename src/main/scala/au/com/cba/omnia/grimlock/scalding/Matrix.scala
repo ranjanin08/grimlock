@@ -59,11 +59,12 @@ import com.twitter.scalding.typed.{ IterablePipe, Grouped, TypedPipe, TypedSink,
 
 import java.io.{ File, PrintWriter }
 import java.lang.{ ProcessBuilder, Thread }
-import java.nio.file.Paths
+import java.nio.file.{ Files, Paths }
 
 import org.apache.hadoop.io.Writable
 
 import scala.collection.immutable.HashSet
+import scala.collection.JavaConverters._
 import scala.io.Source
 import scala.reflect.ClassTag
 
@@ -421,21 +422,32 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMapWithValue(value) { case (c, vo) => partitioner.assignWithValue(c, vo.get).map { case q => (q, c) } }
   }
 
-  def stream[Q <: Position](command: String, script: String, separator: String,
+  def stream[Q <: Position](command: String, files: List[String] = List(),
+    writer: Cell[P] => TraversableOnce[String] = (c) => Some(c.toString("|", false, true)),
     parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String]) = {
-    val lines = Source.fromFile(script).getLines.toList
+    val lines = files.map { case f => (Paths.get(f).getFileName.toString, Source.fromFile(f).getLines.toList) }
     val smfn = (k: Unit, itr: Iterator[String]) => {
-      val tmp = File.createTempFile("grimlock-", "-" + Paths.get(script).getFileName().toString())
-      val name = tmp.getAbsolutePath
-      tmp.deleteOnExit()
+      val tmp = Files.createTempDirectory("grimlock-")
+      tmp.toFile.deleteOnExit()
 
-      val writer = new PrintWriter(name, "UTF-8")
-      for (line <- lines) {
-        writer.println(line)
+      lines.map {
+        case (file, content) =>
+          val writer = new PrintWriter(tmp.toString + File.separator + file, "UTF-8")
+          for (line <- content) {
+            writer.println(line)
+          }
+          writer.close()
       }
-      writer.close()
 
-      val process = new ProcessBuilder(command, name).start()
+      val process = new ProcessBuilder(command.split(' ').toList.asJava).directory(tmp.toFile).start()
+
+      new Thread() {
+        override def run() {
+          for (line <- Source.fromInputStream(process.getErrorStream).getLines) {
+            System.err.println(line)
+          }
+        }
+      }.start()
 
       new Thread() {
         override def run() {
@@ -457,7 +469,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           } else {
             val status = process.waitFor()
             if (status != 0) {
-              throw new Exception(s"Subprocess '${command} ${script}' exited with status ${status}")
+              throw new Exception(s"Subprocess '${command}' exited with status ${status}")
             }
             false
           }
@@ -466,7 +478,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     }
 
     val result = data
-      .map(_.toString(separator, false, true))
+      .flatMap(writer(_))
       .groupAll
       .mapGroup(smfn)
       .values
@@ -948,8 +960,8 @@ object Matrix {
    * @param file   The text file to read from.
    * @param parser The parser that converts a single line to a cell.
    */
-  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]])(
-    implicit flow: FlowDef, mode: Mode): (TypedPipe[Cell[P]], TypedPipe[String]) = {
+  def loadText[P <: Position](file: String,
+    parser: (String) => TraversableOnce[Either[Cell[P], String]]): (TypedPipe[Cell[P]], TypedPipe[String]) = {
     val pipe = TypedPipe.from(TextLine(file)).flatMap { parser(_) }
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })

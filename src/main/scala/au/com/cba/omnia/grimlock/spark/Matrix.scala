@@ -49,6 +49,9 @@ import au.com.cba.omnia.grimlock.framework.window._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
 
+import java.io.File
+import java.nio.file.{ Files, Paths }
+
 import org.apache.hadoop.io.Writable
 
 import org.apache.spark.SparkContext
@@ -317,11 +320,20 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMap { case c => partitioner.assignWithValue(c, value).map { case q => (q, c) } }
   }
 
-  def stream[Q <: Position](command: String, script: String, separator: String,
+  def stream[Q <: Position](command: String, files: List[String] = List(),
+    writer: Cell[P] => TraversableOnce[String] = (c) => Some(c.toString("|", false, true)),
     parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String]) = {
+    val tmp = Files.createTempDirectory("grimlock-")
+    tmp.toFile.deleteOnExit()
+
+    // TODO: Create symbolic links in the local directory? Or change working dir to tmp (as separate command)?
+    files.map {
+      case f => Files.copy(Paths.get(f), Paths.get(tmp.toString + File.separator + Paths.get(f).getFileName.toString))
+    }
+
     val result = data
-      .map(_.toString(separator, false, true))
-      .pipe(command + " " + script)
+      .flatMap(writer(_))
+      .pipe(Seq(command), separateWorkingDir = true)
       .flatMap(parser(_))
 
     (result.collect { case Left(c) => c }, result.collect { case Right(e) => e })

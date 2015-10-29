@@ -329,8 +329,9 @@ trait Matrix[P <: Position] {
    * Stream this matrix through `command` and apply `script`.
    *
    * @param command   The command to stream (pipe) the data through.
-   * @param script    The script to apply to the data.
-   * @param separator The separator to convert a cell to string.
+   * @param files     A list of text files that will be available to `command`. Note that all files will be located
+   *                  in the same directory (the working directory).
+   * @param writer    Function that converts a cell to a string (prior to streaming it through `command`).
    * @param parser    Function that parses the resulting string back to a cell.
    *
    * @return A `U[Cell[Q]]` with the new data as well as a `U[String]` with any parse errors.
@@ -338,7 +339,8 @@ trait Matrix[P <: Position] {
    * @note The `command` must be installed on each node of the cluster. Also, `script` must be a single self
    *       contained script. Lastly, `parser` functions are provided on the `Cell` object.
    */
-  def stream[Q <: Position](command: String, script: String, separator: String,
+  def stream[Q <: Position](command: String, files: List[String] = List(),
+    writer: Cell[P] => TraversableOnce[String] = (c) => Some(c.toString("|", false, true)),
     parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String])
 
   /** Specifies tuners permitted on a call to `summarise` functions. */

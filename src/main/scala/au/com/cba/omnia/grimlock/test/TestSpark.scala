@@ -1081,7 +1081,7 @@ object TestSpark30 {
       ("iid:H", Content(schema, 7)))
 
     data
-      .stream("Rscript", "double.R", "|", Cell.parse2D("#", StringCodex, LongCodex))
+      .stream("Rscript double.R", List("double.R"), parser = Cell.parse2D("#", StringCodex, LongCodex))
       .data
       .saveAsText(s"./tmp.${tool}/strm.out")
       .toUnit
