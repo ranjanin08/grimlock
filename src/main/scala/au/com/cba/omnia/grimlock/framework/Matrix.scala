@@ -329,8 +329,8 @@ trait Matrix[P <: Position] {
    * Stream this matrix through `command` and apply `script`.
    *
    * @param command   The command to stream (pipe) the data through.
-   * @param files     A list of text files that will be available to `command`. Note that all files will be located
-   *                  in the same directory (the working directory).
+   * @param files     A list of text files that will be available to `command`. Note that all files must be
+   *                  located in the same directory as which the job is started.
    * @param writer    Function that converts a cell to a string (prior to streaming it through `command`).
    * @param parser    Function that parses the resulting string back to a cell.
    *

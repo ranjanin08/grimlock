@@ -59,7 +59,7 @@ import com.twitter.scalding.typed.{ IterablePipe, Grouped, TypedPipe, TypedSink,
 
 import java.io.{ File, PrintWriter }
 import java.lang.{ ProcessBuilder, Thread }
-import java.nio.file.{ Files, Paths }
+import java.nio.file.Files
 
 import org.apache.hadoop.io.Writable
 
@@ -425,7 +425,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def stream[Q <: Position](command: String, files: List[String] = List(),
     writer: Cell[P] => TraversableOnce[String] = (c) => Some(c.toString("|", false, true)),
     parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String]) = {
-    val lines = files.map { case f => (Paths.get(f).getFileName.toString, Source.fromFile(f).getLines.toList) }
+    val lines = files.map { case f => (f, Source.fromFile(f).getLines.toList) }
     val smfn = (k: Unit, itr: Iterator[String]) => {
       val tmp = Files.createTempDirectory("grimlock-")
       tmp.toFile.deleteOnExit()

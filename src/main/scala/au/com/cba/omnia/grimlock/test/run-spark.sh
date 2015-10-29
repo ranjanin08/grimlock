@@ -66,6 +66,7 @@ then
       --class au.com.cba.omnia.grimlock.spark.examples.MutualInformation $JAR local ../data
     $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.DerivedData $JAR local ../data
+    cp ../data/gbm.R ../data/rf.R ../data/lr.R .
     $BASE_DIR/../spark-1.5.0/bin/spark-submit --master local \
       --class au.com.cba.omnia.grimlock.spark.examples.Ensemble $JAR local ../data
 
@@ -102,4 +103,6 @@ then
     fi
   fi
 fi
+
+rm -rf gbm.R rf.R lr.R
 

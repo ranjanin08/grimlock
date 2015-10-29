@@ -66,6 +66,7 @@ then
       au.com.cba.omnia.grimlock.scalding.examples.MutualInformation --local --path ../data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.DerivedData --local --path ../data
+    cp ../data/gbm.R ../data/rf.R ../data/lr.R .
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.Ensemble --local --path ../data
 
@@ -112,6 +113,7 @@ then
       au.com.cba.omnia.grimlock.scalding.examples.MutualInformation --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.DerivedData --hdfs --path ./data
+    cp ../data/gbm.R ../data/rf.R ../data/lr.R .
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.Ensemble --hdfs --path ./data
   fi
@@ -173,4 +175,6 @@ then
     done
   fi
 fi
+
+rm -rf gbm.R rf.R lr.R
 

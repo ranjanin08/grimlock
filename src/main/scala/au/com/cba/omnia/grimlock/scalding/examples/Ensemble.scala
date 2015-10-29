@@ -79,7 +79,7 @@ class Ensemble(args: Args) extends Job(args) {
   val (data, _) = loadText(s"${path}/exampleEnsemble.txt", Cell.parseTable(schema, separator = "|"))
 
   // Ensemble scripts to apply to the data.
-  val scripts = List(s"${path}/gbm.R", s"${path}/lr.R", s"${path}/rf.R")
+  val scripts = List("gbm.R", "lr.R", "rf.R")
 
   // Weigh each model equally.
   val weights = ValuePipe(Map(Position1D(scripts(0)) -> Content(ContinuousSchema(DoubleCodex), 0.33),

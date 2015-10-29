@@ -323,17 +323,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def stream[Q <: Position](command: String, files: List[String] = List(),
     writer: Cell[P] => TraversableOnce[String] = (c) => Some(c.toString("|", false, true)),
     parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String]) = {
-    val tmp = Files.createTempDirectory("grimlock-")
-    tmp.toFile.deleteOnExit()
-
-    // TODO: Create symbolic links in the local directory? Or change working dir to tmp (as separate command)?
-    files.map {
-      case f => Files.copy(Paths.get(f), Paths.get(tmp.toString + File.separator + Paths.get(f).getFileName.toString))
-    }
-
     val result = data
       .flatMap(writer(_))
-      .pipe(Seq(command), separateWorkingDir = true)
+      .pipe(command)
       .flatMap(parser(_))
 
     (result.collect { case Left(c) => c }, result.collect { case Right(e) => e })
