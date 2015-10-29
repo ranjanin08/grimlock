@@ -83,8 +83,8 @@ object PipelineDataPreparation {
     // Compute histogram on the categorical features in the training data.
     val histogram = train
       .filter(_.content.schema.kind.isSpecialisationOf(Type.Categorical))
-      .expand((c: Cell[Position2D]) => c.position.append(
-        "%1$s=%2$s".format(c.position(Second).toShortString, c.content.value.toShortString)))
+      .expand((c: Cell[Position2D]) => Some(c.position.append(
+        "%1$s=%2$s".format(c.position(Second).toShortString, c.content.value.toShortString))))
       .summarise(Along(First), Count[Position3D, Position2D]())
 
     // Compute the counts for each categorical features.

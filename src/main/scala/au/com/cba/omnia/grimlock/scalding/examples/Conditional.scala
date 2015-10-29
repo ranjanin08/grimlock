@@ -57,12 +57,10 @@ class Conditional(args: Args) extends Job(args) {
     .squash(Second, KeepSlice[Position2D, String]("gender"))
     .toMap(Over(First))
 
-  // Define shorthand for the of the hair/eye/gender maps.
-  type W = Map[Position1D, Content]
-
   // Define function that expands based on the row id.
-  def expander[P <: Position with ExpandablePosition](cell: Cell[P], ext: W): P#M = {
-    cell.position.append(ext(Position1D(cell.position(First))).value)
+  def expander[P <: Position with ExpandablePosition](cell: Cell[P],
+    ext: Map[Position1D, Content]): TraversableOnce[P#M] = {
+    ext.get(Position1D(cell.position(First))).map { case con => cell.position.append(con.value) }
   }
 
   // Generate 3D matrix (hair color x eye color x gender)
