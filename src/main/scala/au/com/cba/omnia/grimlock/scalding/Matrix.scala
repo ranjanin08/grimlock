@@ -422,8 +422,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMapWithValue(value) { case (c, vo) => partitioner.assignWithValue(c, vo.get).map { case q => (q, c) } }
   }
 
-  def stream[Q <: Position](command: String, files: List[String], writer: Cell[P] => TraversableOnce[String],
-    parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String]) = {
+  def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
+    parser: BaseMatrix.TextParser[Q]): (U[Cell[Q]], U[String]) = {
     val lines = files.map { case f => (f, Source.fromFile(f).getLines.toList) }
     val smfn = (k: Unit, itr: Iterator[String]) => {
       val tmp = Files.createTempDirectory("grimlock-")
@@ -960,7 +960,7 @@ object Matrix {
    * @param parser The parser that converts a single line to a cell.
    */
   def loadText[P <: Position](file: String,
-    parser: (String) => TraversableOnce[Either[Cell[P], String]]): (TypedPipe[Cell[P]], TypedPipe[String]) = {
+    parser: BaseMatrix.TextParser[P]): (TypedPipe[Cell[P]], TypedPipe[String]) = {
     val pipe = TypedPipe.from(TextLine(file)).flatMap { parser(_) }
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })

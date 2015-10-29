@@ -32,7 +32,7 @@ import java.util.regex.Pattern
 import scala.reflect.ClassTag
 
 /** Base trait for matrix operations. */
-trait Matrix[P <: Position] {
+trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /** Type of the underlying data structure. */
   type U[_]
 
@@ -339,9 +339,8 @@ trait Matrix[P <: Position] {
    * @note The `command` must be installed on each node of the cluster. Also, `script` must be a single self
    *       contained script. Lastly, `parser` functions are provided on the `Cell` object.
    */
-  def stream[Q <: Position](command: String, files: List[String] = List(),
-    writer: Cell[P] => TraversableOnce[String] = (c) => Some(c.toString("|", false, true)),
-    parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String])
+  def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
+    parser: Matrix.TextParser[Q]): (U[Cell[Q]], U[String])
 
   /** Specifies tuners permitted on a call to `summarise` functions. */
   type SummariseTuners <: OneOf
@@ -510,6 +509,9 @@ trait Matrix[P <: Position] {
 object Matrix {
   /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
   type Predicate[P <: Position] = Cell[P] => Boolean
+
+  /** Type for parsing a string into either a cell or an error message. */
+  type TextParser[Q <: Position] = (String) => TraversableOnce[Either[Cell[Q], String]]
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */

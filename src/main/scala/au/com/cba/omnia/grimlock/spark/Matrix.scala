@@ -320,8 +320,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMap { case c => partitioner.assignWithValue(c, value).map { case q => (q, c) } }
   }
 
-  def stream[Q <: Position](command: String, files: List[String], writer: Cell[P] => TraversableOnce[String],
-    parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String]) = {
+  def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
+    parser: BaseMatrix.TextParser[Q]): (U[Cell[Q]], U[String]) = {
     val result = data
       .flatMap(writer(_))
       .pipe(command)
@@ -719,7 +719,7 @@ object Matrix {
    * @param file   The text file to read from.
    * @param parser The parser that converts a single line to a cell.
    */
-  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]])(
+  def loadText[P <: Position](file: String, parser: BaseMatrix.TextParser[P])(
     implicit sc: SparkContext): (RDD[Cell[P]], RDD[String]) = {
     val rdd = sc.textFile(file).flatMap { parser(_) }
 

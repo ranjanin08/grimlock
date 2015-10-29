@@ -96,7 +96,7 @@ class Ensemble(args: Args) extends Job(args) {
   // the test set. The resulting scores are expanded with the model name so they can be merged (see below).
   def trainAndScore(key: String, partition: TypedPipe[Cell[Position3D]]): TypedPipe[Cell[Position2D]] = {
     partition
-      .stream("Rscript " + key, List(key), parser = Cell.parse1D("|", StringCodex))
+      .stream("Rscript " + key, List(key), Cell.toString("|", false, true), Cell.parse1D("|", StringCodex))
       .data // Keep only the data (ignoring errors).
       .expand((cell: Cell[Position1D]) => cell.position.append(key))
   }
