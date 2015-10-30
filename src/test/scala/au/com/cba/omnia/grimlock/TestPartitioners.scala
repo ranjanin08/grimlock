@@ -26,8 +26,8 @@ import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
 
 import au.com.cba.omnia.grimlock.spark.partition.Partitions._
 
-import com.twitter.scalding._
-import com.twitter.scalding.bdd._
+import com.twitter.scalding.bdd.TBddDsl
+import com.twitter.scalding.typed.TypedPipe
 
 import java.util.Date
 

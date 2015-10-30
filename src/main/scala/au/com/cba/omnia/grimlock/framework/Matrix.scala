@@ -123,6 +123,20 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   def join[T <: Tuner](slice: Slice[P], that: S, tuner: T)(implicit ev1: P =!= Position1D, ev2: ClassTag[slice.S],
     ev3: JoinTuners#V[T]): U[Cell[P]]
 
+  /** Specifies tuners permitted on a call to `materialise`. */
+  type MaterialiseTuners <: OneOf
+
+  /**
+   * Returns the matrix as in in-memory list of cells.
+   *
+   * @param tuner The tuner for the job.
+   *
+   * @return A `L[Cell[P]]` of the cells.
+   *
+   * @note Avoid using this for very large matrices.
+   */
+  def materialise[T <: Tuner](tuner: T)(implicit ev: MaterialiseTuners#V[T]): List[Cell[P]]
+
   /** Specifies tuners permitted on a call to `names`. */
   type NamesTuners <: OneOf
 
@@ -500,7 +514,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations
   // TODO: Add read/write[CSV|Hive|HBase|VW|LibSVM] operations
-  // TODO: Add statistics/dictionary into memory (from HDFS) operations
   // TODO: Is there a way not to use asInstanceOf[] as much?
   // TODO: Add machine learning operations (SVD/finding cliques/etc.) - use Spark instead?
 }

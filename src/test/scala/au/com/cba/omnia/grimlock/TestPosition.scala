@@ -24,8 +24,8 @@ import au.com.cba.omnia.grimlock.scalding.position.Positions._
 
 import au.com.cba.omnia.grimlock.spark.position.Positions._
 
-import com.twitter.scalding._
-import com.twitter.scalding.bdd._
+import com.twitter.scalding.bdd.TBddDsl
+import com.twitter.scalding.typed.TypedPipe
 
 class TestPosition0D extends TestGrimlock {
 

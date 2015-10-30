@@ -33,6 +33,7 @@ import au.com.cba.omnia.grimlock.library.pairwise._
 import au.com.cba.omnia.grimlock.library.squash._
 import au.com.cba.omnia.grimlock.library.transform._
 
+import au.com.cba.omnia.grimlock.scalding._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Matrixable._
 import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
@@ -43,9 +44,9 @@ import au.com.cba.omnia.grimlock.spark.Matrixable._
 import au.com.cba.omnia.grimlock.spark.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.spark.position.Positions._
 
-import com.twitter.scalding._
-import com.twitter.scalding.bdd._
-import com.twitter.scalding.typed.ValuePipe
+import com.twitter.scalding.{ Config, Local }
+import com.twitter.scalding.bdd.TBddDsl
+import com.twitter.scalding.typed.{ TypedPipe, ValuePipe }
 
 class TestCell extends TestGrimlock {
 
@@ -10910,6 +10911,48 @@ class TestSparkMatrixToVector extends TestMatrixToVector {
     toRDD(data3)
       .toVector(separator)
       .toList.sortBy(_.position) shouldBe result2
+  }
+}
+
+trait TestMatrixMaterialise extends TestMatrix {
+
+  val data = List(("a", "one", Content(ContinuousSchema(DoubleCodex), 3.14)),
+    ("a", "two", Content(NominalSchema(StringCodex), "foo")),
+    ("a", "three", Content(DiscreteSchema(LongCodex), 42)),
+    ("b", "one", Content(ContinuousSchema(DoubleCodex), 6.28)),
+    ("b", "two", Content(DiscreteSchema(LongCodex), 123)),
+    ("b", "three", Content(ContinuousSchema(DoubleCodex), 9.42)),
+    ("c", "two", Content(NominalSchema(StringCodex), "bar")),
+    ("c", "three", Content(ContinuousSchema(DoubleCodex), 12.56)))
+
+  val result = List(Cell(Position2D("a", "one"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position2D("a", "two"), Content(NominalSchema(StringCodex), "foo")),
+    Cell(Position2D("a", "three"), Content(DiscreteSchema(LongCodex), 42)),
+    Cell(Position2D("b", "one"), Content(ContinuousSchema(DoubleCodex), 6.28)),
+    Cell(Position2D("b", "two"), Content(DiscreteSchema(LongCodex), 123)),
+    Cell(Position2D("b", "three"), Content(ContinuousSchema(DoubleCodex), 9.42)),
+    Cell(Position2D("c", "two"), Content(NominalSchema(StringCodex), "bar")),
+    Cell(Position2D("c", "three"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+}
+
+class TestScaldingMatrixMaterialise extends TestMatrixMaterialise with TBddDsl {
+
+  implicit val mode = Local(true)
+  implicit val config = Config.defaultFrom(mode)
+
+  "A Matrix.materialise" should "return its list" in {
+    LV2C2TPM2(data)
+      .materialise(Default(Execution()))
+      .sortBy(_.position) shouldBe result.sortBy(_.position)
+  }
+}
+
+class TestSparkMatrixMaterialise extends TestMatrixMaterialise {
+
+  "A Matrix.materialise" should "return its list" in {
+    LV2C2RDDM2(data)
+      .materialise(Default())
+      .sortBy(_.position) shouldBe result.sortBy(_.position)
   }
 }
 
