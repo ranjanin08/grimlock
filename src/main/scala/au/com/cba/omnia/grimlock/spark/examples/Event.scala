@@ -151,7 +151,7 @@ object InstanceCentricTfIdf {
     // Get the number of instances (i.e. documents)
     val n = tf
       .size(First)
-      .toMap(Over(First))
+      .compact(Over(First))
 
     // Define extractor to get data out of map.
     val extractN = ExtractWithKey[Position1D, String, Content](First.toString)
@@ -160,11 +160,11 @@ object InstanceCentricTfIdf {
     // Using the number of documents, compute Idf:
     //  1/ Compute document frequency;
     //  2/ Apply Idf transformation (using document count);
-    //  3/ Save as Map for use in Tf-Idf below.
+    //  3/ Compact into a Map for use in Tf-Idf below.
     val idf = tf
       .summarise(Along(First), Count[Position2D, Position1D]())
       .transformWithValue(Idf(extractN, (df: Double, n: Double) => math.log10(n / df)), n)
-      .toMap(Over(First))
+      .compact(Over(First))
 
     // Define extractor to get data out of idf map.
     val extractIdf = ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
@@ -178,7 +178,7 @@ object InstanceCentricTfIdf {
       //.transform(LogarithmicTf[Position2D]())
       //.transformWithValue(AugmentedTf(ExtractWithDimension[Dimension.First, Position2D, Content](First)
       //    .andThenPresent(_.value.asDouble)),
-      //  tf.summarise(Along(Second), Max[Position2D, Position1D]()).toMap(Over(First)))
+      //  tf.summarise(Along(Second), Max[Position2D, Position1D]()).compact(Over(First)))
       .transformWithValue(TfIdf(extractIdf), idf)
       .saveAsText(s"./demo.${output}/tfidf_entity.out")
   }

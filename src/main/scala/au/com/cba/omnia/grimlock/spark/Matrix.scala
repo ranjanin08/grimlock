@@ -124,6 +124,25 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
+  type CompactTuners = TP2
+  def compact()(implicit ev: ClassTag[P]): E[Map[P, Content]] = {
+    data
+      .map { case c => (c.position, c.content) }
+      .collectAsMap
+      .toMap
+  }
+
+  def compact[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S], ev3: CompactTuners#V[T]): E[Map[slice.S, slice.C]] = {
+    data
+      .map { case c => (c.position, slice.toMap(c)) }
+      .keyBy { case (p, m) => slice.selected(p) }
+      .tunedReduce(tuner.parameters, (l: (P, Map[slice.S, slice.C]), r: (P, Map[slice.S, slice.C])) =>
+        (l._1, slice.combineMaps(l._1, l._2, r._2)))
+      .map { case (_, (_, m)) => m }
+      .reduce { case (lm, rm) => lm ++ rm }
+  }
+
   type DomainTuners = TP1
 
   type GetTuners = TP2
@@ -362,25 +381,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  type ToMapTuners = TP2
-  def toMap()(implicit ev: ClassTag[P]): E[Map[P, Content]] = {
-    data
-      .map { case c => (c.position, c.content) }
-      .collectAsMap
-      .toMap
-  }
-
-  def toMap[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
-    ev2: ClassTag[slice.S], ev3: ToMapTuners#V[T]): E[Map[slice.S, slice.C]] = {
-    data
-      .map { case c => (c.position, slice.toMap(c)) }
-      .keyBy { case (p, m) => slice.selected(p) }
-      .tunedReduce(tuner.parameters, (l: (P, Map[slice.S, slice.C]), r: (P, Map[slice.S, slice.C])) =>
-        (l._1, slice.combineMaps(l._1, l._2, r._2)))
-      .map { case (_, (_, m)) => m }
-      .reduce { case (lm, rm) => lm ++ rm }
-  }
-
   def transform[Q <: Position, F](transformers: F)(implicit ev: Transformable[F, P, Q]): U[Cell[Q]] = {
     val transformer = ev.convert(transformers)
 
@@ -581,7 +581,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val mean = data
       .summarise(slice, Mean[Position2D, slice.S](), stuner)
-      .toMap(Over(First))
+      .compact(Over(First))
 
     implicit object P2D extends PosDimDep[Position2D, slice.dimension.type]
 
@@ -594,7 +594,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
       .summarise(slice, Sum[Position2D, slice.S](), stuner)
       .pairwise(Over(First), Lower, Times(Locate.OperatorString[Position1D, Position0D]("(%1$s*%2$s)")), ptuner)
       .transform(SquareRoot[Position1D]())
-      .toMap(Over(First))
+      .compact(Over(First))
 
     centered
       .pairwise(slice, Lower, Times(Locate.OperatorString[slice.S, slice.R]("(%1$s*%2$s)")), ptuner)
@@ -637,7 +637,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val mcount = mhist
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
-      .toMap()
+      .compact()
 
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
@@ -651,7 +651,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val jcount = jhist
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
-      .toMap()
+      .compact()
 
     val joint = jhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor, negate = true)
@@ -686,12 +686,12 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val pos = data
       .transform(Compare[Position2D](isPositive))
       .summarise(slice, Sum[Position2D, slice.S](), stuner)
-      .toMap(Over(First))
+      .compact(Over(First))
 
     val neg = data
       .transform(Compare[Position2D](isNegative))
       .summarise(slice, Sum[Position2D, slice.S](), stuner)
-      .toMap(Over(First))
+      .compact(Over(First))
 
     val tpr = data
       .transform(Compare[Position2D](isPositive))

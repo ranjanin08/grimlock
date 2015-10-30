@@ -2677,7 +2677,7 @@ class TestSparkMatrixGet extends TestMatrixGet {
   }
 }
 
-trait TestMatrixToMap extends TestMatrix {
+trait TestMatrixCompact extends TestMatrix {
   val result1 = data1.map { case c => c.position -> c.content }.toMap
 
   val result2 = Map(
@@ -2811,14 +2811,14 @@ trait TestMatrixToMap extends TestMatrix {
         Position2D("qux", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema(StringCodex), "12.56")))
 }
 
-class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
+class TestScaldingMatrixCompact extends TestMatrixCompact with TBddDsl {
 
-  "A Matrix.toMap" should "return its first over map in 1D" in {
+  "A Matrix.compact" should "return its first over map in 1D" in {
     Given {
       data1
     } When {
       cells: TypedPipe[Cell[Position1D]] =>
-        cells.toMap(Over(First), Default()).toTypedPipe
+        cells.compact(Over(First), Default()).toTypedPipe
     } Then {
       _.toList shouldBe List(result1)
     }
@@ -2829,7 +2829,7 @@ class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.toMap(Over(First), Default(Reducers(123))).toTypedPipe
+        cells.compact(Over(First), Default(Reducers(123))).toTypedPipe
     } Then {
       _.toList shouldBe List(result2)
     }
@@ -2840,7 +2840,7 @@ class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.toMap(Along(First), Default()).toTypedPipe
+        cells.compact(Along(First), Default()).toTypedPipe
     } Then {
       _.toList shouldBe List(result3)
     }
@@ -2851,7 +2851,7 @@ class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.toMap(Over(Second), Default(Reducers(123))).toTypedPipe
+        cells.compact(Over(Second), Default(Reducers(123))).toTypedPipe
     } Then {
       _.toList shouldBe List(result4)
     }
@@ -2862,7 +2862,7 @@ class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
       data2
     } When {
       cells: TypedPipe[Cell[Position2D]] =>
-        cells.toMap(Along(Second), Default()).toTypedPipe
+        cells.compact(Along(Second), Default()).toTypedPipe
     } Then {
       _.toList shouldBe List(result5)
     }
@@ -2873,7 +2873,7 @@ class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.toMap(Over(First), Default(Reducers(123))).toTypedPipe
+        cells.compact(Over(First), Default(Reducers(123))).toTypedPipe
     } Then {
       _.toList shouldBe List(result6)
     }
@@ -2884,7 +2884,7 @@ class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.toMap(Along(First), Default()).toTypedPipe
+        cells.compact(Along(First), Default()).toTypedPipe
     } Then {
       _.toList shouldBe List(result7)
     }
@@ -2895,7 +2895,7 @@ class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.toMap(Over(Second), Default(Reducers(123))).toTypedPipe
+        cells.compact(Over(Second), Default(Reducers(123))).toTypedPipe
     } Then {
       _.toList shouldBe List(result8)
     }
@@ -2906,7 +2906,7 @@ class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.toMap(Along(Second), Default()).toTypedPipe
+        cells.compact(Along(Second), Default()).toTypedPipe
     } Then {
       _.toList shouldBe List(result9)
     }
@@ -2917,7 +2917,7 @@ class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.toMap(Over(Third), Default(Reducers(123))).toTypedPipe
+        cells.compact(Over(Third), Default(Reducers(123))).toTypedPipe
     } Then {
       _.toList shouldBe List(result10)
     }
@@ -2928,57 +2928,57 @@ class TestScaldingMatrixToMap extends TestMatrixToMap with TBddDsl {
       data3
     } When {
       cells: TypedPipe[Cell[Position3D]] =>
-        cells.toMap(Along(Third), Default()).toTypedPipe
+        cells.compact(Along(Third), Default()).toTypedPipe
     } Then {
       _.toList shouldBe List(result11)
     }
   }
 }
 
-class TestSparkMatrixToMap extends TestMatrixToMap {
+class TestSparkMatrixCompact extends TestMatrixCompact {
 
-  "A Matrix.toMap" should "return its first over map in 1D" in {
-    toRDD(data1).toMap(Over(First), Default()) shouldBe result1
+  "A Matrix.compact" should "return its first over map in 1D" in {
+    toRDD(data1).compact(Over(First), Default()) shouldBe result1
   }
 
   it should "return its first over map in 2D" in {
-    toRDD(data2).toMap(Over(First), Default(Reducers(12))) shouldBe result2
+    toRDD(data2).compact(Over(First), Default(Reducers(12))) shouldBe result2
   }
 
   it should "return its first along map in 2D" in {
-    toRDD(data2).toMap(Along(First), Default()) shouldBe result3
+    toRDD(data2).compact(Along(First), Default()) shouldBe result3
   }
 
   it should "return its second over map in 2D" in {
-    toRDD(data2).toMap(Over(Second), Default(Reducers(12))) shouldBe result4
+    toRDD(data2).compact(Over(Second), Default(Reducers(12))) shouldBe result4
   }
 
   it should "return its second along map in 2D" in {
-    toRDD(data2).toMap(Along(Second), Default()) shouldBe result5
+    toRDD(data2).compact(Along(Second), Default()) shouldBe result5
   }
 
   it should "return its first over map in 3D" in {
-    toRDD(data3).toMap(Over(First), Default(Reducers(12))) shouldBe result6
+    toRDD(data3).compact(Over(First), Default(Reducers(12))) shouldBe result6
   }
 
   it should "return its first along map in 3D" in {
-    toRDD(data3).toMap(Along(First), Default()) shouldBe result7
+    toRDD(data3).compact(Along(First), Default()) shouldBe result7
   }
 
   it should "return its second over map in 3D" in {
-    toRDD(data3).toMap(Over(Second), Default(Reducers(12))) shouldBe result8
+    toRDD(data3).compact(Over(Second), Default(Reducers(12))) shouldBe result8
   }
 
   it should "return its second along map in 3D" in {
-    toRDD(data3).toMap(Along(Second), Default()) shouldBe result9
+    toRDD(data3).compact(Along(Second), Default()) shouldBe result9
   }
 
   it should "return its third over map in 3D" in {
-    toRDD(data3).toMap(Over(Third), Default(Reducers(12))) shouldBe result10
+    toRDD(data3).compact(Over(Third), Default(Reducers(12))) shouldBe result10
   }
 
   it should "return its third along map in 3D" in {
-    toRDD(data3).toMap(Along(Third), Default()) shouldBe result11
+    toRDD(data3).compact(Along(Third), Default()) shouldBe result11
   }
 }
 

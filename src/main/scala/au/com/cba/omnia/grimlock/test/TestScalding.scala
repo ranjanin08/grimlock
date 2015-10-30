@@ -570,7 +570,7 @@ class TestScalding17(args : Args) extends Job(args) {
 
   val stats = data
     .summarise(Along(First), aggregators)
-    .toMap(Over(First))
+    .compact(Over(First))
 
   data
     .transformWithValue(Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second,
@@ -685,7 +685,7 @@ class TestScalding19(args : Args) extends Job(args) {
   def cb(key: String, pipe: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {
     pipe
       .slice(Over(Second), rem, false)
-      .transformWithValue(transforms, stats.toMap(Over(First)))
+      .transformWithValue(transforms, stats.compact(Over(First)))
       .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
       .saveAsCSV(Over(First), s"./tmp.${tool}/pln_" + key + ".csv")
   }
@@ -928,7 +928,7 @@ class TestScalding28(args: Args) extends Job(args) {
 
   val stats = data
     .summarise(Along(First), aggregators)
-    .toMap(Over(First))
+    .compact(Over(First))
 
   val extractor = ExtractWithDimension[Dimension.Second, Position2D, List[Double]](Second)
 

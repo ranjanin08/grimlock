@@ -58,6 +58,31 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Schema, tuner: T)(
     implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S], ev3: ChangeTuners#V[T]): U[Cell[P]]
 
+  /** Specifies tuners permitted on a call to `compact` functions. */
+  type CompactTuners <: OneOf
+
+  /**
+   * Compacts a matrix to a `Map`.
+   *
+   * @return A `E[Map[P, Content]]` containing the Map representation of this matrix.
+   *
+   * @note Avoid using this for very large matrices.
+   */
+  def compact()(implicit ev: ClassTag[P]): E[Map[P, Content]]
+
+  /**
+   * Compact a matrix to a `Map`.
+   *
+   * @param slice Encapsulates the dimension(s) along which to convert.
+   * @param tuner The tuner for the job.
+   *
+   * @return A `E[Map[slice.S, Slice.C]]` containing the Map representation of this matrix.
+   *
+   * @note Avoid using this for very large matrices.
+   */
+  def compact[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: ClassTag[slice.S],
+    ev3: CompactTuners#V[T]): E[Map[slice.S, slice.C]]
+
   /** Specifies tuners permitted on a call to `domain`. */
   type DomainTuners <: OneOf
 
@@ -370,31 +395,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   def summariseWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], aggregators: F, value: E[W], tuner: T)(
     implicit ev1: AggregatableWithValue[F, P, slice.S, Q, W], ev2: ClassTag[slice.S],
       ev3: SummariseTuners#V[T]): U[Cell[Q]]
-
-  /** Specifies tuners permitted on a call to `toMap` functions. */
-  type ToMapTuners <: OneOf
-
-  /**
-   * Convert a matrix to an in-memory `Map`.
-   *
-   * @return A `E[Map[P, Content]]` containing the Map representation of this matrix.
-   *
-   * @note Avoid using this for very large matrices.
-   */
-  def toMap()(implicit ev: ClassTag[P]): E[Map[P, Content]]
-
-  /**
-   * Convert a matrix to an in-memory `Map`.
-   *
-   * @param slice Encapsulates the dimension(s) along which to convert.
-   * @param tuner The tuner for the job.
-   *
-   * @return A `E[Map[slice.S, Slice.C]]` containing the Map representation of this matrix.
-   *
-   * @note Avoid using this for very large matrices.
-   */
-  def toMap[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: ClassTag[slice.S],
-    ev3: ToMapTuners#V[T]): E[Map[slice.S, slice.C]]
 
   /**
    * Transform the content of a matrix.

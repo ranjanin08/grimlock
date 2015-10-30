@@ -42,24 +42,24 @@ object Conditional {
 
     // Get map of row id -> hair color
     // 1/ Squash the matrix keeping only hair column.
-    // 2/ Convert vector to map.
+    // 2/ Compact vector into a map.
     val hair = data
       .squash(Second, KeepSlice[Position2D, String]("hair"))
-      .toMap(Over(First))
+      .compact(Over(First))
 
     // Get map of row id -> eye color
     // 1/ Squash the matrix keeping only eye column.
-    // 2/ Convert vector to map.
+    // 2/ Compact vector into a map.
     val eye = data
       .squash(Second, KeepSlice[Position2D, String]("eye"))
-      .toMap(Over(First))
+      .compact(Over(First))
 
     // Get map of row id -> gender
     // 1/ Squash the matrix keeping only gender column.
-    // 2/ Convert vector to map.
+    // 2/ Compact vector into a map.
     val gender = data
       .squash(Second, KeepSlice[Position2D, String]("gender"))
-      .toMap(Over(First))
+      .compact(Over(First))
 
     // Define function that expands based on the row id.
     def expander[P <: Position with ExpandablePosition](cell: Cell[P],
@@ -90,7 +90,7 @@ object Conditional {
     val gcount = heg
       .summarise(Along(First), Sum[Position3D, Position2D]())
       .summarise(Along(First), Sum[Position2D, Position1D]())
-      .toMap()
+      .compact()
 
     // Get eye color conditional on gender.
     // 1/ Sum out hair color.
