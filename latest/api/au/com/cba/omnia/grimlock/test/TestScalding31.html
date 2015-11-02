@@ -49,7 +49,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(66f57c038f8a5a4846ab91ba0c26062e88899506)//src/main/scala/au/com/cba/omnia/grimlock/test/TestScalding.scala" target="_blank">TestScalding.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(6b465a01a57780f60befeb186ed780e32497e1a9)//src/main/scala/au/com/cba/omnia/grimlock/test/TestScalding.scala" target="_blank">TestScalding.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="com.twitter.scalding.Job">Job</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="com.twitter.scalding.FieldConversions">FieldConversions</span>, <span class="extype" name="com.twitter.scalding.LowPriorityFieldConversions">LowPriorityFieldConversions</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -167,7 +167,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.twitter.scalding.LowPriorityFieldConversions#anyToFieldArg" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="anyToFieldArg(f:&lt;?&gt;):Comparable[_]"></a>
+      <a id="anyToFieldArg(f:Any):Comparable[_]"></a>
       <a id="anyToFieldArg(Any):Comparable[_]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -218,7 +218,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="com.twitter.scalding.FieldConversions#asList" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="asList(f:&lt;?&gt;):List[Comparable[_]]"></a>
+      <a id="asList(f:cascading.tuple.Fields):List[Comparable[_]]"></a>
       <a id="asList(Fields):List[Comparable[_]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -235,7 +235,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>FieldConversions</dd></dl></div>
     </li><li name="com.twitter.scalding.FieldConversions#asSet" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="asSet(f:&lt;?&gt;):Set[Comparable[_]]"></a>
+      <a id="asSet(f:cascading.tuple.Fields):Set[Comparable[_]]"></a>
       <a id="asSet(Fields):Set[Comparable[_]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -411,7 +411,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Job</dd></dl></div>
     </li><li name="com.twitter.scalding.FieldConversions#defaultMode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="defaultMode(fromFields:&lt;?&gt;,toFields:&lt;?&gt;):cascading.tuple.Fields"></a>
+      <a id="defaultMode(fromFields:cascading.tuple.Fields,toFields:cascading.tuple.Fields):cascading.tuple.Fields"></a>
       <a id="defaultMode(Fields,Fields):Fields"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -445,7 +445,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Job</dd></dl></div>
     </li><li name="com.twitter.scalding.FieldConversions#ensureUniqueFields" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ensureUniqueFields(left:&lt;?&gt;,right:&lt;?&gt;,rightPipe:&lt;?&gt;):(cascading.tuple.Fields,cascading.pipe.Pipe)"></a>
+      <a id="ensureUniqueFields(left:cascading.tuple.Fields,right:cascading.tuple.Fields,rightPipe:cascading.pipe.Pipe):(cascading.tuple.Fields,cascading.pipe.Pipe)"></a>
       <a id="ensureUniqueFields(Fields,Fields,Pipe):(Fields,Pipe)"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -672,7 +672,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.twitter.scalding.FieldConversions#getField" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="getField(f:&lt;?&gt;,idx:&lt;?&gt;):cascading.tuple.Fields"></a>
+      <a id="getField(f:cascading.tuple.Fields,idx:Int):cascading.tuple.Fields"></a>
       <a id="getField(Fields,Int):Fields"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -689,7 +689,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>FieldConversions</dd></dl></div>
     </li><li name="com.twitter.scalding.Job#handleStats" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="handleStats(statsData:&lt;?&gt;):Unit"></a>
+      <a id="handleStats(statsData:cascading.stats.CascadingStats):Unit"></a>
       <a id="handleStats(CascadingStats):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -706,7 +706,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Job</dd></dl></div>
     </li><li name="com.twitter.scalding.FieldConversions#hasInts" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hasInts(f:&lt;?&gt;):Boolean"></a>
+      <a id="hasInts(f:cascading.tuple.Fields):Boolean"></a>
       <a id="hasInts(Fields):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -927,7 +927,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="com.twitter.scalding.FieldConversions#newSymbol" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="newSymbol(avoid:&lt;?&gt;,guess:&lt;?&gt;,trial:&lt;?&gt;):Symbol"></a>
+      <a id="newSymbol(avoid:Set[Symbol],guess:Symbol,trial:Int):Symbol"></a>
       <a id="newSymbol(Set[Symbol],Symbol,Int):Symbol"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1014,6 +1014,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>FieldConversions</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.test.TestScalding31#path" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="path:String"></a>
+      <a id="path:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">path</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.test.TestScalding31@path:String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      
     </li><li name="com.twitter.scalding.Job#pipeToRichPipe" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="pipeToRichPipe(pipe:cascading.pipe.Pipe):com.twitter.scalding.RichPipe"></a>
       <a id="pipeToRichPipe(Pipe):RichPipe"></a>
@@ -1236,7 +1253,7 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="com.twitter.scalding.Job#timeout" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="timeout[T&lt;:&lt;?&gt;](timeout:&lt;?&gt;)(t:&lt;?&gt;):Option[T]"></a>
+      <a id="timeout[T](timeout:com.twitter.scalding.AbsoluteDuration)(t:=&gt;T):Option[T]"></a>
       <a id="timeout[T](AbsoluteDuration)(⇒T):Option[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1286,6 +1303,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.test.TestScalding31#tool" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="tool:String"></a>
+      <a id="tool:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tool</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.test.TestScalding31@tool:String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      
     </li><li name="com.twitter.scalding.FieldConversions#tuple2ToFieldsPair" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="tuple2ToFieldsPair[T,U](pair:(T,U))(implicittf:T=&gt;cascading.tuple.Fields,implicituf:U=&gt;cascading.tuple.Fields):(cascading.tuple.Fields,cascading.tuple.Fields)"></a>
       <a id="tuple2ToFieldsPair[T,U]((T,U))((T)⇒Fields,(U)⇒Fields):(Fields,Fields)"></a>
@@ -1407,7 +1441,7 @@
               
         </dd></dl></div>
     </li><li name="com.twitter.scalding.Job#write" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="write(pipe:&lt;?&gt;,src:&lt;?&gt;):Unit"></a>
+      <a id="write(pipe:cascading.pipe.Pipe,src:com.twitter.scalding.Source):Unit"></a>
       <a id="write(Pipe,Source):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
