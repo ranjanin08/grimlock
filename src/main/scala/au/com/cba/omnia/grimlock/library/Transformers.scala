@@ -184,7 +184,7 @@ case class LogarithmicTf[P <: Position](log: (Double) => Double = math.log) exte
 /**
  * Create augmented term frequencies.
  *
- * @param extractor Object that will extract, for `cell`, its corresponding maximum count.
+ * @param max Object that will extract, for `cell`, its corresponding maximum count.
  *
  * @note Augmented tf is only applied to numerical variables.
  */

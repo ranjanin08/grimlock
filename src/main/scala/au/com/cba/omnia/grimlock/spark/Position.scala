@@ -41,12 +41,10 @@ class Positions[P <: Position](val data: RDD[P]) extends BasePositions[P] with P
   import SparkImplicits._
 
   type NamesTuners = OneOf2[Default[NoParameters.type], Default[Reducers]]
-  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S] = {
+  def names[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S], ev3: NamesTuners#V[T]): U[slice.S] = {
     data.map { case p => slice.selected(p) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
   }
-
-  def number(): U[(P, Long)] = Names.number(data)
 
   def saveAsText(file: String, writer: TextWriter = Position.toString()): U[P] = saveText(file, writer)
 

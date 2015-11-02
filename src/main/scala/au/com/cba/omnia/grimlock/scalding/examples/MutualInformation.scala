@@ -81,7 +81,7 @@ class MutualInformation(args: Args) extends Job(args) {
   // Compute count of histogram elements.
   val mcount = mhist
     .summarise(Over(First), Sum[Position2D, Position1D]())
-    .toMap()
+    .compact()
 
   // Compute sum of marginal entropy
   // 1/ Compute the marginal entropy over the features (second dimension).
@@ -103,7 +103,7 @@ class MutualInformation(args: Args) extends Job(args) {
   // Compute count of histogram elements.
   val jcount = jhist
     .summarise(Over(First), Sum[Position2D, Position1D]())
-    .toMap()
+    .compact()
 
   // Compute joint entropy
   val joint = jhist

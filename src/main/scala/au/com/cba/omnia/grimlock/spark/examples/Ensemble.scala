@@ -75,7 +75,7 @@ object Ensemble {
     val (data, _) = loadText(s"${path}/exampleEnsemble.txt", Cell.parseTable(schema, separator = "|"))
 
     // Ensemble scripts to apply to the data.
-    val scripts = List(s"${path}/gbm.R", s"${path}/lr.R", s"${path}/rf.R")
+    val scripts = List("gbm.R", "lr.R", "rf.R")
 
     // Weigh each model equally.
     val weights = Map(Position1D(scripts(0)) -> Content(ContinuousSchema(DoubleCodex), 0.33),
@@ -92,7 +92,7 @@ object Ensemble {
     // the test set. The resulting scores are expanded with the model name so they can be merged (see below).
     def trainAndScore(key: String, partition: RDD[Cell[Position3D]]): RDD[Cell[Position2D]] = {
       partition
-        .stream("Rscript", key, "|", Cell.parse1D("|", StringCodex))
+        .stream("Rscript " + key, List(key), Cell.toString("|", false, true), Cell.parse1D("|", StringCodex))
         .data // Keep only the data (ignoring errors).
         .expand((cell: Cell[Position1D]) => Some(cell.position.append(key)))
     }
@@ -108,7 +108,7 @@ object Ensemble {
     // 4/ Merge the scores of each model into a single 2D matrix (instance x model);
     // 5/ Apply a weighted sum to the model scores (this can be leared by streaming the scores);
     // 6/ Persist the final scores.
-    // 7/ Collect the scores in a Map so they can be used to compute the Gini index with.
+    // 7/ Compact the scores into a Map so they can be used to compute the Gini index with.
     val scores = data
       .expand((cell: Cell[Position2D]) => Some(cell.position.append(math.abs(cell.position(First).hashCode % 10))))
       .split(EnsembleSplit(scripts(0), scripts(1), scripts(2)))
@@ -116,7 +116,7 @@ object Ensemble {
       .merge(scripts)
       .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
       .saveAsText(s"./demo.${output}/ensemble.scores.out")
-      .toMap(Over(First))
+      .compact(Over(First))
 
     // Rename instance id (first dimension) with its score
     def renameWithScore(cell: Cell[Position2D], ext: Map[Position1D, Content]): Option[Position2D] = {

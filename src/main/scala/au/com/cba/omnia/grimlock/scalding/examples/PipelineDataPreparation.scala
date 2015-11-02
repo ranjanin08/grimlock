@@ -86,7 +86,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
   // Compute the counts for each categorical features.
   val counts = histogram
     .summarise(Over(First), Sum[Position2D, Position1D]())
-    .toMap()
+    .compact()
 
   // Define type of the counts map.
   type W = Map[Position1D, Content]
@@ -161,12 +161,12 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
     val csb = d
       .slice(Over(Second), rem2, false)
-      .transformWithValue(transforms, stats.toMap(Over(First)))
+      .transformWithValue(transforms, stats.compact(Over(First)))
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
       //.fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0))
-      .saveAsCSV(Over(Second), s"./demo.${output}/${key}.csv")
+      .saveAsCSV(Over(First), s"./demo.${output}/${key}.csv")
   }
 
   // Prepare each partition.

@@ -24,7 +24,6 @@ import au.com.cba.omnia.grimlock.framework.{
   Matrix => BaseMatrix,
   Matrixable => BaseMatrixable,
   MatrixWithParseErrors,
-  Nameable => BaseNameable,
   NoParameters,
   Predicateable => BasePredicateable,
   ReduceableMatrix => BaseReduceableMatrix,
@@ -49,13 +48,16 @@ import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 import au.com.cba.omnia.grimlock.framework.window._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
-import au.com.cba.omnia.grimlock.spark.Nameable._
+
+import java.io.File
+import java.nio.file.{ Files, Paths }
 
 import org.apache.hadoop.io.Writable
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
+import scala.collection.immutable.HashSet
 import scala.reflect.ClassTag
 
 private[spark] object SparkImplicits {
@@ -108,18 +110,37 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   import SparkImplicits._
 
   type ChangeTuners = TP2
-  def change[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, schema: Schema, tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, RDD], ev3: ClassTag[slice.S],
-      ev4: ChangeTuners#V[T]): U[Cell[P]] = {
+  def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Schema, tuner: T = Default())(
+    implicit ev1: PositionDistributable[I, slice.S, RDD], ev2: ClassTag[slice.S],
+      ev3: ChangeTuners#V[T]): U[Cell[P]] = {
     data
       .keyBy { case c => slice.selected(c.position) }
-      .tunedLeftJoin(tuner.parameters, ev2.convert(positions).keyBy { case p => p })
+      .tunedLeftJoin(tuner.parameters, ev1.convert(positions).keyBy { case p => p })
       .flatMap {
         case (_, (c, po)) => po match {
           case Some(_) => schema.decode(c.content.value.toShortString).map { case con => Cell(c.position, con) }
           case None => Some(c)
         }
       }
+  }
+
+  type CompactTuners = TP2
+  def compact()(implicit ev: ClassTag[P]): E[Map[P, Content]] = {
+    data
+      .map { case c => (c.position, c.content) }
+      .collectAsMap
+      .toMap
+  }
+
+  def compact[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S], ev3: CompactTuners#V[T]): E[Map[slice.S, slice.C]] = {
+    data
+      .map { case c => (c.position, slice.toMap(c)) }
+      .keyBy { case (p, m) => slice.selected(p) }
+      .tunedReduce(tuner.parameters, (l: (P, Map[slice.S, slice.C]), r: (P, Map[slice.S, slice.C])) =>
+        (l._1, slice.combineMaps(l._1, l._2, r._2)))
+      .map { case (_, (_, m)) => m }
+      .reduce { case (lm, rm) => lm ++ rm }
   }
 
   type DomainTuners = TP1
@@ -134,8 +155,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type JoinTuners = TP3
-  def join[D <: Dimension, T <: Tuner](slice: Slice[P, D], that: S, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: P =!= Position1D, ev3: ClassTag[slice.S], ev4: JoinTuners#V[T]): U[Cell[P]] = {
+  def join[T <: Tuner](slice: Slice[P], that: S, tuner: T = Default())(implicit ev1: P =!= Position1D,
+    ev2: ClassTag[slice.S], ev3: JoinTuners#V[T]): U[Cell[P]] = {
     val (p1, p2) = tuner.parameters match {
       case Sequence2(f, s) => (f, s)
       case p => (NoParameters, p)
@@ -147,9 +168,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .map { case (_, (c, _)) => c }
   }
 
+  type MaterialiseTuners = TP1
+  def materialise[T <: Tuner](tuner: T = Default())(implicit ev: MaterialiseTuners#V[T]): List[Cell[P]] = {
+    data.collect.toList
+  }
+
   type NamesTuners = TP2
-  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S] = {
+  def names[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S], ev3: NamesTuners#V[T]): U[slice.S] = {
     data.map { case c => slice.selected(c.position) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
   }
 
@@ -159,41 +185,39 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
                                Default[Sequence2[Reducers, Sequence2[Reducers, Reducers]]],
                                Default[Sequence2[Sequence2[Reducers, Reducers], Reducers]],
                                Default[Sequence2[Sequence2[Reducers, Reducers], Sequence2[Reducers, Reducers]]]]
-  def pairwise[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], comparer: Comparer, operators: F,
-    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q],
-      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R],
-        ev6: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev2.convert(operators)
+  def pairwise[Q <: Position, F, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: F, tuner: T = Default())(
+    implicit ev1: Operable[F, slice.S, slice.R, Q], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S],
+      ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+    val operator = ev1.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, data)
       .flatMap { case ((lc, lr), (rc, rr)) => operator.compute(lc, lr, rc, rr) }
   }
 
-  def pairwiseWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
-    operators: F, value: E[W], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-      ev2: OperableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-        ev5: ClassTag[slice.R], ev6: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev2.convert(operators)
+  def pairwiseWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: F,
+    value: E[W], tuner: T = Default())(implicit ev1: OperableWithValue[F, slice.S, slice.R, Q, W],
+      ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
+        ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+    val operator = ev1.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, data)
       .flatMap { case ((lc, lr), (rc, rr)) => operator.computeWithValue(lc, lr, rc, rr, value) }
   }
 
-  def pairwiseBetween[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], comparer: Comparer, that: S,
-    operators: F, tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q],
-      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R],
-        ev6: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev2.convert(operators)
+  def pairwiseBetween[Q <: Position, F, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S, operators: F,
+    tuner: T = Default())(implicit ev1: Operable[F, slice.S, slice.R, Q], ev2: slice.S =!= Position0D,
+      ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+    val operator = ev1.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, that.data)
       .flatMap { case ((lc, lr), (rc, rr)) => operator.compute(lc, lr, rc, rr) }
   }
 
-  def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
-    that: S, operators: F, value: E[W], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-      ev2: OperableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-        ev5: ClassTag[slice.R], ev6: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev2.convert(operators)
+  def pairwiseBetweenWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S,
+    operators: F, value: E[W], tuner: T = Default())(implicit ev1: OperableWithValue[F, slice.S, slice.R, Q, W],
+      ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
+        ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+    val operator = ev1.convert(operators)
 
     pairwiseTuples(slice, comparer, tuner)(data, that.data)
       .flatMap { case ((lc, lr), (rc, rr)) => operator.computeWithValue(lc, lr, rc, rr, value) }
@@ -253,21 +277,20 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type SliceTuners = TP2
-  def slice[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, keep: Boolean, tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, RDD], ev3: ClassTag[slice.S],
-      ev4: SliceTuners#V[T]): U[Cell[P]] = {
+  def slice[I, T <: Tuner](slice: Slice[P], positions: I, keep: Boolean, tuner: T = Default())(
+    implicit ev1: PositionDistributable[I, slice.S, RDD], ev2: ClassTag[slice.S],
+      ev3: SliceTuners#V[T]): U[Cell[P]] = {
     data
       .keyBy { case c => slice.selected(c.position) }
-      .tunedLeftJoin(tuner.parameters, ev2.convert(positions).map { case p => (p, ()) })
+      .tunedLeftJoin(tuner.parameters, ev1.convert(positions).map { case p => (p, ()) })
       .collect { case (_, (c, o)) if (o.isEmpty != keep) => c }
   }
 
   type SlideTuners = TP1
-  def slide[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], windows: F, ascending: Boolean,
-    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: Windowable[F, slice.S, slice.R, Q],
-      ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R],
-        ev6: SlideTuners#V[T]): U[Cell[Q]] = {
-    val window = ev2.convert(windows)
+  def slide[Q <: Position, F, T <: Tuner](slice: Slice[P], windows: F, ascending: Boolean, tuner: T = Default())(
+    implicit ev1: Windowable[F, slice.S, slice.R, Q], ev2: slice.R =!= Position0D, ev3: ClassTag[slice.S],
+      ev4: ClassTag[slice.R], ev5: SlideTuners#V[T]): U[Cell[Q]] = {
+    val window = ev1.convert(windows)
 
     data
       .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
@@ -287,11 +310,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def slideWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], windows: F, value: E[W],
-    ascending: Boolean, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-      ev2: WindowableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
-        ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]] = {
-    val window = ev2.convert(windows)
+  def slideWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], windows: F, value: E[W], ascending: Boolean,
+    tuner: T = Default())(implicit ev1: WindowableWithValue[F, slice.S, slice.R, Q, W], ev2: slice.R =!= Position0D,
+      ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: SlideTuners#V[T]): U[Cell[Q]] = {
+    val window = ev1.convert(windows)
 
     data
       .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
@@ -324,21 +346,20 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMap { case c => partitioner.assignWithValue(c, value).map { case q => (q, c) } }
   }
 
-  def stream[Q <: Position](command: String, script: String, separator: String,
-    parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String]) = {
+  def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
+    parser: BaseMatrix.TextParser[Q]): (U[Cell[Q]], U[String]) = {
     val result = data
-      .map(_.toString(separator, false, true))
-      .pipe(command + " " + script)
+      .flatMap(writer(_))
+      .pipe(command)
       .flatMap(parser(_))
 
     (result.collect { case Left(c) => c }, result.collect { case Right(e) => e })
   }
 
   type SummariseTuners = TP2
-  def summarise[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], aggregators: F,
-    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: Aggregatable[F, P, slice.S, Q], ev3: ClassTag[slice.S],
-      ev4: SummariseTuners#V[T]): U[Cell[Q]] = {
-    val aggregator = ev2.convert(aggregators)
+  def summarise[Q <: Position, F, T <: Tuner](slice: Slice[P], aggregators: F, tuner: T = Default())(
+    implicit ev1: Aggregatable[F, P, slice.S, Q], ev2: ClassTag[slice.S], ev3: SummariseTuners#V[T]): U[Cell[Q]] = {
+    val aggregator = ev1.convert(aggregators)
 
     data
       .map { case c => (slice.selected(c.position), aggregator.map { case a => a.prepare(c) }) }
@@ -349,10 +370,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def summariseWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], aggregators: F,
-    value: E[W], tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[F, P, slice.S, Q, W],
-      ev3: ClassTag[slice.S], ev4: SummariseTuners#V[T]): U[Cell[Q]] = {
-    val aggregator = ev2.convert(aggregators)
+  def summariseWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], aggregators: F, value: E[W],
+    tuner: T = Default())(implicit ev1: AggregatableWithValue[F, P, slice.S, Q, W], ev2: ClassTag[slice.S],
+      ev3: SummariseTuners#V[T]): U[Cell[Q]] = {
+    val aggregator = ev1.convert(aggregators)
 
     data
       .map { case c => (slice.selected(c.position), aggregator.map { case a => a.prepareWithValue(c, value) }) }
@@ -363,25 +384,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           case (a, s) => a.presentWithValue(p, s.asInstanceOf[a.T], value)
         }
       }
-  }
-
-  type ToMapTuners = TP2
-  def toMap()(implicit ev: ClassTag[P]): E[Map[P, Content]] = {
-    data
-      .map { case c => (c.position, c.content) }
-      .collectAsMap
-      .toMap
-  }
-
-  def toMap[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ToMapTuners#V[T]): E[Map[slice.S, slice.C]] = {
-    data
-      .map { case c => (c.position, slice.toMap(c)) }
-      .keyBy { case (p, m) => slice.selected(p) }
-      .tunedReduce(tuner.parameters, (l: (P, Map[slice.S, slice.C]), r: (P, Map[slice.S, slice.C])) =>
-        (l._1, slice.combineMaps(l._1, l._2, r._2)))
-      .map { case (_, (_, m)) => m }
-      .reduce { case (lm, rm) => lm ++ rm }
   }
 
   def transform[Q <: Position, F](transformers: F)(implicit ev: Transformable[F, P, Q]): U[Cell[Q]] = {
@@ -398,9 +400,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type TypesTuners = TP2
-  def types[D <: Dimension, T <: Tuner](slice: Slice[P, D], specific: Boolean, tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S],
-      ev4: TypesTuners#V[T]): U[(slice.S, Type)] = {
+  def types[T <: Tuner](slice: Slice[P], specific: Boolean, tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S], ev3: TypesTuners#V[T]): U[(slice.S, Type)] = {
     data
       .map { case Cell(p, c) => (slice.selected(p), c.schema.kind) }
       .tunedReduce(tuner.parameters, (lt: Type, rt: Type) => Type.getCommonType(lt, rt))
@@ -416,8 +417,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .tunedDistinct(tuner.parameters)(ordering)
   }
 
-  def uniqueByPositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T = Default())(
-    implicit ev1: slice.S =!= Position0D, ev2: UniqueTuners#V[T]): U[(slice.S, Content)] = {
+  def uniqueByPositions[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: UniqueTuners#V[T]): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
     }
@@ -433,10 +434,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.collect { case c if predicate(c) => c.position }
   }
 
-  def whichByPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: BasePredicateable[I, P, slice.S, RDD], ev3: ClassTag[slice.S],
-      ev4: ClassTag[P], ev5: WhichTuners#V[T]): U[P] = {
-    val pp = ev2.convert(predicates)
+  def whichByPositions[I, T <: Tuner](slice: Slice[P], predicates: I, tuner: T = Default())(
+    implicit ev1: BasePredicateable[I, P, slice.S, RDD], ev2: ClassTag[slice.S], ev3: ClassTag[P],
+      ev4: WhichTuners#V[T]): U[P] = {
+    val pp = ev1.convert(predicates)
       .map { case (pos, pred) => pos.map { case p => (p, pred) } }
       .reduce((l, r) => l ++ r)
 
@@ -448,26 +449,21 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   val data: U[Cell[P]]
 
-  protected def saveDictionary(names: U[(Position1D, Long)], file: String, dictionary: String, separator: String) = {
-    names
-      .map { case (p, i) => p.toShortString(separator) + separator + i }
-      .saveAsTextFile(dictionary.format(file))
+  protected def saveDictionary(slice: Slice[P], file: String, dictionary: String, separator: String)(
+    implicit ev: ClassTag[slice.S]) = {
+    val numbered = names(slice)
+      .zipWithIndex
 
-    names
+    numbered
+      .map { case (p, i) => p.toShortString(separator) + separator + i }
+      .saveAsTextFile(dictionary.format(file, slice.dimension.index))
+
+    numbered
   }
 
-  protected def saveDictionary(names: U[(Position1D, Long)], file: String, dictionary: String, separator: String,
-    dim: Dimension) = {
-    names
-      .map { case (p, i) => p.toShortString(separator) + separator + i }
-      .saveAsTextFile(dictionary.format(file, dim.index))
-
-    names
-  }
-
-  private def pairwiseTuples[D <: Dimension, T <: Tuner](slice: Slice[P, D], comparer: Comparer, tuner: T)(
-    ldata: U[Cell[P]], rdata: U[Cell[P]])(implicit ev1: PosDimDep[P, D], ev2: ClassTag[slice.S],
-      ev3: ClassTag[slice.R]): U[((Cell[slice.S], slice.R), (Cell[slice.S], slice.R))] = {
+  private def pairwiseTuples[T <: Tuner](slice: Slice[P], comparer: Comparer, tuner: T)(ldata: U[Cell[P]],
+    rdata: U[Cell[P]])(implicit ev1: ClassTag[slice.S],
+      ev2: ClassTag[slice.R]): U[((Cell[slice.S], slice.R), (Cell[slice.S], slice.R))] = {
     val toTuple = (c: Cell[P]) => (Cell(slice.selected(c.position), c.content), slice.remainder(c.position))
     val (rr, rj, lr, lj) = tuner.parameters match {
       case Sequence2(Sequence2(rr, rj), Sequence2(lr, lj)) => (rr, rj, lr, lj)
@@ -496,9 +492,9 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
   import SparkImplicits._
 
   type FillHeterogeneousTuners = TP3
-  def fillHeterogeneous[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]],
-    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
-      ev5: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
+  def fillHeterogeneous[Q <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[Q]], tuner: T = Default())(
+    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= Q,
+      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
     val (p1, p2) = tuner.parameters match {
       case Sequence2(f, s) => (f, s)
       case p => (NoParameters, p)
@@ -582,26 +578,28 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    *
    * @return A `U[Cell[Position1D]]` with all pairwise correlations.
    */
-  def correlation[D <: Dimension, ST <: Tuner, PT <: Tuner](slice: Slice[Position2D, D], stuner: ST = Default(),
-    ptuner: PT = Default())(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R],
-      ev4: SummariseTuners#V[ST], ev5: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
+  def correlation[ST <: Tuner, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(), ptuner: PT = Default())(
+    implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R], ev3: SummariseTuners#V[ST],
+      ev4: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
     val mean = data
       .summarise(slice, Mean[Position2D, slice.S](), stuner)
-      .toMap(Over(First))
+      .compact(Over(First))
+
+    implicit object P2D extends PosDimDep[Position2D, slice.dimension.type]
 
     val centered = data
-      .transformWithValue(Subtract(ExtractWithDimension(slice.dimension)
-        .andThenPresent((con: Content) => con.value.asDouble)), mean)
+      .transformWithValue(Subtract(ExtractWithDimension[slice.dimension.type, Position2D, Content](slice.dimension)
+        .andThenPresent(_.value.asDouble)), mean)
 
     val denom = centered
       .transform(Power[Position2D](2))
       .summarise(slice, Sum[Position2D, slice.S](), stuner)
       .pairwise(Over(First), Lower, Times(Locate.OperatorString[Position1D, Position0D]("(%1$s*%2$s)")), ptuner)
       .transform(SquareRoot[Position1D]())
-      .toMap(Over(First))
+      .compact(Over(First))
 
     centered
       .pairwise(slice, Lower, Times(Locate.OperatorString[slice.S, slice.R]("(%1$s*%2$s)")), ptuner)
@@ -619,9 +617,9 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    *
    * @return A `U[Cell[Position1D]]` with all pairwise mutual information.
    */
-  def mutualInformation[D <: Dimension, ST <: Tuner, PT <: Tuner](slice: Slice[Position2D, D], stuner: ST = Default(),
-    ptuner: PT = Default())(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S], ev3: ClassTag[slice.R],
-      ev4: SummariseTuners#V[ST], ev5: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
+  def mutualInformation[ST <: Tuner, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(),
+    ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R], ev3: SummariseTuners#V[ST],
+      ev4: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
     val dim = slice match {
@@ -644,7 +642,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val mcount = mhist
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
-      .toMap()
+      .compact()
 
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
@@ -658,7 +656,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val jcount = jhist
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
-      .toMap()
+      .compact()
 
     val joint = jhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor, negate = true)
@@ -678,10 +676,9 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    *
    * @return A `U[Cell[Position1D]]` with all pairwise Gini indices.
    */
-  def gini[D <: Dimension, ST <: Tuner, WT <: Tuner, PT <: Tuner](slice: Slice[Position2D, D], stuner: ST = Default(),
-    wtuner: WT = Default(), ptuner: PT = Default())(implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S],
-      ev3: ClassTag[slice.R], ev4: SummariseTuners#V[ST], ev5: SlideTuners#V[WT],
-        ev6: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
+  def gini[ST <: Tuner, WT <: Tuner, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(),
+    wtuner: WT = Default(), ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R],
+      ev3: SummariseTuners#V[ST], ev4: SlideTuners#V[WT], ev5: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
@@ -694,12 +691,12 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val pos = data
       .transform(Compare[Position2D](isPositive))
       .summarise(slice, Sum[Position2D, slice.S](), stuner)
-      .toMap(Over(First))
+      .compact(Over(First))
 
     val neg = data
       .transform(Compare[Position2D](isNegative))
       .summarise(slice, Sum[Position2D, slice.S](), stuner)
-      .toMap(Over(First))
+      .compact(Over(First))
 
     val tpr = data
       .transform(Compare[Position2D](isPositive))
@@ -731,7 +728,7 @@ object Matrix {
    * @param file   The text file to read from.
    * @param parser The parser that converts a single line to a cell.
    */
-  def loadText[P <: Position](file: String, parser: (String) => TraversableOnce[Either[Cell[P], String]])(
+  def loadText[P <: Position](file: String, parser: BaseMatrix.TextParser[P])(
     implicit sc: SparkContext): (RDD[Cell[P]], RDD[String]) = {
     val rdd = sc.textFile(file).flatMap { parser(_) }
 
@@ -771,29 +768,66 @@ object Matrix {
   /** Conversion from `RDD[Cell[Position9D]]` to a Spark `Matrix9D`. */
   implicit def RDD2M9(data: RDD[Cell[Position9D]]): Matrix9D = new Matrix9D(data)
 
+  /** Conversion from `List[Cell[Position1D]]` to a Spark `Matrix1D`. */
+  implicit def L2RDDM1(data: List[Cell[Position1D]])(implicit sc: SparkContext): Matrix1D = {
+    new Matrix1D(sc.parallelize(data))
+  }
+  /** Conversion from `List[Cell[Position2D]]` to a Spark `Matrix2D`. */
+  implicit def L2RDDM2(data: List[Cell[Position2D]])(implicit sc: SparkContext): Matrix2D = {
+    new Matrix2D(sc.parallelize(data))
+  }
+  /** Conversion from `List[Cell[Position3D]]` to a Spark `Matrix3D`. */
+  implicit def L2RDDM3(data: List[Cell[Position3D]])(implicit sc: SparkContext): Matrix3D = {
+    new Matrix3D(sc.parallelize(data))
+  }
+  /** Conversion from `List[Cell[Position4D]]` to a Spark `Matrix4D`. */
+  implicit def L2RDDM4(data: List[Cell[Position4D]])(implicit sc: SparkContext): Matrix4D = {
+    new Matrix4D(sc.parallelize(data))
+  }
+  /** Conversion from `List[Cell[Position5D]]` to a Spark `Matrix5D`. */
+  implicit def L2RDDM5(data: List[Cell[Position5D]])(implicit sc: SparkContext): Matrix5D = {
+    new Matrix5D(sc.parallelize(data))
+  }
+  /** Conversion from `List[Cell[Position6D]]` to a Spark `Matrix6D`. */
+  implicit def L2RDDM6(data: List[Cell[Position6D]])(implicit sc: SparkContext): Matrix6D = {
+    new Matrix6D(sc.parallelize(data))
+  }
+  /** Conversion from `List[Cell[Position7D]]` to a Spark `Matrix7D`. */
+  implicit def L2RDDM7(data: List[Cell[Position7D]])(implicit sc: SparkContext): Matrix7D = {
+    new Matrix7D(sc.parallelize(data))
+  }
+  /** Conversion from `List[Cell[Position8D]]` to a Spark `Matrix8D`. */
+  implicit def L2RDDM8(data: List[Cell[Position8D]])(implicit sc: SparkContext): Matrix8D = {
+    new Matrix8D(sc.parallelize(data))
+  }
+  /** Conversion from `List[Cell[Position9D]]` to a Spark `Matrix9D`. */
+  implicit def L2RDDM9(data: List[Cell[Position9D]])(implicit sc: SparkContext): Matrix9D = {
+    new Matrix9D(sc.parallelize(data))
+  }
+
   /** Conversion from `List[(Valueable, Content)]` to a Spark `Matrix1D`. */
-  implicit def LV1C2M1[V: Valueable](list: List[(V, Content)])(implicit sc: SparkContext): Matrix1D = {
+  implicit def LV1C2RDDM1[V: Valueable](list: List[(V, Content)])(implicit sc: SparkContext): Matrix1D = {
     new Matrix1D(sc.parallelize(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a Spark `Matrix2D`. */
-  implicit def LV2C2M2[V: Valueable, W: Valueable](list: List[(V, W, Content)])(
+  implicit def LV2C2RDDM2[V: Valueable, W: Valueable](list: List[(V, W, Content)])(
     implicit sc: SparkContext): Matrix2D = {
     new Matrix2D(sc.parallelize(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix3D`. */
-  implicit def LV3C2M3[V: Valueable, W: Valueable, X: Valueable](
+  implicit def LV3C2RDDM3[V: Valueable, W: Valueable, X: Valueable](
     list: List[(V, W, X, Content)])(implicit sc: SparkContext): Matrix3D = {
     new Matrix3D(sc.parallelize(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix4D`. */
-  implicit def LV4C2M4[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
+  implicit def LV4C2RDDM4[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
     list: List[(V, W, X, Y, Content)])(implicit sc: SparkContext): Matrix4D = {
     new Matrix4D(sc.parallelize(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix5D`.
    */
-  implicit def LV5C2M5[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV5C2RDDM5[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
     list: List[(V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix5D = {
     new Matrix5D(sc.parallelize(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
   }
@@ -801,7 +835,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
    * Spark `Matrix6D`.
    */
-  implicit def LV6C2M6[U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV6C2RDDM6[U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
     list: List[(U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix6D = {
     new Matrix6D(sc.parallelize(list.map { case (u, v, w, x, y, z, c) => Cell(Position6D(u, v, w, x, y, z), c) }))
   }
@@ -809,7 +843,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
    * Spark `Matrix7D`.
    */
-  implicit def LV7C2M7[T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV7C2RDDM7[T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
     list: List[(T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix7D = {
     new Matrix7D(sc.parallelize(list.map { case (t, u, v, w, x, y, z, c) => Cell(Position7D(t, u, v, w, x, y, z), c) }))
   }
@@ -817,7 +851,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
    * Content)]` to a Spark `Matrix8D`.
    */
-  implicit def LV8C2M8[S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV8C2RDDM8[S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
     list: List[(S, T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix8D = {
     new Matrix8D(sc.parallelize(list.map {
       case (s, t, u, v, w, x, y, z, c) => Cell(Position8D(s, t, u, v, w, x, y, z), c)
@@ -827,7 +861,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
    * Valueable, Content)]` to a Spark `Matrix9D`.
    */
-  implicit def LV9C2M9[R: Valueable, S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV9C2RDDM9[R: Valueable, S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
     list: List[(R, S, T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix9D = {
     new Matrix9D(sc.parallelize(list.map {
       case (r, s, t, u, v, w, x, y, z, c) => Cell(Position9D(r, s, t, u, v, w, x, y, z), c)
@@ -858,26 +892,9 @@ class Matrix1D(val data: RDD[Cell[Position1D]]) extends Matrix[Position1D] with 
    * @return A `RDD[Cell[Position1D]]`; that is it returns `data`.
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position1D]] = {
-    saveAsIVWithNames(file, names(Over(First)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix1D` as sparse matrix file (index, value).
-   *
-   * @param file       File to write to.
-   * @param names      The names to use for the first dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position1D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I](file: String, names: I, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-    implicit ev: BaseNameable[I, Position1D, Position1D, Dimension.First, RDD]): U[Cell[Position1D]] = {
     data
       .keyBy { case c => c.position }
-      .join(saveDictionary(ev.convert(this, Over(First), names), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .map { case (_, (c, i)) => i + separator + c.content.value.toShortString }
       .saveAsTextFile(file)
 
@@ -924,45 +941,18 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    */
-  def saveAsCSV[D <: Dimension](slice: Slice[Position2D, D], file: String, separator: String = "|",
-    escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true,
-      rowId: String = "id")(implicit ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    saveAsCSVWithNames(slice, file, names(slice), separator, escapee, writeHeader, header, writeRowId, rowId)
-  }
-
-  /**
-   * Persist a `Matrix2D` as a CSV file.
-   *
-   * @param slice       Encapsulates the dimension that makes up the columns.
-   * @param file        File to write to.
-   * @param names       The names to use for the columns (according to their ordering).
-   * @param separator   Column separator to use.
-   * @param escapee     The method for escaping the separator character.
-   * @param writeHeader Indicator of the header should be written to a separate file.
-   * @param header      Postfix for the header file name.
-   * @param writeRowId  Indicator if row names should be written.
-   * @param rowId       Column name of row names.
-   *
-   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsCSVWithNames[D <: Dimension, I](slice: Slice[Position2D, D], file: String, names: I,
-    separator: String = "|", escapee: Escape = Quote("|"), writeHeader: Boolean = true, header: String = "%s.header",
-      writeRowId: Boolean = true, rowId: String = "id")(implicit ev1: BaseNameable[I, Position2D, slice.S, D, RDD],
-        ev2: PosDimDep[Position2D, D], ev3: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    // Note: Usage of .toShortString should be safe as data is written as string anyways. It does assume that all
-    //       indices have unique short string representations.
-    val columns = ev1.convert(this, slice, names)
-      .map { case (p, i) => (0, List((escapee.escape(p.toShortString("")), i))) }
+  def saveAsCSV(slice: Slice[Position2D], file: String, separator: String = "|", escapee: Escape = Quote("|"),
+    writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true, rowId: String = "id")(
+      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    val escape = (str: String) => escapee.escape(str)
+    val columns = data
+      .map { case c => ((), HashSet(escape(slice.remainder(c.position)(First).toShortString))) }
       .reduceByKey(_ ++ _)
-      .map { case (_, l) => l.sortBy(_._2).map(_._1) }
+      .map { case (_, set) => set.toList.sorted }
 
     if (writeHeader) {
       columns
-        .map {
-          case lst => (if (writeRowId) escapee.escape(rowId) + separator else "") + lst.mkString(separator)
-        }
+        .map { case lst => (if (writeRowId) escape(rowId) + separator else "") + lst.mkString(separator) }
         .saveAsTextFile(header.format(file))
     }
 
@@ -971,13 +961,12 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
 
     data
       .map {
-        case Cell(p, c) => (slice.remainder(p).toShortString(""),
-          Map(escapee.escape(slice.selected(p).toShortString("")) ->
-            escapee.escape(c.value.toShortString)))
+        case Cell(p, c) => (slice.selected(p)(First).toShortString,
+          Map(escape(slice.remainder(p)(First).toShortString) -> escape(c.value.toShortString)))
       }
       .reduceByKey(_ ++ _)
       .map {
-        case (key, values) => (if (writeRowId) escapee.escape(key) + separator else "") +
+        case (key, values) => (if (writeRowId) escape(key) + separator else "") +
           cols.map { case c => values.getOrElse(c, "") }.mkString(separator)
       }
       .saveAsTextFile(file)
@@ -995,31 +984,12 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position2D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix2D` as sparse matrix file (index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J](file: String, namesI: I, namesJ: J, dictionary: String = "%1$s.dict.%2$d",
-    separator: String = "|")(implicit ev1: BaseNameable[I, Position2D, Position1D, Dimension.First, RDD],
-      ev2: BaseNameable[J, Position2D, Position1D, Dimension.Second, RDD]) : U[Cell[Position2D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .keyBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => i + separator + j + separator + c.content.value.toShortString }
       .saveAsTextFile(file)
 
@@ -1027,94 +997,130 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
   }
 
   /**
-   * Persist a `Matrix2D` as a LDA file.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   * @param addId      Indicator if each line should start with the row id followed by `separator`.
-   *
-   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   */
-  def saveAsLDA[D <: Dimension](slice: Slice[Position2D, D], file: String, dictionary: String = "%s.dict",
-    separator: String = "|", addId: Boolean = false)(implicit ev1: PosDimDep[Position2D, D],
-      ev2: ClassTag[slice.S]): U[Cell[Position2D]] = {
-    saveAsLDAWithNames(slice, file, names(Along(slice.dimension)), dictionary, separator, addId)
-  }
-
-  /**
-   * Persist a `Matrix2D` as a LDA file.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param names      The names to use for the columns (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   * @param addId      Indicator if each line should start with the row id followed by `separator`.
-   *
-   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsLDAWithNames[D <: Dimension, I](slice: Slice[Position2D, D], file: String, names: I,
-    dictionary: String = "%s.dict", separator: String = "|", addId: Boolean = false)(
-      implicit ev1: PosDimDep[Position2D, D], ev2: ClassTag[slice.S],
-        ev3: BaseNameable[I, Position2D, Position1D, D, RDD]): U[Cell[Position2D]] = {
-    data
-      .keyBy { case c => slice.remainder(c.position).asInstanceOf[Position1D] }
-      .join(saveDictionary(ev3.convert(this, Along(slice.dimension), names), file, dictionary, separator))
-      .map { case (_, (Cell(p, c), i)) => (p, " " + i + ":" + c.value.toShortString, 1L) }
-      .keyBy { case (p, ics, m) => slice.selected(p) }
-      .reduceByKey { case ((p, ls, lm), (_, rs, rm)) => (p, ls + rs, lm + rm) }
-      .map { case (p, (_, ics, m)) => if (addId) p.toShortString(separator) + separator + m + ics else m + ics }
-      .saveAsTextFile(file)
-
-    data
-  }
-
-  /**
    * Persist a `Matrix2D` as a Vowpal Wabbit file.
    *
    * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param labels     The labels to write with.
    * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
+   * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    */
-  def saveAsVW[D <: Dimension](slice: Slice[Position2D, D], labels: U[Cell[Position1D]], file: String,
-    dictionary: String = "%s.dict", separator: String = ":")(
-      implicit ev: PosDimDep[Position2D, D]): U[Cell[Position2D]] = {
-    saveAsVWWithNames(slice, labels, file, names(Along(slice.dimension)), dictionary, separator)
+  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String = "%s.dict", tag: Boolean = false,
+    separator: String = "|")(implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, None, None, tag, dictionary, separator)
   }
 
   /**
-   * Persist a `Matrix2D` as a Vowpal Wabbit file.
+   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels.
    *
    * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param labels     The labels to write with.
    * @param file       File to write to.
-   * @param names      The names to use for the columns (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
+   * @param labels     The labels.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
+   * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
    *
    * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
    *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
+   * @note The labels are joined to the data keeping only those examples for which data and a label are available.
    */
-  def saveAsVWWithNames[D <: Dimension, I](slice: Slice[Position2D, D], labels: U[Cell[Position1D]], file: String,
-    names: I, dictionary: String = "%s.dict", separator: String = ":")(implicit ev1: PosDimDep[Position2D, D],
-      ev2: BaseNameable[I, Position2D, Position1D, D, RDD]): U[Cell[Position2D]] = {
-    data
-      .keyBy { case c => slice.remainder(c.position).asInstanceOf[Position1D] }
-      .join(saveDictionary(ev2.convert(this, Along(slice.dimension), names), file, dictionary, separator))
-      .map { case (_, (Cell(p, c), i)) => (p, " " + i + ":" + c.value.toShortString) }
-      .keyBy { case (p, ics) => slice.selected(p).asInstanceOf[Position1D] }
-      .reduceByKey { case ((p, ls), (_, rs)) => (p, ls + rs) }
-      .join(labels.keyBy { case c => c.position })
-      .map { case (p, ((_, ics), c)) => c.content.value.toShortString + " " + p.toShortString(separator) + "|" + ics }
+  def saveAsVWWithLabels(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
+    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(
+      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, Some(labels), None, tag, dictionary, separator)
+  }
+
+  /**
+   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided importance weights.
+   *
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param importance The importance weights.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
+   * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
+   *
+   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
+   *
+   * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
+   */
+  def saveAsVWWithImportance(slice: Slice[Position2D], file: String, importance: U[Cell[Position1D]],
+    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(
+      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, None, Some(importance), tag, dictionary, separator)
+  }
+
+  /**
+   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels and importance weights.
+   *
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param labels     The labels.
+   * @param importance The importance weights.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
+   * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
+   *
+   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
+   *
+   * @note The labels and weights are joined to the data keeping only those examples for which data and a label
+   *       and weight are available.
+   */
+  def saveAsVWWithLabelsAndImportance(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
+    importance: U[Cell[Position1D]], dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(
+      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, Some(labels), Some(importance), tag, dictionary, separator)
+  }
+
+  private def saveAsVW(slice: Slice[Position2D], file: String, labels: Option[U[Cell[Position1D]]],
+    importance: Option[U[Cell[Position1D]]], tag: Boolean, dictionary: String, separator: String)(
+      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    val dict = data
+      .map { c => slice.remainder(c.position)(First).toShortString }
+      .distinct
+      .zipWithIndex
+
+    dict
+      .map { case (s, i) => s + separator + i }
+      .saveAsTextFile(dictionary.format(file))
+
+    val features = data
+      .keyBy { c => slice.remainder(c.position)(First).toShortString }
+      .join(dict)
+      .flatMap {
+        case (_, (c, i)) => c.content.value.asDouble.map { case v => (slice.selected(c.position), (i, v)) }
+      }
+      .groupByKey
+      .map {
+        case (p, itr) => (p, itr
+          .toList
+          .sortBy { case (i, _) => i }
+          .foldLeft("|") { case (b, (i, v)) => b + " " + i + ":" + v })
+      }
+
+    val tagged = tag match {
+      case true => features.map { case (p, s) => (p, p(First).toShortString + s) }
+      case false => features
+    }
+
+    val weighted = importance match {
+      case Some(imp) => tagged
+        .join(imp.keyBy { case c => c.position.asInstanceOf[slice.S] })
+        .flatMap { case (p, (s, c)) => c.content.value.asDouble.map { case i => (p, i + " " + s) } }
+      case None => tagged
+    }
+
+    val examples = labels match {
+      case Some(lab) => weighted
+        .join(lab.keyBy { case c => c.position.asInstanceOf[slice.S] })
+        .flatMap { case (p, (s, c)) => c.content.value.asDouble.map { case l => (p, l + " " + s) } }
+      case None => weighted
+    }
+
+    examples
+      .map { case (p, s) => s }
       .saveAsTextFile(file)
 
     data
@@ -1159,36 +1165,15 @@ class Matrix3D(val data: RDD[Cell[Position3D]]) extends Matrix[Position3D] with 
    * @return A `RDD[Cell[Position3D]]`; that is it returns `data`.
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position3D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix3D` as sparse matrix file (index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position3D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K](file: String, namesI: I, namesJ: J, namesK: K, dictionary: String = "%1$s.dict.%2$d",
-    separator: String = "|")(implicit ev1: BaseNameable[I, Position3D, Position1D, Dimension.First, RDD],
-      ev2: BaseNameable[J, Position3D, Position1D, Dimension.Second, RDD],
-        ev3: BaseNameable[K, Position3D, Position1D, Dimension.Third, RDD]): U[Cell[Position3D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .keyBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .keyBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => i + separator + j + separator + k + separator + c.content.value.toShortString }
       .saveAsTextFile(file)
 
@@ -1236,43 +1221,18 @@ class Matrix4D(val data: RDD[Cell[Position4D]]) extends Matrix[Position4D] with 
    * @return A `RDD[Cell[Position4D]]`; that is it returns `data`.
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position4D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix4D` as sparse matrix file (index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position4D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L](file: String, namesI: I, namesJ: J, namesK: K, namesL: L,
-    dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position4D, Position1D, Dimension.First, RDD],
-        ev2: BaseNameable[J, Position4D, Position1D, Dimension.Second, RDD],
-          ev3: BaseNameable[K, Position4D, Position1D, Dimension.Third, RDD],
-            ev4: BaseNameable[L, Position4D, Position1D, Dimension.Fourth, RDD]): U[Cell[Position4D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .keyBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .keyBy { case (c, i, j) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .keyBy { case (c, i, j, p) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k), l)) =>
           i + separator + j + separator + k + separator + l + separator + c.content.value.toShortString
@@ -1326,48 +1286,21 @@ class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with 
    * @return A `RDD[Cell[Position5D]]`; that is it returns `data`.
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position5D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      names(Over(Fifth)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix5D` as sparse matrix file (index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param namesM     The names to use for the fifth dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position5D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L, M](file: String, namesI: I, namesJ: J, namesK: K, namesL: L, namesM: M,
-    dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position5D, Position1D, Dimension.First, RDD],
-        ev2: BaseNameable[J, Position5D, Position1D, Dimension.Second, RDD],
-          ev3: BaseNameable[K, Position5D, Position1D, Dimension.Third, RDD],
-            ev4: BaseNameable[L, Position5D, Position1D, Dimension.Fourth, RDD],
-              ev5: BaseNameable[M, Position5D, Position1D, Dimension.Fifth, RDD]): U[Cell[Position5D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .keyBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .keyBy { case (c, pi, pj) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .keyBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .keyBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(ev5.convert(this, Over(Fifth), namesM), file, dictionary, separator, Fifth))
+      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l), m)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator + c.content.value.toShortString
@@ -1424,53 +1357,24 @@ class Matrix6D(val data: RDD[Cell[Position6D]]) extends Matrix[Position6D] with 
    * @return A `RDD[Cell[Position6D]]`; that is it returns `data`.
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position6D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      names(Over(Fifth)), names(Over(Sixth)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix6D` as sparse matrix file (index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param namesM     The names to use for the fifth dimension (according to their ordering).
-   * @param namesN     The names to use for the sixth dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position6D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L, M, N](file: String, namesI: I, namesJ: J, namesK: K, namesL: L, namesM: M,
-    namesN: N, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position6D, Position1D, Dimension.First, RDD],
-        ev2: BaseNameable[J, Position6D, Position1D, Dimension.Second, RDD],
-          ev3: BaseNameable[K, Position6D, Position1D, Dimension.Third, RDD],
-            ev4: BaseNameable[L, Position6D, Position1D, Dimension.Fourth, RDD],
-              ev5: BaseNameable[M, Position6D, Position1D, Dimension.Fifth, RDD],
-                ev6: BaseNameable[N, Position6D, Position1D, Dimension.Sixth, RDD]): U[Cell[Position6D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .keyBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .keyBy { case (c, pi, pj) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .keyBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .keyBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(ev5.convert(this, Over(Fifth), namesM), file, dictionary, separator, Fifth))
+      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .keyBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(ev6.convert(this, Over(Sixth), namesN), file, dictionary, separator, Sixth))
+      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m), n)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
@@ -1530,58 +1434,27 @@ class Matrix7D(val data: RDD[Cell[Position7D]]) extends Matrix[Position7D] with 
    * @return A `RDD[Cell[Position7D]]`; that is it returns `data`.
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position7D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      names(Over(Fifth)), names(Over(Sixth)), names(Over(Seventh)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix7D` as sparse matrix file (index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param namesM     The names to use for the fifth dimension (according to their ordering).
-   * @param namesN     The names to use for the sixth dimension (according to their ordering).
-   * @param namesO     The names to use for the seventh dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position7D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L, M, N, O](file: String, namesI: I, namesJ: J, namesK: K, namesL: L, namesM: M,
-    namesN: N, namesO: O, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position7D, Position1D, Dimension.First, RDD],
-        ev2: BaseNameable[J, Position7D, Position1D, Dimension.Second, RDD],
-          ev3: BaseNameable[K, Position7D, Position1D, Dimension.Third, RDD],
-            ev4: BaseNameable[L, Position7D, Position1D, Dimension.Fourth, RDD],
-              ev5: BaseNameable[M, Position7D, Position1D, Dimension.Fifth, RDD],
-                ev6: BaseNameable[N, Position7D, Position1D, Dimension.Sixth, RDD],
-                  ev7: BaseNameable[O, Position7D, Position1D, Dimension.Seventh, RDD]): U[Cell[Position7D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .keyBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .keyBy { case (c, pi, pj) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .keyBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .keyBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(ev5.convert(this, Over(Fifth), namesM), file, dictionary, separator, Fifth))
+      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .keyBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(ev6.convert(this, Over(Sixth), namesN), file, dictionary, separator, Sixth))
+      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
       .keyBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
-      .join(saveDictionary(ev7.convert(this, Over(Seventh), namesO), file, dictionary, separator, Seventh))
+      .join(saveDictionary(Over(Seventh), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m, n), o)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
@@ -1646,63 +1519,30 @@ class Matrix8D(val data: RDD[Cell[Position8D]]) extends Matrix[Position8D] with 
    * @return A `RDD[Cell[Position8D]]`; that is it returns `data`.
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position8D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      names(Over(Fifth)), names(Over(Sixth)), names(Over(Seventh)), names(Over(Eighth)), dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix8D` as sparse matrix file (index, index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param namesM     The names to use for the fifth dimension (according to their ordering).
-   * @param namesN     The names to use for the sixth dimension (according to their ordering).
-   * @param namesO     The names to use for the seventh dimension (according to their ordering).
-   * @param namesQ     The names to use for the eighth dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position8D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L, M, N, O, Q](file: String, namesI: I, namesJ: J, namesK: K, namesL: L, namesM: M,
-    namesN: N, namesO: O, namesQ: Q, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position8D, Position1D, Dimension.First, RDD],
-        ev2: BaseNameable[J, Position8D, Position1D, Dimension.Second, RDD],
-          ev3: BaseNameable[K, Position8D, Position1D, Dimension.Third, RDD],
-            ev4: BaseNameable[L, Position8D, Position1D, Dimension.Fourth, RDD],
-              ev5: BaseNameable[M, Position8D, Position1D, Dimension.Fifth, RDD],
-                ev6: BaseNameable[N, Position8D, Position1D, Dimension.Sixth, RDD],
-                  ev7: BaseNameable[O, Position8D, Position1D, Dimension.Seventh, RDD],
-                    ev8: BaseNameable[Q, Position8D, Position1D, Dimension.Eighth, RDD]): U[Cell[Position8D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .keyBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .keyBy { case (c, pi, pj) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .keyBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .keyBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(ev5.convert(this, Over(Fifth), namesM), file, dictionary, separator, Fifth))
+      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .keyBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(ev6.convert(this, Over(Sixth), namesN), file, dictionary, separator, Sixth))
+      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
       .keyBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
-      .join(saveDictionary(ev7.convert(this, Over(Seventh), namesO), file, dictionary, separator, Seventh))
+      .join(saveDictionary(Over(Seventh), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m, n), o)) => (c, i, j, k, l, m, n, o) }
       .keyBy { case (c, i, j, k, l, m, n, o) => Position1D(c.position(Eighth)) }
-      .join(saveDictionary(ev8.convert(this, Over(Eighth), namesQ), file, dictionary, separator, Eighth))
+      .join(saveDictionary(Over(Eighth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m, n, o), p)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +
@@ -1768,69 +1608,33 @@ class Matrix9D(val data: RDD[Cell[Position9D]]) extends Matrix[Position9D] with 
    * @return A `RDD[Cell[Position9D]]`; that is it returns `data`.
    */
   def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position9D]] = {
-    saveAsIVWithNames(file, names(Over(First)), names(Over(Second)), names(Over(Third)), names(Over(Fourth)),
-      names(Over(Fifth)), names(Over(Sixth)), names(Over(Seventh)), names(Over(Eighth)), names(Over(Ninth)),
-      dictionary, separator)
-  }
-
-  /**
-   * Persist a `Matrix9D` as sparse matrix file (index, index, index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param namesI     The names to use for the first dimension (according to their ordering).
-   * @param namesJ     The names to use for the second dimension (according to their ordering).
-   * @param namesK     The names to use for the third dimension (according to their ordering).
-   * @param namesL     The names to use for the fourth dimension (according to their ordering).
-   * @param namesM     The names to use for the fifth dimension (according to their ordering).
-   * @param namesN     The names to use for the sixth dimension (according to their ordering).
-   * @param namesO     The names to use for the seventh dimension (according to their ordering).
-   * @param namesQ     The names to use for the eighth dimension (according to their ordering).
-   * @param namesR     The names to use for the ninth dimension (according to their ordering).
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position9D]]`; that is it returns `data`.
-   *
-   * @note If `names` contains a subset of the columns, then only those columns get persisted to file.
-   */
-  def saveAsIVWithNames[I, J, K, L, M, N, O, Q, R](file: String, namesI: I, namesJ: J, namesK: K, namesL: L, namesM: M,
-    namesN: N, namesO: O, namesQ: Q, namesR: R, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
-      implicit ev1: BaseNameable[I, Position9D, Position1D, Dimension.First, RDD],
-        ev2: BaseNameable[J, Position9D, Position1D, Dimension.Second, RDD],
-          ev3: BaseNameable[K, Position9D, Position1D, Dimension.Third, RDD],
-            ev4: BaseNameable[L, Position9D, Position1D, Dimension.Fourth, RDD],
-              ev5: BaseNameable[M, Position9D, Position1D, Dimension.Fifth, RDD],
-                ev6: BaseNameable[N, Position9D, Position1D, Dimension.Sixth, RDD],
-                  ev7: BaseNameable[O, Position9D, Position1D, Dimension.Seventh, RDD],
-                    ev8: BaseNameable[Q, Position9D, Position1D, Dimension.Eighth, RDD],
-                      ev9: BaseNameable[R, Position9D, Position1D, Dimension.Ninth, RDD]): U[Cell[Position9D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
-      .join(saveDictionary(ev1.convert(this, Over(First), namesI), file, dictionary, separator, First))
+      .join(saveDictionary(Over(First), file, dictionary, separator))
       .values
       .keyBy { case (c, i) => Position1D(c.position(Second)) }
-      .join(saveDictionary(ev2.convert(this, Over(Second), namesJ), file, dictionary, separator, Second))
+      .join(saveDictionary(Over(Second), file, dictionary, separator))
       .map { case (_, ((c, i), j)) => (c, i, j) }
       .keyBy { case (c, pi, pj) => Position1D(c.position(Third)) }
-      .join(saveDictionary(ev3.convert(this, Over(Third), namesK), file, dictionary, separator, Third))
+      .join(saveDictionary(Over(Third), file, dictionary, separator))
       .map { case (_, ((c, i, j), k)) => (c, i, j, k) }
       .keyBy { case (c, i, j, k) => Position1D(c.position(Fourth)) }
-      .join(saveDictionary(ev4.convert(this, Over(Fourth), namesL), file, dictionary, separator, Fourth))
+      .join(saveDictionary(Over(Fourth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k), l)) => (c, i, j, k, l) }
       .keyBy { case (c, i, j, k, l) => Position1D(c.position(Fifth)) }
-      .join(saveDictionary(ev5.convert(this, Over(Fifth), namesM), file, dictionary, separator, Fifth))
+      .join(saveDictionary(Over(Fifth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l), m)) => (c, i, j, k, l, m) }
       .keyBy { case (c, i, j, k, l, m) => Position1D(c.position(Sixth)) }
-      .join(saveDictionary(ev6.convert(this, Over(Sixth), namesN), file, dictionary, separator, Sixth))
+      .join(saveDictionary(Over(Sixth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m), n)) => (c, i, j, k, l, m, n) }
       .keyBy { case (c, i, j, k, l, m, n) => Position1D(c.position(Seventh)) }
-      .join(saveDictionary(ev7.convert(this, Over(Seventh), namesO), file, dictionary, separator, Seventh))
+      .join(saveDictionary(Over(Seventh), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m, n), o)) => (c, i, j, k, l, m, n, o) }
       .keyBy { case (c, i, j, k, l, m, n, o) => Position1D(c.position(Eighth)) }
-      .join(saveDictionary(ev8.convert(this, Over(Eighth), namesQ), file, dictionary, separator, Eighth))
+      .join(saveDictionary(Over(Eighth), file, dictionary, separator))
       .map { case (_, ((c, i, j, k, l, m, n, o), p)) => (c, i, j, k, l, m, n, o, p) }
       .keyBy { case (c, i, j, k, l, m, n, o, p) => Position1D(c.position(Ninth)) }
-      .join(saveDictionary(ev9.convert(this, Over(Ninth), namesR), file, dictionary, separator, Ninth))
+      .join(saveDictionary(Over(Ninth), file, dictionary, separator))
       .map {
         case (_, ((c, i, j, k, l, m, n, o, p), q)) =>
           i + separator + j + separator + k + separator + l + separator + m + separator +

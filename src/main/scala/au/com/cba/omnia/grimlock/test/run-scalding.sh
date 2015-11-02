@@ -17,7 +17,7 @@
 set -vx
 
 JAR=grimlock.jar
-NUM_TEST=31
+NUM_TEST=33
 DO_BUILD=true
 DO_CLEANUP=true
 DO_INIT=false
@@ -66,12 +66,13 @@ then
       au.com.cba.omnia.grimlock.scalding.examples.MutualInformation --local --path ../data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.DerivedData --local --path ../data
+    cp ../data/gbm.R ../data/rf.R ../data/lr.R .
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.Ensemble --local --path ../data
 
-    if [ -d "demo.old" ]
+    if [ -d "demo.scalding.old" ]
     then
-      diff -r demo.scalding demo.old
+      diff -r demo.scalding demo.scalding.old
     fi
   fi
 
@@ -112,6 +113,7 @@ then
       au.com.cba.omnia.grimlock.scalding.examples.MutualInformation --hdfs --path ./data
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.DerivedData --hdfs --path ./data
+    cp ../data/gbm.R ../data/rf.R ../data/lr.R .
     export HADOOP_OPTS="-Dsun.io.serialization.extendedDebugInfo=true"; hadoop jar $JAR com.twitter.scalding.Tool \
       au.com.cba.omnia.grimlock.scalding.examples.Ensemble --hdfs --path ./data
   fi
@@ -137,9 +139,9 @@ then
         au.com.cba.omnia.grimlock.test.TestScalding${i} --local --path .
     done
 
-    if [ -d "tmp.old" ]
+    if [ -d "tmp.scalding.old" ]
     then
-      diff -r tmp.scalding tmp.old
+      diff -r tmp.scalding tmp.scalding.old
     fi
   fi
 
@@ -173,4 +175,6 @@ then
     done
   fi
 fi
+
+rm -rf gbm.R rf.R lr.R
 

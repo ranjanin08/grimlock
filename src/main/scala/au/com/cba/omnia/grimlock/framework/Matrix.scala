@@ -32,7 +32,7 @@ import java.util.regex.Pattern
 import scala.reflect.ClassTag
 
 /** Base trait for matrix operations. */
-trait Matrix[P <: Position] {
+trait Matrix[P <: Position] extends Persist[Cell[P]] {
   /** Type of the underlying data structure. */
   type U[_]
 
@@ -55,9 +55,33 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[P]]' with the changed contents.
    */
-  def change[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, schema: Schema, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S],
-      ev4: ChangeTuners#V[T]): U[Cell[P]]
+  def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Schema, tuner: T)(
+    implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S], ev3: ChangeTuners#V[T]): U[Cell[P]]
+
+  /** Specifies tuners permitted on a call to `compact` functions. */
+  type CompactTuners <: OneOf
+
+  /**
+   * Compacts a matrix to a `Map`.
+   *
+   * @return A `E[Map[P, Content]]` containing the Map representation of this matrix.
+   *
+   * @note Avoid using this for very large matrices.
+   */
+  def compact()(implicit ev: ClassTag[P]): E[Map[P, Content]]
+
+  /**
+   * Compact a matrix to a `Map`.
+   *
+   * @param slice Encapsulates the dimension(s) along which to convert.
+   * @param tuner The tuner for the job.
+   *
+   * @return A `E[Map[slice.S, Slice.C]]` containing the Map representation of this matrix.
+   *
+   * @note Avoid using this for very large matrices.
+   */
+  def compact[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: ClassTag[slice.S],
+    ev3: CompactTuners#V[T]): E[Map[slice.S, slice.C]]
 
   /** Specifies tuners permitted on a call to `domain`. */
   type DomainTuners <: OneOf
@@ -96,8 +120,22 @@ trait Matrix[P <: Position] {
    * @return A `U[Cell[P]]` consisting of the inner-join of the two matrices.
    */
   // TODO: Add inner/left/right/outer join functionality?
-  def join[D <: Dimension, T <: Tuner](slice: Slice[P, D], that: S, tuner: T)(implicit ev1: PosDimDep[P, D],
-    ev2: P =!= Position1D, ev3: ClassTag[slice.S], ev4: JoinTuners#V[T]): U[Cell[P]]
+  def join[T <: Tuner](slice: Slice[P], that: S, tuner: T)(implicit ev1: P =!= Position1D, ev2: ClassTag[slice.S],
+    ev3: JoinTuners#V[T]): U[Cell[P]]
+
+  /** Specifies tuners permitted on a call to `materialise`. */
+  type MaterialiseTuners <: OneOf
+
+  /**
+   * Returns the matrix as in in-memory list of cells.
+   *
+   * @param tuner The tuner for the job.
+   *
+   * @return A `L[Cell[P]]` of the cells.
+   *
+   * @note Avoid using this for very large matrices.
+   */
+  def materialise[T <: Tuner](tuner: T)(implicit ev: MaterialiseTuners#V[T]): List[Cell[P]]
 
   /** Specifies tuners permitted on a call to `names`. */
   type NamesTuners <: OneOf
@@ -110,8 +148,8 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[(slice.S, Long)]` of the distinct position(s) together with a unique index.
    */
-  def names[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: NamesTuners#V[T]): U[slice.S]
+  def names[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: ClassTag[slice.S],
+    ev3: NamesTuners#V[T]): U[slice.S]
 
   /** Specifies tuners permitted on a call to `pairwise` functions. */
   type PairwiseTuners <: OneOf
@@ -126,9 +164,9 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwise[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], comparer: Comparer, operators: F,
-    tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q], ev3: slice.S =!= Position0D,
-      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: PairwiseTuners#V[T]): U[Cell[Q]]
+  def pairwise[Q <: Position, F, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: F, tuner: T)(
+    implicit ev1: Operable[F, slice.S, slice.R, Q], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S],
+      ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all pairs of values given a slice with a user supplied value.
@@ -141,10 +179,9 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
-    operators: F, value: E[W], tuner: T)(implicit ev1: PosDimDep[P, D],
-      ev2: OperableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-        ev5: ClassTag[slice.R], ev6: PairwiseTuners#V[T]): U[Cell[Q]]
+  def pairwiseWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: F,
+    value: E[W], tuner: T)(implicit ev1: OperableWithValue[F, slice.S, slice.R, Q, W], ev2: slice.S =!= Position0D,
+      ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all values of this and that given a slice.
@@ -157,9 +194,9 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetween[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], comparer: Comparer, that: S,
-    operators: F, tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Operable[F, slice.S, slice.R, Q],
-      ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: PairwiseTuners#V[T]): U[Cell[Q]]
+  def pairwiseBetween[Q <: Position, F, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S, operators: F,
+    tuner: T)(implicit ev1: Operable[F, slice.S, slice.R, Q], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S],
+      ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]]
 
   /**
    * Compute pairwise values between all values of this and that given a slice with a user supplied value.
@@ -173,10 +210,9 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetweenWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], comparer: Comparer,
-    that: S, operators: F, value: E[W], tuner: T)(implicit ev1: PosDimDep[P, D],
-      ev2: OperableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.S =!= Position0D, ev4: ClassTag[slice.S],
-        ev5: ClassTag[slice.R], ev6: PairwiseTuners#V[T]): U[Cell[Q]]
+  def pairwiseBetweenWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S,
+    operators: F, value: E[W], tuner: T)(implicit ev1: OperableWithValue[F, slice.S, slice.R, Q, W],
+      ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]]
 
   /**
    * Rename the coordinates of a dimension.
@@ -273,9 +309,8 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[P]]' of the remaining content.
    */
-  def slice[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], positions: I, keep: Boolean, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: PositionDistributable[I, slice.S, U], ev3: ClassTag[slice.S],
-      ev4: SliceTuners#V[T]): U[Cell[P]]
+  def slice[I, T <: Tuner](slice: Slice[P], positions: I, keep: Boolean, tuner: T)(
+    implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S], ev3: SliceTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `slide` functions. */
   type SlideTuners <: OneOf
@@ -290,9 +325,9 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def slide[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], windows: F, ascending: Boolean = true,
-    tuner: T)(implicit ev1: PosDimDep[P, D], ev2: Windowable[F, slice.S, slice.R, Q], ev3: slice.R =!= Position0D,
-      ev4: ClassTag[slice.S], ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]]
+  def slide[Q <: Position, F, T <: Tuner](slice: Slice[P], windows: F, ascending: Boolean = true, tuner: T)(
+    implicit ev1: Windowable[F, slice.S, slice.R, Q], ev2: slice.R =!= Position0D, ev3: ClassTag[slice.S],
+      ev4: ClassTag[slice.R], ev5: SlideTuners#V[T]): U[Cell[Q]]
 
   /**
    * Create window based derived data with a user supplied value.
@@ -305,10 +340,9 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def slideWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], windows: F, value: E[W],
-    ascendig: Boolean = true, tuner: T)(implicit ev1: PosDimDep[P, D],
-      ev2: WindowableWithValue[F, slice.S, slice.R, Q, W], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
-        ev5: ClassTag[slice.R], ev6: SlideTuners#V[T]): U[Cell[Q]]
+  def slideWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], windows: F, value: E[W],
+    ascendig: Boolean = true, tuner: T)(implicit ev1: WindowableWithValue[F, slice.S, slice.R, Q, W],
+      ev2: slice.R =!= Position0D, ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: SlideTuners#V[T]): U[Cell[Q]]
 
   /**
    * Partition a matrix according to `partitioner`.
@@ -334,8 +368,9 @@ trait Matrix[P <: Position] {
    * Stream this matrix through `command` and apply `script`.
    *
    * @param command   The command to stream (pipe) the data through.
-   * @param script    The script to apply to the data.
-   * @param separator The separator to convert a cell to string.
+   * @param files     A list of text files that will be available to `command`. Note that all files must be
+   *                  located in the same directory as which the job is started.
+   * @param writer    Function that converts a cell to a string (prior to streaming it through `command`).
    * @param parser    Function that parses the resulting string back to a cell.
    *
    * @return A `U[Cell[Q]]` with the new data as well as a `U[String]` with any parse errors.
@@ -343,8 +378,8 @@ trait Matrix[P <: Position] {
    * @note The `command` must be installed on each node of the cluster. Also, `script` must be a single self
    *       contained script. Lastly, `parser` functions are provided on the `Cell` object.
    */
-  def stream[Q <: Position](command: String, script: String, separator: String,
-    parser: String => TraversableOnce[Either[Cell[Q], String]]): (U[Cell[Q]], U[String])
+  def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
+    parser: Matrix.TextParser[Q]): (U[Cell[Q]], U[String])
 
   /** Specifies tuners permitted on a call to `summarise` functions. */
   type SummariseTuners <: OneOf
@@ -358,9 +393,8 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summarise[D <: Dimension, Q <: Position, F, T <: Tuner](slice: Slice[P, D], aggregators: F, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Aggregatable[F, P, slice.S, Q], ev3: ClassTag[slice.S],
-      ev4: SummariseTuners#V[T]): U[Cell[Q]]
+  def summarise[Q <: Position, F, T <: Tuner](slice: Slice[P], aggregators: F, tuner: T)(
+    implicit ev1: Aggregatable[F, P, slice.S, Q], ev2: ClassTag[slice.S], ev3: SummariseTuners#V[T]): U[Cell[Q]]
 
   /**
    * Summarise a matrix, using a user supplied value, and return the aggregates.
@@ -372,34 +406,9 @@ trait Matrix[P <: Position] {
    *
    * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summariseWithValue[D <: Dimension, Q <: Position, F, W, T <: Tuner](slice: Slice[P, D], aggregators: F,
-    value: E[W], tuner: T)(implicit ev1: PosDimDep[P, D], ev2: AggregatableWithValue[F, P, slice.S, Q, W],
-      ev3: ClassTag[slice.S], ev4: SummariseTuners#V[T]): U[Cell[Q]]
-
-  /** Specifies tuners permitted on a call to `toMap` functions. */
-  type ToMapTuners <: OneOf
-
-  /**
-   * Convert a matrix to an in-memory `Map`.
-   *
-   * @return A `E[Map[P, Content]]` containing the Map representation of this matrix.
-   *
-   * @note Avoid using this for very large matrices.
-   */
-  def toMap()(implicit ev: ClassTag[P]): E[Map[P, Content]]
-
-  /**
-   * Convert a matrix to an in-memory `Map`.
-   *
-   * @param slice Encapsulates the dimension(s) along which to convert.
-   * @param tuner The tuner for the job.
-   *
-   * @return A `E[Map[slice.S, Slice.C]]` containing the Map representation of this matrix.
-   *
-   * @note Avoid using this for very large matrices.
-   */
-  def toMap[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: PosDimDep[P, D],
-    ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ToMapTuners#V[T]): E[Map[slice.S, slice.C]]
+  def summariseWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], aggregators: F, value: E[W], tuner: T)(
+    implicit ev1: AggregatableWithValue[F, P, slice.S, Q, W], ev2: ClassTag[slice.S],
+      ev3: SummariseTuners#V[T]): U[Cell[Q]]
 
   /**
    * Transform the content of a matrix.
@@ -435,9 +444,8 @@ trait Matrix[P <: Position] {
    *
    * @see [[Types]]
    */
-  def types[D <: Dimension, T <: Tuner](slice: Slice[P, D], specific: Boolean = false, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S],
-      ev4: TypesTuners#V[T]): U[(slice.S, Type)]
+  def types[T <: Tuner](slice: Slice[P], specific: Boolean = false, tuner: T)(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S], ev3: TypesTuners#V[T]): U[(slice.S, Type)]
 
   /** Specifies tuners permitted on a call to `unique` functions. */
   type UniqueTuners <: OneOf
@@ -461,7 +469,7 @@ trait Matrix[P <: Position] {
    *
    * @note Comparison is performed based on the string representation of the `slice.S` and `Content`.
    */
-  def uniqueByPositions[D <: Dimension, T <: Tuner](slice: Slice[P, D], tuner: T)(implicit ev1: slice.S =!= Position0D,
+  def uniqueByPositions[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D,
     ev2: UniqueTuners#V[T]): U[(slice.S, Content)]
 
   /** Specifies tuners permitted on a call to `which` functions. */
@@ -493,9 +501,9 @@ trait Matrix[P <: Position] {
    *       `(U[slice.S], Matrix.Predicate[P])`, `List[(Valueable[T], Matrix.Predicate[P])]`,
    *       `List[(List[Valueable[T]], Matrix.Predicate[P])]`, `List[(U[slice.S], Matrix.Predicate[P])]`.
    */
-  def whichByPositions[D <: Dimension, I, T <: Tuner](slice: Slice[P, D], predicates: I, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: Predicateable[I, P, slice.S, U], ev3: ClassTag[slice.S], ev4: ClassTag[P],
-      ev5: WhichTuners#V[T]): U[P]
+  def whichByPositions[I, T <: Tuner](slice: Slice[P], predicates: I, tuner: T)(
+    implicit ev1: Predicateable[I, P, slice.S, U], ev2: ClassTag[slice.S], ev3: ClassTag[P],
+      ev4: WhichTuners#V[T]): U[P]
 
   protected type TP1 = OneOf1[Default[NoParameters.type]]
   protected type TP2 = OneOf2[Default[NoParameters.type], Default[Reducers]]
@@ -506,7 +514,6 @@ trait Matrix[P <: Position] {
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations
   // TODO: Add read/write[CSV|Hive|HBase|VW|LibSVM] operations
-  // TODO: Add statistics/dictionary into memory (from HDFS) operations
   // TODO: Is there a way not to use asInstanceOf[] as much?
   // TODO: Add machine learning operations (SVD/finding cliques/etc.) - use Spark instead?
 }
@@ -515,6 +522,9 @@ trait Matrix[P <: Position] {
 object Matrix {
   /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
   type Predicate[P <: Position] = Cell[P] => Boolean
+
+  /** Type for parsing a string into either a cell or an error message. */
+  type TextParser[Q <: Position] = (String) => TraversableOnce[Either[Cell[Q], String]]
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
@@ -535,9 +545,9 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *       the join is an inner join, any positions in the matrix that aren't in `values` are filtered
    *       from the resulting matrix.
    */
-  def fillHeterogeneous[D <: Dimension, Q <: Position, T <: Tuner](slice: Slice[P, D], values: U[Cell[Q]], tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P], ev3: ClassTag[slice.S], ev4: slice.S =:= Q,
-      ev5: FillHeterogeneousTuners#V[T]): U[Cell[P]]
+  def fillHeterogeneous[Q <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[Q]], tuner: T)(
+    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= Q,
+      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `fill` with homogeneous data. */
   type FillHomogeneousTuners <: OneOf
