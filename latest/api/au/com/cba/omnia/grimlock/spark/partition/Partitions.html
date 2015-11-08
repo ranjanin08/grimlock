@@ -52,7 +52,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>RDD[(I, Cell[P])]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(6b465a01a57780f60befeb186ed780e32497e1a9)//src/main/scala/au/com/cba/omnia/grimlock/spark/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/spark/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.I">I</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.P">P</span>])], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.I">I</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.P">P</span>])], <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">framework.partition.Partitions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.I">I</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.P">P</span>], <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -149,6 +149,23 @@
       </a>
     </span>
       <p class="shortcomment cmt">Specifies tuners permitted on a call to <code>ids</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Specifies tuners permitted on a call to <code>ids</code>.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions">Partitions</a> → <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">Partitions</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Persist.SequenceWriter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="SequenceWriter[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable]=T=&gt;TraversableOnce[(K,V)]"></a>
+      <a id="SequenceWriter[K&lt;:Writable,V&lt;:Writable]:SequenceWriter[K,V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">SequenceWriter</span><span class="tparams">[<span name="K">K &lt;: <span class="extype" name="org.apache.hadoop.io.Writable">Writable</span></span>, <span name="V">V &lt;: <span class="extype" name="org.apache.hadoop.io.Writable">Writable</span></span>]</span><span class="result"> = ((<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.I">I</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.P">P</span>])) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Persist.SequenceWriter.K">K</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Persist.SequenceWriter.V">V</span>)]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.partition.Partitions@SequenceWriter[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable]=T=&gt;TraversableOnce[(K,V)]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Shorthand type for converting a <code>T</code> to key value tuple.</p><div class="fullcomment"><div class="comment cmt"><p>Shorthand type for converting a <code>T</code> to key value tuple.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.Persist.TextWriter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="TextWriter=T=&gt;TraversableOnce[String]"></a>
       <a id="TextWriter:TextWriter"></a>

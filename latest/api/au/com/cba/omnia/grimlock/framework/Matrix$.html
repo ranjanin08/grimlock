@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>Matrix</code> trait.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(6b465a01a57780f60befeb186ed780e32497e1a9)//src/main/scala/au/com/cba/omnia/grimlock/framework/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to <code>Matrix</code> trait.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/framework/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -110,23 +110,40 @@
       </a>
     </span>
       <p class="shortcomment cmt">Predicate used in, for example, the <code>which</code> methods of a matrix for finding content.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix.TextParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TextParser[Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=String=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[Q],String]]"></a>
-      <a id="TextParser[Q&lt;:Position]:TextParser[Q]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix.SequenceParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SequenceParser[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=(K,V)=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]]"></a>
+      <a id="SequenceParser[K&lt;:Writable,V&lt;:Writable,P&lt;:Position]:SequenceParser[K,V,P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">TextParser</span><span class="tparams">[<span name="Q">Q &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> = (<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Either">Either</span>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix.TextParser.Q">Q</span>], <span class="extype" name="scala.Predef.String">String</span>]]</span>
+        <span class="name">SequenceParser</span><span class="tparams">[<span name="K">K &lt;: <span class="extype" name="org.apache.hadoop.io.Writable">Writable</span></span>, <span name="V">V &lt;: <span class="extype" name="org.apache.hadoop.io.Writable">Writable</span></span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> = (<span class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix.SequenceParser.K">K</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix.SequenceParser.V">V</span>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Either">Either</span>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix.SequenceParser.P">P</span>], <span class="extype" name="scala.Predef.String">String</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Matrix$@TextParser[Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=String=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[Q],String]]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Matrix$@SequenceParser[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=(K,V)=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type for parsing a string into either a cell or an error message.</p>
+      <p class="shortcomment cmt">Type for parsing a key value tuple into either a <code>Cell[P]</code> or an error message.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix.TextParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TextParser[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=String=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]]"></a>
+      <a id="TextParser[P&lt;:Position]:TextParser[P]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TextParser</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> = (<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Either">Either</span>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix.TextParser.P">P</span>], <span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Matrix$@TextParser[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=String=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type for parsing a string into either a <code>Cell[P]</code> or an error message.</p>
     </li></ol>
             </div>
 
