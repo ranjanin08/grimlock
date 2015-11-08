@@ -14,6 +14,8 @@
 
 package au.com.cba.omnia.grimlock.framework
 
+import org.apache.hadoop.io.Writable
+
 /** Base trait for persisting data. */
 trait Persist[T] {
   /**
@@ -26,5 +28,8 @@ trait Persist[T] {
 
   /** Shorthand type for converting a `T` to string. */
   type TextWriter = (T) => TraversableOnce[String]
+
+  /** Shorthand type for converting a `T` to key value tuple. */
+  type SequenceWriter[K <: Writable, V <: Writable] = (T) => TraversableOnce[(K, V)]
 }
 

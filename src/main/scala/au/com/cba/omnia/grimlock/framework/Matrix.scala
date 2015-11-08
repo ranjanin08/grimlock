@@ -29,6 +29,8 @@ import au.com.cba.omnia.grimlock.framework.window._
 
 import java.util.regex.Pattern
 
+import org.apache.hadoop.io.Writable
+
 import scala.reflect.ClassTag
 
 /** Base trait for matrix operations. */
@@ -411,6 +413,24 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
       ev3: SummariseTuners#V[T]): U[Cell[Q]]
 
   /**
+   * Convert all cells to key value tuples.
+   *
+   * @param writer The writer to convert a cell to key value tuple.
+   *
+   * @return A `U[(K, V)]` with all cells as key value tuples.
+   */
+  def toSequence[K <: Writable, V <: Writable](writer: SequenceWriter[K, V]): U[(K, V)]
+
+  /**
+   * Convert all cells to strings.
+   *
+   * @param writer The writer to convert a cell to string.
+   *
+   * @return A `U[String]` with all cells as string.
+   */
+  def toText(writer: TextWriter): U[String]
+
+  /**
    * Transform the content of a matrix.
    *
    * @param transformers The transformer(s) to apply to the content.
@@ -523,8 +543,11 @@ object Matrix {
   /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
   type Predicate[P <: Position] = Cell[P] => Boolean
 
-  /** Type for parsing a string into either a cell or an error message. */
-  type TextParser[Q <: Position] = (String) => TraversableOnce[Either[Cell[Q], String]]
+  /** Type for parsing a string into either a `Cell[P]` or an error message. */
+  type TextParser[P <: Position] = (String) => TraversableOnce[Either[Cell[P], String]]
+
+  /** Type for parsing a key value tuple into either a `Cell[P]` or an error message. */
+  type SequenceParser[K <: Writable, V <: Writable, P <: Position] = (K, V) => TraversableOnce[Either[Cell[P], String]]
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */

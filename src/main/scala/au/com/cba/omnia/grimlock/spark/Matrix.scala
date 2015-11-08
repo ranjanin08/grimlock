@@ -386,6 +386,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
+  def toSequence[K <: Writable, V <: Writable](writer: SequenceWriter[K, V]): U[(K, V)] = data.flatMap(writer(_))
+
+  def toText(writer: TextWriter): U[String] = data.flatMap(writer(_))
+
   def transform[Q <: Position, F](transformers: F)(implicit ev: Transformable[F, P, Q]): U[Cell[Q]] = {
     val transformer = ev.convert(transformers)
 
@@ -742,7 +746,7 @@ object Matrix {
    * @param parser The parser that converts a single key-value to a cell.
    */
   def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String,
-    parser: (K, V) => TraversableOnce[Either[Cell[P], String]])(implicit sc: SparkContext, ev1: ClassTag[K],
+    parser: BaseMatrix.SequenceParser[K, V, P])(implicit sc: SparkContext, ev1: ClassTag[K],
       ev2: ClassTag[V]): (RDD[Cell[P]], RDD[String]) = {
     val pipe = sc.sequenceFile[K, V](file).flatMap { case (k, v) => parser(k, v) }
 
