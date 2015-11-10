@@ -22,11 +22,11 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.library.partition._
 
+import au.com.cba.omnia.grimlock.scalding.Execution
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
 
 import au.com.cba.omnia.grimlock.spark.partition.Partitions._
 
-import com.twitter.scalding.bdd.TBddDsl
 import com.twitter.scalding.typed.TypedPipe
 
 import java.util.Date
@@ -285,63 +285,48 @@ object TestPartitions {
   def doubleR(key: String, pipe: RDD[Cell[Position1D]]): RDD[Cell[Position1D]] = pipe.flatMap { double(_) }
 }
 
-class TestScaldingPartitions extends TestPartitions with TBddDsl {
+class TestScaldingPartitions extends TestPartitions {
 
   "A Partitions" should "return its ids" in {
-    Given {
-      data
-    } When {
-      parts: TypedPipe[(String, Cell[Position1D])] =>
-        parts.ids(Default())
-    } Then {
-      _.toList.sorted shouldBe result1
-    }
+    toPipe(data)
+      .ids(Default())
+      .toList.sorted shouldBe result1
   }
 
   it should "get a partition's data" in {
-    Given {
-      data
-    } When {
-      parts: TypedPipe[(String, Cell[Position1D])] =>
-        parts.get("train")
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data)
+      .get("train")
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "add new data" in {
-    Given {
-      data
-    } And {
-      data2
-    } When {
-      (parts: TypedPipe[(String, Cell[Position1D])], pipe: TypedPipe[Cell[Position1D]]) =>
-        parts.add("xyz", pipe)
-    } Then {
-      _.toList.sortBy(_._2.content.value.toShortString) shouldBe result3
-    }
+    toPipe(data)
+      .add("xyz", toPipe(data2))
+      .toList.sortBy(_._2.content.value.toShortString) shouldBe result3
   }
 
   it should "remove a partition's data" in {
-    Given {
-      data
-    } When {
-      parts: TypedPipe[(String, Cell[Position1D])] =>
-        parts.remove("train")
-    } Then {
-      _.toList.sortBy(_._2.content.value.toShortString) shouldBe result4
-    }
+    toPipe(data)
+      .remove("train")
+      .toList.sortBy(_._2.content.value.toShortString) shouldBe result4
   }
 
   it should "foreach should apply to selected partitions" in {
-    Given {
-      data
-    } When {
-      parts: TypedPipe[(String, Cell[Position1D])] =>
-        parts.forEach(TestPartitions.doubleT, List("test", "valid", "not.there"), Default())
-    } Then {
-      _.toList.sortBy(_._2.content.value.toShortString) shouldBe result5
-    }
+    toPipe(data)
+      .forEach(List("test", "valid", "not.there"), TestPartitions.doubleT)
+      .toList.sortBy(_._2.content.value.toShortString) shouldBe result5
+  }
+
+  it should "forall should apply to selected partitions" in {
+    toPipe(data)
+      .forAll(TestPartitions.doubleT, List("train", "not.there"), Default(Execution()))
+      .toList.sortBy(_._2.content.value.toShortString) shouldBe result5
+  }
+
+  it should "forall should apply to selected partitions with reducers" in {
+    toPipe(data)
+      .forAll(TestPartitions.doubleT, List("train", "not.there"), Default(Sequence2(Reducers(123), Execution())))
+      .toList.sortBy(_._2.content.value.toShortString) shouldBe result5
   }
 }
 
@@ -373,7 +358,19 @@ class TestSparkPartitions extends TestPartitions {
 
   it should "foreach should apply to selected partitions" in {
     toRDD(data)
-      .forEach(TestPartitions.doubleR, List("test", "valid", "not.there"), Default())
+      .forEach(List("test", "valid", "not.there"), TestPartitions.doubleR)
+      .toList.sortBy(_._2.content.value.toShortString) shouldBe result5
+  }
+
+  it should "forall should apply to selected partitions" in {
+    toRDD(data)
+      .forAll(TestPartitions.doubleR, List("train", "not.there"), Default())
+      .toList.sortBy(_._2.content.value.toShortString) shouldBe result5
+  }
+
+  it should "forall should apply to selected partitions with reducers" in {
+    toRDD(data)
+      .forAll(TestPartitions.doubleR, List("train", "not.there"), Default(Reducers(10)))
       .toList.sortBy(_._2.content.value.toShortString) shouldBe result5
   }
 }

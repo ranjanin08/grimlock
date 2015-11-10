@@ -175,7 +175,7 @@ object PipelineDataPreparation {
 
     // Prepare each partition.
     parts
-      .forEach(prepare, List("train", "test"))
+      .forEach(List("train", "test"), prepare)
       .toUnit
   }
 }

@@ -112,7 +112,7 @@ object Ensemble {
     val scores = data
       .expand((cell: Cell[Position2D]) => Some(cell.position.append(math.abs(cell.position(First).hashCode % 10))))
       .split(EnsembleSplit(scripts(0), scripts(1), scripts(2)))
-      .forEach(trainAndScore, scripts)
+      .forEach(scripts, trainAndScore)
       .merge(scripts)
       .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](extractWeight), weights)
       .saveAsText(s"./demo.${output}/ensemble.scores.out")

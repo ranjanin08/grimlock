@@ -729,7 +729,7 @@ object TestSpark19 {
     }
 
     parts
-      .forEach(cb, List("train", "test"))
+      .forEach(List("train", "test"), cb)
       .toUnit
   }
 }

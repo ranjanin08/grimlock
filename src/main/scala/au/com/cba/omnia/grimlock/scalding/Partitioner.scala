@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.scalding.partition
 
-import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner }
+import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner, Sequence2 }
 import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => BasePartitions }
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
@@ -38,56 +38,25 @@ class Partitions[I: Ordering, P <: Position](val data: TypedPipe[(I, Cell[P])]) 
 
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  type ForEachTuners = OneOf1[Default[NoParameters.type]]
-  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], ids: List[I], tuner: T = Default())(
-    implicit ev1: ClassTag[I], ev2: ForEachTuners#V[T]): U[(I, Cell[Q])] = {
-/*
-    // This bit of code does do things in parallel, but it doesn't support a `saveAs...` call withing
-    // `fn`. It also has problems with joining onto other typed pipes. In addition, it executes the
-    // graph for each `get` after a `forEach`.
-
-    val (config, mode) = tuner.parameters match {
-      case Execution(cfg, md) => (cfg, md)
-    }
-    val f = (t: I, c: Iterator[Cell[P]]) => {
-      fn(t, com.twitter.scalding.typed.IterablePipe(c.toIterable))
-        .toIterableExecution
-        .waitFor(config, mode) match {
-          case scala.util.Success(itr) => itr.toIterator
-          case _ => Iterator.empty
-        }
-      }
-
-    Grouped(data.filter { case (i, _) => !exclude.contains(i) })
-      .mapGroup(f)
-*/
-/*
-    // This reads the data `keys` times. It can be parallelised further by using a `forceToDiskExecution` inside
-    // `collect` and then zipping together the pipes in `reduce`. However, for some reason scalatest fails
-    // because `keys` is empty - but it works outside of scalatest.
-
-    val keys = tuner.parameters match {
-      case au.com.cba.omnia.grimlock.framework.Sequence2(_, r @ Reducers(_)) => ids(Default(r))
-      case _ => ids(Default(NoParameters))
+  type ForAllTuners = OneOf2[Default[Execution], Default[Sequence2[Reducers, Execution]]]
+  def forAll[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T)(
+    implicit ev1: ClassTag[I], ev2: ForAllTuners#V[T]): U[(I, Cell[Q])] = {
+    val (config, mode, identifiers) = tuner.parameters match {
+      case Execution(cfg, md) => (cfg, md, ids(Default()))
+      case Sequence2(r @ Reducers(_), Execution(cfg, md)) => (cfg, md, ids(Default(r)))
     }
 
-    val (config, mode) = tuner.parameters match {
-      case Execution(cfg, md) => (cfg, md)
-      case au.com.cba.omnia.grimlock.framework.Sequence2(Execution(cfg, md), _) => (cfg, md)
-    }
-
-    (keys
-      .map { case k => List(k) }
+    val keys = identifiers
+      .collect { case i if !exclude.contains(i) => List(i) }
       .sum
       .getExecution
-      .waitFor(config, mode) match {
-        case scala.util.Success(list) => list
-        case _ => List.empty
-      })
-      .collect { case k if (!exclude.contains(k)) => fn(k, get(k)).map { case c => (k, c) } }
-      .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)
-*/
-    // TODO: This reads the data ids.length times. Is there a way to read it only once?
+      .waitFor(config, mode)
+      .getOrElse(throw new Exception("unable to get ids list"))
+
+    forEach(keys, fn)
+  }
+
+  def forEach[Q <: Position](ids: List[I], fn: (I, U[Cell[P]]) => U[Cell[Q]]): U[(I, Cell[Q])] = {
     ids
       .map { case i => fn(i, get(i)).map { case c => (i, c) } }
       .reduce[U[(I, Cell[Q])]]((x, y) => x ++ y)

@@ -16,6 +16,9 @@ package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.framework.position._
 
+import com.twitter.scalding.{ Config, Local }
+import com.twitter.scalding.typed.{ IterablePipe, TypedPipe }
+
 import org.apache.log4j.{ Level, Logger }
 import org.apache.spark.{ SparkConf, SparkContext }
 import org.apache.spark.rdd._
@@ -25,13 +28,25 @@ import org.scalatest._
 import scala.reflect.ClassTag
 
 trait TestGrimlock extends FlatSpec with Matchers {
-  def toRDD[T](list: List[T])(implicit ev: ClassTag[T]): RDD[T] = TestGrimlock.spark.parallelize(list)
 
-  implicit def toList[T](rdd: RDD[T]): List[T] = rdd.toLocalIterator.toList
+  implicit val sc = TestGrimlock.spark
+
+  implicit val mode = Local(true)
+  implicit val config = Config.defaultFrom(mode)
 
   implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
 
-  implicit val sc = TestGrimlock.spark
+  def toRDD[T](list: List[T])(implicit ev: ClassTag[T]): RDD[T] = sc.parallelize(list)
+  def toPipe[T](list: List[T]): TypedPipe[T] = IterablePipe(list)
+
+  implicit def toList[T](rdd: RDD[T]): List[T] = rdd.toLocalIterator.toList
+  implicit def toList[T](pipe: TypedPipe[T]): List[T] = {
+    pipe
+      .toIterableExecution
+      .waitFor(config, mode)
+      .getOrElse(throw new Exception("couldn't get pipe as list"))
+      .toList
+  }
 }
 
 object TestGrimlock {

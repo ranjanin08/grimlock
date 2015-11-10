@@ -44,8 +44,6 @@ import au.com.cba.omnia.grimlock.spark.Matrixable._
 import au.com.cba.omnia.grimlock.spark.position.PositionDistributable._
 import au.com.cba.omnia.grimlock.spark.position.Positions._
 
-import com.twitter.scalding.{ Config, Local }
-import com.twitter.scalding.bdd.TBddDsl
 import com.twitter.scalding.typed.{ TypedPipe, ValuePipe }
 
 trait TestMatrix extends TestGrimlock {
@@ -107,131 +105,76 @@ trait TestMatrix extends TestGrimlock {
     Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)))
 }
 
-class TestScaldingMatrixNames extends TestMatrix with TBddDsl {
+class TestScaldingMatrixNames extends TestMatrix {
 
   "A Matrix.names" should "return its first over names in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.names(Over(First), Default())
-    } Then {
-      _.toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
-    }
+    toPipe(data1)
+      .names(Over(First), Default())
+      .toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
   }
 
   it should "return its first over names in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Over(First), Default(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
-    }
+    toPipe(data2)
+      .names(Over(First), Default(Reducers(123)))
+      .toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
   }
 
   it should "return its first along names in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Along(First), Default())
-    } Then {
-      _.toList.sorted shouldBe List(Position1D(1), Position1D(2), Position1D(3), Position1D(4))
-    }
+    toPipe(data2)
+      .names(Along(First), Default())
+      .toList.sorted shouldBe List(Position1D(1), Position1D(2), Position1D(3), Position1D(4))
   }
 
   it should "return its second over names in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Over(Second), Default(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe List(Position1D(1), Position1D(2), Position1D(3), Position1D(4))
-    }
+    toPipe(data2)
+      .names(Over(Second), Default(Reducers(123)))
+      .toList.sorted shouldBe List(Position1D(1), Position1D(2), Position1D(3), Position1D(4))
   }
 
   it should "return its second along names in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.names(Along(Second), Default())
-    } Then {
-      _.toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
-    }
+    toPipe(data2)
+      .names(Along(Second), Default())
+      .toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
   }
 
   it should "return its first over names in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(First), Default(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
-    }
+    toPipe(data3)
+      .names(Over(First), Default(Reducers(123)))
+      .toList.sorted shouldBe List(Position1D("bar"), Position1D("baz"), Position1D("foo"), Position1D("qux"))
   }
 
   it should "return its first along names in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Along(First), Default())
-    } Then {
-      _.toList.sorted shouldBe List(Position2D(1, "xyz"), Position2D(2, "xyz"), Position2D(3, "xyz"),
+    toPipe(data3)
+      .names(Along(First), Default())
+      .toList.sorted shouldBe List(Position2D(1, "xyz"), Position2D(2, "xyz"), Position2D(3, "xyz"),
         Position2D(4, "xyz"))
-    }
   }
 
   it should "return its second over names in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(Second), Default(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe List(Position1D(1), Position1D(2), Position1D(3), Position1D(4))
-    }
+    toPipe(data3)
+      .names(Over(Second), Default(Reducers(123)))
+      .toList.sorted shouldBe List(Position1D(1), Position1D(2), Position1D(3), Position1D(4))
   }
 
   it should "return its second along names in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Along(Second), Default())
-    } Then {
-      _.toList.sorted shouldBe List(Position2D("bar", "xyz"), Position2D("baz", "xyz"), Position2D("foo", "xyz"),
+    toPipe(data3)
+      .names(Along(Second), Default())
+      .toList.sorted shouldBe List(Position2D("bar", "xyz"), Position2D("baz", "xyz"), Position2D("foo", "xyz"),
         Position2D("qux", "xyz"))
-    }
   }
 
   it should "return its third over names in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Over(Third), Default(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe List(Position1D("xyz"))
-    }
+    toPipe(data3)
+      .names(Over(Third), Default(Reducers(123)))
+      .toList.sorted shouldBe List(Position1D("xyz"))
   }
 
   it should "return its third along names in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.names(Along(Third), Default())
-    } Then {
-      _.toList.sorted shouldBe List(Position2D("bar", 1), Position2D("bar", 2), Position2D("bar", 3),
+    toPipe(data3)
+      .names(Along(Third), Default())
+      .toList.sorted shouldBe List(Position2D("bar", 1), Position2D("bar", 2), Position2D("bar", 3),
         Position2D("baz", 1), Position2D("baz", 2), Position2D("foo", 1), Position2D("foo", 2), Position2D("foo", 3),
         Position2D("foo", 4), Position2D("qux", 1))
-    }
   }
 }
 
@@ -379,248 +322,138 @@ trait TestMatrixTypes extends TestMatrix {
     (Position2D("foo", 4), Date), (Position2D("qux", 1), Ordinal))
 }
 
-class TestScaldingMatrixTypes extends TestMatrixTypes with TBddDsl {
+class TestScaldingMatrixTypes extends TestMatrixTypes {
 
   "A Matrix.types" should "return its first over types in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.types(Over(First), false, Default())
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result1
-    }
+    toPipe(data1)
+      .types(Over(First), false, Default())
+      .toList.sortBy(_._1) shouldBe result1
   }
 
   it should "return its first over specific types in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.types(Over(First), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result2
-    }
+    toPipe(data1)
+      .types(Over(First), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result2
   }
 
   it should "return its first over types in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.types(Over(First), false, Default())
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result3
-    }
+    toPipe(data2)
+      .types(Over(First), false, Default())
+      .toList.sortBy(_._1) shouldBe result3
   }
 
   it should "return its first over specific types in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.types(Over(First), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result4
-    }
+    toPipe(data2)
+      .types(Over(First), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result4
   }
 
   it should "return its first along types in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.types(Along(First), false, Default())
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result5
-    }
+    toPipe(data2)
+      .types(Along(First), false, Default())
+      .toList.sortBy(_._1) shouldBe result5
   }
 
   it should "return its first along specific types in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.types(Along(First), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result6
-    }
+    toPipe(data2)
+      .types(Along(First), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result6
   }
 
   it should "return its second over types in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.types(Over(Second), false, Default())
-    } Then {
-       _.toList.sortBy(_._1) shouldBe result7
-    }
+    toPipe(data2)
+      .types(Over(Second), false, Default())
+      .toList.sortBy(_._1) shouldBe result7
   }
 
   it should "return its second over specific types in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.types(Over(Second), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result8
-    }
+    toPipe(data2)
+      .types(Over(Second), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result8
   }
 
   it should "return its second along types in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.types(Along(Second), false, Default())
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result9
-    }
+    toPipe(data2)
+      .types(Along(Second), false, Default())
+      .toList.sortBy(_._1) shouldBe result9
   }
 
   it should "return its second along specific types in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.types(Along(Second), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result10
-    }
+    toPipe(data2)
+      .types(Along(Second), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result10
   }
 
   it should "return its first over types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Over(First), false, Default())
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result11
-    }
+    toPipe(data3)
+      .types(Over(First), false, Default())
+      .toList.sortBy(_._1) shouldBe result11
   }
 
   it should "return its first over specific types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Over(First), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result12
-    }
+    toPipe(data3)
+      .types(Over(First), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result12
   }
 
   it should "return its first along types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Along(First), false, Default())
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result13
-    }
+    toPipe(data3)
+      .types(Along(First), false, Default())
+      .toList.sortBy(_._1) shouldBe result13
   }
 
   it should "return its first along specific types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Along(First), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result14
-    }
+    toPipe(data3)
+      .types(Along(First), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result14
   }
 
   it should "return its second over types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Over(Second), false, Default())
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result15
-    }
+    toPipe(data3)
+      .types(Over(Second), false, Default())
+      .toList.sortBy(_._1) shouldBe result15
   }
 
   it should "return its second over specific types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Over(Second), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result16
-    }
+    toPipe(data3)
+      .types(Over(Second), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result16
   }
 
   it should "return its second along types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Along(Second), false, Default())
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result17
-    }
+    toPipe(data3)
+      .types(Along(Second), false, Default())
+      .toList.sortBy(_._1) shouldBe result17
   }
 
   it should "return its second along specific types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Along(Second), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result18
-    }
+    toPipe(data3)
+      .types(Along(Second), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result18
   }
 
   it should "return its third over types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Over(Third), false, Default())
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result19
-    }
+    toPipe(data3)
+      .types(Over(Third), false, Default())
+      .toList.sortBy(_._1) shouldBe result19
   }
 
   it should "return its third over specific types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Over(Third), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result20
-    }
+    toPipe(data3)
+      .types(Over(Third), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result20
   }
 
   it should "return its third along types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Along(Third), false, Default())
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result21
-    }
+    toPipe(data3)
+      .types(Along(Third), false, Default())
+      .toList.sortBy(_._1) shouldBe result21
   }
 
   it should "return its third along specific types in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.types(Along(Third), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_._1) shouldBe result22
-    }
+    toPipe(data3)
+      .types(Along(Third), true, Default(Reducers(123)))
+      .toList.sortBy(_._1) shouldBe result22
   }
 }
 
@@ -792,149 +625,84 @@ trait TestMatrixSize extends TestMatrix {
   val result13 = List(Cell(Position1D("Second"), Content(DiscreteSchema(LongCodex), 3)))
 }
 
-class TestScaldingMatrixSize extends TestMatrixSize with TBddDsl {
+class TestScaldingMatrixSize extends TestMatrixSize {
 
   "A Matrix.size" should "return its first size in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.size(First, false, Default())
-    } Then {
-      _.toList shouldBe result1
-    }
+    toPipe(data1)
+      .size(First, false, Default())
+      .toList shouldBe result1
   }
 
   it should "return its first distinct size in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.size(First, true, Default(Reducers(123)))
-    } Then {
-      _.toList shouldBe result2
-    }
+    toPipe(data1)
+      .size(First, true, Default(Reducers(123)))
+      .toList shouldBe result2
   }
 
   it should "return its first size in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(First, false, Default())
-    } Then {
-      _.toList shouldBe result3
-    }
+    toPipe(data2)
+      .size(First, false, Default())
+      .toList shouldBe result3
   }
 
   it should "return its first distinct size in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(First, true, Default(Reducers(123)))
-    } Then {
-      _.toList shouldBe result4
-    }
+    toPipe(data2)
+      .size(First, true, Default(Reducers(123)))
+      .toList shouldBe result4
   }
 
   it should "return its second size in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(Second, false, Default())
-    } Then {
-      _.toList shouldBe result5
-    }
+    toPipe(data2)
+      .size(Second, false, Default())
+      .toList shouldBe result5
   }
 
   it should "return its second distinct size in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(Second, true, Default(Reducers(123)))
-    } Then {
-      _.toList shouldBe result6
-    }
+    toPipe(data2)
+      .size(Second, true, Default(Reducers(123)))
+      .toList shouldBe result6
   }
 
   it should "return its first size in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(First, false, Default())
-    } Then {
-      _.toList shouldBe result7
-    }
+    toPipe(data3)
+      .size(First, false, Default())
+      .toList shouldBe result7
   }
 
   it should "return its first distinct size in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(First, true, Default(Reducers(123)))
-    } Then {
-      _.toList shouldBe result8
-    }
+    toPipe(data3)
+      .size(First, true, Default(Reducers(123)))
+      .toList shouldBe result8
   }
 
   it should "return its second size in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(Second, false, Default())
-    } Then {
-      _.toList shouldBe result9
-    }
+    toPipe(data3)
+      .size(Second, false, Default())
+      .toList shouldBe result9
   }
 
   it should "return its second distinct size in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(Second, true, Default(Reducers(123)))
-    } Then {
-      _.toList shouldBe result10
-    }
+    toPipe(data3)
+      .size(Second, true, Default(Reducers(123)))
+      .toList shouldBe result10
   }
 
   it should "return its third size in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(Third, false, Default())
-    } Then {
-      _.toList shouldBe result11
-    }
+    toPipe(data3)
+      .size(Third, false, Default())
+      .toList shouldBe result11
   }
 
   it should "return its third distinct size in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.size(Third, true, Default(Reducers(123)))
-    } Then {
-      _.toList shouldBe result12
-    }
+    toPipe(data3)
+      .size(Third, true, Default(Reducers(123)))
+      .toList shouldBe result12
   }
 
   it should "return its distinct size" in {
-    Given {
-      dataA
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.size(Second, true, Default())
-    } Then {
-      _.toList shouldBe result13
-    }
+    toPipe(dataA)
+      .size(Second, true, Default())
+      .toList shouldBe result13
   }
 }
 
@@ -1031,39 +799,24 @@ trait TestMatrixShape extends TestMatrix {
     Cell(Position1D("Third"), Content(DiscreteSchema(LongCodex), 1)))
 }
 
-class TestScaldingMatrixShape extends TestMatrixShape with TBddDsl {
+class TestScaldingMatrixShape extends TestMatrixShape {
 
   "A Matrix.shape" should "return its shape in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.shape(Default())
-    } Then {
-      _.toList shouldBe result1
-    }
+    toPipe(data1)
+      .shape(Default())
+      .toList shouldBe result1
   }
 
   it should "return its shape in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.shape(Default(Reducers(123)))
-    } Then {
-      _.toList shouldBe result2
-    }
+    toPipe(data2)
+      .shape(Default(Reducers(123)))
+      .toList shouldBe result2
   }
 
   it should "return its shape in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.shape(Default())
-    } Then {
-      _.toList shouldBe result3
-    }
+    toPipe(data3)
+      .shape(Default())
+      .toList shouldBe result3
   }
 }
 
@@ -1218,292 +971,162 @@ trait TestMatrixSlice extends TestMatrix {
     Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")))
 }
 
-class TestScaldingMatrixSlice extends TestMatrixSlice with TBddDsl {
+class TestScaldingMatrixSlice extends TestMatrixSlice {
 
   "A Matrix.slice" should "return its first over slice in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.slice(Over(First), List("bar", "qux"), false, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data1)
+      .slice(Over(First), List("bar", "qux"), false, InMemory())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over inverse slice in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.slice(Over(First), List("bar", "qux"), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data1)
+      .slice(Over(First), List("bar", "qux"), true, Default())
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first over slice in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slice(Over(First), List("bar", "qux"), false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(data2)
+      .slice(Over(First), List("bar", "qux"), false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its first over inverse slice in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slice(Over(First), List("bar", "qux"), true, Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(data2)
+      .slice(Over(First), List("bar", "qux"), true, Unbalanced(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its first along slice in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slice(Along(First), List(1, 3), false, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(data2)
+      .slice(Along(First), List(1, 3), false, InMemory())
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first along inverse slice in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slice(Along(First), List(1, 3), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(data2)
+      .slice(Along(First), List(1, 3), true, Default())
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its second over slice in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slice(Over(Second), List(1, 3), false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(data2)
+      .slice(Over(Second), List(1, 3), false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over inverse slice in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slice(Over(Second), List(1, 3), true, Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(data2)
+      .slice(Over(Second), List(1, 3), true, Unbalanced(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along slice in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slice(Along(Second), List("bar", "qux"), false, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(data2)
+      .slice(Along(Second), List("bar", "qux"), false, InMemory())
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its second along inverse slice in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slice(Along(Second), List("bar", "qux"), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    toPipe(data2)
+      .slice(Along(Second), List("bar", "qux"), true, Default())
+      .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its first over slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Over(First), List("bar", "qux"), false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result11
-    }
+    toPipe(data3)
+      .slice(Over(First), List("bar", "qux"), false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its first over inverse slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Over(First), List("bar", "qux"), true, Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result12
-    }
+    toPipe(data3)
+      .slice(Over(First), List("bar", "qux"), true, Unbalanced(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first along slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Along(First), List(Position2D(1, "xyz"), Position2D(3, "xyz")), false, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result13
-    }
+    toPipe(data3)
+      .slice(Along(First), List(Position2D(1, "xyz"), Position2D(3, "xyz")), false, InMemory())
+      .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along inverse slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Along(First), List(Position2D(1, "xyz"), Position2D(3, "xyz")), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result14
-    }
+    toPipe(data3)
+      .slice(Along(First), List(Position2D(1, "xyz"), Position2D(3, "xyz")), true, Default())
+      .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Over(Second), List(1, 3), false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result15
-    }
+    toPipe(data3)
+      .slice(Over(Second), List(1, 3), false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second over inverse slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Over(Second), List(1, 3), true, Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result16
-    }
+    toPipe(data3)
+      .slice(Over(Second), List(1, 3), true, Unbalanced(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its second along slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), false, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result17
-    }
+    toPipe(data3)
+      .slice(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), false, InMemory())
+      .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its second along inverse slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result18
-    }
+    toPipe(data3)
+      .slice(Along(Second), List(Position2D("bar", "xyz"), Position2D("qux", "xyz")), true, Default())
+      .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its third over slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Over(Third), "xyz", false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result19
-    }
+    toPipe(data3)
+      .slice(Over(Third), "xyz", false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its third over inverse slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Over(Third), "xyz", true, Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result20
-    }
+    toPipe(data3)
+      .slice(Over(Third), "xyz", true, Unbalanced(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third along slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), false, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result21
-    }
+    toPipe(data3)
+      .slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), false, InMemory())
+      .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along inverse slice in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result22
-    }
+    toPipe(data3)
+      .slice(Along(Third), List(Position2D("foo", 3), Position2D("baz", 1)), true, Default())
+      .toList.sortBy(_.position) shouldBe result22
   }
 
   it should "return empty data - InMemory" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Along(Third), List.empty[Position2D], true, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe List()
-    }
+    toPipe(data3)
+      .slice(Along(Third), List.empty[Position2D], true, InMemory())
+      .toList.sortBy(_.position) shouldBe List()
   }
 
   it should "return all data - InMemory" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Along(Third), List.empty[Position2D], false, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
-    }
+    toPipe(data3)
+      .slice(Along(Third), List.empty[Position2D], false, InMemory())
+      .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 
   it should "return empty data - Default" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Along(Third), List.empty[Position2D], true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe List()
-    }
+    toPipe(data3)
+      .slice(Along(Third), List.empty[Position2D], true, Default())
+      .toList.sortBy(_.position) shouldBe List()
   }
 
   it should "return all data - Default" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slice(Along(Third), List.empty[Position2D], false, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
-    }
+    toPipe(data3)
+      .slice(Along(Third), List.empty[Position2D], false, Default())
+      .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 }
 
@@ -1718,342 +1341,205 @@ object TestMatrixWhich {
   }
 }
 
-class TestScaldingMatrixWhich extends TestMatrixWhich with TBddDsl {
+class TestScaldingMatrixWhich extends TestMatrixWhich {
 
   import au.com.cba.omnia.grimlock.scalding.Predicateable._
 
   "A Matrix.which" should "return its coordinates in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.which(TestMatrixWhich.predicate)
-    } Then {
-      _.toList.sorted shouldBe result1
-    }
+    toPipe(data1)
+      .which(TestMatrixWhich.predicate)
+      .toList.sorted shouldBe result1
   }
 
   it should "return its first over coordinates in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.whichByPositions(Over(First),
-          (List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c)), InMemory())
-    } Then {
-      _.toList.sorted shouldBe result2
-    }
+    toPipe(data1)
+      .whichByPositions(Over(First),
+        (List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c)), InMemory())
+      .toList.sorted shouldBe result2
   }
 
   it should "return its first over multiple coordinates in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.whichByPositions(Over(First), List(
-          (List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c)),
-          (List("foo"), (c: Cell[Position1D]) => !TestMatrixWhich.predicate(c))), Default())
-    } Then {
-      _.toList.sorted shouldBe result3
-    }
+    toPipe(data1)
+      .whichByPositions(Over(First), List(
+        (List("bar", "qux"), (c: Cell[Position1D]) => TestMatrixWhich.predicate(c)),
+        (List("foo"), (c: Cell[Position1D]) => !TestMatrixWhich.predicate(c))), Default())
+      .toList.sorted shouldBe result3
   }
 
   it should "return its coordinates in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.which(TestMatrixWhich.predicate)
-    } Then {
-      _.toList.sorted shouldBe result4
-    }
+    toPipe(data2)
+      .which(TestMatrixWhich.predicate)
+      .toList.sorted shouldBe result4
   }
 
   it should "return its first over coordinates in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.whichByPositions(Over(First),
-          (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)), Default(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe result5
-    }
+    toPipe(data2)
+      .whichByPositions(Over(First),
+        (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)), Default(Reducers(123)))
+      .toList.sorted shouldBe result5
   }
 
   it should "return its first along coordinates in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.whichByPositions(Along(First), (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
-          Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe result6
-    }
+    toPipe(data2)
+      .whichByPositions(Along(First), (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        Unbalanced(Reducers(123)))
+      .toList.sorted shouldBe result6
   }
 
   it should "return its second over coordinates in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.whichByPositions(Over(Second), (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
-          InMemory())
-    } Then {
-      _.toList.sorted shouldBe result7
-    }
+    toPipe(data2)
+      .whichByPositions(Over(Second), (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)), InMemory())
+      .toList.sorted shouldBe result7
   }
 
   it should "return its second along coordinates in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.whichByPositions(Along(Second),
-          (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)), Default())
-    } Then {
-      _.toList.sorted shouldBe result8
-    }
+    toPipe(data2)
+      .whichByPositions(Along(Second),
+        (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)), Default())
+      .toList.sorted shouldBe result8
   }
 
   it should "return its first over multiple coordinates in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.whichByPositions(Over(First), List(
-          (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
-          (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe result9
-    }
+    toPipe(data2)
+      .whichByPositions(Over(First), List(
+        (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(123)))
+      .toList.sorted shouldBe result9
   }
 
   it should "return its first along multiple coordinates in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.whichByPositions(Along(First), List(
-          (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
-          (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe result10
-    }
+    toPipe(data2)
+      .whichByPositions(Along(First), List(
+        (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Unbalanced(Reducers(123)))
+      .toList.sorted shouldBe result10
   }
 
   it should "return its second over multiple coordinates in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.whichByPositions(Over(Second), List(
-          (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
-          (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), InMemory())
-    } Then {
-      _.toList.sorted shouldBe result11
-    }
+    toPipe(data2)
+      .whichByPositions(Over(Second), List(
+        (List(2, 4), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        (List(2), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), InMemory())
+      .toList.sorted shouldBe result11
   }
 
   it should "return its second along multiple coordinates in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.whichByPositions(Along(Second), List(
-          (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
-          (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default())
-    } Then {
-      _.toList.sorted shouldBe result12
-    }
+    toPipe(data2)
+      .whichByPositions(Along(Second), List(
+        (List("bar", "qux"), (c: Cell[Position2D]) => TestMatrixWhich.predicate(c)),
+        (List("foo"), (c: Cell[Position2D]) => !TestMatrixWhich.predicate(c))), Default())
+      .toList.sorted shouldBe result12
   }
 
   it should "return its coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.which(TestMatrixWhich.predicate)
-    } Then {
-      _.toList.sorted shouldBe result13
-    }
+    toPipe(data3)
+      .which(TestMatrixWhich.predicate)
+      .toList.sorted shouldBe result13
   }
 
   it should "return its first over coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Over(First),
-          (List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe result14
-    }
+    toPipe(data3)
+      .whichByPositions(Over(First),
+        (List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default(Reducers(123)))
+      .toList.sorted shouldBe result14
   }
 
   it should "return its first along coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Along(First),
-          (List(Position2D(2, "xyz"), Position2D(4, "xyz")), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-            Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe result15
-    }
+    toPipe(data3)
+      .whichByPositions(Along(First),
+        (List(Position2D(2, "xyz"), Position2D(4, "xyz")), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+          Unbalanced(Reducers(123)))
+      .toList.sorted shouldBe result15
   }
 
   it should "return its second over coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Over(Second), (List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-          InMemory())
-    } Then {
-      _.toList.sorted shouldBe result16
-    }
+    toPipe(data3)
+      .whichByPositions(Over(Second), (List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), InMemory())
+      .toList.sorted shouldBe result16
   }
 
   it should "return its second along coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Along(Second), (List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
-          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default())
-    } Then {
-      _.toList.sorted shouldBe result17
-    }
+    toPipe(data3)
+      .whichByPositions(Along(Second), (List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Default())
+      .toList.sorted shouldBe result17
   }
 
   it should "return its third over coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Over(Third), ("xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-          Default(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe result18
-    }
+    toPipe(data3)
+      .whichByPositions(Over(Third), ("xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+        Default(Reducers(123)))
+      .toList.sorted shouldBe result18
   }
 
   it should "return its third along coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Along(Third), (List(Position2D("bar", 2), Position2D("qux", 1)),
-          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe result19
-    }
+    toPipe(data3)
+      .whichByPositions(Along(Third), (List(Position2D("bar", 2), Position2D("qux", 1)),
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), Unbalanced(Reducers(123)))
+      .toList.sorted shouldBe result19
   }
 
   it should "return its first over multiple coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Over(First), List(
-          (List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-          (List("foo"), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
-    } Then {
-      _.toList.sorted shouldBe result20
-    }
+    toPipe(data3)
+      .whichByPositions(Over(First), List(
+        (List("bar", "qux"), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+        (List("foo"), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
+      .toList.sorted shouldBe result20
   }
 
   it should "return its first along multiple coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Along(First), List(
-          (List(Position2D(2, "xyz"), Position2D(4, "xyz")), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-          (List(Position2D(2, "xyz")), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
-    } Then {
-      _.toList.sorted shouldBe result21
-    }
+    toPipe(data3)
+      .whichByPositions(Along(First), List(
+        (List(Position2D(2, "xyz"), Position2D(4, "xyz")), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+        (List(Position2D(2, "xyz")), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
+      .toList.sorted shouldBe result21
   }
 
   it should "return its second over multiple coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Over(Second), List(
-          (List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-          (List(2), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe result22
-    }
+    toPipe(data3)
+      .whichByPositions(Over(Second), List(
+        (List(2, 4), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+        (List(2), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default(Reducers(123)))
+      .toList.sorted shouldBe result22
   }
 
   it should "return its second along multiple coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Along(Second), List(
-          (List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
-          (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), (List(Position2D("foo", "xyz")),
-          (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sorted shouldBe result23
-    }
+    toPipe(data3)
+      .whichByPositions(Along(Second), List(
+        (List(Position2D("bar", "xyz"), Position2D("qux", "xyz")),
+        (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)), (List(Position2D("foo", "xyz")),
+        (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Unbalanced(Reducers(123)))
+      .toList.sorted shouldBe result23
   }
 
   it should "return its third over multiple coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Over(Third), List(
-          ("xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-          ("xyz", (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
-    } Then {
-      _.toList.sorted shouldBe result24
-    }
+    toPipe(data3)
+      .whichByPositions(Over(Third), List(
+        ("xyz", (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+        ("xyz", (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
+      .toList.sorted shouldBe result24
   }
 
   it should "return its third along multiple coordinates in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Along(Third), List(
-          (List(Position2D("foo", 1), Position2D("qux", 1)), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
-          (List(Position2D("foo", 2)), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
-    } Then {
-      _.toList.sorted shouldBe result25
-    }
+    toPipe(data3)
+      .whichByPositions(Along(Third), List(
+        (List(Position2D("foo", 1), Position2D("qux", 1)), (c: Cell[Position3D]) => TestMatrixWhich.predicate(c)),
+        (List(Position2D("foo", 2)), (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
+      .toList.sorted shouldBe result25
   }
 
   it should "return empty data - InMemory" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Along(Third), List(
-          (List.empty[Position2D], (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
-    } Then {
-      _.toList.sorted shouldBe List()
-    }
+    toPipe(data3)
+      .whichByPositions(Along(Third), List(
+        (List.empty[Position2D], (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), InMemory())
+      .toList.sorted shouldBe List()
   }
 
   it should "return empty data - Default" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.whichByPositions(Along(Third), List(
-          (List.empty[Position2D], (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
-    } Then {
-      _.toList.sorted shouldBe List()
-    }
+    toPipe(data3)
+      .whichByPositions(Along(Third), List(
+        (List.empty[Position2D], (c: Cell[Position3D]) => !TestMatrixWhich.predicate(c))), Default())
+      .toList.sorted shouldBe List()
   }
 }
 
@@ -2262,62 +1748,37 @@ trait TestMatrixGet extends TestMatrix {
     Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
 }
 
-class TestScaldingMatrixGet extends TestMatrixGet with TBddDsl {
+class TestScaldingMatrixGet extends TestMatrixGet {
 
   "A Matrix.get" should "return its cells in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.get("qux", InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data1)
+      .get("qux", InMemory())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its cells in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.get(List(Position2D("foo", 3), Position2D("qux", 1), Position2D("baz", 4)), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data2)
+      .get(List(Position2D("foo", 3), Position2D("qux", 1), Position2D("baz", 4)), Default())
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its cells in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.get(List(Position3D("foo", 3, "xyz"), Position3D("qux", 1, "xyz"), Position3D("baz", 4, "xyz")),
-          Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(data3)
+      .get(List(Position3D("foo", 3, "xyz"), Position3D("qux", 1, "xyz"), Position3D("baz", 4, "xyz")),
+        Unbalanced(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return empty data - InMemory" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.get(List.empty[Position3D], InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe List()
-    }
+    toPipe(data3)
+      .get(List.empty[Position3D], InMemory())
+      .toList.sortBy(_.position) shouldBe List()
   }
 
   it should "return empty data - Default" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.get(List.empty[Position3D], Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe List()
-    }
+    toPipe(data3)
+      .get(List.empty[Position3D], Default())
+      .toList.sortBy(_.position) shouldBe List()
   }
 }
 
@@ -2483,127 +1944,72 @@ trait TestMatrixCompact extends TestMatrix {
         Position2D("qux", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema(StringCodex), "12.56")))
 }
 
-class TestScaldingMatrixCompact extends TestMatrixCompact with TBddDsl {
+class TestScaldingMatrixCompact extends TestMatrixCompact {
 
   "A Matrix.compact" should "return its first over map in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.compact(Over(First), Default()).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result1)
-    }
+    toPipe(data1)
+      .compact(Over(First), Default()).toTypedPipe
+      .toList shouldBe List(result1)
   }
 
   it should "return its first over map in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.compact(Over(First), Default(Reducers(123))).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result2)
-    }
+    toPipe(data2)
+      .compact(Over(First), Default(Reducers(123))).toTypedPipe
+      .toList shouldBe List(result2)
   }
 
   it should "return its first along map in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.compact(Along(First), Default()).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result3)
-    }
+    toPipe(data2)
+      .compact(Along(First), Default()).toTypedPipe
+      .toList shouldBe List(result3)
   }
 
   it should "return its second over map in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.compact(Over(Second), Default(Reducers(123))).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result4)
-    }
+    toPipe(data2)
+      .compact(Over(Second), Default(Reducers(123))).toTypedPipe
+      .toList shouldBe List(result4)
   }
 
   it should "return its second along map in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.compact(Along(Second), Default()).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result5)
-    }
+    toPipe(data2)
+      .compact(Along(Second), Default()).toTypedPipe
+      .toList shouldBe List(result5)
   }
 
   it should "return its first over map in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.compact(Over(First), Default(Reducers(123))).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result6)
-    }
+    toPipe(data3)
+      .compact(Over(First), Default(Reducers(123))).toTypedPipe
+      .toList shouldBe List(result6)
   }
 
   it should "return its first along map in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.compact(Along(First), Default()).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result7)
-    }
+    toPipe(data3)
+      .compact(Along(First), Default()).toTypedPipe
+      .toList shouldBe List(result7)
   }
 
   it should "return its second over map in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.compact(Over(Second), Default(Reducers(123))).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result8)
-    }
+    toPipe(data3)
+      .compact(Over(Second), Default(Reducers(123))).toTypedPipe
+      .toList shouldBe List(result8)
   }
 
   it should "return its second along map in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.compact(Along(Second), Default()).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result9)
-    }
+    toPipe(data3)
+      .compact(Along(Second), Default()).toTypedPipe
+      .toList shouldBe List(result9)
   }
 
   it should "return its third over map in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.compact(Over(Third), Default(Reducers(123))).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result10)
-    }
+    toPipe(data3)
+      .compact(Over(Third), Default(Reducers(123))).toTypedPipe
+      .toList shouldBe List(result10)
   }
 
   it should "return its third along map in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.compact(Along(Third), Default()).toTypedPipe
-    } Then {
-      _.toList shouldBe List(result11)
-    }
+    toPipe(data3)
+      .compact(Along(Third), Default()).toTypedPipe
+      .toList shouldBe List(result11)
   }
 }
 
@@ -2974,552 +2380,332 @@ object TestMatrixSummarise {
   }
 }
 
-class TestScaldingMatrixSummarise extends TestMatrixSummarise with TBddDsl {
+class TestScaldingMatrixSummarise extends TestMatrixSummarise {
 
   "A Matrix.summarise" should "return its first over aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise(Over(First), Min[Position2D, Position1D](), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(num2)
+      .summarise(Over(First), Min[Position2D, Position1D](), Default())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first along aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise(Along(First), Max[Position2D, Position1D](), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(num2)
+      .summarise(Along(First), Max[Position2D, Position1D](), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its second over aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise(Over(Second), Max[Position2D, Position1D](), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(num2)
+      .summarise(Over(Second), Max[Position2D, Position1D](), Default())
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second along aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise(Along(Second), Min[Position2D, Position1D](), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(num2)
+      .summarise(Along(Second), Min[Position2D, Position1D](), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its first over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Over(First), Min[Position3D, Position1D](), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(num3)
+      .summarise(Over(First), Min[Position3D, Position1D](), Default())
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Along(First), Max[Position3D, Position2D](), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(num3)
+      .summarise(Along(First), Max[Position3D, Position2D](), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its second over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Over(Second), Max[Position3D, Position1D](), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(num3)
+      .summarise(Over(Second), Max[Position3D, Position1D](), Default())
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Along(Second), Min[Position3D, Position2D](), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(num3)
+      .summarise(Along(Second), Min[Position3D, Position2D](), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its third over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Over(Third), Max[Position3D, Position1D](), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(num3)
+      .summarise(Over(Third), Max[Position3D, Position1D](), Default())
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Along(Third), Min[Position3D, Position2D](), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    toPipe(num3)
+      .summarise(Along(Third), Min[Position3D, Position2D](), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result10
   }
 
   "A Matrix.summariseWithValue" should "return its first over aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First)),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result11
-    }
+    toPipe(num2)
+      .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First)),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its first along aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue(Along(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second)),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result12
-    }
+    toPipe(num2)
+      .summariseWithValue(Along(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second)),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its second over aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue(Over(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second)),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result13
-    }
+    toPipe(num2)
+      .summariseWithValue(Over(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second)),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its second along aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First)),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result14
-    }
+    toPipe(num2)
+      .summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First)),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its first over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Over(First), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(First)),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result15
-    }
+    toPipe(num3)
+      .summariseWithValue(Over(First), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(First)),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its first along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Along(First), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second)),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result16
-    }
+    toPipe(num3)
+      .summariseWithValue(Along(First), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second)),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its second over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Over(Second), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Second)),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result17
-    }
+    toPipe(num3)
+      .summariseWithValue(Over(Second), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Second)),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its second along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Along(Second), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First)),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result18
-    }
+    toPipe(num3)
+      .summariseWithValue(Along(Second), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First)),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its third over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Over(Third), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Third)),
-          ValuePipe(ext), Default())
-    } Then {
-        _.toList.sortBy(_.position) shouldBe result19
-    }
+    toPipe(num3)
+      .summariseWithValue(Over(Third), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Third)),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its third along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third)),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result20
-    }
+    toPipe(num3)
+      .summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third)),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result20
   }
 
   "A Matrix.summariseAndExpand" should "return its first over aggregates in 1D" in {
-    Given {
-      num1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.summarise(Over(First), Min[Position1D, Position1D]().andThenExpand(_.position.append("min")), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result21
-    }
+    toPipe(num1)
+      .summarise(Over(First), Min[Position1D, Position1D]().andThenExpand(_.position.append("min")), Default())
+      .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its first along aggregates in 1D" in {
-    Given {
-      num1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.summarise(Along(First), List(Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
-          Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result22
-    }
+    toPipe(num1)
+      .summarise(Along(First), List(Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
+        Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result22
   }
 
   it should "return its first over aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise(Over(First), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result23
-    }
+    toPipe(num2)
+      .summarise(Over(First), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")), Default())
+      .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first along aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise(Along(First), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-          Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result24
-    }
+    toPipe(num2)
+      .summarise(Along(First), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+        Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its second over aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise(Over(Second), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-          Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result25
-    }
+    toPipe(num2)
+      .summarise(Over(Second), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+        Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))), Default())
+      .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second along aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summarise(Along(Second), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-          Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result26
-    }
+    toPipe(num2)
+      .summarise(Along(Second), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+        Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its first over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Over(First), Min[Position3D, Position1D]().andThenExpand(_.position.append("min")), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result27
-    }
+    toPipe(num3)
+      .summarise(Over(First), Min[Position3D, Position1D]().andThenExpand(_.position.append("min")), Default())
+      .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Along(First), List(Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
-          Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result28
-    }
+    toPipe(num3)
+      .summarise(Along(First), List(Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+        Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its second over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Over(Second), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
-          Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result29
-    }
+    toPipe(num3)
+      .summarise(Over(Second), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
+        Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))), Default())
+      .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-      cells.summarise(Along(Second), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+    toPipe(num3)
+      .summarise(Along(Second), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
         Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result30
-    }
+      .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its third over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Over(Third), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
-          Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result31
-    }
+    toPipe(num3)
+      .summarise(Over(Third), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
+        Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))), Default())
+      .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summarise(Along(Third), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
-          Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result32
-    }
+    toPipe(num3)
+      .summarise(Along(Third), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+        Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result32
   }
 
   "A Matrix.summariseAndExpandWithValue" should "return its first over aggregates in 1D" in {
-    Given {
-      num1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.summariseWithValue(Over(First), WeightedSum[Position1D, Position1D, W](ExtractWithDimension(First))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result33
-    }
+    toPipe(num1)
+      .summariseWithValue(Over(First), WeightedSum[Position1D, Position1D, W](ExtractWithDimension(First))
+        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result33
   }
 
   it should "return its first along aggregates in 1D" in {
-    Given {
-      num1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.summariseWithValue(Along(First), List(
-            WeightedSum[Position1D, Position0D, W](ExtractWithDimension(First))
-              .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
-              .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result34
-    }
+    toPipe(num1)
+      .summariseWithValue(Along(First), List(
+        WeightedSum[Position1D, Position0D, W](ExtractWithDimension(First))
+          .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result34
   }
 
   it should "return its first over aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result35
-    }
+    toPipe(num2)
+      .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result35
   }
 
   it should "return its first along aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue(Along(First), List(
-            WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
-              .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
-              .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result36
-    }
+    toPipe(num2)
+      .summariseWithValue(Along(First), List(
+        WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result36
   }
 
   it should "return its second over aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue(Over(Second), List(
-            WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
-              .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
-              .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result37
-    }
+    toPipe(num2)
+      .summariseWithValue(Over(Second), List(
+        WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result37
   }
 
   it should "return its second along aggregates in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result38
-    }
+    toPipe(num2)
+      .summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result38
   }
 
   it should "return its first over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Over(First), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(First))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result39
-    }
+    toPipe(num3)
+      .summariseWithValue(Over(First), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(First))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result39
   }
 
   it should "return its first along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Along(First), List(
-            WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second))
-              .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
-              .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result40
-    }
+    toPipe(num3)
+      .summariseWithValue(Along(First), List(
+        WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second))
+          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result40
   }
 
   it should "return its second over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Over(Second), List(
-            WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Second))
-              .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
-              .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result41
-    }
+    toPipe(num3)
+      .summariseWithValue(Over(Second), List(
+        WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Second))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result41
   }
 
   it should "return its second along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Along(Second),
-          WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First))
-            .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result42
-    }
+    toPipe(num3)
+      .summariseWithValue(Along(Second),
+        WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First))
+          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result42
   }
 
   it should "return its third over aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Over(Third), List(
-            WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Third))
-              .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
-            WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Third, "%1$s.2"))
-              .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result43
-    }
+    toPipe(num3)
+      .summariseWithValue(Over(Third), List(
+        WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Third))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+        WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Third, "%1$s.2"))
+          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result43
   }
 
   it should "return its third along aggregates in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third))
-            .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
-          ValuePipe(ext), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result44
-    }
+    toPipe(num3)
+      .summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third))
+          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
+        ValuePipe(ext), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result44
   }
 }
 
@@ -3897,138 +3083,78 @@ object TestMatrixSplit {
   }
 }
 
-class TestScaldingMatrixSplit extends TestMatrixSplit with TBddDsl {
+class TestScaldingMatrixSplit extends TestMatrixSplit {
 
   "A Matrix.split" should "return its first partitions in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.split(TestMatrixSplit.TestPartitioner[Position1D](First))
-    } Then {
-      _.toList.sorted shouldBe result1
-    }
+    toPipe(data1)
+      .split(TestMatrixSplit.TestPartitioner[Position1D](First))
+      .toList.sorted shouldBe result1
   }
 
   it should "return its first partitions in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.split(TestMatrixSplit.TestPartitioner[Position2D](First))
-    } Then {
-      _.toList.sorted shouldBe result2
-    }
+    toPipe(data2)
+      .split(TestMatrixSplit.TestPartitioner[Position2D](First))
+      .toList.sorted shouldBe result2
   }
 
   it should "return its second partitions in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.split(TestMatrixSplit.TestPartitioner[Position2D](Second))
-    } Then {
-      _.toList.sorted shouldBe result3
-    }
+    toPipe(data2)
+      .split(TestMatrixSplit.TestPartitioner[Position2D](Second))
+      .toList.sorted shouldBe result3
   }
 
   it should "return its first partitions in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.split(TestMatrixSplit.TestPartitioner[Position3D](First))
-    } Then {
-      _.toList.sorted shouldBe result4
-    }
+    toPipe(data3)
+      .split(TestMatrixSplit.TestPartitioner[Position3D](First))
+      .toList.sorted shouldBe result4
   }
 
   it should "return its second partitions in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.split(TestMatrixSplit.TestPartitioner[Position3D](Second))
-    } Then {
-      _.toList.sorted shouldBe result5
-    }
+    toPipe(data3)
+      .split(TestMatrixSplit.TestPartitioner[Position3D](Second))
+      .toList.sorted shouldBe result5
   }
 
   it should "return its third partitions in 3D" in {
-    Given {
-      data3
-      } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.split(TestMatrixSplit.TestPartitioner[Position3D](Third))
-    } Then {
-      _.toList.sorted shouldBe result6
-    }
+    toPipe(data3)
+      .split(TestMatrixSplit.TestPartitioner[Position3D](Third))
+      .toList.sorted shouldBe result6
   }
 
   "A Matrix.splitWithValue" should "return its first partitions in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position1D](), ValuePipe(First))
-    } Then {
-      _.toList.sorted shouldBe result7
-    }
+    toPipe(data1)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position1D](), ValuePipe(First))
+      .toList.sorted shouldBe result7
   }
 
   it should "return its first partitions in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position2D](), ValuePipe(First))
-    } Then {
-      _.toList.sorted shouldBe result8
-    }
+    toPipe(data2)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position2D](), ValuePipe(First))
+      .toList.sorted shouldBe result8
   }
 
   it should "return its second partitions in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position2D](), ValuePipe(Second))
-    } Then {
-      _.toList.sorted shouldBe result9
-    }
+    toPipe(data2)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position2D](), ValuePipe(Second))
+      .toList.sorted shouldBe result9
   }
 
   it should "return its first partitions in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), ValuePipe(First))
-    } Then {
-      _.toList.sorted shouldBe result10
-    }
+    toPipe(data3)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), ValuePipe(First))
+      .toList.sorted shouldBe result10
   }
 
   it should "return its second partitions in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), ValuePipe(Second))
-    } Then {
-      _.toList.sorted shouldBe result11
-    }
+    toPipe(data3)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), ValuePipe(Second))
+      .toList.sorted shouldBe result11
   }
 
   it should "return its third partitions in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), ValuePipe(Third))
-    } Then {
-      _.toList.sorted shouldBe result12
-    }
+    toPipe(data3)
+      .splitWithValue(TestMatrixSplit.TestPartitionerWithValue[Position3D](), ValuePipe(Third))
+      .toList.sorted shouldBe result12
   }
 }
 
@@ -4158,72 +3284,42 @@ object TestMatrixSample {
   }
 }
 
-class TestScaldingMatrixSample extends TestMatrixSample with TBddDsl {
+class TestScaldingMatrixSample extends TestMatrixSample {
 
   "A Matrix.sample" should "return its sampled data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.sample(TestMatrixSample.TestSampler[Position1D]())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data1)
+      .sample(TestMatrixSample.TestSampler[Position1D]())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its sampled data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.sample(TestMatrixSample.TestSampler[Position2D]())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data2)
+      .sample(TestMatrixSample.TestSampler[Position2D]())
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its sampled data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.sample(TestMatrixSample.TestSampler[Position3D]())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(data3)
+      .sample(TestMatrixSample.TestSampler[Position3D]())
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   "A Matrix.sampleWithValue" should "return its sampled data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position1D](), ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(data1)
+      .sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position1D](), ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its sampled data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position2D](), ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(data2)
+      .sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position2D](), ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its sampled data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position3D](), ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(data3)
+      .sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position3D](), ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result6
   }
 }
 
@@ -4312,61 +3408,36 @@ class TestMatrixDomain extends TestMatrix {
   val result5 = i5.toList.flatten.sorted
 }
 
-class TestScaldingMatrixDomain extends TestMatrixDomain with TBddDsl {
+class TestScaldingMatrixDomain extends TestMatrixDomain {
 
   "A Matrix.domain" should "return its domain in 1D" in {
-    Given {
-      dataA
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.domain(Default())
-    } Then {
-      _.toList.sorted shouldBe result1
-    }
+    toPipe(dataA)
+      .domain(Default())
+      .toList.sorted shouldBe result1
   }
 
   it should "return its domain in 2D" in {
-    Given {
-      dataB
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.domain(Default())
-    } Then {
-      _.toList.sorted shouldBe result2
-    }
+    toPipe(dataB)
+      .domain(Default())
+      .toList.sorted shouldBe result2
   }
 
   it should "return its domain in 3D" in {
-    Given {
-      dataC
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.domain(Default())
-    } Then {
-      _.toList.sorted shouldBe result3
-    }
+    toPipe(dataC)
+      .domain(Default())
+      .toList.sorted shouldBe result3
   }
 
   it should "return its domain in 4D" in {
-    Given {
-      dataD
-    } When {
-      cells: TypedPipe[Cell[Position4D]] =>
-        cells.domain(Default())
-    } Then {
-      _.toList.sorted shouldBe result4
-    }
+    toPipe(dataD)
+      .domain(Default())
+      .toList.sorted shouldBe result4
   }
 
   it should "return its domain in 5D" in {
-    Given {
-      dataE
-    } When {
-      cells: TypedPipe[Cell[Position5D]] =>
-        cells.domain(Default())
-    } Then {
-      _.toList.sorted shouldBe result5
-    }
+    toPipe(dataE)
+      .domain(Default())
+      .toList.sorted shouldBe result5
   }
 }
 
@@ -4597,158 +3668,78 @@ trait TestMatrixJoin extends TestMatrix {
     Cell(Position3D("qux", 1, "xyz.2"), Content(OrdinalSchema(StringCodex), "12.56")))
 }
 
-class TestScaldingMatrixJoin extends TestMatrixJoin with TBddDsl {
+class TestScaldingMatrixJoin extends TestMatrixJoin {
 
   "A Matrix.join" should "return its first over join in 2D" in {
-    Given {
-      data2
-    } And {
-      dataA
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.join(Over(First), that, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data2)
+      .join(Over(First), toPipe(dataA), InMemory())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first along join in 2D" in {
-    Given {
-      data2
-    } And {
-      dataB
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        that.join(Along(First), cells, InMemory(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(dataB)
+      .join(Along(First), toPipe(data2), InMemory(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its second over join in 2D" in {
-    Given {
-      data2
-    } And {
-      dataC
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        that.join(Over(Second), cells, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(dataC)
+      .join(Over(Second), toPipe(data2), Default())
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second along join in 2D" in {
-    Given {
-      data2
-    } And {
-      dataD
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.join(Along(Second), that, Default(Reducers(456)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(data2)
+      .join(Along(Second), toPipe(dataD), Default(Reducers(456)))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its first over join in 3D" in {
-    Given {
-      data3
-    } And {
-      dataE
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.join(Over(First), that, Default(Reducers(123), Reducers(456)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(data3)
+      .join(Over(First), toPipe(dataE), Default(Reducers(123), Reducers(456)))
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first along join in 3D" in {
-    Given {
-      data3
-    } And {
-      dataF
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        that.join(Along(First), cells, Unbalanced(Reducers(456)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(dataF)
+      .join(Along(First), toPipe(data3), Unbalanced(Reducers(456)))
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its second over join in 3D" in {
-    Given {
-      data3
-    } And {
-      dataG
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        that.join(Over(Second), cells, Unbalanced(Reducers(123), Reducers(456)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(dataG)
+      .join(Over(Second), toPipe(data3), Unbalanced(Reducers(123), Reducers(456)))
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second along join in 3D" in {
-    Given {
-      data3
-    } And {
-      dataH
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.join(Along(Second), that, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(data3)
+      .join(Along(Second), toPipe(dataH), InMemory())
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its third over join in 3D" in {
-    Given {
-      data3
-    } And {
-      dataI
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        that.join(Over(Third), cells, InMemory(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(dataI)
+      .join(Over(Third), toPipe(data3), InMemory(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third along join in 3D" in {
-    Given {
-      data3
-    } And {
-      dataJ
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.join(Along(Third), that, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    toPipe(data3)
+      .join(Along(Third), toPipe(dataJ), Default())
+      .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return empty data - InMemory" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.join(Along(Third), TypedPipe.empty, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe List()
-    }
+    toPipe(data3)
+      .join(Along(Third), TypedPipe.empty, InMemory())
+      .toList.sortBy(_.position) shouldBe List()
   }
 
   it should "return empty data - Default" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.join(Along(Third), TypedPipe.empty, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe List()
-    }
+    toPipe(data3)
+      .join(Along(Third), TypedPipe.empty, Default())
+      .toList.sortBy(_.position) shouldBe List()
   }
 }
 
@@ -4978,160 +3969,90 @@ trait TestMatrixUnique extends TestMatrix {
     (Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
 }
 
-class TestScaldingMatrixUnique extends TestMatrixUnique with TBddDsl {
+class TestScaldingMatrixUnique extends TestMatrixUnique {
 
   "A Matrix.unique" should "return its content in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.unique(Default())
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result1
-    }
+    toPipe(data1)
+      .unique(Default())
+      .toList.sortBy(_.toString) shouldBe result1
   }
 
   it should "return its first over content in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.uniqueByPositions(Over(First), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result2
-    }
+    toPipe(data1)
+      .uniqueByPositions(Over(First), Default(Reducers(123)))
+      .toList.sortBy(_.toString) shouldBe result2
   }
 
   it should "return its content in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.unique(Default())
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result3
-    }
+    toPipe(data2)
+      .unique(Default())
+      .toList.sortBy(_.toString) shouldBe result3
   }
 
   it should "return its first over content in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.uniqueByPositions(Over(First), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result4
-    }
+    toPipe(data2)
+      .uniqueByPositions(Over(First), Default(Reducers(123)))
+      .toList.sortBy(_.toString) shouldBe result4
   }
 
   it should "return its first along content in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.uniqueByPositions(Along(First), Default())
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result5
-    }
+    toPipe(data2)
+      .uniqueByPositions(Along(First), Default())
+      .toList.sortBy(_.toString) shouldBe result5
   }
 
   it should "return its second over content in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.uniqueByPositions(Over(Second), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result6
-    }
+    toPipe(data2)
+      .uniqueByPositions(Over(Second), Default(Reducers(123)))
+      .toList.sortBy(_.toString) shouldBe result6
   }
 
   it should "return its second along content in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.uniqueByPositions(Along(Second), Default())
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result7
-    }
+    toPipe(data2)
+      .uniqueByPositions(Along(Second), Default())
+      .toList.sortBy(_.toString) shouldBe result7
   }
 
   it should "return its content in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.unique(Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result8
-    }
+    toPipe(data3)
+      .unique(Default(Reducers(123)))
+      .toList.sortBy(_.toString) shouldBe result8
   }
 
   it should "return its first over content in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.uniqueByPositions(Over(First), Default())
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result9
-    }
+    toPipe(data3)
+      .uniqueByPositions(Over(First), Default())
+      .toList.sortBy(_.toString) shouldBe result9
   }
 
   it should "return its first along content in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.uniqueByPositions(Along(First), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result10
-    }
+    toPipe(data3)
+      .uniqueByPositions(Along(First), Default(Reducers(123)))
+      .toList.sortBy(_.toString) shouldBe result10
   }
 
   it should "return its second over content in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.uniqueByPositions(Over(Second), Default())
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result11
-    }
+    toPipe(data3)
+      .uniqueByPositions(Over(Second), Default())
+      .toList.sortBy(_.toString) shouldBe result11
   }
 
   it should "return its second along content in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.uniqueByPositions(Along(Second), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result12
-    }
+    toPipe(data3)
+      .uniqueByPositions(Along(Second), Default(Reducers(123)))
+      .toList.sortBy(_.toString) shouldBe result12
   }
 
   it should "return its third over content in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.uniqueByPositions(Over(Third), Default())
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result13
-    }
+    toPipe(data3)
+      .uniqueByPositions(Over(Third), Default())
+      .toList.sortBy(_.toString) shouldBe result13
   }
 
   it should "return its third along content in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.uniqueByPositions(Along(Third), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.toString) shouldBe result14
-    }
+    toPipe(data3)
+      .uniqueByPositions(Along(Third), Default(Reducers(123)))
+      .toList.sortBy(_.toString) shouldBe result14
   }
 }
 
@@ -5984,634 +4905,358 @@ object TestMatrixPairwise {
   }
 }
 
-class TestScaldingMatrixPairwise extends TestMatrixPairwise with TBddDsl {
+class TestScaldingMatrixPairwise extends TestMatrixPairwise {
 
   "A Matrix.pairwise" should "return its first over pairwise in 1D" in {
-    Given {
-      num1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position0D]("(%1$s+%2$s)")),
-          InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(num1)
+      .pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position0D]("(%1$s+%2$s)")), InMemory())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over pairwise in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(num2)
+      .pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")), Default())
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along pairwise in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise(Along(First), Lower, List(
-          Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
-          Default(Redistribute(123), Redistribute(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(num2)
+      .pairwise(Along(First), Lower, List(
+        Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
+        Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
+        Default(Redistribute(123), Redistribute(321)))
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over pairwise in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise(Over(Second), Lower, List(
-          Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
-          Default(Redistribute(123), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(num2)
+      .pairwise(Over(Second), Lower, List(
+        Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
+        Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
+        Default(Redistribute(123), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along pairwise in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwise(Along(Second), Lower, Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(num2)
+      .pairwise(Along(Second), Lower, Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
+        Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-          Default(Reducers(123), Redistribute(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(num3)
+      .pairwise(Over(First), Lower, Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
+        Default(Reducers(123), Redistribute(321)))
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Along(First), Lower, List(
-          Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))),
-          Default(Reducers(123), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(num3)
+      .pairwise(Along(First), Lower, List(
+        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
+        Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))),
+        Default(Reducers(123), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Over(Second), Lower, List(
-          Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
-          Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(num3)
+      .pairwise(Over(Second), Lower, List(
+        Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
+        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
+        Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Along(Second), Lower, Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-          Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(num3)
+      .pairwise(Along(Second), Lower, Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
+        Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Over(Third), Lower, List(
-          Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
-          Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    toPipe(num3)
+      .pairwise(Over(Third), Lower, List(
+        Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
+        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
+        Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwise(Along(Third), Lower, Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-          Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result11
-    }
+    toPipe(num3)
+      .pairwise(Along(Third), Lower, Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
+        Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.pairwiseWithValue" should "return its first over pairwise in 1D" in {
-    Given {
-      num1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position0D](),
-          ValuePipe(ext), Unbalanced(Reducers(123), Reducers(654)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result12
-    }
+    toPipe(num1)
+      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position0D](),
+        ValuePipe(ext), Unbalanced(Reducers(123), Reducers(654)))
+      .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over pairwise in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          ValuePipe(ext), Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result13
-    }
+    toPipe(num2)
+      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        ValuePipe(ext), Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along pairwise in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result14
-    }
+    toPipe(num2)
+      .pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext), InMemory())
+      .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over pairwise in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result15
-    }
+    toPipe(num2)
+      .pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        TestMatrixPairwise.MinusX[Position1D, Position1D]()), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along pairwise in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          ValuePipe(ext), Default(Redistribute(123), Redistribute(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result16
-    }
+    toPipe(num2)
+      .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        ValuePipe(ext), Default(Redistribute(123), Redistribute(321)))
+      .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position2D](),
-          ValuePipe(ext), Default(Redistribute(123), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result17
-    }
+    toPipe(num3)
+      .pairwiseWithValue(Over(First), Lower, TestMatrixPairwise.PlusX[Position1D, Position2D](),
+        ValuePipe(ext), Default(Redistribute(123), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          TestMatrixPairwise.MinusX[Position2D, Position1D]()), ValuePipe(ext),
-            Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result18
-    }
+    toPipe(num3)
+      .pairwiseWithValue(Along(First), Lower, List(TestMatrixPairwise.PlusX[Position2D, Position1D](),
+        TestMatrixPairwise.MinusX[Position2D, Position1D]()), ValuePipe(ext),
+          Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
-          TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext),
-            Default(Reducers(321), Redistribute(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result19
-    }
+    toPipe(num3)
+      .pairwiseWithValue(Over(Second), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
+        TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext),
+          Default(Reducers(321), Redistribute(321)))
+      .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          ValuePipe(ext), Default(Reducers(123), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result20
-    }
+    toPipe(num3)
+      .pairwiseWithValue(Along(Second), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](),
+        ValuePipe(ext), Default(Reducers(123), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue(Over(Third), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
-          TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext),
-            Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result21
-    }
+    toPipe(num3)
+      .pairwiseWithValue(Over(Third), Lower, List(TestMatrixPairwise.PlusX[Position1D, Position2D](),
+        TestMatrixPairwise.MinusX[Position1D, Position2D]()), ValuePipe(ext),
+          Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along pairwise in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseWithValue(Along(Third), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result22
-    }
+    toPipe(num3)
+      .pairwiseWithValue(Along(Third), Lower, TestMatrixPairwise.PlusX[Position2D, Position1D](),
+        ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
+      .toList.sortBy(_.position) shouldBe result22
   }
 
   "A Matrix.pairwiseBetween" should "return its first over pairwise in 1D" in {
-    Given {
-      num1
-    } And {
-      dataA
-    } When {
-      (cells: TypedPipe[Cell[Position1D]], that: TypedPipe[Cell[Position1D]]) =>
-        cells.pairwiseBetween(Over(First), Lower, that,
-          Plus(Locate.OperatorString[Position1D, Position0D]("(%1$s+%2$s)")),
-            Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result23
-    }
+    toPipe(num1)
+      .pairwiseBetween(Over(First), Lower, toPipe(dataA),
+        Plus(Locate.OperatorString[Position1D, Position0D]("(%1$s+%2$s)")),
+          Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first over pairwise in 2D" in {
-    Given {
-      num2
-    } And {
-      dataB
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween(Over(First), Lower, that,
-          Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-            Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result24
-    }
+    toPipe(num2)
+      .pairwiseBetween(Over(First), Lower, toPipe(dataB),
+        Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
+          Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its first along pairwise in 2D" in {
-    Given {
-      num2
-    } And {
-      dataC
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween(Along(First), Lower, that, List(
-          Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
-          Unbalanced(Reducers(123), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result25
-    }
+    toPipe(num2)
+      .pairwiseBetween(Along(First), Lower, toPipe(dataC), List(
+        Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
+        Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
+        Unbalanced(Reducers(123), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second over pairwise in 2D" in {
-    Given {
-      num2
-    } And {
-      dataD
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween(Over(Second), Lower, that, List(
-          Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
-            Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result26
-    }
+    toPipe(num2)
+      .pairwiseBetween(Over(Second), Lower, toPipe(dataD), List(
+        Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")),
+        Minus(Locate.OperatorString[Position1D, Position1D]("(%1$s-%2$s)"))),
+          Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its second along pairwise in 2D" in {
-    Given {
-      num2
-    } And {
-      dataE
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetween(Along(Second), Lower, that,
-          Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result27
-    }
+    toPipe(num2)
+      .pairwiseBetween(Along(Second), Lower, toPipe(dataE),
+        Plus(Locate.OperatorString[Position1D, Position1D]("(%1$s+%2$s)")), InMemory())
+      .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first over pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataF
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Over(First), Lower, that,
-          Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result28
-    }
+    toPipe(num3)
+      .pairwiseBetween(Over(First), Lower, toPipe(dataF),
+        Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")), Default())
+      .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its first along pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataG
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Along(First), Lower, that, List(
-          Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))),
-            Default(Redistribute(123), Redistribute(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result29
-    }
+    toPipe(num3)
+      .pairwiseBetween(Along(First), Lower, toPipe(dataG), List(
+        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
+        Minus(Locate.OperatorString[Position2D, Position1D]("(%1$s-%2$s)"))),
+          Default(Redistribute(123), Redistribute(321)))
+      .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second over pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataH
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Over(Second), Lower, that, List(
-          Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
-            Default(Redistribute(123), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result30
-    }
+    toPipe(num3)
+      .pairwiseBetween(Over(Second), Lower, toPipe(dataH), List(
+        Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
+        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
+          Default(Redistribute(123), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its second along pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataI
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Along(Second), Lower, that,
-          Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-            Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result31
-    }
+    toPipe(num3)
+      .pairwiseBetween(Along(Second), Lower, toPipe(dataI),
+        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
+          Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third over pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataJ
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Over(Third), Lower, that, List(
-          Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
-          Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
-            Default(Reducers(123), Redistribute(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result32
-    }
+    toPipe(num3)
+      .pairwiseBetween(Over(Third), Lower, toPipe(dataJ), List(
+        Plus(Locate.OperatorString[Position1D, Position2D]("(%1$s+%2$s)")),
+        Minus(Locate.OperatorString[Position1D, Position2D]("(%1$s-%2$s)"))),
+          Default(Reducers(123), Redistribute(321)))
+      .toList.sortBy(_.position) shouldBe result32
   }
 
   it should "return its third along pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataK
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetween(Along(Third), Lower, that,
-          Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
-            Default(Reducers(123), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result33
-    }
+    toPipe(num3)
+      .pairwiseBetween(Along(Third), Lower, toPipe(dataK),
+        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")),
+          Default(Reducers(123), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result33
   }
 
   "A Matrix.pairwiseBetweenWithValue" should "return its first over pairwise in 1D" in {
-    Given {
-      num1
-    } And {
-      dataL
-    } When {
-      (cells: TypedPipe[Cell[Position1D]], that: TypedPipe[Cell[Position1D]]) =>
-        cells.pairwiseBetweenWithValue(Over(First), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position0D](),
-          ValuePipe(ext), Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result34
-    }
+    toPipe(num1)
+      .pairwiseBetweenWithValue(Over(First), Lower, toPipe(dataL), TestMatrixPairwise.PlusX[Position1D, Position0D](),
+        ValuePipe(ext), Default(Reducers(123), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result34
   }
 
   it should "return its first over pairwise in 2D" in {
-    Given {
-      num2
-    } And {
-      dataM
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetweenWithValue(Over(First), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result35
-    }
+    toPipe(num2)
+      .pairwiseBetweenWithValue(Over(First), Lower, toPipe(dataM), TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(321)))
+      .toList.sortBy(_.position) shouldBe result35
   }
 
   it should "return its first along pairwise in 2D" in {
-    Given {
-      num2
-    } And {
-      dataN
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetweenWithValue(Along(First), Lower, that, List(
-          TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
-          ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result36
-    }
+    toPipe(num2)
+      .pairwiseBetweenWithValue(Along(First), Lower, toPipe(dataN), List(
+        TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
+        ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result36
   }
 
   it should "return its second over pairwise in 2D" in {
-    Given {
-      num2
-    } And {
-      dataO
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetweenWithValue(Over(Second), Lower, that, List(
-          TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
-          ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result37
-    }
+    toPipe(num2)
+      .pairwiseBetweenWithValue(Over(Second), Lower, toPipe(dataO), List(
+        TestMatrixPairwise.PlusX[Position1D, Position1D](), TestMatrixPairwise.MinusX[Position1D, Position1D]()),
+        ValuePipe(ext), Default(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result37
   }
 
   it should "return its second along pairwise in 2D" in {
-    Given {
-      num2
-    } And {
-      dataP
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.pairwiseBetweenWithValue(Along(Second), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position1D](),
-          ValuePipe(ext), Unbalanced(Reducers(123), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result38
-    }
+    toPipe(num2)
+      .pairwiseBetweenWithValue(Along(Second), Lower, toPipe(dataP), TestMatrixPairwise.PlusX[Position1D, Position1D](),
+        ValuePipe(ext), Unbalanced(Reducers(123), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result38
   }
 
   it should "return its first over pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataQ
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue(Over(First), Lower, that, TestMatrixPairwise.PlusX[Position1D, Position2D](),
-          ValuePipe(ext), Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result39
-    }
+    toPipe(num3)
+      .pairwiseBetweenWithValue(Over(First), Lower, toPipe(dataQ), TestMatrixPairwise.PlusX[Position1D, Position2D](),
+        ValuePipe(ext), Unbalanced(Redistribute(123) |-> Reducers(456), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result39
   }
 
   it should "return its first along pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataR
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue(Along(First), Lower, that, List(
-          TestMatrixPairwise.PlusX[Position2D, Position1D](), TestMatrixPairwise.MinusX[Position2D, Position1D]()),
-          ValuePipe(ext), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result40
-    }
+    toPipe(num3)
+      .pairwiseBetweenWithValue(Along(First), Lower, toPipe(dataR), List(
+        TestMatrixPairwise.PlusX[Position2D, Position1D](), TestMatrixPairwise.MinusX[Position2D, Position1D]()),
+        ValuePipe(ext), InMemory())
+      .toList.sortBy(_.position) shouldBe result40
   }
 
   it should "return its second over pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataS
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue(Over(Second), Lower, that, List(
-          TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
-          ValuePipe(ext), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result41
-    }
+    toPipe(num3)
+      .pairwiseBetweenWithValue(Over(Second), Lower, toPipe(dataS), List(
+        TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
+        ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result41
   }
 
   it should "return its second along pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataT
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue(Along(Second), Lower, that, TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          ValuePipe(ext), Default(Redistribute(123), Redistribute(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result42
-    }
+    toPipe(num3)
+      .pairwiseBetweenWithValue(Along(Second), Lower, toPipe(dataT), TestMatrixPairwise.PlusX[Position2D, Position1D](),
+        ValuePipe(ext), Default(Redistribute(123), Redistribute(321)))
+      .toList.sortBy(_.position) shouldBe result42
   }
 
   it should "return its third over pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataU
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue(Over(Third), Lower, that, List(
-          TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
-          ValuePipe(ext), Default(Redistribute(123), Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result43
-    }
+    toPipe(num3)
+      .pairwiseBetweenWithValue(Over(Third), Lower, toPipe(dataU), List(
+        TestMatrixPairwise.PlusX[Position1D, Position2D](), TestMatrixPairwise.MinusX[Position1D, Position2D]()),
+        ValuePipe(ext), Default(Redistribute(123), Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result43
   }
 
   it should "return its third along pairwise in 3D" in {
-    Given {
-      num3
-    } And {
-      dataV
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.pairwiseBetweenWithValue(Along(Third), Lower, that, TestMatrixPairwise.PlusX[Position2D, Position1D](),
-          ValuePipe(ext), Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result44
-    }
+    toPipe(num3)
+      .pairwiseBetweenWithValue(Along(Third), Lower, toPipe(dataV), TestMatrixPairwise.PlusX[Position2D, Position1D](),
+        ValuePipe(ext), Default(Redistribute(123), Redistribute(654) |-> Reducers(321)))
+      .toList.sortBy(_.position) shouldBe result44
   }
 
   it should "return empty data - InMemory" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseBetween(Along(Third), Lower, TypedPipe.empty,
-          Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe List()
-    }
+    toPipe(num3)
+      .pairwiseBetween(Along(Third), Lower, TypedPipe.empty,
+        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), InMemory())
+      .toList.sortBy(_.position) shouldBe List()
   }
 
   it should "return empty data - Default" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.pairwiseBetween(Along(Third), Lower, TypedPipe.empty,
-          Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe List()
-    }
+    toPipe(num3)
+      .pairwiseBetween(Along(Third), Lower, TypedPipe.empty,
+        Plus(Locate.OperatorString[Position2D, Position1D]("(%1$s+%2$s)")), Default())
+      .toList.sortBy(_.position) shouldBe List()
   }
 }
 
@@ -7055,150 +5700,85 @@ trait TestMatrixChange extends TestMatrix {
     Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
 }
 
-class TestScaldingMatrixChange extends TestMatrixChange with TBddDsl {
+class TestScaldingMatrixChange extends TestMatrixChange {
 
   "A Matrix.change" should "return its first over data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.change(Over(First), "foo", ContinuousSchema(DoubleCodex), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data1)
+      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), InMemory())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data2)
+      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default())
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.change(Along(First), List(3, 4), ContinuousSchema(DoubleCodex), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(data2)
+      .change(Along(First), List(3, 4), ContinuousSchema(DoubleCodex), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(data2)
+      .change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Unbalanced(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.change(Along(Second), "foo", ContinuousSchema(DoubleCodex), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(data2)
+      .change(Along(Second), "foo", ContinuousSchema(DoubleCodex), InMemory())
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(data3)
+      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default())
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.change(Along(First), List(Position2D(3, "xyz"), Position2D(4, "xyz")),
-          ContinuousSchema(DoubleCodex), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(data3)
+      .change(Along(First), List(Position2D(3, "xyz"), Position2D(4, "xyz")),
+        ContinuousSchema(DoubleCodex), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Unbalanced(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(data3)
+      .change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Unbalanced(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.change(Along(Second), Position2D("foo", "xyz"), ContinuousSchema(DoubleCodex), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(data3)
+      .change(Along(Second), Position2D("foo", "xyz"), ContinuousSchema(DoubleCodex), InMemory())
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.change(Over(Third), List("xyz"), ContinuousSchema(DoubleCodex), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    toPipe(data3)
+      .change(Over(Third), List("xyz"), ContinuousSchema(DoubleCodex), Default())
+      .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.change(Along(Third), Position2D("foo", 1), ContinuousSchema(DoubleCodex), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result11
-    }
+    toPipe(data3)
+      .change(Along(Third), Position2D("foo", 1), ContinuousSchema(DoubleCodex), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return with empty data - InMemory" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.change(Over(First), List.empty[Position1D], ContinuousSchema(DoubleCodex), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
-    }
+    toPipe(data3)
+      .change(Over(First), List.empty[Position1D], ContinuousSchema(DoubleCodex), InMemory())
+      .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 
   it should "return with empty data - Default" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.change(Over(First), List.empty[Position1D], ContinuousSchema(DoubleCodex), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
-    }
+    toPipe(data3)
+      .change(Over(First), List.empty[Position1D], ContinuousSchema(DoubleCodex), Default())
+      .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 }
 
@@ -7382,114 +5962,63 @@ trait TestMatrixSet extends TestMatrix {
     Cell(Position3D("quxx", 5, "abc"), Content(ContinuousSchema(DoubleCodex), 2)))
 }
 
-class TestScaldingMatrixSet extends TestMatrixSet with TBddDsl {
+class TestScaldingMatrixSet extends TestMatrixSet {
 
   "A Matrix.set" should "return its updated data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.set(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data1)
+      .set(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its updated and added data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.set(List("foo", "quxx")
-          .map { case pos => Cell(Position1D(pos), Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data1)
+      .set(List("foo", "quxx")
+        .map { case pos => Cell(Position1D(pos), Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its matrix updated data in 1D" in {
-    Given {
-      data1
-    } And {
-      dataA
-    } When {
-      (cells: TypedPipe[Cell[Position1D]], that: TypedPipe[Cell[Position1D]]) =>
-        cells.set(that, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(data1)
+      .set(toPipe(dataA), Default())
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its updated data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.set(Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1)), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(data2)
+      .set(Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1)), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its updated and added data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.set(List(Position2D("foo", 2), Position2D("quxx", 5))
-          .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(data2)
+      .set(List(Position2D("foo", 2), Position2D("quxx", 5))
+        .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default())
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its matrix updated data in 2D" in {
-    Given {
-      data2
-    } And {
-      dataB
-    } When {
-      (cells: TypedPipe[Cell[Position2D]], that: TypedPipe[Cell[Position2D]]) =>
-        cells.set(that, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(data2)
+      .set(toPipe(dataB), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its updated data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.set(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(data3)
+      .set(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its updated and added data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc"))
-          .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(data3)
+      .set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc"))
+        .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its matrix updated data in 3D" in {
-    Given {
-      data3
-    } And {
-      dataC
-    } When {
-      (cells: TypedPipe[Cell[Position3D]], that: TypedPipe[Cell[Position3D]]) =>
-        cells.set(that, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(data3)
+      .set(toPipe(dataC), Default())
+      .toList.sortBy(_.position) shouldBe result9
   }
 }
 
@@ -7717,183 +6246,123 @@ trait TestMatrixTransform extends TestMatrix {
   }
 }
 
-class TestScaldingMatrixTransform extends TestMatrixTransform with TBddDsl {
+class TestScaldingMatrixTransform extends TestMatrixTransform {
 
   "A Matrix.transform" should "return its transformed data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.transform[Position1D, Transformer[Position1D, Position1D]](
-          Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data1)
+      .transform[Position1D, Transformer[Position1D, Position1D]](
+        Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")))
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its transformed data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.transform[Position2D, List[Transformer[Position2D, Position2D]]](List(
-          Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")),
-          Binarise(Binarise.rename(First))))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data2)
+      .transform[Position2D, List[Transformer[Position2D, Position2D]]](List(
+        Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")),
+        Binarise(Binarise.rename(First))))
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its transformed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.transform[Position3D, List[Transformer[Position3D, Position3D]]](List(
-          Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")),
-          Binarise(Binarise.rename(First))))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(data3)
+      .transform[Position3D, List[Transformer[Position3D, Position3D]]](List(
+        Indicator().andThenRename(Transformer.rename(First, "%1$s.ind")),
+        Binarise(Binarise.rename(First))))
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   "A Matrix.transformWithValue" should "return its transformed data in 1D" in {
-    Given {
-      num1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.transformWithValue[Position1D, List[TransformerWithValue[Position1D,Position1D] { type V >: W }], W](List(
-          Normalise(extractor[Dimension.First, Position1D](First, "max.abs"))
-            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")),
-          Standardise(extractor[Dimension.First, Position1D](First, "mean"),
-            extractor[Dimension.First, Position1D](First, "sd"))
-            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.s"))),
-          ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(num1)
+      .transformWithValue[Position1D, List[TransformerWithValue[Position1D,Position1D] { type V >: W }], W](List(
+        Normalise(extractor[Dimension.First, Position1D](First, "max.abs"))
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")),
+        Standardise(extractor[Dimension.First, Position1D](First, "mean"),
+          extractor[Dimension.First, Position1D](First, "sd"))
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.s"))),
+        ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its transformed data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
-          Normalise(extractor[Dimension.First, Position2D](First, "max.abs"))
-            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")),
-          ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(num2)
+      .transformWithValue[Position2D, TransformerWithValue[Position2D, Position2D] { type V >: W }, W](
+        Normalise(extractor[Dimension.First, Position2D](First, "max.abs"))
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")),
+        ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its transformed data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.transformWithValue[Position3D, TransformerWithValue[Position3D, Position3D] { type V >: W }, W](
-          Normalise(extractor[Dimension.First, Position3D](First, "max.abs"))
-            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")),
-          ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(num3)
+      .transformWithValue[Position3D, TransformerWithValue[Position3D, Position3D] { type V >: W }, W](
+        Normalise(extractor[Dimension.First, Position3D](First, "max.abs"))
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n")),
+        ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   "A Matrix.transformAndExpand" should "return its transformed data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.transform[Position2D, Transformer[Position1D, Position2D]](Indicator()
-          .andThenRename(Transformer.rename(First, "%1$s.ind"))
-          .andThenExpand(Transformer.expand[Position1D, Position1D, String]("ind")))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(data1)
+      .transform[Position2D, Transformer[Position1D, Position2D]](Indicator()
+        .andThenRename(Transformer.rename(First, "%1$s.ind"))
+        .andThenExpand(Transformer.expand[Position1D, Position1D, String]("ind")))
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its transformed data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.transform[Position3D, List[Transformer[Position2D, Position3D]]](List(
-          Indicator()
-            .andThenRename(Transformer.rename(First, "%1$s.ind"))
-            .andThenExpand(Transformer.expand[Position2D, Position2D, String]("ind")),
-          Binarise(Binarise.rename(First))
-            .andThenExpand(Transformer.expand[Position2D, Position2D, String]("bin"))))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(data2)
+      .transform[Position3D, List[Transformer[Position2D, Position3D]]](List(
+        Indicator()
+          .andThenRename(Transformer.rename(First, "%1$s.ind"))
+          .andThenExpand(Transformer.expand[Position2D, Position2D, String]("ind")),
+        Binarise(Binarise.rename(First))
+          .andThenExpand(Transformer.expand[Position2D, Position2D, String]("bin"))))
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its transformed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.transform[Position4D, List[Transformer[Position3D, Position4D]]](List(
-          Indicator()
-            .andThenRename(Transformer.rename(First, "%1$s.ind"))
-            .andThenExpand(Transformer.expand[Position3D, Position3D, String]("ind")),
-          Binarise(Binarise.rename(First))
-            .andThenExpand(Transformer.expand[Position3D, Position3D, String]("bin"))))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(data3)
+      .transform[Position4D, List[Transformer[Position3D, Position4D]]](List(
+        Indicator()
+          .andThenRename(Transformer.rename(First, "%1$s.ind"))
+          .andThenExpand(Transformer.expand[Position3D, Position3D, String]("ind")),
+        Binarise(Binarise.rename(First))
+          .andThenExpand(Transformer.expand[Position3D, Position3D, String]("bin"))))
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   "A Matrix.transformAndExpandWithValue" should "return its transformed data in 1D" in {
-    Given {
-      num1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.transformWithValue[Position2D, List[TransformerWithValue[Position1D,Position2D] { type V >: W }], W](List(
-          Normalise(extractor[Dimension.First, Position1D](First, "max.abs"))
-            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
-            .andThenExpandWithValue(TransformerWithValue.expand[Position1D, Position1D, W, String]("nrm")),
-          Standardise(extractor[Dimension.First, Position1D](First, "mean"),
-            extractor[Dimension.First, Position1D](First, "sd"))
-            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.s"))
-            .andThenExpandWithValue(TransformerWithValue.expand[Position1D, Position1D, W, String]("std"))),
-          ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    toPipe(num1)
+      .transformWithValue[Position2D, List[TransformerWithValue[Position1D,Position2D] { type V >: W }], W](List(
+        Normalise(extractor[Dimension.First, Position1D](First, "max.abs"))
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
+          .andThenExpandWithValue(TransformerWithValue.expand[Position1D, Position1D, W, String]("nrm")),
+        Standardise(extractor[Dimension.First, Position1D](First, "mean"),
+          extractor[Dimension.First, Position1D](First, "sd"))
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.s"))
+          .andThenExpandWithValue(TransformerWithValue.expand[Position1D, Position1D, W, String]("std"))),
+        ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its transformed data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.transformWithValue[Position3D, TransformerWithValue[Position2D, Position3D] { type V >: W }, W](
-          Normalise(extractor[Dimension.First, Position2D](First, "max.abs"))
-            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
-            .andThenExpandWithValue(TransformerWithValue.expand[Position2D, Position2D, W, String]("nrm")),
-          ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result11
-    }
+    toPipe(num2)
+      .transformWithValue[Position3D, TransformerWithValue[Position2D, Position3D] { type V >: W }, W](
+        Normalise(extractor[Dimension.First, Position2D](First, "max.abs"))
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
+          .andThenExpandWithValue(TransformerWithValue.expand[Position2D, Position2D, W, String]("nrm")),
+        ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its transformed data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.transformWithValue[Position4D, TransformerWithValue[Position3D, Position4D] { type V >: W }, W](
-          Normalise(extractor[Dimension.First, Position3D](First, "max.abs"))
-            .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
-            .andThenExpandWithValue(TransformerWithValue.expand[Position3D, Position3D, W, String]("nrm")),
-          ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result12
-    }
+    toPipe(num3)
+      .transformWithValue[Position4D, TransformerWithValue[Position3D, Position4D] { type V >: W }, W](
+        Normalise(extractor[Dimension.First, Position3D](First, "max.abs"))
+          .andThenRenameWithValue(TransformerWithValue.rename(First, "%1$s.n"))
+          .andThenExpandWithValue(TransformerWithValue.expand[Position3D, Position3D, W, String]("nrm")),
+        ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result12
   }
 }
 
@@ -8218,261 +6687,151 @@ object TestMatrixSlide {
   }
 }
 
-class TestScaldingMatrixSlide extends TestMatrixSlide with TBddDsl {
+class TestScaldingMatrixSlide extends TestMatrixSlide {
 
   "A Matrix.slide" should "return its first along derived data in 1D" in {
-    Given {
-      num1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.slide(Along(First), List(TestMatrixSlide.Delta[Position0D, Position1D](1),
-          TestMatrixSlide.Delta[Position0D, Position1D](2)), false, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(num1)
+      .slide(Along(First), List(TestMatrixSlide.Delta[Position0D, Position1D](1),
+        TestMatrixSlide.Delta[Position0D, Position1D](2)), false, Default())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over derived data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(num2)
+      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along derived data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Along(First), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(num2)
+      .slide(Along(First), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default())
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over derived data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(num2)
+      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along derived data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slide(Along(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(num2)
+      .slide(Along(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default())
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(num3)
+      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(num3)
+      .slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(num3)
+      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1), true, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D](1), false, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(num3)
+      .slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D](1), false, Default())
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    toPipe(num3)
+      .slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slide(Along(Third), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result11
-    }
+    toPipe(num3)
+      .slide(Along(Third), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
+      .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.slideWithValue" should "return its first along derived data in 1D" in {
-    Given {
-      num1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
-          TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ValuePipe(ext), true,
-            Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result12
-    }
+    toPipe(num1)
+      .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
+        TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ValuePipe(ext), true,
+          Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over derived data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
-          ValuePipe(ext), false, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result13
-    }
+    toPipe(num2)
+      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+        ValuePipe(ext), false, Default())
+      .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along derived data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
-          ValuePipe(ext), false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result14
-    }
+    toPipe(num2)
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+        ValuePipe(ext), false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over derived data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
-          ValuePipe(ext), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result15
-    }
+    toPipe(num2)
+      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+        ValuePipe(ext), true, Default())
+      .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along derived data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
-          ValuePipe(ext), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result16
-    }
+    toPipe(num2)
+      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+        ValuePipe(ext), true, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
-          ValuePipe(ext), false, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result17
-    }
+    toPipe(num3)
+      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
+        ValuePipe(ext), false, Default())
+      .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
-          ValuePipe(ext), false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result18
-    }
+    toPipe(num3)
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
+        ValuePipe(ext), false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
-          ValuePipe(ext), true, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result19
-    }
+    toPipe(num3)
+      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
+        ValuePipe(ext), true, Default())
+      .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
-          ValuePipe(ext), true, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result20
-    }
+    toPipe(num3)
+      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
+        ValuePipe(ext), true, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
-          ValuePipe(ext), false, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result21
-    }
+    toPipe(num3)
+      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
+        ValuePipe(ext), false, Default())
+      .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along derived data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
-          ValuePipe(ext), false, Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result22
-    }
+    toPipe(num3)
+      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
+        ValuePipe(ext), false, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result22
   }
 }
 
@@ -8830,165 +7189,115 @@ trait TestMatrixFill extends TestMatrix {
     Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)))
 }
 
-class TestScaldingMatrixFill extends TestMatrixFill with TBddDsl {
+class TestScaldingMatrixFill extends TestMatrixFill {
 
   "A Matrix.fill" should "return its filled data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(num2)
+      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its filled data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(num3)
+      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   "A Matrix.fill" should "return its first over filled data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.fillHeterogeneous(Over(First), cells.summarise(Over(First), Mean[Position2D, Position1D]()), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    val cells = toPipe(num2)
+
+    cells
+      .fillHeterogeneous(Over(First), cells.summarise(Over(First), Mean[Position2D, Position1D]()), InMemory())
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its first along filled data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.fillHeterogeneous(Along(First), cells.summarise(Along(First), Mean[Position2D, Position1D]()),
-          InMemory(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    val cells = toPipe(num2)
+
+    cells
+      .fillHeterogeneous(Along(First), cells.summarise(Along(First), Mean[Position2D, Position1D]()),
+        InMemory(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second over filled data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.fillHeterogeneous(Over(Second), cells.summarise(Over(Second), Mean[Position2D, Position1D]()), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    val cells = toPipe(num2)
+
+    cells
+      .fillHeterogeneous(Over(Second), cells.summarise(Over(Second), Mean[Position2D, Position1D]()), Default())
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its second along filled data in 2D" in {
-    Given {
-      num2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.fillHeterogeneous(Along(Second), cells.summarise(Along(Second), Mean[Position2D, Position1D]()),
-          Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    val cells = toPipe(num2)
+
+    cells
+      .fillHeterogeneous(Along(Second), cells.summarise(Along(Second), Mean[Position2D, Position1D]()),
+        Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first over filled data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.fillHeterogeneous(Over(First), cells.summarise(Over(First), Mean[Position3D, Position1D]()), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    val cells = toPipe(num3)
+
+    cells
+      .fillHeterogeneous(Over(First), cells.summarise(Over(First), Mean[Position3D, Position1D]()), InMemory())
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its first along filled data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.fillHeterogeneous(Along(First), cells.summarise(Along(First), Mean[Position3D, Position2D]()),
-          InMemory(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    val cells = toPipe(num3)
+
+    cells
+      .fillHeterogeneous(Along(First), cells.summarise(Along(First), Mean[Position3D, Position2D]()),
+        InMemory(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second over filled data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.fillHeterogeneous(Over(Second), cells.summarise(Over(Second), Mean[Position3D, Position1D]()), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    val cells = toPipe(num3)
+
+    cells
+      .fillHeterogeneous(Over(Second), cells.summarise(Over(Second), Mean[Position3D, Position1D]()), Default())
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its second along filled data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.fillHeterogeneous(Along(Second), cells.summarise(Along(Second), Mean[Position3D, Position2D]()),
-          Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    val cells = toPipe(num3)
+
+    cells
+      .fillHeterogeneous(Along(Second), cells.summarise(Along(Second), Mean[Position3D, Position2D]()),
+        Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third over filled data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.fillHeterogeneous(Over(Third), cells.summarise(Over(Third), Mean[Position3D, Position1D]()), InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result11
-    }
+    val cells = toPipe(num3)
+
+    cells
+      .fillHeterogeneous(Over(Third), cells.summarise(Over(Third), Mean[Position3D, Position1D]()), InMemory())
+      .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its third along filled data in 3D" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.fillHeterogeneous(Along(Third), cells.summarise(Along(Third), Mean[Position3D, Position2D]()),
-          InMemory(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result12
-    }
+    val cells = toPipe(num3)
+
+    cells
+      .fillHeterogeneous(Along(Third), cells.summarise(Along(Third), Mean[Position3D, Position2D]()),
+        InMemory(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return empty data - InMemory" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.fillHeterogeneous(Along(Third), TypedPipe.empty, InMemory())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe List()
-    }
+    toPipe(num3)
+      .fillHeterogeneous(Along(Third), TypedPipe.empty, InMemory())
+      .toList.sortBy(_.position) shouldBe List()
   }
 
   it should "return empty data - Default" in {
-    Given {
-      num3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.fillHeterogeneous(Along(Third), TypedPipe.empty, Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe List()
-    }
+    toPipe(num3)
+      .fillHeterogeneous(Along(Third), TypedPipe.empty, Default())
+      .toList.sortBy(_.position) shouldBe List()
   }
 }
 
@@ -9245,138 +7554,78 @@ object TestMatrixRename {
   }
 }
 
-class TestScaldingMatrixRename extends TestMatrixRename with TBddDsl {
+class TestScaldingMatrixRename extends TestMatrixRename {
 
   "A Matrix.rename" should "return its first renamed data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.rename(TestMatrixRename.renamer(First))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data1)
+      .rename(TestMatrixRename.renamer(First))
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first renamed data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.rename(TestMatrixRename.renamer(First))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data2)
+      .rename(TestMatrixRename.renamer(First))
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its second renamed data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.rename(TestMatrixRename.renamer(Second))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(data2)
+      .rename(TestMatrixRename.renamer(Second))
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its first renamed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.rename(TestMatrixRename.renamer(First))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(data3)
+      .rename(TestMatrixRename.renamer(First))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second renamed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.rename(TestMatrixRename.renamer(Second))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(data3)
+      .rename(TestMatrixRename.renamer(Second))
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its third renamed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.rename(TestMatrixRename.renamer(Third))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(data3)
+      .rename(TestMatrixRename.renamer(Third))
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   "A Matrix.renameWithValue" should "return its first renamed data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(data1)
+      .renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its first renamed data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(data2)
+      .renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second renamed data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.renameWithValue(TestMatrixRename.renamerWithValue(Second), ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(data2)
+      .renameWithValue(TestMatrixRename.renamerWithValue(Second), ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its first renamed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    toPipe(data3)
+      .renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its second renamed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.renameWithValue(TestMatrixRename.renamerWithValue(Second), ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result11
-    }
+    toPipe(data3)
+      .renameWithValue(TestMatrixRename.renamerWithValue(Second), ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its third renamed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.renameWithValue(TestMatrixRename.renamerWithValue(Third), ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result12
-    }
+    toPipe(data3)
+      .renameWithValue(TestMatrixRename.renamerWithValue(Third), ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result12
   }
 }
 
@@ -9545,121 +7794,71 @@ object TestMatrixSquash {
   }
 }
 
-class TestScaldingMatrixSquash extends TestMatrixSquash with TBddDsl {
+class TestScaldingMatrixSquash extends TestMatrixSquash {
 
   "A Matrix.squash" should "return its first squashed data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.squash(First, PreservingMaxPosition[Position2D](), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data2)
+      .squash(First, PreservingMaxPosition[Position2D](), Default())
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its second squashed data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.squash(Second, PreservingMaxPosition[Position2D](), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data2)
+      .squash(Second, PreservingMaxPosition[Position2D](), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first squashed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.squash(First, PreservingMaxPosition[Position3D](), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(data3)
+      .squash(First, PreservingMaxPosition[Position3D](), Default())
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second squashed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.squash(Second, PreservingMaxPosition[Position3D](), Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(data3)
+      .squash(Second, PreservingMaxPosition[Position3D](), Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its third squashed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.squash(Third, PreservingMaxPosition[Position3D](), Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(data3)
+      .squash(Third, PreservingMaxPosition[Position3D](), Default())
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   "A Matrix.squashWithValue" should "return its first squashed data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.squashWithValue(First, TestMatrixSquash.PreservingMaxPositionWithValue[Position2D](), ValuePipe(ext),
-          Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(data2)
+      .squashWithValue(First, TestMatrixSquash.PreservingMaxPositionWithValue[Position2D](), ValuePipe(ext),
+        Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its second squashed data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.squashWithValue(Second, TestMatrixSquash.PreservingMaxPositionWithValue[Position2D](), ValuePipe(ext),
-          Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(data2)
+      .squashWithValue(Second, TestMatrixSquash.PreservingMaxPositionWithValue[Position2D](), ValuePipe(ext),
+        Default())
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its first squashed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.squashWithValue(First, TestMatrixSquash.PreservingMaxPositionWithValue[Position3D](), ValuePipe(ext),
-          Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(data3)
+      .squashWithValue(First, TestMatrixSquash.PreservingMaxPositionWithValue[Position3D](), ValuePipe(ext),
+        Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second squashed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.squashWithValue(Second, TestMatrixSquash.PreservingMaxPositionWithValue[Position3D](), ValuePipe(ext),
-          Default())
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(data3)
+      .squashWithValue(Second, TestMatrixSquash.PreservingMaxPositionWithValue[Position3D](), ValuePipe(ext),
+        Default())
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third squashed data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.squashWithValue(Third, TestMatrixSquash.PreservingMaxPositionWithValue[Position3D](), ValuePipe(ext),
-          Default(Reducers(123)))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    toPipe(data3)
+      .squashWithValue(Third, TestMatrixSquash.PreservingMaxPositionWithValue[Position3D](), ValuePipe(ext),
+        Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result10
   }
 }
 
@@ -9792,61 +7991,36 @@ trait TestMatrixMelt extends TestMatrix {
     Cell(Position2D("qux.xyz", 1), Content(OrdinalSchema(StringCodex), "12.56")))
 }
 
-class TestScaldingMatrixMelt extends TestMatrixMelt with TBddDsl {
+class TestScaldingMatrixMelt extends TestMatrixMelt {
 
   "A Matrix.melt" should "return its first melted data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.melt(First, Second)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data2)
+      .melt(First, Second)
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its second melted data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.melt(Second, First)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data2)
+      .melt(Second, First)
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first melted data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.melt(First, Third)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(data3)
+      .melt(First, Third)
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second melted data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.melt(Second, Third)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(data3)
+      .melt(Second, Third)
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its third melted data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.melt(Third, First)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(data3)
+      .melt(Third, First)
+      .toList.sortBy(_.position) shouldBe result5
   }
 }
 
@@ -10102,204 +8276,114 @@ object TestMatrixExpand {
   val expand3D5DWithValue = expander2DWithValue[Position3D, Position4D] _
 }
 
-class TestScaldingMatrixExpand extends TestMatrixExpand with TBddDsl {
+class TestScaldingMatrixExpand extends TestMatrixExpand {
 
   "A Matrix.expand" should "return its 1D expanded data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand(TestMatrixExpand.expand1D2D)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data1)
+      .expand(TestMatrixExpand.expand1D2D)
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its 2D expanded data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand(TestMatrixExpand.expand1D3D)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data1)
+      .expand(TestMatrixExpand.expand1D3D)
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its 3D expanded data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand(TestMatrixExpand.expand1D4D)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(data1)
+      .expand(TestMatrixExpand.expand1D4D)
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its 4D expanded data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.expand(TestMatrixExpand.expand1D5D)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(data1)
+      .expand(TestMatrixExpand.expand1D5D)
+      .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its 1D expanded data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.expand(TestMatrixExpand.expand2D3D)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result5
-    }
+    toPipe(data2)
+      .expand(TestMatrixExpand.expand2D3D)
+      .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its 2D expanded data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.expand(TestMatrixExpand.expand2D4D)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result6
-    }
+    toPipe(data2)
+      .expand(TestMatrixExpand.expand2D4D)
+      .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its 3D expanded data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.expand(TestMatrixExpand.expand2D5D)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result7
-    }
+    toPipe(data2)
+      .expand(TestMatrixExpand.expand2D5D)
+      .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its 1D expanded data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.expand(TestMatrixExpand.expand3D4D)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result8
-    }
+    toPipe(data3)
+      .expand(TestMatrixExpand.expand3D4D)
+      .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its 2D expanded data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.expand(TestMatrixExpand.expand3D5D)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result9
-    }
+    toPipe(data3)
+      .expand(TestMatrixExpand.expand3D5D)
+      .toList.sortBy(_.position) shouldBe result9
   }
 
   "A Matrix.expandWithValue" should "return its 1D expanded data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.expandWithValue(TestMatrixExpand.expand1D2DWithValue, ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result10
-    }
+    toPipe(data1)
+      .expandWithValue(TestMatrixExpand.expand1D2DWithValue, ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its 2D expanded data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.expandWithValue(TestMatrixExpand.expand1D3DWithValue, ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result11
-    }
+    toPipe(data1)
+      .expandWithValue(TestMatrixExpand.expand1D3DWithValue, ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its 3D expanded data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.expandWithValue(TestMatrixExpand.expand1D4DWithValue, ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result12
-    }
+    toPipe(data1)
+      .expandWithValue(TestMatrixExpand.expand1D4DWithValue, ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its 4D expanded data in 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.expandWithValue(TestMatrixExpand.expand1D5DWithValue, ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result13
-    }
+    toPipe(data1)
+      .expandWithValue(TestMatrixExpand.expand1D5DWithValue, ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its 1D expanded data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.expandWithValue(TestMatrixExpand.expand2D3DWithValue, ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result14
-    }
+    toPipe(data2)
+      .expandWithValue(TestMatrixExpand.expand2D3DWithValue, ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its 2D expanded data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.expandWithValue(TestMatrixExpand.expand2D4DWithValue, ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result15
-    }
+    toPipe(data2)
+      .expandWithValue(TestMatrixExpand.expand2D4DWithValue, ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its 3D expanded data in 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.expandWithValue(TestMatrixExpand.expand2D5DWithValue, ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result16
-    }
+    toPipe(data2)
+      .expandWithValue(TestMatrixExpand.expand2D5DWithValue, ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its 1D expanded data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.expandWithValue(TestMatrixExpand.expand3D4DWithValue, ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result17
-    }
+    toPipe(data3)
+      .expandWithValue(TestMatrixExpand.expand3D4DWithValue, ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its 2D expanded data in 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.expandWithValue(TestMatrixExpand.expand3D5DWithValue, ValuePipe(ext))
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result18
-    }
+    toPipe(data3)
+      .expandWithValue(TestMatrixExpand.expand3D5DWithValue, ValuePipe(ext))
+      .toList.sortBy(_.position) shouldBe result18
   }
 }
 
@@ -10455,50 +8539,30 @@ trait TestMatrixPermute extends TestMatrix {
     Cell(Position5D(5, 1, 1, 5, 3), Content(ContinuousSchema(DoubleCodex), 9.42)))
 }
 
-class TestScaldingMatrixPermute extends TestMatrixPermute with TBddDsl {
+class TestScaldingMatrixPermute extends TestMatrixPermute {
 
   "A Matrix.permute" should "return its permutation in 2D" in {
-    Given {
-      dataA
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.permute(Second, First)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(dataA)
+      .permute(Second, First)
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its permutation in 3D" in {
-    Given {
-      dataB
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.permute(Second, Third, First)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(dataB)
+      .permute(Second, Third, First)
+      .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its permutation in 4D" in {
-    Given {
-      dataC
-    } When {
-      cells: TypedPipe[Cell[Position4D]] =>
-        cells.permute(Fourth, Third, First, Second)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result3
-    }
+    toPipe(dataC)
+      .permute(Fourth, Third, First, Second)
+      .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its permutation in 5D" in {
-    Given {
-      dataD
-    } When {
-      cells: TypedPipe[Cell[Position5D]] =>
-        cells.permute(Fourth, Second, First, Fifth, Third)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result4
-    }
+    toPipe(dataD)
+      .permute(Fourth, Second, First, Fifth, Third)
+      .toList.sortBy(_.position) shouldBe result4
   }
 }
 
@@ -10545,28 +8609,18 @@ trait TestMatrixToVector extends TestMatrix {
     .sortBy(_.position)
 }
 
-class TestScaldingMatrixToVector extends TestMatrixToVector with TBddDsl {
+class TestScaldingMatrixToVector extends TestMatrixToVector {
 
   "A Matrix.toVector" should "return its vector for 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.toVector(separator)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result1
-    }
+    toPipe(data2)
+      .toVector(separator)
+      .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its permutation vector for 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.toVector(separator)
-    } Then {
-      _.toList.sortBy(_.position) shouldBe result2
-    }
+    toPipe(data3)
+      .toVector(separator)
+      .toList.sortBy(_.position) shouldBe result2
   }
 }
 
@@ -10606,10 +8660,7 @@ trait TestMatrixMaterialise extends TestMatrix {
     Cell(Position2D("c", "three"), Content(ContinuousSchema(DoubleCodex), 12.56)))
 }
 
-class TestScaldingMatrixMaterialise extends TestMatrixMaterialise with TBddDsl {
-
-  implicit val mode = Local(true)
-  implicit val config = Config.defaultFrom(mode)
+class TestScaldingMatrixMaterialise extends TestMatrixMaterialise {
 
   "A Matrix.materialise" should "return its list" in {
     LV2C2TPM2(data)
@@ -10636,39 +8687,24 @@ trait TestMatrixToText extends TestMatrix {
   val result3 = data3.map(_.toString("/", false, true)).sorted
 }
 
-class TestScaldingMatrixToText extends TestMatrixToText with TBddDsl {
+class TestScaldingMatrixToText extends TestMatrixToText {
 
   "A Matrix.toText" should "return its strings for 1D" in {
-    Given {
-      data1
-    } When {
-      cells: TypedPipe[Cell[Position1D]] =>
-        cells.toText(Cell.toString(":", true, true))
-    } Then {
-      _.toList.sorted shouldBe result1
-    }
+    toPipe(data1)
+      .toText(Cell.toString(":", true, true))
+      .toList.sorted shouldBe result1
   }
 
   "A Matrix.toText" should "return its strings for 2D" in {
-    Given {
-      data2
-    } When {
-      cells: TypedPipe[Cell[Position2D]] =>
-        cells.toText(Cell.toString("|", false, false))
-    } Then {
-      _.toList.sorted shouldBe result2
-    }
+    toPipe(data2)
+      .toText(Cell.toString("|", false, false))
+      .toList.sorted shouldBe result2
   }
 
   "A Matrix.toText" should "return its strings for 3D" in {
-    Given {
-      data3
-    } When {
-      cells: TypedPipe[Cell[Position3D]] =>
-        cells.toText(Cell.toString("/", false, true))
-    } Then {
-      _.toList.sorted shouldBe result3
-    }
+    toPipe(data3)
+      .toText(Cell.toString("/", false, true))
+      .toList.sorted shouldBe result3
   }
 }
 

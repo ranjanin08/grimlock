@@ -171,7 +171,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
   // Prepare each partition.
   parts
-    .forEach(prepare, List("train", "test"))
+    .forEach(List("train", "test"), prepare)
     .toUnit
 }
 

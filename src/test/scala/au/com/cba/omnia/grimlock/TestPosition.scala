@@ -24,7 +24,6 @@ import au.com.cba.omnia.grimlock.scalding.position.Positions._
 
 import au.com.cba.omnia.grimlock.spark.position.Positions._
 
-import com.twitter.scalding.bdd.TBddDsl
 import com.twitter.scalding.typed.TypedPipe
 
 class TestPosition0D extends TestGrimlock {
@@ -893,529 +892,355 @@ trait TestPositions extends TestGrimlock {
   val result29 = data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }.sorted
 }
 
-class TestScaldingPositions extends TestPositions with TBddDsl {
+class TestScaldingPositions extends TestPositions {
 
   "A Positions of Position1D" should "return its First over names" in {
-    Given {
-      data.map { case (s, i) => Position1D(s) }
-    } When {
-      positions: TypedPipe[Position1D] =>
-        positions.names(Over(First), Default())
-    } Then {
-      _.toList.sorted shouldBe result1
-    }
+    toPipe(data.map { case (s, i) => Position1D(s) })
+      .names(Over(First), Default())
+      .toList.sorted shouldBe result1
   }
 
   "A Positions of Position2D" should "return its First over names" in {
-    Given {
-      data.map { case (s, i) => Position2D(s, i) }
-    } When {
-      positions: TypedPipe[Position2D] =>
-        positions.names(Over(First), Default())
-    } Then {
-      _.toList.sorted shouldBe result2
-    }
+    toPipe(data.map { case (s, i) => Position2D(s, i) })
+      .names(Over(First), Default())
+      .toList.sorted shouldBe result2
   }
 
   it should "return its Second over names" in {
-    Given {
-      data.map { case (s, i) => Position2D(s, i) }
-    } When {
-      positions: TypedPipe[Position2D] =>
-        positions.names(Over(Second), Default())
-    } Then {
-      _.toList.sorted shouldBe result3
-    }
+    toPipe(data.map { case (s, i) => Position2D(s, i) })
+      .names(Over(Second), Default())
+      .toList.sorted shouldBe result3
   }
 
   it should "return its First along names" in {
-    Given {
-      data.map { case (s, i) => Position2D(s, i) }
-    } When {
-      positions: TypedPipe[Position2D] =>
-        positions.names(Along(First), Default())
-    } Then {
-      _.toList.sorted shouldBe result4
-    }
+    toPipe(data.map { case (s, i) => Position2D(s, i) })
+      .names(Along(First), Default())
+      .toList.sorted shouldBe result4
   }
 
   it should "return its Second along names" in {
-    Given {
-      data.map { case (s, i) => Position2D(s, i) }
-    } When {
-      positions: TypedPipe[Position2D] =>
-        positions.names(Along(Second), Default())
-    } Then {
-      _.toList.sorted shouldBe result5
-    }
+    toPipe(data.map { case (s, i) => Position2D(s, i) })
+      .names(Along(Second), Default())
+      .toList.sorted shouldBe result5
   }
 
   "A Positions of Position3D" should "return its First over names" in {
-    Given {
-      data.map { case (s, i) => Position3D(s, i, i + 1) }
-    } When {
-      positions: TypedPipe[Position3D] =>
-        positions.names(Over(First), Default())
-    } Then {
-      _.toList.sorted shouldBe result6
-    }
+    toPipe(data.map { case (s, i) => Position3D(s, i, i + 1) })
+      .names(Over(First), Default())
+      .toList.sorted shouldBe result6
   }
 
   it should "return its Second over names" in {
-    Given {
-      data.map { case (s, i) => Position3D(s, i, i + 1) }
-    } When {
-      positions: TypedPipe[Position3D] =>
-        positions.names(Over(Second), Default())
-    } Then {
-      _.toList.sorted shouldBe result7
-    }
+    toPipe(data.map { case (s, i) => Position3D(s, i, i + 1) })
+      .names(Over(Second), Default())
+      .toList.sorted shouldBe result7
   }
 
   it should "return its Third over names" in {
-    Given {
-      data.map { case (s, i) => Position3D(s, i, i + 1) }
-    } When {
-      positions: TypedPipe[Position3D] =>
-        positions.names(Over(Third), Default())
-    } Then {
-      _.toList.sorted shouldBe result8
-    }
+    toPipe(data.map { case (s, i) => Position3D(s, i, i + 1) })
+      .names(Over(Third), Default())
+      .toList.sorted shouldBe result8
   }
 
   it should "return its First along names" in {
-    Given {
-      data.map { case (s, i) => Position3D(s, i, i + 1) }
-    } When {
-      positions: TypedPipe[Position3D] =>
-        positions.names(Along(First), Default())
-    } Then {
-      _.toList.sorted shouldBe result9
-    }
+    toPipe(data.map { case (s, i) => Position3D(s, i, i + 1) })
+      .names(Along(First), Default())
+      .toList.sorted shouldBe result9
   }
 
   it should "return its Second along names" in {
-    Given {
-      data.map { case (s, i) => Position3D(s, i, i + 1) }
-    } When {
-      positions: TypedPipe[Position3D] =>
-        positions.names(Along(Second), Default())
-    } Then {
-      _.toList.sorted shouldBe result10
-    }
+    toPipe(data.map { case (s, i) => Position3D(s, i, i + 1) })
+      .names(Along(Second), Default())
+      .toList.sorted shouldBe result10
   }
 
   it should "return its Third along names" in {
-    Given {
-      data.map { case (s, i) => Position3D(s, i, i + 1) }
-    } When {
-      positions: TypedPipe[Position3D] =>
-        positions.names(Along(Third), Default())
-    } Then {
-      _.toList.sorted shouldBe result11
-    }
+    toPipe(data.map { case (s, i) => Position3D(s, i, i + 1) })
+      .names(Along(Third), Default())
+      .toList.sorted shouldBe result11
   }
 
   "A Positions of Position4D" should "return its First over names" in {
-    Given {
-      data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-    } When {
-      positions: TypedPipe[Position4D] =>
-        positions.names(Over(First), Default())
-    } Then {
-      _.toList.sorted shouldBe result12
-    }
+    toPipe(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
+      .names(Over(First), Default())
+      .toList.sorted shouldBe result12
   }
 
   it should "return its Second over names" in {
-    Given {
-      data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-    } When {
-      positions: TypedPipe[Position4D] =>
-        positions.names(Over(Second), Default())
-    } Then {
-      _.toList.sorted shouldBe result13
-    }
+    toPipe(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
+      .names(Over(Second), Default())
+      .toList.sorted shouldBe result13
   }
 
   it should "return its Third over names" in {
-    Given {
-      data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-    } When {
-      positions: TypedPipe[Position4D] =>
-        positions.names(Over(Third), Default())
-    } Then {
-      _.toList.sorted shouldBe result14
-    }
+    toPipe(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
+      .names(Over(Third), Default())
+      .toList.sorted shouldBe result14
   }
 
   it should "return its Fourth over names" in {
-    Given {
-      data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-    } When {
-      positions: TypedPipe[Position4D] =>
-        positions.names(Over(Fourth), Default())
-    } Then {
-      _.toList.sorted shouldBe result15
-    }
+    toPipe(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
+      .names(Over(Fourth), Default())
+      .toList.sorted shouldBe result15
   }
 
   it should "return its First along names" in {
-    Given {
-      data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-    } When {
-      positions: TypedPipe[Position4D] =>
-        positions.names(Along(First), Default())
-    } Then {
-      _.toList.sorted shouldBe result16
-    }
+    toPipe(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
+      .names(Along(First), Default())
+      .toList.sorted shouldBe result16
   }
 
   it should "return its Second along names" in {
-    Given {
-      data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-    } When {
-      positions: TypedPipe[Position4D] =>
-        positions.names(Along(Second), Default())
-    } Then {
-      _.toList.sorted shouldBe result17
-    }
+    toPipe(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
+      .names(Along(Second), Default())
+      .toList.sorted shouldBe result17
   }
 
   it should "return its Third along names" in {
-    Given {
-      data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-    } When {
-      positions: TypedPipe[Position4D] =>
-        positions.names(Along(Third), Default())
-    } Then {
-      _.toList.sorted shouldBe result18
-    }
+    toPipe(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
+      .names(Along(Third), Default())
+      .toList.sorted shouldBe result18
   }
 
   it should "return its Fourth along names" in {
-    Given {
-      data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
-    } When {
-      positions: TypedPipe[Position4D] =>
-        positions.names(Along(Fourth), Default())
-    } Then {
-      _.toList.sorted shouldBe result19
-    }
+    toPipe(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
+      .names(Along(Fourth), Default())
+      .toList.sorted shouldBe result19
   }
 
   "A Positions of Position5D" should "return its First over names" in {
-    Given {
-      data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-    } When {
-      positions: TypedPipe[Position5D] =>
-        positions.names(Over(First), Default())
-    } Then {
-      _.toList.sorted shouldBe result20
-    }
+    toPipe(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
+      .names(Over(First), Default())
+      .toList.sorted shouldBe result20
   }
 
   it should "return its Second over names" in {
-    Given {
-      data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-    } When {
-      positions: TypedPipe[Position5D] =>
-        positions.names(Over(Second), Default())
-    } Then {
-      _.toList.sorted shouldBe result21
-    }
+    toPipe(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
+      .names(Over(Second), Default())
+      .toList.sorted shouldBe result21
   }
 
   it should "return its Third over names" in {
-    Given {
-      data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-    } When {
-      positions: TypedPipe[Position5D] =>
-        positions.names(Over(Third), Default())
-    } Then {
-      _.toList.sorted shouldBe result22
-    }
+    toPipe(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
+      .names(Over(Third), Default())
+      .toList.sorted shouldBe result22
   }
 
   it should "return its Fourth over names" in {
-    Given {
-      data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-    } When {
-      positions: TypedPipe[Position5D] =>
-        positions.names(Over(Fourth), Default())
-    } Then {
-      _.toList.sorted shouldBe result23
-    }
+    toPipe(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
+      .names(Over(Fourth), Default())
+      .toList.sorted shouldBe result23
   }
 
   it should "return its Fifth over names" in {
-    Given {
-      data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-    } When {
-      positions: TypedPipe[Position5D] =>
-        positions.names(Over(Fifth), Default())
-    } Then {
-      _.toList.sorted shouldBe result24
-    }
+    toPipe(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
+      .names(Over(Fifth), Default())
+      .toList.sorted shouldBe result24
   }
 
   it should "return its First along names" in {
-    Given {
-      data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-    } When {
-      positions: TypedPipe[Position5D] =>
-        positions.names(Along(First), Default())
-    } Then {
-      _.toList.sorted shouldBe result25
-    }
+    toPipe(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
+      .names(Along(First), Default())
+      .toList.sorted shouldBe result25
   }
 
   it should "return its Second along names" in {
-    Given {
-      data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-    } When {
-      positions: TypedPipe[Position5D] =>
-        positions.names(Along(Second), Default())
-    } Then {
-      _.toList.sorted shouldBe result26
-    }
+    toPipe(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
+      .names(Along(Second), Default())
+      .toList.sorted shouldBe result26
   }
 
   it should "return its Third along names" in {
-    Given {
-      data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-    } When {
-      positions: TypedPipe[Position5D] =>
-        positions.names(Along(Third), Default())
-    } Then {
-      _.toList.sorted shouldBe result27
-    }
+    toPipe(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
+      .names(Along(Third), Default())
+      .toList.sorted shouldBe result27
   }
 
   it should "return its Fourth along names" in {
-    Given {
-      data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-    } When {
-      positions: TypedPipe[Position5D] =>
-        positions.names(Along(Fourth), Default())
-    } Then {
-      _.toList.sorted shouldBe result28
-    }
+    toPipe(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
+      .names(Along(Fourth), Default())
+      .toList.sorted shouldBe result28
   }
 
   it should "return its Fifth along names" in {
-    Given {
-      data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
-    } When {
-      positions: TypedPipe[Position5D] =>
-        positions.names(Along(Fifth), Default())
-    } Then {
-      _.toList.sorted shouldBe result29
-    }
+    toPipe(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
+      .names(Along(Fifth), Default())
+      .toList.sorted shouldBe result29
   }
 }
 
 class TestSparkPositions extends TestPositions {
 
   "A Positions of Position1D" should "return its First over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position1D(s) }
+    toRDD(data.map { case (s, i) => Position1D(s) })
       .names(Over(First), Default())
       .toList.sorted shouldBe result1
   }
 
   "A Positions of Position2D" should "return its First over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position2D(s, i) }
+    toRDD(data.map { case (s, i) => Position2D(s, i) })
       .names(Over(First), Default(Reducers(12)))
       .toList.sorted shouldBe result2
   }
 
   it should "return its Second over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position2D(s, i) }
+    toRDD(data.map { case (s, i) => Position2D(s, i) })
       .names(Over(Second), Default())
       .toList.sorted shouldBe result3
   }
 
   it should "return its First along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position2D(s, i) }
+    toRDD(data.map { case (s, i) => Position2D(s, i) })
       .names(Along(First), Default(Reducers(12)))
       .toList.sorted shouldBe result4
   }
 
   it should "return its Second along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position2D(s, i) }
+    toRDD(data.map { case (s, i) => Position2D(s, i) })
       .names(Along(Second), Default())
       .toList.sorted shouldBe result5
   }
 
   "A Positions of Position3D" should "return its First over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position3D(s, i, i + 1) }
+    toRDD(data.map { case (s, i) => Position3D(s, i, i + 1) })
       .names(Over(First), Default(Reducers(12)))
       .toList.sorted shouldBe result6
   }
 
   it should "return its Second over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position3D(s, i, i + 1) }
+    toRDD(data.map { case (s, i) => Position3D(s, i, i + 1) })
       .names(Over(Second), Default())
       .toList.sorted shouldBe result7
   }
 
   it should "return its Third over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position3D(s, i, i + 1) }
+    toRDD(data.map { case (s, i) => Position3D(s, i, i + 1) })
       .names(Over(Third), Default(Reducers(12)))
       .toList.sorted shouldBe result8
   }
 
   it should "return its First along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position3D(s, i, i + 1) }
+    toRDD(data.map { case (s, i) => Position3D(s, i, i + 1) })
       .names(Along(First), Default())
       .toList.sorted shouldBe result9
   }
 
   it should "return its Second along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position3D(s, i, i + 1) }
+    toRDD(data.map { case (s, i) => Position3D(s, i, i + 1) })
       .names(Along(Second), Default(Reducers(12)))
       .toList.sorted shouldBe result10
   }
 
   it should "return its Third along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position3D(s, i, i + 1) }
+    toRDD(data.map { case (s, i) => Position3D(s, i, i + 1) })
       .names(Along(Third), Default())
       .toList.sorted shouldBe result11
   }
 
   "A Positions of Position4D" should "return its First over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+    toRDD(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
       .names(Over(First), Default(Reducers(12)))
       .toList.sorted shouldBe result12
   }
 
   it should "return its Second over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+    toRDD(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
       .names(Over(Second), Default())
       .toList.sorted shouldBe result13
   }
 
   it should "return its Third over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+    toRDD(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
       .names(Over(Third), Default(Reducers(12)))
       .toList.sorted shouldBe result14
   }
 
   it should "return its Fourth over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+    toRDD(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
       .names(Over(Fourth), Default())
       .toList.sorted shouldBe result15
   }
 
   it should "return its First along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+    toRDD(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
       .names(Along(First), Default(Reducers(12)))
       .toList.sorted shouldBe result16
   }
 
   it should "return its Second along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+    toRDD(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
       .names(Along(Second), Default())
       .toList.sorted shouldBe result17
   }
 
   it should "return its Third along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+    toRDD(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
       .names(Along(Third), Default(Reducers(12)))
       .toList.sorted shouldBe result18
   }
 
   it should "return its Fourth along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position4D(s, i, i + 1, i + 2) }
+    toRDD(data.map { case (s, i) => Position4D(s, i, i + 1, i + 2) })
       .names(Along(Fourth), Default())
       .toList.sorted shouldBe result19
   }
 
   "A Positions of Position5D" should "return its First over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+    toRDD(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
       .names(Over(First), Default(Reducers(12)))
       .toList.sorted shouldBe result20
   }
 
   it should "return its Second over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+    toRDD(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
       .names(Over(Second), Default())
       .toList.sorted shouldBe result21
   }
 
   it should "return its Third over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+    toRDD(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
       .names(Over(Third), Default(Reducers(12)))
       .toList.sorted shouldBe result22
   }
 
   it should "return its Fourth over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+    toRDD(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
       .names(Over(Fourth), Default())
       .toList.sorted shouldBe result23
   }
 
   it should "return its Fifth over names" in {
-    toRDD(data)
-      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+    toRDD(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
       .names(Over(Fifth), Default(Reducers(12)))
       .toList.sorted shouldBe result24
   }
 
   it should "return its First along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+    toRDD(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
       .names(Along(First), Default())
       .toList.sorted shouldBe result25
   }
 
   it should "return its Second along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+    toRDD(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
       .names(Along(Second), Default(Reducers(12)))
       .toList.sorted shouldBe result26
   }
 
   it should "return its Third along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+    toRDD(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
       .names(Along(Third), Default())
       .toList.sorted shouldBe result27
   }
 
   it should "return its Fourth along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+    toRDD(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
       .names(Along(Fourth), Default(Reducers(12)))
       .toList.sorted shouldBe result28
   }
 
   it should "return its Fifth along names" in {
-    toRDD(data)
-      .map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) }
+    toRDD(data.map { case (s, i) => Position5D(s, i, i + 1, i + 2, i + 3) })
       .names(Along(Fifth), Default())
       .toList.sorted shouldBe result29
   }

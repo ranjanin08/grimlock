@@ -67,20 +67,33 @@ trait Partitions[I, P <: Position] {
    */
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])]
 
-  /** Specifies tuners permitted on a call to `forEach`. */
-  type ForEachTuners <: OneOf
+  /** Specifies tuners permitted on a call to `forAll`. */
+  type ForAllTuners <: OneOf
+
+  /**
+   * Apply function `fn` to all partitions.
+   *
+   * @param fn      The function to apply to each partition.
+   * @param exclude List of partition ids to exclude from applying `fn` to.
+   * @param tuner   The tuner for the job.
+   *
+   * @return A `U[(I, Cell[Q])]` containing the paritions with `fn` applied to them.
+   *
+   * @note This will pull all partition ids into memory, so only use this if there is sufficient memory
+   *       available to keep all (distinct) partition ids in memory.
+   */
+  def forAll[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I] = List(), tuner: T)(
+    implicit ev1: ClassTag[I], ev2: ForAllTuners#V[T]): U[(I, Cell[Q])]
 
   /**
    * Apply function `fn` to each partition in `ids`.
    *
-   * @param fn    The function to apply to each partition.
    * @param ids   List of partition ids to apply `fn` to.
-   * @param tuner The tuner for the job.
+   * @param fn    The function to apply to each partition.
    *
    * @return A `U[(I, Cell[Q])]` containing the paritions with `fn` applied to them.
    */
-  def forEach[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], ids: List[I], tuner: T)(
-    implicit ev1: ClassTag[I], ev2: ForEachTuners#V[T]): U[(I, Cell[Q])]
+  def forEach[Q <: Position](ids: List[I], fn: (I, U[Cell[P]]) => U[Cell[Q]]): U[(I, Cell[Q])]
 
   /**
    * Return the data for the partition `id`.

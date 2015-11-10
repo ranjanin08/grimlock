@@ -691,7 +691,7 @@ class TestScalding19(args : Args) extends Job(args) {
   }
 
   parts
-    .forEach(cb, List("train", "test"))
+    .forEach(List("train", "test"), cb)
     .toUnit
 }
 
