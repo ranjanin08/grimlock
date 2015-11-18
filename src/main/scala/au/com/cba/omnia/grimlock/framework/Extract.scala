@@ -54,16 +54,6 @@ object Extract {
 }
 
 /**
- * Extract from a `Map[Position1D, R]` using a dimension from the cell.
- *
- * @param dim Dimension used for extracting from the map.
- */
-case class ExtractWithDimension[D <: Dimension, P <: Position, R](dim: D)(
-  implicit ev: PosDimDep[P, D]) extends Extract[P, Map[Position1D, R], R] {
-  def extract(cell: Cell[P], ext: V): Option[R] = ext.get(Position1D(cell.position(dim)))
-}
-
-/**
  * Extract from a `Map[Position1D, R]` using the provided key.
  *
  * @param key The key used for extracting from the map.
@@ -73,9 +63,14 @@ case class ExtractWithKey[P <: Position, T, R](key: T)(
   def extract(cell: Cell[P], ext: V): Option[R] = ext.get(ev.convert(key))
 }
 
-/** Extract from a `Map[P, R]` using the position of the cell. */
-case class ExtractWithPosition[P <: Position, R]() extends Extract[P, Map[P, R], R] {
-  def extract(cell: Cell[P], ext: V): Option[R] = ext.get(cell.position)
+/**
+ * Extract from a `Map[Position1D, R]` using a dimension from the cell.
+ *
+ * @param dim Dimension used for extracting from the map.
+ */
+case class ExtractWithDimension[D <: Dimension, P <: Position, R](dim: D)(
+  implicit ev: PosDimDep[P, D]) extends Extract[P, Map[Position1D, R], R] {
+  def extract(cell: Cell[P], ext: V): Option[R] = ext.get(Position1D(cell.position(dim)))
 }
 
 /**
@@ -92,6 +87,21 @@ case class ExtractWithDimensionAndKey[D <: Dimension, P <: Position, T, R](dim: 
   }
 }
 
+/** Extract from a `Map[P, R]` using the position of the cell. */
+case class ExtractWithPosition[P <: Position, R]() extends Extract[P, Map[P, R], R] {
+  def extract(cell: Cell[P], ext: V): Option[R] = ext.get(cell.position)
+}
+
+/**
+ * Extract from a `Map[P, Map[Position1D, R]]` using the position of the cell and the provided key.
+ *
+ * @param key The key used for extracting from the inner map.
+ */
+case class ExtractWithPositionAndKey[P <: Position, T, R](key: T)(
+  implicit ev1: Positionable[T, Position1D]) extends Extract[P, Map[P, Map[Position1D, R]], R] {
+  def extract(cell: Cell[P], ext: V): Option[R] = ext.get(cell.position).flatMap(_.get(ev1.convert(key)))
+}
+
 /**
  * Extract from a `Map[S#S, R]` using the selected position(s) of the cell.
  *
@@ -100,6 +110,20 @@ case class ExtractWithDimensionAndKey[D <: Dimension, P <: Position, T, R](dim: 
  */
 case class ExtractWithSelected[P <: Position, S <: Slice[P], R](slice: S) extends Extract[P, Map[S#S, R], R] {
   def extract(cell: Cell[P], ext: V): Option[R] = ext.get(slice.selected(cell.position))
+}
+
+/**
+ * Extract from a `Map[P, Map[Position1D, R]]` using the selected position(s) of the cell and the provided key.
+ *
+ * @param slice The slice used to extract the selected position(s) from the cell which are used as the key
+ *              into the map.
+ * @param key   The key used for extracting from the inner map.
+ */
+case class ExtractWithSelectedAndKey[P <: Position, S <: Slice[P], T, R](slice: S, key: T)(
+  implicit ev1: Positionable[T, Position1D]) extends Extract[P, Map[S#S, Map[Position1D, R]], R] {
+  def extract(cell: Cell[P], ext: V): Option[R] = {
+    ext.get(slice.selected(cell.position)).flatMap(_.get(ev1.convert(key)))
+  }
 }
 
 /**

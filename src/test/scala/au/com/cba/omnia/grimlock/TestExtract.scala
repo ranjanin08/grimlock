@@ -20,6 +20,25 @@ import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
+class TestExtractWithKey extends TestGrimlock {
+
+  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
+  val ext = Map(Position1D("ghi") -> 3.14)
+
+  "A ExtractWithKey" should "extract with key" in {
+    ExtractWithKey[Position2D, String, Double]("ghi").extract(cell, ext) shouldBe (Some(3.14))
+  }
+
+  it should "extract with missing key" in {
+    ExtractWithKey[Position2D, String, Double]("jkl").extract(cell, ext) shouldBe (None)
+  }
+
+  it should "extract and present" in {
+    ExtractWithKey[Position2D, String, Double]("ghi")
+      .andThenPresent((d: Double) => Some(d * 2)).extract(cell, ext) shouldBe (Some(6.28))
+  }
+}
+
 class TestExtractWithDimension extends TestGrimlock {
 
   val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
@@ -39,21 +58,33 @@ class TestExtractWithDimension extends TestGrimlock {
   }
 }
 
-class TestExtractWithKey extends TestGrimlock {
+class TestExtractWithDimensionAndKey extends TestGrimlock {
 
   val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
-  val ext = Map(Position1D("ghi") -> 3.14)
+  val ext = Map(Position1D("abc") -> Map(Position1D(123) -> 3.14))
 
-  "A ExtractWithKey" should "extract with key" in {
-    ExtractWithKey[Position2D, String, Double]("ghi").extract(cell, ext) shouldBe (Some(3.14))
+  "A ExtractWithDimensionAndKey" should "extract with First" in {
+    ExtractWithDimensionAndKey[Dimension.First, Position2D, Int, Double](First, 123)
+      .extract(cell, ext) shouldBe (Some(3.14))
   }
 
   it should "extract with missing key" in {
-    ExtractWithKey[Position2D, String, Double]("jkl").extract(cell, ext) shouldBe (None)
+    ExtractWithDimensionAndKey[Dimension.First, Position2D, Int, Double](First, 456)
+      .extract(cell, ext) shouldBe (None)
+  }
+
+  it should "extract with Second" in {
+    ExtractWithDimensionAndKey[Dimension.Second, Position2D, Int, Double](Second, 123)
+      .extract(cell, ext) shouldBe (None)
+  }
+
+  it should "extract with Second and missing key" in {
+    ExtractWithDimensionAndKey[Dimension.Second, Position2D, Int, Double](Second, 456)
+      .extract(cell, ext) shouldBe (None)
   }
 
   it should "extract and present" in {
-    ExtractWithKey[Position2D, String, Double]("ghi")
+    ExtractWithDimensionAndKey[Dimension.First, Position2D, Int, Double](First, 123)
       .andThenPresent((d: Double) => Some(d * 2)).extract(cell, ext) shouldBe (Some(6.28))
   }
 }
@@ -78,34 +109,31 @@ class TestExtractWithPosition extends TestGrimlock {
   }
 }
 
-class TestExtractWithDimensionAndKey extends TestGrimlock {
+class TestExtractWithPositionAndKey extends TestGrimlock {
 
-  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
-  val ext = Map(Position1D("abc") -> Map(Position1D(123) -> 3.14))
+  val cell1 = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell2 = Cell(Position2D("cba", "fed"), Content(ContinuousSchema(DoubleCodex), 1))
+  val ext = Map(Position2D("abc", "def") -> Map(Position1D("xyz") -> 3.14))
 
-  "A ExtractWithDimensionAndKey" should "extract with First" in {
-    ExtractWithDimensionAndKey[Dimension.First, Position2D, Int, Double](First, 123)
-      .extract(cell, ext) shouldBe (Some(3.14))
+  "A ExtractWithPositionAndKey" should "extract with key" in {
+    ExtractWithPositionAndKey[Position2D, String, Double]("xyz").extract(cell1, ext) shouldBe (Some(3.14))
   }
 
-  "A ExtractWithDimensionAndKey" should "extract with missing key" in {
-    ExtractWithDimensionAndKey[Dimension.First, Position2D, Int, Double](First, 456)
-      .extract(cell, ext) shouldBe (None)
+  it should "extract with missing position" in {
+    ExtractWithPositionAndKey[Position2D, String, Double]("xyz").extract(cell2, ext) shouldBe (None)
   }
 
-  it should "extract with Second" in {
-    ExtractWithDimensionAndKey[Dimension.Second, Position2D, Int, Double](Second, 123)
-      .extract(cell, ext) shouldBe (None)
+  it should "extract with missing key" in {
+    ExtractWithPositionAndKey[Position2D, String, Double]("abc").extract(cell1, ext) shouldBe (None)
   }
 
-  it should "extract with Second and missing key" in {
-    ExtractWithDimensionAndKey[Dimension.Second, Position2D, Int, Double](Second, 456)
-      .extract(cell, ext) shouldBe (None)
+  it should "extract with missing position and key" in {
+    ExtractWithPositionAndKey[Position2D, String, Double]("abc").extract(cell2, ext) shouldBe (None)
   }
 
   it should "extract and present" in {
-    ExtractWithDimensionAndKey[Dimension.First, Position2D, Int, Double](First, 123)
-      .andThenPresent((d: Double) => Some(d * 2)).extract(cell, ext) shouldBe (Some(6.28))
+    ExtractWithPositionAndKey[Position2D, String, Double]("xyz")
+      .andThenPresent((d: Double) => Some(d * 2)).extract(cell1, ext) shouldBe (Some(6.28))
   }
 }
 
@@ -126,6 +154,37 @@ class TestExtractWithSelected extends TestGrimlock {
 
   it should "extract and present" in {
     ExtractWithSelected[Position2D, Over[Position2D, Dimension.First], Double](Over(First))
+      .andThenPresent((d: Double) => Some(d * 2)).extract(cell, ext) shouldBe (Some(6.28))
+  }
+}
+
+class TestExtractWithSelectedAndKey extends TestGrimlock {
+
+  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
+  val ext = Map(Position1D("abc") -> Map(Position1D("xyz") -> 3.14))
+
+  "A ExtractWithSelectedAndKey" should "extract with Over" in {
+    ExtractWithSelectedAndKey[Position2D, Over[Position2D, Dimension.First], String, Double](Over(First), "xyz")
+      .extract(cell, ext) shouldBe (Some(3.14))
+  }
+
+  it should "extract with Along" in {
+    ExtractWithSelectedAndKey[Position2D, Along[Position2D, Dimension.First], String, Double](Along(First), "xyz")
+      .extract(cell, ext) shouldBe (None)
+  }
+
+  it should "extract with missing key" in {
+    ExtractWithSelectedAndKey[Position2D, Over[Position2D, Dimension.First], String, Double](Over(First), "abc")
+      .extract(cell, ext) shouldBe (None)
+  }
+
+  it should "extract with Along and missing key" in {
+    ExtractWithSelectedAndKey[Position2D, Along[Position2D, Dimension.First], String, Double](Along(First), "abc")
+      .extract(cell, ext) shouldBe (None)
+  }
+
+  it should "extract and present" in {
+    ExtractWithSelectedAndKey[Position2D, Over[Position2D, Dimension.First], String, Double](Over(First), "xyz")
       .andThenPresent((d: Double) => Some(d * 2)).extract(cell, ext) shouldBe (Some(6.28))
   }
 }
