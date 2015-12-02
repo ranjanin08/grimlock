@@ -528,23 +528,26 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 
   type SquashTuners = TP2
   def squash[D <: Dimension, F, T <: Tuner](dim: D, squasher: F, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: Squashable[F, P], ev3: SquashTuners#V[T]): U[Cell[P#L]] = {
+    ev2: Squashable[F, P], ev3: ClassTag[P#L], ev4: SquashTuners#V[T]): U[Cell[P#L]] = {
     val squash = ev2.convert(squasher)
 
     data
-      .keyBy { case c => c.position.remove(dim) }
-      .tunedReduce(tuner.parameters, (x: Cell[P], y: Cell[P]) => squash.reduce(dim, x, y))
-      .map { case (p, c) => Cell(p, c.content) }
+      .map[(P#L, Any)] { case Cell(p, c) => (p.remove(dim), squash.prepare(Cell(p.remove(dim), c), p(dim))) }
+      .tunedReduce(tuner.parameters, (lt, rt) => squash.reduce(lt.asInstanceOf[squash.T], rt.asInstanceOf[squash.T]))
+      .flatMap { case (p, t) => squash.present(t.asInstanceOf[squash.T]).map { case c => Cell(p, c) } }
   }
 
   def squashWithValue[D <: Dimension, F, W, T <: Tuner](dim: D, squasher: F, value: E[W], tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: SquashTuners#V[T]): U[Cell[P#L]] = {
+    implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: ClassTag[P#L],
+      ev4: SquashTuners#V[T]): U[Cell[P#L]] = {
     val squash = ev2.convert(squasher)
 
     data
-      .keyBy { case c => c.position.remove(dim) }
-      .tunedReduce(tuner.parameters, (x: Cell[P], y: Cell[P]) => squash.reduceWithValue(dim, x, y, value))
-      .map { case (p, c) => Cell(p, c.content) }
+      .map[(P#L, Any)] {
+        case Cell(p, c) => (p.remove(dim), squash.prepareWithValue(Cell(p.remove(dim), c), p(dim), value))
+      }
+      .tunedReduce(tuner.parameters, (lt, rt) => squash.reduce(lt.asInstanceOf[squash.T], rt.asInstanceOf[squash.T]))
+      .flatMap { case (p, t) => squash.presentWithValue(t.asInstanceOf[squash.T], value).map { case c => Cell(p, c) } }
   }
 
   def toVector(separator: String): U[Cell[Position1D]] = {

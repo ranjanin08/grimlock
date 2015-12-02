@@ -614,7 +614,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
   def squash[D <: Dimension, F, T <: Tuner](dim: D, squasher: F, tuner: T)(implicit ev1: PosDimDep[P, D],
-    ev2: Squashable[F, P], ev3: SquashTuners#V[T]): U[Cell[P#L]]
+    ev2: Squashable[F, P], ev3: ClassTag[P#L], ev4: SquashTuners#V[T]): U[Cell[P#L]]
 
   /**
    * Squash a dimension of a matrix with a user supplied value.
@@ -627,7 +627,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
   def squashWithValue[D <: Dimension, F, W, T <: Tuner](dim: D, squasher: F, value: E[W], tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: SquashTuners#V[T]): U[Cell[P#L]]
+    implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: ClassTag[P#L],
+      ev4: SquashTuners#V[T]): U[Cell[P#L]]
 
   /**
    * Merge all dimensions into a single.

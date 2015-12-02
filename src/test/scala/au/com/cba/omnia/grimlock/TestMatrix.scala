@@ -7783,14 +7783,18 @@ trait TestMatrixSquash extends TestMatrix {
 
 object TestMatrixSquash {
 
-  case class PreservingMaxPositionWithValue[P <: Position]() extends SquasherWithValue[P] {
+  case class PreservingMaxPositionWithValue[P <: Position with ReduceablePosition]() extends SquasherWithValue[P] {
     type V = String
 
     val squasher = PreservingMaxPosition[P]()
 
-    def reduceWithValue(dim: Dimension, x: Cell[P], y: Cell[P], ext: V): Cell[P] = {
-      if (ext == "ext") squasher.reduce(dim, x, y) else x
-    }
+    type T = squasher.T
+
+    def prepareWithValue(cell: Cell[P#L], rem: Value, ext: V): T = squasher.prepare(cell, rem)
+
+    def reduce(lt: T, rt: T): T = squasher.reduce(lt, rt)
+
+    def presentWithValue(t: T, ext: V): Option[Content] = if (ext == "ext") squasher.present(t) else None
   }
 }
 

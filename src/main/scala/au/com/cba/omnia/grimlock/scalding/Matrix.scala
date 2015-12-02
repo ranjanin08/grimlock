@@ -773,26 +773,30 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 
   type SquashTuners = TP2
   def squash[D <: Dimension, F, T <: Tuner](dim: D, squasher: F, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: Squashable[F, P], ev3: SquashTuners#V[T]): U[Cell[P#L]] = {
+    ev2: Squashable[F, P], ev3: ClassTag[P#L], ev4: SquashTuners#V[T]): U[Cell[P#L]] = {
     val squash = ev2.convert(squasher)
 
     data
-      .groupBy { case c => c.position.remove(dim) }
+      .map { case Cell(p, c) => (p.remove(dim), squash.prepare(Cell(p.remove(dim), c), p(dim))) }
+      .group[P#L, squash.T]
       .tuneReducers(tuner.parameters)
-      .reduce[Cell[P]] { case (x, y) => squash.reduce(dim, x, y) }
-      .map { case (p, c) => Cell(p, c.content) }
+      .reduce[squash.T] { case (lt, rt) => squash.reduce(lt, rt) }
+      .flatMap { case (p, t) => squash.present(t).map { case c => Cell(p, c) } }
   }
 
   def squashWithValue[D <: Dimension, F, W, T <: Tuner](dim: D, squasher: F, value: E[W], tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: SquashTuners#V[T]): U[Cell[P#L]] = {
+    implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: ClassTag[P#L],
+      ev4: SquashTuners#V[T]): U[Cell[P#L]] = {
     val squash = ev2.convert(squasher)
 
     data
-      .leftCross(value)
-      .groupBy { case (c, vo) => c.position.remove(dim) }
+      .mapWithValue(value) {
+        case (Cell(p, c), vo) => (p.remove(dim), squash.prepareWithValue(Cell(p.remove(dim), c), p(dim), vo.get))
+      }
+      .group[P#L, squash.T]
       .tuneReducers(tuner.parameters)
-      .reduce[(Cell[P], Option[W])] { case ((x, xvo), (y, yvo)) => (squash.reduceWithValue(dim, x, y, xvo.get), xvo) }
-      .map { case (p, (c, _)) => Cell(p, c.content) }
+      .reduce[squash.T] { case (lt, rt) => squash.reduce(lt, rt) }
+      .flatMapWithValue(value) { case ((p, t), vo) => squash.presentWithValue(t, vo.get).map { case c => Cell(p, c) } }
   }
 
   def toVector(separator: String): U[Cell[Position1D]] = {

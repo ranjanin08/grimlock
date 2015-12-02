@@ -15,26 +15,37 @@
 package au.com.cba.omnia.grimlock.library.squash
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.squash._
 
+private[squash] trait PreservingPosition[P <: Position with ReduceablePosition] extends Squasher[P] {
+  type T = (Value, Content)
+
+  def prepare(cell: Cell[P#L], rem: Value): T = (rem, cell.content)
+
+  def present(t: T): Option[Content] = Some(t._2)
+}
+
 /** Reduce two cells preserving the cell with maximal value for the coordinate of the dimension being squashed. */
-case class PreservingMaxPosition[P <: Position]() extends Squasher[P] {
-  def reduce(dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
-    if (Value.Ordering.compare(x.position(dim), y.position(dim)) > 0) { x } else { y }
-  }
+case class PreservingMaxPosition[P <: Position with ReduceablePosition]() extends PreservingPosition[P] {
+  def reduce(lt: T, rt: T): T = if (Value.Ordering.compare(lt._1, rt._1) > 0) { lt } else { rt }
 }
 
 /** Reduce two cells preserving the cell with minimal value for the coordinate of the dimension being squashed. */
-case class PreservingMinPosition[P <: Position]() extends Squasher[P] {
-  def reduce(dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = {
-    if (Value.Ordering.compare(x.position(dim), y.position(dim)) < 0) { x } else { y }
-  }
+case class PreservingMinPosition[P <: Position with ReduceablePosition]() extends PreservingPosition[P] {
+  def reduce(lt: T, rt: T): T = if (Value.Ordering.compare(lt._1, rt._1) < 0) { lt } else { rt }
 }
 
 /** Reduce two cells preserving the cell whose coordinate matches `keep`. */
-case class KeepSlice[P <: Position, V](keep: V)(implicit ev: Valueable[V]) extends Squasher[P] {
-  def reduce(dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = if (x.position(dim) equ keep) { x } else { y }
+case class KeepSlice[P <: Position with ReduceablePosition, V](keep: V)(implicit ev: Valueable[V]) extends Squasher[P] {
+  type T = Option[Content]
+
+  def prepare(cell: Cell[P#L], rem: Value): T = if (rem equ keep) { Some(cell.content) } else { None }
+
+  def reduce(lt: T, rt: T): T = if (lt.isEmpty) { rt } else { lt }
+
+  def present(t: T): Option[Content] = t
 }
 

@@ -15,42 +15,77 @@
 package au.com.cba.omnia.grimlock.framework.squash
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for squashing a dimension. */
-trait Squasher[P <: Position] extends SquasherWithValue[P] {
+trait Squasher[P <: Position with ReduceablePosition] extends SquasherWithValue[P] {
   type V = Any
 
-  def reduceWithValue(dim: Dimension, x: Cell[P], y: Cell[P], ext: V): Cell[P] = reduce(dim, x, y)
+  def prepareWithValue(cell: Cell[P#L], rem: Value, ext: V): T = prepare(cell, rem)
+  def presentWithValue(t: T, ext: V): Option[Content] = present(t)
 
   /**
-   * Reduce two cells.
+   * Prepare for squashing.
    *
-   * @param dim The dimension along which to squash.
-   * @param x   The first cell to reduce.
-   * @param y   The second cell to reduce.
+   * @param cell Cell which is to be squashed. Note that the coordinate `dim` has been removed from the position.
+   * @param rem  The coordinate of the dimension being squashed.
+   *
+   * @return State to reduce.
    */
-  def reduce(dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P]
+  def prepare(cell: Cell[P#L], rem: Value): T
+
+  /**
+   * Present the squashed content.
+   *
+   * @param t The reduced state.
+   *
+   * @return The squashed content.
+   */
+  def present(t: T): Option[Content]
 }
 
 /** Base trait for squashing a dimension with a user provided value. */
-trait SquasherWithValue[P <: Position] extends java.io.Serializable {
+trait SquasherWithValue[P <: Position with ReduceablePosition] extends java.io.Serializable {
+  /** Type of the state being squashed. */
+  type T
+
   /** Type of the external value. */
   type V
 
   /**
-   * Reduce two cells with a user supplied value.
+   * Prepare for squashing.
    *
-   * @param dim The dimension along which to squash.
-   * @param x   The first cell to reduce.
-   * @param y   The second cell to reduce.
-   * @param ext The user define the value.
+   * @param cell Cell which is to be squashed. Note that the coordinate `dim` has been removed from the position.
+   * @param rem  The coordinate of the dimension being squashed.
+   * @param ext  User provided data required for preparation.
+   *
+   * @return State to reduce.
    */
-  def reduceWithValue(dim: Dimension, x: Cell[P], y: Cell[P], ext: V): Cell[P]
+  def prepareWithValue(cell: Cell[P#L], rem: Value, ext: V): T
+
+  /**
+   * Standard reduce method.
+   *
+   * @param lt The left state to reduce.
+   * @param rt The right state to reduce.
+   */
+  def reduce(lt: T, rt: T): T
+
+  /**
+   * Present the squashed content.
+   *
+   * @param t   The reduced state.
+   * @param ext User provided data required for presentation.
+   *
+   * @return The squashed content.
+   */
+  def presentWithValue(t: T, ext: V): Option[Content]
 }
 
 /** Type class for transforming a type `T` to a `Squasher[P]`. */
-trait Squashable[T, P <: Position] {
+trait Squashable[T, P <: Position with ReduceablePosition] {
   /**
    * Returns a `Squasher[P]` for type `T`.
    *
@@ -61,23 +96,14 @@ trait Squashable[T, P <: Position] {
 
 /** Companion object for the `Squashable` type class. */
 object Squashable {
-  /** Converts a `(Dimension, Cell[P], Cell[P]) => Cell[P]` to a `Squasher[P]`. */
-  implicit def DCC2S[P <: Position]: Squashable[(Dimension, Cell[P], Cell[P]) => Cell[P], P] = {
-    new Squashable[(Dimension, Cell[P], Cell[P]) => Cell[P], P] {
-      def convert(t: (Dimension, Cell[P], Cell[P]) => Cell[P]): Squasher[P] = {
-        new Squasher[P] { def reduce(dim: Dimension, x: Cell[P], y: Cell[P]): Cell[P] = t(dim, x, y) }
-      }
-    }
-  }
-
   /** Converts a `Squasher[P]` to a `Squasher[P]`; that is, it is a pass through. */
-  implicit def S2S[P <: Position, T <: Squasher[P]]: Squashable[T, P] = {
+  implicit def S2S[P <: Position with ReduceablePosition, T <: Squasher[P]]: Squashable[T, P] = {
     new Squashable[T, P] { def convert(t: T): Squasher[P] = t }
   }
 }
 
 /** Type class for transforming a type `T` to a `SquasherWithValue[P]`. */
-trait SquashableWithValue[T, P <: Position, W] {
+trait SquashableWithValue[T, P <: Position with ReduceablePosition, W] {
   /**
    * Returns a `SquasherWithValue[P]` for type `T`.
    *
@@ -88,21 +114,8 @@ trait SquashableWithValue[T, P <: Position, W] {
 
 /** Companion object for the `SquashableWithValue` type class. */
 object SquashableWithValue {
-  /** Converts a `(Dimension, Cell[P], Cell[P], W) => Cell[P]` to a `SquasherWithValue[P]`. */
-  implicit def DCCW2SWV[P <: Position, W]: SquashableWithValue[(Dimension, Cell[P], Cell[P], W) => Cell[P], P, W] = {
-    new SquashableWithValue[(Dimension, Cell[P], Cell[P], W) => Cell[P], P, W] {
-      def convert(t: (Dimension, Cell[P], Cell[P], W) => Cell[P]): SquasherWithValue[P] { type V >: W } = {
-        new SquasherWithValue[P] {
-          type V = W
-
-          def reduceWithValue(dim: Dimension, x: Cell[P], y: Cell[P], ext: W): Cell[P] = t(dim, x, y, ext)
-        }
-      }
-    }
-  }
-
   /** Converts a `SquasherWithValue[P]` to a `SquasherWithValue[P]`; that is, it is a pass through. */
-  implicit def S2SWV[P <: Position, T <: SquasherWithValue[P] { type V >: W }, W]: SquashableWithValue[T, P, W] = {
+  implicit def S2SWV[P <: Position with ReduceablePosition, T <: SquasherWithValue[P] { type V >: W }, W]: SquashableWithValue[T, P, W] = {
     new SquashableWithValue[T, P, W] { def convert(t: T): SquasherWithValue[P] { type V >: W } = t }
   }
 }
