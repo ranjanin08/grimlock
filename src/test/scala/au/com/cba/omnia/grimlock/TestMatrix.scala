@@ -3233,7 +3233,7 @@ class TestSparkMatrixSplit extends TestMatrixSplit {
   }
 }
 
-trait TestMatrixSample extends TestMatrix {
+trait TestMatrixSubset extends TestMatrix {
 
   val ext = "foo"
 
@@ -3270,7 +3270,7 @@ trait TestMatrixSample extends TestMatrix {
       (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
 }
 
-object TestMatrixSample {
+object TestMatrixSubset {
 
   case class TestSampler[P <: Position]() extends Sampler[P] {
     def select(cell: Cell[P]): Boolean = {
@@ -3284,80 +3284,80 @@ object TestMatrixSample {
   }
 }
 
-class TestScaldingMatrixSample extends TestMatrixSample {
+class TestScaldingMatrixSubset extends TestMatrixSubset {
 
-  "A Matrix.sample" should "return its sampled data in 1D" in {
+  "A Matrix.subset" should "return its sampled data in 1D" in {
     toPipe(data1)
-      .sample(TestMatrixSample.TestSampler[Position1D]())
+      .subset(TestMatrixSubset.TestSampler[Position1D]())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its sampled data in 2D" in {
     toPipe(data2)
-      .sample(TestMatrixSample.TestSampler[Position2D]())
+      .subset(TestMatrixSubset.TestSampler[Position2D]())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its sampled data in 3D" in {
     toPipe(data3)
-      .sample(TestMatrixSample.TestSampler[Position3D]())
+      .subset(TestMatrixSubset.TestSampler[Position3D]())
       .toList.sortBy(_.position) shouldBe result3
   }
 
-  "A Matrix.sampleWithValue" should "return its sampled data in 1D" in {
+  "A Matrix.subsetWithValue" should "return its sampled data in 1D" in {
     toPipe(data1)
-      .sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position1D](), ValuePipe(ext))
+      .subsetWithValue(TestMatrixSubset.TestSamplerWithValue[Position1D](), ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its sampled data in 2D" in {
     toPipe(data2)
-      .sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position2D](), ValuePipe(ext))
+      .subsetWithValue(TestMatrixSubset.TestSamplerWithValue[Position2D](), ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its sampled data in 3D" in {
     toPipe(data3)
-      .sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position3D](), ValuePipe(ext))
+      .subsetWithValue(TestMatrixSubset.TestSamplerWithValue[Position3D](), ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result6
   }
 }
 
-class TestSparkMatrixSample extends TestMatrixSample {
+class TestSparkMatrixSubset extends TestMatrixSubset {
 
-  "A Matrix.sample" should "return its sampled data in 1D" in {
+  "A Matrix.subset" should "return its sampled data in 1D" in {
     toRDD(data1)
-      .sample(TestMatrixSample.TestSampler[Position1D]())
+      .subset(TestMatrixSubset.TestSampler[Position1D]())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its sampled data in 2D" in {
     toRDD(data2)
-      .sample(TestMatrixSample.TestSampler[Position2D]())
+      .subset(TestMatrixSubset.TestSampler[Position2D]())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its sampled data in 3D" in {
     toRDD(data3)
-      .sample(TestMatrixSample.TestSampler[Position3D]())
+      .subset(TestMatrixSubset.TestSampler[Position3D]())
       .toList.sortBy(_.position) shouldBe result3
   }
 
-  "A Matrix.sampleWithValue" should "return its sampled data in 1D" in {
+  "A Matrix.subsetWithValue" should "return its sampled data in 1D" in {
     toRDD(data1)
-      .sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position1D](), ext)
+      .subsetWithValue(TestMatrixSubset.TestSamplerWithValue[Position1D](), ext)
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its sampled data in 2D" in {
     toRDD(data2)
-      .sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position2D](), ext)
+      .subsetWithValue(TestMatrixSubset.TestSamplerWithValue[Position2D](), ext)
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its sampled data in 3D" in {
     toRDD(data3)
-      .sampleWithValue(TestMatrixSample.TestSamplerWithValue[Position3D](), ext)
+      .subsetWithValue(TestMatrixSubset.TestSamplerWithValue[Position3D](), ext)
       .toList.sortBy(_.position) shouldBe result6
   }
 }

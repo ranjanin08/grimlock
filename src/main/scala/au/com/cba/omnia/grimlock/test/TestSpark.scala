@@ -577,7 +577,7 @@ object TestSpark16 {
     }
 
     data
-      .sample(HashSample())
+      .subset(HashSample())
       .saveAsText(s"./tmp.${tool}/smp1.out")
       .toUnit
   }
@@ -617,7 +617,7 @@ object TestSpark17 {
     }
 
     data
-      .sample(Sample500())
+      .subset(Sample500())
       .saveAsCSV(Over(First), s"./tmp.${tool}/flt1.csv")
       .toUnit
 
@@ -634,7 +634,7 @@ object TestSpark17 {
     }
 
     data
-      .sampleWithValue(RemoveGreaterThanMean(Second), stats)
+      .subsetWithValue(RemoveGreaterThanMean(Second), stats)
       .saveAsCSV(Over(First), s"./tmp.${tool}/flt2.csv")
       .toUnit
   }

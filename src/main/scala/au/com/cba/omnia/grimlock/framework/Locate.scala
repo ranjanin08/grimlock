@@ -27,12 +27,14 @@ object Locate {
   /**
    * Extract position use a name pattern.
    *
+   * @param slice     Encapsulates the dimension(s) from which to construct the name.
    * @param pattern   Name pattern of the new coordinate. Use `%[12]$``s` for the string representations of the
    *                  left and right selected positions respectively.
-   * @param all       Indicates if all positions should be returned (true), or only if `reml` is equal to `remr`.
+   * @param all       Indicates if all positions should be returned (true), or only if left and right remainder
+   *                  are equal.
    * @param separator Separator to use when converting left and right positions to string.
    *
-   * @note If a position is returned then it's always `reml` with an additional coordinate prepended.
+   * @note If a position is returned then it's always right cell's remainder with an additional coordinate prepended.
    */
   def OperatorString[P <: Position](slice: Slice[P], pattern: String, all: Boolean = false,
     separator: String = "|"): Operator[P, slice.R#M] = {

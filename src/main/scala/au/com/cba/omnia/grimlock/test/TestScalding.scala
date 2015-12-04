@@ -545,7 +545,7 @@ class TestScalding16(args : Args) extends Job(args) {
   }
 
   data
-    .sample(HashSample())
+    .subset(HashSample())
     .saveAsText(s"./tmp.${tool}/smp1.out")
     .toUnit
 }
@@ -583,7 +583,7 @@ class TestScalding17(args : Args) extends Job(args) {
   }
 
   data
-    .sample(Sample500())
+    .subset(Sample500())
     .saveAsCSV(Over(First), s"./tmp.${tool}/flt1.csv")
     .toUnit
 
@@ -600,7 +600,7 @@ class TestScalding17(args : Args) extends Job(args) {
   }
 
   data
-    .sampleWithValue(RemoveGreaterThanMean(Second), stats)
+    .subsetWithValue(RemoveGreaterThanMean(Second), stats)
     .saveAsCSV(Over(First), s"./tmp.${tool}/flt2.csv")
     .toUnit
 }

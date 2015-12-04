@@ -235,26 +235,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def renameWithValue[W](renamer: (Cell[P], W) => Option[P], value: E[W]): U[Cell[P]]
 
-  /**
-   * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
-   *
-   * @param samplers Sampling function(s).
-   *
-   * @return A `U[Cell[P]]` with the sampled cells.
-   */
-  def sample[F](samplers: F)(implicit ev: Sampleable[F, P]): U[Cell[P]]
-
-  /**
-   * Sample a matrix according to some `sampler` using a user supplied value. It keeps only those cells for which
-   * `sampler` returns true.
-   *
-   * @param samplers Sampling function(s).
-   * @param value    A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[P]]` with the sampled cells.
-   */
-  def sampleWithValue[F, W](samplers: F, value: E[W])(implicit ev: SampleableWithValue[F, P, W]): U[Cell[P]]
-
   /** Specifies tuners permitted on a call to `set` functions. */
   type SetTuners <: OneOf
 
@@ -382,6 +362,26 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    */
   def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
     parser: Matrix.TextParser[Q]): (U[Cell[Q]], U[String])
+
+  /**
+   * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
+   *
+   * @param samplers Sampling function(s).
+   *
+   * @return A `U[Cell[P]]` with the sampled cells.
+   */
+  def subset(samplers: Sampleable[P]): U[Cell[P]]
+
+  /**
+   * Sample a matrix according to some `sampler` using a user supplied value. It keeps only those cells for which
+   * `sampler` returns true.
+   *
+   * @param samplers Sampling function(s).
+   * @param value    A `E` holding a user supplied value.
+   *
+   * @return A `U[Cell[P]]` with the sampled cells.
+   */
+  def subsetWithValue[W](samplers: SampleableWithValue[P, W], value: E[W]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `summarise` functions. */
   type SummariseTuners <: OneOf
@@ -613,8 +613,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squash[D <: Dimension, F, T <: Tuner](dim: D, squasher: F, tuner: T)(implicit ev1: PosDimDep[P, D],
-    ev2: Squashable[F, P], ev3: ClassTag[P#L], ev4: SquashTuners#V[T]): U[Cell[P#L]]
+  def squash[D <: Dimension, T <: Tuner](dim: D, squasher: Squashable[P], tuner: T)(implicit ev1: PosDimDep[P, D],
+    ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
 
   /**
    * Squash a dimension of a matrix with a user supplied value.
@@ -626,9 +626,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squashWithValue[D <: Dimension, F, W, T <: Tuner](dim: D, squasher: F, value: E[W], tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: ClassTag[P#L],
-      ev4: SquashTuners#V[T]): U[Cell[P#L]]
+  def squashWithValue[D <: Dimension, W, T <: Tuner](dim: D, squasher: SquashableWithValue[P, W], value: E[W],
+    tuner: T)(implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
 
   /**
    * Merge all dimensions into a single.
@@ -649,7 +648,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[Q]]` with extra dimension(s) added.
    */
-  def expand[Q <: Position](expander: Cell[P] => TraversableOnce[Q])(implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
+  def expand[Q <: Position](expander: (Cell[P]) => TraversableOnce[Q])(implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
 
   /**
    * Expand a matrix with extra dimension(s) using a user supplied value.

@@ -83,39 +83,31 @@ trait SquasherWithValue[P <: Position] extends java.io.Serializable {
   def presentWithValue(t: T, ext: V): Option[Content]
 }
 
-/** Type class for transforming a type `T` to a `Squasher[P]`. */
-trait Squashable[T, P <: Position] {
-  /**
-   * Returns a `Squasher[P]` for type `T`.
-   *
-   * @param t Object that can be converted to a `Squasher[P]`.
-   */
-  def convert(t: T): Squasher[P]
+/** Trait for transforming a type `T` to a `Squasher[P]`. */
+trait Squashable[P <: Position] extends java.io.Serializable {
+  /** Returns a `Squasher[P]` for this type `T`. */
+  def apply(): Squasher[P]
 }
 
-/** Companion object for the `Squashable` type class. */
+/** Companion object for the `Squashable` trait. */
 object Squashable {
   /** Converts a `Squasher[P]` to a `Squasher[P]`; that is, it is a pass through. */
-  implicit def S2S[P <: Position, T <: Squasher[P]]: Squashable[T, P] = {
-    new Squashable[T, P] { def convert(t: T): Squasher[P] = t }
+  implicit def S2S[P <: Position](t: Squasher[P]): Squashable[P] = {
+    new Squashable[P] { def apply(): Squasher[P] = t }
   }
 }
 
-/** Type class for transforming a type `T` to a `SquasherWithValue[P]`. */
-trait SquashableWithValue[T, P <: Position, W] {
-  /**
-   * Returns a `SquasherWithValue[P]` for type `T`.
-   *
-   * @param t Object that can be converted to a `SquasherWithValue[P]`.
-   */
-  def convert(t: T): SquasherWithValue[P] { type V >: W }
+/** Trait for transforming a type `T` to a `SquasherWithValue[P]`. */
+trait SquashableWithValue[P <: Position, W] extends java.io.Serializable {
+  /** Returns a `SquasherWithValue[P]` for this type `T`. */
+  def apply(): SquasherWithValue[P] { type V >: W }
 }
 
-/** Companion object for the `SquashableWithValue` type class. */
+/** Companion object for the `SquashableWithValue` trait. */
 object SquashableWithValue {
   /** Converts a `SquasherWithValue[P]` to a `SquasherWithValue[P]`; that is, it is a pass through. */
-  implicit def S2SWV[P <: Position, T <: SquasherWithValue[P] { type V >: W }, W]: SquashableWithValue[T, P, W] = {
-    new SquashableWithValue[T, P, W] { def convert(t: T): SquasherWithValue[P] { type V >: W } = t }
+  implicit def SWV2SWV[P <: Position, W](t: SquasherWithValue[P] { type V >: W }): SquashableWithValue[P, W] = {
+    new SquashableWithValue[P, W] { def apply(): SquasherWithValue[P] { type V >: W } = t }
   }
 }
 

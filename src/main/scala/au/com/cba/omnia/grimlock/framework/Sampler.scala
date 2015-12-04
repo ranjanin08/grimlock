@@ -73,58 +73,46 @@ trait SamplerWithValue[P <: Position] extends java.io.Serializable { self =>
   }
 }
 
-/** Type class for transforming a type `T` to a `Sampler[P]`. */
-trait Sampleable[T, P <: Position] {
-  /**
-   * Returns a `Sampler[P]` for type `T`.
-   *
-   * @param t Object that can be converted to a `Sampler[P]`.
-   */
-  def convert(t: T): Sampler[P]
+/** Trait for transforming a type `T` to a `Sampler[P]`. */
+trait Sampleable[P <: Position] extends java.io.Serializable {
+  /** Returns a `Sampler[P]` for this type `T`. */
+  def apply(): Sampler[P]
 }
 
-/** Companion object for the `Sampleable` type class. */
+/** Companion object for the `Sampleable` trait. */
 object Sampleable {
-  /** Converts a `Cell[P] => Boolean` to a `Sampler[P]`. */
-  implicit def C2S[P <: Position]: Sampleable[(Cell[P]) => Boolean, P] = {
-    new Sampleable[(Cell[P]) => Boolean, P] {
-      def convert(t: (Cell[P]) => Boolean): Sampler[P] = {
-        new Sampler[P] { def select(cell: Cell[P]): Boolean = t(cell) }
-      }
-    }
+  /** Converts a `(Cell[P]) => Boolean` to a `Sampler[P]`. */
+  implicit def C2S[P <: Position](t: (Cell[P]) => Boolean): Sampleable[P] = {
+    new Sampleable[P] { def apply(): Sampler[P] = new Sampler[P] { def select(cell: Cell[P]): Boolean = t(cell) } }
   }
 
   /** Converts a `Sampler[P]` to a `Sampler[P]`; that is, it is a pass through. */
-  implicit def S2S[P <: Position, T <: Sampler[P]]: Sampleable[T, P] = {
-    new Sampleable[T, P] { def convert(t: T): Sampler[P] = t }
+  implicit def S2S[P <: Position](t: Sampler[P]): Sampleable[P] = {
+    new Sampleable[P] { def apply(): Sampler[P] = t }
   }
 
-  /** Converts a `List[Sampler[P]]` to a single `Sampler[P]`. */
-  implicit def LS2S[P <: Position, T <: Sampler[P]]: Sampleable[List[T], P] = {
-    new Sampleable[List[T], P] {
-      def convert(t: List[T]): Sampler[P] = {
+  /** Converts a `List[Sampler[P]]` to a `Sampler[P]`. */
+  implicit def LS2S[P <: Position](t: List[Sampler[P]]): Sampleable[P] = {
+    new Sampleable[P] {
+      def apply(): Sampler[P] = {
         new Sampler[P] { def select(cell: Cell[P]): Boolean = t.map { case s => s.select(cell) }.reduce(_ || _) }
       }
     }
   }
 }
 
-/** Type class for transforming a type `T` to a `SamplerWithValue[P]`. */
-trait SampleableWithValue[T, P <: Position, W] {
-  /**
-   * Returns a `SamplerWithValue[P]` for type `T`.
-   *
-   * @param t Object that can be converted to a `SamplerWithValue[P]`.
-   */
-  def convert(t: T): SamplerWithValue[P] { type V >: W }
+/** Trait for transforming a type `T` to a `SamplerWithValue[P]`. */
+trait SampleableWithValue[P <: Position, W] extends java.io.Serializable {
+  /** Returns a `SamplerWithValue[P]` for this type `T`. */
+  def apply(): SamplerWithValue[P] { type V >: W }
 }
 
-/** Companion object for the `SampleableWithValue` type class. */
+/** Companion object for the `SampleableWithValue` trait. */
 object SampleableWithValue {
   /** Converts a `(Cell[P], W) => Boolean` to a `SamplerWithValue[P]`. */
-  implicit def CW2SWV[P <: Position, W]: SampleableWithValue[(Cell[P], W) => Boolean, P, W] = {
-    new SampleableWithValue[(Cell[P], W) => Boolean, P, W] {
-      def convert(t: (Cell[P], W) => Boolean): SamplerWithValue[P] { type V >: W } = {
+  implicit def CW2SWV[P <: Position, W](t: (Cell[P], W) => Boolean): SampleableWithValue[P, W] = {
+    new SampleableWithValue[P, W] {
+      def apply(): SamplerWithValue[P] { type V >: W } = {
         new SamplerWithValue[P] {
           type V = W
 
@@ -135,14 +123,14 @@ object SampleableWithValue {
   }
 
   /** Converts a `SamplerWithValue[P]` to a `SamplerWithValue[P]`; that is, it is a pass through. */
-  implicit def S2SWV[P <: Position, T <: SamplerWithValue[P] { type V >: W }, W]: SampleableWithValue[T, P, W] = {
-    new SampleableWithValue[T, P, W] { def convert(t: T): SamplerWithValue[P] { type V >: W } = t }
+  implicit def SWV2SWV[P <: Position, W](t: SamplerWithValue[P] { type V >: W }): SampleableWithValue[P, W] = {
+    new SampleableWithValue[P, W] { def apply(): SamplerWithValue[P] { type V >: W } = t }
   }
 
-  /** Converts a `List[SamplerWithValue[P] { type V >: W }]` to a single `SamplerWithValue[P] { type V >: W }`. */
-  implicit def LS2SWV[P <: Position, T <: SamplerWithValue[P] { type V >: W }, W]: SampleableWithValue[List[T], P, W] = {
-    new SampleableWithValue[List[T], P, W] {
-      def convert(t: List[T]): SamplerWithValue[P] { type V >: W } = {
+  /** Converts a `List[SamplerWithValue[P] { type V >: W }]` to a `SamplerWithValue[P] { type V >: W }`. */
+  implicit def LSWV2SWV[P <: Position, W](t: List[SamplerWithValue[P] { type V >: W }]): SampleableWithValue[P, W] = {
+    new SampleableWithValue[P, W] {
+      def apply(): SamplerWithValue[P] { type V >: W } = {
         new SamplerWithValue[P] {
           type V = W
 

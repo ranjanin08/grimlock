@@ -229,18 +229,6 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMap { case c => renamer(c, value).map { Cell(_, c.content) } }
   }
 
-  def sample[F](samplers: F)(implicit ev: Sampleable[F, P]): U[Cell[P]] = {
-    val sampler = ev.convert(samplers)
-
-    data.filter { case c => sampler.select(c) }
-  }
-
-  def sampleWithValue[F, W](samplers: F, value: E[W])(implicit ev: SampleableWithValue[F, P, W]): U[Cell[P]] = {
-    val sampler = ev.convert(samplers)
-
-    data.filter { case c => sampler.selectWithValue(c, value) }
-  }
-
   def saveAsText(file: String, writer: TextWriter = Cell.toString()): U[Cell[P]] = saveText(file, writer)
 
   type SetTuners = TP2
@@ -352,6 +340,18 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .flatMap(parser(_))
 
     (result.collect { case Left(c) => c }, result.collect { case Right(e) => e })
+  }
+
+  def subset(samplers: Sampleable[P]): U[Cell[P]] = {
+    val sampler = samplers()
+
+    data.filter { case c => sampler.select(c) }
+  }
+
+  def subsetWithValue[W](samplers: SampleableWithValue[P, W], value: E[W]): U[Cell[P]] = {
+    val sampler = samplers()
+
+    data.filter { case c => sampler.selectWithValue(c, value) }
   }
 
   type SummariseTuners = TP2
@@ -523,9 +523,9 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
   }
 
   type SquashTuners = TP2
-  def squash[D <: Dimension, F, T <: Tuner](dim: D, squasher: F, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
-    ev2: Squashable[F, P], ev3: ClassTag[P#L], ev4: SquashTuners#V[T]): U[Cell[P#L]] = {
-    val squash = ev2.convert(squasher)
+  def squash[D <: Dimension, T <: Tuner](dim: D, squasher: Squashable[P], tuner: T = Default())(
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]] = {
+    val squash = squasher()
 
     data
       .map[(P#L, Any)] { case c => (c.position.remove(dim), squash.prepare(c, dim)) }
@@ -533,10 +533,9 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
       .flatMap { case (p, t) => squash.present(t.asInstanceOf[squash.T]).map { case c => Cell(p, c) } }
   }
 
-  def squashWithValue[D <: Dimension, F, W, T <: Tuner](dim: D, squasher: F, value: E[W], tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: SquashableWithValue[F, P, W], ev3: ClassTag[P#L],
-      ev4: SquashTuners#V[T]): U[Cell[P#L]] = {
-    val squash = ev2.convert(squasher)
+  def squashWithValue[D <: Dimension, W, T <: Tuner](dim: D, squasher: SquashableWithValue[P, W], value: E[W],
+    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]] = {
+    val squash = squasher()
 
     data
       .map[(P#L, Any)] { case c => (c.position.remove(dim), squash.prepareWithValue(c, dim, value)) }
@@ -552,7 +551,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 /** Base trait for methods that expand the number of dimension of a matrix using a `RDD[Cell[P]]`. */
 trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
 
-  def expand[Q <: Position](expander: Cell[P] => TraversableOnce[Q])(implicit ev: PosExpDep[P, Q]): RDD[Cell[Q]] = {
+  def expand[Q <: Position](expander: (Cell[P]) => TraversableOnce[Q])(implicit ev: PosExpDep[P, Q]): RDD[Cell[Q]] = {
     data.flatMap { case c => expander(c).map { Cell(_, c.content) } }
   }
 

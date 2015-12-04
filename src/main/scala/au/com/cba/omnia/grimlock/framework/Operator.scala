@@ -160,7 +160,7 @@ trait OperatorWithValue[P <: Position, Q <: Position] extends java.io.Serializab
 }
 
 /** Trait for transforming a type `T` to an `Operator[P, Q]`. */
-trait Operable[P <: Position, Q <: Position] {
+trait Operable[P <: Position, Q <: Position] extends java.io.Serializable {
   /** Returns an `Operator[P, Q]` for this type `T`. */
   def apply(): Operator[P, Q]
 }
@@ -209,7 +209,7 @@ object Operable {
 }
 
 /** Trait for transforming a type `T` to an `OperatorWithValue[P, Q]`. */
-trait OperableWithValue[P <: Position, Q <: Position, W] {
+trait OperableWithValue[P <: Position, Q <: Position, W] extends java.io.Serializable {
   /** Returns a `OperatorWithValue[P, Q]` for this type `T`. */
   def apply(): OperatorWithValue[P, Q] { type V >: W }
 }
