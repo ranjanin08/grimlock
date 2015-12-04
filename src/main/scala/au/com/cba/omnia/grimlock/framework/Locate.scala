@@ -18,12 +18,11 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 object Locate {
   /**
-   * Extract position for left and right selected cells and their remainder.
+   * Extract position for left and right cells.
    *
-   * @note An `Option` is returned to allow for additional filtering (for example requiring that
-   *       `reml` and `remr` are equal.
+   * @note An `Option` is returned to allow for additional filtering.
    */
-  type Operator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (Cell[S], R, Cell[S], R) => Option[Q]
+  type Operator[P <: Position, Q <: Position] = (Cell[P], Cell[P]) => Option[Q]
 
   /**
    * Extract position use a name pattern.
@@ -35,13 +34,16 @@ object Locate {
    *
    * @note If a position is returned then it's always `reml` with an additional coordinate prepended.
    */
-  def OperatorString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](pattern: String,
-    all: Boolean = false, separator: String = "|"): Operator[S, R, R#M] = {
-    (left: Cell[S], reml: R, right: Cell[S], remr: R) =>
+  def OperatorString[P <: Position](slice: Slice[P], pattern: String, all: Boolean = false,
+    separator: String = "|"): Operator[P, slice.R#M] = {
+    (left: Cell[P], right: Cell[P]) =>
       {
+        val reml = slice.remainder(left.position)
+        val remr = slice.remainder(right.position)
+
         (all || reml == remr) match {
-          case true => Some(reml.prepend(pattern.format(left.position.toShortString(separator),
-            right.position.toShortString(separator))))
+          case true => Some(reml.prepend(pattern.format(slice.selected(left.position).toShortString(separator),
+            slice.selected(right.position).toShortString(separator))))
           case false => None
         }
       }

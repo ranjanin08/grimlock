@@ -16,25 +16,24 @@ package au.com.cba.omnia.grimlock.framework.squash
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for squashing a dimension. */
-trait Squasher[P <: Position with ReduceablePosition] extends SquasherWithValue[P] {
+trait Squasher[P <: Position] extends SquasherWithValue[P] {
   type V = Any
 
-  def prepareWithValue(cell: Cell[P#L], rem: Value, ext: V): T = prepare(cell, rem)
+  def prepareWithValue(cell: Cell[P], dim: Dimension, ext: V): T = prepare(cell, dim)
   def presentWithValue(t: T, ext: V): Option[Content] = present(t)
 
   /**
    * Prepare for squashing.
    *
-   * @param cell Cell which is to be squashed. Note that the coordinate `dim` has been removed from the position.
-   * @param rem  The coordinate of the dimension being squashed.
+   * @param cell Cell which is to be squashed.
+   * @param dim  The dimension being squashed.
    *
    * @return State to reduce.
    */
-  def prepare(cell: Cell[P#L], rem: Value): T
+  def prepare(cell: Cell[P], dim: Dimension): T
 
   /**
    * Present the squashed content.
@@ -47,7 +46,7 @@ trait Squasher[P <: Position with ReduceablePosition] extends SquasherWithValue[
 }
 
 /** Base trait for squashing a dimension with a user provided value. */
-trait SquasherWithValue[P <: Position with ReduceablePosition] extends java.io.Serializable {
+trait SquasherWithValue[P <: Position] extends java.io.Serializable {
   /** Type of the state being squashed. */
   type T
 
@@ -57,13 +56,13 @@ trait SquasherWithValue[P <: Position with ReduceablePosition] extends java.io.S
   /**
    * Prepare for squashing.
    *
-   * @param cell Cell which is to be squashed. Note that the coordinate `dim` has been removed from the position.
-   * @param rem  The coordinate of the dimension being squashed.
+   * @param cell Cell which is to be squashed.
+   * @param dim  The dimension being squashed.
    * @param ext  User provided data required for preparation.
    *
    * @return State to reduce.
    */
-  def prepareWithValue(cell: Cell[P#L], rem: Value, ext: V): T
+  def prepareWithValue(cell: Cell[P], dim: Dimension, ext: V): T
 
   /**
    * Standard reduce method.
@@ -85,7 +84,7 @@ trait SquasherWithValue[P <: Position with ReduceablePosition] extends java.io.S
 }
 
 /** Type class for transforming a type `T` to a `Squasher[P]`. */
-trait Squashable[T, P <: Position with ReduceablePosition] {
+trait Squashable[T, P <: Position] {
   /**
    * Returns a `Squasher[P]` for type `T`.
    *
@@ -97,13 +96,13 @@ trait Squashable[T, P <: Position with ReduceablePosition] {
 /** Companion object for the `Squashable` type class. */
 object Squashable {
   /** Converts a `Squasher[P]` to a `Squasher[P]`; that is, it is a pass through. */
-  implicit def S2S[P <: Position with ReduceablePosition, T <: Squasher[P]]: Squashable[T, P] = {
+  implicit def S2S[P <: Position, T <: Squasher[P]]: Squashable[T, P] = {
     new Squashable[T, P] { def convert(t: T): Squasher[P] = t }
   }
 }
 
 /** Type class for transforming a type `T` to a `SquasherWithValue[P]`. */
-trait SquashableWithValue[T, P <: Position with ReduceablePosition, W] {
+trait SquashableWithValue[T, P <: Position, W] {
   /**
    * Returns a `SquasherWithValue[P]` for type `T`.
    *
@@ -115,7 +114,7 @@ trait SquashableWithValue[T, P <: Position with ReduceablePosition, W] {
 /** Companion object for the `SquashableWithValue` type class. */
 object SquashableWithValue {
   /** Converts a `SquasherWithValue[P]` to a `SquasherWithValue[P]`; that is, it is a pass through. */
-  implicit def S2SWV[P <: Position with ReduceablePosition, T <: SquasherWithValue[P] { type V >: W }, W]: SquashableWithValue[T, P, W] = {
+  implicit def S2SWV[P <: Position, T <: SquasherWithValue[P] { type V >: W }, W]: SquashableWithValue[T, P, W] = {
     new SquashableWithValue[T, P, W] { def convert(t: T): SquasherWithValue[P] { type V >: W } = t }
   }
 }

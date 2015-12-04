@@ -22,10 +22,9 @@ import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Convenience trait for operators that apply to `Double` values. */
-trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends Operator[S, R, Q] {
+trait DoubleOperator[P <: Position, Q <: Position] extends Operator[P, Q] {
   /** Function to extract result position. */
-  val pos: Locate.Operator[S, R, Q]
+  val pos: Locate.Operator[P, Q]
 
   /** Indicator if pairwise operator `f()` should be called as `f(l, r)` or as `f(r, l)`. */
   val inverse: Boolean
@@ -33,12 +32,11 @@ trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with E
   /**
    * Indicate if the cell is selected as part of the sample.
    *
-   * @param left  The selected left cell to compute with.
-   * @param right The selected right cell to compute with.
-   * @param rem   The remaining coordinates.
+   * @param left  The left cell to compute with.
+   * @param right The right cell to compute with.
    */
-  def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): TraversableOnce[Cell[Q]] = {
-    (pos(left, reml, right, remr), left.content.value.asDouble, right.content.value.asDouble) match {
+  def compute(left: Cell[P], right: Cell[P]): TraversableOnce[Cell[Q]] = {
+    (pos(left, right), left.content.value.asDouble, right.content.value.asDouble) match {
       case (Some(p), Some(l), Some(r)) => Some[Cell[Q]](Cell(p,
         Content(ContinuousSchema(DoubleCodex), if (inverse) compute(r, l) else compute(l, r))))
       case _ => None
@@ -49,28 +47,26 @@ trait DoubleOperator[S <: Position with ExpandablePosition, R <: Position with E
 }
 
 /** Add two values. */
-case class Plus[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  pos: Locate.Operator[S, R, Q]) extends DoubleOperator[S, R, Q] {
+case class Plus[P <: Position, Q <: Position](pos: Locate.Operator[P, Q]) extends DoubleOperator[P, Q] {
   val inverse: Boolean = false
   protected def compute(l: Double, r: Double) = l + r
 }
 
 /** Subtract two values. */
-case class Minus[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  pos: Locate.Operator[S, R, Q], inverse: Boolean = false) extends DoubleOperator[S, R, Q] {
+case class Minus[P <: Position, Q <: Position](pos: Locate.Operator[P, Q],
+  inverse: Boolean = false) extends DoubleOperator[P, Q] {
   protected def compute(l: Double, r: Double) = l - r
 }
 
 /** Multiply two values. */
-case class Times[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  pos: Locate.Operator[S, R, Q]) extends DoubleOperator[S, R, Q] {
+case class Times[P <: Position, Q <: Position](pos: Locate.Operator[P, Q]) extends DoubleOperator[P, Q] {
   val inverse: Boolean = false
   protected def compute(l: Double, r: Double) = l * r
 }
 
 /** Divide two values. */
-case class Divide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  pos: Locate.Operator[S, R, Q], inverse: Boolean = false) extends DoubleOperator[S, R, Q] {
+case class Divide[P <: Position, Q <: Position](pos: Locate.Operator[P, Q],
+  inverse: Boolean = false) extends DoubleOperator[P, Q] {
   protected def compute(l: Double, r: Double) = l / r
 }
 
@@ -81,10 +77,10 @@ case class Divide[S <: Position with ExpandablePosition, R <: Position with Expa
  * @param value Pattern for the new (string) value of the pairwise contents. Use `%[12]$``s` for the string
  *              representations of the content.
  */
-case class Concatenate[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  pos: Locate.Operator[S, R, Q], value: String = "%1$s,%2$s") extends Operator[S, R, Q] {
-  def compute(left: Cell[S], reml: R, right: Cell[S], remr: R): TraversableOnce[Cell[Q]] = {
-    pos(left, reml, right, remr) match {
+case class Concatenate[P <: Position, Q <: Position](pos: Locate.Operator[P, Q],
+  value: String = "%1$s,%2$s") extends Operator[P, Q] {
+  def compute(left: Cell[P], right: Cell[P]): TraversableOnce[Cell[Q]] = {
+    pos(left, right) match {
       case Some(p) => Some[Cell[Q]](Cell(p, Content(NominalSchema(StringCodex),
         value.format(left.content.value.toShortString, right.content.value.toShortString))))
       case None => None

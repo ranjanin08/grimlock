@@ -22,22 +22,20 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 class TestOperatorString extends TestGrimlock {
 
-  val left = Cell(Position1D("left"), Content(ContinuousSchema(DoubleCodex), 1))
-  val reml = Position2D("abc", 123)
-  val right = Cell(Position1D("right"), Content(ContinuousSchema(DoubleCodex), 2))
-  val remr = Position2D("def", 456)
+  val left = Cell(Position3D("left", "abc", 123), Content(ContinuousSchema(DoubleCodex), 1))
+  val right = Cell(Position3D("right", "def", 456), Content(ContinuousSchema(DoubleCodex), 2))
 
   "A OperatorString" should "extract with all" in {
-    Locate.OperatorString[Position1D, Position2D]("%1$s-%2$s", false)(left, reml, right, remr) shouldBe (None)
-    Locate.OperatorString[Position1D, Position2D]("%1$s-%2$s", false)(left, remr, right, remr) shouldBe
-      (Some(Position3D("left-right", "def", 456)))
+    Locate.OperatorString[Position3D](Over(First), "%1$s-%2$s", false)(left, right) shouldBe (None)
+    Locate.OperatorString[Position3D](Over(First), "%1$s-%2$s", false)(right, right) shouldBe
+      (Some(Position3D("right-right", "def", 456)))
   }
 
   it should "extract with non-all" in {
-    Locate.OperatorString[Position1D, Position2D]("%1$s-%2$s", true)(left, reml, right, remr) shouldBe
+    Locate.OperatorString[Position3D](Over(First), "%1$s-%2$s", true)(left, right) shouldBe
       (Some(Position3D("left-right", "abc", 123)))
-    Locate.OperatorString[Position1D, Position2D]("%1$s-%2$s", true)(left, remr, right, remr) shouldBe
-      (Some(Position3D("left-right", "def", 456)))
+    Locate.OperatorString[Position3D](Over(First), "%1$s-%2$s", true)(right, left) shouldBe
+      (Some(Position3D("right-left", "def", 456)))
   }
 }
 

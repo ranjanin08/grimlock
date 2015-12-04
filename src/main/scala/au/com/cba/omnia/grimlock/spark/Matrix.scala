@@ -185,42 +185,40 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
                                Default[Sequence2[Reducers, Sequence2[Reducers, Reducers]]],
                                Default[Sequence2[Sequence2[Reducers, Reducers], Reducers]],
                                Default[Sequence2[Sequence2[Reducers, Reducers], Sequence2[Reducers, Reducers]]]]
-  def pairwise[Q <: Position, F, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: F, tuner: T = Default())(
-    implicit ev1: Operable[F, slice.S, slice.R, Q], ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S],
+  def pairwise[Q <: Position, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: Operable[P, Q],
+    tuner: T = Default())(implicit ev1: slice.S =!= Position0D, ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S],
       ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev1.convert(operators)
+    val operator = operators()
 
-    pairwiseTuples(slice, comparer, tuner)(data, data)
-      .flatMap { case ((lc, lr), (rc, rr)) => operator.compute(lc, lr, rc, rr) }
+    pairwiseTuples(slice, comparer, tuner)(data, data).flatMap { case (lc, rc) => operator.compute(lc, rc) }
   }
 
-  def pairwiseWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: F,
-    value: E[W], tuner: T = Default())(implicit ev1: OperableWithValue[F, slice.S, slice.R, Q, W],
-      ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
+  def pairwiseWithValue[Q <: Position, W, T <: Tuner](slice: Slice[P], comparer: Comparer,
+    operators: OperableWithValue[P, Q, W], value: E[W], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+      ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
         ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev1.convert(operators)
+    val operator = operators()
 
     pairwiseTuples(slice, comparer, tuner)(data, data)
-      .flatMap { case ((lc, lr), (rc, rr)) => operator.computeWithValue(lc, lr, rc, rr, value) }
+      .flatMap { case (lc, rc) => operator.computeWithValue(lc, rc, value) }
   }
 
-  def pairwiseBetween[Q <: Position, F, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S, operators: F,
-    tuner: T = Default())(implicit ev1: Operable[F, slice.S, slice.R, Q], ev2: slice.S =!= Position0D,
+  def pairwiseBetween[Q <: Position, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S,
+    operators: Operable[P, Q], tuner: T = Default())(implicit ev1: slice.S =!= Position0D, ev2: PosExpDep[slice.R, Q],
       ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev1.convert(operators)
+    val operator = operators()
 
-    pairwiseTuples(slice, comparer, tuner)(data, that.data)
-      .flatMap { case ((lc, lr), (rc, rr)) => operator.compute(lc, lr, rc, rr) }
+    pairwiseTuples(slice, comparer, tuner)(data, that.data).flatMap { case (lc, rc) => operator.compute(lc, rc) }
   }
 
-  def pairwiseBetweenWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S,
-    operators: F, value: E[W], tuner: T = Default())(implicit ev1: OperableWithValue[F, slice.S, slice.R, Q, W],
-      ev2: slice.S =!= Position0D, ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
+  def pairwiseBetweenWithValue[Q <: Position, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S,
+    operators: OperableWithValue[P, Q, W], value: E[W], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+      ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
         ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
-    val operator = ev1.convert(operators)
+    val operator = operators()
 
     pairwiseTuples(slice, comparer, tuner)(data, that.data)
-      .flatMap { case ((lc, lr), (rc, rr)) => operator.computeWithValue(lc, lr, rc, rr, value) }
+      .flatMap { case (lc, rc) => operator.computeWithValue(lc, rc, value) }
   }
 
   def rename(renamer: (Cell[P]) => Option[P]): U[Cell[P]] = {
@@ -466,9 +464,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   private def pairwiseTuples[T <: Tuner](slice: Slice[P], comparer: Comparer, tuner: T)(ldata: U[Cell[P]],
-    rdata: U[Cell[P]])(implicit ev1: ClassTag[slice.S],
-      ev2: ClassTag[slice.R]): U[((Cell[slice.S], slice.R), (Cell[slice.S], slice.R))] = {
-    val toTuple = (c: Cell[P]) => (Cell(slice.selected(c.position), c.content), slice.remainder(c.position))
+    rdata: U[Cell[P]])(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R]): U[(Cell[P], Cell[P])] = {
     val (rr, rj, lr, lj) = tuner.parameters match {
       case Sequence2(Sequence2(rr, rj), Sequence2(lr, lj)) => (rr, rj, lr, lj)
       case Sequence2(rj @ Reducers(_), Sequence2(lr, lj)) => (NoParameters, rj, lr, lj)
@@ -486,7 +482,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .tunedJoin(lj, ldata.keyBy { case Cell(p, _) => slice.selected(p) })
       .keyBy { case (_, ((_, r),  _)) => r }
       .tunedJoin(rj, rdata.keyBy { case Cell(p, _) => slice.selected(p) })
-      .map { case (_, ((_, (_, lc)), rc)) => (toTuple(lc), toTuple(rc)) }
+      .map { case (_, ((_, (_, lc)), rc)) => (lc, rc) }
   }
 }
 
@@ -532,7 +528,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
     val squash = ev2.convert(squasher)
 
     data
-      .map[(P#L, Any)] { case Cell(p, c) => (p.remove(dim), squash.prepare(Cell(p.remove(dim), c), p(dim))) }
+      .map[(P#L, Any)] { case c => (c.position.remove(dim), squash.prepare(c, dim)) }
       .tunedReduce(tuner.parameters, (lt, rt) => squash.reduce(lt.asInstanceOf[squash.T], rt.asInstanceOf[squash.T]))
       .flatMap { case (p, t) => squash.present(t.asInstanceOf[squash.T]).map { case c => Cell(p, c) } }
   }
@@ -543,9 +539,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
     val squash = ev2.convert(squasher)
 
     data
-      .map[(P#L, Any)] {
-        case Cell(p, c) => (p.remove(dim), squash.prepareWithValue(Cell(p.remove(dim), c), p(dim), value))
-      }
+      .map[(P#L, Any)] { case c => (c.position.remove(dim), squash.prepareWithValue(c, dim, value)) }
       .tunedReduce(tuner.parameters, (lt, rt) => squash.reduce(lt.asInstanceOf[squash.T], rt.asInstanceOf[squash.T]))
       .flatMap { case (p, t) => squash.presentWithValue(t.asInstanceOf[squash.T], value).map { case c => Cell(p, c) } }
   }
@@ -604,12 +598,12 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val denom = centered
       .transform(Power[Position2D](2))
       .summarise(slice, Sum[Position2D, slice.S](), stuner)
-      .pairwise(Over(First), Lower, Times(Locate.OperatorString[Position1D, Position0D]("(%1$s*%2$s)")), ptuner)
+      .pairwise(Over(First), Lower, Times(Locate.OperatorString[Position1D](Over(First), "(%1$s*%2$s)")), ptuner)
       .transform(SquareRoot[Position1D]())
       .compact(Over(First))
 
     centered
-      .pairwise(slice, Lower, Times(Locate.OperatorString[slice.S, slice.R]("(%1$s*%2$s)")), ptuner)
+      .pairwise(slice, Lower, Times(Locate.OperatorString[Position2D](slice, "(%1$s*%2$s)")), ptuner)
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
       .transformWithValue(Fraction(ExtractWithDimension[Dimension.First, Position1D, Content](First)
         .andThenPresent(_.value.asDouble)), denom)
@@ -654,10 +648,10 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
         .andThenExpandWithValue((cell, _) => cell.position.append("marginal")), mcount, stuner)
-      .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position1D, Position1D]("%s,%s")), ptuner)
+      .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position2D](Over(First), "%s,%s")), ptuner)
 
     val jhist = data
-      .pairwise(slice, Upper, Concatenate(Locate.OperatorString[slice.S, slice.R]("%s,%s")), ptuner)
+      .pairwise(slice, Upper, Concatenate(Locate.OperatorString[Position2D](slice, "%s,%s")), ptuner)
       .expand(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(Second), Count[Position3D, Position2D](), stuner)
 
@@ -721,7 +715,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     tpr
       .pairwiseBetween(Along(First), Diagonal, fpr,
-        Times(Locate.OperatorString[Position1D, Position1D]("(%1$s*%2$s)")), ptuner)
+        Times(Locate.OperatorString[Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
       .summarise(Along(First), Sum[Position2D, Position1D](), stuner)
       .transformWithValue(Subtract(ExtractWithKey[Position1D, String, Double]("one"), true),
         Map(Position1D("one") -> 1.0))

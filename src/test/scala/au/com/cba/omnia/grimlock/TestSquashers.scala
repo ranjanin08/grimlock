@@ -25,27 +25,10 @@ import au.com.cba.omnia.grimlock.library.squash._
 trait TestSquashers extends TestGrimlock {
 
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
-
   val con1 = Content(ContinuousSchema(LongCodex), 123)
   val con2 = Content(ContinuousSchema(LongCodex), 456)
-
-  val c1f = Cell(Position2D("b", DateValue(dfmt.parse("2001-01-01"), DateCodex())), con1)
-  val c2f = Cell(Position2D("a", DateValue(dfmt.parse("2002-01-01"), DateCodex())), con2)
-
-  val r1f = LongValue(1)
-  val r2f = LongValue(2)
-
-  val c1s = Cell(Position2D(1, DateValue(dfmt.parse("2001-01-01"), DateCodex())), con1)
-  val c2s = Cell(Position2D(2, DateValue(dfmt.parse("2002-01-01"), DateCodex())), con2)
-
-  val r1s = StringValue("b")
-  val r2s = StringValue("a")
-
-  val c1t = Cell(Position2D(1, "b"), con1)
-  val c2t = Cell(Position2D(2, "a"), con2)
-
-  val r1t = DateValue(dfmt.parse("2001-01-01"), DateCodex())
-  val r2t = DateValue(dfmt.parse("2002-01-01"), DateCodex())
+  val cell1 = Cell(Position3D(1, "b", DateValue(dfmt.parse("2001-01-01"), DateCodex())), con1)
+  val cell2 = Cell(Position3D(2, "a", DateValue(dfmt.parse("2002-01-01"), DateCodex())), con2)
 }
 
 class TestPreservingMaxPosition extends TestSquashers {
@@ -53,8 +36,8 @@ class TestPreservingMaxPosition extends TestSquashers {
   "A PreservingMaxPosition" should "return the second cell for the first dimension when greater" in {
     val squash = PreservingMaxPosition[Position3D]()
 
-    val t1 = squash.prepare(c1f, r1f)
-    val t2 = squash.prepare(c2f, r2f)
+    val t1 = squash.prepare(cell1, First)
+    val t2 = squash.prepare(cell2, First)
 
     val t = squash.reduce(t1, t2)
 
@@ -64,8 +47,8 @@ class TestPreservingMaxPosition extends TestSquashers {
   it should "return the first cell for the first dimension when greater" in {
     val squash = PreservingMaxPosition[Position3D]()
 
-    val t1 = squash.prepare(c2f, r2f)
-    val t2 = squash.prepare(c1f, r1f)
+    val t1 = squash.prepare(cell2, First)
+    val t2 = squash.prepare(cell1, First)
 
     val t = squash.reduce(t1, t2)
 
@@ -75,8 +58,8 @@ class TestPreservingMaxPosition extends TestSquashers {
   it should "return the first cell for the first dimension when equal" in {
     val squash = PreservingMaxPosition[Position3D]()
 
-    val t1 = squash.prepare(c2f, r2f)
-    val t2 = squash.prepare(c2f, r2f)
+    val t1 = squash.prepare(cell2, First)
+    val t2 = squash.prepare(cell2, First)
 
     val t = squash.reduce(t1, t2)
 
@@ -86,8 +69,8 @@ class TestPreservingMaxPosition extends TestSquashers {
   it should "return the first cell for the second dimension when greater" in {
     val squash = PreservingMaxPosition[Position3D]()
 
-    val t1 = squash.prepare(c1s, r1s)
-    val t2 = squash.prepare(c2s, r2s)
+    val t1 = squash.prepare(cell1, Second)
+    val t2 = squash.prepare(cell2, Second)
 
     val t = squash.reduce(t1, t2)
 
@@ -97,8 +80,8 @@ class TestPreservingMaxPosition extends TestSquashers {
   it should "return the second cell for the second dimension when greater" in {
     val squash = PreservingMaxPosition[Position3D]()
 
-    val t1 = squash.prepare(c2s, r2s)
-    val t2 = squash.prepare(c1s, r1s)
+    val t1 = squash.prepare(cell2, Second)
+    val t2 = squash.prepare(cell1, Second)
 
     val t = squash.reduce(t1, t2)
 
@@ -108,8 +91,8 @@ class TestPreservingMaxPosition extends TestSquashers {
   it should "return the first cell for the second dimension when equal" in {
     val squash = PreservingMaxPosition[Position3D]()
 
-    val t1 = squash.prepare(c1s, r1s)
-    val t2 = squash.prepare(c1s, r1s)
+    val t1 = squash.prepare(cell1, Second)
+    val t2 = squash.prepare(cell1, Second)
 
     val t = squash.reduce(t1, t2)
 
@@ -119,8 +102,8 @@ class TestPreservingMaxPosition extends TestSquashers {
   it should "return the second cell for the third dimension when greater" in {
     val squash = PreservingMaxPosition[Position3D]()
 
-    val t1 = squash.prepare(c1t, r1t)
-    val t2 = squash.prepare(c2t, r2t)
+    val t1 = squash.prepare(cell1, Third)
+    val t2 = squash.prepare(cell2, Third)
 
     val t = squash.reduce(t1, t2)
 
@@ -130,8 +113,8 @@ class TestPreservingMaxPosition extends TestSquashers {
   it should "return the first cell for the third dimension when greater" in {
     val squash = PreservingMaxPosition[Position3D]()
 
-    val t1 = squash.prepare(c2t, r2t)
-    val t2 = squash.prepare(c1t, r1t)
+    val t1 = squash.prepare(cell2, Third)
+    val t2 = squash.prepare(cell1, Third)
 
     val t = squash.reduce(t1, t2)
 
@@ -141,8 +124,8 @@ class TestPreservingMaxPosition extends TestSquashers {
   it should "return the first cell for the third dimension when equal" in {
     val squash = PreservingMaxPosition[Position3D]()
 
-    val t1 = squash.prepare(c2t, r2t)
-    val t2 = squash.prepare(c2t, r2t)
+    val t1 = squash.prepare(cell2, Third)
+    val t2 = squash.prepare(cell2, Third)
 
     val t = squash.reduce(t1, t2)
 
@@ -155,8 +138,8 @@ class TestPreservingMinPosition extends TestSquashers {
   "A PreservingMinPosition" should "return the first cell for the first dimension when less" in {
     val squash = PreservingMinPosition[Position3D]()
 
-    val t1 = squash.prepare(c1f, r1f)
-    val t2 = squash.prepare(c2f, r2f)
+    val t1 = squash.prepare(cell1, First)
+    val t2 = squash.prepare(cell2, First)
 
     val t = squash.reduce(t1, t2)
 
@@ -166,8 +149,8 @@ class TestPreservingMinPosition extends TestSquashers {
   it should "return the second cell for the first dimension when less" in {
     val squash = PreservingMinPosition[Position3D]()
 
-    val t1 = squash.prepare(c2f, r2f)
-    val t2 = squash.prepare(c1f, r1f)
+    val t1 = squash.prepare(cell2, First)
+    val t2 = squash.prepare(cell1, First)
 
     val t = squash.reduce(t1, t2)
 
@@ -177,8 +160,8 @@ class TestPreservingMinPosition extends TestSquashers {
   it should "return the first cell for the first dimension when equal" in {
     val squash = PreservingMinPosition[Position3D]()
 
-    val t1 = squash.prepare(c1f, r1f)
-    val t2 = squash.prepare(c1f, r1f)
+    val t1 = squash.prepare(cell1, First)
+    val t2 = squash.prepare(cell1, First)
 
     val t = squash.reduce(t1, t2)
 
@@ -188,8 +171,8 @@ class TestPreservingMinPosition extends TestSquashers {
   it should "return the second cell for the second dimension when less" in {
     val squash = PreservingMinPosition[Position3D]()
 
-    val t1 = squash.prepare(c1s, r1s)
-    val t2 = squash.prepare(c2s, r2s)
+    val t1 = squash.prepare(cell1, Second)
+    val t2 = squash.prepare(cell2, Second)
 
     val t = squash.reduce(t1, t2)
 
@@ -199,8 +182,8 @@ class TestPreservingMinPosition extends TestSquashers {
   it should "return the first cell for the second dimension when less" in {
     val squash = PreservingMinPosition[Position3D]()
 
-    val t1 = squash.prepare(c2s, r2s)
-    val t2 = squash.prepare(c1s, r1s)
+    val t1 = squash.prepare(cell2, Second)
+    val t2 = squash.prepare(cell1, Second)
 
     val t = squash.reduce(t1, t2)
 
@@ -210,8 +193,8 @@ class TestPreservingMinPosition extends TestSquashers {
   it should "return the first cell for the second dimension when equal" in {
     val squash = PreservingMinPosition[Position3D]()
 
-    val t1 = squash.prepare(c2s, r2s)
-    val t2 = squash.prepare(c2s, r2s)
+    val t1 = squash.prepare(cell2, Second)
+    val t2 = squash.prepare(cell2, Second)
 
     val t = squash.reduce(t1, t2)
 
@@ -221,8 +204,8 @@ class TestPreservingMinPosition extends TestSquashers {
   it should "return the first cell for the third dimension when less" in {
     val squash = PreservingMinPosition[Position3D]()
 
-    val t1 = squash.prepare(c1t, r1t)
-    val t2 = squash.prepare(c2t, r2t)
+    val t1 = squash.prepare(cell1, Third)
+    val t2 = squash.prepare(cell2, Third)
 
     val t = squash.reduce(t1, t2)
 
@@ -232,8 +215,8 @@ class TestPreservingMinPosition extends TestSquashers {
   it should "return the second cell for the third dimension when less" in {
     val squash = PreservingMinPosition[Position3D]()
 
-    val t1 = squash.prepare(c2t, r2t)
-    val t2 = squash.prepare(c1t, r1t)
+    val t1 = squash.prepare(cell2, Third)
+    val t2 = squash.prepare(cell1, Third)
 
     val t = squash.reduce(t1, t2)
 
@@ -243,8 +226,8 @@ class TestPreservingMinPosition extends TestSquashers {
   it should "return the first cell for the third dimension when equal" in {
     val squash = PreservingMinPosition[Position3D]()
 
-    val t1 = squash.prepare(c1t, r1t)
-    val t2 = squash.prepare(c1t, r1t)
+    val t1 = squash.prepare(cell1, Third)
+    val t2 = squash.prepare(cell1, Third)
 
     val t = squash.reduce(t1, t2)
 
@@ -257,8 +240,8 @@ class TestKeepSlice extends TestSquashers {
   "A KeepSlice" should "return the first cell for the first dimension when equal" in {
     val squash = KeepSlice[Position3D, Long](1)
 
-    val t1 = squash.prepare(c1f, r1f)
-    val t2 = squash.prepare(c2f, r2f)
+    val t1 = squash.prepare(cell1, First)
+    val t2 = squash.prepare(cell2, First)
 
     val t = squash.reduce(t1, t2)
 
@@ -268,8 +251,8 @@ class TestKeepSlice extends TestSquashers {
   it should "return the second cell for the first dimension when equal" in {
     val squash = KeepSlice[Position3D, Long](2)
 
-    val t1 = squash.prepare(c1f, r1f)
-    val t2 = squash.prepare(c2f, r2f)
+    val t1 = squash.prepare(cell1, First)
+    val t2 = squash.prepare(cell2, First)
 
     val t = squash.reduce(t1, t2)
 
@@ -279,8 +262,8 @@ class TestKeepSlice extends TestSquashers {
   it should "return the second cell for the first dimension when not equal" in {
     val squash = KeepSlice[Position3D, Long](3)
 
-    val t1 = squash.prepare(c1f, r1f)
-    val t2 = squash.prepare(c2f, r2f)
+    val t1 = squash.prepare(cell1, First)
+    val t2 = squash.prepare(cell2, First)
 
     val t = squash.reduce(t1, t2)
 
@@ -290,8 +273,8 @@ class TestKeepSlice extends TestSquashers {
   it should "return the second cell for the second dimension when equal" in {
     val squash = KeepSlice[Position3D, String]("b")
 
-    val t1 = squash.prepare(c1s, r1s)
-    val t2 = squash.prepare(c2s, r2s)
+    val t1 = squash.prepare(cell1, Second)
+    val t2 = squash.prepare(cell2, Second)
 
     val t = squash.reduce(t1, t2)
 
@@ -301,8 +284,8 @@ class TestKeepSlice extends TestSquashers {
   it should "return the first cell for the second dimension when equal" in {
     val squash = KeepSlice[Position3D, String]("a")
 
-    val t1 = squash.prepare(c1s, r1s)
-    val t2 = squash.prepare(c2s, r2s)
+    val t1 = squash.prepare(cell1, Second)
+    val t2 = squash.prepare(cell2, Second)
 
     val t = squash.reduce(t1, t2)
 
@@ -312,8 +295,8 @@ class TestKeepSlice extends TestSquashers {
   it should "return the second cell for the second dimension when not equal" in {
     val squash = KeepSlice[Position3D, String]("c")
 
-    val t1 = squash.prepare(c1s, r1s)
-    val t2 = squash.prepare(c2s, r2s)
+    val t1 = squash.prepare(cell1, Second)
+    val t2 = squash.prepare(cell2, Second)
 
     val t = squash.reduce(t1, t2)
 
@@ -323,8 +306,8 @@ class TestKeepSlice extends TestSquashers {
   it should "return the first cell for the third dimension when equal" in {
     val squash = KeepSlice[Position3D, DateValue](DateValue(dfmt.parse("2001-01-01"), DateCodex()))
 
-    val t1 = squash.prepare(c1t, r1t)
-    val t2 = squash.prepare(c2t, r2t)
+    val t1 = squash.prepare(cell1, Third)
+    val t2 = squash.prepare(cell2, Third)
 
     val t = squash.reduce(t1, t2)
 
@@ -334,8 +317,8 @@ class TestKeepSlice extends TestSquashers {
   it should "return the second cell for the third dimension when equal" in {
     val squash = KeepSlice[Position3D, DateValue](DateValue(dfmt.parse("2002-01-01"), DateCodex()))
 
-    val t1 = squash.prepare(c1t, r1t)
-    val t2 = squash.prepare(c2t, r2t)
+    val t1 = squash.prepare(cell1, Third)
+    val t2 = squash.prepare(cell2, Third)
 
     val t = squash.reduce(t1, t2)
 
@@ -345,8 +328,8 @@ class TestKeepSlice extends TestSquashers {
   it should "return the second cell for the third dimension when not equal" in {
     val squash = KeepSlice[Position3D, DateValue](DateValue(dfmt.parse("2003-01-01"), DateCodex()))
 
-    val t1 = squash.prepare(c1t, r1t)
-    val t2 = squash.prepare(c2t, r2t)
+    val t1 = squash.prepare(cell1, Third)
+    val t2 = squash.prepare(cell2, Third)
 
     val t = squash.reduce(t1, t2)
 
