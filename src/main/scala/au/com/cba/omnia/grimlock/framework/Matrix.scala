@@ -331,20 +331,19 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @param partitioners Assigns each position to zero, one or more partition(s).
    *
-   * @return A `U[(Q, Cell[P])]` where `Q` is the partition for the corresponding tuple.
+   * @return A `U[(I, Cell[P])]` where `I` is the partition for the corresponding tuple.
    */
-  def split[Q, F](partitioners: F)(implicit ev: Partitionable[F, P, Q]): U[(Q, Cell[P])]
+  def split[I](partitioners: Partitionable[P, I]): U[(I, Cell[P])]
 
   /**
    * Partition a matrix according to `partitioner` using a user supplied value.
    *
    * @param partitioners Assigns each position to zero, one or more partition(s).
-   * @param value        A `ValuePipe` holding a user supplied value.
+   * @param value        A `E` holding a user supplied value.
    *
-   * @return A `U[(Q, Cell[P])]` where `Q` is the partition for the corresponding tuple.
+   * @return A `U[(I, Cell[P])]` where `I` is the partition for the corresponding tuple.
    */
-  def splitWithValue[Q, F, W](partitioners: F, value: E[W])(
-    implicit ev: PartitionableWithValue[F, P, Q, W]): U[(Q, Cell[P])]
+  def splitWithValue[I, W](partitioners: PartitionableWithValue[P, I, W], value: E[W]): U[(I, Cell[P])]
 
   /**
    * Stream this matrix through `command` and apply `script`.

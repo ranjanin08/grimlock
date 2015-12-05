@@ -30,7 +30,7 @@ import scala.reflect.ClassTag
  *
  * @param data The `RDD[(I, Cell[P])]`.
  */
-class Partitions[I: Ordering, P <: Position](val data: RDD[(I, Cell[P])]) extends BasePartitions[I, P]
+class Partitions[P <: Position, I: Ordering](val data: RDD[(I, Cell[P])]) extends BasePartitions[P, I]
   with Persist[(I, Cell[P])] {
   type U[A] = RDD[A]
 
@@ -66,7 +66,7 @@ class Partitions[I: Ordering, P <: Position](val data: RDD[(I, Cell[P])]) extend
 
 /** Companion object for the Spark `Partitions` class. */
 object Partitions {
-  /** Conversion from `RDD[(T, Cell[P])]` to a Spark `Partitions`. */
-  implicit def RDDTC2RDDP[T: Ordering, P <: Position](data: RDD[(T, Cell[P])]): Partitions[T, P] = new Partitions(data)
+  /** Conversion from `RDD[(I, Cell[P])]` to a Spark `Partitions`. */
+  implicit def RDDTC2RDDP[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]): Partitions[P, I] = new Partitions(data)
 }
 

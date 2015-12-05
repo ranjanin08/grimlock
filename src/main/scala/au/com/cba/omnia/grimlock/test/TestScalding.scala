@@ -353,7 +353,7 @@ class TestScalding9(args : Args) extends Job(args) {
     .slice(Over(Second), List("fid:A", "fid:B"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .split[(Int, Int, Int), IntTuplePartitioner](IntTuplePartitioner(Second))
+    .split(IntTuplePartitioner(Second))
     .saveAsText(s"./tmp.${tool}/prt2.out", Partition.toString(descriptive = true))
     .toUnit
 

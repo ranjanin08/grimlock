@@ -32,7 +32,7 @@ import scala.reflect.ClassTag
  *
  * @param data The `TypedPipe[(I, Cell[P])]`.
  */
-class Partitions[I: Ordering, P <: Position](val data: TypedPipe[(I, Cell[P])]) extends BasePartitions[I, P]
+class Partitions[P <: Position, I: Ordering](val data: TypedPipe[(I, Cell[P])]) extends BasePartitions[P, I]
   with Persist[(I, Cell[P])] {
   type U[A] = TypedPipe[A]
 
@@ -84,8 +84,8 @@ class Partitions[I: Ordering, P <: Position](val data: TypedPipe[(I, Cell[P])]) 
 
 /** Companion object for the Scalding `Partitions` class. */
 object Partitions {
-  /** Conversion from `TypedPipe[(T, Cell[P])]` to a Scalding `Partitions`. */
-  implicit def TPTC2TPP[T: Ordering, P <: Position](data: TypedPipe[(T, Cell[P])]): Partitions[T, P] = {
+  /** Conversion from `TypedPipe[(I, Cell[P])]` to a Scalding `Partitions`. */
+  implicit def TPTC2TPP[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])]): Partitions[P, I] = {
     new Partitions(data)
   }
 }

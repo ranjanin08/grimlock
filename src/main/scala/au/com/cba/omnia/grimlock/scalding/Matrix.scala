@@ -439,15 +439,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def split[Q, F](partitioners: F)(implicit ev: Partitionable[F, P, Q]): U[(Q, Cell[P])] = {
-    val partitioner = ev.convert(partitioners)
+  def split[I](partitioners: Partitionable[P, I]): U[(I, Cell[P])] = {
+    val partitioner = partitioners()
 
     data.flatMap { case c => partitioner.assign(c).map { case q => (q, c) } }
   }
 
-  def splitWithValue[Q, F, W](partitioners: F, value: E[W])(
-    implicit ev: PartitionableWithValue[F, P, Q, W]): U[(Q, Cell[P])] = {
-    val partitioner = ev.convert(partitioners)
+  def splitWithValue[I, W](partitioners: PartitionableWithValue[P, I, W], value: E[W]): U[(I, Cell[P])] = {
+    val partitioner = partitioners()
 
     data.flatMapWithValue(value) { case (c, vo) => partitioner.assignWithValue(c, vo.get).map { case q => (q, c) } }
   }
