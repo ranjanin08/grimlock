@@ -158,7 +158,7 @@ private[scalding] object ScaldingImplicits {
 trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type U[A] = TypedPipe[A]
   type E[B] = ValuePipe[B]
-  type S = Matrix[P]
+  type M = Matrix[P]
 
   import ScaldingImplicits._
 
@@ -238,7 +238,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   type JoinTuners = OneOf7[InMemory[NoParameters.type], InMemory[Reducers],
                            Default[NoParameters.type], Default[Reducers], Default[Sequence2[Reducers, Reducers]],
                            Unbalanced[Reducers], Unbalanced[Sequence2[Reducers, Reducers]]]
-  def join[T <: Tuner](slice: Slice[P], that: S, tuner: T = Default())(implicit ev1: P =!= Position1D,
+  def join[T <: Tuner](slice: Slice[P], that: M, tuner: T = Default())(implicit ev1: P =!= Position1D,
     ev2: ClassTag[slice.S], ev3: JoinTuners#V[T]): U[Cell[P]] = {
     val (p1, p2) = (tuner, tuner.parameters) match {
       case (_, Sequence2(f, s)) => (f, s)
@@ -319,7 +319,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .flatMapWithValue(value) { case ((lc, rc), vo) => operator.computeWithValue(lc, rc, vo.get) }
   }
 
-  def pairwiseBetween[Q <: Position, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S,
+  def pairwiseBetween[Q <: Position, T <: Tuner](slice: Slice[P], comparer: Comparer, that: M,
     operators: Operable[P, Q], tuner: T = Default())(implicit ev1: slice.S =!= Position0D, ev2: PosExpDep[slice.R, Q],
       ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
     val operator = operators()
@@ -327,7 +327,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     pairwiseTuples(slice, comparer, tuner)(data, that.data).flatMap { case (lc, rc) => operator.compute(lc, rc) }
   }
 
-  def pairwiseBetweenWithValue[Q <: Position, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S,
+  def pairwiseBetweenWithValue[Q <: Position, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: M,
     operators: OperableWithValue[P, Q, W], value: E[W], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
       ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
         ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
@@ -527,9 +527,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type SummariseTuners = TP2
-  def summarise[Q <: Position, F, T <: Tuner](slice: Slice[P], aggregators: F, tuner: T = Default())(
-    implicit ev1: Aggregatable[F, P, slice.S, Q], ev2: ClassTag[slice.S], ev3: SummariseTuners#V[T]): U[Cell[Q]] = {
-    val aggregator = ev1.convert(aggregators)
+  def summarise[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
+    aggregators: Aggregatable[P, S, Q], tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: PosIncDep[S, Q],
+      ev3: ClassTag[slice.S], ev4: SummariseTuners#V[T]): U[Cell[Q]] = {
+    val aggregator = aggregators()
 
     Grouped(data.map { case c => (slice.selected(c.position), aggregator.map { case a => a.prepare(c) }) })
       .tuneReducers(tuner.parameters)
@@ -543,10 +544,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       }
   }
 
-  def summariseWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], aggregators: F, value: E[W],
-    tuner: T = Default())(implicit ev1: AggregatableWithValue[F, P, slice.S, Q, W], ev2: ClassTag[slice.S],
-      ev3: SummariseTuners#V[T]): U[Cell[Q]] = {
-    val aggregator = ev1.convert(aggregators)
+  def summariseWithValue[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
+    aggregators: AggregatableWithValue[P, S, Q, W], value: E[W], tuner: T = Default())(implicit ev1: slice.S =:= S,
+      ev2: PosIncDep[S, Q], ev3: ClassTag[slice.S], ev4: SummariseTuners#V[T]): U[Cell[Q]] = {
+    val aggregator = aggregators()
 
     Grouped(data.mapWithValue(value) {
       case (c, vo) => (slice.selected(c.position), aggregator.map { case a => a.prepareWithValue(c, vo.get) })
@@ -1821,12 +1822,12 @@ class Matrix9D(val data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D]
    * @param eighth  Dimension used for the eighth coordinate.
    * @param ninth   Dimension used for the ninth coordinate.
    */
-  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension, L <: Dimension, M <: Dimension](
-    first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K, eighth: L, ninth: M)(
+  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension, L <: Dimension, N <: Dimension](
+    first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K, eighth: L, ninth: N)(
       implicit ev1: PosDimDep[Position9D, D], ev2: PosDimDep[Position9D, F], ev3: PosDimDep[Position9D, G],
         ev4: PosDimDep[Position9D, H], ev5: PosDimDep[Position9D, I], ev6: PosDimDep[Position9D, J],
-          ev7: PosDimDep[Position9D, K], ev8: PosDimDep[Position9D, L], ev9: PosDimDep[Position9D, M],
-            ev10: Distinct9[D, F, G, H, I, J, K, L, M]): U[Cell[Position9D]] = {
+          ev7: PosDimDep[Position9D, K], ev8: PosDimDep[Position9D, L], ev9: PosDimDep[Position9D, N],
+            ev10: Distinct9[D, F, G, H, I, J, K, L, N]): U[Cell[Position9D]] = {
     data.map {
       case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)), c)
     }

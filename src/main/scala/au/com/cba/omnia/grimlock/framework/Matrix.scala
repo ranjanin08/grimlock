@@ -42,7 +42,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
   type E[_]
 
   /** Self-type of a specific implementation of this API. */
-  type S <: Matrix[P]
+  type M <: Matrix[P]
 
   /** Specifies tuners permitted on a call to `change`. */
   type ChangeTuners <: OneOf
@@ -122,7 +122,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    * @return A `U[Cell[P]]` consisting of the inner-join of the two matrices.
    */
   // TODO: Add inner/left/right/outer join functionality?
-  def join[T <: Tuner](slice: Slice[P], that: S, tuner: T)(implicit ev1: P =!= Position1D, ev2: ClassTag[slice.S],
+  def join[T <: Tuner](slice: Slice[P], that: M, tuner: T)(implicit ev1: P =!= Position1D, ev2: ClassTag[slice.S],
     ev3: JoinTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `materialise`. */
@@ -196,7 +196,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetween[Q <: Position, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S,
+  def pairwiseBetween[Q <: Position, T <: Tuner](slice: Slice[P], comparer: Comparer, that: M,
     operators: Operable[P, Q], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: PosExpDep[slice.R, Q],
       ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]]
 
@@ -212,7 +212,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
    */
-  def pairwiseBetweenWithValue[Q <: Position, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: S,
+  def pairwiseBetweenWithValue[Q <: Position, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: M,
     operators: OperableWithValue[P, Q, W], value: E[W], tuner: T)(implicit ev1: slice.S =!= Position0D,
       ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]]
 
@@ -393,8 +393,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summarise[Q <: Position, F, T <: Tuner](slice: Slice[P], aggregators: F, tuner: T)(
-    implicit ev1: Aggregatable[F, P, slice.S, Q], ev2: ClassTag[slice.S], ev3: SummariseTuners#V[T]): U[Cell[Q]]
+  def summarise[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
+    aggregators: Aggregatable[P, S, Q], tuner: T)(implicit ev1: slice.S =:= S, ev2: PosIncDep[S, Q],
+      ev3: ClassTag[slice.S], ev4: SummariseTuners#V[T]): U[Cell[Q]]
 
   /**
    * Summarise a matrix, using a user supplied value, and return the aggregates.
@@ -406,9 +407,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summariseWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], aggregators: F, value: E[W], tuner: T)(
-    implicit ev1: AggregatableWithValue[F, P, slice.S, Q, W], ev2: ClassTag[slice.S],
-      ev3: SummariseTuners#V[T]): U[Cell[Q]]
+  def summariseWithValue[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
+    aggregators: AggregatableWithValue[P, S, Q, W], value: E[W], tuner: T)(implicit ev1: slice.S =:= S,
+      ev2: PosIncDep[S, Q], ev3: ClassTag[slice.S], ev4: SummariseTuners#V[T]): U[Cell[Q]]
 
   /**
    * Convert all cells to key value tuples.

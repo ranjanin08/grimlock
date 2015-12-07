@@ -331,6 +331,12 @@ object Position {
 
   /** Define dependency between an increase from `Position9D` to `Position9D`. */
   implicit object P9IP9 extends PosIncDep[Position9D, Position9D]
+
+  /** Define dependency between an increase from `P` to `P`. */
+  implicit def PIP[P <: Position] = new PosIncDep[P, P] {}
+
+  /** Define dependency between an increase from `P` to `P#M`. */
+  implicit def PIPM[P <: Position with ExpandablePosition] = new PosIncDep[P, P#M] {}
 }
 
 /** Trait for operations that reduce a position by one dimension. */
