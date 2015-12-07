@@ -272,7 +272,7 @@ object Transformable {
 }
 
 /** Trait for transforming a type `T` to a `TransformerWithValue[P, Q]`. */
-trait TransformableWithValue[P <: Position, Q <: Position, W] {
+trait TransformableWithValue[P <: Position, Q <: Position, W] extends java.io.Serializable {
   /** Returns a `TransformerWithValue[P, Q]` for this type `T`. */
   def apply(): TransformerWithValue[P, Q] { type V >: W }
 }

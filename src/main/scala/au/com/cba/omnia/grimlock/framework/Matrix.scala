@@ -669,7 +669,7 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
 case class MatrixWithParseErrors[P <: Position, U[_]](data: U[Cell[P]], errors: U[String])
 
 /** Type class for transforming a type `T` into a `U[Cell[P]]`. */
-trait Matrixable[P <: Position, U[_]] {
+trait Matrixable[P <: Position, U[_]] extends java.io.Serializable {
   /** Returns a `U[Cell[P]]` for this type `T`. */
   def apply(): U[Cell[P]]
 }
