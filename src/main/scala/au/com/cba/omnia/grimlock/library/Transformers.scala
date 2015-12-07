@@ -62,14 +62,14 @@ case class Indicator[P <: Position]() extends Transformer[P, P] {
 /**
  * Binarise categorical variables.
  *
- * @param presenter Function that returns the updated position.
+ * @param pos Function that returns the updated position.
  *
  * @note Binarisation is only applied to categorical variables.
  */
-case class Binarise[P <: Position](presenter: (Cell[P]) => P) extends Transformer[P, P] {
+case class Binarise[P <: Position](pos: (Cell[P]) => P) extends Transformer[P, P] {
   def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
     Transform.checkType(cell, Categorical) match {
-      case true => Some(Cell(presenter(cell), Content(DiscreteSchema(LongCodex), 1)))
+      case true => Some(Cell(pos(cell), Content(DiscreteSchema(LongCodex), 1)))
       case false => None
     }
   }

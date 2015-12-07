@@ -349,12 +349,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     mode: Mode): U[Cell[P]] = saveText(file, writer)
 
   type SetTuners = TP2
-  def set[M, T <: Tuner](values: M, tuner: T = Default())(implicit ev1: BaseMatrixable[M, P, TypedPipe],
-    ev2: ClassTag[P], ev3: SetTuners#V[T]): U[Cell[P]] = {
+  def set[T <: Tuner](values: BaseMatrixable[P, TypedPipe], tuner: T = Default())(implicit ev1: ClassTag[P],
+    ev2: SetTuners#V[T]): U[Cell[P]] = {
     data
       .groupBy { case c => c.position }
       .tuneReducers(tuner.parameters)
-      .outerJoin(ev1.convert(values).groupBy { case c => c.position })
+      .outerJoin(values().groupBy { case c => c.position })
       .map { case (_, (co, cn)) => cn.getOrElse(co.get) }
   }
 
@@ -568,15 +568,15 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   def toText(writer: TextWriter): U[String] = data.flatMap(writer(_))
 
-  def transform[Q <: Position, F](transformers: F)(implicit ev: Transformable[F, P, Q]): U[Cell[Q]] = {
-    val transformer = ev.convert(transformers)
+  def transform[Q <: Position](transformers: Transformable[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
+    val transformer = transformers()
 
     data.flatMap { case c => transformer.present(c) }
   }
 
-  def transformWithValue[Q <: Position, F, W](transformers: F, value: E[W])(
-    implicit ev: TransformableWithValue[F, P, Q, W]): U[Cell[Q]] = {
-    val transformer = ev.convert(transformers)
+  def transformWithValue[Q <: Position, W](transformers: TransformableWithValue[P, Q, W], value: E[W])(
+    implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
+    val transformer = transformers()
 
     data.flatMapWithValue(value) { case (c, vo) => transformer.presentWithValue(c, vo.get) }
   }
@@ -1881,25 +1881,21 @@ class Matrix9D(val data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D]
   }
 }
 
-/** Scalding companion object for the `Matrixable` type class. */
+/** Scalding companion object for the `Matrixable` trait. */
 object Matrixable {
   /** Converts a `TypedPipe[Cell[P]]` into a `TypedPipe[Cell[P]]`; that is, it is a  pass through. */
-  implicit def TPC2TPM[P <: Position]: BaseMatrixable[TypedPipe[Cell[P]], P, TypedPipe] = {
-    new BaseMatrixable[TypedPipe[Cell[P]], P, TypedPipe] { def convert(t: TypedPipe[Cell[P]]): TypedPipe[Cell[P]] = t }
+  implicit def TPC2TPM[P <: Position](t: TypedPipe[Cell[P]]): BaseMatrixable[P, TypedPipe] = {
+    new BaseMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = t }
   }
 
   /** Converts a `List[Cell[P]]` into a `TypedPipe[Cell[P]]`. */
-  implicit def LC2TPM[P <: Position]: BaseMatrixable[List[Cell[P]], P, TypedPipe] = {
-    new BaseMatrixable[List[Cell[P]], P, TypedPipe] {
-      def convert(t: List[Cell[P]]): TypedPipe[Cell[P]] = new IterablePipe(t)
-    }
+  implicit def LC2TPM[P <: Position](t: List[Cell[P]]): BaseMatrixable[P, TypedPipe] = {
+    new BaseMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = new IterablePipe(t) }
   }
 
   /** Converts a `Cell[P]` into a `TypedPipe[Cell[P]]`. */
-  implicit def C2TPM[P <: Position]: BaseMatrixable[Cell[P], P, TypedPipe] = {
-    new BaseMatrixable[Cell[P], P, TypedPipe] {
-      def convert(t: Cell[P]): TypedPipe[Cell[P]] = new IterablePipe(List(t))
-    }
+  implicit def C2TPM[P <: Position](t: Cell[P]): BaseMatrixable[P, TypedPipe] = {
+    new BaseMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = new IterablePipe(List(t)) }
   }
 }
 

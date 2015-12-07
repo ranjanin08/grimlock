@@ -37,7 +37,7 @@ trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Posi
   /**
    * Present the reduced content.
    *
-   * @param pos The reduced position. That is, the position returned by `Slice.selected`.
+   * @param pos The reduced position. That is, the position returned by `slice.selected`.
    * @param t   The reduced state.
    *
    * @return Optional cell where the position is `pos` and the content is derived from `t`.

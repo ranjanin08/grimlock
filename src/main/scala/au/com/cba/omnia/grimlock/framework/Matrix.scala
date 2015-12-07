@@ -246,8 +246,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]' with the `values` set.
    */
-  def set[M, T <: Tuner](values: M, tuner: T)(implicit ev1: Matrixable[M, P, U], ev2: ClassTag[P],
-    ev3: SetTuners#V[T]): U[Cell[P]]
+  def set[T <: Tuner](values: Matrixable[P, U], tuner: T)(implicit ev1: ClassTag[P], ev2: SetTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `shape`. */
   type ShapeTuners <: OneOf
@@ -436,7 +435,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[Q]]` with the transformed cells.
    */
-  def transform[Q <: Position, F](transformers: F)(implicit ev: Transformable[F, P, Q]): U[Cell[Q]]
+  def transform[Q <: Position](transformers: Transformable[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]]
 
   /**
    * Transform the content of a matrix using a user supplied value.
@@ -446,8 +445,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[P]]` with the transformed cells.
    */
-  def transformWithValue[Q <: Position, F, W](transformers: F, value: E[W])(
-    implicit ev: TransformableWithValue[F, P, Q, W]): U[Cell[Q]]
+  def transformWithValue[Q <: Position, W](transformers: TransformableWithValue[P, Q, W], value: E[W])(
+    implicit ev: PosIncDep[P, Q]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `types`. */
   type TypesTuners <: OneOf
@@ -670,13 +669,9 @@ trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] 
 case class MatrixWithParseErrors[P <: Position, U[_]](data: U[Cell[P]], errors: U[String])
 
 /** Type class for transforming a type `T` into a `U[Cell[P]]`. */
-trait Matrixable[T, P <: Position, U[_]] {
-  /**
-   * Returns a `U[Cell[P]]` for type `T`.
-   *
-   * @param t Object that can be converted to a `U[Cell[P]]`.
-   */
-  def convert(t: T): U[Cell[P]]
+trait Matrixable[P <: Position, U[_]] {
+  /** Returns a `U[Cell[P]]` for this type `T`. */
+  def apply(): U[Cell[P]]
 }
 
 /** Type class for transforming a type `T` to a `List[(U[S], Matrix.Predicate[P])]`. */

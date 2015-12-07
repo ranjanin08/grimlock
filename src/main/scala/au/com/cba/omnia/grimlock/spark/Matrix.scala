@@ -232,11 +232,11 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def saveAsText(file: String, writer: TextWriter = Cell.toString()): U[Cell[P]] = saveText(file, writer)
 
   type SetTuners = TP2
-  def set[M, T <: Tuner](values: M, tuner: T = Default())(implicit ev1: BaseMatrixable[M, P, RDD], ev2: ClassTag[P],
-    ev3: SetTuners#V[T]): U[Cell[P]] = {
+  def set[T <: Tuner](values: BaseMatrixable[P, RDD], tuner: T = Default())(implicit ev1: ClassTag[P],
+    ev2: SetTuners#V[T]): U[Cell[P]] = {
     data
       .keyBy { case c => c.position }
-      .tunedOuterJoin(tuner.parameters, ev1.convert(values).keyBy { case c => c.position })
+      .tunedOuterJoin(tuner.parameters, values().keyBy { case c => c.position })
       .map { case (_, (co, cn)) => cn.getOrElse(co.get) }
   }
 
@@ -387,15 +387,15 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   def toText(writer: TextWriter): U[String] = data.flatMap(writer(_))
 
-  def transform[Q <: Position, F](transformers: F)(implicit ev: Transformable[F, P, Q]): U[Cell[Q]] = {
-    val transformer = ev.convert(transformers)
+  def transform[Q <: Position](transformers: Transformable[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
+    val transformer = transformers()
 
     data.flatMap { case c => transformer.present(c) }
   }
 
-  def transformWithValue[Q <: Position, F, W](transformers: F, value: E[W])(
-    implicit ev: TransformableWithValue[F, P, Q, W]): U[Cell[Q]] = {
-    val transformer = ev.convert(transformers)
+  def transformWithValue[Q <: Position, W](transformers: TransformableWithValue[P, Q, W], value: E[W])(
+    implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
+    val transformer = transformers()
 
     data.flatMap { case c => transformer.presentWithValue(c, value) }
   }
@@ -1645,22 +1645,22 @@ class Matrix9D(val data: RDD[Cell[Position9D]]) extends Matrix[Position9D] with 
   }
 }
 
-/** Spark companion object for the `Matrixable` type class. */
+/** Spark companion object for the `Matrixable` trait. */
 object Matrixable {
   /** Converts a `RDD[Cell[P]]` into a `RDD[Cell[P]]`; that is, it is a  pass through. */
-  implicit def RDDC2RDDM[P <: Position]: BaseMatrixable[RDD[Cell[P]], P, RDD] = {
-    new BaseMatrixable[RDD[Cell[P]], P, RDD] { def convert(t: RDD[Cell[P]]): RDD[Cell[P]] = t }
+  implicit def RDDC2RDDM[P <: Position](t: RDD[Cell[P]]): BaseMatrixable[P, RDD] = {
+    new BaseMatrixable[P, RDD] { def apply(): RDD[Cell[P]] = t }
   }
 
   /** Converts a `List[Cell[P]]` into a `RDD[Cell[P]]`. */
-  implicit def LC2RDDM[P <: Position](implicit sc: SparkContext,
-    ct: ClassTag[P]): BaseMatrixable[List[Cell[P]], P, RDD] = {
-    new BaseMatrixable[List[Cell[P]], P, RDD] { def convert(t: List[Cell[P]]): RDD[Cell[P]] = sc.parallelize(t) }
+  implicit def LC2RDDM[P <: Position](t: List[Cell[P]])(implicit sc: SparkContext,
+    ct: ClassTag[P]): BaseMatrixable[P, RDD] = {
+    new BaseMatrixable[P, RDD] { def apply(): RDD[Cell[P]] = sc.parallelize(t) }
   }
 
   /** Converts a `Cell[P]` into a `RDD[Cell[P]]`. */
-  implicit def C2RDDM[P <: Position](implicit sc: SparkContext, ct: ClassTag[P]): BaseMatrixable[Cell[P], P, RDD] = {
-    new BaseMatrixable[Cell[P], P, RDD] { def convert(t: Cell[P]): RDD[Cell[P]] = sc.parallelize(List(t)) }
+  implicit def C2RDDM[P <: Position](t: Cell[P])(implicit sc: SparkContext, ct: ClassTag[P]): BaseMatrixable[P, RDD] = {
+    new BaseMatrixable[P, RDD] { def apply(): RDD[Cell[P]] = sc.parallelize(List(t)) }
   }
 }
 

@@ -89,6 +89,9 @@ trait Position {
 /** Trait for capturing the dependency between a position and its expansion. */
 trait PosExpDep[A <: Position, B <: Position] extends java.io.Serializable
 
+/** Trait for capturing the dependency between a position and its increment (which may be the same). */
+trait PosIncDep[A <: Position, B <: Position] extends java.io.Serializable
+
 object Position {
   /** Define an ordering between 2 position. Only use with position of the same type coordinates. */
   def Ordering[T <: Position](ascending: Boolean = true): Ordering[T] = {
@@ -110,106 +113,224 @@ object Position {
   case object MapAlong extends MapMapablePosition[Position1D] {}
 
   /** Define dependency between expansion from `Position0D` to `Position1D`. */
-  implicit object P0P1 extends PosExpDep[Position0D, Position1D]
+  implicit object P0EP1 extends PosExpDep[Position0D, Position1D]
   /** Define dependency between expansion from `Position0D` to `Position2D`. */
-  implicit object P0P2 extends PosExpDep[Position0D, Position2D]
+  implicit object P0EP2 extends PosExpDep[Position0D, Position2D]
   /** Define dependency between expansion from `Position0D` to `Position3D`. */
-  implicit object P0P3 extends PosExpDep[Position0D, Position3D]
+  implicit object P0EP3 extends PosExpDep[Position0D, Position3D]
   /** Define dependency between expansion from `Position0D` to `Position4D`. */
-  implicit object P0P4 extends PosExpDep[Position0D, Position4D]
+  implicit object P0EP4 extends PosExpDep[Position0D, Position4D]
   /** Define dependency between expansion from `Position0D` to `Position5D`. */
-  implicit object P0P5 extends PosExpDep[Position0D, Position5D]
+  implicit object P0EP5 extends PosExpDep[Position0D, Position5D]
   /** Define dependency between expansion from `Position0D` to `Position6D`. */
-  implicit object P0P6 extends PosExpDep[Position0D, Position6D]
+  implicit object P0EP6 extends PosExpDep[Position0D, Position6D]
   /** Define dependency between expansion from `Position0D` to `Position7D`. */
-  implicit object P0P7 extends PosExpDep[Position0D, Position7D]
+  implicit object P0EP7 extends PosExpDep[Position0D, Position7D]
   /** Define dependency between expansion from `Position0D` to `Position8D`. */
-  implicit object P0P8 extends PosExpDep[Position0D, Position8D]
+  implicit object P0EP8 extends PosExpDep[Position0D, Position8D]
   /** Define dependency between expansion from `Position0D` to `Position9D`. */
-  implicit object P0P9 extends PosExpDep[Position0D, Position9D]
+  implicit object P0EP9 extends PosExpDep[Position0D, Position9D]
 
   /** Define dependency between expansion from `Position1D` to `Position2D`. */
-  implicit object P1P2 extends PosExpDep[Position1D, Position2D]
+  implicit object P1EP2 extends PosExpDep[Position1D, Position2D]
   /** Define dependency between expansion from `Position1D` to `Position3D`. */
-  implicit object P1P3 extends PosExpDep[Position1D, Position3D]
+  implicit object P1EP3 extends PosExpDep[Position1D, Position3D]
   /** Define dependency between expansion from `Position1D` to `Position4D`. */
-  implicit object P1P4 extends PosExpDep[Position1D, Position4D]
+  implicit object P1EP4 extends PosExpDep[Position1D, Position4D]
   /** Define dependency between expansion from `Position1D` to `Position5D`. */
-  implicit object P1P5 extends PosExpDep[Position1D, Position5D]
+  implicit object P1EP5 extends PosExpDep[Position1D, Position5D]
   /** Define dependency between expansion from `Position1D` to `Position6D`. */
-  implicit object P1P6 extends PosExpDep[Position1D, Position6D]
+  implicit object P1EP6 extends PosExpDep[Position1D, Position6D]
   /** Define dependency between expansion from `Position1D` to `Position7D`. */
-  implicit object P1P7 extends PosExpDep[Position1D, Position7D]
+  implicit object P1EP7 extends PosExpDep[Position1D, Position7D]
   /** Define dependency between expansion from `Position1D` to `Position8D`. */
-  implicit object P1P8 extends PosExpDep[Position1D, Position8D]
+  implicit object P1EP8 extends PosExpDep[Position1D, Position8D]
   /** Define dependency between expansion from `Position1D` to `Position9D`. */
-  implicit object P1P9 extends PosExpDep[Position1D, Position9D]
+  implicit object P1EP9 extends PosExpDep[Position1D, Position9D]
 
   /** Define dependency between expansion from `Position2D` to `Position3D`. */
-  implicit object P2P3 extends PosExpDep[Position2D, Position3D]
+  implicit object P2EP3 extends PosExpDep[Position2D, Position3D]
   /** Define dependency between expansion from `Position2D` to `Position4D`. */
-  implicit object P2P4 extends PosExpDep[Position2D, Position4D]
+  implicit object P2EP4 extends PosExpDep[Position2D, Position4D]
   /** Define dependency between expansion from `Position2D` to `Position5D`. */
-  implicit object P2P5 extends PosExpDep[Position2D, Position5D]
+  implicit object P2EP5 extends PosExpDep[Position2D, Position5D]
   /** Define dependency between expansion from `Position2D` to `Position6D`. */
-  implicit object P2P6 extends PosExpDep[Position2D, Position6D]
+  implicit object P2EP6 extends PosExpDep[Position2D, Position6D]
   /** Define dependency between expansion from `Position2D` to `Position7D`. */
-  implicit object P2P7 extends PosExpDep[Position2D, Position7D]
+  implicit object P2EP7 extends PosExpDep[Position2D, Position7D]
   /** Define dependency between expansion from `Position2D` to `Position8D`. */
-  implicit object P2P8 extends PosExpDep[Position2D, Position8D]
+  implicit object P2EP8 extends PosExpDep[Position2D, Position8D]
   /** Define dependency between expansion from `Position2D` to `Position9D`. */
-  implicit object P2P9 extends PosExpDep[Position2D, Position9D]
+  implicit object P2EP9 extends PosExpDep[Position2D, Position9D]
 
   /** Define dependency between expansion from `Position3D` to `Position4D`. */
-  implicit object P3P4 extends PosExpDep[Position3D, Position4D]
+  implicit object P3EP4 extends PosExpDep[Position3D, Position4D]
   /** Define dependency between expansion from `Position3D` to `Position5D`. */
-  implicit object P3P5 extends PosExpDep[Position3D, Position5D]
+  implicit object P3EP5 extends PosExpDep[Position3D, Position5D]
   /** Define dependency between expansion from `Position3D` to `Position6D`. */
-  implicit object P3P6 extends PosExpDep[Position3D, Position6D]
+  implicit object P3EP6 extends PosExpDep[Position3D, Position6D]
   /** Define dependency between expansion from `Position3D` to `Position7D`. */
-  implicit object P3P7 extends PosExpDep[Position3D, Position7D]
+  implicit object P3EP7 extends PosExpDep[Position3D, Position7D]
   /** Define dependency between expansion from `Position3D` to `Position8D`. */
-  implicit object P3P8 extends PosExpDep[Position3D, Position8D]
+  implicit object P3EP8 extends PosExpDep[Position3D, Position8D]
   /** Define dependency between expansion from `Position3D` to `Position9D`. */
-  implicit object P3P9 extends PosExpDep[Position3D, Position9D]
+  implicit object P3EP9 extends PosExpDep[Position3D, Position9D]
 
   /** Define dependency between expansion from `Position4D` to `Position5D`. */
-  implicit object P4P5 extends PosExpDep[Position4D, Position5D]
+  implicit object P4EP5 extends PosExpDep[Position4D, Position5D]
   /** Define dependency between expansion from `Position4D` to `Position6D`. */
-  implicit object P4P6 extends PosExpDep[Position4D, Position6D]
+  implicit object P4EP6 extends PosExpDep[Position4D, Position6D]
   /** Define dependency between expansion from `Position4D` to `Position7D`. */
-  implicit object P4P7 extends PosExpDep[Position4D, Position7D]
+  implicit object P4EP7 extends PosExpDep[Position4D, Position7D]
   /** Define dependency between expansion from `Position4D` to `Position8D`. */
-  implicit object P4P8 extends PosExpDep[Position4D, Position8D]
+  implicit object P4EP8 extends PosExpDep[Position4D, Position8D]
   /** Define dependency between expansion from `Position4D` to `Position9D`. */
-  implicit object P4P9 extends PosExpDep[Position4D, Position9D]
+  implicit object P4EP9 extends PosExpDep[Position4D, Position9D]
 
   /** Define dependency between expansion from `Position5D` to `Position6D`. */
-  implicit object P5P6 extends PosExpDep[Position5D, Position6D]
+  implicit object P5EP6 extends PosExpDep[Position5D, Position6D]
   /** Define dependency between expansion from `Position5D` to `Position7D`. */
-  implicit object P5P7 extends PosExpDep[Position5D, Position7D]
+  implicit object P5EP7 extends PosExpDep[Position5D, Position7D]
   /** Define dependency between expansion from `Position5D` to `Position8D`. */
-  implicit object P5P8 extends PosExpDep[Position5D, Position8D]
+  implicit object P5EP8 extends PosExpDep[Position5D, Position8D]
   /** Define dependency between expansion from `Position5D` to `Position9D`. */
-  implicit object P5P9 extends PosExpDep[Position5D, Position9D]
+  implicit object P5EP9 extends PosExpDep[Position5D, Position9D]
 
   /** Define dependency between expansion from `Position6D` to `Position7D`. */
-  implicit object P6P7 extends PosExpDep[Position6D, Position7D]
+  implicit object P6EP7 extends PosExpDep[Position6D, Position7D]
   /** Define dependency between expansion from `Position6D` to `Position8D`. */
-  implicit object P6P8 extends PosExpDep[Position6D, Position8D]
+  implicit object P6EP8 extends PosExpDep[Position6D, Position8D]
   /** Define dependency between expansion from `Position6D` to `Position9D`. */
-  implicit object P6P9 extends PosExpDep[Position6D, Position9D]
+  implicit object P6EP9 extends PosExpDep[Position6D, Position9D]
 
   /** Define dependency between expansion from `Position7D` to `Position8D`. */
-  implicit object P7P8 extends PosExpDep[Position7D, Position8D]
+  implicit object P7EP8 extends PosExpDep[Position7D, Position8D]
   /** Define dependency between expansion from `Position7D` to `Position9D`. */
-  implicit object P7P9 extends PosExpDep[Position7D, Position9D]
+  implicit object P7EP9 extends PosExpDep[Position7D, Position9D]
 
   /** Define dependency between expansion from `Position8D` to `Position9D`. */
-  implicit object P8P9 extends PosExpDep[Position8D, Position9D]
+  implicit object P8EP9 extends PosExpDep[Position8D, Position9D]
 
   /** Define dependency between an expandable position and its expansion. */
-  implicit def PPM[P <: Position with ExpandablePosition] = new PosExpDep[P, P#M] {}
+  implicit def PEPM[P <: Position with ExpandablePosition] = new PosExpDep[P, P#M] {}
+
+  /** Define dependency between an increase from `Position0D` to `Position1D`. */
+  implicit object P0IP1 extends PosIncDep[Position0D, Position1D]
+  /** Define dependency between an increase from `Position0D` to `Position2D`. */
+  implicit object P0IP2 extends PosIncDep[Position0D, Position2D]
+  /** Define dependency between an increase from `Position0D` to `Position3D`. */
+  implicit object P0IP3 extends PosIncDep[Position0D, Position3D]
+  /** Define dependency between an increase from `Position0D` to `Position4D`. */
+  implicit object P0IP4 extends PosIncDep[Position0D, Position4D]
+  /** Define dependency between an increase from `Position0D` to `Position5D`. */
+  implicit object P0IP5 extends PosIncDep[Position0D, Position5D]
+  /** Define dependency between an increase from `Position0D` to `Position6D`. */
+  implicit object P0IP6 extends PosIncDep[Position0D, Position6D]
+  /** Define dependency between an increase from `Position0D` to `Position7D`. */
+  implicit object P0IP7 extends PosIncDep[Position0D, Position7D]
+  /** Define dependency between an increase from `Position0D` to `Position8D`. */
+  implicit object P0IP8 extends PosIncDep[Position0D, Position8D]
+  /** Define dependency between an increase from `Position0D` to `Position9D`. */
+  implicit object P0IP9 extends PosIncDep[Position0D, Position9D]
+
+  /** Define dependency between an increase from `Position1D` to `Position1D`. */
+  implicit object P1IP1 extends PosIncDep[Position1D, Position1D]
+  /** Define dependency between an increase from `Position1D` to `Position2D`. */
+  implicit object P1IP2 extends PosIncDep[Position1D, Position2D]
+  /** Define dependency between an increase from `Position1D` to `Position3D`. */
+  implicit object P1IP3 extends PosIncDep[Position1D, Position3D]
+  /** Define dependency between an increase from `Position1D` to `Position4D`. */
+  implicit object P1IP4 extends PosIncDep[Position1D, Position4D]
+  /** Define dependency between an increase from `Position1D` to `Position5D`. */
+  implicit object P1IP5 extends PosIncDep[Position1D, Position5D]
+  /** Define dependency between an increase from `Position1D` to `Position6D`. */
+  implicit object P1IP6 extends PosIncDep[Position1D, Position6D]
+  /** Define dependency between an increase from `Position1D` to `Position7D`. */
+  implicit object P1IP7 extends PosIncDep[Position1D, Position7D]
+  /** Define dependency between an increase from `Position1D` to `Position8D`. */
+  implicit object P1IP8 extends PosIncDep[Position1D, Position8D]
+  /** Define dependency between an increase from `Position1D` to `Position9D`. */
+  implicit object P1IP9 extends PosIncDep[Position1D, Position9D]
+
+  /** Define dependency between an increase from `Position2D` to `Position2D`. */
+  implicit object P2IP2 extends PosIncDep[Position2D, Position2D]
+  /** Define dependency between an increase from `Position2D` to `Position3D`. */
+  implicit object P2IP3 extends PosIncDep[Position2D, Position3D]
+  /** Define dependency between an increase from `Position2D` to `Position4D`. */
+  implicit object P2IP4 extends PosIncDep[Position2D, Position4D]
+  /** Define dependency between an increase from `Position2D` to `Position5D`. */
+  implicit object P2IP5 extends PosIncDep[Position2D, Position5D]
+  /** Define dependency between an increase from `Position2D` to `Position6D`. */
+  implicit object P2IP6 extends PosIncDep[Position2D, Position6D]
+  /** Define dependency between an increase from `Position2D` to `Position7D`. */
+  implicit object P2IP7 extends PosIncDep[Position2D, Position7D]
+  /** Define dependency between an increase from `Position2D` to `Position8D`. */
+  implicit object P2IP8 extends PosIncDep[Position2D, Position8D]
+  /** Define dependency between an increase from `Position2D` to `Position9D`. */
+  implicit object P2IP9 extends PosIncDep[Position2D, Position9D]
+
+  /** Define dependency between an increase from `Position3D` to `Position3D`. */
+  implicit object P3IP3 extends PosIncDep[Position3D, Position3D]
+  /** Define dependency between an increase from `Position3D` to `Position4D`. */
+  implicit object P3IP4 extends PosIncDep[Position3D, Position4D]
+  /** Define dependency between an increase from `Position3D` to `Position5D`. */
+  implicit object P3IP5 extends PosIncDep[Position3D, Position5D]
+  /** Define dependency between an increase from `Position3D` to `Position6D`. */
+  implicit object P3IP6 extends PosIncDep[Position3D, Position6D]
+  /** Define dependency between an increase from `Position3D` to `Position7D`. */
+  implicit object P3IP7 extends PosIncDep[Position3D, Position7D]
+  /** Define dependency between an increase from `Position3D` to `Position8D`. */
+  implicit object P3IP8 extends PosIncDep[Position3D, Position8D]
+  /** Define dependency between an increase from `Position3D` to `Position9D`. */
+  implicit object P3IP9 extends PosIncDep[Position3D, Position9D]
+
+  /** Define dependency between an increase from `Position4D` to `Position4D`. */
+  implicit object P4IP4 extends PosIncDep[Position4D, Position4D]
+  /** Define dependency between an increase from `Position4D` to `Position5D`. */
+  implicit object P4IP5 extends PosIncDep[Position4D, Position5D]
+  /** Define dependency between an increase from `Position4D` to `Position6D`. */
+  implicit object P4IP6 extends PosIncDep[Position4D, Position6D]
+  /** Define dependency between an increase from `Position4D` to `Position7D`. */
+  implicit object P4IP7 extends PosIncDep[Position4D, Position7D]
+  /** Define dependency between an increase from `Position4D` to `Position8D`. */
+  implicit object P4IP8 extends PosIncDep[Position4D, Position8D]
+  /** Define dependency between an increase from `Position4D` to `Position9D`. */
+  implicit object P4IP9 extends PosIncDep[Position4D, Position9D]
+
+  /** Define dependency between an increase from `Position5D` to `Position5D`. */
+  implicit object P5IP5 extends PosIncDep[Position5D, Position5D]
+  /** Define dependency between an increase from `Position5D` to `Position6D`. */
+  implicit object P5IP6 extends PosIncDep[Position5D, Position6D]
+  /** Define dependency between an increase from `Position5D` to `Position7D`. */
+  implicit object P5IP7 extends PosIncDep[Position5D, Position7D]
+  /** Define dependency between an increase from `Position5D` to `Position8D`. */
+  implicit object P5IP8 extends PosIncDep[Position5D, Position8D]
+  /** Define dependency between an increase from `Position5D` to `Position9D`. */
+  implicit object P5IP9 extends PosIncDep[Position5D, Position9D]
+
+  /** Define dependency between an increase from `Position6D` to `Position6D`. */
+  implicit object P6IP6 extends PosIncDep[Position6D, Position6D]
+  /** Define dependency between an increase from `Position6D` to `Position7D`. */
+  implicit object P6IP7 extends PosIncDep[Position6D, Position7D]
+  /** Define dependency between an increase from `Position6D` to `Position8D`. */
+  implicit object P6IP8 extends PosIncDep[Position6D, Position8D]
+  /** Define dependency between an increase from `Position6D` to `Position9D`. */
+  implicit object P6IP9 extends PosIncDep[Position6D, Position9D]
+
+  /** Define dependency between an increase from `Position7D` to `Position7D`. */
+  implicit object P7IP7 extends PosIncDep[Position7D, Position7D]
+  /** Define dependency between an increase from `Position7D` to `Position8D`. */
+  implicit object P7IP8 extends PosIncDep[Position7D, Position8D]
+  /** Define dependency between an increase from `Position7D` to `Position9D`. */
+  implicit object P7IP9 extends PosIncDep[Position7D, Position9D]
+
+  /** Define dependency between an increase from `Position8D` to `Position8D`. */
+  implicit object P8IP8 extends PosIncDep[Position8D, Position8D]
+  /** Define dependency between an increase from `Position8D` to `Position9D`. */
+  implicit object P8IP9 extends PosIncDep[Position8D, Position9D]
+
+  /** Define dependency between an increase from `Position9D` to `Position9D`. */
+  implicit object P9IP9 extends PosIncDep[Position9D, Position9D]
 }
 
 /** Trait for operations that reduce a position by one dimension. */
