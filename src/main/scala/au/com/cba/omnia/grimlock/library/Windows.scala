@@ -69,14 +69,16 @@ trait BatchMovingAverage[P <: Position, S <: Position with ExpandablePosition, R
 }
 
 /** Compute simple moving average over last `window` values. */
-case class SimpleMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](window: Int, position: Locate.WindowSize1[S, R, Q], all: Boolean = false) extends BatchMovingAverage[P, S, R, Q] {
+case class SimpleMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  window: Int, position: Locate.WindowSize1[S, R, Q], all: Boolean = false) extends BatchMovingAverage[P, S, R, Q] {
   protected val idx = window - 1
 
   protected def compute(lst: T): Double = lst.foldLeft(0.0)((c, p) => p._2 + c) / lst.size
 }
 
 /** Compute centered moving average over last `2 * width + 1` values. */
-case class CenteredMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](width: Int, position: Locate.WindowSize1[S, R, Q]) extends BatchMovingAverage[P, S, R, Q] {
+case class CenteredMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  width: Int, position: Locate.WindowSize1[S, R, Q]) extends BatchMovingAverage[P, S, R, Q] {
   val window = 2 * width + 1
   val all = false
   protected val idx = width
@@ -85,7 +87,8 @@ case class CenteredMovingAverage[P <: Position, S <: Position with ExpandablePos
 }
 
 /** Compute weighted moving average over last `window` values. */
-case class WeightedMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](window: Int, position: Locate.WindowSize1[S, R, Q], all: Boolean = false) extends BatchMovingAverage[P, S, R, Q] {
+case class WeightedMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  window: Int, position: Locate.WindowSize1[S, R, Q], all: Boolean = false) extends BatchMovingAverage[P, S, R, Q] {
   protected val idx = window - 1
 
   protected def compute(lst: T): Double = {
@@ -111,12 +114,14 @@ trait OnlineMovingAverage[P <: Position, S <: Position with ExpandablePosition, 
 }
 
 /** Compute cumulatve moving average. */
-case class CumulativeMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](position: Locate.WindowSize1[S, R, Q]) extends OnlineMovingAverage[P, S, R, Q] {
+case class CumulativeMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  position: Locate.WindowSize1[S, R, Q]) extends OnlineMovingAverage[P, S, R, Q] {
   protected def compute(curr: Double, t: T): Double = (curr + t._2 * t._1) / (t._2 + 1)
 }
 
 /** Compute exponential moving average. */
-case class ExponentialMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](alpha: Double, position: Locate.WindowSize1[S, R, Q]) extends OnlineMovingAverage[P, S, R, Q] {
+case class ExponentialMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  alpha: Double, position: Locate.WindowSize1[S, R, Q]) extends OnlineMovingAverage[P, S, R, Q] {
   protected def compute(curr: Double, t: T): Double = alpha * curr + (1 - alpha) * t._1
 }
 
@@ -126,7 +131,8 @@ case class ExponentialMovingAverage[P <: Position, S <: Position with Expandable
  * @param position Function to extract result position.
  * @param strict   Indicates is non-numeric values should result in NaN.
  */
-case class CumulativeSum[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](position: Locate.WindowSize1[S, R, Q], strict: Boolean = true) extends Window[P, S, R, Q] {
+case class CumulativeSum[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  position: Locate.WindowSize1[S, R, Q], strict: Boolean = true) extends Window[P, S, R, Q] {
   type I = Option[Double]
   type T = Option[Double]
   type O = (R, Double)
@@ -161,7 +167,9 @@ case class CumulativeSum[P <: Position, S <: Position with ExpandablePosition, R
  * @param position Function to extract result position.
  * @param strict   Indicates is non-numeric values should result in NaN.
  */
-case class BinOp[P <: Position,S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](binop: (Double, Double) => Double, position: Locate.WindowSize2[S, R, Q], strict: Boolean = true) extends Window[P, S, R, Q] {
+case class BinOp[P <: Position,S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+  binop: (Double, Double) => Double, position: Locate.WindowSize2[S, R, Q],
+    strict: Boolean = true) extends Window[P, S, R, Q] {
   type I = Option[Double]
   type T = (Option[Double], R)
   type O = (Double, R, R)
