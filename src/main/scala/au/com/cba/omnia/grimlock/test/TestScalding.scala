@@ -743,20 +743,25 @@ class TestScalding22(args : Args) extends Job(args) {
 
   val (data, _) = loadText(path + "/numericInputfile.txt", Cell.parse2D())
 
-  case class Diff() extends Window[Position1D, Position1D, Position2D] {
-    type T = Cell[Position1D]
+  case class Diff() extends Window[Position2D, Position1D, Position1D, Position2D] {
+    type I = Option[Double]
+    type T = (Option[Double], Position1D)
+    type O = (Double, Position1D, Position1D)
 
-    def initialise(cell: Cell[Position1D], rem: Position1D): (T, TraversableOnce[Cell[Position2D]]) = {
-      (Cell(rem, cell.content), None)
-    }
+    def prepare(cell: Cell[Position2D]): I = cell.content.value.asDouble
 
-    def present(cell: Cell[Position1D], rem: Position1D, t: T): (T, TraversableOnce[Cell[Position2D]]) = {
-      (Cell(rem, cell.content), (cell.content.value.asDouble, t.content.value.asDouble) match {
-        case (Some(c), Some(l)) =>
-          Some(Cell(cell.position.append(rem.toShortString("") + "-" + t.position.toShortString("")),
-            Content(ContinuousSchema(DoubleCodex), c - l)))
+    def initialise(rem: Position1D, in: I): (T, TraversableOnce[O]) = ((in, rem), None)
+
+    def update(rem: Position1D, in: I, t: T): (T, TraversableOnce[O]) = {
+      ((in, rem), (in, t._1) match {
+        case (Some(c), Some(l)) => Some((c - l, rem,  t._2))
         case _ => None
       })
+    }
+
+    def present(pos: Position1D, out: O): TraversableOnce[Cell[Position2D]] = {
+      Some(Cell(pos.append(out._2.toShortString("") + "-" + out._3.toShortString("")),
+        Content(ContinuousSchema(DoubleCodex), out._1)))
     }
   }
 
@@ -863,31 +868,36 @@ class TestScalding27(args: Args) extends Job(args) {
 
   loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
     .data
-    .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
+    .slide(Over(Second), SimpleMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
+      Locate.WindowDimension[Position1D, Position1D](First)))
     .saveAsText(s"./tmp.${tool}/sma1.out")
     .toUnit
 
   loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
     .data
-    .slide(Over(Second), SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all = true))
+    .slide(Over(Second), SimpleMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
+      Locate.WindowDimension[Position1D, Position1D](First), all = true))
     .saveAsText(s"./tmp.${tool}/sma2.out")
     .toUnit
 
   loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
     .data
-    .slide(Over(Second), CenteredMovingAverage(2, Locate.WindowDimension[Position1D, Position1D](First)))
+    .slide(Over(Second), CenteredMovingAverage[Position2D, Position1D, Position1D, Position2D](2,
+      Locate.WindowDimension[Position1D, Position1D](First)))
     .saveAsText(s"./tmp.${tool}/tma.out")
     .toUnit
 
   loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
     .data
-    .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First)))
+    .slide(Over(Second), WeightedMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
+      Locate.WindowDimension[Position1D, Position1D](First)))
     .saveAsText(s"./tmp.${tool}/wma1.out")
     .toUnit
 
   loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
     .data
-    .slide(Over(Second), WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), all = true))
+    .slide(Over(Second), WeightedMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
+      Locate.WindowDimension[Position1D, Position1D](First), all = true))
     .saveAsText(s"./tmp.${tool}/wma2.out")
     .toUnit
 
@@ -895,7 +905,8 @@ class TestScalding27(args: Args) extends Job(args) {
 
   loadText(path + "/cumMovAvgInputfile.txt", Cell.parse1D())
     .data
-    .slide(Along(First), CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First)))
+    .slide(Along(First), CumulativeMovingAverage[Position1D, Position0D, Position1D, Position1D](
+      Locate.WindowDimension[Position0D, Position1D](First)))
     .saveAsText(s"./tmp.${tool}/cma.out")
     .toUnit
 
@@ -903,7 +914,8 @@ class TestScalding27(args: Args) extends Job(args) {
 
   loadText(path + "/expMovAvgInputfile.txt", Cell.parse1D())
     .data
-    .slide(Along(First), ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First)))
+    .slide(Along(First), ExponentialMovingAverage[Position1D, Position0D, Position1D, Position1D](0.33,
+      Locate.WindowDimension[Position0D, Position1D](First)))
     .saveAsText(s"./tmp.${tool}/ema.out")
     .toUnit
 }

@@ -24,16 +24,16 @@ import au.com.cba.omnia.grimlock.framework.window._
 import au.com.cba.omnia.grimlock.library.window._
 
 trait TestBatchMovingAverage extends TestGrimlock {
-  // test initilise
-  val cell = Cell(Position1D("foo"), Content(ContinuousSchema(LongCodex), 1))
+  // test prepare&initilise
+  val cell = Cell(Position3D("foo", "bar", "baz"), Content(ContinuousSchema(LongCodex), 1))
   val rem = Position2D("bar", "baz")
-  val first = (rem, 1.0)
-  val second = (rem, 1.0)
+  val in = 1.0
+  val first = (rem, in)
+  val second = (rem, in)
 
   // test present
   val sel = Position1D("sales")
 
-  def createContent(value: Long): Content = Content(ContinuousSchema(LongCodex), value)
   def createCell(year: String, value: Double) = {
     List(Cell(Position2D("sales", year), Content(ContinuousSchema(DoubleCodex), value)))
   }
@@ -41,208 +41,230 @@ trait TestBatchMovingAverage extends TestGrimlock {
 
 class TestSimpleMovingAverage extends TestBatchMovingAverage {
 
-  "A SimpleMovingAverage" should "initialise correctly" in {
+  "A SimpleMovingAverage" should "prepare correctly" in {
     SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), false)
-      .initialise(cell, rem) shouldBe ((List(first), List()))
-    SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), true)
-      .initialise(cell, rem) shouldBe ((List(first), List(Cell(Position2D("foo", "bar"),
-        Content(ContinuousSchema(DoubleCodex), 1.0)))))
-    SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), false)
-      .initialise(cell, rem) shouldBe ((List(second), List()))
-    SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), true)
-      .initialise(cell, rem) shouldBe ((List(second), List(Cell(Position2D("foo", "baz"),
-        Content(ContinuousSchema(DoubleCodex), 1.0)))))
-    SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), false)
-      .initialise(cell, rem) shouldBe ((List(first), List()))
-    SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), true)
-      .initialise(cell, rem) shouldBe ((List(first), List(Cell(Position2D("foo", "bar"),
-        Content(ContinuousSchema(DoubleCodex), 1.0)))))
-    SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), false)
-      .initialise(cell, rem) shouldBe ((List(second), List()))
-    SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), true)
-      .initialise(cell, rem) shouldBe ((List(second), List(Cell(Position2D("foo", "baz"),
-        Content(ContinuousSchema(DoubleCodex), 1.0)))))
+      .prepare(cell) shouldBe (in)
   }
 
-  it should "present correctly" in {
+  it should "initialise correctly" in {
+    SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), false)
+      .initialise(rem, in) shouldBe ((List(first), List()))
+    SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), true)
+      .initialise(rem, in) shouldBe ((List(first), List((rem, 1.0))))
+    SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), false)
+      .initialise(rem, in) shouldBe ((List(second), List()))
+    SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), true)
+      .initialise(rem, in) shouldBe ((List(second), List((rem, 1.0))))
+    SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), false)
+      .initialise(rem, in) shouldBe ((List(first), List()))
+    SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), true)
+      .initialise(rem, in) shouldBe ((List(first), List((rem, 1.0))))
+    SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), false)
+      .initialise(rem, in) shouldBe ((List(second), List()))
+    SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), true)
+      .initialise(rem, in) shouldBe ((List(second), List((rem, 1.0))))
+  }
+
+  it should "update correctly" in {
     val obj = SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), false)
 
-    val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
+    val init = obj.initialise(Position1D("2003"), 4.0)
     init shouldBe ((List((Position1D("2003"), 4.0)), List()))
 
-    val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
+    val first = obj.update(Position1D("2004"), 6.0, init._1)
     first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), List()))
 
-    val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
+    val second = obj.update(Position1D("2005"), 5.0, first._1)
     second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)), List()))
 
-    val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
+    val third = obj.update(Position1D("2006"), 8.0, second._1)
     third shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
       (Position1D("2006"), 8.0)), List()))
 
-    val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
+    val fourth = obj.update(Position1D("2007"), 9.0, third._1)
     fourth shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCell("2007", 6.4)))
+      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), List((Position1D("2007"), 6.4))))
 
-    val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
+    val fifth = obj.update(Position1D("2008"), 5.0, fourth._1)
     fifth shouldBe ((List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
-      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCell("2008", 6.6)))
+      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), List((Position1D("2008"), 6.6))))
   }
 
-  it should "present all correctly" in {
+  it should "update all correctly" in {
     val obj = SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), true)
 
-    val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
-    init shouldBe ((List((Position1D("2003"), 4.0)), createCell("2003", 4.0)))
+    val init = obj.initialise(Position1D("2003"), 4.0)
+    init shouldBe ((List((Position1D("2003"), 4.0)), List((Position1D("2003"), 4.0))))
 
-    val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
-    first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), createCell("2004", 5)))
+    val first = obj.update(Position1D("2004"), 6.0, init._1)
+    first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), List((Position1D("2004"), 5))))
 
-    val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
+    val second = obj.update(Position1D("2005"), 5.0, first._1)
     second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)),
-      createCell("2005", 5)))
+      List((Position1D("2005"), 5))))
 
-    val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
+    val third = obj.update(Position1D("2006"), 8.0, second._1)
     third shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0)), createCell("2006", 5.75)))
+      (Position1D("2006"), 8.0)), List((Position1D("2006"), 5.75))))
 
-    val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
+    val fourth = obj.update(Position1D("2007"), 9.0, third._1)
     fourth shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCell("2007", 6.4)))
+      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), List((Position1D("2007"), 6.4))))
 
-    val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
+    val fifth = obj.update(Position1D("2008"), 5.0, fourth._1)
     fifth shouldBe ((List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
-      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCell("2008", 6.6)))
+      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), List((Position1D("2008"), 6.6))))
+  }
+
+  it should "present" in {
+    SimpleMovingAverage(1, Locate.WindowDimension[Position1D, Position1D](First), false)
+      .present(sel, (Position1D("2008"), 6.6)) shouldBe createCell("2008", 6.6)
   }
 }
 
 class TestCenteredMovingAverage extends TestBatchMovingAverage {
 
-  "A CenteredMovingAverage" should "initialise correctly" in {
-    CenteredMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First)).initialise(cell, rem) shouldBe
-      ((List(first), List()))
-    CenteredMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second)).initialise(cell, rem) shouldBe
-      ((List(second), List()))
-    CenteredMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First)).initialise(cell, rem) shouldBe
-      ((List(first), List()))
-    CenteredMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second)).initialise(cell, rem) shouldBe
-      ((List(second), List()))
+  "A CenteredMovingAverage" should "prepare correctly" in {
+    CenteredMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First))
+      .prepare(cell) shouldBe (in)
   }
 
-  it should "present correctly" in {
+  it should "initialise correctly" in {
+    CenteredMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First))
+      .initialise(rem, in) shouldBe ((List(first), List()))
+    CenteredMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second))
+      .initialise(rem, in) shouldBe ((List(second), List()))
+    CenteredMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First))
+      .initialise(rem, in) shouldBe ((List(first), List()))
+    CenteredMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second))
+      .initialise(rem, in) shouldBe ((List(second), List()))
+  }
+
+  it should "update correctly" in {
     val obj = CenteredMovingAverage(2, Locate.WindowDimension[Position1D, Position1D](First))
 
-    val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
+    val init = obj.initialise(Position1D("2003"), 4.0)
     init shouldBe ((List((Position1D("2003"), 4.0)), List()))
 
-    val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
+    val first = obj.update(Position1D("2004"), 6.0, init._1)
     first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), List()))
 
-    val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
+    val second = obj.update(Position1D("2005"), 5.0, first._1)
     second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)), List()))
 
-    val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
+    val third = obj.update(Position1D("2006"), 8.0, second._1)
     third shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
       (Position1D("2006"), 8.0)), List()))
 
-    val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
+    val fourth = obj.update(Position1D("2007"), 9.0, third._1)
     fourth shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCell("2005", 6.4)))
+      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), List((Position1D("2005"), 6.4))))
 
-    val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
+    val fifth = obj.update(Position1D("2008"), 5.0, fourth._1)
     fifth shouldBe ((List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
-      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCell("2006", 6.6)))
+      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), List((Position1D("2006"), 6.6))))
+  }
+
+  it should "present correctly" in {
+    CenteredMovingAverage(2, Locate.WindowDimension[Position1D, Position1D](First))
+      .present(sel, (Position1D("2006"), 6.6)) shouldBe createCell("2006", 6.6)
   }
 }
 
 class TestWeightedMovingAverage extends TestBatchMovingAverage {
 
-  "A WeightedMovingAverage" should "initialise correctly" in {
+  "A WeightedMovingAverage" should "prepare correctly" in {
     WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), false)
-      .initialise(cell, rem) shouldBe ((List(first), List()))
-    WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), true)
-      .initialise(cell, rem) shouldBe ((List(first), List(Cell(Position2D("foo", "bar"),
-        Content(ContinuousSchema(DoubleCodex), 1.0)))))
-    WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), false)
-      .initialise(cell, rem) shouldBe ((List(second), List()))
-    WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), true)
-      .initialise(cell, rem) shouldBe ((List(second), List(Cell(Position2D("foo", "baz"),
-        Content(ContinuousSchema(DoubleCodex), 1.0)))))
-    WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), false)
-      .initialise(cell, rem) shouldBe ((List(first), List()))
-    WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), true)
-      .initialise(cell, rem) shouldBe ((List(first), List(Cell(Position2D("foo", "bar"),
-        Content(ContinuousSchema(DoubleCodex), 1.0)))))
-    WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), false)
-      .initialise(cell, rem) shouldBe ((List(second), List()))
-    WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), true)
-      .initialise(cell, rem) shouldBe ((List(second), List(Cell(Position2D("foo", "baz"),
-        Content(ContinuousSchema(DoubleCodex), 1.0)))))
+      .prepare(cell) shouldBe (in)
   }
 
-  it should "present correctly" in {
+  it should "initialise correctly" in {
+    WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), false)
+      .initialise(rem, in) shouldBe ((List(first), List()))
+    WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](First), true)
+      .initialise(rem, in) shouldBe ((List(first), List((rem, in))))
+    WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), false)
+      .initialise(rem, in) shouldBe ((List(second), List()))
+    WeightedMovingAverage(1, Locate.WindowDimension[Position1D, Position2D](Second), true)
+      .initialise(rem, in) shouldBe ((List(second), List((rem, in))))
+    WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), false)
+      .initialise(rem, in) shouldBe ((List(first), List()))
+    WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](First), true)
+      .initialise(rem, in) shouldBe ((List(first), List((rem, in))))
+    WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), false)
+      .initialise(rem, in) shouldBe ((List(second), List()))
+    WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position2D](Second), true)
+      .initialise(rem, in) shouldBe ((List(second), List((rem, in))))
+  }
+
+  it should "update correctly" in {
     val obj = WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), false)
 
-    val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
+    val init = obj.initialise(Position1D("2003"), 4.0)
     init shouldBe ((List((Position1D("2003"), 4.0)), List()))
 
-    val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
+    val first = obj.update(Position1D("2004"), 6.0, init._1)
     first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)), List()))
 
-    val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
+    val second = obj.update(Position1D("2005"), 5.0, first._1)
     second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)), List()))
 
-    val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
+    val third = obj.update(Position1D("2006"), 8.0, second._1)
     third shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
       (Position1D("2006"), 8.0)), List()))
 
-    val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
+    val fourth = obj.update(Position1D("2007"), 9.0, third._1)
     fourth shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCell("2007", 7.2)))
+      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), List((Position1D("2007"), 7.2))))
 
-    val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
+    val fifth = obj.update(Position1D("2008"), 5.0, fourth._1)
     fifth shouldBe ((List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
-      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCell("2008", 6.733333333333333)))
+      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), List((Position1D("2008"), 6.733333333333333))))
   }
 
-  it should "present all correctly" in {
+  it should "update all correctly" in {
     val obj = WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), true)
 
-    val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
-    init shouldBe ((List((Position1D("2003"), 4.0)), createCell("2003", 4.0)))
+    val init = obj.initialise(Position1D("2003"), 4.0)
+    init shouldBe ((List((Position1D("2003"), 4.0)), List((Position1D("2003"), 4.0))))
 
-    val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
+    val first = obj.update(Position1D("2004"), 6.0, init._1)
     first shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)),
-      createCell("2004", 5.333333333333333)))
+      List((Position1D("2004"), 5.333333333333333))))
 
-    val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
+    val second = obj.update(Position1D("2005"), 5.0, first._1)
     second shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)),
-      createCell("2005", 5.166666666666667)))
+      List((Position1D("2005"), 5.166666666666667))))
 
-    val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
+    val third = obj.update(Position1D("2006"), 8.0, second._1)
     third shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0)), createCell("2006", 6.3)))
+      (Position1D("2006"), 8.0)), List((Position1D("2006"), 6.3))))
 
-    val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
+    val fourth = obj.update(Position1D("2007"), 9.0, third._1)
     fourth shouldBe ((List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), createCell("2007", 7.2)))
+      (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)), List((Position1D("2007"), 7.2))))
 
-    val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
+    val fifth = obj.update(Position1D("2008"), 5.0, fourth._1)
     fifth shouldBe ((List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
-      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), createCell("2008", 6.733333333333333)))
+      (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)), List((Position1D("2008"), 6.733333333333333))))
+  }
+
+  it should "present correctly" in {
+    WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), false)
+      .present(sel, (Position1D("2008"), 6.733333333333333)) shouldBe createCell("2008", 6.733333333333333)
   }
 }
 
 trait TestOnlineMovingAverage extends TestGrimlock {
-  // test initilise
-  val cell = Cell(Position1D("foo"), Content(ContinuousSchema(LongCodex), 1))
+  // test prepare&initilise
+  val cell = Cell(Position3D("foo", "bar", "baz"), Content(ContinuousSchema(LongCodex), 1))
   val rem = Position2D("bar", "baz")
-  val first = ((1.0, 1), List(Cell(Position2D("foo", "bar"), createContent(1.0))))
-  val second = ((1.0, 1), List(Cell(Position2D("foo", "baz"), createContent(1.0))))
+  val in = 1.0
+  val first = ((1.0, 1), List((rem, in)))
+  val second = ((1.0, 1), List((rem, in)))
   // test present
   val sel = Position0D()
 
-  def createContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
   def createCell(str: String, value: Double) = {
     List(Cell(Position1D(str), Content(ContinuousSchema(DoubleCodex), value)))
   }
@@ -250,446 +272,470 @@ trait TestOnlineMovingAverage extends TestGrimlock {
 
 class TestCumulativeMovingAverage extends TestOnlineMovingAverage {
 
-  "A CumulativeMovingAverage" should "initialise correctly" in {
+  "A CumulativeMovingAverage" should "prepare correctly" in {
     CumulativeMovingAverage(Locate.WindowDimension[Position1D, Position2D](First))
-      .initialise(cell, rem) shouldBe first
+      .prepare(cell) shouldBe in
+  }
+
+  it should "initialise correctly" in {
+    CumulativeMovingAverage(Locate.WindowDimension[Position1D, Position2D](First))
+      .initialise(rem, in) shouldBe first
     CumulativeMovingAverage(Locate.WindowDimension[Position1D, Position2D](Second))
-      .initialise(cell, rem) shouldBe second
+      .initialise(rem, in) shouldBe second
+  }
+
+  it should "update correctly" in {
+    val obj = CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First))
+
+    val init = obj.initialise(Position1D("val.1"), 1.0)
+    init shouldBe (((1.0, 1), List((Position1D("val.1"), 1.0))))
+
+    val first = obj.update(Position1D("val.2"), 2.0, init._1)
+    first shouldBe (((1.5, 2), List((Position1D("val.2"), 1.5))))
+
+    val second = obj.update(Position1D("val.3"), 3.0, first._1)
+    second shouldBe (((2.0, 3), List((Position1D("val.3"), 2))))
+
+    val third = obj.update(Position1D("val.4"), 4.0, second._1)
+    third shouldBe (((2.5, 4), List((Position1D("val.4"), 2.5))))
+
+    val fourth = obj.update(Position1D("val.5"), 5.0, third._1)
+    fourth shouldBe (((3.0, 5), List((Position1D("val.5"), 3))))
   }
 
   it should "present correctly" in {
-    val obj = CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First))
-
-    val init = obj.initialise(Cell(sel, createContent(1)), Position1D("val.1"))
-    init shouldBe (((1.0, 1), createCell("val.1", 1.0)))
-
-    val first = obj.present(Cell(sel, createContent(2)), Position1D("val.2"), init._1)
-    first shouldBe (((1.5, 2), createCell("val.2", 1.5)))
-
-    val second = obj.present(Cell(sel, createContent(3)), Position1D("val.3"), first._1)
-    second shouldBe (((2.0, 3), createCell("val.3", 2)))
-
-    val third = obj.present(Cell(sel, createContent(4)), Position1D("val.4"), second._1)
-    third shouldBe (((2.5, 4), createCell("val.4", 2.5)))
-
-    val fourth = obj.present(Cell(sel, createContent(5)), Position1D("val.5"), third._1)
-    fourth shouldBe (((3.0, 5), createCell("val.5", 3)))
+    CumulativeMovingAverage(Locate.WindowDimension[Position0D, Position1D](First))
+      .present(sel, (Position1D("val.5"), 3.0)) shouldBe createCell("val.5", 3)
   }
 }
 
 class TestExponentialMovingAverage extends TestOnlineMovingAverage {
 
-  "A ExponentialMovingAverage" should "initialise correctly" in {
-    ExponentialMovingAverage(0.33, Locate.WindowDimension[Position1D, Position2D](First))
-      .initialise(cell, rem) shouldBe first
+  "A ExponentialMovingAverage" should "prepare correctly" in {
     ExponentialMovingAverage(3, Locate.WindowDimension[Position1D, Position2D](First))
-      .initialise(cell, rem) shouldBe first
+      .prepare(cell) shouldBe in
+  }
+
+  it should "initialise correctly" in {
+    ExponentialMovingAverage(0.33, Locate.WindowDimension[Position1D, Position2D](First))
+      .initialise(rem, in) shouldBe first
+    ExponentialMovingAverage(3, Locate.WindowDimension[Position1D, Position2D](First))
+      .initialise(rem, in) shouldBe first
     ExponentialMovingAverage(0.33, Locate.WindowDimension[Position1D, Position2D](Second))
-      .initialise(cell, rem) shouldBe second
+      .initialise(rem, in) shouldBe second
     ExponentialMovingAverage(3, Locate.WindowDimension[Position1D, Position2D](Second))
-      .initialise(cell, rem) shouldBe second
+      .initialise(rem, in) shouldBe second
+  }
+
+  it should "update correctly" in {
+    val obj = ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First))
+
+    val init = obj.initialise(Position1D("day.1"), 16.0)
+    init shouldBe (((16.0, 1), List((Position1D("day.1"), 16.0))))
+
+    val first = obj.update(Position1D("day.2"), 17.0, init._1)
+    first shouldBe (((16.33, 2), List((Position1D("day.2"), 16.33))))
+
+    val second = obj.update(Position1D("day.3"), 17.0, first._1)
+    second shouldBe (((16.551099999999998, 3), List((Position1D("day.3"), 16.551099999999998))))
+
+    val third = obj.update(Position1D("day.4"), 10.0, second._1)
+    third shouldBe (((14.389236999999998, 4), List((Position1D("day.4"), 14.389236999999998))))
+
+    val fourth = obj.update(Position1D("day.5"), 17.0, third._1)
+    fourth shouldBe (((15.250788789999998, 5), List((Position1D("day.5"), 15.250788789999998))))
   }
 
   it should "present correctly" in {
-    val obj = ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First))
-
-    val init = obj.initialise(Cell(sel, createContent(16)), Position1D("day.1"))
-    init shouldBe (((16.0, 1), createCell("day.1", 16.0)))
-
-    val first = obj.present(Cell(sel, createContent(17)), Position1D("day.2"), init._1)
-    first shouldBe (((16.33, 2), createCell("day.2", 16.33)))
-
-    val second = obj.present(Cell(sel, createContent(17)), Position1D("day.3"), first._1)
-    second shouldBe (((16.551099999999998, 3), createCell("day.3", 16.551099999999998)))
-
-    val third = obj.present(Cell(sel, createContent(10)), Position1D("day.4"), second._1)
-    third shouldBe (((14.389236999999998, 4), createCell("day.4", 14.389236999999998)))
-
-    val fourth = obj.present(Cell(sel, createContent(17)), Position1D("day.5"), third._1)
-    fourth shouldBe (((15.250788789999998, 5), createCell("day.5", 15.250788789999998)))
+    ExponentialMovingAverage(0.33, Locate.WindowDimension[Position0D, Position1D](First))
+      .present(sel, (Position1D("day.5"), 15.250788789999998)) shouldBe createCell("day.5", 15.250788789999998)
   }
 }
 
 trait TestWindow extends TestGrimlock {
 
-  val cell1 = Cell(Position1D("foo"), Content(ContinuousSchema(LongCodex), 1))
-  val cell2 = Cell(Position1D("foo"), Content(NominalSchema(StringCodex), "abc"))
+  val cell1 = Cell(Position3D("foo", "bar", "baz"), Content(ContinuousSchema(LongCodex), 1))
+  val cell2 = Cell(Position3D("foo", "bar", "baz"), Content(NominalSchema(StringCodex), "abc"))
+  val sel = Position1D("foo")
   val rem = Position2D("bar", "baz")
+  val in1 = Some(1.0)
+  val in2f = None
+  val in2t = Some(Double.NaN)
 }
 
 class TestCumulativeSum extends TestWindow {
-
-  val result1 = (Some(1.0), createCell(1))
-  val result2 = (None, List())
 
   def createCell(value: Double) = {
     List(Cell(Position2D("foo", "bar|baz"), Content(ContinuousSchema(DoubleCodex), value)))
   }
 
-  "A CumulativeSum" should "initialise correctly" in {
-    CumulativeSum(Locate.WindowString[Position1D, Position2D](), true).initialise(cell1, rem) shouldBe result1
-    CumulativeSum(Locate.WindowString[Position1D, Position2D](), false).initialise(cell1, rem) shouldBe result1
-    val init = CumulativeSum(Locate.WindowString[Position1D, Position2D](), true).initialise(cell2, rem)
+  "A CumulativeSum" should "prepare correctly" in {
+    CumulativeSum(Locate.WindowString[Position1D, Position2D](), true)
+      .prepare(cell1) shouldBe in1
+    CumulativeSum(Locate.WindowString[Position1D, Position2D](), false)
+      .prepare(cell1) shouldBe in1
+    CumulativeSum(Locate.WindowString[Position1D, Position2D](), true)
+      .prepare(cell2).map(_.compare(Double.NaN)) shouldBe (Some(0))
+    CumulativeSum(Locate.WindowString[Position1D, Position2D](), false)
+      .prepare(cell2) shouldBe in2f
+  }
+
+  it should "initialise correctly" in {
+    val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), true)
+
+    obj.initialise(rem, Some(1.0)) shouldBe ((Some(1.0), List((rem, 1.0))))
+    obj.initialise(rem, None) shouldBe ((None, List()))
+
+    val init = obj.initialise(rem, Some(Double.NaN))
     init._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    init._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
-    init._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    CumulativeSum(Locate.WindowString[Position1D, Position2D](), false).initialise(cell2, rem) shouldBe result2
+    init._2.toList.map { case (r, d) => (r, d.compare(Double.NaN)) } shouldBe (List((rem, 0)))
+  }
+
+  it should "update correctly strict" in {
+    val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), true)
+
+    val init = obj.initialise(rem, in1)
+    init shouldBe ((Some(1.0), List((rem, 1.0))))
+
+    val first = obj.update(rem, in1, init._1)
+    first shouldBe ((Some(2.0), List((rem, 2.0))))
+
+    val second = obj.update(rem, in2t, first._1)
+    second._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    second._2.toList.map { case (r, d) => (r, d.compare(Double.NaN)) } shouldBe (List((rem, 0)))
+
+    val third = obj.update(rem, in1, second._1)
+    third._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    third._2.toList.map { case (r, d) => (r, d.compare(Double.NaN)) } shouldBe (List((rem, 0)))
+  }
+
+  it should "update correctly strict on first" in {
+    val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), true)
+
+    val init = obj.initialise(rem, in2t)
+    init._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    init._2.toList.map { case (r, d) => (r, d.compare(Double.NaN)) } shouldBe (List((rem, 0)))
+
+    val first = obj.update(rem, in1, init._1)
+    first._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    first._2.toList.map { case (r, d) => (r, d.compare(Double.NaN)) } shouldBe (List((rem, 0)))
+
+    val second = obj.update(rem, in2t, first._1)
+    second._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    second._2.toList.map { case (r, d) => (r, d.compare(Double.NaN)) } shouldBe (List((rem, 0)))
+
+    val third = obj.update(rem, in1, second._1)
+    third._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    third._2.toList.map { case (r, d) => (r, d.compare(Double.NaN)) } shouldBe (List((rem, 0)))
+  }
+
+  it should "update correctly non-strict" in {
+    val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), false)
+
+    val init = obj.initialise(rem, in1)
+    init shouldBe ((Some(1.0), List((rem, 1.0))))
+
+    val first = obj.update(rem, in1, init._1)
+    first shouldBe ((Some(2.0), List((rem, 2.0))))
+
+    val second = obj.update(rem, in2f, first._1)
+    second shouldBe ((Some(2.0), List()))
+
+    val third = obj.update(rem, in1, second._1)
+    third shouldBe ((Some(3.0), List((rem, 3.0))))
+  }
+
+  it should "update correctly non-strict on first" in {
+    val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), false)
+
+    val init = obj.initialise(rem, in2f)
+    init shouldBe ((None, List()))
+
+    val first = obj.update(rem, in1, init._1)
+    first shouldBe ((Some(1.0), List((rem, 1.0))))
+
+    val second = obj.update(rem, in2f, first._1)
+    second shouldBe ((Some(1.0), List()))
+
+    val third = obj.update(rem, in1, second._1)
+    third shouldBe ((Some(2.0), List((rem, 2.0))))
   }
 
   it should "present correctly strict" in {
-    val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), true)
-
-    val init = obj.initialise(cell1, rem)
-    init shouldBe ((Some(1.0), createCell(1.0)))
-
-    val first = obj.present(cell1, rem, init._1)
-    first shouldBe ((Some(2.0), createCell(2.0)))
-
-    val second = obj.present(cell2, rem, first._1)
-    second._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    second._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
-    second._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
-
-    val third = obj.present(cell1, rem, second._1)
-    third._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    third._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
-    third._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
-  }
-
-  it should "present correctly strict on first" in {
-    val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), true)
-
-    val init = obj.initialise(cell2, rem)
-    init._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    init._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
-    init._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
-
-    val first = obj.present(cell1, rem, init._1)
-    first._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    first._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
-    first._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
-
-    val second = obj.present(cell2, rem, first._1)
-    second._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    second._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
-    second._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
-
-    val third = obj.present(cell1, rem, second._1)
-    third._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
-    third._2.toList(0).position shouldBe (Position2D("foo", "bar|baz"))
-    third._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
-  }
-
-  it should "present correctly non-strict" in {
-    val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), false)
-
-    val init = obj.initialise(cell1, rem)
-    init shouldBe ((Some(1.0), createCell(1.0)))
-
-    val first = obj.present(cell1, rem, init._1)
-    first shouldBe ((Some(2.0), createCell(2.0)))
-
-    val second = obj.present(cell2, rem, first._1)
-    second shouldBe ((Some(2.0), List()))
-
-    val third = obj.present(cell1, rem, second._1)
-    third shouldBe ((Some(3.0), createCell(3.0)))
-  }
-
-  it should "present correctly non-strict on first" in {
-    val obj = CumulativeSum(Locate.WindowString[Position1D, Position2D](), false)
-
-    val init = obj.initialise(cell2, rem)
-    init shouldBe ((None, List()))
-
-    val first = obj.present(cell1, rem, init._1)
-    first shouldBe ((Some(1.0), createCell(1.0)))
-
-    val second = obj.present(cell2, rem, first._1)
-    second shouldBe ((Some(1.0), List()))
-
-    val third = obj.present(cell1, rem, second._1)
-    third shouldBe ((Some(2.0), createCell(2.0)))
+    CumulativeSum(Locate.WindowString[Position1D, Position2D](), true)
+      .present(sel, (rem, 1.0)) shouldBe (createCell(1.0))
   }
 }
 
 class TestBinOp extends TestWindow {
 
-  val result1 = ((Some(1.0), rem), List())
-  val result2 = ((None, rem), List())
-
   def createCell(value: Double) = {
     List(Cell(Position2D("foo", "p(bar|baz, bar|baz)"), Content(ContinuousSchema(DoubleCodex), value)))
   }
 
-  "A BinOp" should "initialise correctly" in {
+  "A BinOp" should "prepare correctly" in {
     BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
-      .initialise(cell1, rem) shouldBe result1
+      .prepare(cell1) shouldBe in1
     BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
-      .initialise(cell1, rem) shouldBe result1
+      .prepare(cell1) shouldBe in1
+    BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
+      .prepare(cell2).map(_.compare(Double.NaN)) shouldBe (Some(0))
+    BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
+      .prepare(cell2) shouldBe in2f
+  }
+
+  it should "initialise correctly" in {
+    BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
+      .initialise(rem, in1) shouldBe (((in1, rem), List()))
+    BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
+      .initialise(rem, in1) shouldBe (((in1, rem), List()))
     val init = BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
-      .initialise(cell2, rem)
+      .initialise(rem, in2t)
     init._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     init._1._2 shouldBe (rem)
     init._2 shouldBe (List())
     BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
-      .initialise(cell2, rem) shouldBe result2
+      .initialise(rem, in2f) shouldBe (((None, rem), List()))
   }
 
-  it should "present correctly strict" in {
+  it should "update correctly strict" in {
     val obj = BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
 
-    val init = obj.initialise(cell1, rem)
+    val init = obj.initialise(rem, in1)
     init shouldBe (((Some(1.0), rem), List()))
 
-    val first = obj.present(cell1, rem, init._1)
-    first shouldBe (((Some(1.0), rem), createCell(2.0)))
+    val first = obj.update(rem, in1, init._1)
+    first shouldBe (((Some(1.0), rem), List((2.0, rem, rem))))
 
-    val second = obj.present(cell2, rem, first._1)
+    val second = obj.update(rem, in2t, first._1)
     second._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     second._1._2 shouldBe (rem)
-    second._2.toList(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
-    second._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    second._2.toList.map { case (d, c, p) => (d.compare(Double.NaN), c, p) } shouldBe (List((0, rem, rem)))
 
-    val third = obj.present(cell1, rem, second._1)
+    val third = obj.update(rem, in1, second._1)
     third._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     third._1._2 shouldBe (rem)
-    third._2.toList(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
-    third._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    third._2.toList.map { case (d, c, p) => (d.compare(Double.NaN), c, p) } shouldBe (List((0, rem, rem)))
   }
 
-  it should "present correctly strict on first" in {
+  it should "update correctly strict on first" in {
     val obj = BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), true)
 
-    val init = obj.initialise(cell2, rem)
+    val init = obj.initialise(rem, in2t)
     init._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     init._1._2 shouldBe (rem)
     init._2. shouldBe (List())
 
-    val first = obj.present(cell1, rem, init._1)
+    val first = obj.update(rem, in1, init._1)
     first._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     first._1._2 shouldBe (rem)
-    first._2.toList(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
-    first._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    first._2.toList.map { case (d, c, p) => (d.compare(Double.NaN), c, p) } shouldBe (List((0, rem, rem)))
 
-    val second = obj.present(cell2, rem, first._1)
+    val second = obj.update(rem, in2t, first._1)
     second._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     second._1._2 shouldBe (rem)
-    second._2.toList(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
-    second._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    second._2.toList.map { case (d, c, p) => (d.compare(Double.NaN), c, p) } shouldBe (List((0, rem, rem)))
 
-    val third = obj.present(cell1, rem, second._1)
+    val third = obj.update(rem, in1, second._1)
     third._1._1.map(_.compare(Double.NaN)) shouldBe (Some(0))
     third._1._2 shouldBe (rem)
-    third._2.toList(0).position shouldBe (Position2D("foo", "p(bar|baz, bar|baz)"))
-    third._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+    third._2.toList.map { case (d, c, p) => (d.compare(Double.NaN), c, p) } shouldBe (List((0, rem, rem)))
   }
 
-  it should "present correctly non-strict" in {
+  it should "update correctly non-strict" in {
     val obj = BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
 
-    val init = obj.initialise(cell1, rem)
+    val init = obj.initialise(rem, in1)
     init shouldBe (((Some(1.0), rem), List()))
 
-    val first = obj.present(cell1, rem, init._1)
-    first shouldBe (((Some(1.0), rem), createCell(2.0)))
+    val first = obj.update(rem, in1, init._1)
+    first shouldBe (((Some(1.0), rem), List((2.0, rem, rem))))
 
-    val second = obj.present(cell2, rem, first._1)
+    val second = obj.update(rem, in2f, first._1)
     second shouldBe (((Some(1.0), rem), List()))
 
-    val third = obj.present(cell1, rem, second._1)
-    third shouldBe (((Some(1.0), rem), createCell(2.0)))
+    val third = obj.update(rem, in1, second._1)
+    third shouldBe (((Some(1.0), rem), List((2.0, rem, rem))))
   }
 
-  it should "present correctly non-strict on first" in {
+  it should "update correctly non-strict on first" in {
     val obj = BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
 
-    val init = obj.initialise(cell2, rem)
+    val init = obj.initialise(rem, in2f)
     init shouldBe (((None, rem), List()))
 
-    val first = obj.present(cell1, rem, init._1)
+    val first = obj.update(rem, in1, init._1)
     first shouldBe (((Some(1.0), rem), List()))
 
-    val second = obj.present(cell2, rem, first._1)
+    val second = obj.update(rem, in2f, first._1)
     second shouldBe (((Some(1.0), rem), List()))
 
-    val third = obj.present(cell1, rem, second._1)
-    third shouldBe (((Some(1.0), rem), createCell(2.0)))
+    val third = obj.update(rem, in1, second._1)
+    third shouldBe (((Some(1.0), rem), List((2.0, rem, rem))))
+  }
+
+  it should "present correctly" in {
+    BinOp(_ + _, Locate.WindowPairwiseString[Position1D, Position2D]("p(%1$s, %2$s)"), false)
+      .present(sel, (1.0, rem, rem)) shouldBe createCell(1.0)
   }
 }
 
 class TestQuantile extends TestGrimlock {
 
   val probs = List(0.25, 0.5, 0.75)
-  val count = ExtractWithDimensionAndKey[Dimension.First, Position1D, String, Content](First, "count")
+  val count = ExtractWithDimensionAndKey[Dimension.First, Position2D, String, Content](First, "count")
     .andThenPresent(_.value.asLong)
-  val min = ExtractWithDimensionAndKey[Dimension.First, Position1D, String, Content](First, "min")
-    .andThenPresent(_.value.asDouble)
-  val max = ExtractWithDimensionAndKey[Dimension.First, Position1D, String, Content](First, "max")
-    .andThenPresent(_.value.asDouble)
   val quantiser = Quantile.Type7
   val name = "quantile=%1$f"
-  val cell1 = Cell(Position1D("abc"), Content(ContinuousSchema(LongCodex), 1))
-  val cell2 = Cell(Position1D("abc"), Content(ContinuousSchema(LongCodex), 2))
-  val cell4 = Cell(Position1D("abc"), Content(ContinuousSchema(LongCodex), 4))
-  val cellX = Cell(Position1D("abc"), Content(NominalSchema(StringCodex), "def"))
-  val cellY = Cell(Position1D("def"), Content(ContinuousSchema(LongCodex), 3))
+  val cell1 = Cell(Position2D("abc", "not.used"), Content(ContinuousSchema(LongCodex), 1))
+  val cell2 = Cell(Position2D("abc", "not.used"), Content(ContinuousSchema(LongCodex), 2))
+  val cell4 = Cell(Position2D("abc", "not.used"), Content(ContinuousSchema(LongCodex), 4))
+  val cellX = Cell(Position2D("abc", "not.used"), Content(NominalSchema(StringCodex), "def"))
+  val cellY = Cell(Position2D("def", "not.used"), Content(ContinuousSchema(LongCodex), 3))
+  val sel = Position1D("abc")
   val rem = Position1D("not.used")
-  val ext = Map(Position1D("abc") -> Map(Position1D("count") -> Content(DiscreteSchema(LongCodex), 10),
-    Position1D("min") -> Content(ContinuousSchema(DoubleCodex), 1),
-    Position1D("max") -> Content(ContinuousSchema(DoubleCodex), 10)))
+  val in1 = (1.0, Some(10L))
+  val in2 = (2.0, Some(10L))
+  val in4 = (4.0, Some(10L))
+  val inX = (Double.NaN, Some(10L))
+  val inY = (3.0, None)
+  val obj = Quantile[Position2D, Position1D, Position1D, W](probs, count, quantiser, name)
+  val ext = Map(Position1D("abc") -> Map(Position1D("count") -> Content(DiscreteSchema(LongCodex), 10)))
 
   type W = Map[Position1D, Map[Position1D, Content]]
 
-  val result1 = ((1.0, 0L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), List(
-      Cell(Position2D("abc", "quantile=0.000000"), Content(ContinuousSchema(DoubleCodex), 1)),
-      Cell(Position2D("abc", "quantile=100.000000"), Content(ContinuousSchema(DoubleCodex), 10))))
+  val result1 = ((in1._1, 0L), List())
+  val result2 = ((inX._1, 0L), List())
+  val result3 = ((inY._1, 0L), List())
+  val result4 = ((in2._1, 1L), List())
+  val result5 = ((in4._1, 4L), List(("quantile=0.250000", 3.25)))
+  val result6 = ((Double.NaN, 4L), List())
+  val result7 = ((Double.NaN, 4L), List(("quantile=0.250000", Double.NaN)))
+  val result8 = ((Double.NaN, 1L), List())
 
-  val result2 = ((Double.NaN, 0L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), List(
-      Cell(Position2D("abc", "quantile=0.000000"), Content(ContinuousSchema(DoubleCodex), 1)),
-      Cell(Position2D("abc", "quantile=100.000000"), Content(ContinuousSchema(DoubleCodex), 10))))
-
-  val result3 = ((Double.NaN, 0L, List()), List())
-
-  val result4 = ((2.0, 1L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), List())
-
-  val result5 = ((4.0, 4L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), List(Cell(Position2D("abc", "quantile=25.000000"),
-      Content(ContinuousSchema(DoubleCodex), 3.25))))
-
-  val result6 = ((Double.NaN, 4L, List()), List())
-
-  val result7 = ((Double.NaN, 4L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), List(Cell(Position2D("abc", "quantile=25.000000"),
-      Content(ContinuousSchema(DoubleCodex), Double.NaN))))
-
-  val result8 = ((Double.NaN, 1L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), List())
-
-  val result9 = ((3.0, 1L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-    (7L, 0.75, "quantile=75.000000"))), List())
-
-  "A Quantile" should "initialise correctly" in {
-    Quantile[Position1D, Position1D, W](probs, count, min, max, quantiser, name)
-      .initialiseWithValue(cell1, rem, ext) shouldBe (result1)
-
-    val init2 = Quantile[Position1D, Position1D, W](probs, count, min, max, quantiser, name)
-      .initialiseWithValue(cellX, rem, ext)
-    init2._1._1.compare(Double.NaN) shouldBe (0)
-    init2._1._2 shouldBe (result2._1._2)
-    init2._1._3 shouldBe (result2._1._3)
-    init2._2 shouldBe (result2._2)
-
-    val init3 = Quantile[Position1D, Position1D, W](probs, count, min, max, quantiser, name)
-      .initialiseWithValue(cellY, rem, ext)
-    init3._1._1.compare(Double.NaN) shouldBe (0)
-    init3._1._2 shouldBe (result3._1._2)
-    init3._1._3 shouldBe (result3._1._3)
-    init3._2 shouldBe (result3._2)
+  "A Quantile" should "prepare correctly" in {
+    obj.prepareWithValue(cell1, ext) shouldBe in1
+    val prep = obj.prepareWithValue(cellX, ext)
+    prep._1.compare(Double.NaN) shouldBe (0)
+    prep._2 shouldBe (Some(10))
+    obj.prepareWithValue(cellY, ext) shouldBe inY
   }
 
-  it should "present correctly not at boundary" in {
-    Quantile[Position1D, Position1D, W](probs, count, min, max, quantiser, name)
-      .presentWithValue(cell2, rem, ext, result1._1) shouldBe (result4)
+  it should "initialise correctly" in {
+    obj.initialise(rem, in1) shouldBe (result1)
+
+    val init = obj.initialise(rem, inX)
+    init._1._1.compare(Double.NaN) shouldBe (0)
+    init._1._2 shouldBe (result2._1._2)
+    init._2 shouldBe (result2._2)
+
+    obj.initialise(rem, inY) shouldBe (result3)
   }
 
-  it should "present correctly at boundary" in {
-    val t = (3.0, 3L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-      (7L, 0.75, "quantile=75.000000")))
-
-    Quantile[Position1D, Position1D, W](probs, count, min, max, quantiser, name)
-      .presentWithValue(cell4, rem, ext, t) shouldBe (result5)
+  it should "update correctly not at boundary" in {
+    obj.update(rem, in2, result1._1) shouldBe (result4)
   }
 
-  it should "present correctly with missing state" in {
-    val t = (3.0, 3L, List())
-
-    val present6 = Quantile[Position1D, Position1D, W](probs, count, min, max, quantiser, name)
-      .presentWithValue(cell4, rem, ext, t)
-    present6._1._1.compare(Double.NaN) shouldBe (0)
-    present6._1._2 shouldBe (result6._1._2)
-    present6._1._3 shouldBe (result6._1._3)
-    present6._2 shouldBe (result6._2)
+  it should "update correctly at boundary" in {
+    obj.update(rem, in4, (3.0, 3L)) shouldBe (result5)
   }
 
-  it should "present correctly with NaN" in {
-    val t = (Double.NaN, 3L, List((3L, 0.25, "quantile=25.000000"), (5L, 0.5, "quantile=50.000000"),
-      (7L, 0.75, "quantile=75.000000")))
-
-    val present7 = Quantile[Position1D, Position1D, W](probs, count, min, max, quantiser, name)
-      .presentWithValue(cell4, rem, ext, t)
-    present7._1._1.compare(Double.NaN) shouldBe (0)
-    present7._1._2 shouldBe (result7._1._2)
-    present7._1._3 shouldBe (result7._1._3)
-    present7._2.toList(0).position shouldBe (result7._2.toList(0).position)
-    present7._2.toList(0).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe (Some(0))
+  it should "update correctly with missing count" in {
+    val up = obj.update(rem, inY, (3.0, 3L))
+    up._1._1.compare(Double.NaN) shouldBe (0)
+    up._1._2 shouldBe (result6._1._2)
+    up._2 shouldBe (result6._2)
   }
 
-  it should "present with bad data" in {
-    val present8 = Quantile[Position1D, Position1D, W](probs, count, min, max, quantiser, name)
-      .presentWithValue(cellX, rem, ext, result1._1)
-    present8._1._1.compare(Double.NaN) shouldBe (0)
-    present8._1._2 shouldBe (result8._1._2)
-    present8._1._3 shouldBe (result8._1._3)
-    present8._2 shouldBe (result8._2)
+  it should "update correctly with NaN" in {
+    val up = obj.update(rem, in4, (Double.NaN, 3L))
+    up._1._1.compare(Double.NaN) shouldBe (0)
+    up._1._2 shouldBe (result7._1._2)
+    up._2.toList.map { case (n, d) => (n, d.compare(Double.NaN)) } shouldBe (List((result7._2(0)._1, 0)))
   }
 
-  it should "present with missing ext" in {
-    Quantile[Position1D, Position1D, W](probs, count, min, max, quantiser, name)
-      .presentWithValue(cellY, rem, ext, result1._1) shouldBe (result9)
+  it should "update with bad data" in {
+    val up = obj.update(rem, inX, result1._1)
+    up._1._1.compare(Double.NaN) shouldBe (0)
+    up._1._2 shouldBe (result8._1._2)
+    up._2 shouldBe (result8._2)
+  }
+
+  it should "present correctly" in {
+    obj.presentWithValue(sel, result5._2(0), ext) shouldBe (List(Cell(sel.append(result5._2(0)._1),
+      Content(ContinuousSchema(DoubleCodex), result5._2(0)._2))))
   }
 }
 
 class TestCombinationWindow extends TestGrimlock {
 
-  def renamer(name: String)(sel: Cell[Position1D], rem: Position1D, cell: Cell[Position2D]): Position2D = {
+  def renamer(name: String)(cell: Cell[Position2D]): Position2D = {
     cell.position.update(Second, name.format(cell.position(Second).toShortString))
   }
 
   "A CombinationWindow" should "present correctly" in {
     val sel = Position1D("sales")
-    val obj = Windowable.LWSRSM2W[Position1D, Position1D, Window[Position1D, Position1D, Position2D]].convert(List(
+    val obj = Windowable.LW2W[Position2D, Position1D, Position1D, Position2D](List(
       SimpleMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), false)
         .andThenRename(renamer("%1$s.simple")),
       WeightedMovingAverage(5, Locate.WindowDimension[Position1D, Position1D](First), false)
-        .andThenRename(renamer("%1$s.weighted"))))
+        .andThenRename(renamer("%1$s.weighted"))))()
 
-    val init = obj.initialise(Cell(sel, createContent(4)), Position1D("2003"))
-    init shouldBe ((List(List((Position1D("2003"), 4.0)), List((Position1D("2003"), 4.0))), List()))
+    val prep3 = obj.prepare(Cell(Position2D("sales", "2003"), createContent(4)))
+    prep3 shouldBe (List(4.0, 4.0))
 
-    val first = obj.present(Cell(sel, createContent(6)), Position1D("2004"), init._1)
+    val init = obj.initialise(Position1D("2003"), prep3)
+    init shouldBe ((List(List((Position1D("2003"), 4.0)), List((Position1D("2003"), 4.0))), List(List(List(), List()))))
+
+    val prep4 = obj.prepare(Cell(Position2D("sales", "2004"), createContent(6)))
+    prep4 shouldBe (List(6.0, 6.0))
+
+    val first = obj.update(Position1D("2004"), prep4, init._1)
     first shouldBe ((List(List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0)),
-      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0))), List()))
+      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0))), List(List(List(), List()))))
 
-    val second = obj.present(Cell(sel, createContent(5)), Position1D("2005"), first._1)
+    val prep5 = obj.prepare(Cell(Position2D("sales", "2005"), createContent(5)))
+    prep5 shouldBe (List(5.0, 5.0))
+
+    val second = obj.update(Position1D("2005"), prep5, first._1)
     second shouldBe ((List(
       List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0)),
-      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0))), List()))
+      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0))),
+      List(List(List(), List()))))
 
-    val third = obj.present(Cell(sel, createContent(8)), Position1D("2006"), second._1)
+    val prep6 = obj.prepare(Cell(Position2D("sales", "2006"), createContent(8)))
+    prep6 shouldBe (List(8.0, 8.0))
+
+    val third = obj.update(Position1D("2006"), prep6, second._1)
     third shouldBe ((List(
-      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-        (Position1D("2006"), 8.0)),
-      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-        (Position1D("2006"), 8.0))), List()))
+      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0)),
+      List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0))),
+      List(List(List(), List()))))
 
-    val fourth = obj.present(Cell(sel, createContent(9)), Position1D("2007"), third._1)
+    val prep7 = obj.prepare(Cell(Position2D("sales", "2007"), createContent(9)))
+    prep7 shouldBe (List(9.0, 9.0))
+
+    val fourth = obj.update(Position1D("2007"), prep7, third._1)
     fourth shouldBe ((List(
       List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
         (Position1D("2006"), 8.0), (Position1D("2007"), 9.0)),
       List((Position1D("2003"), 4.0), (Position1D("2004"), 6.0), (Position1D("2005"), 5.0),
-        (Position1D("2006"), 8.0), (Position1D("2007"), 9.0))), createCell("2007", 6.4, 7.2)))
+        (Position1D("2006"), 8.0), (Position1D("2007"), 9.0))),
+      List(List(List((Position1D("2007"), 6.4)), List((Position1D("2007"), 7.2))))))
 
-    val fifth = obj.present(Cell(sel, createContent(5)), Position1D("2008"), fourth._1)
+    val prep8 = obj.prepare(Cell(Position2D("sales", "2008"), createContent(5)))
+    prep8 shouldBe (List(5.0, 5.0))
+
+    val fifth = obj.update(Position1D("2008"), prep8, fourth._1)
     fifth shouldBe ((List(
       List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
         (Position1D("2007"), 9.0), (Position1D("2008"), 5.0)),
       List((Position1D("2004"), 6.0), (Position1D("2005"), 5.0), (Position1D("2006"), 8.0),
         (Position1D("2007"), 9.0), (Position1D("2008"), 5.0))),
-      createCell("2008", 6.6, 6.733333333333333)))
+      List(List(List((Position1D("2008"), 6.6)), List((Position1D("2008"), 6.733333333333333))))))
+
+    val cells = obj.present(sel, fifth._2.toList(0))
+    cells shouldBe createCell("2008", 6.6, 6.733333333333333)
   }
 
   def createContent(value: Long): Content = Content(ContinuousSchema(LongCodex), value)

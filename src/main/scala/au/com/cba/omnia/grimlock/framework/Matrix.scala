@@ -306,9 +306,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def slide[Q <: Position, F, T <: Tuner](slice: Slice[P], windows: F, ascending: Boolean = true, tuner: T)(
-    implicit ev1: Windowable[F, slice.S, slice.R, Q], ev2: slice.R =!= Position0D, ev3: ClassTag[slice.S],
-      ev4: ClassTag[slice.R], ev5: SlideTuners#V[T]): U[Cell[Q]]
+  def slide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Tuner](
+    slice: Slice[P], windows: Windowable[P, S, R, Q], ascending: Boolean = true, tuner: T)(
+      implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D, ev4: PosExpDep[S, Q],
+        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]]
 
   /**
    * Create window based derived data with a user supplied value.
@@ -321,9 +322,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[slice.S#M]]` with the derived data.
    */
-  def slideWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], windows: F, value: E[W],
-    ascendig: Boolean = true, tuner: T)(implicit ev1: WindowableWithValue[F, slice.S, slice.R, Q, W],
-      ev2: slice.R =!= Position0D, ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: SlideTuners#V[T]): U[Cell[Q]]
+  def slideWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](
+    slice: Slice[P], windows: WindowableWithValue[P, S, R, Q, W], value: E[W], ascendig: Boolean = true, tuner: T)(
+      implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D, ev4: PosExpDep[S, Q],
+        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]]
 
   /**
    * Partition a matrix according to `partitioner`.

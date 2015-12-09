@@ -273,47 +273,49 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type SlideTuners = TP1
-  def slide[Q <: Position, F, T <: Tuner](slice: Slice[P], windows: F, ascending: Boolean, tuner: T = Default())(
-    implicit ev1: Windowable[F, slice.S, slice.R, Q], ev2: slice.R =!= Position0D, ev3: ClassTag[slice.S],
-      ev4: ClassTag[slice.R], ev5: SlideTuners#V[T]): U[Cell[Q]] = {
-    val window = ev1.convert(windows)
+  def slide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Tuner](
+    slice: Slice[P], windows: Windowable[P, S, R, Q], ascending: Boolean = true, tuner: T = Default())(
+      implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D, ev4: PosExpDep[S, Q],
+        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]] ={
+    val window = windows()
 
     data
-      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
-      .groupBy { case (c, r) => c.position }
+      .map { case c => (slice.selected(c.position), (slice.remainder(c.position), window.prepare(c))) }
+      .groupByKey
       .flatMap {
-        case (_, itr) => itr
+        case (p, itr) => itr
           .toList
-          .sortBy { case (c, r) => r }(Position.Ordering(ascending))
-          .scanLeft(Option.empty[(window.T, TraversableOnce[Cell[Q]])]) {
-            case (None, (c, r)) => Some(window.initialise(c, r))
-            case (Some((t, _)), (c, r)) => Some(window.present(c, r, t))
+          .sortBy { case (r, _) => r }(Position.Ordering(ascending))
+          .scanLeft(Option.empty[(window.T, TraversableOnce[window.O])]) {
+            case (None, (r, i)) => Some(window.initialise(r, i))
+            case (Some((t, _)), (r, i)) => Some(window.update(r, i, t))
           }
           .flatMap {
-            case Some((t, c)) => c
+            case Some((_, o)) => o.flatMap(window.present(p, _))
             case _ => None
           }
       }
   }
 
-  def slideWithValue[Q <: Position, F, W, T <: Tuner](slice: Slice[P], windows: F, value: E[W], ascending: Boolean,
-    tuner: T = Default())(implicit ev1: WindowableWithValue[F, slice.S, slice.R, Q, W], ev2: slice.R =!= Position0D,
-      ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: SlideTuners#V[T]): U[Cell[Q]] = {
-    val window = ev1.convert(windows)
+  def slideWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](
+    slice: Slice[P], windows: WindowableWithValue[P, S, R, Q, W], value: E[W], ascending: Boolean = true,
+      tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D,
+        ev4: PosExpDep[S, Q], ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]] = {
+    val window = windows()
 
     data
-      .map { case Cell(p, c) => (Cell(slice.selected(p), c), slice.remainder(p)) }
-      .groupBy { case (c, r) => c.position }
+      .map { case c => (slice.selected(c.position), (slice.remainder(c.position), window.prepareWithValue(c, value))) }
+      .groupByKey
       .flatMap {
-        case (_, itr) => itr
+        case (p, itr) => itr
           .toList
-          .sortBy { case (c, r) => r }(Position.Ordering(ascending))
-          .scanLeft(Option.empty[(window.T, TraversableOnce[Cell[Q]])]) {
-            case (None, (c, r)) => Some(window.initialiseWithValue(c, r, value))
-            case (Some((t, _)), (c, r)) => Some(window.presentWithValue(c, r, value, t))
+          .sortBy { case (r, _) => r }(Position.Ordering(ascending))
+          .scanLeft(Option.empty[(window.T, TraversableOnce[window.O])]) {
+            case (None, (r, i)) => Some(window.initialise(r, i))
+            case (Some((t, _)), (r, i)) => Some(window.update(r, i, t))
           }
           .flatMap {
-            case Some((t, c)) => c
+            case Some((_, o)) => o.flatMap(window.presentWithValue(p, _, value))
             case _ => None
           }
       }
@@ -700,16 +702,16 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val tpr = data
       .transform(Compare[Position2D](isPositive))
-      .slide(slice, CumulativeSum(Locate.WindowString[slice.S, slice.R]()), true, wtuner)
+      .slide(slice, CumulativeSum[Position2D, slice.S, slice.R, slice.S#M](Locate.WindowString()), true, wtuner)
       .transformWithValue(Fraction(extractor), pos)
-      .slide(Over(First), BinOp((l: Double, r: Double) => r + l,
+      .slide(Over(First), BinOp[Position2D, Position1D, Position1D, Position2D]((l: Double, r: Double) => r + l,
         Locate.WindowPairwiseString[Position1D, Position1D]("%2$s.%1$s")), true, wtuner)
 
     val fpr = data
       .transform(Compare[Position2D](isNegative))
-      .slide(slice, CumulativeSum(Locate.WindowString[slice.S, slice.R]()), true, wtuner)
+      .slide(slice, CumulativeSum[Position2D, slice.S, slice.R, slice.S#M](Locate.WindowString()), true, wtuner)
       .transformWithValue(Fraction(extractor), neg)
-      .slide(Over(First), BinOp((l: Double, r: Double) => r - l,
+      .slide(Over(First), BinOp[Position2D, Position1D, Position1D, Position2D]((l: Double, r: Double) => r - l,
         Locate.WindowPairwiseString[Position1D, Position1D]("%2$s.%1$s")), true, wtuner)
 
     tpr

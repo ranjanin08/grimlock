@@ -21,40 +21,40 @@ import au.com.cba.omnia.grimlock.framework.position._
  * Base trait for generating windowed data.
  *
  * Windowed data is derived from two or more values, for example deltas or gradients. To generate this, the process is
- * as follows. First the matrix is grouped according to a slice. The data in each group is then sorted by the remaining
- * coordinates. The first cell of each group is passed to the prepare method. This allows a windowed to initialise it's
- * running state. All subsequent cells are passed to the present method (together with the running state). The present
- * method can update the running state, and optionally return one or more cells with derived data. Note that the
- * running state can be used to create derived features of different window sizes.
+ * as follows. First each cell is prepared for windowed operations. This involves return the input data to slide over.
+ * Next the input data is grouped according to a `slice`. The data in each group is then sorted by the remaining
+ * coordinates. The first cell's data of each group is passed to the initialise method. This allows a window to
+ * initialise it's running state. All subsequent cells' data are passed to the update method (together with the running
+ * state). The update method can update the running state, and optionally return one or more output values. Finally,
+ * the present method returns cells for the output values. Note that the running state can be used to create derived
+ * features of different window sizes.
  */
-trait Window[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends WindowWithValue[S, R, Q] { self =>
+trait Window[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
+  extends WindowWithValue[P, S, R, Q] { self =>
   type V = Any
 
-  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[Q]]) = initialise(cell, rem)
+  def prepareWithValue(cell: Cell[P], ext: V): I = prepare(cell)
 
-  def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[Q]]) = present(cell, rem, t)
-
-  /**
-   * Initialise the state using the first cell (ordered according to its position).
-   *
-   * @param cell The cell to initialise with.
-   * @param rem  The remaining coordinates of the cell.
-   *
-   * @return The state for this object.
-   */
-  def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]])
+  def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[Q]] = present(pos, out)
 
   /**
-   * Update state with the current cell and, optionally, output derived data.
+   * Prepare a sliding window operations.
    *
-   * @param cell The selected cell to derive from.
-   * @param rem  The remaining coordinates of the cell.
-   * @param t    The state.
+   * @param cell The cell from which to generate the input data.
    *
-   * @return A tuple consisting of updated state together with optional derived data.
+   * @return The input data over which the sliding window operates.
    */
-  def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]])
+  def prepare(cell: Cell[P]): I
+
+  /**
+   * Present zero or more cells for the output data.
+   *
+   * @param pos Selected position from which to generate the derived data.
+   * @param out The output data from which to generate the cell.
+   *
+   * @return Zero or more cells.
+   */
+  def present(pos: S, out: O): TraversableOnce[Cell[Q]]
 
   /**
    * Operator for generating derived data and then renaming dimensions.
@@ -63,20 +63,20 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
    *
    * @return A window that runs `this` and then renames the resulting dimension(s).
    */
-  def andThenRename(rename: (Cell[S], R, Cell[Q]) => Q) = {
-    new Window[S, R, Q] {
+  def andThenRename(rename: (Cell[Q]) => Q) = {
+    new Window[P, S, R, Q] {
+      type I = self.I
       type T = self.T
+      type O = self.O
 
-      def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
-        val state = self.initialise(cell, rem)
+      def prepare(cell: Cell[P]): I = self.prepare(cell)
 
-        (state._1, state._2.map { case c => Cell(rename(cell, rem, c), c.content) })
-      }
+      def initialise(rem: R, in: I): (T, TraversableOnce[O]) = self.initialise(rem, in)
 
-      def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
-        val state = self.present(cell, rem, t)
+      def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
-        (state._1, state._2.map { case c => Cell(rename(cell, rem, c), c.content) })
+      def present(pos: S, out: O): TraversableOnce[Cell[Q]] = {
+        self.present(pos, out).map { case c => Cell(rename(c), c.content) }
       }
     }
   }
@@ -88,20 +88,20 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
    *
    * @return A window that runs `this` and then expands the resulting dimensions.
    */
-  def andThenExpand[U <: Position](expand: (Cell[S], R, Cell[Q]) => U)(implicit ev: PosExpDep[Q, U]) = {
-    new Window[S, R, U] {
+  def andThenExpand[U <: Position](expand: (Cell[Q]) => U)(implicit ev: PosExpDep[Q, U]) = {
+    new Window[P, S, R, U] {
+      type I = self.I
       type T = self.T
+      type O = self.O
 
-      def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[U]]) = {
-        val state = self.initialise(cell, rem)
+      def prepare(cell: Cell[P]): I = self.prepare(cell)
 
-        (state._1, state._2.map { case c => Cell(expand(cell, rem, c), c.content) })
-      }
+      def initialise(rem: R, in: I): (T, TraversableOnce[O]) = self.initialise(rem, in)
 
-      def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[U]]) = {
-        val state = self.present(cell, rem, t)
+      def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
-        (state._1, state._2.map { case c => Cell(expand(cell, rem, c), c.content) })
+      def present(pos: S, out: O): TraversableOnce[Cell[U]] = {
+        self.present(pos, out).map { case c => Cell(expand(c), c.content) }
       }
     }
   }
@@ -111,42 +111,69 @@ trait Window[S <: Position with ExpandablePosition, R <: Position with Expandabl
  * Base trait for initialising a windowed with a user supplied value.
  *
  * Windowed data is derived from two or more values, for example deltas or gradients. To generate this, the process is
- * as follows. First the matrix is grouped according to a slice. The data in each group is then sorted by the remaining
- * coordinates. The first cell of each group is passed to the prepare method. This allows a windowed to initialise it's
- * running state. All subsequent cells are passed to the present method (together with the running state). The present
- * method can update the running state, and optionally return one or more cells with derived data. Note that the
- * running state can be used to create derived features of different window sizes.
+ * as follows. First each cell is prepared for windowed operations. This involves return the input data to slide over.
+ * Next the input data is grouped according to a `slice`. The data in each group is then sorted by the remaining
+ * coordinates. The first cell's data of each group is passed to the initialise method. This allows a window to
+ * initialise it's running state. All subsequent cells' data are passed to the update method (together with the running
+ * state). The update method can update the running state, and optionally return one or more output values. Finally,
+ * the present method returns cells for the output values. Note that the running state can be used to create derived
+ * features of different window sizes.
  */
-trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
+trait WindowWithValue[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
   extends java.io.Serializable { self =>
   /** Type of the external value. */
   type V
 
-  /** Type of the state. */
+  /** Type of the input data. */
+  type I
+
+  /** Type of the running state. */
   type T
 
-  /**
-   * Initialise the state using the first cell (ordered according to its position).
-   *
-   * @param cell The cell to initialise with.
-   * @param rem  The remaining coordinates of the cell.
-   * @param ext  The user define the value.
-   *
-   * @return The state for this object.
-   */
-  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[Q]])
+  /** Type of the output data. */
+  type O
 
   /**
-   * Update state with the current cell and, optionally, output derived data.
+   * Prepare a sliding window operations.
    *
-   * @param cell The selected cell to derive from.
-   * @param rem  The remaining coordinates of the cell.
-   * @param ext  The user define the value.
-   * @param t    The state.
+   * @param cell The cell from which to generate the input data.
+   * @param ext  User provided data required for preparation.
    *
-   * @return A tuple consisting of updated state together with optional derived data.
+   * @return The input data over which the sliding window operates.
    */
-  def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[Q]])
+  def prepareWithValue(cell: Cell[P], ext: V): I
+
+  /**
+   * Initialise the running state using the first cell (ordered according to its position).
+   *
+   * @param rem  The remaining coordinates of the cell.
+   * @param in   The input data.
+   *
+   * @return The running state for this object.
+   */
+  def initialise(rem: R, in: I): (T, TraversableOnce[O])
+
+  /**
+   * Update running state with the state and, optionally, return output data.
+   *
+   * @param rem  The remaining coordinates of the cell.
+   * @param in   The input data.
+   * @param t    The running state.
+   *
+   * @return A tuple consisting of updated running state together with optional output data.
+   */
+  def update(rem: R, in: I, t: T): (T, TraversableOnce[O])
+
+  /**
+   * Present zero or more cells for the output data.
+   *
+   * @param pos Selected position from which to generate the derived data.
+   * @param out The output data from which to generate the cell.
+   * @param ext User provided data required for preparation.
+   *
+   * @return Zero or more cells.
+   */
+  def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[Q]]
 
   /**
    * Operator for generating derived data and then renaming dimensions.
@@ -155,21 +182,21 @@ trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with 
    *
    * @return A window that runs `this` and then renames the resulting dimension(s).
    */
-  def andThenRenameWithValue(rename: (Cell[S], R, V, Cell[Q]) => Q) = {
-    new WindowWithValue[S, R, Q] {
+  def andThenRenameWithValue(rename: (Cell[Q], V) => Q) = {
+    new WindowWithValue[P, S, R, Q] {
       type V = self.V
+      type I = self.I
       type T = self.T
+      type O = self.O
 
-      def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[Q]]) = {
-        val state = self.initialiseWithValue(cell, rem, ext)
+      def prepareWithValue(cell: Cell[P], ext: V): I = self.prepareWithValue(cell, ext)
 
-        (state._1, state._2.map { case c => Cell(rename(cell, rem, ext, c), c.content) })
-      }
+      def initialise(rem: R, in: I): (T, TraversableOnce[O]) = self.initialise(rem, in)
 
-      def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[Q]]) = {
-        val state = self.presentWithValue(cell, rem, ext, t)
+      def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
-        (state._1, state._2.map { case c => Cell(rename(cell, rem, ext, c), c.content) })
+      def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[Q]] = {
+        self.presentWithValue(pos, out, ext).map { case c => Cell(rename(c, ext), c.content) }
       }
     }
   }
@@ -181,72 +208,72 @@ trait WindowWithValue[S <: Position with ExpandablePosition, R <: Position with 
    *
    * @return A window that runs `this` and then expands the resulting dimensions.
    */
-  def andThenExpandWithValue[U <: Position](expand: (Cell[S], R, V, Cell[Q]) => U)(implicit ev: PosExpDep[Q, U]) = {
-    new WindowWithValue[S, R, U] {
+  def andThenExpandWithValue[U <: Position](expand: (Cell[Q], V) => U)(implicit ev: PosExpDep[Q, U]) = {
+    new WindowWithValue[P, S, R, U] {
       type V = self.V
+      type I = self.I
       type T = self.T
+      type O = self.O
 
-      def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[U]]) = {
-        val state = self.initialiseWithValue(cell, rem, ext)
+      def prepareWithValue(cell: Cell[P], ext: V): I = self.prepareWithValue(cell, ext)
 
-        (state._1, state._2.map { case c => Cell(expand(cell, rem, ext, c), c.content) })
-      }
+      def initialise(rem: R, in: I): (T, TraversableOnce[O]) = self.initialise(rem, in)
 
-      def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[U]]) = {
-        val state = self.presentWithValue(cell, rem, ext, t)
+      def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
-        (state._1, state._2.map { case c => Cell(expand(cell, rem, ext, c), c.content) })
+      def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[U]] = {
+        self.presentWithValue(pos, out, ext).map { case c => Cell(expand(c, ext), c.content) }
       }
     }
   }
 }
 
-/** Type class for transforming a type `T` to a `Window[S, R, Q]`. */
-trait Windowable[T, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] {
-  /**
-   * Returns a `Window[S, R, Q]` for type `T`.
-   *
-   * @param t Object that can be converted to a `Window[S, R, Q]`.
-   */
-  def convert(t: T): Window[S, R, Q]
+/** Trait for transforming a type `T` to a `Window[S, R, Q]`. */
+trait Windowable[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] {
+  /** Returns a `Window[S, R, Q]` for this type `T`. */
+  def apply(): Window[P, S, R, Q]
 }
 
-/** Companion object for the `Windowable` type class. */
+/** Companion object for the `Windowable` trait. */
 object Windowable {
-  /** Converts a `Window[S, R, S#M]` to a `Window[S, R, S#M]`; that is, it is a pass through. */
-  implicit def WSRSM2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: Window[S, R, S#M]]: Windowable[T, S, R, S#M] = W2W[S, R, S#M, T]
-
-  /** Converts a `Window[S, R, Q]` to a `Window[S, R, Q]`; that is, it is a pass through. */
-  implicit def WSRQ2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Window[S, R, Q]](implicit ev: PosExpDep[S, Q]): Windowable[T, S, R, Q] = W2W[S, R, Q, T]
-
-  private def W2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Window[S, R, Q]]: Windowable[T, S, R, Q] = {
-    new Windowable[T, S, R, Q] { def convert(t: T): Window[S, R, Q] = t }
+  /** Converts a `Window[P, S, R, Q]` to a `Window[P, S, R, Q]`; that is, it is a pass through. */
+  implicit def W2W[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](t: Window[P, S, R, Q]): Windowable[P, S, R, Q] = {
+    new Windowable[P, S, R, Q] { def apply(): Window[P, S, R, Q] = t }
   }
 
-  /** Converts a `List[Window[S, R, S#M]]` to a single `Window[S, R, S#M]`. */
-  implicit def LWSRSM2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: Window[S, R, S#M]]: Windowable[List[T], S, R, S#M] = LW2W[S, R, S#M, T]
-
-  /** Converts a `List[Window[S, R, Q]]` to a single `Window[S, R, Q]`. */
-  implicit def LWSRQ2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Window[S, R, Q]](implicit ev: PosExpDep[S, Q]): Windowable[List[T], S, R, Q] = LW2W[S, R, Q, T]
-
-  private def LW2W[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Window[S, R, Q]]: Windowable[List[T], S, R, Q] = {
-    new Windowable[List[T], S, R, Q] {
-      def convert(windows: List[T]): Window[S, R, Q] = {
-        new Window[S, R, Q] {
+  /** Converts a `List[Window[P, S, R, Q]]` to a single `Window[P, S, R, Q]`. */
+  implicit def LW2W[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](t: List[Window[P, S, R, Q]]): Windowable[P, S, R, Q] = {
+    new Windowable[P, S, R, Q] {
+      def apply(): Window[P, S, R, Q] = {
+        new Window[P, S, R, Q] {
+          type I = List[Any]
           type T = List[Any]
+          type O = List[TraversableOnce[Any]]
 
-          def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
-            val state = windows.map { case window => window.initialise(cell, rem) }
+          def prepare(cell: Cell[P]): I = t.map { case window => window.prepare(cell) }
 
-            (state.map { case (t, c) => t }, state.flatMap { case (t, c) => c })
+          def initialise(rem: R, in: I): (T, TraversableOnce[O]) = {
+            val state = (t, in)
+              .zipped
+              .map { case (window, j) => window.initialise(rem, j.asInstanceOf[window.I]) }
+
+            (state.map(_._1), Some(state.map(_._2)))
           }
 
-          def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
-            val state = (windows, t)
+          def update(rem: R, in: I, s: T): (T, TraversableOnce[O]) = {
+            val state = (t, in, s)
               .zipped
-              .map { case (window, s) => window.present(cell, rem, s.asInstanceOf[window.T]) }
+              .map { case (window, j, u) => window.update(rem, j.asInstanceOf[window.I], u.asInstanceOf[window.T]) }
 
-            (state.map { case (t, c) => t }, state.flatMap { case (t, c) => c })
+            (state.map(_._1), Some(state.map(_._2)))
+          }
+
+          def present(pos: S, out: O): TraversableOnce[Cell[Q]] = {
+            (t, out)
+              .zipped
+              .flatMap {
+                case (window, s) => s.flatMap { case t => window.present(pos, t.asInstanceOf[window.O]) }
+              }
           }
         }
       }
@@ -254,53 +281,53 @@ object Windowable {
   }
 }
 
-/** Type class for transforming a type `T` to a `WindowWithValue[S, R, Q]`. */
-trait WindowableWithValue[T, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W] {
-  /**
-   * Returns a `WindowWithValue[S, R, Q]` for type `T`.
-   *
-   * @param t Object that can be converted to a `WindowWithValue[S, R, Q]`.
-   */
-  def convert(t: T): WindowWithValue[S, R, Q] { type V >: W }
+/** Trait for transforming a type `T` to a `WindowWithValue[P, S, R, Q]`. */
+trait WindowableWithValue[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W] {
+  /** Returns a `WindowWithValue[P, S, R, Q]` for this type `T`. */
+  def apply(): WindowWithValue[P, S, R, Q] { type V >: W }
 }
 
-/** Companion object for the `WindowableWithValue` type class. */
+/** Companion object for the `WindowableWithValue` trait. */
 object WindowableWithValue {
-  /** Converts a `WindowWithValue[S, R, S#M]` to a `WindowWithValue[S, R, S#M]`; that is, it is a pass through. */
-  implicit def WSRSMW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: WindowWithValue[S, R, S#M] { type V >: W }, W]: WindowableWithValue[T, S, R, S#M, W] = W2WWV[S, R, S#M, T, W]
-
-  /** Converts a `WindowWithValue[S, R, Q]` to a `WindowWithValue[S, R, Q]`; that is, it is a pass through. */
-  implicit def WSRQW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: WindowWithValue[S, R, Q] { type V >: W }, W](implicit ev: PosExpDep[S, Q]): WindowableWithValue[T, S, R, Q, W] = W2WWV[S, R, Q, T, W]
-
-  private def W2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: WindowWithValue[S, R, Q] { type V >: W }, W]: WindowableWithValue[T, S, R, Q, W] = {
-    new WindowableWithValue[T, S, R, Q, W] { def convert(t: T): WindowWithValue[S, R, Q] { type V >: W } = t }
+  /** Converts a `WindowWithValue[P, S, R, Q]` to a `WindowWithValue[P, S, R, Q]`; that is, it is a pass through. */
+  implicit def WWV2WWV[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](t: WindowWithValue[P, S, R, Q] { type V >: W }): WindowableWithValue[P, S, R, Q, W] = {
+    new WindowableWithValue[P, S, R, Q, W] { def apply(): WindowWithValue[P, S, R, Q] { type V >: W } = t }
   }
 
-  /** Converts a `List[WindowWithValue[S, R, S#M]]` to a single `WindowWithValue[S, R, S#M]`. */
-  implicit def LWSRSMW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, T <: WindowWithValue[S, R, S#M] { type V >: W }, W]: WindowableWithValue[List[T], S, R, S#M, W] = LW2WWV[S, R, S#M, T, W]
-
   /** Converts a `List[WindowWithValue[S, R, Q]]` to a single `WindowWithValue[S, R, Q]`. */
-  implicit def LWSRQW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: WindowWithValue[S, R, Q] { type V >: W }, W](implicit ev: PosExpDep[S, Q]): WindowableWithValue[List[T], S, R, Q, W] = LW2WWV[S, R, Q, T, W]
-
-  private def LW2WWV[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: WindowWithValue[S, R, Q] { type V >: W }, W]: WindowableWithValue[List[T], S, R, Q, W] = {
-    new WindowableWithValue[List[T], S, R, Q, W] {
-      def convert(windows: List[T]): WindowWithValue[S, R, Q] { type V >: W } = {
-        new WindowWithValue[S, R, Q] {
-          type T = List[Any]
+  implicit def LWWV2WWV[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W](t: List[WindowWithValue[P, S, R, Q] { type V >: W }]): WindowableWithValue[P, S, R, Q, W] = {
+    new WindowableWithValue[P, S, R, Q, W] {
+      def apply(): WindowWithValue[P, S, R, Q] { type V >: W } = {
+        new WindowWithValue[P, S, R, Q] {
           type V = W
+          type I = List[Any]
+          type T = List[Any]
+          type O = List[TraversableOnce[Any]]
 
-          def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[Q]]) = {
-            val state = windows.map { case window => window.initialiseWithValue(cell, rem, ext) }
+          def prepareWithValue(cell: Cell[P], ext: V): I = t.map { case window => window.prepareWithValue(cell, ext) }
 
-            (state.map { case (t, c) => t }, state.flatMap { case (t, c) => c })
+          def initialise(rem: R, in: I): (T, TraversableOnce[O]) = {
+            val state = (t, in)
+              .zipped
+              .map { case (window, j) => window.initialise(rem, j.asInstanceOf[window.I]) }
+
+            (state.map(_._1), Some(state.map(_._2)))
           }
 
-          def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[Q]]) = {
-            val state = (windows, t)
+          def update(rem: R, in: I, s: T): (T, TraversableOnce[O]) = {
+            val state = (t, in, s)
               .zipped
-              .map { case (window, s) => window.presentWithValue(cell, rem, ext, s.asInstanceOf[window.T]) }
+              .map { case (window, j, u) => window.update(rem, j.asInstanceOf[window.I], u.asInstanceOf[window.T]) }
 
-            (state.map { case (t, c) => t }, state.flatMap { case (t, c) => c })
+            (state.map(_._1), Some(state.map(_._2)))
+          }
+
+          def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[Q]] = {
+            (t, out)
+              .zipped
+              .flatMap {
+                case (window, s) => s.flatMap { case t => window.presentWithValue(pos, t.asInstanceOf[window.O], ext) }
+              }
           }
         }
       }

@@ -52,7 +52,7 @@ object Locate {
   }
 
   /** Extract position for the selected cell and its remainder. */
-  type WindowSize1[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (Cell[S], R) => Q
+  type WindowSize1[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (S, R) => Q
 
   /**
    * Extract position using a dimension.
@@ -60,7 +60,7 @@ object Locate {
    * @param dim The dimension (out of `rem`) to append to the cell's position.
    */
   def WindowDimension[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-    dim: Dimension): WindowSize1[S, R, S#M] = (cell: Cell[S], rem: R) => cell.position.append(rem(dim))
+    dim: Dimension): WindowSize1[S, R, S#M] = (pos: S, rem: R) => pos.append(rem(dim))
 
   /**
    * Extract position using string of `rem`.
@@ -69,11 +69,11 @@ object Locate {
    */
   def WindowString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
     separator: String = "|"): WindowSize1[S, R, S#M] = {
-    (cell: Cell[S], rem: R) => cell.position.append(rem.toShortString(separator))
+    (pos: S, rem: R) => pos.append(rem.toShortString(separator))
   }
 
   /** Extract position for the selected cell and its current and prior remainder. */
-  type WindowSize2[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (Cell[S], R, R) => Q
+  type WindowSize2[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (S, R, R) => Q
 
   /**
    * Extract position using string of current and previous `rem`.
@@ -84,8 +84,8 @@ object Locate {
    */
   def WindowPairwiseString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
     pattern: String, separator: String = "|"): WindowSize2[S, R, S#M] = {
-    (cell: Cell[S], curr: R, prev: R) =>
-      cell.position.append(pattern.format(prev.toShortString(separator), curr.toShortString(separator)))
+    (pos: S, curr: R, prev: R) =>
+      pos.append(pattern.format(prev.toShortString(separator), curr.toShortString(separator)))
   }
 }
 

@@ -26,37 +26,43 @@ import au.com.cba.omnia.grimlock.scalding.Matrix._
 import com.twitter.scalding.{ Args, Job }
 
 // Simple gradient feature genertor
-case class Gradient(dim: Dimension) extends Window[Position2D, Position1D, Position3D] {
-  type T = Cell[Position1D]
-
-  // Initialise state to the remainder coordinates (contains the date) and the content.
-  def initialise(cell: Cell[Position2D], rem: Position1D): (T, TraversableOnce[Cell[Position3D]]) = {
-    (Cell(rem, cell.content), None)
-  }
+case class Gradient(dim: Dimension) extends Window[Position3D, Position2D, Position1D, Position3D] {
+  type I = (Option[Long], Option[Double])
+  type T = (Option[Long], Option[Double], Position1D)
+  type O = (Option[Double], Position1D, Position1D)
 
   val DayInMillis = 1000 * 60 * 60 * 24
   val separator = ""
 
+  // Prepare the sliding window, the state is the time and the value.
+  def prepare(cell: Cell[Position3D]): I = {
+    (cell.position(dim).asDate.map { case d => d.getTime }, cell.content.value.asDouble)
+  }
+
+  // Initialise state to the time, value and remainder coordinates.
+  def initialise(rem: Position1D, in: I): (T, TraversableOnce[O]) = ((in._1, in._2, rem), None)
+
   // For each new cell, output the difference with the previous cell (contained in `t`).
-  def present(cell: Cell[Position2D], rem: Position1D, t: T): (T, TraversableOnce[Cell[Position3D]]) = {
-    // Get current date from `rem` and previous date from `t` and compute number of days between the dates.
-    val days = rem(dim).asDate.flatMap {
-      case dc => t.position(dim).asDate.map { case dt => (dc.getTime - dt.getTime) / DayInMillis }
+  def update(rem: Position1D, in: I, t: T): (T, TraversableOnce[O]) = {
+    // Get current date from `in` and previous date from `t` and compute number of days between the dates.
+    val days = in._1.flatMap { case dc => t._1.map { case dt => (dc - dt) / DayInMillis } }
+
+    // Get the difference between current and previous values.
+    val delta = in._2.flatMap { case dc => t._2.map { case dt => dc - dt } }
+
+    // Generate the gradient (delta / days).
+    val grad = days.flatMap { case td => delta.map { case vd => vd / td } }
+
+    // Update state to be current `in` and `rem`, and output the gradient.
+    ((in._1, in._2, rem), Some((grad, rem, t._3)))
+  }
+
+  // If a gradient is available, output a cell for it.
+  def present(pos: Position2D, out: O): TraversableOnce[Cell[Position3D]] = {
+    out._1.map {
+      case grad => Cell(pos.append(out._3.toShortString(separator) + ".to." +
+        out._2.toShortString(separator)), Content(ContinuousSchema(DoubleCodex), grad))
     }
-
-    // Get the difference in current value and previous value.
-    val delta = cell.content.value.asDouble.flatMap { case dc => t.content.value.asDouble.map { case dt => dc - dt } }
-
-    // Generate cell containing the gradient (delta / days).
-    val grad = days.flatMap {
-      case td => delta.map {
-        case vd => Cell(cell.position.append(t.position.toShortString(separator) + ".to." +
-          rem.toShortString(separator)), Content(ContinuousSchema(DoubleCodex), vd / td))
-      }
-    }
-
-    // Update state to be current `rem` and `con`, and output the gradient.
-    (Cell(rem, cell.content), grad)
   }
 }
 
@@ -75,7 +81,7 @@ class DerivedData(args: Args) extends Job(args) {
   // 5/ Persist 2D gradient features.
   loadText(s"${path}/exampleDerived.txt", Cell.parse3D(third = DateCodex()))
     .data
-    .slide(Along(Third), Gradient(First))
+    .slide(Along(Third), Gradient(Third))
     .melt(Third, Second, ".from.")
     .saveAsText(s"./demo.${output}/gradient.out")
     .toUnit

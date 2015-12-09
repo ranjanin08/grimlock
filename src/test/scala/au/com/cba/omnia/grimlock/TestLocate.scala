@@ -45,8 +45,8 @@ class TestWindowDimension extends TestGrimlock {
   val rem = Position2D("abc", 123)
 
   "A WindowDimension" should "extract" in {
-    Locate.WindowDimension[Position1D, Position2D](First)(cell, rem) shouldBe (Position2D("foo", "abc"))
-    Locate.WindowDimension[Position1D, Position2D](Second)(cell, rem) shouldBe (Position2D("foo", 123))
+    Locate.WindowDimension[Position1D, Position2D](First)(cell.position, rem) shouldBe (Position2D("foo", "abc"))
+    Locate.WindowDimension[Position1D, Position2D](Second)(cell.position, rem) shouldBe (Position2D("foo", 123))
   }
 }
 
@@ -56,7 +56,7 @@ class TestWindowString extends TestGrimlock {
   val rem = Position2D("abc", 123)
 
   "A WindowString" should "extract" in {
-    Locate.WindowString[Position1D, Position2D](":")(cell, rem) shouldBe (Position2D("foo", "abc:123"))
+    Locate.WindowString[Position1D, Position2D](":")(cell.position, rem) shouldBe (Position2D("foo", "abc:123"))
   }
 }
 
@@ -67,7 +67,7 @@ class TestWindowPairwiseString extends TestGrimlock {
   val prev = Position2D("def", 456)
 
   "A WindowPairwiseString" should "extract" in {
-    Locate.WindowPairwiseString[Position1D, Position2D]("g(%2$s, %1$s)", ":")(cell, curr, prev) shouldBe
+    Locate.WindowPairwiseString[Position1D, Position2D]("g(%2$s, %1$s)", ":")(cell.position, curr, prev) shouldBe
       (Position2D("foo", "g(abc:123, def:456)"))
   }
 }

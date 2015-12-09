@@ -216,7 +216,8 @@ object AggregatableWithValue {
    * `List[AggregatorWithValue[P, S, Q] { type V >: W }]`; that is, it is a pass through.
    */
   implicit def LAWV2AWV[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](
-    t: List[AggregatorWithValue[P, S, Q] { type V >: W }]): AggregatableWithValue[P, S, Q, W] = {
+    t: List[AggregatorWithValue[P, S, Q] { type V >: W }])(
+      implicit ev: PosExpDep[S, Q]): AggregatableWithValue[P, S, Q, W] = {
     new AggregatableWithValue[P, S, Q, W] {
       def apply(): List[AggregatorWithValue[P, S, Q] { type V >: W }] = t
     }

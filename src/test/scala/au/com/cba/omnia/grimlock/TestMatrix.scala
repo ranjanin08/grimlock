@@ -6610,42 +6610,50 @@ trait TestMatrixSlide extends TestMatrix {
 
 object TestMatrixSlide {
 
-  case class Delta[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-    times: Int) extends Window[S, R, S#M] {
-    type T = Cell[R]
+  case class Delta[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+    times: Int) extends Window[P, S, R, S#M] {
+    type I = Option[Double]
+    type T = (Option[Double], R)
+    type O = (Double, R, R)
 
-    def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[S#M]]) = (Cell(rem, cell.content), None)
+    def prepare(cell: Cell[P]): I = cell.content.value.asDouble
 
-    def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[S#M]]) = {
-      val delta = cell.content.value.asDouble.flatMap {
-        case dc => t.content.value.asDouble.map {
-          case dt => Cell[S#M](cell.position.append(times + "*(" + rem.toShortString("|") + "-" +
-            t.position.toShortString("|") + ")"), Content(ContinuousSchema(DoubleCodex), times * (dc - dt)))
-        }
-      }
+    def initialise(rem: R, in: I): (T, TraversableOnce[O]) = ((in, rem), None)
 
-      (Cell(rem, cell.content), delta)
+    def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = {
+     ((in, rem), (in, t._1) match {
+       case (Some(dc), Some(dt)) => Some((dc - dt, rem, t._2))
+       case _ => None
+     })
+    }
+
+    def present(pos: S, out: O): TraversableOnce[Cell[S#M]] = {
+      Some(Cell[S#M](pos.append(times + "*(" + out._2.toShortString("|") + "-" + out._3.toShortString("|") + ")"),
+        Content(ContinuousSchema(DoubleCodex), times * out._1)))
     }
   }
 
-  case class DeltaWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-    key: String) extends WindowWithValue[S, R, S#M] {
-    type T = Cell[R]
+  case class DeltaWithValue[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+    key: String) extends WindowWithValue[P, S, R, S#M] {
     type V = Map[String, Int]
+    type I = Option[Double]
+    type T = (Option[Double], R)
+    type O = (Double, R, R)
 
-    def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[S#M]]) = {
-      (Cell(rem, cell.content), None)
+    def prepareWithValue(cell: Cell[P], ext: V): I = cell.content.value.asDouble
+
+    def initialise(rem: R, in: I): (T, TraversableOnce[O]) = ((in, rem), None)
+
+    def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = {
+     ((in, rem), (in, t._1) match {
+       case (Some(dc), Some(dt)) => Some((dc - dt, rem, t._2))
+       case _ => None
+     })
     }
 
-    def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[S#M]]) = {
-      val delta = cell.content.value.asDouble.flatMap {
-        case dc => t.content.value.asDouble.map {
-          case dt => Cell[S#M](cell.position.append(ext(key) + "*(" + rem.toShortString("|") + "-" +
-            t.position.toShortString("|") + ")"), Content(ContinuousSchema(DoubleCodex), ext(key) * (dc - dt)))
-        }
-      }
-
-      (Cell(rem, cell.content), delta)
+    def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[S#M]] = {
+      Some(Cell[S#M](pos.append(ext(key) + "*(" + out._2.toShortString("|") + "-" + out._3.toShortString("|") + ")"),
+        Content(ContinuousSchema(DoubleCodex), ext(key) * out._1)))
     }
   }
 }
@@ -6654,145 +6662,145 @@ class TestScaldingMatrixSlide extends TestMatrixSlide {
 
   "A Matrix.slide" should "return its first along derived data in 1D" in {
     toPipe(num1)
-      .slide(Along(First), List(TestMatrixSlide.Delta[Position0D, Position1D](1),
-        TestMatrixSlide.Delta[Position0D, Position1D](2)), false, Default())
+      .slide(Along(First), List(TestMatrixSlide.Delta[Position1D, Position0D, Position1D](1),
+        TestMatrixSlide.Delta[Position1D, Position0D, Position1D](2)), false, Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over derived data in 2D" in {
     toPipe(num2)
-      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default(Reducers(123)))
+      .slide(Over(First), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), false, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along derived data in 2D" in {
     toPipe(num2)
-      .slide(Along(First), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default())
+      .slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over derived data in 2D" in {
     toPipe(num2)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default(Reducers(123)))
+      .slide(Over(Second), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), true, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along derived data in 2D" in {
     toPipe(num2)
-      .slide(Along(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default())
+      .slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over derived data in 3D" in {
     toPipe(num3)
-      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default(Reducers(123)))
+      .slide(Over(First), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), false, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along derived data in 3D" in {
     toPipe(num3)
-      .slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
+      .slide(Along(First), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over derived data in 3D" in {
     toPipe(num3)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1), true, Default(Reducers(123)))
+      .slide(Over(Second), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), true, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along derived data in 3D" in {
     toPipe(num3)
-      .slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D](1), false, Default())
+      .slide(Along(Second), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over derived data in 3D" in {
     toPipe(num3)
-      .slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default(Reducers(123)))
+      .slide(Over(Third), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), false, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along derived data in 3D" in {
     toPipe(num3)
-      .slide(Along(Third), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
+      .slide(Along(Third), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.slideWithValue" should "return its first along derived data in 1D" in {
     toPipe(num1)
-      .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
-        TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ValuePipe(ext), true,
+      .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D]("one"),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D]("two")), ValuePipe(ext), true,
           Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over derived data in 2D" in {
     toPipe(num2)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
         ValuePipe(ext), false, Default())
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along derived data in 2D" in {
     toPipe(num2)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
         ValuePipe(ext), false, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over derived data in 2D" in {
     toPipe(num2)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
         ValuePipe(ext), true, Default())
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along derived data in 2D" in {
     toPipe(num2)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"),
+      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
         ValuePipe(ext), true, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
+      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
         ValuePipe(ext), false, Default())
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
         ValuePipe(ext), false, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
+      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
         ValuePipe(ext), true, Default())
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
+      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
         ValuePipe(ext), true, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"),
+      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
         ValuePipe(ext), false, Default())
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along derived data in 3D" in {
     toPipe(num3)
-      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"),
+      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
         ValuePipe(ext), false, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result22
   }
@@ -6802,145 +6810,145 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
   "A Matrix.slide" should "return its first along derived data in 1D" in {
     toRDD(num1)
-      .slide(Along(First), List(TestMatrixSlide.Delta[Position0D, Position1D](1),
-        TestMatrixSlide.Delta[Position0D, Position1D](2)), false, Default())
+      .slide(Along(First), List(TestMatrixSlide.Delta[Position1D, Position0D, Position1D](1),
+        TestMatrixSlide.Delta[Position1D, Position0D, Position1D](2)), false, Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default())
+      .slide(Over(First), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slide(Along(First), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default())
+      .slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), true, Default())
+      .slide(Over(Second), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
-      .slide(Along(Second), TestMatrixSlide.Delta[Position1D, Position1D](1), false, Default())
+      .slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D, Position1D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(First), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default())
+      .slide(Over(First), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(First), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
+      .slide(Along(First), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(Second), TestMatrixSlide.Delta[Position1D, Position2D](1), true, Default())
+      .slide(Over(Second), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(Second), TestMatrixSlide.Delta[Position2D, Position1D](1), false, Default())
+      .slide(Along(Second), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slide(Over(Third), TestMatrixSlide.Delta[Position1D, Position2D](1), false, Default())
+      .slide(Over(Third), TestMatrixSlide.Delta[Position3D, Position1D, Position2D](1), false, Default())
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slide(Along(Third), TestMatrixSlide.Delta[Position2D, Position1D](1), true, Default())
+      .slide(Along(Third), TestMatrixSlide.Delta[Position3D, Position2D, Position1D](1), true, Default())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   "A Matrix.slideWithValue" should "return its first along derived data in 1D" in {
     toRDD(num1)
-      .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("one"),
-        TestMatrixSlide.DeltaWithValue[Position0D, Position1D]("two")), ext, true, Default())
+      .slideWithValue(Along(First), List(TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D]("one"),
+        TestMatrixSlide.DeltaWithValue[Position1D, Position0D, Position1D]("two")), ext, true, Default())
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its first over derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, false,
-        Default())
+      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+        ext, false, Default())
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its first along derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, false,
-        Default())
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+        ext, false, Default())
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its second over derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, true,
-        Default())
+      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+        ext, true, Default())
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its second along derived data in 2D" in {
     toRDD(num2)
-      .slideWithValue(Along(Second),
-        TestMatrixSlide.DeltaWithValue[Position1D, Position1D]("one"), ext, true, Default())
+      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D, Position1D]("one"),
+        ext, true, Default())
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its first over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext, false,
-        Default())
+      .slideWithValue(Over(First), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
+        ext, false, Default())
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its first along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, false,
-        Default())
+      .slideWithValue(Along(First), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
+        ext, false, Default())
       .toList.sortBy(_.position) shouldBe result18
   }
 
   it should "return its second over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext, true,
-        Default())
+      .slideWithValue(Over(Second), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
+        ext, true, Default())
       .toList.sortBy(_.position) shouldBe result19
   }
 
   it should "return its second along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, true,
-        Default())
+      .slideWithValue(Along(Second), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
+        ext, true, Default())
       .toList.sortBy(_.position) shouldBe result20
   }
 
   it should "return its third over derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position1D, Position2D]("one"), ext, false,
-        Default())
+      .slideWithValue(Over(Third), TestMatrixSlide.DeltaWithValue[Position3D, Position1D, Position2D]("one"),
+        ext, false, Default())
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its third along derived data in 3D" in {
     toRDD(num3)
-      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position2D, Position1D]("one"), ext, false,
-        Default())
+      .slideWithValue(Along(Third), TestMatrixSlide.DeltaWithValue[Position3D, Position2D, Position1D]("one"),
+        ext, false, Default())
       .toList.sortBy(_.position) shouldBe result22
   }
 }

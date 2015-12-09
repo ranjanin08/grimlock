@@ -22,27 +22,25 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.window._
 
 /** Base trait for computing a moving average. */
-trait MovingAverage[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends Window[S, R, Q] {
+trait MovingAverage[P <: Position,S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] extends Window[P, S, R, Q] {
+  type I = Double
+  type O = (R, Double)
 
   /** Function to extract result position. */
-  val pos: Locate.WindowSize1[S, R, Q]
+  val position: Locate.WindowSize1[S, R, Q]
 
-  protected def getCell(cell: Cell[S], rem: R, value: Double): Option[Cell[Q]] = {
-    Some(Cell[Q](pos(cell, rem), Content(ContinuousSchema(DoubleCodex), value)))
+  def prepare(cell: Cell[P]): I = cell.content.value.asDouble.getOrElse(Double.NaN)
+
+  def present(pos: S, out: O): TraversableOnce[Cell[Q]] = {
+    Some(Cell(position(pos, out._1), Content(ContinuousSchema(DoubleCodex), out._2)))
   }
-
-  protected def getDouble(con: Content): Double = con.value.asDouble.getOrElse(Double.NaN)
-
-  protected def getCurrent(rem: R, con: Content): (R, Double) = (rem, getDouble(con))
 }
 
 /**
  * Trait for computing moving average in batch mode; that is, keep the last N values and compute the moving average
  * from it.
  */
-trait BatchMovingAverage[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends MovingAverage[S, R, Q] {
+trait BatchMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] extends MovingAverage[P, S, R, Q] {
   type T = List[(R, Double)]
 
   /** Size of the window. */
@@ -53,53 +51,44 @@ trait BatchMovingAverage[S <: Position with ExpandablePosition, R <: Position wi
 
   protected val idx: Int
 
-  def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
-    val curr = getCurrent(rem, cell.content)
-
-    (List(curr), if (all) { getCell(cell, curr._1, curr._2) } else { None })
+  def initialise(rem: R, in: I): (T, TraversableOnce[O]) = {
+    (List((rem, in)), if (all) { Some((rem, in)) } else { None })
   }
 
-  def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
-    val lst = updateList(rem, cell.content, t)
+  def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = {
+    val lst = (if (t.size == window) { t.tail } else { t }) :+ ((rem, in))
     val out = (all || lst.size == window) match {
-      case true => getCell(cell, lst(math.min(idx, lst.size - 1))._1, compute(lst))
+      case true => Some((lst(math.min(idx, lst.size - 1))._1, compute(lst)))
       case false => None
     }
 
     (lst, out)
   }
 
-  private def updateList(rem: R, con: Content, lst: List[(R, Double)]): List[(R, Double)] = {
-    (if (lst.size == window) { lst.tail } else { lst }) :+ getCurrent(rem, con)
-  }
-
-  protected def compute(lst: List[(R, Double)]): Double
+  protected def compute(lst: T): Double
 }
 
 /** Compute simple moving average over last `window` values. */
-case class SimpleMovingAverage[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  window: Int, pos: Locate.WindowSize1[S, R, Q], all: Boolean = false) extends BatchMovingAverage[S, R, Q] {
+case class SimpleMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](window: Int, position: Locate.WindowSize1[S, R, Q], all: Boolean = false) extends BatchMovingAverage[P, S, R, Q] {
   protected val idx = window - 1
 
-  protected def compute(lst: List[(R, Double)]): Double = lst.foldLeft(0.0)((c, p) => p._2 + c) / lst.size
+  protected def compute(lst: T): Double = lst.foldLeft(0.0)((c, p) => p._2 + c) / lst.size
 }
 
 /** Compute centered moving average over last `2 * width + 1` values. */
-case class CenteredMovingAverage[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  width: Int, pos: Locate.WindowSize1[S, R, Q]) extends BatchMovingAverage[S, R, Q] {
+case class CenteredMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](width: Int, position: Locate.WindowSize1[S, R, Q]) extends BatchMovingAverage[P, S, R, Q] {
   val window = 2 * width + 1
   val all = false
   protected val idx = width
 
-  protected def compute(lst: List[(R, Double)]): Double = lst.foldLeft(0.0)((c, p) => p._2 + c) / lst.size
+  protected def compute(lst: T): Double = lst.foldLeft(0.0)((c, p) => p._2 + c) / lst.size
 }
 
 /** Compute weighted moving average over last `window` values. */
-case class WeightedMovingAverage[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  window: Int, pos: Locate.WindowSize1[S, R, Q], all: Boolean = false) extends BatchMovingAverage[S, R, Q] {
+case class WeightedMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](window: Int, position: Locate.WindowSize1[S, R, Q], all: Boolean = false) extends BatchMovingAverage[P, S, R, Q] {
   protected val idx = window - 1
 
-  protected def compute(lst: List[(R, Double)]): Double = {
+  protected def compute(lst: T): Double = {
     val curr = lst.zipWithIndex.foldLeft((0.0, 0))((c, p) => ((p._2 + 1) * p._1._2 + c._1, c._2 + p._2 + 1))
 
     curr._1 / curr._2
@@ -107,105 +96,100 @@ case class WeightedMovingAverage[S <: Position with ExpandablePosition, R <: Pos
 }
 
 /** Trait for computing moving average in online mode. */
-trait OnlineMovingAverage[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position]
-  extends MovingAverage[S, R, Q] {
+trait OnlineMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] extends MovingAverage[P, S, R, Q] {
   type T = (Double, Long)
 
-  def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
-    val curr = getCurrent(rem, cell.content)
+  def initialise(rem: R, in: I): (T, TraversableOnce[O]) = ((in, 1), Some((rem, in)))
 
-    ((curr._2, 1), getCell(cell, curr._1, curr._2))
-  }
+  def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = {
+    val curr = compute(in, t)
 
-  def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
-    val curr = compute(getDouble(cell.content), t)
-
-    ((curr, t._2 + 1), getCell(cell, rem, curr))
+    ((curr, t._2 + 1), Some((rem, curr)))
   }
 
   protected def compute(curr: Double, t: T): Double
 }
 
 /** Compute cumulatve moving average. */
-case class CumulativeMovingAverage[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  pos: Locate.WindowSize1[S, R, Q]) extends OnlineMovingAverage[S, R, Q] {
+case class CumulativeMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](position: Locate.WindowSize1[S, R, Q]) extends OnlineMovingAverage[P, S, R, Q] {
   protected def compute(curr: Double, t: T): Double = (curr + t._2 * t._1) / (t._2 + 1)
 }
 
 /** Compute exponential moving average. */
-case class ExponentialMovingAverage[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  alpha: Double, pos: Locate.WindowSize1[S, R, Q]) extends OnlineMovingAverage[S, R, Q] {
+case class ExponentialMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](alpha: Double, position: Locate.WindowSize1[S, R, Q]) extends OnlineMovingAverage[P, S, R, Q] {
   protected def compute(curr: Double, t: T): Double = alpha * curr + (1 - alpha) * t._1
 }
 
 /**
  * Compute cumulative sum.
  *
- * @param pos    Function to extract result position.
- * @param strict Indicates is non-numeric values should result in NaN.
+ * @param position Function to extract result position.
+ * @param strict   Indicates is non-numeric values should result in NaN.
  */
-case class CumulativeSum[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  pos: Locate.WindowSize1[S, R, Q], strict: Boolean = true) extends Window[S, R, Q] {
+case class CumulativeSum[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](position: Locate.WindowSize1[S, R, Q], strict: Boolean = true) extends Window[P, S, R, Q] {
+  type I = Option[Double]
   type T = Option[Double]
+  type O = (R, Double)
 
   val schema = ContinuousSchema(DoubleCodex)
 
-  def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
-    val value = (strict, cell.content.value.asDouble) match {
+  def prepare(cell: Cell[P]): I = {
+    (strict, cell.content.value.asDouble) match {
       case (true, None) => Some(Double.NaN)
       case (_, v) => v
     }
-
-    (value, value match {
-      case Some(d) => Some(Cell(pos(cell, rem), Content(schema, d)))
-      case None => None
-    })
   }
 
-  def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
-    val position = pos(cell, rem)
+  def initialise(rem: R, in: I): (T, TraversableOnce[O]) = (in, in.map { case d => (rem, d) })
 
-    (strict, t, cell.content.value.asDouble) match {
-      case (true, _, None) => (Some(Double.NaN), Some(Cell(position, Content(schema, Double.NaN))))
+  def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = {
+    (strict, t, in) match {
+      case (true, _, None) => (Some(Double.NaN), Some((rem, Double.NaN)))
       case (false, p, None) => (p, None)
-      case (_, None, Some(d)) => (Some(d), Some(Cell(position, Content(schema, d))))
-      case (_, Some(p), Some(d)) => (Some(p + d), Some(Cell(position, Content(schema, p + d))))
+      case (_, None, Some(d)) => (Some(d), Some((rem, d)))
+      case (_, Some(p), Some(d)) => (Some(p + d), Some((rem, p + d)))
     }
   }
+
+  def present(pos: S, out: O): TraversableOnce[Cell[Q]] = Some(Cell(position(pos, out._1), Content(schema, out._2)))
 }
 
 /**
  * Compute sliding binary operator on sequential numeric cells.
  *
- * @param binop  The binary operator to apply to two sequential numeric cells.
- * @param pos    Function to extract result position.
- * @param strict Indicates is non-numeric values should result in NaN.
+ * @param binop    The binary operator to apply to two sequential numeric cells.
+ * @param position Function to extract result position.
+ * @param strict   Indicates is non-numeric values should result in NaN.
  */
-case class BinOp[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  binop: (Double, Double) => Double, pos: Locate.WindowSize2[S, R, Q], strict: Boolean = true) extends Window[S, R, Q] {
+case class BinOp[P <: Position,S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](binop: (Double, Double) => Double, position: Locate.WindowSize2[S, R, Q], strict: Boolean = true) extends Window[P, S, R, Q] {
+  type I = Option[Double]
   type T = (Option[Double], R)
+  type O = (Double, R, R)
 
-  def initialise(cell: Cell[S], rem: R): (T, TraversableOnce[Cell[Q]]) = {
-    val value = (strict, cell.content.value.asDouble) match {
+  def prepare(cell: Cell[P]): I = {
+    (strict, cell.content.value.asDouble) match {
       case (true, None) => Some(Double.NaN)
       case (_, v) => v
     }
-
-    ((value, rem), None)
   }
 
-  def present(cell: Cell[S], rem: R, t: T): (T, TraversableOnce[Cell[Q]]) = {
-    (strict, t, cell.content.value.asDouble) match {
-      case (true, (_, c), None) => getResult(cell, rem, Double.NaN, Double.NaN, c)
+  def initialise(rem: R, in: I): (T, TraversableOnce[O]) = ((in, rem), None)
+
+  def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = {
+    (strict, t, in) match {
+      case (true, (_, c), None) => getResult(rem, Double.NaN, Double.NaN, c)
       case (false, p, None) => (p, None)
       case (_, (None, _), Some(d)) => ((Some(d), rem), None)
-      case (_, (Some(p), c), Some(d)) => getResult(cell, rem, if (p.isNaN) p else d, binop(p, d), c)
+      case (_, (Some(p), c), Some(d)) => getResult(rem, if (p.isNaN) p else d, binop(p, d), c)
     }
   }
 
-  private def getResult(cell: Cell[S], rem: R, value: Double, result: Double,
-    prev: R): (T, TraversableOnce[Cell[Q]]) = {
-    ((Some(value), rem), Some(Cell(pos(cell, rem, prev), Content(ContinuousSchema(DoubleCodex), result))))
+  def present(pos: S, out: O): TraversableOnce[Cell[Q]] = {
+    Some(Cell(position(pos, out._3, out._2), Content(ContinuousSchema(DoubleCodex), out._1)))
+  }
+
+  private def getResult(rem: R, value: Double, result: Double, prev: R): (T, TraversableOnce[O]) = {
+    ((Some(value), rem), Some((result, prev, rem)))
   }
 }
 
@@ -214,61 +198,48 @@ case class BinOp[S <: Position with ExpandablePosition, R <: Position with Expan
  *
  * @param probs     List of probabilities; values must lie in (0, 1).
  * @param count     Function that extracts the count value statistics from the user provided value.
- * @param min       Function that extracts the minimum value statistics from the user provided value.
- * @param max       Function that extracts the maximum value statistics from the user provided value.
  * @param quantiser Function that determines the quantile indices into the order statistics.
  * @param name      Pattern for the name. Use `%1$``s` for the probability correpsponding to the quantile.
  *
  * @note Non-numeric result in `NaN` quantiles.
  */
-case class Quantile[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W](
-  probs: List[Double], count: Extract[S, W, Long], min: Extract[S, W, Double], max: Extract[S, W, Double],
-  quantiser: Quantile.Quantiser, name: String = "%1$f%%") extends WindowWithValue[S, R, S#M] {
-  type T = (Double, Long, List[(Long, Double, String)])
+case class Quantile[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W](
+  probs: List[Double], count: Extract[P, W, Long], quantiser: Quantile.Quantiser,
+    name: String = "%1$f%%") extends WindowWithValue[P, S, R, S#M] {
   type V = W
+  type I = (Double, Option[Long])
+  type T = (Double, Long)
+  type O = (String, Double)
 
-  def initialiseWithValue(cell: Cell[S], rem: R, ext: V): (T, TraversableOnce[Cell[S#M]]) = {
+  def prepareWithValue(cell: Cell[P], ext: V): I = {
+    (cell.content.value.asDouble.getOrElse(Double.NaN), count.extract(cell, ext))
+  }
+
+  def initialise(rem: R, in: I): (T, TraversableOnce[O]) = ((in._1, 0), None)
+
+  def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = {
+    val count = in._2
     val state = count
-      .extract(cell, ext)
       .map {
         case n => probs
-          .map { case p => (quantiser(p, n), name.format(p * 100)) }
+          .map { case p => (quantiser(p, n), name.format(p)) }
           .map { case ((j, g), c) => (j, g, c) }
       }
       .getOrElse(List())
-    val curr = (state.isEmpty, cell.content.value.asDouble) match {
-      case (false, Some(c)) => c
-      case _ => Double.NaN
-    }
-    val col = List(boundary(cell, ext, min, name, 0, state), boundary(cell, ext, max, name, 100, state)).flatten
 
-    ((curr, 0, state), col)
-  }
+    val prev = t._1
+    val curr = if (state.isEmpty || prev.isNaN) { Double.NaN } else { in._1 }
 
-  def presentWithValue(cell: Cell[S], rem: R, ext: V, t: T): (T, TraversableOnce[Cell[S#M]]) = {
-    val state = t._3
-    val curr = (t._1.isNaN || state.isEmpty, cell.content.value.asDouble) match {
-      case (false, Some(c)) => c
-      case _ => Double.NaN
-    }
     val col = state.find(_._1 == t._2) match {
-      case Some((_, g, n)) => Some(Cell[S#M](cell.position.append(n),
-        Content(ContinuousSchema(DoubleCodex), (1 - g) * t._1 + g * curr)))
+      case Some((_, g, n)) => Some((n, (1 - g) * prev + g * curr))
       case None => None
     }
 
-    ((curr, t._2 + 1, state), col)
+    ((curr, t._2 + 1), col)
   }
 
-  private def boundary(cell: Cell[S], ext: W, extractor: Extract[S, W, Double], name: String, value: Double,
-    state: List[(Long, Double, String)]): List[Cell[S#M]] = {
-    extractor
-      .extract(cell, ext)
-      .map {
-        case v => Cell[S#M](cell.position.append(name.format(value)),
-          Content(ContinuousSchema(DoubleCodex), if (state.isEmpty) Double.NaN else v))
-      }
-      .toList
+  def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[S#M]] = {
+    Some(Cell[S#M](pos.append(out._1), Content(ContinuousSchema(DoubleCodex), out._2)))
   }
 }
 
