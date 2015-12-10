@@ -76,13 +76,6 @@ private[scalding] object ScaldingImplicits {
       key.toShortString("|").toCharArray.map(_.toByte)
     }
 
-    def redistribute(parameters: TunerParameters): TypedPipe[(K, V)] = {
-      parameters match {
-        case Redistribute(reducers) => grouped.withReducers(reducers).forceToReducers
-        case _ => grouped
-      }
-    }
-
     def tunedJoin[W](tuner: Tuner, parameters: TunerParameters, smaller: TypedPipe[(K, W)])(
       implicit ev: Ordering[K]): TypedPipe[(K, (V, W))] = {
       (tuner, parameters) match {
@@ -126,11 +119,7 @@ private[scalding] object ScaldingImplicits {
 
     def redistribute(parameters: TunerParameters): TypedPipe[P] = {
       parameters match {
-        case Redistribute(reducers) =>
-          Grouped(pipe.map { case p => (scala.util.Random.nextInt(reducers), p) })
-            .withReducers(reducers)
-            .forceToReducers
-            .values
+        case Redistribute(reducers) => pipe.shard(reducers)
         case _ => pipe
       }
     }
@@ -398,17 +387,27 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     }
   }
 
-  type SlideTuners = TP2
+  type SlideTuners = OneOf4[Default[NoParameters.type],
+                            Default[Redistribute],
+                            Default[Reducers],
+                            Default[Sequence2[Redistribute, Reducers]]]
   def slide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Tuner](
     slice: Slice[P], windows: Windowable[P, S, R, Q], ascending: Boolean = true, tuner: T = Default())(
       implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D, ev4: PosExpDep[S, Q],
         ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]] ={
     val window = windows()
+    val (partitions, reducers) = tuner.parameters match {
+      case Sequence2(rp @ Redistribute(_), rr @ Reducers(_)) => (rp, rr)
+      case rp @ Redistribute(_) => (rp, NoParameters)
+      case rr @ Reducers(_) => (NoParameters, rr)
+      case _ => (NoParameters, NoParameters)
+    }
 
     data
+      .redistribute(partitions)
       .map { case c => (slice.selected(c.position), (slice.remainder(c.position), window.prepare(c))) }
       .group
-      .tuneReducers(tuner.parameters)
+      .tuneReducers(reducers)
       .sortBy { case (r, _) => r }(Position.Ordering(ascending))
       .scanLeft(Option.empty[(window.T, TraversableOnce[window.O])]) {
         case (None, (r, i)) => Some(window.initialise(r, i))
@@ -425,13 +424,20 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D,
         ev4: PosExpDep[S, Q], ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]] = {
     val window = windows()
+    val (partitions, reducers) = tuner.parameters match {
+      case Sequence2(rp @ Redistribute(_), rr @ Reducers(_)) => (rp, rr)
+      case rp @ Redistribute(_) => (rp, NoParameters)
+      case rr @ Reducers(_) => (NoParameters, rr)
+      case _ => (NoParameters, NoParameters)
+    }
 
     data
+      .redistribute(partitions)
       .mapWithValue(value) {
         case (c, vo) => (slice.selected(c.position), (slice.remainder(c.position), window.prepareWithValue(c, vo.get)))
       }
       .group
-      .tuneReducers(tuner.parameters)
+      .tuneReducers(reducers)
       .sortBy { case (r, _) => r }(Position.Ordering(ascending))
       .scanLeft(Option.empty[(window.T, TraversableOnce[window.O])]) {
         case (None, (r, i)) => Some(window.initialise(r, i))
@@ -689,19 +695,17 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
         }
         val ordering = Position.Ordering[slice.S]()
         val right = rdata
+          .redistribute(rr)
           .map { case Cell(p, _) => slice.selected(p) }
           .distinct(ordering)
-          .asKeys
-          .redistribute(rr)
-          .map { case (p, _) => List(p) }
+          .map { case p => List(p) }
           .sum
         val keys = ldata
+          .redistribute(lr)
           .map { case Cell(p, _) => slice.selected(p) }
           .distinct(ordering)
-          .asKeys
-          .redistribute(lr)
           .flatMapWithValue(right) {
-            case ((l, _), Some(v)) => v.collect { case r if comparer.keep(l, r) => (r, l) }
+            case (l, Some(v)) => v.collect { case r if comparer.keep(l, r) => (r, l) }
             case _ => None
           }
           .forceToDisk // TODO: Should this be configurable?

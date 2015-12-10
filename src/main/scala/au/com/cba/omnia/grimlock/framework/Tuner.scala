@@ -51,9 +51,9 @@ case class Reducers(reducers: Int) extends TunerParameters {
 /**
  * Redistribute the data across a number of partitions.
  *
- * @param reducers The number of partitions to redistribute among.
+ * @param partitions The number of partitions to redistribute among.
  */
-case class Redistribute(reducers: Int) extends TunerParameters {
+case class Redistribute(partitions: Int) extends TunerParameters {
   type P = Redistribute
 }
 
