@@ -394,7 +394,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def slide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Tuner](
     slice: Slice[P], windows: Windowable[P, S, R, Q], ascending: Boolean = true, tuner: T = Default())(
       implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D, ev4: PosExpDep[S, Q],
-        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]] ={
+        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]] = {
     val window = windows()
     val (partitions, reducers) = tuner.parameters match {
       case Sequence2(rp @ Redistribute(_), rr @ Reducers(_)) => (rp, rr)
@@ -404,8 +404,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     }
 
     data
-      .redistribute(partitions)
       .map { case c => (slice.selected(c.position), (slice.remainder(c.position), window.prepare(c))) }
+      .redistribute(partitions)
       .group
       .tuneReducers(reducers)
       .sortBy { case (r, _) => r }(Position.Ordering(ascending))
@@ -432,10 +432,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     }
 
     data
-      .redistribute(partitions)
       .mapWithValue(value) {
         case (c, vo) => (slice.selected(c.position), (slice.remainder(c.position), window.prepareWithValue(c, vo.get)))
       }
+      .redistribute(partitions)
       .group
       .tuneReducers(reducers)
       .sortBy { case (r, _) => r }(Position.Ordering(ascending))
@@ -611,7 +611,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def uniqueByPositions[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
-    ev2:UniqueTuners#V[T]): U[(slice.S, Content)] = {
+    ev2: UniqueTuners#V[T]): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
     }
@@ -695,14 +695,14 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
         }
         val ordering = Position.Ordering[slice.S]()
         val right = rdata
-          .redistribute(rr)
           .map { case Cell(p, _) => slice.selected(p) }
+          .redistribute(rr)
           .distinct(ordering)
           .map { case p => List(p) }
           .sum
         val keys = ldata
-          .redistribute(lr)
           .map { case Cell(p, _) => slice.selected(p) }
+          .redistribute(lr)
           .distinct(ordering)
           .flatMapWithValue(right) {
             case (l, Some(v)) => v.collect { case r if comparer.keep(l, r) => (r, l) }
@@ -900,7 +900,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
-        .andThenExpandWithValue((cell, _) => cell.position.append("marginal")), mcount, stuner)
+        .andThenExpand(_.position.append("marginal")), mcount, stuner)
       .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position2D](Over(First), "%s,%s")), ptuner)
 
     val jhist = data
@@ -914,7 +914,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val joint = jhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor, negate = true)
-        .andThenExpandWithValue((cell, _) => cell.position.append("joint")), jcount, stuner)
+        .andThenExpand(_.position.append("joint")), jcount, stuner)
 
     (marginal ++ joint)
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
@@ -1743,9 +1743,9 @@ class Matrix8D(val data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D]
   def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension, L <: Dimension](
     first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K, eighth: L)(
       implicit ev1: PosDimDep[Position8D, D], ev2: PosDimDep[Position8D, F], ev3: PosDimDep[Position8D, G],
-      ev4: PosDimDep[Position8D, H], ev5: PosDimDep[Position8D, I], ev6: PosDimDep[Position8D, J],
-        ev7: PosDimDep[Position8D, K], ev8: PosDimDep[Position8D, L],
-          ev9: Distinct8[D, F, G, H, I, J, K, L]): U[Cell[Position8D]] = {
+        ev4: PosDimDep[Position8D, H], ev5: PosDimDep[Position8D, I], ev6: PosDimDep[Position8D, J],
+          ev7: PosDimDep[Position8D, K], ev8: PosDimDep[Position8D, L],
+            ev9: Distinct8[D, F, G, H, I, J, K, L]): U[Cell[Position8D]] = {
     data.map {
       case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth, sixth, seventh, eighth)), c)
     }

@@ -14,6 +14,7 @@
 
 package au.com.cba.omnia.grimlock.framework
 
+import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
 object Locate {
@@ -86,6 +87,59 @@ object Locate {
     pattern: String, separator: String = "|"): WindowSize2[S, R, S#M] = {
     (pos: S, curr: R, prev: R) =>
       pos.append(pattern.format(prev.toShortString(separator), curr.toShortString(separator)))
+  }
+
+  type FromInput[P <: Position, Q <: Position] = (Cell[P]) => Q
+  type FromInputWithValue[P <: Position, Q <: Position, V] = (Cell[P], V) => Q
+
+  /**
+   * Rename coordinate according a name pattern.
+   *
+   * @param dim  Dimension for which to update coordinate name.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
+   *             representations of the coordinate, and the content.
+   */
+  def RenameDimensionWithContent[P <: Position](dim: Dimension, name: String = "%1$s=%2$s")(
+    implicit ev: PosDimDep[P, dim.type]): FromInput[P, P] = {
+    (cell: Cell[P]) =>
+      cell.position.update(dim, name.format(cell.position(dim).toShortString, cell.content.value.toShortString))
+  }
+
+  type FromOutcome[Q <: Position, R <: Position] = (Cell[Q]) => R
+  type FromOutcomeWithValue[Q <: Position, R <: Position, V] = (Cell[Q], V) => R
+
+  def AppendToOutcome[Q <: Position with ExpandablePosition, T](name: T)(
+    implicit ev: Valueable[T]): FromOutcome[Q, Q#M] = (cell: Cell[Q]) => cell.position.append(name)
+
+  type FromInputAndOutcome[P <: Position, Q <: Position, R <: Position] = (Cell[P], Cell[Q]) => R
+  type FromInputAndOutcomeWithValue[P <: Position, Q <: Position, R <: Position, V] = (Cell[P], Cell[Q], V) => R
+
+  /**
+   * Rename a dimension.
+   *
+   * @param dim  The dimension to rename.
+   * @param name The rename pattern. Use `%[12]$``s` for the coordinate and original value respectively.
+   *
+   * @return A `FromInputAndOutcome` function.
+   */
+  def RenameOutcomeDimensionWithInputContent[P <: Position, Q <: Position](dim: Dimension,
+    name: String): FromInputAndOutcome[P, Q, Q] = {
+    (input: Cell[P], outcome: Cell[Q]) =>
+      outcome.position.update(dim, name.format(outcome.position(dim).toShortString, input.content.value.toShortString))
+  }
+
+  /**
+   * Expand position by appending a coordinate.
+   *
+   * @param dim  The dimension used to construct the new coordinate name.
+   * @param name The name pattern. Use `%[12]$``s` for the coordinate and original value respectively.
+   *
+   * @return A `FromInputAndOutcome` function.
+   */
+  def ExpandWithOutcomeDimensionAndInputContent[P <: Position, Q <: Position with ExpandablePosition](dim: Dimension,
+    name: String): FromInputAndOutcome[P, Q, Q#M] = {
+    (input: Cell[P], outcome: Cell[Q]) =>
+      outcome.position.append(name.format(outcome.position(dim).toShortString, input.content.value.toShortString))
   }
 }
 

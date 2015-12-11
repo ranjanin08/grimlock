@@ -648,7 +648,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
-        .andThenExpandWithValue((cell, _) => cell.position.append("marginal")), mcount, stuner)
+        .andThenExpand(_.position.append("marginal")), mcount, stuner)
       .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position2D](Over(First), "%s,%s")), ptuner)
 
     val jhist = data
@@ -662,7 +662,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val joint = jhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor, negate = true)
-        .andThenExpandWithValue((cell, _) => cell.position.append("joint")), jcount, stuner)
+        .andThenExpand(_.position.append("joint")), jcount, stuner)
 
     (marginal ++ joint)
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)

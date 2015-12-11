@@ -22,7 +22,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.window._
 
 /** Base trait for computing a moving average. */
-trait MovingAverage[P <: Position,S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] extends Window[P, S, R, Q] {
+trait MovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] extends Window[P, S, R, Q] {
   type I = Double
   type O = (R, Double)
 
@@ -167,7 +167,7 @@ case class CumulativeSum[P <: Position, S <: Position with ExpandablePosition, R
  * @param position Function to extract result position.
  * @param strict   Indicates is non-numeric values should result in NaN.
  */
-case class BinOp[P <: Position,S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
+case class BinOp[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
   binop: (Double, Double) => Double, position: Locate.WindowSize2[S, R, Q],
     strict: Boolean = true) extends Window[P, S, R, Q] {
   type I = Option[Double]

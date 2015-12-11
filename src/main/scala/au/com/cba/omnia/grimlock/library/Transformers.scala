@@ -66,27 +66,12 @@ case class Indicator[P <: Position]() extends Transformer[P, P] {
  *
  * @note Binarisation is only applied to categorical variables.
  */
-case class Binarise[P <: Position](pos: (Cell[P]) => P) extends Transformer[P, P] {
+case class Binarise[P <: Position](pos: Locate.FromInput[P, P]) extends Transformer[P, P] {
   def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
     Transform.checkType(cell, Categorical) match {
       case true => Some(Cell(pos(cell), Content(DiscreteSchema(LongCodex), 1)))
       case false => None
     }
-  }
-}
-
-/** Companion object to `Binarise` case class. */
-object Binarise {
-  /**
-   * Rename coordinate according a name pattern.
-   *
-   * @param dim  Dimension for which to update coordinate name.
-   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
-   *             representations of the coordinate, and the content.
-   */
-  def rename[P <: Position](dim: Dimension, name: String = "%1$s=%2$s"): (Cell[P]) => P = {
-    (cell: Cell[P]) =>
-      cell.position.update(dim, name.format(cell.position(dim).toShortString, cell.content.value.toShortString))
   }
 }
 

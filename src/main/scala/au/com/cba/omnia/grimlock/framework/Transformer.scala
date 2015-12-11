@@ -15,7 +15,6 @@
 package au.com.cba.omnia.grimlock.framework.transform
 
 import au.com.cba.omnia.grimlock.framework._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for transformations from `P` to `Q`. */
@@ -53,7 +52,7 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
    *
    * @return A transformer that runs `this` and then renames the resulting dimension(s).
    */
-  def andThenRename(rename: (Cell[P], Cell[Q]) => Q) = {
+  override def andThenRename(rename: Locate.FromInputAndOutcome[P, Q, Q]) = {
     new Transformer[P, Q] {
       def present(cell: Cell[P]): TraversableOnce[Cell[Q]] = {
         self.present(cell).map { case c => Cell(rename(cell, c), c.content) }
@@ -68,54 +67,13 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
    *
    * @return A transformer that runs `this` and then expands the resulting dimensions.
    */
-  def andThenExpand[R <: Position](expand: (Cell[P], Cell[Q]) => R)(implicit ev: PosExpDep[Q, R]) = {
+  override def andThenExpand[R <: Position](expand: Locate.FromInputAndOutcome[P, Q, R])(
+    implicit ev: PosExpDep[Q, R]) = {
     new Transformer[P, R] {
       def present(cell: Cell[P]): TraversableOnce[Cell[R]] = {
         self.present(cell).map { case c => Cell(expand(cell, c), c.content) }
       }
     }
-  }
-}
-
-/** Companion object to the `Transformer` trait. */
-object Transformer {
-  /**
-   * Rename a dimension.
-   *
-   * @param dim  The dimension to rename.
-   * @param name The rename pattern. Use `%[12]$``s` for the coordinate and original value respectively.
-   *
-   * @return A function that can be passed to `Transformer.andThenRename`.
-   */
-  def rename[P <: Position, Q <: Position](dim: Dimension, name: String): (Cell[P], Cell[Q]) => Q = {
-    (before: Cell[P], after: Cell[Q]) =>
-      after.position.update(dim, name.format(after.position(dim).toShortString, before.content.value.toShortString))
-  }
-
-  /**
-   * Expand position by appending a coordinate.
-   *
-   * @param name The value to expand with.
-   *
-   * @return A function that can be passed to `Transformer.andThenExpand`.
-   */
-  def expand[P <: Position, Q <: Position with ExpandablePosition, V](name: V)(
-    implicit ev: Valueable[V]): (Cell[P], Cell[Q]) => Q#M = {
-    (before: Cell[P], after: Cell[Q]) => after.position.append(name)
-  }
-
-  /**
-   * Expand position by appending a coordinate.
-   *
-   * @param dim  The dimension used to construct the new coordinate name.
-   * @param name The name pattern. Use `%[12]$``s` for the coordinate and original value respectively.
-   *
-   * @return A function that can be passed to `Transformer.andThenExpand`.
-   */
-  def expand[P <: Position, Q <: Position with ExpandablePosition](dim: Dimension,
-    name: String): (Cell[P], Cell[Q]) => Q#M = {
-    (before: Cell[P], after: Cell[Q]) =>
-      after.position.append(name.format(after.position(dim).toShortString, before.content.value.toShortString))
   }
 }
 
@@ -158,7 +116,41 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
    *
    * @return A transformer that runs `this` and then renames the resulting dimension(s).
    */
-  def andThenRenameWithValue(rename: (Cell[P], Cell[Q], V) => Q) = {
+  def andThenRename(rename: Locate.FromInputAndOutcome[P, Q, Q]) = {
+    new TransformerWithValue[P, Q] {
+      type V = self.V
+
+      def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
+        self.presentWithValue(cell, ext).map { case c => Cell(rename(cell, c), c.content) }
+      }
+    }
+  }
+
+  /**
+   * Operator for transforming and then expanding dimensions.
+   *
+   * @param expand The expansion to apply after the transformation.
+   *
+   * @return A transformer that runs `this` and then expands the resulting dimensions.
+   */
+  def andThenExpand[R <: Position](expand: Locate.FromInputAndOutcome[P, Q, R])(implicit ev: PosExpDep[Q, R]) = {
+    new TransformerWithValue[P, R] {
+      type V = self.V
+
+      def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
+        self.presentWithValue(cell, ext).map { case c => Cell(expand(cell, c), c.content) }
+      }
+    }
+  }
+
+  /**
+   * Operator for transforming and then renaming dimensions.
+   *
+   * @param rename The rename to apply after the transformation.
+   *
+   * @return A transformer that runs `this` and then renames the resulting dimension(s).
+   */
+  def andThenRenameWithValue(rename: Locate.FromInputAndOutcomeWithValue[P, Q, Q, V]) = {
     new TransformerWithValue[P, Q] {
       type V = self.V
 
@@ -175,7 +167,8 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
    *
    * @return A transformer that runs `this` and then expands the resulting dimensions.
    */
-  def andThenExpandWithValue[R <: Position](expand: (Cell[P], Cell[Q], V) => R)(implicit ev: PosExpDep[Q, R]) = {
+  def andThenExpandWithValue[R <: Position](expand: Locate.FromInputAndOutcomeWithValue[P, Q, R, V])(
+    implicit ev: PosExpDep[Q, R]) = {
     new TransformerWithValue[P, R] {
       type V = self.V
 
@@ -183,48 +176,6 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
         self.presentWithValue(cell, ext).map { case c => Cell(expand(cell, c, ext), c.content) }
       }
     }
-  }
-}
-
-/** Companion object to the `TransformerWithValue` trait. */
-object TransformerWithValue {
-  /**
-   * Rename a dimension.
-   *
-   * @param dim  The dimension to rename.
-   * @param name The rename pattern. Use `%[12]$``s` for the coordinate and original value respectively.
-   *
-   * @return A function that can be passed to `TransformerWithValue.andThenRenameWithValue`.
-   */
-  def rename[P <: Position, Q <: Position, V](dim: Dimension, name: String): (Cell[P], Cell[Q], V) => Q = {
-    (before: Cell[P], after: Cell[Q], V) =>
-      after.position.update(dim, name.format(after.position(dim).toShortString, before.content.value.toShortString))
-  }
-
-  /**
-   * Expand position by appending a coordinate.
-   *
-   * @param name The value to expand with.
-   *
-   * @return A function that can be passed to `TransformerWithValue.andThenExpandWithValue`.
-   */
-  def expand[P <: Position, Q <: Position with ExpandablePosition, V, W](name: W)(
-    implicit ev: Valueable[W]): (Cell[P], Cell[Q], V) => Q#M = {
-    (before: Cell[P], after: Cell[Q], ext: V) => after.position.append(name)
-  }
-
-  /**
-   * Expand position by appending a coordinate.
-   *
-   * @param dim  The dimension used to construct the new coordinate name.
-   * @param name The name pattern. Use `%[12]$``s` for the coordinate and original value respectively.
-   *
-   * @return A function that can be passed to `TransformerWithValue.andThenExpandWithValue`.
-   */
-  def expand[P <: Position, Q <: Position with ExpandablePosition, V](dim: Dimension,
-    name: String): (Cell[P], Cell[Q], V) => Q#M = {
-    (before: Cell[P], after: Cell[Q], ext: V) =>
-      after.position.append(name.format(after.position(dim).toShortString, before.content.value.toShortString))
   }
 }
 
@@ -281,7 +232,7 @@ trait TransformableWithValue[P <: Position, Q <: Position, W] extends java.io.Se
 object TransformableWithValue {
   /** Converts a `(Cell[P], W) => Cell[Q]` to a `TransformerWithValue[P, Q] { type V >: W }`. */
   implicit def CQW2TWV[P <: Position, Q <: Position, W](
-    t: (Cell[P], W) => Cell[Q]): TransformableWithValue[ P, Q, W] = {
+    t: (Cell[P], W) => Cell[Q]): TransformableWithValue[P, Q, W] = {
     new TransformableWithValue[P, Q, W] {
       def apply(): TransformerWithValue[P, Q] { type V >: W } = {
         new TransformerWithValue[P, Q] {

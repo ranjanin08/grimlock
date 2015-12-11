@@ -91,8 +91,8 @@ object MutualInformation {
     // 1/ Compute the marginal entropy over the features (second dimension).
     // 2/ Compute pairwise sum of marginal entropies for all upper triangular values.
     val marginal = mhist
-      .summariseWithValue(Over(First), Entropy(extractor)
-        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("marginal")), mcount)
+      .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
+        .andThenExpand(_.position.append("marginal")), mcount)
       .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position2D](Over(First), "%s,%s")))
 
     // Compute histogram on pairwise data.
@@ -111,8 +111,8 @@ object MutualInformation {
 
     // Compute joint entropy
     val joint = jhist
-      .summariseWithValue(Over(First), Entropy(extractor, negate = true)
-        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("joint")), jcount)
+      .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor, negate = true)
+        .andThenExpand(_.position.append("joint")), jcount)
 
     // Generate mutual information
     // 1/ Sum marginal and negated joint entropy

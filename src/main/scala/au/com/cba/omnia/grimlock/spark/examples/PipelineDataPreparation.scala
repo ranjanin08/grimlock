@@ -102,7 +102,7 @@ object PipelineDataPreparation {
     // Define summary statisics to compute on the histogram.
     val sstats: List[AggregatorWithValue[Position2D, Position1D, Position2D] { type V >: W }] = List(
       Count().andThenExpand(_.position.append("num.cat")),
-      Entropy(extractCount).andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy")),
+      Entropy(extractCount).andThenExpand(_.position.append("entropy")),
       FrequencyRatio().andThenExpand(_.position.append("freq.ratio")))
 
     // Compute summary statisics on the histogram.
@@ -145,7 +145,7 @@ object PipelineDataPreparation {
     val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: S }] = List(
       Clamp(extractStat("min"), extractStat("max"))
         .andThenWithValue(Standardise(extractStat("mean"), extractStat("sd"))),
-      Binarise(Binarise.rename(Second)))
+      Binarise(Locate.RenameDimensionWithContent(Second)))
 
     // For each partition:
     //  1/  Remove sparse features;
@@ -161,7 +161,8 @@ object PipelineDataPreparation {
         .slice(Over(Second), rem1, false)
 
       val ind = d
-        .transform(Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
+        .transform(Indicator[Position2D]()
+          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")))
 
       val csb = d
         .slice(Over(Second), rem2, false)

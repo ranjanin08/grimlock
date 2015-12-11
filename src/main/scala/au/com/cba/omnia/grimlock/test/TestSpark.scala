@@ -444,7 +444,8 @@ object TestSpark11 {
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .transform(Indicator[Position3D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
+      .transform(Indicator[Position3D]()
+        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")))
       .saveAsText(s"./tmp.${tool}/trn2.out", Cell.toString(descriptive = true))
       .toUnit
 
@@ -452,7 +453,7 @@ object TestSpark11 {
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .transform(Binarise[Position2D](Binarise.rename(Second)))
+      .transform(Binarise[Position2D](Locate.RenameDimensionWithContent(Second)))
       .saveAsCSV(Over(First), s"./tmp.${tool}/trn3.out")
       .toUnit
   }
@@ -495,7 +496,8 @@ object TestSpark13 {
       .squash(Third, PreservingMaxPosition[Position3D]())
 
     val inds = data
-      .transform(Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
+      .transform(Indicator[Position2D]()
+        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")))
       .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
 
     data
@@ -550,7 +552,8 @@ object TestSpark15 {
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .transform(Indicator[Position2D]().andThenRename(Transformer.rename(Second, "%1$s.ind")))
+      .transform(Indicator[Position2D]()
+        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")))
       .saveAsCSV(Over(First), s"./tmp.${tool}/trn1.csv")
 
     data
@@ -715,8 +718,8 @@ object TestSpark19 {
     type W = Map[Position1D, Map[Position1D, Content]]
 
     val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: W }] = List(
-      Indicator().andThenRename(Transformer.rename(Second, "%1$s.ind")),
-      Binarise(Binarise.rename(Second)),
+      Indicator().andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")),
+      Binarise(Locate.RenameDimensionWithContent(Second)),
       Normalise(ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, "max.abs")
         .andThenPresent(_.value.asDouble)))
 
@@ -1005,37 +1008,43 @@ object TestSpark28 {
       .toUnit
 
     data
-      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.square")),
+      .transformWithValue(
+        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.square")),
         CutRules.squareRootChoice(stats, "count", "min", "max"))
       .saveAsText(s"./tmp.${tool}/cut2.out")
       .toUnit
 
     data
-      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.sturges")),
+      .transformWithValue(
+        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.sturges")),
         CutRules.sturgesFormula(stats, "count", "min", "max"))
       .saveAsText(s"./tmp.${tool}/cut3.out")
       .toUnit
 
     data
-      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.rice")),
+      .transformWithValue(
+        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.rice")),
         CutRules.riceRule(stats, "count", "min", "max"))
       .saveAsText(s"./tmp.${tool}/cut4.out")
       .toUnit
 
     data
-      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.doane")),
+      .transformWithValue(
+        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.doane")),
         CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
       .saveAsText(s"./tmp.${tool}/cut5.out")
       .toUnit
 
     data
-      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.scott")),
+      .transformWithValue(
+        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.scott")),
         CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
       .saveAsText(s"./tmp.${tool}/cut6.out")
       .toUnit
 
     data
-      .transformWithValue(Cut(extractor).andThenRenameWithValue(TransformerWithValue.rename(Second, "%s.break")),
+      .transformWithValue(
+        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.break")),
         CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
       .saveAsText(s"./tmp.${tool}/cut7.out")
       .toUnit
