@@ -357,8 +357,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
    *
    * @return A `U[Cell[Q]]` with the new data as well as a `U[String]` with any parse errors.
    *
-   * @note The `command` must be installed on each node of the cluster. Also, `script` must be a single self
-   *       contained script. Lastly, `parser` functions are provided on the `Cell` object.
+   * @note The `command` must be installed on each node of the cluster.
    */
   def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
     parser: Matrix.TextParser[Q]): (U[Cell[Q]], U[String])

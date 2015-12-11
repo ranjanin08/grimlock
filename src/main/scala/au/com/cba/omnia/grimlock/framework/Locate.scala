@@ -141,5 +141,19 @@ object Locate {
     (input: Cell[P], outcome: Cell[Q]) =>
       outcome.position.append(name.format(outcome.position(dim).toShortString, input.content.value.toShortString))
   }
+
+  type FromSelectedAndOutput[S <: Position with ExpandablePosition, T, Q <: Position] = (S, T) => Q
+
+  /**
+   * Expand position by appending a string coordinate from double.
+   *
+   * @param name The name pattern. Use `%1$``s` for the output pattern.
+   *
+   * @return A `FromSelectedAndOutput` function.
+   */
+  def ExpandWithStringFromDouble[S <: Position with ExpandablePosition](
+    name: String = "%1$f%%"): FromSelectedAndOutput[S, Double, S#M] = {
+    (pos: S, value: Double) => pos.append(name.format(value))
+  }
 }
 

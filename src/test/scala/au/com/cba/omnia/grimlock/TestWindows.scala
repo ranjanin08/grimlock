@@ -586,7 +586,7 @@ class TestQuantile extends TestGrimlock {
   val count = ExtractWithDimensionAndKey[Dimension.First, Position2D, String, Content](First, "count")
     .andThenPresent(_.value.asLong)
   val quantiser = Quantile.Type7
-  val name = "quantile=%1$f"
+  val name = Locate.ExpandWithStringFromDouble[Position1D]("quantile=%1$f")
   val cell1 = Cell(Position2D("abc", "not.used"), Content(ContinuousSchema(LongCodex), 1))
   val cell2 = Cell(Position2D("abc", "not.used"), Content(ContinuousSchema(LongCodex), 2))
   val cell4 = Cell(Position2D("abc", "not.used"), Content(ContinuousSchema(LongCodex), 4))
@@ -601,17 +601,18 @@ class TestQuantile extends TestGrimlock {
   val inY = (3.0, None)
   val obj = Quantile[Position2D, Position1D, Position1D, W](probs, count, quantiser, name)
   val ext = Map(Position1D("abc") -> Map(Position1D("count") -> Content(DiscreteSchema(LongCodex), 10)))
+  val state = List((3L, 0.25, 0.25), (5L, 0.5, 0.5), (7L, 0.75, 0.75))
 
   type W = Map[Position1D, Map[Position1D, Content]]
 
-  val result1 = ((in1._1, 0L), List())
-  val result2 = ((inX._1, 0L), List())
-  val result3 = ((inY._1, 0L), List())
-  val result4 = ((in2._1, 1L), List())
-  val result5 = ((in4._1, 4L), List(("quantile=0.250000", 3.25)))
-  val result6 = ((Double.NaN, 4L), List())
-  val result7 = ((Double.NaN, 4L), List(("quantile=0.250000", Double.NaN)))
-  val result8 = ((Double.NaN, 1L), List())
+  val result1 = ((in1._1, 0L, state), List())
+  val result2 = ((inX._1, 0L, state), List())
+  val result3 = ((inY._1, 0L, List()), List())
+  val result4 = ((in2._1, 1L, state), List())
+  val result5 = ((in4._1, 4L, state), List((0.25, 3.25)))
+  val result6 = ((Double.NaN, 4L, state), List())
+  val result7 = ((Double.NaN, 4L, state), List((0.25, Double.NaN)))
+  val result8 = ((Double.NaN, 1L, state), List())
 
   "A Quantile" should "prepare correctly" in {
     obj.prepareWithValue(cell1, ext) shouldBe in1
@@ -637,18 +638,18 @@ class TestQuantile extends TestGrimlock {
   }
 
   it should "update correctly at boundary" in {
-    obj.update(rem, in4, (3.0, 3L)) shouldBe (result5)
+    obj.update(rem, in4, (3.0, 3L, state)) shouldBe (result5)
   }
 
   it should "update correctly with missing count" in {
-    val up = obj.update(rem, inY, (3.0, 3L))
+    val up = obj.update(rem, inY, (3.0, 3L, List()))
     up._1._1.compare(Double.NaN) shouldBe (0)
     up._1._2 shouldBe (result6._1._2)
     up._2 shouldBe (result6._2)
   }
 
   it should "update correctly with NaN" in {
-    val up = obj.update(rem, in4, (Double.NaN, 3L))
+    val up = obj.update(rem, in4, (Double.NaN, 3L, state))
     up._1._1.compare(Double.NaN) shouldBe (0)
     up._1._2 shouldBe (result7._1._2)
     up._2.toList.map { case (n, d) => (n, d.compare(Double.NaN)) } shouldBe (List((result7._2(0)._1, 0)))
@@ -662,7 +663,7 @@ class TestQuantile extends TestGrimlock {
   }
 
   it should "present correctly" in {
-    obj.presentWithValue(sel, result5._2(0), ext) shouldBe (List(Cell(sel.append(result5._2(0)._1),
+    obj.presentWithValue(sel, result5._2(0), ext) shouldBe (List(Cell(name(sel, result5._2(0)._1),
       Content(ContinuousSchema(DoubleCodex), result5._2(0)._2))))
   }
 }

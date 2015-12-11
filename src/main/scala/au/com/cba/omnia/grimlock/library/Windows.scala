@@ -213,41 +213,46 @@ case class BinOp[P <: Position, S <: Position with ExpandablePosition, R <: Posi
  */
 case class Quantile[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, W](
   probs: List[Double], count: Extract[P, W, Long], quantiser: Quantile.Quantiser,
-    name: String = "%1$f%%") extends WindowWithValue[P, S, R, S#M] {
+    name: Locate.FromSelectedAndOutput[S, Double, S#M]) extends WindowWithValue[P, S, R, S#M] {
   type V = W
   type I = (Double, Option[Long])
-  type T = (Double, Long)
-  type O = (String, Double)
+  type T = (Double, Long, List[(Long, Double, Double)])
+  type O = (Double, Double)
 
   def prepareWithValue(cell: Cell[P], ext: V): I = {
     (cell.content.value.asDouble.getOrElse(Double.NaN), count.extract(cell, ext))
   }
 
-  def initialise(rem: R, in: I): (T, TraversableOnce[O]) = ((in._1, 0), None)
-
-  def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = {
-    val count = in._2
-    val state = count
+  def initialise(rem: R, in: I): (T, TraversableOnce[O]) = {
+    val count = 0
+    val state = in._2
       .map {
         case n => probs
-          .map { case p => (quantiser(p, n), name.format(p)) }
-          .map { case ((j, g), c) => (j, g, c) }
+          .map { case p => (quantiser(p, n), p) }
+          .map { case ((j, g), p) => (j, g, p) }
       }
       .getOrElse(List())
+    val curr = in._1
+    val out = None
 
+    ((curr, count, state), out)
+  }
+
+  def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = {
     val prev = t._1
+    val count = t._2 + 1
+    val state = t._3
     val curr = if (state.isEmpty || prev.isNaN) { Double.NaN } else { in._1 }
-
-    val col = state.find(_._1 == t._2) match {
-      case Some((_, g, n)) => Some((n, (1 - g) * prev + g * curr))
+    val out = state.find(_._1 == t._2) match {
+      case Some((_, g, p)) => Some((p, (1 - g) * prev + g * curr))
       case None => None
     }
 
-    ((curr, t._2 + 1), col)
+    ((curr, count, state), out)
   }
 
   def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[S#M]] = {
-    Some(Cell[S#M](pos.append(out._1), Content(ContinuousSchema(DoubleCodex), out._2)))
+    Some(Cell[S#M](name(pos, out._1), Content(ContinuousSchema(DoubleCodex), out._2)))
   }
 }
 
