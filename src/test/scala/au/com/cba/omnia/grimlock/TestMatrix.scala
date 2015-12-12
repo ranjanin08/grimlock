@@ -4874,14 +4874,14 @@ trait TestMatrixPairwise extends TestMatrix {
     Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 4 + 1)),
     Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 5 + 1)))
 
-  def plus[P <: Position](slice: Slice[P]) = Locate.OperatorString[P](slice, "(%1$s+%2$s)")
+  def plus[P <: Position](slice: Slice[P]) = Locate.PrependPairwiseSelectedToRemainder[P](slice, "(%1$s+%2$s)")
 
-  def minus[P <: Position](slice: Slice[P]) = Locate.OperatorString[P](slice, "(%1$s-%2$s)")
+  def minus[P <: Position](slice: Slice[P]) = Locate.PrependPairwiseSelectedToRemainder[P](slice, "(%1$s-%2$s)")
 }
 
 object TestMatrixPairwise {
 
-  case class PlusX[P <: Position, Q <: Position](pos: Locate.Operator[P, Q]) extends OperatorWithValue[P, Q] {
+  case class PlusX[P <: Position, Q <: Position](pos: Locate.FromPairwiseInput[P, Q]) extends OperatorWithValue[P, Q] {
     type V = Double
 
     val plus = Plus(pos)
@@ -4893,7 +4893,7 @@ object TestMatrixPairwise {
     }
   }
 
-  case class MinusX[P <: Position, Q <: Position](pos: Locate.Operator[P, Q]) extends OperatorWithValue[P, Q] {
+  case class MinusX[P <: Position, Q <: Position](pos: Locate.FromPairwiseInput[P, Q]) extends OperatorWithValue[P, Q] {
     type V = Double
 
     val minus = Minus(pos)

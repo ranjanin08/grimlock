@@ -851,12 +851,14 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val denom = centered
       .transform(Power[Position2D](2))
       .summarise(slice, Sum[Position2D, slice.S](), stuner)
-      .pairwise(Over(First), Lower, Times(Locate.OperatorString[Position1D](Over(First), "(%1$s*%2$s)")), ptuner)
+      .pairwise(Over(First), Lower,
+        Times(Locate.PrependPairwiseSelectedToRemainder[Position1D](Over(First), "(%1$s*%2$s)")), ptuner)
       .transform(SquareRoot[Position1D]())
       .compact(Over(First))
 
     centered
-      .pairwise(slice, Lower, Times(Locate.OperatorString[Position2D](slice, "(%1$s*%2$s)")), ptuner)
+      .pairwise(slice, Lower,
+        Times(Locate.PrependPairwiseSelectedToRemainder[Position2D](slice, "(%1$s*%2$s)")), ptuner)
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
       .transformWithValue(Fraction(ExtractWithDimension[Dimension.First, Position1D, Content](First)
         .andThenPresent(_.value.asDouble)), denom)
@@ -901,10 +903,12 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
         .andThenExpand(_.position.append("marginal")), mcount, stuner)
-      .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position2D](Over(First), "%s,%s")), ptuner)
+      .pairwise(Over(First), Upper,
+        Plus(Locate.PrependPairwiseSelectedToRemainder[Position2D](Over(First), "%s,%s")), ptuner)
 
     val jhist = data
-      .pairwise(slice, Upper, Concatenate(Locate.OperatorString[Position2D](slice, "%s,%s")), ptuner)
+      .pairwise(slice, Upper,
+        Concatenate(Locate.PrependPairwiseSelectedToRemainder[Position2D](slice, "%s,%s")), ptuner)
       .expand(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(Second), Count[Position3D, Position2D](), stuner)
 
@@ -954,21 +958,23 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val tpr = data
       .transform(Compare[Position2D](isPositive))
-      .slide(slice, CumulativeSum[Position2D, slice.S, slice.R, slice.S#M](Locate.WindowString()), true, wtuner)
+      .slide(slice, CumulativeSum[Position2D, slice.S, slice.R, slice.S#M](Locate.AppendRemainderString()),
+        true, wtuner)
       .transformWithValue(Fraction(extractor), pos)
       .slide(Over(First), BinOp[Position2D, Position1D, Position1D, Position2D]((l: Double, r: Double) => r + l,
-        Locate.WindowPairwiseString[Position1D, Position1D]("%2$s.%1$s")), true, wtuner)
+        Locate.AppendPairwiseString[Position1D, Position1D]("%2$s.%1$s")), true, wtuner)
 
     val fpr = data
       .transform(Compare[Position2D](isNegative))
-      .slide(slice, CumulativeSum[Position2D, slice.S, slice.R, slice.S#M](Locate.WindowString()), true, wtuner)
+      .slide(slice, CumulativeSum[Position2D, slice.S, slice.R, slice.S#M](Locate.AppendRemainderString()),
+        true, wtuner)
       .transformWithValue(Fraction(extractor), neg)
       .slide(Over(First), BinOp[Position2D, Position1D, Position1D, Position2D]((l: Double, r: Double) => r - l,
-        Locate.WindowPairwiseString[Position1D, Position1D]("%2$s.%1$s")), true, wtuner)
+        Locate.AppendPairwiseString[Position1D, Position1D]("%2$s.%1$s")), true, wtuner)
 
     tpr
       .pairwiseBetween(Along(First), Diagonal, fpr,
-        Times(Locate.OperatorString[Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
+        Times(Locate.PrependPairwiseSelectedToRemainder[Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
       .summarise(Along(First), Sum[Position2D, Position1D](), stuner)
       .transformWithValue(Subtract(ExtractWithKey[Position1D, String, Double]("one"), true),
         ValuePipe(Map(Position1D("one") -> 1.0)))

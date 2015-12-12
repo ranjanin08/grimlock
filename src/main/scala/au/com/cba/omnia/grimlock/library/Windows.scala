@@ -27,7 +27,7 @@ trait MovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: P
   type O = (R, Double)
 
   /** Function to extract result position. */
-  val position: Locate.WindowSize1[S, R, Q]
+  val position: Locate.FromSelectedWithRemainder[S, R, Q]
 
   def prepare(cell: Cell[P]): I = cell.content.value.asDouble.getOrElse(Double.NaN)
 
@@ -70,7 +70,8 @@ trait BatchMovingAverage[P <: Position, S <: Position with ExpandablePosition, R
 
 /** Compute simple moving average over last `window` values. */
 case class SimpleMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  window: Int, position: Locate.WindowSize1[S, R, Q], all: Boolean = false) extends BatchMovingAverage[P, S, R, Q] {
+  window: Int, position: Locate.FromSelectedWithRemainder[S, R, Q],
+    all: Boolean = false) extends BatchMovingAverage[P, S, R, Q] {
   protected val idx = window - 1
 
   protected def compute(lst: T): Double = lst.foldLeft(0.0)((c, p) => p._2 + c) / lst.size
@@ -78,7 +79,7 @@ case class SimpleMovingAverage[P <: Position, S <: Position with ExpandablePosit
 
 /** Compute centered moving average over last `2 * width + 1` values. */
 case class CenteredMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  width: Int, position: Locate.WindowSize1[S, R, Q]) extends BatchMovingAverage[P, S, R, Q] {
+  width: Int, position: Locate.FromSelectedWithRemainder[S, R, Q]) extends BatchMovingAverage[P, S, R, Q] {
   val window = 2 * width + 1
   val all = false
   protected val idx = width
@@ -88,7 +89,8 @@ case class CenteredMovingAverage[P <: Position, S <: Position with ExpandablePos
 
 /** Compute weighted moving average over last `window` values. */
 case class WeightedMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  window: Int, position: Locate.WindowSize1[S, R, Q], all: Boolean = false) extends BatchMovingAverage[P, S, R, Q] {
+  window: Int, position: Locate.FromSelectedWithRemainder[S, R, Q],
+    all: Boolean = false) extends BatchMovingAverage[P, S, R, Q] {
   protected val idx = window - 1
 
   protected def compute(lst: T): Double = {
@@ -115,13 +117,13 @@ trait OnlineMovingAverage[P <: Position, S <: Position with ExpandablePosition, 
 
 /** Compute cumulatve moving average. */
 case class CumulativeMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  position: Locate.WindowSize1[S, R, Q]) extends OnlineMovingAverage[P, S, R, Q] {
+  position: Locate.FromSelectedWithRemainder[S, R, Q]) extends OnlineMovingAverage[P, S, R, Q] {
   protected def compute(curr: Double, t: T): Double = (curr + t._2 * t._1) / (t._2 + 1)
 }
 
 /** Compute exponential moving average. */
 case class ExponentialMovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  alpha: Double, position: Locate.WindowSize1[S, R, Q]) extends OnlineMovingAverage[P, S, R, Q] {
+  alpha: Double, position: Locate.FromSelectedWithRemainder[S, R, Q]) extends OnlineMovingAverage[P, S, R, Q] {
   protected def compute(curr: Double, t: T): Double = alpha * curr + (1 - alpha) * t._1
 }
 
@@ -132,7 +134,7 @@ case class ExponentialMovingAverage[P <: Position, S <: Position with Expandable
  * @param strict   Indicates is non-numeric values should result in NaN.
  */
 case class CumulativeSum[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  position: Locate.WindowSize1[S, R, Q], strict: Boolean = true) extends Window[P, S, R, Q] {
+  position: Locate.FromSelectedWithRemainder[S, R, Q], strict: Boolean = true) extends Window[P, S, R, Q] {
   type I = Option[Double]
   type T = Option[Double]
   type O = (R, Double)
@@ -168,7 +170,7 @@ case class CumulativeSum[P <: Position, S <: Position with ExpandablePosition, R
  * @param strict   Indicates is non-numeric values should result in NaN.
  */
 case class BinOp[P <: Position, S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position](
-  binop: (Double, Double) => Double, position: Locate.WindowSize2[S, R, Q],
+  binop: (Double, Double) => Double, position: Locate.FromSelectedWithPairwiseRemainder[S, R, Q],
     strict: Boolean = true) extends Window[P, S, R, Q] {
   type I = Option[Double]
   type T = (Option[Double], R)

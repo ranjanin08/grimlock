@@ -93,14 +93,15 @@ object MutualInformation {
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
         .andThenExpand(_.position.append("marginal")), mcount)
-      .pairwise(Over(First), Upper, Plus(Locate.OperatorString[Position2D](Over(First), "%s,%s")))
+      .pairwise(Over(First), Upper, Plus(Locate.PrependPairwiseSelectedToRemainder[Position2D](Over(First), "%s,%s")))
 
     // Compute histogram on pairwise data.
     // 1/ Generate pairwise values for all upper triangular values.
     // 2/ Expand with content as an extra dimension.
     // 3/ Aggregate out second dimension to get histogram counts.
     val jhist = data
-      .pairwise(Over(Second), Upper, Concatenate(Locate.OperatorString[Position2D](Over(Second), "%s,%s")))
+      .pairwise(Over(Second), Upper,
+        Concatenate(Locate.PrependPairwiseSelectedToRemainder[Position2D](Over(Second), "%s,%s")))
       .expand((c: Cell[Position2D]) => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(Second), Count[Position3D, Position2D]())
 

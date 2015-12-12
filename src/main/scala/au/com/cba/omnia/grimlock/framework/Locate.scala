@@ -23,7 +23,7 @@ object Locate {
    *
    * @note An `Option` is returned to allow for additional filtering.
    */
-  type Operator[P <: Position, Q <: Position] = (Cell[P], Cell[P]) => Option[Q]
+  type FromPairwiseInput[P <: Position, Q <: Position] = (Cell[P], Cell[P]) => Option[Q]
 
   /**
    * Extract position use a name pattern.
@@ -37,8 +37,8 @@ object Locate {
    *
    * @note If a position is returned then it's always right cell's remainder with an additional coordinate prepended.
    */
-  def OperatorString[P <: Position](slice: Slice[P], pattern: String, all: Boolean = false,
-    separator: String = "|"): Operator[P, slice.R#M] = {
+  def PrependPairwiseSelectedToRemainder[P <: Position](slice: Slice[P], pattern: String, all: Boolean = false,
+    separator: String = "|"): FromPairwiseInput[P, slice.R#M] = {
     (left: Cell[P], right: Cell[P]) =>
       {
         val reml = slice.remainder(left.position)
@@ -53,28 +53,28 @@ object Locate {
   }
 
   /** Extract position for the selected cell and its remainder. */
-  type WindowSize1[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (S, R) => Q
+  type FromSelectedWithRemainder[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (S, R) => Q
 
   /**
    * Extract position using a dimension.
    *
    * @param dim The dimension (out of `rem`) to append to the cell's position.
    */
-  def WindowDimension[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-    dim: Dimension): WindowSize1[S, R, S#M] = (pos: S, rem: R) => pos.append(rem(dim))
+  def AppendRemainderDimension[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+    dim: Dimension): FromSelectedWithRemainder[S, R, S#M] = (pos: S, rem: R) => pos.append(rem(dim))
 
   /**
    * Extract position using string of `rem`.
    *
    * @param separator The separator to use for the appended coordinate.
    */
-  def WindowString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-    separator: String = "|"): WindowSize1[S, R, S#M] = {
+  def AppendRemainderString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+    separator: String = "|"): FromSelectedWithRemainder[S, R, S#M] = {
     (pos: S, rem: R) => pos.append(rem.toShortString(separator))
   }
 
   /** Extract position for the selected cell and its current and prior remainder. */
-  type WindowSize2[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (S, R, R) => Q
+  type FromSelectedWithPairwiseRemainder[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (S, R, R) => Q
 
   /**
    * Extract position using string of current and previous `rem`.
@@ -83,13 +83,16 @@ object Locate {
    *                  previous and current remainder positions respectively.
    * @param separator The separator to use for the appended coordinate.
    */
-  def WindowPairwiseString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-    pattern: String, separator: String = "|"): WindowSize2[S, R, S#M] = {
+  def AppendPairwiseString[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
+    pattern: String, separator: String = "|"): FromSelectedWithPairwiseRemainder[S, R, S#M] = {
     (pos: S, curr: R, prev: R) =>
       pos.append(pattern.format(prev.toShortString(separator), curr.toShortString(separator)))
   }
 
+  /** Extract position from input cell. */
   type FromInput[P <: Position, Q <: Position] = (Cell[P]) => Q
+
+  /** Extract position from input cell with user provided value. */
   type FromInputWithValue[P <: Position, Q <: Position, V] = (Cell[P], V) => Q
 
   /**
@@ -105,13 +108,24 @@ object Locate {
       cell.position.update(dim, name.format(cell.position(dim).toShortString, cell.content.value.toShortString))
   }
 
+  /** Extract position from outcome cell. */
   type FromOutcome[Q <: Position, R <: Position] = (Cell[Q]) => R
+
+  /** Extract position from outcome cell with user provided value. */
   type FromOutcomeWithValue[Q <: Position, R <: Position, V] = (Cell[Q], V) => R
 
+  /**
+   * Append a coordinate to the outcome position.
+   *
+   * @param name The coordinate to append to the outcome cell.
+   */
   def AppendToOutcome[Q <: Position with ExpandablePosition, T](name: T)(
     implicit ev: Valueable[T]): FromOutcome[Q, Q#M] = (cell: Cell[Q]) => cell.position.append(name)
 
+  /** Extract position from input and outcome cells. */
   type FromInputAndOutcome[P <: Position, Q <: Position, R <: Position] = (Cell[P], Cell[Q]) => R
+
+  /** Extract position from input and outcome cells with user provided value. */
   type FromInputAndOutcomeWithValue[P <: Position, Q <: Position, R <: Position, V] = (Cell[P], Cell[Q], V) => R
 
   /**
@@ -142,6 +156,7 @@ object Locate {
       outcome.position.append(name.format(outcome.position(dim).toShortString, input.content.value.toShortString))
   }
 
+  /** Extract position from selected position and a value. */
   type FromSelectedAndOutput[S <: Position with ExpandablePosition, T, Q <: Position] = (S, T) => Q
 
   /**
