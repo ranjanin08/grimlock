@@ -218,7 +218,7 @@ case class Quantile[P <: Position, S <: Position with ExpandablePosition, R <: P
     name: Locate.FromSelectedAndOutput[S, Double, S#M]) extends WindowWithValue[P, S, R, S#M] {
   type V = W
   type I = (Double, Option[Long])
-  type T = (Double, Long, List[(Long, Double, Double)])
+  type T = (Double, Long, Long)
   type O = (Double, Double)
 
   def prepareWithValue(cell: Cell[P], ext: V): I = {
@@ -226,35 +226,55 @@ case class Quantile[P <: Position, S <: Position with ExpandablePosition, R <: P
   }
 
   def initialise(rem: R, in: I): (T, TraversableOnce[O]) = {
-    val count = 0
-    val state = in._2
-      .map {
-        case n => probs
-          .map { case p => (quantiser(p, n), p) }
-          .map { case ((j, g), p) => (j, g, p) }
-      }
-      .getOrElse(List())
+    val count = in._2
+    val index = 0
+    val target = next(boundaries(count), index)
     val curr = in._1
     val out = None
 
-    ((curr, count, state), out)
+    ((curr, index, target), out)
   }
 
   def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = {
+    val count = in._2
+    val index = t._2
+    val target = t._3
     val prev = t._1
-    val count = t._2 + 1
-    val state = t._3
-    val curr = if (state.isEmpty || prev.isNaN) { Double.NaN } else { in._1 }
-    val out = state.find(_._1 == t._2) match {
-      case Some((_, g, p)) => Some((p, (1 - g) * prev + g * curr))
-      case None => None
+    val curr = if (target < 0 || prev.isNaN) { Double.NaN } else { in._1 }
+    val (trgt, out) = if (index == target) {
+      val b = boundaries(count)
+
+      (next(b, index), b.find(_._1 == index).map { case (_, g, p) => (p, (1 - g) * prev + g * curr) })
+    } else {
+      (target, None)
     }
 
-    ((curr, count, state), out)
+    ((curr, index + 1, trgt), out)
   }
 
   def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[S#M]] = {
     Some(Cell[S#M](name(pos, out._1), Content(ContinuousSchema(DoubleCodex), out._2)))
+  }
+
+  private def boundaries(count: Option[Long]): List[(Long, Double, Double)] = {
+    count
+      .map {
+        case n => probs
+          .sorted
+          .map { case p => (quantiser(p, n), p) }
+          .map { case ((j, g), p) => (j, g, p) }
+      }
+      .getOrElse(List())
+  }
+
+  private def next(boundaries: List[(Long, Double, Double)], index: Long): Long = {
+    if (boundaries.isEmpty) {
+      -1
+    } else {
+      val i = boundaries.indexWhere(_._1 > index)
+
+      if (i < 0) { 0 } else { boundaries(i)._1 }
+    }
   }
 }
 
