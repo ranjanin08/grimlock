@@ -928,10 +928,9 @@ object Position9D {
 }
 
 /** Base trait that represents the positions of a matrix. */
-trait Positions[P <: Position] {
-  /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
-  type U[_]
+trait Positions[P <: Position] extends RawData {
 
+  /** Specifies tuners permitted on a call to `names`. */
   type NamesTuners <: OneOf
 
   /**
@@ -1031,5 +1030,10 @@ trait PositionDistributable[T, P <: Position, U[_]] {
    * @param t Object that can be converted to a `U[Position]`.
    */
   def convert(t: T): U[P]
+}
+
+/** Define implicit ordering. */
+private[grimlock] trait PositionOrdering {
+  protected implicit def ImplicitPositionOrdering[T <: Position] = Position.Ordering[T]()
 }
 

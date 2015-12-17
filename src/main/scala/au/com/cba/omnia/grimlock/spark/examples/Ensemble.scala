@@ -98,8 +98,7 @@ object Ensemble {
     }
 
     // Define extractor to get weight out of weights map.
-    val extractWeight = ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
-      .andThenPresent(_.value.asDouble)
+    val extractWeight = ExtractWithDimension[Position2D, Content](Second).andThenPresent(_.value.asDouble)
 
     // Train and score an ensemble:
     // 1/ Expand with a dimension that holds the hash-code base 10 (for use in partitioning);

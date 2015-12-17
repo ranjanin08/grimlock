@@ -53,9 +53,7 @@ trait PartitionerWithValue[P <: Position, I] {
 }
 
 /** Base trait that represents the partitions of matrices */
-trait Partitions[P <: Position, I] {
-  /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
-  type U[_]
+trait Partitions[P <: Position, I] extends RawData {
 
   /**
    * Add a partition.

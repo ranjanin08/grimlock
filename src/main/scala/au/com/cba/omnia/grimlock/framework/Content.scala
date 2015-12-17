@@ -14,6 +14,7 @@
 
 package au.com.cba.omnia.grimlock.framework.content
 
+import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 
@@ -187,8 +188,5 @@ object Content {
 private[content] case class ContentImpl(schema: Schema, value: Value) extends Content
 
 /** Base trait that represents the contents of a matrix. */
-trait Contents {
-  /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
-  type U[_]
-}
+trait Contents extends RawData { }
 

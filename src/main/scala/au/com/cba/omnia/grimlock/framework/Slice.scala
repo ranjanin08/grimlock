@@ -61,8 +61,7 @@ trait Mapable[P <: Position with ReduceablePosition] { self: Slice[P] =>
  *
  * @param dimension Dimension of the selected coordinate.
  */
-case class Over[P <: Position with ReduceablePosition with MapOverPosition, D <: Dimension](
-  dimension: D)(implicit ev: PosDimDep[P, D]) extends Slice[P] with Mapable[P] {
+trait Over[P <: Position with ReduceablePosition with MapOverPosition] extends Slice[P] with Mapable[P] {
   type S = Position1D
   type R = P#L
   type C = P#O
@@ -80,15 +79,32 @@ case class Over[P <: Position with ReduceablePosition with MapOverPosition, D <:
   }
 }
 
+/** Companion object to `Over` trait. */
+object Over {
+  /**
+   * Indicates that the selected coordinate is indexed by `dimension`. In other words, when a groupBy is performed,
+   * it is performed using a `Position1D` consisting of the coordinate at index `dimension`.
+   *
+   * @param dimension Dimension of the selected coordinate.
+   */
+  def apply[P <: Position with ReduceablePosition with MapOverPosition](dimension: Dimension)(
+    implicit ev: PosDimDep[P, dimension.type]): Over[P] = OverImpl(dimension)
+
+  /** Standard `unapply` method for pattern matching. */
+  def unapply[P <: Position with ReduceablePosition with MapOverPosition](over: Over[P]): Option[Dimension] = {
+    Some(over.dimension)
+  }
+}
+
+private[position] case class OverImpl[P <: Position with ReduceablePosition with MapOverPosition](
+  dimension: Dimension) extends Over[P]
+
 /**
  * Indicates that the selected coordinates are all except the one indexed by `dimension`. In other words, when a
  * groupBy is performed, it is performed using a `Position` (type `ReduceablePosition.L`) consisting of all coordinates
  * except that at index `dimension`.
- *
- * @param dimension Dimension of the coordinate to exclude.
  */
-case class Along[P <: Position with ReduceablePosition with MapAlongPosition, D <: Dimension](
-  dimension: D)(implicit ev: PosDimDep[P, D]) extends Slice[P] with Mapable[P] {
+trait Along[P <: Position with ReduceablePosition with MapAlongPosition] extends Slice[P] with Mapable[P] {
   type S = P#L
   type R = Position1D
   type C = P#A
@@ -105,4 +121,25 @@ case class Along[P <: Position with ReduceablePosition with MapAlongPosition, D 
     }
   }
 }
+
+/** Companion object to `Along` trait. */
+object Along {
+  /**
+   * Indicates that the selected coordinates are all except the one indexed by `dimension`. In other words, when a
+   * groupBy is performed, it is performed using a `Position` (type `ReduceablePosition.L`) consisting of all
+   * coordinates except that at index `dimension`.
+   *
+   * @param dimension Dimension of the coordinate to exclude.
+   */
+  def apply[P <: Position with ReduceablePosition with MapAlongPosition](dimension: Dimension)(
+    implicit ev: PosDimDep[P, dimension.type]): Along[P] = AlongImpl(dimension)
+
+  /** Standard `unapply` method for pattern matching. */
+  def unapply[P <: Position with ReduceablePosition with MapAlongPosition](along: Along[P]): Option[Dimension] = {
+    Some(along.dimension)
+  }
+}
+
+private[position] case class AlongImpl[P <: Position with ReduceablePosition with MapAlongPosition](
+  dimension: Dimension) extends Along[P]
 

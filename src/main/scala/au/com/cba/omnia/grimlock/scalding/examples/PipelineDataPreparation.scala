@@ -92,8 +92,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
   type W = Map[Position1D, Content]
 
   // Define extractor to extract counts from the map.
-  val extractCount = ExtractWithDimension[Dimension.First, Position2D, Content](First)
-    .andThenPresent(_.value.asDouble)
+  val extractCount = ExtractWithDimension[Position2D, Content](First).andThenPresent(_.value.asDouble)
 
   // Define summary statisics to compute on the histogram.
   val sstats: List[AggregatorWithValue[Position2D, Position1D, Position2D] { type V >: W }] = List(
@@ -132,10 +131,8 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
   type S = Map[Position1D, Map[Position1D, Content]]
 
   // Define extract object to get data out of statistics map.
-  def extractStat(key: String): Extract[Position2D, S, Double] = {
-    ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, key)
-      .andThenPresent(_.value.asDouble)
-  }
+  def extractStat(key: String) = ExtractWithDimensionAndKey[Position2D, String, Content](Second, key)
+    .andThenPresent(_.value.asDouble)
 
   // List of transformations to apply to each partition.
   val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: S }] = List(

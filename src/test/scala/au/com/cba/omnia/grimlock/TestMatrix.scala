@@ -6205,8 +6205,8 @@ trait TestMatrixTransform extends TestMatrix {
 
   type W = Map[Position1D, Map[Position1D, Content]]
 
-  def extractor[D <: Dimension, P <: Position](dim: D, key: String)(implicit ev: PosDimDep[P, D]) = {
-    ExtractWithDimensionAndKey[D, P, String, Content](dim, key).andThenPresent(_.value.asDouble)
+  def extractor[P <: Position](dim: Dimension, key: String)(implicit ev: PosDimDep[P, dim.type]) = {
+    ExtractWithDimensionAndKey[P, String, Content](dim, key).andThenPresent(_.value.asDouble)
   }
 }
 
@@ -6238,10 +6238,9 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
   "A Matrix.transformWithValue" should "return its transformed data in 1D" in {
     toPipe(num1)
       .transformWithValue(List(
-        Normalise(extractor[Dimension.First, Position1D](First, "max.abs"))
+        Normalise(extractor[Position1D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")),
-        Standardise(extractor[Dimension.First, Position1D](First, "mean"),
-          extractor[Dimension.First, Position1D](First, "sd"))
+        Standardise(extractor[Position1D](First, "mean"), extractor[Position1D](First, "sd"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.s"))),
         ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result4
@@ -6250,7 +6249,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
   it should "return its transformed data in 2D" in {
     toPipe(num2)
       .transformWithValue(
-        Normalise(extractor[Dimension.First, Position2D](First, "max.abs"))
+        Normalise(extractor[Position2D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")),
         ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result5
@@ -6259,7 +6258,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
   it should "return its transformed data in 3D" in {
     toPipe(num3)
       .transformWithValue(
-        Normalise(extractor[Dimension.First, Position3D](First, "max.abs"))
+        Normalise(extractor[Position3D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")),
         ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result6
@@ -6298,11 +6297,10 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
   "A Matrix.transformAndExpandWithValue" should "return its transformed data in 1D" in {
     toPipe(num1)
       .transformWithValue(List(
-        Normalise(extractor[Dimension.First, Position1D](First, "max.abs"))
+        Normalise(extractor[Position1D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
           .andThenExpandWithValue((_, c, _) => c.position.append("nrm")),
-        Standardise(extractor[Dimension.First, Position1D](First, "mean"),
-          extractor[Dimension.First, Position1D](First, "sd"))
+        Standardise(extractor[Position1D](First, "mean"), extractor[Position1D](First, "sd"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.s"))
           .andThenExpandWithValue((_, c, _) => c.position.append("std"))),
         ValuePipe(ext))
@@ -6312,7 +6310,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
   it should "return its transformed data in 2D" in {
     toPipe(num2)
       .transformWithValue(
-        Normalise(extractor[Dimension.First, Position2D](First, "max.abs"))
+        Normalise(extractor[Position2D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
           .andThenExpandWithValue((_, c, _) => c.position.append("nrm")),
         ValuePipe(ext))
@@ -6322,7 +6320,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
   it should "return its transformed data in 3D" in {
     toPipe(num3)
       .transformWithValue(
-        Normalise(extractor[Dimension.First, Position3D](First, "max.abs"))
+        Normalise(extractor[Position3D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
           .andThenExpandWithValue((_, c, _) => c.position.append("nrm")),
         ValuePipe(ext))
@@ -6358,10 +6356,9 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
   "A Matrix.transformWithValue" should "return its transformed data in 1D" in {
     toRDD(num1)
       .transformWithValue(List(
-        Normalise(extractor[Dimension.First, Position1D](First, "max.abs"))
+        Normalise(extractor[Position1D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")),
-        Standardise(extractor[Dimension.First, Position1D](First, "mean"),
-          extractor[Dimension.First, Position1D](First, "sd"))
+        Standardise(extractor[Position1D](First, "mean"), extractor[Position1D](First, "sd"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.s"))), ext)
       .toList.sortBy(_.position) shouldBe result4
   }
@@ -6369,7 +6366,7 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
   it should "return its transformed data in 2D" in {
     toRDD(num2)
       .transformWithValue(
-        Normalise(extractor[Dimension.First, Position2D](First, "max.abs"))
+        Normalise(extractor[Position2D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")), ext)
       .toList.sortBy(_.position) shouldBe result5
   }
@@ -6377,7 +6374,7 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
   it should "return its transformed data in 3D" in {
     toRDD(num3)
       .transformWithValue(
-        Normalise(extractor[Dimension.First, Position3D](First, "max.abs"))
+        Normalise(extractor[Position3D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")), ext)
       .toList.sortBy(_.position) shouldBe result6
   }
@@ -6415,11 +6412,10 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
   "A Matrix.transformAndExpandWithValue" should "return its transformed data in 1D" in {
     toRDD(num1)
       .transformWithValue(List(
-        Normalise(extractor[Dimension.First, Position1D](First, "max.abs"))
+        Normalise(extractor[Position1D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
           .andThenExpandWithValue((_, c, _) => c.position.append("nrm")),
-        Standardise(extractor[Dimension.First, Position1D](First, "mean"),
-          extractor[Dimension.First, Position1D](First, "sd"))
+        Standardise(extractor[Position1D](First, "mean"), extractor[Position1D](First, "sd"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.s"))
           .andThenExpandWithValue((_, c, _) => c.position.append("std"))), ext)
       .toList.sortBy(_.position) shouldBe result10
@@ -6428,7 +6424,7 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
   it should "return its transformed data in 2D" in {
     toRDD(num2)
       .transformWithValue(
-        Normalise(extractor[Dimension.First, Position2D](First, "max.abs"))
+        Normalise(extractor[Position2D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
           .andThenExpandWithValue((_, c, _) => c.position.append("nrm")), ext)
       .toList.sortBy(_.position) shouldBe result11
@@ -6437,7 +6433,7 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
   it should "return its transformed data in 3D" in {
     toRDD(num3)
       .transformWithValue(
-        Normalise(extractor[Dimension.First, Position3D](First, "max.abs"))
+        Normalise(extractor[Position3D](First, "max.abs"))
           .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
           .andThenExpandWithValue((_, c, _) => c.position.append("nrm")), ext)
       .toList.sortBy(_.position) shouldBe result12

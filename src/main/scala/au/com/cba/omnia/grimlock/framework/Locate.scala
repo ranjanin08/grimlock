@@ -61,7 +61,9 @@ object Locate {
    * @param dim The dimension (out of `rem`) to append to the cell's position.
    */
   def AppendRemainderDimension[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition](
-    dim: Dimension): FromSelectedWithRemainder[S, R, S#M] = (pos: S, rem: R) => pos.append(rem(dim))
+    dim: Dimension)(implicit ev: PosDimDep[R, dim.type]): FromSelectedWithRemainder[S, R, S#M] = {
+    (pos: S, rem: R) => pos.append(rem(dim))
+  }
 
   /**
    * Extract position using string of `rem`.
@@ -137,7 +139,7 @@ object Locate {
    * @return A `FromInputAndOutcome` function.
    */
   def RenameOutcomeDimensionWithInputContent[P <: Position, Q <: Position](dim: Dimension,
-    name: String): FromInputAndOutcome[P, Q, Q] = {
+    name: String)(implicit ev: PosDimDep[P, dim.type]): FromInputAndOutcome[P, Q, Q] = {
     (input: Cell[P], outcome: Cell[Q]) =>
       outcome.position.update(dim, name.format(outcome.position(dim).toShortString, input.content.value.toShortString))
   }
@@ -151,7 +153,7 @@ object Locate {
    * @return A `FromInputAndOutcome` function.
    */
   def ExpandWithOutcomeDimensionAndInputContent[P <: Position, Q <: Position with ExpandablePosition](dim: Dimension,
-    name: String): FromInputAndOutcome[P, Q, Q#M] = {
+    name: String)(implicit ev: PosDimDep[Q, dim.type]): FromInputAndOutcome[P, Q, Q#M] = {
     (input: Cell[P], outcome: Cell[Q]) =>
       outcome.position.append(name.format(outcome.position(dim).toShortString, input.content.value.toShortString))
   }

@@ -24,7 +24,6 @@ import au.com.cba.omnia.grimlock.framework.sample._
 import au.com.cba.omnia.grimlock.framework.squash._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
-import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 import au.com.cba.omnia.grimlock.framework.window._
 
 import java.util.regex.Pattern
@@ -34,12 +33,7 @@ import org.apache.hadoop.io.Writable
 import scala.reflect.ClassTag
 
 /** Base trait for matrix operations. */
-trait Matrix[P <: Position] extends Persist[Cell[P]] {
-  /** Type of the underlying data structure. */
-  type U[_]
-
-  /** Type of 'wrapper' around user defined data. */
-  type E[_]
+trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTuners with PositionOrdering {
 
   /** Self-type of a specific implementation of this API. */
   type M <: Matrix[P]
@@ -525,12 +519,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] {
     implicit ev1: Predicateable[I, P, slice.S, U], ev2: ClassTag[slice.S], ev3: ClassTag[P],
       ev4: WhichTuners#V[T]): U[P]
 
-  protected type TP1 = OneOf1[Default[NoParameters.type]]
-  protected type TP2 = OneOf2[Default[NoParameters.type], Default[Reducers]]
-  protected type TP3 = OneOf3[Default[NoParameters.type], Default[Reducers], Default[Sequence2[Reducers, Reducers]]]
-
-  protected implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
-
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations
   // TODO: Add read/write[CSV|Hive|HBase|VW|LibSVM] operations
@@ -684,5 +672,14 @@ trait Predicateable[T, P <: Position, S <: Position, U[_]] {
    * @param t Object that can be converted to a `List[(U[S], Matrix.Predicate[P])]`.
    */
   def convert(t: T): List[(U[S], Matrix.Predicate[P])]
+}
+
+/** Specify raw data types. */
+private[grimlock] trait RawData {
+  /** Type of the underlying (raw) data structure (i.e. TypedPipe or RDD). */
+  type U[_]
+
+  /** Type of 'wrapper' around user provided data. */
+  type E[_]
 }
 

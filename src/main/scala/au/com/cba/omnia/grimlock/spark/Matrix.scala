@@ -593,7 +593,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     implicit object P2D extends PosDimDep[Position2D, slice.dimension.type]
 
     val centered = data
-      .transformWithValue(Subtract(ExtractWithDimension[slice.dimension.type, Position2D, Content](slice.dimension)
+      .transformWithValue(Subtract(ExtractWithDimension[Position2D, Content](slice.dimension)
         .andThenPresent(_.value.asDouble)), mean)
 
     val denom = centered
@@ -608,7 +608,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
       .pairwise(slice, Lower,
         Times(Locate.PrependPairwiseSelectedToRemainder[Position2D](slice, "(%1$s*%2$s)")), ptuner)
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
-      .transformWithValue(Fraction(ExtractWithDimension[Dimension.First, Position1D, Content](First)
+      .transformWithValue(Fraction(ExtractWithDimension[Position1D, Content](First)
         .andThenPresent(_.value.asDouble)), denom)
   }
 
@@ -637,12 +637,11 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     type W = Map[Position1D, Content]
 
-    val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First)
-      .andThenPresent(_.value.asDouble)
+    val extractor = ExtractWithDimension[Position2D, Content](First).andThenPresent(_.value.asDouble)
 
     val mhist = data
       .expand(c => Some(c.position.append(c.content.value.toShortString)))
-      .summarise(Along[Position3D, dim.type](dim), Count[Position3D, Position2D](), stuner)
+      .summarise(Along(dim), Count[Position3D, Position2D](), stuner)
 
     val mcount = mhist
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
@@ -691,8 +690,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     def isPositive = (cell: Cell[Position2D]) => cell.content.value.asDouble.map(_ > 0).getOrElse(false)
     def isNegative = (cell: Cell[Position2D]) => cell.content.value.asDouble.map(_ <= 0).getOrElse(false)
 
-    val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First)
-      .andThenPresent(_.value.asDouble)
+    val extractor = ExtractWithDimension[Position2D, Content](First).andThenPresent(_.value.asDouble)
 
     val pos = data
       .transform(Compare[Position2D](isPositive))

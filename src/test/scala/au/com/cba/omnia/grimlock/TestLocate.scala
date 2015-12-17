@@ -45,10 +45,10 @@ class TestAppendRemainderDimension extends TestGrimlock {
   val rem = Position2D("abc", 123)
 
   "A AppendRemainderDimension" should "extract" in {
-    Locate.AppendRemainderDimension[Position1D, Position2D](First)(cell.position, rem) shouldBe
-      (Position2D("foo", "abc"))
-    Locate.AppendRemainderDimension[Position1D, Position2D](Second)(cell.position, rem) shouldBe
-      (Position2D("foo", 123))
+    val loc1 = Locate.AppendRemainderDimension[Position1D, Position2D](First)
+    loc1(cell.position, rem) shouldBe (Position2D("foo", "abc"))
+    val loc2 = Locate.AppendRemainderDimension[Position1D, Position2D](Second)
+    loc2(cell.position, rem) shouldBe (Position2D("foo", 123))
   }
 }
 

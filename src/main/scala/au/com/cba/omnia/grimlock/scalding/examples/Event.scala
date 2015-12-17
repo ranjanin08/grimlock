@@ -152,8 +152,7 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
     .compact(Over(First))
 
   // Define extractor to get data out of map.
-  val extractN = ExtractWithKey[Position1D, String, Content](First.toString)
-    .andThenPresent(_.value.asDouble)
+  val extractN = ExtractWithKey[Position1D, String, Content](First.toString).andThenPresent(_.value.asDouble)
 
   // Using the number of documents, compute Idf:
   //  1/ Compute document frequency;
@@ -165,8 +164,7 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
     .compact(Over(First))
 
   // Define extractor to get data out of idf map.
-  val extractIdf = ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
-    .andThenPresent(_.value.asDouble)
+  val extractIdf = ExtractWithDimension[Position2D, Content](Second).andThenPresent(_.value.asDouble)
 
   // Apply TfIdf to the term frequency matrix with the Idf values, then save the results to file.
   //
@@ -174,7 +172,7 @@ class InstanceCentricTfIdf(args: Args) extends Job(args) {
   val tfIdf = tf
     //.transform(BooleanTf[Position2D]())
     //.transform(LogarithmicTf[Position2D]())
-    //.transformWithValue(AugmentedTf(ExtractWithDimension[Dimension.First, Position2D, Content](First)
+    //.transformWithValue(AugmentedTf(ExtractWithDimension[Position2D, Content](First)
     //    .andThenPresent(_.value.asDouble)),
     //  tf.summarise(Along(Second), Max[Position2D, Position1D]()).compact(Over(First)))
     .transformWithValue(TfIdf(extractIdf), idf)

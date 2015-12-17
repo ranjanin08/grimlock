@@ -52,27 +52,6 @@ object Dimension {
   /** List of all available dimensions ordered by index. */
   val All = List(First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth)
 
-  /** Shorthand for `First` type. */
-  type First = First.type
-  /** Shorthand for `Second` type. */
-  type Second = Second.type
-  /** Shorthand for `Third` type. */
-  type Third = Third.type
-  /** Shorthand for `Fourth` type. */
-  type Fourth = Fourth.type
-  /** Shorthand for `Fifth` type. */
-  type Fifth = Fifth.type
-  /** Shorthand for `Sixth` type. */
-  type Sixth = Sixth.type
-  /** Shorthand for `Seventh` type. */
-  type Seventh = Seventh.type
-  /** Shorthand for `Eighth` type. */
-  type Eighth = Eighth.type
-  /** Shorthand for `Ninth` type. */
-  type Ninth = Ninth.type
-  /** Shorthand for `Last` type. */
-  type Last = Last.type
-
   /** Define dependency between `Position1D` and `First`. */
   implicit object P1D1 extends PosDimDep[Position1D, First.type]
   /** Define dependency between `Position1D` and `Last`. */

@@ -90,8 +90,5 @@ object Type {
 }
 
 /** Base trait that represents the variable type along the dimensions of a matrix. */
-trait Types[P <: Position] {
-  /** Type of the underlying data structure (i.e. TypedPipe or RDD). */
-  type U[_]
-}
+trait Types[P <: Position] extends RawData { }
 

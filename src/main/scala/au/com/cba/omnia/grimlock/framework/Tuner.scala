@@ -14,6 +14,8 @@
 
 package au.com.cba.omnia.grimlock.framework
 
+import au.com.cba.omnia.grimlock.framework.utility.OneOf._
+
 /** Base trait for tuner parameters. */
 trait TunerParameters extends java.io.Serializable {
   /** Type of these parameters. */
@@ -109,5 +111,12 @@ object Unbalanced {
   def apply[F <: TunerParameters, S <: TunerParameters](first: F, second: S): Unbalanced[Sequence2[F, S]] = {
     Unbalanced(Sequence2(first, second))
   }
+}
+
+/** Some common sets of default permitted tuners. */
+private[grimlock] trait DefaultTuners {
+  protected type TP1 = OneOf1[Default[NoParameters.type]]
+  protected type TP2 = OneOf2[Default[NoParameters.type], Default[Reducers]]
+  protected type TP3 = OneOf3[Default[NoParameters.type], Default[Reducers], Default[Sequence2[Reducers, Reducers]]]
 }
 

@@ -70,8 +70,7 @@ class MutualInformation(args: Args) extends Job(args) {
   type W = Map[Position1D, Content]
 
   // Define extractor for extracting count from histogram count map.
-  val extractor = ExtractWithDimension[Dimension.First, Position2D, Content](First)
-    .andThenPresent(_.value.asDouble)
+  val extractor = ExtractWithDimension[Position2D, Content](First).andThenPresent(_.value.asDouble)
 
   // Compute histogram on the data.
   val mhist = data

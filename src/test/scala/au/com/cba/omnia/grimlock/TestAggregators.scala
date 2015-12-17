@@ -1893,8 +1893,8 @@ class TestWeightedSum extends TestAggregators {
 
   type W = Map[Position1D, Double]
 
-  def extractor1 = ExtractWithDimension[Dimension.First, Position2D, Double](First)
-  def extractor2 = ExtractWithDimension[Dimension.Second, Position2D, Double](Second)
+  def extractor1 = ExtractWithDimension[Position2D, Double](First)
+  def extractor2 = ExtractWithDimension[Position2D, Double](Second)
 
   case class ExtractWithName(dim: Dimension, name: String) extends Extract[Position2D, W, Double] {
     def extract(cell: Cell[Position2D], ext: W): Option[Double] = {
@@ -2378,7 +2378,7 @@ class TestEntropy extends TestAggregators {
   def log2(x: Double) = math.log(x) / math.log(2)
   def log4(x: Double) = math.log(x) / math.log(4)
 
-  def extractor = ExtractWithDimension[Dimension.First, Position2D, Double](First)
+  def extractor = ExtractWithDimension[Position2D, Double](First)
 
   val count = Map(Position1D("foo") -> 3.0)
 

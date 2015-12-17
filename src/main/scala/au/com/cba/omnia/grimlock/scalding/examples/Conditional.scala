@@ -79,8 +79,7 @@ class Conditional(args: Args) extends Job(args) {
     .squash(First, PreservingMaxPosition[Position4D]())
 
   // Define an extractor for getting data out of the gender count map.
-  def extractor = ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
-    .andThenPresent(_.value.asDouble)
+  def extractor = ExtractWithDimension[Position2D, Content](Second).andThenPresent(_.value.asDouble)
 
   // Get the gender counts. Sum out hair and eye color.
   val gcount = heg

@@ -43,10 +43,8 @@ class Scoring(args: Args) extends Job(args) {
   type S = Map[Position1D, Map[Position1D, Content]]
 
   // Define extract object to get data out of statistics map.
-  def extractStat(key: String): Extract[Position2D, S, Double] = {
-    ExtractWithDimensionAndKey[Dimension.Second, Position2D, String, Content](Second, key)
-      .andThenPresent(_.value.asDouble)
-  }
+  def extractStat(key: String) = ExtractWithDimensionAndKey[Position2D, String, Content](Second, key)
+    .andThenPresent(_.value.asDouble)
 
   // For the data do:
   //  1/ Create indicators, binarise categorical, and clamp & standardise numerical features;
@@ -62,8 +60,7 @@ class Scoring(args: Args) extends Job(args) {
   type W = Map[Position1D, Content]
 
   // Define extract object to get data out of weights map.
-  val extractWeight = ExtractWithDimension[Dimension.Second, Position2D, Content](Second)
-    .andThenPresent(_.value.asDouble)
+  val extractWeight = ExtractWithDimension[Position2D, Content](Second).andThenPresent(_.value.asDouble)
 
   data
     .transformWithValue(transforms, stats)

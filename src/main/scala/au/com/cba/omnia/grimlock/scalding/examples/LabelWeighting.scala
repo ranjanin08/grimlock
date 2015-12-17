@@ -62,9 +62,7 @@ class LabelWeighting(args: Args) extends Job(args) {
     .compact(Over(First))
 
   // Define extract object to get data out of sum/min map.
-  def extractor(key: String): Extract[Position1D, Map[Position1D, Content], Double] = {
-    ExtractWithKey[Position1D, String, Content](key).andThenPresent(_.value.asDouble)
-  }
+  def extractor(key: String) = ExtractWithKey[Position1D, String, Content](key).andThenPresent(_.value.asDouble)
 
   // Compute the ratio of (total number of labels) / (count for each label).
   val ratio = histogram
