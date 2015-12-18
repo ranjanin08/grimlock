@@ -67,17 +67,16 @@ object PositionDistributable {
   }
 
   /** Converts a `List[Positionable]` to a `TypedPipe[Position]`. */
-  implicit def LP2TPPD[T, P <: Position](
-    implicit ev: Positionable[T, P]): BasePositionDistributable[List[T], P, TypedPipe] = {
+  implicit def LP2TPPD[T <% Positionable[P], P <: Position]: BasePositionDistributable[List[T], P, TypedPipe] = {
     new BasePositionDistributable[List[T], P, TypedPipe] {
-      def convert(t: List[T]): TypedPipe[P] = new IterablePipe(t.map(ev.convert(_)))
+      def convert(t: List[T]): TypedPipe[P] = new IterablePipe(t.map { case p => p() })
     }
   }
 
   /** Converts a `Positionable` to a `TypedPipe[Position]`. */
-  implicit def P2TPPD[T, P <: Position](implicit ev: Positionable[T, P]): BasePositionDistributable[T, P, TypedPipe] = {
+  implicit def P2TPPD[T <% Positionable[P], P <: Position]: BasePositionDistributable[T, P, TypedPipe] = {
     new BasePositionDistributable[T, P, TypedPipe] {
-      def convert(t: T): TypedPipe[P] = new IterablePipe(List(ev.convert(t)))
+      def convert(t: T): TypedPipe[P] = new IterablePipe(List(t()))
     }
   }
 }

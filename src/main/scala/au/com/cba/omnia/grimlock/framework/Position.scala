@@ -37,13 +37,13 @@ trait Position {
   /**
    * Update the coordinate at `dim` with `t`.
    *
-   * @param dim The dimension to set.
-   * @param t   The coordinate to set.
+   * @param dim   The dimension to set.
+   * @param value The coordinate to set.
    *
    * @return A position of the same size as `this` but with `t` set at index `dim`.
    */
-  def update[T](dim: Dimension, t: T)(implicit ev: Valueable[T]): this.type = {
-    same(coordinates.updated(getIndex(dim), ev.convert(t))).asInstanceOf[this.type]
+  def update(dim: Dimension, value: Valueable): this.type = {
+    same(coordinates.updated(getIndex(dim), value())).asInstanceOf[this.type]
   }
 
   /**
@@ -391,20 +391,20 @@ trait ExpandablePosition { self: Position =>
   /**
    * Prepend a coordinate to the position.
    *
-   * @param t The coordinate to prepend.
+   * @param value The coordinate to prepend.
    *
    * @return A new position with the coordinate `t` prepended.
    */
-  def prepend[T](t: T)(implicit ev: Valueable[T]): M = more(ev.convert(t) +: coordinates)
+  def prepend(value: Valueable): M = more(value() +: coordinates)
 
   /**
    * Append a coordinate to the position.
    *
-   * @param t The coordinate to append.
+   * @param value The coordinate to append.
    *
    * @return A new position with the coordinate `t` appended.
    */
-  def append[T](t: T)(implicit ev: Valueable[T]): M = more(coordinates :+ ev.convert(t))
+  def append(value: Valueable): M = more(coordinates :+ value())
 
   protected def more(cl: List[Value]): M
 }
@@ -557,7 +557,7 @@ object Position1D {
    *
    * @param s The coordinate value from which to create a `Position1D`.
    */
-  def apply[S](s: S)(implicit ev1: Valueable[S]): Position1D = Position1D(ev1.convert(s))
+  def apply(s: Valueable): Position1D = Position1D(s())
 }
 
 /**
@@ -592,9 +592,7 @@ object Position2D {
    * @param s The first coordinate value from which to create a `Position2D`.
    * @param t The second coordinate value from which to create a `Position2D`.
    */
-  def apply[S, T](s: S, t: T)(implicit ev1: Valueable[S], ev2: Valueable[T]): Position2D = {
-    Position2D(ev1.convert(s), ev2.convert(t))
-  }
+  def apply(s: Valueable, t: Valueable): Position2D = Position2D(s(), t())
 }
 
 /**
@@ -631,9 +629,7 @@ object Position3D {
    * @param t The second coordinate value from which to create a `Position3D`.
    * @param u The third coordinate value from which to create a `Position3D`.
    */
-  def apply[S, T, U](s: S, t: T, u: U)(implicit ev1: Valueable[S], ev2: Valueable[T], ev3: Valueable[U]): Position3D = {
-    Position3D(ev1.convert(s), ev2.convert(t), ev3.convert(u))
-  }
+  def apply(s: Valueable, t: Valueable, u: Valueable): Position3D = Position3D(s(), t(), u())
 }
 
 /**
@@ -672,10 +668,7 @@ object Position4D {
    * @param u The third coordinate value from which to create a `Position4D`.
    * @param v The fourth coordinate value from which to create a `Position4D`.
    */
-  def apply[S, T, U, V](s: S, t: T, u: U, v: V)(implicit ev1: Valueable[S], ev2: Valueable[T], ev3: Valueable[U],
-    ev4: Valueable[V]): Position4D = {
-    Position4D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v))
-  }
+  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable): Position4D = Position4D(s(), t(), u(), v())
 }
 
 /**
@@ -716,9 +709,8 @@ object Position5D {
    * @param v The fourth coordinate value from which to create a `Position5D`.
    * @param w The fifth coordinate value from which to create a `Position5D`.
    */
-  def apply[S, T, U, V, W](s: S, t: T, u: U, v: V, w: W)(implicit ev1: Valueable[S], ev2: Valueable[T],
-    ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W]): Position5D = {
-    Position5D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w))
+  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable, w: Valueable): Position5D = {
+    Position5D(s(), t(), u(), v(), w())
   }
 }
 
@@ -763,9 +755,8 @@ object Position6D {
    * @param w The fifth coordinate value from which to create a `Position6D`.
    * @param x The sixth coordinate value from which to create a `Position6D`.
    */
-  def apply[S, T, U, V, W, X](s: S, t: T, u: U, v: V, w: W, x: X)(implicit ev1: Valueable[S], ev2: Valueable[T],
-    ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W], ev6: Valueable[X]): Position6D = {
-    Position6D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w), ev6.convert(x))
+  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable, w: Valueable, x: Valueable): Position6D = {
+    Position6D(s(), t(), u(), v(), w(), x())
   }
 }
 
@@ -812,12 +803,8 @@ object Position7D {
    * @param x The sixth coordinate value from which to create a `Position7D`.
    * @param y The seventh coordinate value from which to create a `Position7D`.
    */
-  def apply[S, T, U, V, W, X, Y](s: S, t: T, u: U, v: V, w: W, x: X, y: Y)(implicit ev1: Valueable[S],
-    ev2: Valueable[T], ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W], ev6: Valueable[X],
-    ev7: Valueable[Y]): Position7D = {
-    Position7D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w), ev6.convert(x),
-      ev7.convert(y))
-  }
+  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable, w: Valueable, x: Valueable,
+    y: Valueable): Position7D = Position7D(s(), t(), u(), v(), w(), x(), y())
 }
 
 /**
@@ -865,12 +852,8 @@ object Position8D {
    * @param y The seventh coordinate value from which to create a `Position8D`.
    * @param z The eighth coordinate value from which to create a `Position8D`.
    */
-  def apply[S, T, U, V, W, X, Y, Z](s: S, t: T, u: U, v: V, w: W, x: X, y: Y, z: Z)(implicit ev1: Valueable[S],
-    ev2: Valueable[T], ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W], ev6: Valueable[X], ev7: Valueable[Y],
-    ev8: Valueable[Z]): Position8D = {
-    Position8D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w), ev6.convert(x),
-      ev7.convert(y), ev8.convert(z))
-  }
+  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable, w: Valueable, x: Valueable, y: Valueable,
+    z: Valueable): Position8D = Position8D(s(), t(), u(), v(), w(), x(), y(), z())
 }
 
 /**
@@ -919,12 +902,8 @@ object Position9D {
    * @param z The eighth coordinate value from which to create a `Position9D`.
    * @param a The ninth coordinate value from which to create a `Position9D`.
    */
-  def apply[S, T, U, V, W, X, Y, Z, A](s: S, t: T, u: U, v: V, w: W, x: X, y: Y, z: Z, a: A)(implicit ev1: Valueable[S],
-    ev2: Valueable[T], ev3: Valueable[U], ev4: Valueable[V], ev5: Valueable[W], ev6: Valueable[X], ev7: Valueable[Y],
-    ev8: Valueable[Z], ev9: Valueable[A]): Position9D = {
-    Position9D(ev1.convert(s), ev2.convert(t), ev3.convert(u), ev4.convert(v), ev5.convert(w), ev6.convert(x),
-      ev7.convert(y), ev8.convert(z), ev9.convert(a))
-  }
+  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable, w: Valueable, x: Valueable, y: Valueable,
+    z: Valueable, a: Valueable): Position9D = Position9D(s(), t(), u(), v(), w(), x(), y(), z(), a())
 }
 
 /** Base trait that represents the positions of a matrix. */
@@ -971,54 +950,46 @@ trait Positions[P <: Position] extends RawData {
    *
    * @return A `U[P]` with only the positions of interest.
    */
-  def slice[T](positions: T, keep: Boolean)(implicit ev1: PositionListable[T, P], ev2: ClassTag[P]): U[P] = {
-    slice(keep, p => ev1.convert(positions).contains(p))
+  def slice(positions: PositionListable[P], keep: Boolean)(implicit ev1: ClassTag[P]): U[P] = {
+    slice(keep, p => positions().contains(p))
   }
 
   protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[P]
 }
 
 /** Type class for transforming a type `T` into a `Position`. */
-trait Positionable[T, P <: Position] extends java.io.Serializable {
-  /**
-   * Returns a position for type `T`.
-   *
-   * @param t Object that can be converted to a position.
-   */
-  def convert(t: T): P
+trait Positionable[P <: Position] extends java.io.Serializable {
+  /** Returns a position for this type `T`. */
+  def apply(): P
 }
 
-/** Companion object for the [[Positionable]] type class. */
+/** Companion object for the `Positionable` trait. */
 object Positionable {
   /** Converts a position to a position; that is, it's a pass through. */
-  implicit def P2P[T <: Position]: Positionable[T, T] = new Positionable[T, T] { def convert(t: T): T = t }
+  implicit def P2P[T <: Position](t: T): Positionable[T] = new Positionable[T] { def apply(): T = t }
 
   /** Converts a `Valueable` to a position. */
-  implicit def V2P[T](implicit ev: Valueable[T]): Positionable[T, Position1D] = {
-    new Positionable[T, Position1D] { def convert(t: T): Position1D = Position1D(ev.convert(t)) }
+  implicit def V2P[T <% Valueable](t: T): Positionable[Position1D] = {
+    new Positionable[Position1D] { def apply(): Position1D = Position1D(t()) }
   }
 }
 
 /** Type class for transforming a type `T` into a `List[Position]`. */
-trait PositionListable[T, P <: Position] extends java.io.Serializable {
-  /**
-   * Returns a `List[Position]` for type `T`.
-   *
-   * @param t Object that can be converted to a `List[Position]`.
-   */
-  def convert(t: T): List[P]
+trait PositionListable[P <: Position] extends java.io.Serializable {
+  /** Returns a `List[Position]` for this type `T`. */
+  def apply(): List[P]
 }
 
-/** Companion object for the `PositionListable` type class. */
+/** Companion object for the `PositionListable` trait. */
 object PositionListable {
   /** Converts a `List[Positionable]` to a `List[Position]`. */
-  implicit def LP2LP[T, P <: Position](implicit ev: Positionable[T, P]): PositionListable[List[T], P] = {
-    new PositionListable[List[T], P] { def convert(t: List[T]): List[P] = t.map(ev.convert(_)) }
+  implicit def LP2LP[T <% Positionable[P], P <: Position](t: List[T]): PositionListable[P] = {
+    new PositionListable[P] { def apply(): List[P] = t.map { case p => p() } }
   }
 
   /** Converts a `Positionable` to a `List[Position]`. */
-  implicit def P2PL[T, P <: Position](implicit ev: Positionable[T, P]): PositionListable[T, P] = {
-    new PositionListable[T, P] { def convert(t: T): List[P] = List(ev.convert(t)) }
+  implicit def P2PL[T <% Positionable[P], P <: Position](t: T): PositionListable[P] = {
+    new PositionListable[P] { def apply(): List[P] = List(t()) }
   }
 }
 

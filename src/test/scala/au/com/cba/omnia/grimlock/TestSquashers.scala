@@ -238,7 +238,7 @@ class TestPreservingMinPosition extends TestSquashers {
 class TestKeepSlice extends TestSquashers {
 
   "A KeepSlice" should "return the first cell for the first dimension when equal" in {
-    val squash = KeepSlice[Position3D, Long](1)
+    val squash = KeepSlice[Position3D](1)
 
     val t1 = squash.prepare(cell1, First)
     val t2 = squash.prepare(cell2, First)
@@ -249,7 +249,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the second cell for the first dimension when equal" in {
-    val squash = KeepSlice[Position3D, Long](2)
+    val squash = KeepSlice[Position3D](2)
 
     val t1 = squash.prepare(cell1, First)
     val t2 = squash.prepare(cell2, First)
@@ -260,7 +260,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the second cell for the first dimension when not equal" in {
-    val squash = KeepSlice[Position3D, Long](3)
+    val squash = KeepSlice[Position3D](3)
 
     val t1 = squash.prepare(cell1, First)
     val t2 = squash.prepare(cell2, First)
@@ -271,7 +271,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the second cell for the second dimension when equal" in {
-    val squash = KeepSlice[Position3D, String]("b")
+    val squash = KeepSlice[Position3D]("b")
 
     val t1 = squash.prepare(cell1, Second)
     val t2 = squash.prepare(cell2, Second)
@@ -282,7 +282,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the first cell for the second dimension when equal" in {
-    val squash = KeepSlice[Position3D, String]("a")
+    val squash = KeepSlice[Position3D]("a")
 
     val t1 = squash.prepare(cell1, Second)
     val t2 = squash.prepare(cell2, Second)
@@ -293,7 +293,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the second cell for the second dimension when not equal" in {
-    val squash = KeepSlice[Position3D, String]("c")
+    val squash = KeepSlice[Position3D]("c")
 
     val t1 = squash.prepare(cell1, Second)
     val t2 = squash.prepare(cell2, Second)
@@ -304,7 +304,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the first cell for the third dimension when equal" in {
-    val squash = KeepSlice[Position3D, DateValue](DateValue(dfmt.parse("2001-01-01"), DateCodex()))
+    val squash = KeepSlice[Position3D](DateValue(dfmt.parse("2001-01-01"), DateCodex()))
 
     val t1 = squash.prepare(cell1, Third)
     val t2 = squash.prepare(cell2, Third)
@@ -315,7 +315,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the second cell for the third dimension when equal" in {
-    val squash = KeepSlice[Position3D, DateValue](DateValue(dfmt.parse("2002-01-01"), DateCodex()))
+    val squash = KeepSlice[Position3D](DateValue(dfmt.parse("2002-01-01"), DateCodex()))
 
     val t1 = squash.prepare(cell1, Third)
     val t2 = squash.prepare(cell2, Third)
@@ -326,7 +326,7 @@ class TestKeepSlice extends TestSquashers {
   }
 
   it should "return the second cell for the third dimension when not equal" in {
-    val squash = KeepSlice[Position3D, DateValue](DateValue(dfmt.parse("2003-01-01"), DateCodex()))
+    val squash = KeepSlice[Position3D](DateValue(dfmt.parse("2003-01-01"), DateCodex()))
 
     val t1 = squash.prepare(cell1, Third)
     val t2 = squash.prepare(cell2, Third)

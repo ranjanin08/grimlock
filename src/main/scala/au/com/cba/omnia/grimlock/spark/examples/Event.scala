@@ -154,7 +154,7 @@ object InstanceCentricTfIdf {
       .compact(Over(First))
 
     // Define extractor to get data out of map.
-    val extractN = ExtractWithKey[Position1D, String, Content](First.toString).andThenPresent(_.value.asDouble)
+    val extractN = ExtractWithKey[Position1D, Content](First.toString).andThenPresent(_.value.asDouble)
 
     // Using the number of documents, compute Idf:
     //  1/ Compute document frequency;

@@ -508,12 +508,6 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
    * @param tuner      The tuner for the job.
    *
    * @return A `U[P]` of the positions for which the content matches predicates.
-   *
-   * @note `predicates` can be anything that can be converted to a `List[(U[slice.S], Matrix.Predicate[P])]`.
-   *       Supported conversions include (see `Predicateable` type classes for full list):
-   *       `(Valueable[T], Matrix.Predicate[P])`, `(List[Valueable[T]], Matrix.Predicate[P])`,
-   *       `(U[slice.S], Matrix.Predicate[P])`, `List[(Valueable[T], Matrix.Predicate[P])]`,
-   *       `List[(List[Valueable[T]], Matrix.Predicate[P])]`, `List[(U[slice.S], Matrix.Predicate[P])]`.
    */
   def whichByPositions[I, T <: Tuner](slice: Slice[P], predicates: I, tuner: T)(
     implicit ev1: Predicateable[I, P, slice.S, U], ev2: ClassTag[slice.S], ev3: ClassTag[P],

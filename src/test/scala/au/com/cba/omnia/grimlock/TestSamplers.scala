@@ -77,7 +77,7 @@ class TestHashSampleToSize extends TestSample {
 
   "A HashSampleToSize" should "select 25% correctly" in {
     val obj = HashSampleToSize(Second,
-      ExtractWithKey[Position2D, String, Content](Second.toString).andThenPresent(_.value.asDouble), 2500)
+      ExtractWithKey[Position2D, Content](Second.toString).andThenPresent(_.value.asDouble), 2500)
     val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema(LongCodex), 10000))
 
     (1 to 10000).map {
@@ -87,7 +87,7 @@ class TestHashSampleToSize extends TestSample {
 
   it should "select 50% correctly" in {
     val obj = HashSampleToSize(Second,
-      ExtractWithKey[Position2D, String, Content](Second.toString).andThenPresent(_.value.asDouble), 5000)
+      ExtractWithKey[Position2D, Content](Second.toString).andThenPresent(_.value.asDouble), 5000)
     val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema(LongCodex), 10000))
 
     (1 to 10000).map {
@@ -97,7 +97,7 @@ class TestHashSampleToSize extends TestSample {
 
   it should "select 75% correctly" in {
     val obj = HashSampleToSize(Second,
-      ExtractWithKey[Position2D, String, Content](Second.toString).andThenPresent(_.value.asDouble), 7500)
+      ExtractWithKey[Position2D, Content](Second.toString).andThenPresent(_.value.asDouble), 7500)
     val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema(LongCodex), 10000))
 
     (1 to 10000).map {
@@ -121,7 +121,7 @@ class TestAndThenSamplerWithValue extends TestSample {
 
   "A AndThenSamplerWithValue" should "select correctly" in {
     val obj = HashSampleToSize(Second,
-      ExtractWithKey[Position2D, String, Content](Second.toString).andThenPresent(_.value.asDouble), 2500)
+      ExtractWithKey[Position2D, Content](Second.toString).andThenPresent(_.value.asDouble), 2500)
       .andThenWithValue(HashSample(First, 1, 4))
     val ext = Map(Position1D(Second.toString) -> Content(DiscreteSchema(LongCodex), 10000))
     val res = (1 to 10000).flatMap {

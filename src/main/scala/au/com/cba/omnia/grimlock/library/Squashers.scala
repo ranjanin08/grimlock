@@ -39,7 +39,7 @@ case class PreservingMinPosition[P <: Position]() extends PreservingPosition[P] 
 }
 
 /** Reduce two cells preserving the cell whose coordinate matches `keep`. */
-case class KeepSlice[P <: Position, V](keep: V)(implicit ev: Valueable[V]) extends Squasher[P] {
+case class KeepSlice[P <: Position](keep: Valueable) extends Squasher[P] {
   type T = Option[Content]
 
   def prepare(cell: Cell[P], dim: Dimension): T = if (cell.position(dim) equ keep) { Some(cell.content) } else { None }

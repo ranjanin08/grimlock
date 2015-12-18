@@ -67,17 +67,17 @@ object PositionDistributable {
   }
 
   /** Converts a `List[Positionable]` to a `RDD[Position]`. */
-  implicit def LP2RDDPD[T, P <: Position](implicit ev: Positionable[T, P], sc: SparkContext,
+  implicit def LP2RDDPD[T <% Positionable[P], P <: Position](implicit sc: SparkContext,
     ct: ClassTag[P]): BasePositionDistributable[List[T], P, RDD] = {
     new BasePositionDistributable[List[T], P, RDD] {
-      def convert(t: List[T]): RDD[P] = sc.parallelize(t.map(ev.convert(_)))
+      def convert(t: List[T]): RDD[P] = sc.parallelize(t.map { case p => p() })
     }
   }
 
   /** Converts a `Positionable` to a `RDD[Position]`. */
-  implicit def P2RDDPD[T, P <: Position](implicit ev: Positionable[T, P], sc: SparkContext,
+  implicit def P2RDDPD[T <% Positionable[P], P <: Position](implicit sc: SparkContext,
     ct: ClassTag[P]): BasePositionDistributable[T, P, RDD] = {
-    new BasePositionDistributable[T, P, RDD] { def convert(t: T): RDD[P] = sc.parallelize(List(ev.convert(t))) }
+    new BasePositionDistributable[T, P, RDD] { def convert(t: T): RDD[P] = sc.parallelize(List(t())) }
   }
 }
 

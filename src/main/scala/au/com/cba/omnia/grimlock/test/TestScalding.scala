@@ -576,8 +576,8 @@ class TestScalding17(args : Args) extends Job(args) {
     .compact(Over(First))
 
   data
-    .transformWithValue(Normalise(ExtractWithDimensionAndKey[Position2D, String, Content](Second,
-      "max.abs").andThenPresent(_.value.asDouble)), stats)
+    .transformWithValue(Normalise(ExtractWithDimensionAndKey[Position2D, Content](Second, "max.abs")
+      .andThenPresent(_.value.asDouble)), stats)
     .saveAsCSV(Over(First), s"./tmp.${tool}/trn6.csv")
     .toUnit
 
@@ -682,7 +682,7 @@ class TestScalding19(args : Args) extends Job(args) {
   val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: W }] = List(
     Indicator().andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")),
     Binarise(Locate.RenameDimensionWithContent(Second)),
-    Normalise(ExtractWithDimensionAndKey[Position2D, String, Content](Second, "max.abs")
+    Normalise(ExtractWithDimensionAndKey[Position2D, Content](Second, "max.abs")
       .andThenPresent(_.value.asDouble)))
 
   def cb(key: String, pipe: TypedPipe[Cell[Position2D]]): TypedPipe[Cell[Position2D]] = {

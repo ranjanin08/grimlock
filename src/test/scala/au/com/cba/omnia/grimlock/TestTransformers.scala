@@ -29,7 +29,7 @@ trait TestTransformers extends TestGrimlock {
 
   def extractor[P <: Position](dim: Dimension, key: String)(
     implicit ev: PosDimDep[P, dim.type]): Extract[P, Map[Position1D, Map[Position1D, Content]], Double] = {
-    ExtractWithDimensionAndKey[P, String, Content](dim, key).andThenPresent(_.value.asDouble)
+    ExtractWithDimensionAndKey[P, Content](dim, key).andThenPresent(_.value.asDouble)
   }
 
   def dimExtractor[P <: Position](dim: Dimension)(
@@ -38,7 +38,7 @@ trait TestTransformers extends TestGrimlock {
   }
 
   def keyExtractor[P <: Position](key: String): Extract[P, Map[Position1D, Content], Double] = {
-    ExtractWithKey[P, String, Content](key).andThenPresent(_.value.asDouble)
+    ExtractWithKey[P, Content](key).andThenPresent(_.value.asDouble)
   }
 }
 

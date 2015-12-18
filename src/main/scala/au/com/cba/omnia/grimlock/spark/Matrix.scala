@@ -722,7 +722,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
       .pairwiseBetween(Along(First), Diagonal, fpr,
         Times(Locate.PrependPairwiseSelectedToRemainder[Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
       .summarise(Along(First), Sum[Position2D, Position1D](), stuner)
-      .transformWithValue(Subtract(ExtractWithKey[Position1D, String, Double]("one"), true),
+      .transformWithValue(Subtract(ExtractWithKey[Position1D, Double]("one"), true),
         Map(Position1D("one") -> 1.0))
   }
 }
@@ -812,28 +812,28 @@ object Matrix {
   }
 
   /** Conversion from `List[(Valueable, Content)]` to a Spark `Matrix1D`. */
-  implicit def LV1C2RDDM1[V: Valueable](list: List[(V, Content)])(implicit sc: SparkContext): Matrix1D = {
+  implicit def LV1C2RDDM1[V <% Valueable](list: List[(V, Content)])(implicit sc: SparkContext): Matrix1D = {
     new Matrix1D(sc.parallelize(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a Spark `Matrix2D`. */
-  implicit def LV2C2RDDM2[V: Valueable, W: Valueable](list: List[(V, W, Content)])(
+  implicit def LV2C2RDDM2[V <% Valueable, W <% Valueable](list: List[(V, W, Content)])(
     implicit sc: SparkContext): Matrix2D = {
     new Matrix2D(sc.parallelize(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix3D`. */
-  implicit def LV3C2RDDM3[V: Valueable, W: Valueable, X: Valueable](
+  implicit def LV3C2RDDM3[V <% Valueable, W <% Valueable, X <% Valueable](
     list: List[(V, W, X, Content)])(implicit sc: SparkContext): Matrix3D = {
     new Matrix3D(sc.parallelize(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix4D`. */
-  implicit def LV4C2RDDM4[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
+  implicit def LV4C2RDDM4[V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable](
     list: List[(V, W, X, Y, Content)])(implicit sc: SparkContext): Matrix4D = {
     new Matrix4D(sc.parallelize(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix5D`.
    */
-  implicit def LV5C2RDDM5[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV5C2RDDM5[V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix5D = {
     new Matrix5D(sc.parallelize(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
   }
@@ -841,7 +841,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
    * Spark `Matrix6D`.
    */
-  implicit def LV6C2RDDM6[U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV6C2RDDM6[U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix6D = {
     new Matrix6D(sc.parallelize(list.map { case (u, v, w, x, y, z, c) => Cell(Position6D(u, v, w, x, y, z), c) }))
   }
@@ -849,7 +849,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
    * Spark `Matrix7D`.
    */
-  implicit def LV7C2RDDM7[T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV7C2RDDM7[T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix7D = {
     new Matrix7D(sc.parallelize(list.map { case (t, u, v, w, x, y, z, c) => Cell(Position7D(t, u, v, w, x, y, z), c) }))
   }
@@ -857,7 +857,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
    * Content)]` to a Spark `Matrix8D`.
    */
-  implicit def LV8C2RDDM8[S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV8C2RDDM8[S <% Valueable, T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(S, T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix8D = {
     new Matrix8D(sc.parallelize(list.map {
       case (s, t, u, v, w, x, y, z, c) => Cell(Position8D(s, t, u, v, w, x, y, z), c)
@@ -867,7 +867,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
    * Valueable, Content)]` to a Spark `Matrix9D`.
    */
-  implicit def LV9C2RDDM9[R: Valueable, S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV9C2RDDM9[R <% Valueable, S <% Valueable, T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(R, S, T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix9D = {
     new Matrix9D(sc.parallelize(list.map {
       case (r, s, t, u, v, w, x, y, z, c) => Cell(Position9D(r, s, t, u, v, w, x, y, z), c)

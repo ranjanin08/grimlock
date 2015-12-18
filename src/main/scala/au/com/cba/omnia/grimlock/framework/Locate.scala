@@ -121,8 +121,9 @@ object Locate {
    *
    * @param name The coordinate to append to the outcome cell.
    */
-  def AppendToOutcome[Q <: Position with ExpandablePosition, T](name: T)(
-    implicit ev: Valueable[T]): FromOutcome[Q, Q#M] = (cell: Cell[Q]) => cell.position.append(name)
+  def AppendToOutcome[Q <: Position with ExpandablePosition](name: Valueable): FromOutcome[Q, Q#M] = {
+    (cell: Cell[Q]) => cell.position.append(name)
+  }
 
   /** Extract position from input and outcome cells. */
   type FromInputAndOutcome[P <: Position, Q <: Position, R <: Position] = (Cell[P], Cell[Q]) => R

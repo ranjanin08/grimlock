@@ -39,14 +39,14 @@ trait Value {
    *
    * @param that Value to compare against.
    */
-  def equ[T: Valueable](that: T): Boolean = evaluate(that, Equal)
+  def equ(that: Valueable): Boolean = evaluate(that, Equal)
 
   /**
    * Check for in-equality with `that`.
    *
    * @param that Value to compare against.
    */
-  def neq[T: Valueable](that: T): Boolean = !(this equ that)
+  def neq(that: Valueable): Boolean = !(this equ that)
 
   /**
    * Check for for match with `that` regular expression.
@@ -68,7 +68,7 @@ trait Value {
    *
    * @note If `that` is of a different type than `this`, then the result is always `false`.
    */
-  def lss[T: Valueable](that: T): Boolean = evaluate(that, Less)
+  def lss(that: Valueable): Boolean = evaluate(that, Less)
 
   /**
    * Check if `this` is less or equal to `that`.
@@ -77,7 +77,7 @@ trait Value {
    *
    * @note If `that` is of a different type than `this`, then the result is always `false`.
    */
-  def leq[T: Valueable](that: T): Boolean = evaluate(that, LessEqual)
+  def leq(that: Valueable): Boolean = evaluate(that, LessEqual)
 
   /**
    * Check if `this` is greater than `that`.
@@ -86,7 +86,7 @@ trait Value {
    *
    * @note If `that` is of a different type than `this`, then the result is always `false`.
    */
-  def gtr[T: Valueable](that: T): Boolean = evaluate(that, Greater)
+  def gtr(that: Valueable): Boolean = evaluate(that, Greater)
 
   /**
    * Check if `this` is greater or equal to `that`.
@@ -95,7 +95,7 @@ trait Value {
    *
    * @note If `that` is of a different type than `this`, then the result is always `false`.
    */
-  def geq[T: Valueable](that: T): Boolean = evaluate(that, GreaterEqual)
+  def geq(that: Valueable): Boolean = evaluate(that, GreaterEqual)
 
   /** Return value as `java.util.Date`. */
   def asDate: Option[Date] = None
@@ -113,8 +113,8 @@ trait Value {
   /** Return a consise (terse) string representation of a value. */
   def toShortString: String = codex.encode(this)
 
-  private def evaluate[T: Valueable](that: T, op: CompareResult): Boolean = {
-    codex.compare(this, implicitly[Valueable[T]].convert(that)) match {
+  private def evaluate(that: Valueable, op: CompareResult): Boolean = {
+    codex.compare(this, that()) match {
       case Some(0) => (op == Equal) || (op == GreaterEqual) || (op == LessEqual)
       case Some(x) if (x > 0) => (op == Greater) || (op == GreaterEqual)
       case Some(x) if (x < 0) => (op == Less) || (op == LessEqual)
@@ -195,29 +195,30 @@ case class EventValue[T <: Event](value: T, codex: EventCodex) extends Value {
   override def asEvent = Some(value)
 }
 
-/** Type class for transforming a type `T` into a `Value`. */
-trait Valueable[T] extends java.io.Serializable {
-  /**
-   * Returns a `Value` for type `T`.
-   *
-   * @param t Object that can be converted to a `Value`.
-   */
-  def convert(t: T): Value
+/** Trait for transforming a type `T` into a `Value`. */
+trait Valueable extends java.io.Serializable {
+  /** Returns a `Value` for this type `T`. */
+  def apply(): Value
 }
 
-/** Companion object for the `Valueable` type class. */
+/** Companion object for the `Valueable` trait. */
 object Valueable {
   /** Converts a `Value` to a `Value`; that is, it's a pass through. */
-  implicit def VV[T <: Value]: Valueable[T] = new Valueable[T] { def convert(t: T): Value = t }
+  implicit def VV[T <: Value](t: T): Valueable = new Valueable { def apply(): Value = t }
+
   /** Converts a `String` to a `Value`. */
-  implicit def SV: Valueable[String] = new Valueable[String] { def convert(t: String): Value = StringValue(t) }
+  implicit def SV(t: String): Valueable = new Valueable { def apply(): Value = StringValue(t) }
+
   /** Converts a `Double` to a `Value`. */
-  implicit def DV: Valueable[Double] = new Valueable[Double] { def convert(t: Double): Value = DoubleValue(t) }
+  implicit def DV(t: Double): Valueable = new Valueable { def apply(): Value = DoubleValue(t) }
+
   /** Converts a `Long` to a `Value`. */
-  implicit def LV: Valueable[Long] = new Valueable[Long] { def convert(t: Long): Value = LongValue(t) }
+  implicit def LV(t: Long): Valueable = new Valueable { def apply(): Value = LongValue(t) }
+
   /** Converts a `Int` to a `Value`. */
-  implicit def IV: Valueable[Int] = new Valueable[Int] { def convert(t: Int): Value = LongValue(t) }
+  implicit def IV(t: Int): Valueable = new Valueable { def apply(): Value = LongValue(t) }
+
   /** Converts a `Boolean` to a `Value`. */
-  implicit def BV: Valueable[Boolean] = new Valueable[Boolean] { def convert(t: Boolean): Value = BooleanValue(t) }
+  implicit def BV(t: Boolean): Valueable = new Valueable { def apply(): Value = BooleanValue(t) }
 }
 

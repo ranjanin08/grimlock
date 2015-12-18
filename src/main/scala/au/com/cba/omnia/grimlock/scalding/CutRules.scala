@@ -14,7 +14,6 @@
 
 package au.com.cba.omnia.grimlock.scalding.transform
 
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.library.transform.{ CutRules => BaseCutRules }
@@ -25,35 +24,35 @@ import com.twitter.scalding.typed.{ LiteralValue, ValuePipe }
 object CutRules extends BaseCutRules {
   type E[A] = ValuePipe[A]
 
-  def fixed[V: Valueable, W: Valueable](ext: ValuePipe[Stats], min: V, max: W,
+  def fixed(ext: ValuePipe[Stats], min: Positionable[Position1D], max: Positionable[Position1D],
     k: Long): ValuePipe[Map[Position1D, List[Double]]] = ext.map(stats => fixedFromStats(stats, min, max, k))
 
-  def squareRootChoice[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
-    max: X): ValuePipe[Map[Position1D, List[Double]]] = {
+  def squareRootChoice(ext: ValuePipe[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): ValuePipe[Map[Position1D, List[Double]]] = {
     ext.map { case stats => squareRootChoiceFromStats(stats, count, min, max) }
   }
 
-  def sturgesFormula[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
-    max: X): ValuePipe[Map[Position1D, List[Double]]] = {
+  def sturgesFormula(ext: ValuePipe[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): ValuePipe[Map[Position1D, List[Double]]] = {
     ext.map { case stats => sturgesFormulaFromStats(stats, count, min, max) }
   }
 
-  def riceRule[V: Valueable, W: Valueable, X: Valueable](ext: ValuePipe[Stats], count: V, min: W,
-    max: X): ValuePipe[Map[Position1D, List[Double]]] = {
+  def riceRule(ext: ValuePipe[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): ValuePipe[Map[Position1D, List[Double]]] = {
     ext.map { case stats => riceRuleFromStats(stats, count, min, max) }
   }
 
-  def doanesFormula[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: ValuePipe[Stats], count: V, min: W,
-    max: X, skewness: Y): ValuePipe[Map[Position1D, List[Double]]] = {
+  def doanesFormula(ext: ValuePipe[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D], skewness: Positionable[Position1D]): ValuePipe[Map[Position1D, List[Double]]] = {
     ext.map { case stats => doanesFormulaFromStats(stats, count, min, max, skewness) }
   }
 
-  def scottsNormalReferenceRule[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: ValuePipe[Stats],
-    count: V, min: W, max: X, sd: Y): ValuePipe[Map[Position1D, List[Double]]] = {
+  def scottsNormalReferenceRule(ext: ValuePipe[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D], sd: Positionable[Position1D]): ValuePipe[Map[Position1D, List[Double]]] = {
     ext.map { case stats => scottsNormalReferenceRuleFromStats(stats, count, min, max, sd) }
   }
 
-  def breaks[V: Valueable](range: Map[V, List[Double]]): ValuePipe[Map[Position1D, List[Double]]] = {
+  def breaks[P <% Positionable[Position1D]](range: Map[P, List[Double]]): ValuePipe[Map[Position1D, List[Double]]] = {
     new LiteralValue(breaksFromMap(range))
   }
 }

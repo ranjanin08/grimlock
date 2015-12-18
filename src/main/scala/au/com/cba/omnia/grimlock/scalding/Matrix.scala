@@ -974,7 +974,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
       .pairwiseBetween(Along(First), Diagonal, fpr,
         Times(Locate.PrependPairwiseSelectedToRemainder[Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
       .summarise(Along(First), Sum[Position2D, Position1D](), stuner)
-      .transformWithValue(Subtract(ExtractWithKey[Position1D, String, Double]("one"), true),
+      .transformWithValue(Subtract(ExtractWithKey[Position1D, Double]("one"), true),
         ValuePipe(Map(Position1D("one") -> 1.0)))
   }
 }
@@ -1046,26 +1046,26 @@ object Matrix {
   implicit def L2TPM9(data: List[Cell[Position9D]]): Matrix9D = new Matrix9D(new IterablePipe(data))
 
   /** Conversion from `List[(Valueable, Content)]` to a Scalding `Matrix1D`. */
-  implicit def LV1C2TPM1[V: Valueable](list: List[(V, Content)]): Matrix1D = {
+  implicit def LV1C2TPM1[V <% Valueable](list: List[(V, Content)]): Matrix1D = {
     new Matrix1D(new IterablePipe(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a Scalding `Matrix2D`. */
-  implicit def LV2C2TPM2[V: Valueable, W: Valueable](list: List[(V, W, Content)]): Matrix2D = {
+  implicit def LV2C2TPM2[V <% Valueable, W <% Valueable](list: List[(V, W, Content)]): Matrix2D = {
     new Matrix2D(new IterablePipe(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a Scalding `Matrix3D`. */
-  implicit def LV3C2TPM3[V: Valueable, W: Valueable, X: Valueable](list: List[(V, W, X, Content)]): Matrix3D = {
+  implicit def LV3C2TPM3[V <% Valueable, W <% Valueable, X <% Valueable](list: List[(V, W, X, Content)]): Matrix3D = {
     new Matrix3D(new IterablePipe(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a Scalding `Matrix4D`. */
-  implicit def LV4C2TPM4[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](
+  implicit def LV4C2TPM4[V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable](
     list: List[(V, W, X, Y, Content)]): Matrix4D = {
     new Matrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a Scalding `Matrix5D`.
    */
-  implicit def LV5C2TPM5[V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV5C2TPM5[V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(V, W, X, Y, Z, Content)]): Matrix5D = {
     new Matrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
   }
@@ -1073,7 +1073,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
    * Scalding `Matrix6D`.
    */
-  implicit def LV6C2TPM6[U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV6C2TPM6[U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(U, V, W, X, Y, Z, Content)]): Matrix6D = {
     new Matrix6D(new IterablePipe(list.map { case (u, v, w, x, y, z, c) => Cell(Position6D(u, v, w, x, y, z), c) }))
   }
@@ -1081,7 +1081,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]`
    * to a Scalding `Matrix7D`.
    */
-  implicit def LV7C2TPM7[T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV7C2TPM7[T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(T, U, V, W, X, Y, Z, Content)]): Matrix7D = {
     new Matrix7D(new IterablePipe(list.map {
       case (t, u, v, w, x, y, z, c) => Cell(Position7D(t, u, v, w, x, y, z), c)
@@ -1091,7 +1091,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
    * Content)]` to a Scalding `Matrix8D`.
    */
-  implicit def LV8C2TPM8[S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV8C2TPM8[S <% Valueable, T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(S, T, U, V, W, X, Y, Z, Content)]): Matrix8D = {
     new Matrix8D(new IterablePipe(list.map {
       case (s, t, u, v, w, x, y, z, c) => Cell(Position8D(s, t, u, v, w, x, y, z), c)
@@ -1101,7 +1101,7 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
    * Valueable, Content)]` to a Scalding `Matrix9D`.
    */
-  implicit def LV9C2TPM9[R: Valueable, S: Valueable, T: Valueable, U: Valueable, V: Valueable, W: Valueable, X: Valueable, Y: Valueable, Z: Valueable](
+  implicit def LV9C2TPM9[R <% Valueable, S <% Valueable, T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(R, S, T, U, V, W, X, Y, Z, Content)]): Matrix9D = {
     new Matrix9D(new IterablePipe(list.map {
       case (r, s, t, u, v, w, x, y, z, c) => Cell(Position9D(r, s, t, u, v, w, x, y, z), c)

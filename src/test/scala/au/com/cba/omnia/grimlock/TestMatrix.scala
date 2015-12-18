@@ -6206,7 +6206,7 @@ trait TestMatrixTransform extends TestMatrix {
   type W = Map[Position1D, Map[Position1D, Content]]
 
   def extractor[P <: Position](dim: Dimension, key: String)(implicit ev: PosDimDep[P, dim.type]) = {
-    ExtractWithDimensionAndKey[P, String, Content](dim, key).andThenPresent(_.value.asDouble)
+    ExtractWithDimensionAndKey[P, Content](dim, key).andThenPresent(_.value.asDouble)
   }
 }
 

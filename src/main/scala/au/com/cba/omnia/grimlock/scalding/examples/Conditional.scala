@@ -40,21 +40,21 @@ class Conditional(args: Args) extends Job(args) {
   // 1/ Squash the matrix keeping only hair column.
   // 2/ Compact vector into a map.
   val hair = data
-    .squash(Second, KeepSlice[Position2D, String]("hair"))
+    .squash(Second, KeepSlice[Position2D]("hair"))
     .compact(Over(First))
 
   // Get map of row id -> eye color
   // 1/ Squash the matrix keeping only eye column.
   // 2/ Compact vector into a map.
   val eye = data
-    .squash(Second, KeepSlice[Position2D, String]("eye"))
+    .squash(Second, KeepSlice[Position2D]("eye"))
     .compact(Over(First))
 
   // Get map of row id -> gender
   // 1/ Squash the matrix keeping only gender column.
   // 2/ Compact vector into a map.
   val gender = data
-    .squash(Second, KeepSlice[Position2D, String]("gender"))
+    .squash(Second, KeepSlice[Position2D]("gender"))
     .compact(Over(First))
 
   // Define function that expands based on the row id.
@@ -75,7 +75,7 @@ class Conditional(args: Args) extends Job(args) {
     .expandWithValue(expander[Position2D], hair)
     .expandWithValue(expander[Position3D], eye)
     .expandWithValue(expander[Position4D], gender)
-    .squash(Second, KeepSlice[Position5D, String]("value"))
+    .squash(Second, KeepSlice[Position5D]("value"))
     .squash(First, PreservingMaxPosition[Position4D]())
 
   // Define an extractor for getting data out of the gender count map.

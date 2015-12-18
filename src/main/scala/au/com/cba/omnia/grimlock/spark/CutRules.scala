@@ -14,7 +14,6 @@
 
 package au.com.cba.omnia.grimlock.spark.transform
 
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.library.transform.{ CutRules => BaseCutRules }
@@ -23,25 +22,30 @@ import au.com.cba.omnia.grimlock.library.transform.{ CutRules => BaseCutRules }
 object CutRules extends BaseCutRules {
   type E[A] = A
 
-  def fixed[V: Valueable, W: Valueable](ext: Stats, min: V, max: W, k: Long): Map[Position1D, List[Double]] = {
-    fixedFromStats(ext, min, max, k)
+  def fixed(ext: Stats, min: Positionable[Position1D], max: Positionable[Position1D],
+    k: Long): Map[Position1D, List[Double]] = fixedFromStats(ext, min, max, k)
+
+  def squareRootChoice(ext: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): Map[Position1D, List[Double]] = squareRootChoiceFromStats(ext, count, min, max)
+
+  def sturgesFormula(ext: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): Map[Position1D, List[Double]] = sturgesFormulaFromStats(ext, count, min, max)
+
+  def riceRule(ext: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): Map[Position1D, List[Double]] = riceRuleFromStats(ext, count, min, max)
+
+  def doanesFormula(ext: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D], skewness: Positionable[Position1D]): Map[Position1D, List[Double]] = {
+    doanesFormulaFromStats(ext, count, min, max, skewness)
   }
 
-  def squareRootChoice[V: Valueable, W: Valueable, X: Valueable](ext: Stats, count: V, min: W,
-    max: X): Map[Position1D, List[Double]] = squareRootChoiceFromStats(ext, count, min, max)
+  def scottsNormalReferenceRule(ext: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D], sd: Positionable[Position1D]): Map[Position1D, List[Double]] = {
+    scottsNormalReferenceRuleFromStats(ext, count, min, max, sd)
+  }
 
-  def sturgesFormula[V: Valueable, W: Valueable, X: Valueable](ext: Stats, count: V, min: W,
-    max: X): Map[Position1D, List[Double]] = sturgesFormulaFromStats(ext, count, min, max)
-
-  def riceRule[V: Valueable, W: Valueable, X: Valueable](ext: Stats, count: V, min: W,
-    max: X): Map[Position1D, List[Double]] = riceRuleFromStats(ext, count, min, max)
-
-  def doanesFormula[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: Stats, count: V, min: W, max: X,
-    skewness: Y): Map[Position1D, List[Double]] = doanesFormulaFromStats(ext, count, min, max, skewness)
-
-  def scottsNormalReferenceRule[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: Stats, count: V, min: W,
-    max: X, sd: Y): Map[Position1D, List[Double]] = scottsNormalReferenceRuleFromStats(ext, count, min, max, sd)
-
-  def breaks[V: Valueable](range: Map[V, List[Double]]): Map[Position1D, List[Double]] = breaksFromMap(range)
+  def breaks[P <% Positionable[Position1D]](range: Map[P, List[Double]]): Map[Position1D, List[Double]] = {
+    breaksFromMap(range)
+  }
 }
 

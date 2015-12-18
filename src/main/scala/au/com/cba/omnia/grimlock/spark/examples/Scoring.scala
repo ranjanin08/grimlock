@@ -47,7 +47,7 @@ object Scoring {
     type S = Map[Position1D, Map[Position1D, Content]]
 
     // Define extract object to get data out of statistics map.
-    def extractStat(key: String) = ExtractWithDimensionAndKey[Position2D, String, Content](Second, key)
+    def extractStat(key: String) = ExtractWithDimensionAndKey[Position2D, Content](Second, key)
       .andThenPresent(_.value.asDouble)
 
     // For the data do:

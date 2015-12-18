@@ -303,11 +303,9 @@ case class Cut[P <: Position, W](bins: Extract[P, W, List[Double]]) extends Tran
 }
 
 /** Base trait that defined various rules for cutting continuous data. */
-trait CutRules {
-  /** Type of 'wrapper' around user defined data. */
-  type E[_]
+trait CutRules extends RawData {
 
-  /** Type of statistics data from which the number of bins is comuted. */
+  /** Type of statistics data from which the number of bins is computed. */
   type Stats = Map[Position1D, Map[Position1D, Content]]
 
   /**
@@ -320,9 +318,10 @@ trait CutRules {
    *
    * @return A `E` holding the break values.
    */
-  def fixed[V: Valueable, W: Valueable](ext: E[Stats], min: V, max: W, k: Long): E[Map[Position1D, List[Double]]]
+  def fixed(ext: E[Stats], min: Positionable[Position1D], max: Positionable[Position1D],
+    k: Long): E[Map[Position1D, List[Double]]]
 
-  protected def fixedFromStats[V: Valueable, W: Valueable](stats: Stats, min: V, max: W,
+  protected def fixedFromStats(stats: Stats, min: Positionable[Position1D], max: Positionable[Position1D],
     k: Long): Map[Position1D, List[Double]] = cut(stats, min, max, _ => Some(k))
 
   /**
@@ -335,11 +334,11 @@ trait CutRules {
    *
    * @return A `E` holding the break values.
    */
-  def squareRootChoice[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W,
-    max: X): E[Map[Position1D, List[Double]]]
+  def squareRootChoice(ext: E[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): E[Map[Position1D, List[Double]]]
 
-  protected def squareRootChoiceFromStats[V: Valueable, W: Valueable, X: Valueable](stats: Stats, count: V, min: W,
-    max: X): Map[Position1D, List[Double]] = {
+  protected def squareRootChoiceFromStats(stats: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): Map[Position1D, List[Double]] = {
     cut(stats, min, max, extract(_, count).map { case n => math.round(math.sqrt(n)) })
   }
 
@@ -353,11 +352,11 @@ trait CutRules {
    *
    * @return A `E` holding the break values.
    */
-  def sturgesFormula[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W,
-    max: X): E[Map[Position1D, List[Double]]]
+  def sturgesFormula(ext: E[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): E[Map[Position1D, List[Double]]]
 
-  protected def sturgesFormulaFromStats[V: Valueable, W: Valueable, X: Valueable](stats: Stats, count: V, min: W,
-    max: X): Map[Position1D, List[Double]] = {
+  protected def sturgesFormulaFromStats(stats: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): Map[Position1D, List[Double]] = {
     cut(stats, min, max, extract(_, count).map { case n => math.ceil(log2(n) + 1).toLong })
   }
 
@@ -371,11 +370,11 @@ trait CutRules {
    *
    * @return A `E` holding the break values.
    */
-  def riceRule[V: Valueable, W: Valueable, X: Valueable](ext: E[Stats], count: V, min: W,
-    max: X): E[Map[Position1D, List[Double]]]
+  def riceRule(ext: E[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): E[Map[Position1D, List[Double]]]
 
-  protected def riceRuleFromStats[V: Valueable, W: Valueable, X: Valueable](stats: Stats, count: V, min: W,
-    max: X): Map[Position1D, List[Double]] = {
+  protected def riceRuleFromStats(stats: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): Map[Position1D, List[Double]] = {
     cut(stats, min, max, extract(_, count).map { case n => math.ceil(2 * math.pow(n, 1.0 / 3.0)).toLong })
   }
 
@@ -390,11 +389,11 @@ trait CutRules {
    *
    * @return A `E` holding the break values.
    */
-  def doanesFormula[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: E[Stats], count: V, min: W, max: X,
-    skewness: Y): E[Map[Position1D, List[Double]]]
+  def doanesFormula(ext: E[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D], skewness: Positionable[Position1D]): E[Map[Position1D, List[Double]]]
 
-  protected def doanesFormulaFromStats[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](stats: Stats, count: V,
-    min: W, max: X, skewness: Y): Map[Position1D, List[Double]] = {
+  protected def doanesFormulaFromStats(stats: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D], skewness: Positionable[Position1D]): Map[Position1D, List[Double]] = {
     cut(stats, min, max, m => (extract(m, count), extract(m, skewness)) match {
       case (Some(n), Some(s)) =>
         Some(math.round(1 + log2(n) + log2(1 + math.abs(s) / math.sqrt((6 * (n - 2)) / ((n + 1) * (n + 3))))))
@@ -413,11 +412,12 @@ trait CutRules {
    *
    * @return A `E` holding the break values.
    */
-  def scottsNormalReferenceRule[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](ext: E[Stats], count: V,
-    min: W, max: X, sd: Y): E[Map[Position1D, List[Double]]]
+  def scottsNormalReferenceRule(ext: E[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D], sd: Positionable[Position1D]): E[Map[Position1D, List[Double]]]
 
-  protected def scottsNormalReferenceRuleFromStats[V: Valueable, W: Valueable, X: Valueable, Y: Valueable](stats: Stats,
-    count: V, min: W, max: X, sd: Y): Map[Position1D, List[Double]] = {
+  protected def scottsNormalReferenceRuleFromStats(stats: Stats, count: Positionable[Position1D],
+    min: Positionable[Position1D], max: Positionable[Position1D],
+      sd: Positionable[Position1D]): Map[Position1D, List[Double]] = {
     cut(stats, min, max, m => (extract(m, count), extract(m, min), extract(m, max), extract(m, sd)) match {
       case (Some(n), Some(l), Some(u), Some(s)) => Some(math.ceil((u - l) / (3.5 * s / math.pow(n, 1.0 / 3.0))).toLong)
       case _ => None
@@ -429,14 +429,13 @@ trait CutRules {
    *
    * @param range A map (holding for each key) the bins range of that feature.
    */
-  def breaks[V: Valueable](range: Map[V, List[Double]]): E[Map[Position1D, List[Double]]]
+  def breaks[P <% Positionable[Position1D]](range: Map[P, List[Double]]): E[Map[Position1D, List[Double]]]
 
-  protected def breaksFromMap[V: Valueable](range: Map[V, List[Double]]): Map[Position1D, List[Double]] = {
-    range.map { case (v, l) => (Position1D(v), l) }
-  }
+  protected def breaksFromMap[P <% Positionable[Position1D]](
+    range: Map[P, List[Double]]): Map[Position1D, List[Double]] = range.map { case (p, l) => (p(), l) }
 
   // TODO: Add 'right' and 'labels' options (analogous to R's)
-  private def cut[V: Valueable, W: Valueable](stats: Stats, min: V, max: W,
+  private def cut(stats: Stats, min: Positionable[Position1D], max: Positionable[Position1D],
     bins: (Map[Position1D, Content]) => Option[Long]): Map[Position1D, List[Double]] = {
     stats.flatMap {
       case (pos, map) => (extract(map, min), extract(map, max), bins(map)) match {
@@ -450,8 +449,8 @@ trait CutRules {
     }
   }
 
-  private def extract[V: Valueable](ext: Map[Position1D, Content], key: V): Option[Double] = {
-    ext.get(Position1D(key)).flatMap(_.value.asDouble)
+  private def extract(ext: Map[Position1D, Content], key: Positionable[Position1D]): Option[Double] = {
+    ext.get(key()).flatMap(_.value.asDouble)
   }
 
   private def log2(x: Double): Double = math.log(x) / math.log(2)
