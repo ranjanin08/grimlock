@@ -55,6 +55,8 @@ trait Position {
    */
   def toShortString(separator: String): String = coordinates.map(_.toShortString).mkString(separator)
 
+  override def toString = "Position" + coordinates.length + "D(" + coordinates.map(_.toString).mkString(",") + ")"
+
   /**
    * Compare this object with another position.
    *
@@ -524,16 +526,12 @@ case class Position0D() extends Position with ExpandablePosition {
   protected type S = Position0D
 
   protected def same(cl: List[Value]): S = Position0D()
-  protected def more(cl: List[Value]): M = Position1D(cl(0))
+  protected def more(cl: List[Value]): M = Position1DImpl(cl)
 }
 
-/**
- * Position for 1 dimensional data.
- *
- * @param first Coordinate for the first dimension.
- */
-case class Position1D(first: Value) extends Position with ReduceablePosition with ExpandablePosition
-  with MapOverPosition with MapAlongPosition {
+/** Position for 1 dimensional data. */
+trait Position1D extends Position with ReduceablePosition with ExpandablePosition with MapOverPosition
+  with MapAlongPosition {
   type L = Position0D
   type M = Position2D
   type O = Content
@@ -541,33 +539,36 @@ case class Position1D(first: Value) extends Position with ReduceablePosition wit
 
   val over = P1MapOver
   val along = P1MapAlong
-  val coordinates = List(first)
 
   protected type S = Position1D
 
   protected def less(cl: List[Value]): L = Position0D()
-  protected def same(cl: List[Value]): S = Position1D(cl(0))
-  protected def more(cl: List[Value]): M = Position2D(cl(0), cl(1))
+  protected def same(cl: List[Value]): S = Position1DImpl(cl)
+  protected def more(cl: List[Value]): M = Position2DImpl(cl)
 }
 
 /** Companion object to `Position1D`. */
 object Position1D {
   /**
-   * Construct a `Position1D` from a type `S` for which there exist a coordinate.
+   * Construct a `Position1D` from a coordinate.
    *
-   * @param s The coordinate value from which to create a `Position1D`.
+   * @param first Coordinate for the first dimension.
    */
-  def apply(s: Valueable): Position1D = Position1D(s())
+  def apply(first: Valueable): Position1D = Position1DImpl(List(first()))
+
+  /**
+   * Unapply method to permit pattern matching on coordinates values.
+   *
+   * @param p Position to pattern match on.
+   */
+  def unapply(pos: Position1D): Option[Value] = Some(pos(First))
 }
 
-/**
- * Position for 2 dimensional data.
- *
- * @param first  Coordinate for the first dimension.
- * @param second Coordinate for the second dimension.
- */
-case class Position2D(first: Value, second: Value) extends Position with ReduceablePosition with ExpandablePosition
-  with PermutablePosition with MapOverPosition with MapAlongPosition {
+private case class Position1DImpl(coordinates: List[Value]) extends Position1D
+
+/** Position for 2 dimensional data. */
+trait Position2D extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
+  with MapOverPosition with MapAlongPosition {
   type L = Position1D
   type M = Position3D
   type O = Map[Position1D, Content]
@@ -575,35 +576,37 @@ case class Position2D(first: Value, second: Value) extends Position with Reducea
 
   val over = P2MapOver
   val along = PMapAlong
-  val coordinates = List(first, second)
 
   protected type S = Position2D
 
-  protected def less(cl: List[Value]): L = Position1D(cl(0))
-  protected def same(cl: List[Value]): S = Position2D(cl(0), cl(1))
-  protected def more(cl: List[Value]): M = Position3D(cl(0), cl(1), cl(2))
+  protected def less(cl: List[Value]): L = Position1DImpl(cl)
+  protected def same(cl: List[Value]): S = Position2DImpl(cl)
+  protected def more(cl: List[Value]): M = Position3DImpl(cl)
 }
 
 /** Companion object to `Position2D`. */
 object Position2D {
   /**
-   * Construct a `Position2D` from types `S` and `T` for which there exist coordinates.
+   * Construct a `Position2D` from two coordinates.
    *
-   * @param s The first coordinate value from which to create a `Position2D`.
-   * @param t The second coordinate value from which to create a `Position2D`.
+   * @param first  Coordinate for the first dimension.
+   * @param second Coordinate for the second dimension.
    */
-  def apply(s: Valueable, t: Valueable): Position2D = Position2D(s(), t())
+  def apply(first: Valueable, second: Valueable): Position2D = Position2DImpl(List(first(), second()))
+
+  /**
+   * Unapply method to permit pattern matching on coordinates values.
+   *
+   * @param p Position to pattern match on.
+   */
+  def unapply(p: Position2D): Option[(Value, Value)] = Some((p(First), p(Second)))
 }
 
-/**
- * Position for 3 dimensional data.
- *
- * @param first  Coordinate for the first dimension.
- * @param second Coordinate for the second dimension.
- * @param third  Coordinate for the third dimension.
- */
-case class Position3D(first: Value, second: Value, third: Value) extends Position with ReduceablePosition
-  with ExpandablePosition with PermutablePosition with MapOverPosition with MapAlongPosition {
+private case class Position2DImpl(coordinates: List[Value]) extends Position2D
+
+/** Position for 3 dimensional data. */
+trait Position3D extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
+  with MapOverPosition with MapAlongPosition {
   type L = Position2D
   type M = Position4D
   type O = Map[Position2D, Content]
@@ -611,37 +614,40 @@ case class Position3D(first: Value, second: Value, third: Value) extends Positio
 
   val over = P3MapOver
   val along = PMapAlong
-  val coordinates = List(first, second, third)
 
   protected type S = Position3D
 
-  protected def less(cl: List[Value]): L = Position2D(cl(0), cl(1))
-  protected def same(cl: List[Value]): S = Position3D(cl(0), cl(1), cl(2))
-  protected def more(cl: List[Value]): M = Position4D(cl(0), cl(1), cl(2), cl(3))
+  protected def less(cl: List[Value]): L = Position2DImpl(cl)
+  protected def same(cl: List[Value]): S = Position3DImpl(cl)
+  protected def more(cl: List[Value]): M = Position4DImpl(cl)
 }
 
 /** Companion object to `Position3D`. */
 object Position3D {
   /**
-   * Construct a `Position3D` from types `S`, `T` and `U` for which there exist coordinates.
+   * Construct a `Position3D` from three coordinates.
    *
-   * @param s The first coordinate value from which to create a `Position3D`.
-   * @param t The second coordinate value from which to create a `Position3D`.
-   * @param u The third coordinate value from which to create a `Position3D`.
+   * @param first  Coordinate for the first dimension.
+   * @param second Coordinate for the second dimension.
+   * @param third  Coordinate for the third dimension.
    */
-  def apply(s: Valueable, t: Valueable, u: Valueable): Position3D = Position3D(s(), t(), u())
+  def apply(first: Valueable, second: Valueable, third: Valueable): Position3D = {
+    Position3DImpl(List(first(), second(), third()))
+  }
+
+  /**
+   * Unapply method to permit pattern matching on coordinates values.
+   *
+   * @param p Position to pattern match on.
+   */
+  def unapply(p: Position3D): Option[(Value, Value, Value)] = Some((p(First), p(Second), p(Third)))
 }
 
-/**
- * Position for 4 dimensional data.
- *
- * @param first  Coordinate for the first dimension.
- * @param second Coordinate for the second dimension.
- * @param third  Coordinate for the third dimension.
- * @param fourth Coordinate for the fourth dimension.
- */
-case class Position4D(first: Value, second: Value, third: Value, fourth: Value) extends Position
-  with ReduceablePosition with ExpandablePosition with PermutablePosition with MapOverPosition with MapAlongPosition {
+private case class Position3DImpl(coordinates: List[Value]) extends Position3D
+
+/** Position for 4 dimensional data. */
+trait Position4D extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
+  with MapOverPosition with MapAlongPosition {
   type L = Position3D
   type M = Position5D
   type O = Map[Position3D, Content]
@@ -649,39 +655,41 @@ case class Position4D(first: Value, second: Value, third: Value, fourth: Value) 
 
   val over = P4MapOver
   val along = PMapAlong
-  val coordinates = List(first, second, third, fourth)
 
   protected type S = Position4D
 
-  protected def less(cl: List[Value]): L = Position3D(cl(0), cl(1), cl(2))
-  protected def same(cl: List[Value]): S = Position4D(cl(0), cl(1), cl(2), cl(3))
-  protected def more(cl: List[Value]): M = Position5D(cl(0), cl(1), cl(2), cl(3), cl(4))
+  protected def less(cl: List[Value]): L = Position3DImpl(cl)
+  protected def same(cl: List[Value]): S = Position4DImpl(cl)
+  protected def more(cl: List[Value]): M = Position5DImpl(cl)
 }
 
 /** Companion object to `Position4D`. */
 object Position4D {
   /**
-   * Construct a `Position4D` from types `S`, `T`, `U` and `V` for which there exist coordinates.
+   * Construct a `Position4D` from four coordinates.
    *
-   * @param s The first coordinate value from which to create a `Position4D`.
-   * @param t The second coordinate value from which to create a `Position4D`.
-   * @param u The third coordinate value from which to create a `Position4D`.
-   * @param v The fourth coordinate value from which to create a `Position4D`.
+   * @param first  Coordinate for the first dimension.
+   * @param second Coordinate for the second dimension.
+   * @param third  Coordinate for the third dimension.
+   * @param fourth Coordinate for the fourth dimension.
    */
-  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable): Position4D = Position4D(s(), t(), u(), v())
+  def apply(first: Valueable, second: Valueable, third: Valueable, fourth: Valueable): Position4D = {
+    Position4DImpl(List(first(), second(), third(), fourth()))
+  }
+
+  /**
+   * Unapply method to permit pattern matching on coordinates values.
+   *
+   * @param p Position to pattern match on.
+   */
+  def unapply(p: Position4D): Option[(Value, Value, Value, Value)] = Some((p(First), p(Second), p(Third), p(Fourth)))
 }
 
-/**
- * Position for 5 dimensional data.
- *
- * @param first  Coordinate for the first dimension.
- * @param second Coordinate for the second dimension.
- * @param third  Coordinate for the third dimension.
- * @param fourth Coordinate for the fourth dimension.
- * @param fifth  Coordinate for the fifth dimension.
- */
-case class Position5D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value) extends Position
-  with ReduceablePosition with ExpandablePosition with PermutablePosition with MapOverPosition with MapAlongPosition {
+private case class Position4DImpl(coordinates: List[Value]) extends Position4D
+
+/** Position for 5 dimensional data. */
+trait Position5D extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
+  with MapOverPosition with MapAlongPosition {
   type L = Position4D
   type M = Position6D
   type O = Map[Position4D, Content]
@@ -689,43 +697,43 @@ case class Position5D(first: Value, second: Value, third: Value, fourth: Value, 
 
   val over = P5MapOver
   val along = PMapAlong
-  val coordinates = List(first, second, third, fourth, fifth)
 
   protected type S = Position5D
 
-  protected def less(cl: List[Value]): L = Position4D(cl(0), cl(1), cl(2), cl(3))
-  protected def same(cl: List[Value]): S = Position5D(cl(0), cl(1), cl(2), cl(3), cl(4))
-  protected def more(cl: List[Value]): M = Position6D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5))
+  protected def less(cl: List[Value]): L = Position4DImpl(cl)
+  protected def same(cl: List[Value]): S = Position5DImpl(cl)
+  protected def more(cl: List[Value]): M = Position6DImpl(cl)
 }
 
 /** Companion object to `Position5D`. */
 object Position5D {
   /**
-   * Construct a `Position5D` from types `S`, `T`, `U`, `V` and `W` for which there exist coordinates.
+   * Construct a `Position5D` from five coordinates.
    *
-   * @param s The first coordinate value from which to create a `Position5D`.
-   * @param t The second coordinate value from which to create a `Position5D`.
-   * @param u The third coordinate value from which to create a `Position5D`.
-   * @param v The fourth coordinate value from which to create a `Position5D`.
-   * @param w The fifth coordinate value from which to create a `Position5D`.
+   * @param first  Coordinate for the first dimension.
+   * @param second Coordinate for the second dimension.
+   * @param third  Coordinate for the third dimension.
+   * @param fourth Coordinate for the fourth dimension.
+   * @param fifth  Coordinate for the fifth dimension.
    */
-  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable, w: Valueable): Position5D = {
-    Position5D(s(), t(), u(), v(), w())
+  def apply(first: Valueable, second: Valueable, third: Valueable, fourth: Valueable, fifth: Valueable): Position5D = {
+    Position5DImpl(List(first(), second(), third(), fourth(), fifth()))
+  }
+
+  /**
+   * Unapply method to permit pattern matching on coordinates values.
+   *
+   * @param p Position to pattern match on.
+   */
+  def unapply(p: Position5D): Option[(Value, Value, Value, Value, Value)] = {
+    Some((p(First), p(Second), p(Third), p(Fourth), p(Fifth)))
   }
 }
 
-/**
- * Position for 6 dimensional data.
- *
- * @param first  Coordinate for the first dimension.
- * @param second Coordinate for the second dimension.
- * @param third  Coordinate for the third dimension.
- * @param fourth Coordinate for the fourth dimension.
- * @param fifth  Coordinate for the fifth dimension.
- * @param sixth  Coordinate for the sixth dimension.
- */
-case class Position6D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value,
-  sixth: Value) extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
+private case class Position5DImpl(coordinates: List[Value]) extends Position5D
+
+/** Position for 6 dimensional data. */
+trait Position6D extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
   with MapOverPosition with MapAlongPosition {
   type L = Position5D
   type M = Position7D
@@ -734,45 +742,43 @@ case class Position6D(first: Value, second: Value, third: Value, fourth: Value, 
 
   val over = P6MapOver
   val along = PMapAlong
-  val coordinates = List(first, second, third, fourth, fifth, sixth)
 
   protected type S = Position6D
 
-  protected def less(cl: List[Value]): L = Position5D(cl(0), cl(1), cl(2), cl(3), cl(4))
-  protected def same(cl: List[Value]): S = Position6D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5))
-  protected def more(cl: List[Value]): M = Position7D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6))
+  protected def less(cl: List[Value]): L = Position5DImpl(cl)
+  protected def same(cl: List[Value]): S = Position6DImpl(cl)
+  protected def more(cl: List[Value]): M = Position7DImpl(cl)
 }
 
 /** Companion object to `Position6D`. */
 object Position6D {
   /**
-   * Construct a `Position6D` from types `S`, `T`, `U`, `V`, `W` and `X` for which there exist coordinates.
+   * Construct a `Position6D` from six coordinates.
    *
-   * @param s The first coordinate value from which to create a `Position6D`.
-   * @param t The second coordinate value from which to create a `Position6D`.
-   * @param u The third coordinate value from which to create a `Position6D`.
-   * @param v The fourth coordinate value from which to create a `Position6D`.
-   * @param w The fifth coordinate value from which to create a `Position6D`.
-   * @param x The sixth coordinate value from which to create a `Position6D`.
+   * @param first  Coordinate for the first dimension.
+   * @param second Coordinate for the second dimension.
+   * @param third  Coordinate for the third dimension.
+   * @param fourth Coordinate for the fourth dimension.
+   * @param fifth  Coordinate for the fifth dimension.
+   * @param sixth  Coordinate for the sixth dimension.
    */
-  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable, w: Valueable, x: Valueable): Position6D = {
-    Position6D(s(), t(), u(), v(), w(), x())
+  def apply(first: Valueable, second: Valueable, third: Valueable, fourth: Valueable, fifth: Valueable,
+    sixth: Valueable): Position6D = Position6DImpl(List(first(), second(), third(), fourth(), fifth(), sixth()))
+
+  /**
+   * Unapply method to permit pattern matching on coordinates values.
+   *
+   * @param p Position to pattern match on.
+   */
+  def unapply(p: Position6D): Option[(Value, Value, Value, Value, Value, Value)] = {
+    Some((p(First), p(Second), p(Third), p(Fourth), p(Fifth), p(Sixth)))
   }
 }
 
-/**
- * Position for 7 dimensional data.
- *
- * @param first   Coordinate for the first dimension.
- * @param second  Coordinate for the second dimension.
- * @param third   Coordinate for the third dimension.
- * @param fourth  Coordinate for the fourth dimension.
- * @param fifth   Coordinate for the fifth dimension.
- * @param sixth   Coordinate for the sixth dimension.
- * @param seventh Coordinate for the seventh dimension.
- */
-case class Position7D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value, sixth: Value,
-  seventh: Value) extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
+private case class Position6DImpl(coordinates: List[Value]) extends Position6D
+
+/** Position for 7 dimensional data. */
+trait Position7D extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
   with MapOverPosition with MapAlongPosition {
   type L = Position6D
   type M = Position8D
@@ -781,47 +787,47 @@ case class Position7D(first: Value, second: Value, third: Value, fourth: Value, 
 
   val over = P7MapOver
   val along = PMapAlong
-  val coordinates = List(first, second, third, fourth, fifth, sixth, seventh)
 
   protected type S = Position7D
 
-  protected def less(cl: List[Value]): L = Position6D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5))
-  protected def same(cl: List[Value]): S = Position7D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6))
-  protected def more(cl: List[Value]): M = Position8D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6), cl(7))
+  protected def less(cl: List[Value]): L = Position6DImpl(cl)
+  protected def same(cl: List[Value]): S = Position7DImpl(cl)
+  protected def more(cl: List[Value]): M = Position8DImpl(cl)
 }
 
 /** Companion object to `Position7D`. */
 object Position7D {
   /**
-   * Construct a `Position7D` from types `S`, `T`, `U`, `V`, `W`, `X` and `Y` for which there exist coordinates.
+   * Construct a `Position7D` from seven coordinates.
    *
-   * @param s The first coordinate value from which to create a `Position7D`.
-   * @param t The second coordinate value from which to create a `Position7D`.
-   * @param u The third coordinate value from which to create a `Position7D`.
-   * @param v The fourth coordinate value from which to create a `Position7D`.
-   * @param w The fifth coordinate value from which to create a `Position7D`.
-   * @param x The sixth coordinate value from which to create a `Position7D`.
-   * @param y The seventh coordinate value from which to create a `Position7D`.
+   * @param first   Coordinate for the first dimension.
+   * @param second  Coordinate for the second dimension.
+   * @param third   Coordinate for the third dimension.
+   * @param fourth  Coordinate for the fourth dimension.
+   * @param fifth   Coordinate for the fifth dimension.
+   * @param sixth   Coordinate for the sixth dimension.
+   * @param seventh Coordinate for the seventh dimension.
    */
-  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable, w: Valueable, x: Valueable,
-    y: Valueable): Position7D = Position7D(s(), t(), u(), v(), w(), x(), y())
+  def apply(first: Valueable, second: Valueable, third: Valueable, fourth: Valueable, fifth: Valueable,
+    sixth: Valueable, seventh: Valueable): Position7D = {
+    Position7DImpl(List(first(), second(), third(), fourth(), fifth(), sixth(), seventh()))
+  }
+
+  /**
+   * Unapply method to permit pattern matching on coordinates values.
+   *
+   * @param p Position to pattern match on.
+   */
+  def unapply(p: Position7D): Option[(Value, Value, Value, Value, Value, Value, Value)] = {
+    Some((p(First), p(Second), p(Third), p(Fourth), p(Fifth), p(Sixth), p(Seventh)))
+  }
 }
 
-/**
- * Position for 8 dimensional data.
- *
- * @param first   Coordinate for the first dimension.
- * @param second  Coordinate for the second dimension.
- * @param third   Coordinate for the third dimension.
- * @param fourth  Coordinate for the fourth dimension.
- * @param fifth   Coordinate for the fifth dimension.
- * @param sixth   Coordinate for the sixth dimension.
- * @param seventh Coordinate for the seventh dimension.
- * @param eighth  Coordinate for the eighth dimension.
- */
-case class Position8D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value, sixth: Value,
-  seventh: Value, eighth: Value) extends Position with ReduceablePosition with ExpandablePosition
-  with PermutablePosition with MapOverPosition with MapAlongPosition {
+private case class Position7DImpl(coordinates: List[Value]) extends Position7D
+
+/** Position for 8 dimensional data. */
+trait Position8D extends Position with ReduceablePosition with ExpandablePosition with PermutablePosition
+  with MapOverPosition with MapAlongPosition {
   type L = Position7D
   type M = Position9D
   type O = Map[Position7D, Content]
@@ -829,82 +835,92 @@ case class Position8D(first: Value, second: Value, third: Value, fourth: Value, 
 
   val over = P8MapOver
   val along = PMapAlong
-  val coordinates = List(first, second, third, fourth, fifth, sixth, seventh, eighth)
 
   protected type S = Position8D
 
-  protected def less(cl: List[Value]): L = Position7D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6))
-  protected def same(cl: List[Value]): S = Position8D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6), cl(7))
-  protected def more(cl: List[Value]): M = Position9D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6), cl(7), cl(8))
+  protected def less(cl: List[Value]): L = Position7DImpl(cl)
+  protected def same(cl: List[Value]): S = Position8DImpl(cl)
+  protected def more(cl: List[Value]): M = Position9DImpl(cl)
 }
 
 /** Companion object to `Position8D`. */
 object Position8D {
   /**
-   * Construct a `Position8D` from types `S`, `T`, `U`, `V`, `W`, `X`, `Y` and `Z` for which there exist coordinates.
+   * Construct a `Position8D` from eight coordinates.
    *
-   * @param s The first coordinate value from which to create a `Position8D`.
-   * @param t The second coordinate value from which to create a `Position8D`.
-   * @param u The third coordinate value from which to create a `Position8D`.
-   * @param v The fourth coordinate value from which to create a `Position8D`.
-   * @param w The fifth coordinate value from which to create a `Position8D`.
-   * @param x The sixth coordinate value from which to create a `Position8D`.
-   * @param y The seventh coordinate value from which to create a `Position8D`.
-   * @param z The eighth coordinate value from which to create a `Position8D`.
+   * @param first   Coordinate for the first dimension.
+   * @param second  Coordinate for the second dimension.
+   * @param third   Coordinate for the third dimension.
+   * @param fourth  Coordinate for the fourth dimension.
+   * @param fifth   Coordinate for the fifth dimension.
+   * @param sixth   Coordinate for the sixth dimension.
+   * @param seventh Coordinate for the seventh dimension.
+   * @param eighth  Coordinate for the eighth dimension.
    */
-  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable, w: Valueable, x: Valueable, y: Valueable,
-    z: Valueable): Position8D = Position8D(s(), t(), u(), v(), w(), x(), y(), z())
+  def apply(first: Valueable, second: Valueable, third: Valueable, fourth: Valueable, fifth: Valueable,
+    sixth: Valueable, seventh: Valueable, eighth: Valueable): Position8D = {
+    Position8DImpl(List(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth()))
+  }
+
+  /**
+   * Unapply method to permit pattern matching on coordinates values.
+   *
+   * @param p Position to pattern match on.
+   */
+  def unapply(p: Position8D): Option[(Value, Value, Value, Value, Value, Value, Value, Value)] = {
+    Some((p(First), p(Second), p(Third), p(Fourth), p(Fifth), p(Sixth), p(Seventh), p(Eighth)))
+  }
 }
 
-/**
- * Position for 9 dimensional data.
- *
- * @param first   Coordinate for the first dimension.
- * @param second  Coordinate for the second dimension.
- * @param third   Coordinate for the third dimension.
- * @param fourth  Coordinate for the fourth dimension.
- * @param fifth   Coordinate for the fifth dimension.
- * @param sixth   Coordinate for the sixth dimension.
- * @param seventh Coordinate for the seventh dimension.
- * @param eighth  Coordinate for the eighth dimension.
- * @param ninth   Coordinate for the ninth dimension.
- */
-case class Position9D(first: Value, second: Value, third: Value, fourth: Value, fifth: Value, sixth: Value,
-  seventh: Value, eighth: Value, ninth: Value) extends Position with ReduceablePosition with PermutablePosition
-  with MapOverPosition with MapAlongPosition {
+private case class Position8DImpl(coordinates: List[Value]) extends Position8D
+
+/** Position for 9 dimensional data.  */
+trait Position9D extends Position with ReduceablePosition with PermutablePosition with MapOverPosition
+  with MapAlongPosition {
   type L = Position8D
   type O = Map[Position8D, Content]
   type A = Map[Position1D, Content]
 
   val over = P9MapOver
   val along = PMapAlong
-  val coordinates = List(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)
 
   protected type S = Position9D
 
-  protected def less(cl: List[Value]): L = Position8D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6), cl(7))
-  protected def same(cl: List[Value]): S = Position9D(cl(0), cl(1), cl(2), cl(3), cl(4), cl(5), cl(6), cl(7), cl(8))
+  protected def less(cl: List[Value]): L = Position8DImpl(cl)
+  protected def same(cl: List[Value]): S = Position9DImpl(cl)
 }
 
 /** Companion object to `Position9D`. */
 object Position9D {
   /**
-   * Construct a `Position9D` from types `S`, `T`, `U`, `V`, `W`, `X`, `Y`, `Z` and `A` for which there exist
-   * coordinates.
+   * Construct a `Position9D` from nine coordinates.
    *
-   * @param s The first coordinate value from which to create a `Position9D`.
-   * @param t The second coordinate value from which to create a `Position9D`.
-   * @param u The third coordinate value from which to create a `Position9D`.
-   * @param v The fourth coordinate value from which to create a `Position9D`.
-   * @param w The fifth coordinate value from which to create a `Position9D`.
-   * @param x The sixth coordinate value from which to create a `Position9D`.
-   * @param y The seventh coordinate value from which to create a `Position9D`.
-   * @param z The eighth coordinate value from which to create a `Position9D`.
-   * @param a The ninth coordinate value from which to create a `Position9D`.
+   * @param first   Coordinate for the first dimension.
+   * @param second  Coordinate for the second dimension.
+   * @param third   Coordinate for the third dimension.
+   * @param fourth  Coordinate for the fourth dimension.
+   * @param fifth   Coordinate for the fifth dimension.
+   * @param sixth   Coordinate for the sixth dimension.
+   * @param seventh Coordinate for the seventh dimension.
+   * @param eighth  Coordinate for the eighth dimension.
+   * @param ninth   Coordinate for the ninth dimension.
    */
-  def apply(s: Valueable, t: Valueable, u: Valueable, v: Valueable, w: Valueable, x: Valueable, y: Valueable,
-    z: Valueable, a: Valueable): Position9D = Position9D(s(), t(), u(), v(), w(), x(), y(), z(), a())
+  def apply(first: Valueable, second: Valueable, third: Valueable, fourth: Valueable, fifth: Valueable,
+    sixth: Valueable, seventh: Valueable, eighth: Valueable, ninth: Valueable): Position9D = {
+    Position9DImpl(List(first(), second(), third(), fourth(), fifth(), sixth(), seventh(), eighth(), ninth()))
+  }
+
+  /**
+   * Unapply method to permit pattern matching on coordinates values.
+   *
+   * @param p Position to pattern match on.
+   */
+  def unapply(p: Position9D): Option[(Value, Value, Value, Value, Value, Value, Value, Value, Value)] = {
+    Some((p(First), p(Second), p(Third), p(Fourth), p(Fifth), p(Sixth), p(Seventh), p(Eighth), p(Ninth)))
+  }
 }
+
+private case class Position9DImpl(coordinates: List[Value]) extends Position9D
 
 /** Base trait that represents the positions of a matrix. */
 trait Positions[P <: Position] extends RawData {
