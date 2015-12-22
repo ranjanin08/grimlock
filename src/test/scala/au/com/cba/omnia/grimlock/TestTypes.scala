@@ -206,24 +206,24 @@ class TestDateType extends TestGrimlock {
 
 class TestEventType extends TestGrimlock {
 
-  "A Event" should "return its short name" in {
-    Event.toShortString shouldBe "event"
+  "A Structured" should "return its short name" in {
+    Structured.toShortString shouldBe "structured"
   }
 
   it should "return its name" in {
-    Event.toString shouldBe "Event"
+    Structured.toString shouldBe "Structured"
   }
 
   it should "return correct generalised type" in {
-    Event.getGeneralisation shouldBe Event
+    Structured.getGeneralisation shouldBe Structured
   }
 
   it should "match correct specialisation" in {
-    Event.isSpecialisationOf(Event) shouldBe true
+    Structured.isSpecialisationOf(Structured) shouldBe true
   }
 
   it should "not match incorrect specialisation" in {
-    Event.isSpecialisationOf(Numerical) shouldBe false
+    Structured.isSpecialisationOf(Numerical) shouldBe false
   }
 }
 

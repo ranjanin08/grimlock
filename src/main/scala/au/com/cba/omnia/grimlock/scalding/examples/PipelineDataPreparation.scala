@@ -63,14 +63,14 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
   // Define descriptive statistics to be computed on the training data.
   val dstats: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-    Count().andThenExpand(_.position.append("count")),
-    Mean().andThenExpand(_.position.append("mean")),
-    StandardDeviation().andThenExpand(_.position.append("sd")),
-    Skewness().andThenExpand(_.position.append("skewness")),
-    Kurtosis().andThenExpand(_.position.append("kurtosis")),
-    Min().andThenExpand(_.position.append("min")),
-    Max().andThenExpand(_.position.append("max")),
-    MaxAbs().andThenExpand(_.position.append("max.abs")))
+    Count().andThenRelocate(_.position.append("count")),
+    Mean().andThenRelocate(_.position.append("mean")),
+    StandardDeviation().andThenRelocate(_.position.append("sd")),
+    Skewness().andThenRelocate(_.position.append("skewness")),
+    Kurtosis().andThenRelocate(_.position.append("kurtosis")),
+    Min().andThenRelocate(_.position.append("min")),
+    Max().andThenRelocate(_.position.append("max")),
+    MaxAbs().andThenRelocate(_.position.append("max.abs")))
 
   // Compute descriptive statistics on the training data.
   val descriptive = train
@@ -96,9 +96,9 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
 
   // Define summary statisics to compute on the histogram.
   val sstats: List[AggregatorWithValue[Position2D, Position1D, Position2D] { type V >: W }] = List(
-    Count().andThenExpand(_.position.append("num.cat")),
-    Entropy(extractCount).andThenExpand(_.position.append("entropy")),
-    FrequencyRatio().andThenExpand(_.position.append("freq.ratio")))
+    Count().andThenRelocate(_.position.append("num.cat")),
+    Entropy(extractCount).andThenRelocate(_.position.append("entropy")),
+    FrequencyRatio().andThenRelocate(_.position.append("freq.ratio")))
 
   // Compute summary statisics on the histogram.
   val summary = histogram
@@ -154,8 +154,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
       .slice(Over(Second), rem1, false)
 
     val ind = d
-      .transform(Indicator[Position2D]()
-        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")))
+      .transform(Indicator[Position2D]().andThenRelocate(Locate.RenameDimension(Second, "%1$s.ind")))
 
     val csb = d
       .slice(Over(Second), rem2, false)

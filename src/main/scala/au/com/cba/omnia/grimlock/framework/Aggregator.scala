@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.framework.aggregate
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for aggregations. */
@@ -50,36 +51,53 @@ trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Posi
   def present(pos: S, t: T): Option[Cell[Q]]
 
   /**
-   * Operator for aggregating and then renaming dimensions.
+   * Operator for preparing content prior to aggregating.
    *
-   * @param rename The rename to apply after the aggregation.
+   * @param prep The function to apply prior to aggregation.
    *
-   * @return An aggregator that runs `this` and then renames the resulting dimension(s).
+   * @return An aggregator that prepares the content and then runs `this`.
    */
-  override def andThenRename(rename: Locate.FromOutcome[Q, Q]) = {
+  override def withPrepare(prep: (Cell[P]) => Content) = {
+    new Aggregator[P, S, Q] {
+      type T = self.T
+
+      def prepare(cell: Cell[P]): T = self.prepare(Cell(cell.position, prep(cell)))
+      def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
+      def present(pos: S, t: T): Option[Cell[Q]] = self.present(pos, t)
+    }
+  }
+
+  /**
+   * Operator for aggregating and then updating the contents.
+   *
+   * @param mutate The mutation to apply after the aggregation.
+   *
+   * @return An aggregator that runs `this` and then updates the resulting contents.
+   */
+  override def andThenMutate(mutate: (Cell[Q]) => Content) = {
     new Aggregator[P, S, Q] {
       type T = self.T
 
       def prepare(cell: Cell[P]): T = self.prepare(cell)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
-      def present(pos: S, t: T): Option[Cell[Q]] = self.present(pos, t).map { case c => Cell(rename(c), c.content) }
+      def present(pos: S, t: T): Option[Cell[Q]] = self.present(pos, t).map { case c => Cell(c.position, mutate(c)) }
     }
   }
 
   /**
-   * Operator for aggregating and then expanding dimensions.
+   * Operator for aggregating and then relocating the contents.
    *
-   * @param expand The expansion to apply after the aggregation.
+   * @param locate The relocation to apply after the aggregation.
    *
-   * @return An aggregator that runs `this` and then expands the resulting dimensions.
+   * @return An aggregator that runs `this` and then relocates the resulting contents.
    */
-  override def andThenExpand[R <: Position](expand: Locate.FromOutcome[Q, R])(implicit ev: PosExpDep[Q, R]) = {
+  override def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new Aggregator[P, S, R] {
       type T = self.T
 
       def prepare(cell: Cell[P]): T = self.prepare(cell)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
-      def present(pos: S, t: T): Option[Cell[R]] = self.present(pos, t).map { case c => Cell(expand(c), c.content) }
+      def present(pos: S, t: T): Option[Cell[R]] = self.present(pos, t).map { case c => Cell(locate(c), c.content) }
     }
   }
 }
@@ -130,13 +148,31 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
   def presentWithValue(pos: S, t: T, ext: V): Option[Cell[Q]]
 
   /**
-   * Operator for aggregating and then renaming dimensions.
+   * Operator for preparing content prior to aggregating.
    *
-   * @param rename The rename to apply after the aggregation.
+   * @param prep The function to apply prior to aggregation.
    *
-   * @return An aggregator that runs `this` and then renames the resulting dimension(s).
+   * @return An aggregator that prepares the content and then runs `this`.
    */
-  def andThenRename(rename: Locate.FromOutcome[Q, Q]) = {
+  def withPrepare(prep: (Cell[P]) => Content) = {
+    new AggregatorWithValue[P, S, Q] {
+      type T = self.T
+      type V = self.V
+
+      def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(Cell(cell.position, prep(cell)), ext)
+      def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
+      def presentWithValue(pos: S, t: T, ext: V): Option[Cell[Q]] = self.presentWithValue(pos, t, ext)
+    }
+  }
+
+  /**
+   * Operator for aggregating and then updating the contents.
+   *
+   * @param mutate The mutation to apply after the aggregation.
+   *
+   * @return An aggregator that runs `this` and then updates the resulting contents.
+   */
+  def andThenMutate(mutate: (Cell[Q]) => Content) = {
     new AggregatorWithValue[P, S, Q] {
       type T = self.T
       type V = self.V
@@ -144,19 +180,19 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(cell, ext)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[Q]] = {
-        self.presentWithValue(pos, t, ext).map { case c => Cell(rename(c), c.content) }
+        self.presentWithValue(pos, t, ext).map { case c => Cell(c.position, mutate(c)) }
       }
     }
   }
 
   /**
-   * Operator for aggregating and then expanding dimensions.
+   * Operator for aggregating and then relocating the contents.
    *
-   * @param expand The expansion to apply after the aggregation.
+   * @param locate The relocation to apply after the aggregation.
    *
-   * @return An aggregator that runs `this` and then expands the resulting dimensions.
+   * @return An aggregator that runs `this` and then relocates the resulting contents.
    */
-  def andThenExpand[R <: Position](expand: Locate.FromOutcome[Q, R])(implicit ev: PosExpDep[Q, R]) = {
+  def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new AggregatorWithValue[P, S, R] {
       type T = self.T
       type V = self.V
@@ -164,19 +200,39 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(cell, ext)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[R]] = {
-        self.presentWithValue(pos, t, ext).map { case c => Cell(expand(c), c.content) }
+        self.presentWithValue(pos, t, ext).map { case c => Cell(locate(c), c.content) }
       }
     }
   }
 
   /**
-   * Operator for aggregating and then renaming dimensions.
+   * Operator for preparing content prior to aggregating.
    *
-   * @param rename The rename to apply after the aggregation.
+   * @param prep The function to apply prior to aggregation.
    *
-   * @return An aggregator that runs `this` and then renames the resulting dimension(s).
+   * @return An aggregator that prepares the content and then runs `this`.
    */
-  def andThenRenameWithValue(rename: Locate.FromOutcomeWithValue[Q, Q, V]) = {
+  def withPrepareWithValue(prep: (Cell[P], V) => Content) = {
+    new AggregatorWithValue[P, S, Q] {
+      type T = self.T
+      type V = self.V
+
+      def prepareWithValue(cell: Cell[P], ext: V): T = {
+        self.prepareWithValue(Cell(cell.position, prep(cell, ext)), ext)
+      }
+      def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
+      def presentWithValue(pos: S, t: T, ext: V): Option[Cell[Q]] = self.presentWithValue(pos, t, ext)
+    }
+  }
+
+  /**
+   * Operator for aggregating and then updating the contents.
+   *
+   * @param mutate The mutation to apply after the aggregation.
+   *
+   * @return An aggregator that runs `this` and then updates the resulting contents.
+   */
+  def andThenMutateWithValue(mutate: (Cell[Q], V) => Content) = {
     new AggregatorWithValue[P, S, Q] {
       type T = self.T
       type V = self.V
@@ -184,20 +240,20 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(cell, ext)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[Q]] = {
-        self.presentWithValue(pos, t, ext).map { case c => Cell(rename(c, ext), c.content) }
+        self.presentWithValue(pos, t, ext).map { case c => Cell(c.position, mutate(c, ext)) }
       }
     }
   }
 
   /**
-   * Operator for aggregating and then expanding dimensions.
+   * Operator for aggregating and then relocating the contents.
    *
-   * @param expand The expansion to apply after the aggregation.
+   * @param locate The relocation to apply after the aggregation.
    *
-   * @return An aggregator that runs `this` and then expands the resulting dimensions.
+   * @return An aggregator that runs `this` and then relocates the resulting contents.
    */
-  def andThenExpandWithValue[R <: Position](expand: Locate.FromOutcomeWithValue[Q, R, V])(
-    implicit ev: PosExpDep[Q, R]) = {
+  def andThenRelocateWithValue[R <: Position](locate: Locate.FromCellWithValue[Q, R, V])(
+    implicit ev: PosIncDep[Q, R]) = {
     new AggregatorWithValue[P, S, R] {
       type T = self.T
       type V = self.V
@@ -205,7 +261,7 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(cell, ext)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[R]] = {
-        self.presentWithValue(pos, t, ext).map { case c => Cell(expand(c, ext), c.content) }
+        self.presentWithValue(pos, t, ext).map { case c => Cell(locate(c, ext), c.content) }
       }
     }
   }

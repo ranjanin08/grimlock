@@ -60,8 +60,8 @@ object Type {
   val Ordinal = Type(Some(Categorical), "ordinal")
   /** Type for date types. */
   val Date = Type(None, "date")
-  /** Type for event types. */
-  val Event = Type(None, "event")
+  /** Type for structured types. */
+  val Structured = Type(None, "structured")
 
   /** Returns the first type `lt` and `rt` have in common, or `Mixed` if nothing in common. */
   def getCommonType(lt: Type, rt: Type): Type = {

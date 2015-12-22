@@ -34,7 +34,7 @@ object ApproximateDistribution extends BaseApproximateDistribution {
 
   type HistogramTuners = TP2
   def histogram[P <: Position, Q <: Position, T <: Tuner](matrix: U[Cell[P]], slice: Slice[P],
-    name: Locate.FromInput[P, Q], all: Boolean, tuner: T = Default())(implicit ev1: PosExpDep[slice.S, Q],
+    name: Locate.FromCell[P, Q], all: Boolean, tuner: T = Default())(implicit ev1: PosExpDep[slice.S, Q],
       ev2: ClassTag[Q], ev3: HistogramTuners#V[T]): U[Cell[Q]] = {
     matrix
       .collect { case c if (all || c.content.schema.kind.isSpecialisationOf(Type.Categorical)) => (name(c), 1L) }

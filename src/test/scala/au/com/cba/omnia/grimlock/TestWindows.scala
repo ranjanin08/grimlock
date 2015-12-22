@@ -590,9 +590,9 @@ class TestCombinationWindow extends TestGrimlock {
     val sel = Position1D("sales")
     val obj = Windowable.LW2W[Position2D, Position1D, Position1D, Position2D](List(
       SimpleMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D](First), false)
-        .andThenRename(renamer("%1$s.simple")),
+        .andThenRelocate(renamer("%1$s.simple")),
       WeightedMovingAverage(5, Locate.AppendRemainderDimension[Position1D, Position1D](First), false)
-        .andThenRename(renamer("%1$s.weighted"))))()
+        .andThenRelocate(renamer("%1$s.weighted"))))()
 
     val prep3 = obj.prepare(Cell(Position2D("sales", "2003"), createContent(4)))
     prep3 shouldBe (List(4.0, 4.0))

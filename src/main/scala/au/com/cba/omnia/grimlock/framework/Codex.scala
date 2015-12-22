@@ -211,8 +211,8 @@ case object BooleanCodex extends Codex {
   protected def toString(value: T): String = value.toString
 }
 
-/** Base trait for dealing with events. */
-trait EventCodex extends Codex {
-  type T <: Event
+/** Base trait for dealing with structured data. */
+trait StructuredCodex extends Codex {
+  type T <: Structured
 }
 

@@ -423,10 +423,10 @@ case class DateSchema[C <: DateCodex](codex: C) extends Schema {
   protected def params(): String = ""
 }
 
-/** Schema for event variables. */
-case class EventSchema[C <: EventCodex](codex: C) extends Schema {
-  val kind = Type.Event
-  val name = "EventSchema"
+/** Schema for structured data variables. */
+case class StructuredSchema[C <: StructuredCodex](codex: C) extends Schema {
+  val kind = Type.Structured
+  val name = "StructuredSchema"
 
   def isValid[V <: Value](value: V): Boolean = value.codex.name == codex.name
 

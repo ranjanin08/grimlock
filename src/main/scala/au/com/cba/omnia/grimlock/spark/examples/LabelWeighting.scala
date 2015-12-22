@@ -74,7 +74,7 @@ object LabelWeighting {
 
     // Find the minimum ratio, and compact the result into a Map.
     val min = ratio
-      .summarise(Along(First), Min[Position1D, Position0D]().andThenExpand(_.position.append("min")))
+      .summarise(Along(First), Min[Position1D, Position0D]().andThenRelocate(_.position.append("min")))
       .compact(Over(First))
 
     // Divide the ratio by the minimum ratio, and compact the result into a Map.

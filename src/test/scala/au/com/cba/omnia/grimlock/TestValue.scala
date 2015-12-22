@@ -49,8 +49,8 @@ class TestDateValue extends TestGrimlock {
     dv2001.asBoolean shouldBe None
   }
 
-  it should "not return a event" in {
-    dv2001.asEvent shouldBe None
+  it should "not return a structured" in {
+    dv2001.asStructured shouldBe None
   }
 
   it should "equal itself" in {
@@ -174,8 +174,8 @@ class TestStringValue extends TestGrimlock {
     dvfoo.asBoolean shouldBe None
   }
 
-  it should "not return a event" in {
-    dvfoo.asEvent shouldBe None
+  it should "not return a structured" in {
+    dvfoo.asStructured shouldBe None
   }
 
   it should "equal itself" in {
@@ -298,8 +298,8 @@ class TestDoubleValue extends TestGrimlock {
     dvone.asBoolean shouldBe None
   }
 
-  it should "not return a event" in {
-    dvone.asEvent shouldBe None
+  it should "not return a structured" in {
+    dvone.asStructured shouldBe None
   }
 
   it should "equal itself" in {
@@ -422,8 +422,8 @@ class TestLongValue extends TestGrimlock {
     dvone.asBoolean shouldBe None
   }
 
-  it should "not return a event" in {
-    dvone.asEvent shouldBe None
+  it should "not return a structured" in {
+    dvone.asStructured shouldBe None
   }
 
   it should "equal itself" in {
@@ -547,8 +547,8 @@ class TestBooleanValue extends TestGrimlock {
     dvpos.asBoolean shouldBe Some(true)
   }
 
-  it should "not return a event" in {
-    dvpos.asEvent shouldBe None
+  it should "not return a structured" in {
+    dvpos.asStructured shouldBe None
   }
 
   it should "equal itself" in {

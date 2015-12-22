@@ -43,7 +43,7 @@ trait ApproximateDistribution extends RawData with DefaultTuners with PositionOr
    * @note The histogram is computed on the positions returned by `position`.
    */
   def histogram[P <: Position, Q <: Position, T <: Tuner](matrix: U[Cell[P]], slice: Slice[P],
-    position: Locate.FromInput[P, Q], all: Boolean = false, tuner: T)(implicit ev1: PosExpDep[slice.S, Q],
+    position: Locate.FromCell[P, Q], all: Boolean = false, tuner: T)(implicit ev1: PosExpDep[slice.S, Q],
       ev2: ClassTag[Q], ev3: HistogramTuners#V[T]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `quantile`. */

@@ -26,8 +26,8 @@ private[encoding] case object Equal extends CompareResult
 private[encoding] case object Less extends CompareResult
 private[encoding] case object LessEqual extends CompareResult
 
-/** Base trait for representing events. */
-trait Event
+/** Base trait for representing strutured data. */
+trait Structured
 
 /** Base trait for variable values. */
 trait Value {
@@ -108,7 +108,7 @@ trait Value {
   /** Return value as `Boolean`. */
   def asBoolean: Option[Boolean] = None
   /** Return value as event. */
-  def asEvent: Option[Event] = None
+  def asStructured: Option[Structured] = None
 
   /** Return a consise (terse) string representation of a value. */
   def toShortString: String = codex.encode(this)
@@ -191,8 +191,8 @@ case class BooleanValue(value: Boolean) extends Value {
  * @param value An event.
  * @param codex The codex used for encoding/decoding `value`.
  */
-case class EventValue[T <: Event](value: T, codex: EventCodex) extends Value {
-  override def asEvent = Some(value)
+case class StructuredValue[T <: Structured](value: T, codex: StructuredCodex) extends Value {
+  override def asStructured = Some(value)
 }
 
 /** Trait for transforming a type `T` into a `Value`. */

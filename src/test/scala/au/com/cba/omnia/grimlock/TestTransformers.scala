@@ -52,11 +52,11 @@ class TestIndicator extends TestTransformers {
 
   it should "present with name" in {
     Indicator[Position2D]()
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.ind"))
-      .present(cell).toList shouldBe List(Cell(Position2D("foo-3.1415.ind", "bar"), getLongContent(1)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.ind"))
+      .present(cell).toList shouldBe List(Cell(Position2D("foo.ind", "bar"), getLongContent(1)))
     Indicator[Position2D]()
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.ind"))
-      .present(cell).toList shouldBe List(Cell(Position2D("foo", "bar-3.1415.ind"), getLongContent(1)))
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.ind"))
+      .present(cell).toList shouldBe List(Cell(Position2D("foo", "bar.ind"), getLongContent(1)))
   }
 }
 
@@ -99,12 +99,12 @@ class TestNormalise extends TestTransformers {
 
   it should "present with name" in {
     Normalise(extractor[Position2D](First, "const"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.norm"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo-3.1415.norm", "bar"),
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.norm"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo.norm", "bar"),
         getDoubleContent(0.5)))
     Normalise(extractor[Position2D](Second, "const"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.norm"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar-3.1415.norm"),
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.norm"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar.norm"),
         getDoubleContent(-2)))
   }
 
@@ -142,12 +142,12 @@ class TestStandardise extends TestTransformers {
 
   it should "present with name" in {
     Standardise(extractor[Position2D](First, "mean"), extractor[Position2D](First, "sd"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo-3.1415.std", "bar"),
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo.std", "bar"),
         getDoubleContent((3.1415 - 0.75) / 1.25)))
     Standardise(extractor[Position2D](Second, "mean"), extractor[Position2D](Second, "sd"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar-3.1415.std"),
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar.std"),
         getDoubleContent((3.1415 + 0.75) / 0.75)))
   }
 
@@ -170,23 +170,23 @@ class TestStandardise extends TestTransformers {
 
   it should "present with name and threshold" in {
     Standardise(extractor[Position2D](First, "mean"), extractor[Position2D](First, "sd"), 1.0)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo-3.1415.std", "bar"),
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo.std", "bar"),
         getDoubleContent((3.1415 - 0.75) / 1.25)))
     Standardise(extractor[Position2D](Second, "mean"), extractor[Position2D](Second, "sd"), 1.0)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar-3.1415.std"),
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar.std"),
         getDoubleContent(0)))
   }
 
   it should "present with name and N" in {
     Standardise(extractor[Position2D](First, "mean"), extractor[Position2D](First, "sd"), n=2)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo-3.1415.std", "bar"),
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo.std", "bar"),
         getDoubleContent((3.1415 - 0.75) / (2 * 1.25))))
     Standardise(extractor[Position2D](Second, "mean"), extractor[Position2D](Second, "sd"), n=2)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar-3.1415.std"),
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar.std"),
         getDoubleContent((3.1415 + 0.75) / (2 * 0.75))))
   }
 
@@ -200,12 +200,12 @@ class TestStandardise extends TestTransformers {
 
   it should "present with name, threshold and N" in {
     Standardise(extractor[Position2D](First, "mean"), extractor[Position2D](First, "sd"), 1.0, 2)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo-3.1415.std", "bar"),
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo.std", "bar"),
         getDoubleContent((3.1415 - 0.75) / (2 * 1.25))))
     Standardise(extractor[Position2D](Second, "mean"), extractor[Position2D](Second, "sd"), 1.0, 2)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar-3.1415.std"), getDoubleContent(0)))
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar.std"), getDoubleContent(0)))
   }
 
   it should "not present with missing key" in {
@@ -246,16 +246,16 @@ class TestClamp extends TestTransformers {
 
   it should "present with name" in {
     Clamp(extractor[Position3D](First, "min"), extractor[Position3D](First, "max"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position3D("foo-3.1415.std", "bar", "baz"),
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position3D("foo.std", "bar", "baz"),
         getDoubleContent(3.1415)))
     Clamp(extractor[Position3D](Second, "min"), extractor[Position3D](Second, "max"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position3D("foo", "bar-3.1415.std", "baz"),
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position3D("foo", "bar.std", "baz"),
         getDoubleContent(1.57075)))
     Clamp(extractor[Position3D](Third, "min"), extractor[Position3D](Third, "max"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Third, "%1$s-%2$s.std"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position3D("foo", "bar", "baz-3.1415.std"),
+      .andThenRelocate(Locate.RenameDimension(Third, "%1$s.std"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position3D("foo", "bar", "baz.std"),
         getDoubleContent(4.71225)))
   }
 
@@ -289,8 +289,8 @@ class TestIdf extends TestTransformers {
 
   it should "present with name" in {
     Idf(dimExtractor[Position1D](First))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.idf"), getDoubleContent(0)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(0)))
   }
 
   it should "present with key" in {
@@ -305,14 +305,14 @@ class TestIdf extends TestTransformers {
 
   it should "present with name and key" in {
     Idf(keyExtractor[Position1D]("bar"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.idf"), getDoubleContent(0)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(0)))
   }
 
   it should "present with name and function" in {
     Idf(dimExtractor[Position1D](First), (df, n) => math.log10(n / df))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.idf"), getDoubleContent(math.log10(2))))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(math.log10(2))))
   }
 
   it should "present with key and function" in {
@@ -322,8 +322,8 @@ class TestIdf extends TestTransformers {
 
   it should "present with name, key and function" in {
     Idf(keyExtractor[Position1D]("bar"), (df, n) => math.log10(n / df))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.idf"), getDoubleContent(math.log10(2))))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(math.log10(2))))
   }
 
   it should "not present with missing key" in {
@@ -352,11 +352,11 @@ class TestBooleanTf extends TestTransformers {
 
   it should "present with name" in {
     BooleanTf[Position2D]()
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.btf"))
-      .present(cell).toList shouldBe List(Cell(Position2D("foo-3.btf", "bar"), getDoubleContent(1)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.btf"))
+      .present(cell).toList shouldBe List(Cell(Position2D("foo.btf", "bar"), getDoubleContent(1)))
     BooleanTf[Position2D]()
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.btf"))
-      .present(cell).toList shouldBe List(Cell(Position2D("foo", "bar-3.btf"), getDoubleContent(1)))
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.btf"))
+      .present(cell).toList shouldBe List(Cell(Position2D("foo", "bar.btf"), getDoubleContent(1)))
   }
 
   it should "not present with a categorical" in {
@@ -374,11 +374,11 @@ class TestLogarithmicTf extends TestTransformers {
 
   it should "present with name" in {
     LogarithmicTf[Position2D]()
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.ltf"))
-      .present(cell).toList shouldBe List(Cell(Position2D("foo-3.ltf", "bar"), getDoubleContent(1 + math.log(3))))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.ltf"))
+      .present(cell).toList shouldBe List(Cell(Position2D("foo.ltf", "bar"), getDoubleContent(1 + math.log(3))))
     LogarithmicTf[Position2D]()
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.ltf"))
-      .present(cell).toList shouldBe List(Cell(Position2D("foo", "bar-3.ltf"), getDoubleContent(1 + math.log(3))))
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.ltf"))
+      .present(cell).toList shouldBe List(Cell(Position2D("foo", "bar.ltf"), getDoubleContent(1 + math.log(3))))
   }
 
   it should "present with log" in {
@@ -388,11 +388,11 @@ class TestLogarithmicTf extends TestTransformers {
 
   it should "present with name and log" in {
     LogarithmicTf[Position2D](math.log10 _)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.ltf"))
-      .present(cell).toList shouldBe List(Cell(Position2D("foo-3.ltf", "bar"), getDoubleContent(1 + math.log10(3))))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.ltf"))
+      .present(cell).toList shouldBe List(Cell(Position2D("foo.ltf", "bar"), getDoubleContent(1 + math.log10(3))))
     LogarithmicTf[Position2D](math.log10 _)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.ltf"))
-      .present(cell).toList shouldBe List(Cell(Position2D("foo", "bar-3.ltf"), getDoubleContent(1 + math.log10(3))))
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.ltf"))
+      .present(cell).toList shouldBe List(Cell(Position2D("foo", "bar.ltf"), getDoubleContent(1 + math.log10(3))))
   }
 
   it should "not present with a categorical" in {
@@ -416,12 +416,12 @@ class TestAugmentedTf extends TestTransformers {
 
   it should "present with name" in {
     AugmentedTf(extractor[Position2D](First, "baz"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.atf"))
-      .presentWithValue(cell, ext2).toList shouldBe List(Cell(Position2D("foo-1.atf", "bar"),
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.atf"))
+      .presentWithValue(cell, ext2).toList shouldBe List(Cell(Position2D("foo.atf", "bar"),
         getDoubleContent(0.5 + 0.5 * 1 / 2)))
     AugmentedTf(dimExtractor[Position2D](Second))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.atf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar-1.atf"),
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.atf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar.atf"),
         getDoubleContent(0.5 + 0.5 * 1 / 2)))
   }
 
@@ -451,11 +451,11 @@ class TestTfIdf extends TestTransformers {
 
   it should "present with name" in {
     TfIdf(dimExtractor[Position2D](First))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.tfidf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo-1.5.tfidf", "bar"), getDoubleContent(3)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.tfidf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo.tfidf", "bar"), getDoubleContent(3)))
     TfIdf(dimExtractor[Position2D](Second))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.tfidf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar-1.5.tfidf"), getDoubleContent(3)))
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.tfidf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar.tfidf"), getDoubleContent(3)))
   }
 
   it should "present with key" in {
@@ -465,11 +465,11 @@ class TestTfIdf extends TestTransformers {
 
   it should "present with name and key" in {
     TfIdf(keyExtractor[Position2D]("baz"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.tfidf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo-1.5.tfidf", "bar"), getDoubleContent(3)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.tfidf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo.tfidf", "bar"), getDoubleContent(3)))
     TfIdf(keyExtractor[Position2D]("baz"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s-%2$s.tfidf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar-1.5.tfidf"), getDoubleContent(3)))
+      .andThenRelocate(Locate.RenameDimension(Second, "%1$s.tfidf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position2D("foo", "bar.tfidf"), getDoubleContent(3)))
   }
 
   it should "not present with missing key" in {
@@ -500,8 +500,8 @@ class TestAdd extends TestTransformers {
 
   it should "present with name" in {
     Add(dimExtractor[Position1D](First))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(3)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(3)))
   }
 
   it should "present with key" in {
@@ -511,8 +511,8 @@ class TestAdd extends TestTransformers {
 
   it should "present with name and key" in {
     Add(keyExtractor[Position1D]("bar"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(3)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(3)))
   }
 
   it should "not present with missing key" in {
@@ -543,8 +543,8 @@ class TestSubtract extends TestTransformers {
 
   it should "present with name" in {
     Subtract(dimExtractor[Position1D](First))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(-1)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(-1)))
   }
 
   it should "present with key" in {
@@ -559,14 +559,14 @@ class TestSubtract extends TestTransformers {
 
   it should "present with name and key" in {
     Subtract(keyExtractor[Position1D]("bar"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(-1)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(-1)))
   }
 
   it should "present with name and inverse" in {
     Subtract(dimExtractor[Position1D](First), true)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(1)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(1)))
   }
 
   it should "present with key and inverse" in {
@@ -576,8 +576,8 @@ class TestSubtract extends TestTransformers {
 
   it should "present with name, key and inverse" in {
     Subtract(keyExtractor[Position1D]("bar"), true)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(1)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(1)))
   }
 
   it should "not present with missing key" in {
@@ -608,8 +608,8 @@ class TestMultiply extends TestTransformers {
 
   it should "present with name" in {
     Multiply(dimExtractor[Position1D](First))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(2)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(2)))
   }
 
   it should "present with key" in {
@@ -619,8 +619,8 @@ class TestMultiply extends TestTransformers {
 
   it should "present with name and key" in {
     Multiply(keyExtractor[Position1D]("bar"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(2)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(2)))
   }
 
   it should "not present with missing key" in {
@@ -651,8 +651,8 @@ class TestFraction extends TestTransformers {
 
   it should "present with name" in {
     Fraction(dimExtractor[Position1D](First))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(0.5)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(0.5)))
   }
 
   it should "present with key" in {
@@ -667,14 +667,14 @@ class TestFraction extends TestTransformers {
 
   it should "present with name and key" in {
     Fraction(keyExtractor[Position1D]("bar"))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(0.5)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(0.5)))
   }
 
   it should "present with name and inverse" in {
     Fraction(dimExtractor[Position1D](First), true)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(2)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(2)))
   }
 
   it should "present with key and inverse" in {
@@ -684,8 +684,8 @@ class TestFraction extends TestTransformers {
 
   it should "present with name, key and inverse" in {
     Fraction(keyExtractor[Position1D]("bar"), true)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.idf"))
-      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo-1.0.idf"), getDoubleContent(2)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.idf"))
+      .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.idf"), getDoubleContent(2)))
   }
 
   it should "not present with missing key" in {
@@ -714,8 +714,8 @@ class TestPower extends TestTransformers {
 
   it should "present with name" in {
     Power[Position1D](2)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.pwr"))
-      .present(cell).toList shouldBe List(Cell(Position1D("foo-3.1415.pwr"), getDoubleContent(3.1415 * 3.1415)))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.pwr"))
+      .present(cell).toList shouldBe List(Cell(Position1D("foo.pwr"), getDoubleContent(3.1415 * 3.1415)))
   }
 }
 
@@ -729,8 +729,8 @@ class TestSquareRoot extends TestTransformers {
 
   it should "present with name" in {
     SquareRoot[Position1D]()
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s-%2$s.sqr"))
-      .present(cell).toList shouldBe List(Cell(Position1D("foo-3.1415.sqr"), getDoubleContent(math.sqrt(3.1415))))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.sqr"))
+      .present(cell).toList shouldBe List(Cell(Position1D("foo.sqr"), getDoubleContent(math.sqrt(3.1415))))
   }
 }
 
@@ -749,7 +749,7 @@ class TestCut extends TestTransformers {
 
   it should "present with name" in {
     Cut(binExtractor)
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.cut"))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.cut"))
       .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.cut"),
         Content(OrdinalSchema[Codex.StringCodex](StringCodex,
           List("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]", "(4.0,5.0]")), "(3.0,4.0]")))
@@ -777,10 +777,10 @@ class TestCompare extends TestTransformers {
 
   it should "present with name" in {
     Compare(equ(3.1415))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.cmp"))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.cmp"))
       .present(cell).toList shouldBe List(Cell(Position1D("foo.cmp"), Content(NominalSchema(BooleanCodex), true)))
     Compare(equ(3.3))
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.cmp"))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.cmp"))
       .present(cell).toList shouldBe List(Cell(Position1D("foo.cmp"), Content(NominalSchema(BooleanCodex), false)))
   }
 }
@@ -971,7 +971,7 @@ class TestAndThenTransformer extends TestTransformers {
   "An AndThenTransformer" should "present" in {
     Binarise[Position1D](Locate.RenameDimensionWithContent(First))
       .andThen(Indicator()
-      .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind")))
+      .andThenRelocate(Locate.RenameDimension(First, "%1$s.ind")))
       .present(cell).toList shouldBe List(Cell(Position1D("foo=rules.ind"), getLongContent(1)))
   }
 }

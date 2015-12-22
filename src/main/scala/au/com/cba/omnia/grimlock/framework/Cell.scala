@@ -31,6 +31,20 @@ import scala.reflect.ClassTag
  */
 case class Cell[P <: Position](position: P, content: Content) {
   /**
+   * Relocate this cell.
+   *
+   * @param relocator Function that returns the new position for this cell.
+   */
+  def relocate[Q <: Position](relocator: (Cell[P]) => Q): Cell[Q] = Cell(relocator(this), content)
+
+  /**
+   * Mutate the content of this cell.
+   *
+   * @param mutator Function that returns the new content for this cell.
+   */
+  def mutate(mutator: (Cell[P]) => Content): Cell[P] = Cell(position, mutator(this))
+
+  /**
    * Return string representation of a cell.
    *
    * @param separator   The separator to use between various fields.

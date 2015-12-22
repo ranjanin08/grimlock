@@ -35,10 +35,10 @@ class DataAnalysis(args: Args) extends Job(args) {
 
   // Define moments to compute.
   val moments: List[Aggregator[Position1D, Position0D, Position1D]] = List(
-    Mean().andThenExpand(_.position.append("mean")),
-    StandardDeviation().andThenExpand(_.position.append("sd")),
-    Skewness().andThenExpand(_.position.append("skewness")),
-    Kurtosis().andThenExpand(_.position.append("kurtosis")))
+    Mean().andThenRelocate(_.position.append("mean")),
+    StandardDeviation().andThenRelocate(_.position.append("sd")),
+    Skewness().andThenRelocate(_.position.append("skewness")),
+    Kurtosis().andThenRelocate(_.position.append("kurtosis")))
 
   // For the instances:
   //  1/ Compute the number of features for each instance;

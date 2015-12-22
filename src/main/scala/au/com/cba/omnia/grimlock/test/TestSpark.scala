@@ -244,11 +244,11 @@ object TestSpark6 {
       .toUnit
 
     val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-      Count().andThenExpand(_.position.append("count")),
-      Mean().andThenExpand(_.position.append("mean")),
-      Min().andThenExpand(_.position.append("min")),
-      Max().andThenExpand(_.position.append("max")),
-      MaxAbs().andThenExpand(_.position.append("max.abs")))
+      Count().andThenRelocate(_.position.append("count")),
+      Mean().andThenRelocate(_.position.append("mean")),
+      Min().andThenRelocate(_.position.append("min")),
+      Max().andThenRelocate(_.position.append("max")),
+      MaxAbs().andThenRelocate(_.position.append("max.abs")))
 
     load4TupleDataAddDate(path + "/someInputfile3.txt")
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -401,7 +401,7 @@ object TestSpark10 {
     val data = load4TupleDataAddDate(path + "/someInputfile3.txt")
 
     data
-      .summarise(Over(Second), Mean[Position3D, Position1D](true, true).andThenExpand(_.position.append("mean")))
+      .summarise(Over(Second), Mean[Position3D, Position1D](true, true).andThenRelocate(_.position.append("mean")))
       .saveAsCSV(Over(First), s"./tmp.${tool}/agg1.csv")
       .toUnit
 
@@ -409,19 +409,19 @@ object TestSpark10 {
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .summarise(Along(Second), Count[Position2D, Position1D]().andThenExpand(_.position.append("count")))
+      .summarise(Along(Second), Count[Position2D, Position1D]().andThenRelocate(_.position.append("count")))
       .saveAsCSV(Over(First), s"./tmp.${tool}/agg2.csv")
       .toUnit
 
     val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-      Count().andThenExpand(_.position.append("count")),
-      Mean().andThenExpand(_.position.append("mean")),
-      StandardDeviation().andThenExpand(_.position.append("sd")),
-      Skewness().andThenExpand(_.position.append("skewness")),
-      Kurtosis().andThenExpand(_.position.append("kurtosis")),
-      Min().andThenExpand(_.position.append("min")),
-      Max().andThenExpand(_.position.append("max")),
-      MaxAbs().andThenExpand(_.position.append("max.abs")))
+      Count().andThenRelocate(_.position.append("count")),
+      Mean().andThenRelocate(_.position.append("mean")),
+      StandardDeviation().andThenRelocate(_.position.append("sd")),
+      Skewness().andThenRelocate(_.position.append("skewness")),
+      Kurtosis().andThenRelocate(_.position.append("kurtosis")),
+      Min().andThenRelocate(_.position.append("min")),
+      Max().andThenRelocate(_.position.append("max")),
+      MaxAbs().andThenRelocate(_.position.append("max.abs")))
 
     data
       .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -444,8 +444,7 @@ object TestSpark11 {
     data
       .slice(Over(Second), List("fid:A", "fid:B", "fid:Y", "fid:Z"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .transform(Indicator[Position3D]()
-        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")))
+      .transform(Indicator[Position3D]().andThenRelocate(Locate.RenameDimension(Second, "%1$s.ind")))
       .saveAsText(s"./tmp.${tool}/trn2.out", Cell.toString(descriptive = true))
       .toUnit
 
@@ -496,8 +495,7 @@ object TestSpark13 {
       .squash(Third, PreservingMaxPosition[Position3D]())
 
     val inds = data
-      .transform(Indicator[Position2D]()
-        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")))
+      .transform(Indicator[Position2D]().andThenRelocate(Locate.RenameDimension(Second, "%1$s.ind")))
       .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
 
     data
@@ -542,7 +540,7 @@ object TestSpark15 {
     data
       .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
       .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-      .summarise(Along(Third), Sum[Position3D, Position2D]().andThenExpand(_.position.append("sum")))
+      .summarise(Along(Third), Sum[Position3D, Position2D]().andThenRelocate(_.position.append("sum")))
       .melt(Third, Second)
       .saveAsCSV(Over(First), s"./tmp.${tool}/rsh1.out")
       .toUnit
@@ -552,8 +550,7 @@ object TestSpark15 {
                                "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
       .slice(Over(Second), List("fid:A", "fid:B", "fid:C", "fid:D", "fid:E", "fid:F", "fid:G"), true)
       .squash(Third, PreservingMaxPosition[Position3D]())
-      .transform(Indicator[Position2D]()
-        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")))
+      .transform(Indicator[Position2D]().andThenRelocate(Locate.RenameDimension(Second, "%1$s.ind")))
       .saveAsCSV(Over(First), s"./tmp.${tool}/trn1.csv")
 
     data
@@ -599,11 +596,11 @@ object TestSpark17 {
       .squash(Third, PreservingMaxPosition[Position3D]())
 
     val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-      Count().andThenExpand(_.position.append("count")),
-      Mean().andThenExpand(_.position.append("mean")),
-      Min().andThenExpand(_.position.append("min")),
-      Max().andThenExpand(_.position.append("max")),
-      MaxAbs().andThenExpand(_.position.append("max.abs")))
+      Count().andThenRelocate(_.position.append("count")),
+      Mean().andThenRelocate(_.position.append("mean")),
+      Min().andThenRelocate(_.position.append("min")),
+      Max().andThenRelocate(_.position.append("max")),
+      MaxAbs().andThenRelocate(_.position.append("max.abs")))
 
     val stats = data
       .summarise(Along(First), aggregators)
@@ -656,11 +653,11 @@ object TestSpark18 {
       .squash(Third, PreservingMaxPosition[Position3D]())
 
     val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-      Count().andThenExpand(_.position.append("count")),
-      Mean().andThenExpand(_.position.append("mean")),
-      Min().andThenExpand(_.position.append("min")),
-      Max().andThenExpand(_.position.append("max")),
-      MaxAbs().andThenExpand(_.position.append("max.abs")))
+      Count().andThenRelocate(_.position.append("count")),
+      Mean().andThenRelocate(_.position.append("mean")),
+      Min().andThenRelocate(_.position.append("min")),
+      Max().andThenRelocate(_.position.append("max")),
+      MaxAbs().andThenRelocate(_.position.append("max.abs")))
 
     val stats = data
       .summarise(Along(First), aggregators)
@@ -704,8 +701,8 @@ object TestSpark19 {
       .split(CustomPartition(First, "train", "test"))
 
     val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-      Count().andThenExpand(_.position.append("count")),
-      MaxAbs().andThenExpand(_.position.append("max.abs")))
+      Count().andThenRelocate(_.position.append("count")),
+      MaxAbs().andThenRelocate(_.position.append("max.abs")))
 
     val stats = parts
       .get("train")
@@ -718,7 +715,7 @@ object TestSpark19 {
     type W = Map[Position1D, Map[Position1D, Content]]
 
     val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: W }] = List(
-      Indicator().andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")),
+      Indicator().andThenRelocate(Locate.RenameDimension(Second, "%1$s.ind")),
       Binarise(Locate.RenameDimensionWithContent(Second)),
       Normalise(ExtractWithDimensionAndKey[Position2D, Content](Second, "max.abs")
         .andThenPresent(_.value.asDouble)))
@@ -990,12 +987,12 @@ object TestSpark28 {
                                 ("iid:" + i, "fid:B", Content(NominalSchema(StringCodex), i.toString))) }
 
     val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-      Count().andThenExpand(_.position.append("count")),
-      Min().andThenExpand(_.position.append("min")),
-      Max().andThenExpand(_.position.append("max")),
-      Mean().andThenExpand(_.position.append("mean")),
-      StandardDeviation().andThenExpand(_.position.append("sd")),
-      Skewness().andThenExpand(_.position.append("skewness")))
+      Count().andThenRelocate(_.position.append("count")),
+      Min().andThenRelocate(_.position.append("min")),
+      Max().andThenRelocate(_.position.append("max")),
+      Mean().andThenRelocate(_.position.append("mean")),
+      StandardDeviation().andThenRelocate(_.position.append("sd")),
+      Skewness().andThenRelocate(_.position.append("skewness")))
 
     val stats = data
       .summarise(Along(First), aggregators)
@@ -1009,43 +1006,37 @@ object TestSpark28 {
       .toUnit
 
     data
-      .transformWithValue(
-        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.square")),
+      .transformWithValue(Cut(extractor).andThenRelocate(Locate.RenameDimension(Second, "%s.square")),
         CutRules.squareRootChoice(stats, "count", "min", "max"))
       .saveAsText(s"./tmp.${tool}/cut2.out")
       .toUnit
 
     data
-      .transformWithValue(
-        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.sturges")),
+      .transformWithValue(Cut(extractor).andThenRelocate(Locate.RenameDimension(Second, "%s.sturges")),
         CutRules.sturgesFormula(stats, "count", "min", "max"))
       .saveAsText(s"./tmp.${tool}/cut3.out")
       .toUnit
 
     data
-      .transformWithValue(
-        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.rice")),
+      .transformWithValue(Cut(extractor).andThenRelocate(Locate.RenameDimension(Second, "%s.rice")),
         CutRules.riceRule(stats, "count", "min", "max"))
       .saveAsText(s"./tmp.${tool}/cut4.out")
       .toUnit
 
     data
-      .transformWithValue(
-        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.doane")),
+      .transformWithValue(Cut(extractor).andThenRelocate(Locate.RenameDimension(Second, "%s.doane")),
         CutRules.doanesFormula(stats, "count", "min", "max", "skewness"))
       .saveAsText(s"./tmp.${tool}/cut5.out")
       .toUnit
 
     data
-      .transformWithValue(
-        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.scott")),
+      .transformWithValue(Cut(extractor).andThenRelocate(Locate.RenameDimension(Second, "%s.scott")),
         CutRules.scottsNormalReferenceRule(stats, "count", "min", "max", "sd"))
       .saveAsText(s"./tmp.${tool}/cut6.out")
       .toUnit
 
     data
-      .transformWithValue(
-        Cut(extractor).andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%s.break")),
+      .transformWithValue(Cut(extractor).andThenRelocate(Locate.RenameDimension(Second, "%s.break")),
         CutRules.breaks(Map("fid:A" -> List(-1, 4, 8, 12, 16))))
       .saveAsText(s"./tmp.${tool}/cut7.out")
       .toUnit

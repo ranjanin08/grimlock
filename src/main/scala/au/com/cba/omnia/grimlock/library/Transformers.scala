@@ -66,7 +66,7 @@ case class Indicator[P <: Position]() extends Transformer[P, P] {
  *
  * @note Binarisation is only applied to categorical variables.
  */
-case class Binarise[P <: Position](pos: Locate.FromInput[P, P]) extends Transformer[P, P] {
+case class Binarise[P <: Position](pos: Locate.FromCell[P, P]) extends Transformer[P, P] {
   def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
     Transform.checkType(cell, Categorical) match {
       case true => Some(Cell(pos(cell), Content(DiscreteSchema(LongCodex), 1)))

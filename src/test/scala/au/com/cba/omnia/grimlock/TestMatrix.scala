@@ -2513,81 +2513,81 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
 
   "A Matrix.summariseAndExpand" should "return its first over aggregates in 1D" in {
     toPipe(num1)
-      .summarise(Over(First), Min[Position1D, Position1D]().andThenExpand(_.position.append("min")), Default())
+      .summarise(Over(First), Min[Position1D, Position1D]().andThenRelocate(_.position.append("min")), Default())
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its first along aggregates in 1D" in {
     toPipe(num1)
-      .summarise(Along(First), List(Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
-        Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
+      .summarise(Along(First), List(Min[Position1D, Position0D]().andThenRelocate(_.position.append("min")),
+        Max[Position1D, Position0D]().andThenRelocate(_.position.append("max"))), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result22
   }
 
   it should "return its first over aggregates in 2D" in {
     toPipe(num2)
-      .summarise(Over(First), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")), Default())
+      .summarise(Over(First), Min[Position2D, Position1D]().andThenRelocate(_.position.append("min")), Default())
       .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first along aggregates in 2D" in {
     toPipe(num2)
-      .summarise(Along(First), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-        Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
+      .summarise(Along(First), List(Min[Position2D, Position1D]().andThenRelocate(_.position.append("min")),
+        Max[Position2D, Position1D]().andThenRelocate(_.position.append("max"))), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its second over aggregates in 2D" in {
     toPipe(num2)
-      .summarise(Over(Second), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-        Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))), Default())
+      .summarise(Over(Second), List(Min[Position2D, Position1D]().andThenRelocate(_.position.append("min")),
+        Max[Position2D, Position1D]().andThenRelocate(_.position.append("max"))), Default())
       .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second along aggregates in 2D" in {
     toPipe(num2)
-      .summarise(Along(Second), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+      .summarise(Along(Second), Min[Position2D, Position1D]().andThenRelocate(_.position.append("min")),
         Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its first over aggregates in 3D" in {
     toPipe(num3)
-      .summarise(Over(First), Min[Position3D, Position1D]().andThenExpand(_.position.append("min")), Default())
+      .summarise(Over(First), Min[Position3D, Position1D]().andThenRelocate(_.position.append("min")), Default())
       .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first along aggregates in 3D" in {
     toPipe(num3)
-      .summarise(Along(First), List(Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
-        Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))), Default(Reducers(123)))
+      .summarise(Along(First), List(Min[Position3D, Position2D]().andThenRelocate(_.position.append("min")),
+        Max[Position3D, Position2D]().andThenRelocate(_.position.append("max"))), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its second over aggregates in 3D" in {
     toPipe(num3)
-      .summarise(Over(Second), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
-        Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))), Default())
+      .summarise(Over(Second), List(Min[Position3D, Position1D]().andThenRelocate(_.position.append("min")),
+        Max[Position3D, Position1D]().andThenRelocate(_.position.append("max"))), Default())
       .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second along aggregates in 3D" in {
     toPipe(num3)
-      .summarise(Along(Second), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+      .summarise(Along(Second), Min[Position3D, Position2D]().andThenRelocate(_.position.append("min")),
         Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its third over aggregates in 3D" in {
     toPipe(num3)
-      .summarise(Over(Third), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
-        Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))), Default())
+      .summarise(Over(Third), List(Min[Position3D, Position1D]().andThenRelocate(_.position.append("min")),
+        Max[Position3D, Position1D]().andThenRelocate(_.position.append("max"))), Default())
       .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third along aggregates in 3D" in {
     toPipe(num3)
-      .summarise(Along(Third), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+      .summarise(Along(Third), Min[Position3D, Position2D]().andThenRelocate(_.position.append("min")),
         Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result32
   }
@@ -2595,7 +2595,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
   "A Matrix.summariseAndExpandWithValue" should "return its first over aggregates in 1D" in {
     toPipe(num1)
       .summariseWithValue(Over(First), WeightedSum[Position1D, Position1D, W](ExtractWithDimension(First))
-        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+        .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
         ValuePipe(ext), Default())
       .toList.sortBy(_.position) shouldBe result33
   }
@@ -2604,9 +2604,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
     toPipe(num1)
       .summariseWithValue(Along(First), List(
         WeightedSum[Position1D, Position0D, W](ExtractWithDimension(First))
-          .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))),
+          .andThenRelocateWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))),
         ValuePipe(ext), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result34
   }
@@ -2614,7 +2614,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
   it should "return its first over aggregates in 2D" in {
     toPipe(num2)
       .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
         ValuePipe(ext), Default())
       .toList.sortBy(_.position) shouldBe result35
   }
@@ -2623,9 +2623,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
     toPipe(num2)
       .summariseWithValue(Along(First), List(
         WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
         ValuePipe(ext), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result36
   }
@@ -2634,9 +2634,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
     toPipe(num2)
       .summariseWithValue(Over(Second), List(
         WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
         ValuePipe(ext), Default())
       .toList.sortBy(_.position) shouldBe result37
   }
@@ -2644,7 +2644,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
   it should "return its second along aggregates in 2D" in {
     toPipe(num2)
       .summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
         ValuePipe(ext), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result38
   }
@@ -2652,7 +2652,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
   it should "return its first over aggregates in 3D" in {
     toPipe(num3)
       .summariseWithValue(Over(First), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(First))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")),
         ValuePipe(ext), Default())
       .toList.sortBy(_.position) shouldBe result39
   }
@@ -2661,9 +2661,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
     toPipe(num3)
       .summariseWithValue(Along(First), List(
         WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second))
-          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))),
+          .andThenRelocateWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))),
         ValuePipe(ext), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result40
   }
@@ -2672,9 +2672,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
     toPipe(num3)
       .summariseWithValue(Over(Second), List(
         WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Second))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
         ValuePipe(ext), Default())
       .toList.sortBy(_.position) shouldBe result41
   }
@@ -2683,7 +2683,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
     toPipe(num3)
       .summariseWithValue(Along(Second),
         WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First))
-          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
+          .andThenRelocateWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
         ValuePipe(ext), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result42
   }
@@ -2692,9 +2692,9 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
     toPipe(num3)
       .summariseWithValue(Over(Third), List(
         WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Third))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Third, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
         ValuePipe(ext), Default())
       .toList.sortBy(_.position) shouldBe result43
   }
@@ -2702,7 +2702,7 @@ class TestScaldingMatrixSummarise extends TestMatrixSummarise {
   it should "return its third along aggregates in 3D" in {
     toPipe(num3)
       .summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third))
-          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
+          .andThenRelocateWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")),
         ValuePipe(ext), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result44
   }
@@ -2842,81 +2842,81 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
 
   "A Matrix.summariseAndExpand" should "return its first over aggregates in 1D" in {
     toRDD(num1)
-      .summarise(Over(First), Min[Position1D, Position1D]().andThenExpand(_.position.append("min")), Default())
+      .summarise(Over(First), Min[Position1D, Position1D]().andThenRelocate(_.position.append("min")), Default())
       .toList.sortBy(_.position) shouldBe result21
   }
 
   it should "return its first along aggregates in 1D" in {
     toRDD(num1)
-      .summarise(Along(First), List(Min[Position1D, Position0D]().andThenExpand(_.position.append("min")),
-        Max[Position1D, Position0D]().andThenExpand(_.position.append("max"))), Default(Reducers(12)))
+      .summarise(Along(First), List(Min[Position1D, Position0D]().andThenRelocate(_.position.append("min")),
+        Max[Position1D, Position0D]().andThenRelocate(_.position.append("max"))), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result22
   }
 
   it should "return its first over aggregates in 2D" in {
     toRDD(num2)
-      .summarise(Over(First), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")), Default())
+      .summarise(Over(First), Min[Position2D, Position1D]().andThenRelocate(_.position.append("min")), Default())
       .toList.sortBy(_.position) shouldBe result23
   }
 
   it should "return its first along aggregates in 2D" in {
     toRDD(num2)
-      .summarise(Along(First), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-        Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))), Default(Reducers(12)))
+      .summarise(Along(First), List(Min[Position2D, Position1D]().andThenRelocate(_.position.append("min")),
+        Max[Position2D, Position1D]().andThenRelocate(_.position.append("max"))), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result24
   }
 
   it should "return its second over aggregates in 2D" in {
     toRDD(num2)
-      .summarise(Over(Second), List(Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
-        Max[Position2D, Position1D]().andThenExpand(_.position.append("max"))), Default())
+      .summarise(Over(Second), List(Min[Position2D, Position1D]().andThenRelocate(_.position.append("min")),
+        Max[Position2D, Position1D]().andThenRelocate(_.position.append("max"))), Default())
       .toList.sortBy(_.position) shouldBe result25
   }
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
-      .summarise(Along(Second), Min[Position2D, Position1D]().andThenExpand(_.position.append("min")),
+      .summarise(Along(Second), Min[Position2D, Position1D]().andThenRelocate(_.position.append("min")),
         Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result26
   }
 
   it should "return its first over aggregates in 3D" in {
     toRDD(num3)
-      .summarise(Over(First), Min[Position3D, Position1D]().andThenExpand(_.position.append("min")), Default())
+      .summarise(Over(First), Min[Position3D, Position1D]().andThenRelocate(_.position.append("min")), Default())
       .toList.sortBy(_.position) shouldBe result27
   }
 
   it should "return its first along aggregates in 3D" in {
     toRDD(num3)
-      .summarise(Along(First), List(Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
-        Max[Position3D, Position2D]().andThenExpand(_.position.append("max"))), Default(Reducers(12)))
+      .summarise(Along(First), List(Min[Position3D, Position2D]().andThenRelocate(_.position.append("min")),
+        Max[Position3D, Position2D]().andThenRelocate(_.position.append("max"))), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result28
   }
 
   it should "return its second over aggregates in 3D" in {
     toRDD(num3)
-      .summarise(Over(Second), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
-        Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))), Default())
+      .summarise(Over(Second), List(Min[Position3D, Position1D]().andThenRelocate(_.position.append("min")),
+        Max[Position3D, Position1D]().andThenRelocate(_.position.append("max"))), Default())
       .toList.sortBy(_.position) shouldBe result29
   }
 
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
-      .summarise(Along(Second), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+      .summarise(Along(Second), Min[Position3D, Position2D]().andThenRelocate(_.position.append("min")),
         Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result30
   }
 
   it should "return its third over aggregates in 3D" in {
     toRDD(num3)
-      .summarise(Over(Third), List(Min[Position3D, Position1D]().andThenExpand(_.position.append("min")),
-        Max[Position3D, Position1D]().andThenExpand(_.position.append("max"))), Default())
+      .summarise(Over(Third), List(Min[Position3D, Position1D]().andThenRelocate(_.position.append("min")),
+        Max[Position3D, Position1D]().andThenRelocate(_.position.append("max"))), Default())
       .toList.sortBy(_.position) shouldBe result31
   }
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
-      .summarise(Along(Third), Min[Position3D, Position2D]().andThenExpand(_.position.append("min")),
+      .summarise(Along(Third), Min[Position3D, Position2D]().andThenRelocate(_.position.append("min")),
         Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result32
   }
@@ -2924,7 +2924,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   "A Matrix.summariseAndExpandWithValue" should "return its first over aggregates in 1D" in {
     toRDD(num1)
       .summariseWithValue(Over(First), WeightedSum[Position1D, Position1D, W](ExtractWithDimension(First))
-        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext, Default())
+        .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext, Default())
       .toList.sortBy(_.position) shouldBe result33
   }
 
@@ -2932,9 +2932,9 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
     toRDD(num1)
       .summariseWithValue(Along(First), List(
         WeightedSum[Position1D, Position0D, W](ExtractWithDimension(First))
-          .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position1D, Position0D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))), ext,
+          .andThenRelocateWithValue((c: Cell[Position0D], e: W) => c.position.append("sum.2"))), ext,
         Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result34
   }
@@ -2942,7 +2942,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its first over aggregates in 2D" in {
     toRDD(num2)
       .summariseWithValue(Over(First), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
-        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext, Default())
+        .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext, Default())
       .toList.sortBy(_.position) shouldBe result35
   }
 
@@ -2950,9 +2950,9 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
     toRDD(num2)
       .summariseWithValue(Along(First), List(
         WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(First, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))), ext,
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))), ext,
         Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result36
   }
@@ -2961,23 +2961,23 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
     toRDD(num2)
       .summariseWithValue(Over(Second), List(
         WeightedSum[Position2D, Position1D, W](ExtractWithDimension(Second))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position2D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))), ext, Default())
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))), ext, Default())
       .toList.sortBy(_.position) shouldBe result37
   }
 
   it should "return its second along aggregates in 2D" in {
     toRDD(num2)
       .summariseWithValue(Along(Second), WeightedSum[Position2D, Position1D, W](ExtractWithDimension(First))
-        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext, Default(Reducers(12)))
+        .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result38
   }
 
   it should "return its first over aggregates in 3D" in {
     toRDD(num3)
       .summariseWithValue(Over(First), WeightedSum[Position3D, Position1D, W](ExtractWithDimension(First))
-        .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext, Default())
+        .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum")), ext, Default())
       .toList.sortBy(_.position) shouldBe result39
   }
 
@@ -2985,9 +2985,9 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
     toRDD(num3)
       .summariseWithValue(Along(First), List(
         WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Second))
-          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position3D, Position2D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))), ext,
+          .andThenRelocateWithValue((c: Cell[Position2D], e: W) => c.position.append("sum.2"))), ext,
         Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result40
   }
@@ -2996,9 +2996,9 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
     toRDD(num3)
       .summariseWithValue(Over(Second), List(
           WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Second))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+            .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
           WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Second, "%1$s.2"))
-            .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
+            .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))),
         ext, Default())
       .toList.sortBy(_.position) shouldBe result41
   }
@@ -3006,7 +3006,7 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
   it should "return its second along aggregates in 3D" in {
     toRDD(num3)
       .summariseWithValue(Along(Second), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(First))
-        .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext, Default(Reducers(12)))
+        .andThenRelocateWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result42
   }
 
@@ -3014,16 +3014,16 @@ class TestSparkMatrixSummarise extends TestMatrixSummarise {
     toRDD(num3)
       .summariseWithValue(Over(Third), List(
         WeightedSum[Position3D, Position1D, W](ExtractWithDimension(Third))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.1")),
         WeightedSum[Position3D, Position1D, W](TestMatrixSummarise.ExtractWithName(Third, "%1$s.2"))
-          .andThenExpandWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))), ext, Default())
+          .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("sum.2"))), ext, Default())
       .toList.sortBy(_.position) shouldBe result43
   }
 
   it should "return its third along aggregates in 3D" in {
     toRDD(num3)
       .summariseWithValue(Along(Third), WeightedSum[Position3D, Position2D, W](ExtractWithDimension(Third))
-        .andThenExpandWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext, Default(Reducers(12)))
+        .andThenRelocateWithValue((c: Cell[Position2D], e: W) => c.position.append("sum")), ext, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result44
   }
 }
@@ -4881,7 +4881,7 @@ trait TestMatrixPairwise extends TestMatrix {
 
 object TestMatrixPairwise {
 
-  case class PlusX[P <: Position, Q <: Position](pos: Locate.FromPairwiseInput[P, Q]) extends OperatorWithValue[P, Q] {
+  case class PlusX[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q]) extends OperatorWithValue[P, Q] {
     type V = Double
 
     val plus = Plus(pos)
@@ -4893,7 +4893,7 @@ object TestMatrixPairwise {
     }
   }
 
-  case class MinusX[P <: Position, Q <: Position](pos: Locate.FromPairwiseInput[P, Q]) extends OperatorWithValue[P, Q] {
+  case class MinusX[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q]) extends OperatorWithValue[P, Q] {
     type V = Double
 
     val minus = Minus(pos)
@@ -6215,14 +6215,14 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
   "A Matrix.transform" should "return its transformed data in 1D" in {
     toPipe(data1)
       .transform(Indicator[Position1D]()
-        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind")))
+        .andThenRelocate(Locate.RenameDimension(First, "%1$s.ind")))
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its transformed data in 2D" in {
     toPipe(data2)
       .transform(List(
-        Indicator[Position2D]().andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind")),
+        Indicator[Position2D]().andThenRelocate(Locate.RenameDimension(First, "%1$s.ind")),
         Binarise[Position2D](Locate.RenameDimensionWithContent(First))))
       .toList.sortBy(_.position) shouldBe result2
   }
@@ -6230,7 +6230,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
   it should "return its transformed data in 3D" in {
     toPipe(data3)
       .transform(List(
-        Indicator[Position3D]().andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind")),
+        Indicator[Position3D]().andThenRelocate(Locate.RenameDimension(First, "%1$s.ind")),
         Binarise[Position3D](Locate.RenameDimensionWithContent(First))))
       .toList.sortBy(_.position) shouldBe result3
   }
@@ -6239,9 +6239,9 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
     toPipe(num1)
       .transformWithValue(List(
         Normalise(extractor[Position1D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n")),
         Standardise(extractor[Position1D](First, "mean"), extractor[Position1D](First, "sd"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.s"))),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.s"))),
         ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result4
   }
@@ -6250,7 +6250,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
     toPipe(num2)
       .transformWithValue(
         Normalise(extractor[Position2D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n")),
         ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result5
   }
@@ -6259,7 +6259,7 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
     toPipe(num3)
       .transformWithValue(
         Normalise(extractor[Position3D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n")),
         ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result6
   }
@@ -6267,8 +6267,8 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
   "A Matrix.transformAndExpand" should "return its transformed data in 1D" in {
     toPipe(data1)
       .transform(Indicator[Position1D]()
-        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind"))
-        .andThenExpand((_, c) => c.position.append("ind")))
+        .andThenRelocate(Locate.RenameDimension(First, "%1$s.ind"))
+        .andThenRelocate(c => c.position.append("ind")))
       .toList.sortBy(_.position) shouldBe result7
   }
 
@@ -6276,10 +6276,10 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
     toPipe(data2)
       .transform(List(
         Indicator[Position2D]()
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind"))
-          .andThenExpand((_, c) => c.position.append("ind")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.ind"))
+          .andThenRelocate(c => c.position.append("ind")),
         Binarise[Position2D](Locate.RenameDimensionWithContent(First))
-          .andThenExpand((_, c) => c.position.append("bin"))))
+          .andThenRelocate(c => c.position.append("bin"))))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -6287,10 +6287,10 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
     toPipe(data3)
       .transform(List(
         Indicator[Position3D]()
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind"))
-          .andThenExpand((_, c) => c.position.append("ind")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.ind"))
+          .andThenRelocate(c => c.position.append("ind")),
         Binarise[Position3D](Locate.RenameDimensionWithContent(First))
-          .andThenExpand((_, c) => c.position.append("bin"))))
+          .andThenRelocate(c => c.position.append("bin"))))
       .toList.sortBy(_.position) shouldBe result9
   }
 
@@ -6298,11 +6298,11 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
     toPipe(num1)
       .transformWithValue(List(
         Normalise(extractor[Position1D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
-          .andThenExpandWithValue((_, c, _) => c.position.append("nrm")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n"))
+          .andThenRelocateWithValue((c, _) => c.position.append("nrm")),
         Standardise(extractor[Position1D](First, "mean"), extractor[Position1D](First, "sd"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.s"))
-          .andThenExpandWithValue((_, c, _) => c.position.append("std"))),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.s"))
+          .andThenRelocateWithValue((c, _) => c.position.append("std"))),
         ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result10
   }
@@ -6311,8 +6311,8 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
     toPipe(num2)
       .transformWithValue(
         Normalise(extractor[Position2D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
-          .andThenExpandWithValue((_, c, _) => c.position.append("nrm")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n"))
+          .andThenRelocateWithValue((c, _) => c.position.append("nrm")),
         ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result11
   }
@@ -6321,8 +6321,8 @@ class TestScaldingMatrixTransform extends TestMatrixTransform {
     toPipe(num3)
       .transformWithValue(
         Normalise(extractor[Position3D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
-          .andThenExpandWithValue((_, c, _) => c.position.append("nrm")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n"))
+          .andThenRelocateWithValue((c, _) => c.position.append("nrm")),
         ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result12
   }
@@ -6333,14 +6333,14 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
   "A Matrix.transform" should "return its transformed data in 1D" in {
     toRDD(data1)
       .transform(Indicator[Position1D]()
-        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind")))
+        .andThenRelocate(Locate.RenameDimension(First, "%1$s.ind")))
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its transformed data in 2D" in {
     toRDD(data2)
       .transform(List(
-        Indicator[Position2D]().andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind")),
+        Indicator[Position2D]().andThenRelocate(Locate.RenameDimension(First, "%1$s.ind")),
         Binarise[Position2D](Locate.RenameDimensionWithContent(First))))
       .toList.sortBy(_.position) shouldBe result2
   }
@@ -6348,7 +6348,7 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
   it should "return its transformed data in 3D" in {
     toRDD(data3)
       .transform(List(
-        Indicator[Position3D]().andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind")),
+        Indicator[Position3D]().andThenRelocate(Locate.RenameDimension(First, "%1$s.ind")),
         Binarise[Position3D](Locate.RenameDimensionWithContent(First))))
       .toList.sortBy(_.position) shouldBe result3
   }
@@ -6357,9 +6357,9 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
     toRDD(num1)
       .transformWithValue(List(
         Normalise(extractor[Position1D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n")),
         Standardise(extractor[Position1D](First, "mean"), extractor[Position1D](First, "sd"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.s"))), ext)
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.s"))), ext)
       .toList.sortBy(_.position) shouldBe result4
   }
 
@@ -6367,7 +6367,7 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
     toRDD(num2)
       .transformWithValue(
         Normalise(extractor[Position2D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")), ext)
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n")), ext)
       .toList.sortBy(_.position) shouldBe result5
   }
 
@@ -6375,15 +6375,15 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
     toRDD(num3)
       .transformWithValue(
         Normalise(extractor[Position3D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n")), ext)
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n")), ext)
       .toList.sortBy(_.position) shouldBe result6
   }
 
   "A Matrix.transformAndExpand" should "return its transformed data in 1D" in {
     toRDD(data1)
       .transform(Indicator[Position1D]()
-        .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind"))
-        .andThenExpand((_, c) => c.position.append("ind")))
+        .andThenRelocate(Locate.RenameDimension(First, "%1$s.ind"))
+        .andThenRelocate(c => c.position.append("ind")))
       .toList.sortBy(_.position) shouldBe result7
   }
 
@@ -6391,10 +6391,10 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
     toRDD(data2)
       .transform(List(
         Indicator[Position2D]()
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind"))
-          .andThenExpand((_, c) => c.position.append("ind")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.ind"))
+          .andThenRelocate(c => c.position.append("ind")),
         Binarise[Position2D](Locate.RenameDimensionWithContent(First))
-          .andThenExpand((_, c) => c.position.append("bin"))))
+          .andThenRelocate(c => c.position.append("bin"))))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -6402,10 +6402,10 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
     toRDD(data3)
       .transform(List(
         Indicator[Position3D]()
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.ind"))
-          .andThenExpand((_, c) => c.position.append("ind")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.ind"))
+          .andThenRelocate(c => c.position.append("ind")),
         Binarise[Position3D](Locate.RenameDimensionWithContent(First))
-          .andThenExpand((_, c) => c.position.append("bin"))))
+          .andThenRelocate(c => c.position.append("bin"))))
       .toList.sortBy(_.position) shouldBe result9
   }
 
@@ -6413,11 +6413,11 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
     toRDD(num1)
       .transformWithValue(List(
         Normalise(extractor[Position1D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
-          .andThenExpandWithValue((_, c, _) => c.position.append("nrm")),
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n"))
+          .andThenRelocateWithValue((c, _) => c.position.append("nrm")),
         Standardise(extractor[Position1D](First, "mean"), extractor[Position1D](First, "sd"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.s"))
-          .andThenExpandWithValue((_, c, _) => c.position.append("std"))), ext)
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.s"))
+          .andThenRelocateWithValue((c, _) => c.position.append("std"))), ext)
       .toList.sortBy(_.position) shouldBe result10
   }
 
@@ -6425,8 +6425,8 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
     toRDD(num2)
       .transformWithValue(
         Normalise(extractor[Position2D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
-          .andThenExpandWithValue((_, c, _) => c.position.append("nrm")), ext)
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n"))
+          .andThenRelocateWithValue((c, _) => c.position.append("nrm")), ext)
       .toList.sortBy(_.position) shouldBe result11
   }
 
@@ -6434,8 +6434,8 @@ class TestSparkMatrixTransform extends TestMatrixTransform {
     toRDD(num3)
       .transformWithValue(
         Normalise(extractor[Position3D](First, "max.abs"))
-          .andThenRename(Locate.RenameOutcomeDimensionWithInputContent(First, "%1$s.n"))
-          .andThenExpandWithValue((_, c, _) => c.position.append("nrm")), ext)
+          .andThenRelocate(Locate.RenameDimension(First, "%1$s.n"))
+          .andThenRelocateWithValue((c, _) => c.position.append("nrm")), ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 }

@@ -55,7 +55,7 @@ object Scoring {
     //  2/ Compute the scored (as a weighted sum);
     //  3/ Save the results.
     val transforms: List[TransformerWithValue[Position2D, Position2D] { type V >: S }] = List(
-      Indicator().andThenRename(Locate.RenameOutcomeDimensionWithInputContent(Second, "%1$s.ind")),
+      Indicator().andThenRelocate(Locate.RenameDimension(Second, "%1$s.ind")),
       Binarise(Locate.RenameDimensionWithContent(Second)),
       Clamp(extractStat("min"), extractStat("max"))
         .andThenWithValue(Standardise(extractStat("mean"), extractStat("sd"))))

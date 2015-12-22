@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.framework.transform
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for transformations from `P` to `Q`. */
@@ -46,32 +47,44 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
   }
 
   /**
-   * Operator for transforming and then renaming dimensions.
+   * Operator for preparing content prior to transforming.
    *
-   * @param rename The rename to apply after the transformation.
+   * @param prep The function to apply prior to transforming.
    *
-   * @return A transformer that runs `this` and then renames the resulting dimension(s).
+   * @return A transformer that prepares the content and then runs `this`.
    */
-  override def andThenRename(rename: Locate.FromInputAndOutcome[P, Q, Q]) = {
+  override def withPrepare(prep: (Cell[P]) => Content) = {
+    new Transformer[P, Q] {
+      def present(cell: Cell[P]): TraversableOnce[Cell[Q]] = self.present(Cell(cell.position, prep(cell)))
+    }
+  }
+
+  /**
+   * Operator for transforming and then updating the contents.
+   *
+   * @param mutate The mutation to apply after the transformation.
+   *
+   * @return A transformer that runs `this` and then updates the resulting contents.
+   */
+  override def andThenMutate(mutate: (Cell[Q]) => Content) = {
     new Transformer[P, Q] {
       def present(cell: Cell[P]): TraversableOnce[Cell[Q]] = {
-        self.present(cell).map { case c => Cell(rename(cell, c), c.content) }
+        self.present(cell).map { case c => Cell(c.position, mutate(c)) }
       }
     }
   }
 
   /**
-   * Operator for transforming and then expanding dimensions.
+   * Operator for transforming and then relocating the contents.
    *
-   * @param expand The expansion to apply after the transformation.
+   * @param locate The relocation to apply after the transformation.
    *
-   * @return A transformer that runs `this` and then expands the resulting dimensions.
+   * @return A transformer that runs `this` and then relocates the contents.
    */
-  override def andThenExpand[R <: Position](expand: Locate.FromInputAndOutcome[P, Q, R])(
-    implicit ev: PosExpDep[Q, R]) = {
+  override def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new Transformer[P, R] {
       def present(cell: Cell[P]): TraversableOnce[Cell[R]] = {
-        self.present(cell).map { case c => Cell(expand(cell, c), c.content) }
+        self.present(cell).map { case c => Cell(locate(c), c.content) }
       }
     }
   }
@@ -110,70 +123,104 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
   }
 
   /**
-   * Operator for transforming and then renaming dimensions.
+   * Operator for preparing content prior to transforming.
    *
-   * @param rename The rename to apply after the transformation.
+   * @param prep The function to apply prior to transforming.
    *
-   * @return A transformer that runs `this` and then renames the resulting dimension(s).
+   * @return A transformer that prepares the content and then runs `this`.
    */
-  def andThenRename(rename: Locate.FromInputAndOutcome[P, Q, Q]) = {
+  def withPrepare(prep: (Cell[P]) => Content) = {
     new TransformerWithValue[P, Q] {
       type V = self.V
 
       def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
-        self.presentWithValue(cell, ext).map { case c => Cell(rename(cell, c), c.content) }
+        self.presentWithValue(Cell(cell.position, prep(cell)), ext)
       }
     }
   }
 
   /**
-   * Operator for transforming and then expanding dimensions.
+   * Operator for transforming and then updating the contents.
    *
-   * @param expand The expansion to apply after the transformation.
+   * @param mutate The mutation to apply after the transformation.
    *
-   * @return A transformer that runs `this` and then expands the resulting dimensions.
+   * @return A transformer that runs `this` and then updates the resulting contents.
    */
-  def andThenExpand[R <: Position](expand: Locate.FromInputAndOutcome[P, Q, R])(implicit ev: PosExpDep[Q, R]) = {
-    new TransformerWithValue[P, R] {
-      type V = self.V
-
-      def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
-        self.presentWithValue(cell, ext).map { case c => Cell(expand(cell, c), c.content) }
-      }
-    }
-  }
-
-  /**
-   * Operator for transforming and then renaming dimensions.
-   *
-   * @param rename The rename to apply after the transformation.
-   *
-   * @return A transformer that runs `this` and then renames the resulting dimension(s).
-   */
-  def andThenRenameWithValue(rename: Locate.FromInputAndOutcomeWithValue[P, Q, Q, V]) = {
+  def andThenMutate(mutate: (Cell[Q]) => Content) = {
     new TransformerWithValue[P, Q] {
       type V = self.V
 
       def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
-        self.presentWithValue(cell, ext).map { case c => Cell(rename(cell, c, ext), c.content) }
+        self.presentWithValue(cell, ext).map { case c => Cell(c.position, mutate(c)) }
       }
     }
   }
 
   /**
-   * Operator for transforming and then expanding dimensions.
+   * Operator for transforming and then relocating the contents.
    *
-   * @param expand The expansion to apply after the transformation.
+   * @param locate The relocation to apply after the transformation.
    *
-   * @return A transformer that runs `this` and then expands the resulting dimensions.
+   * @return A transformer that runs `this` and then relocates the contents.
    */
-  def andThenExpandWithValue[R <: Position](expand: Locate.FromInputAndOutcomeWithValue[P, Q, R, V])(
-    implicit ev: PosExpDep[Q, R]) = {
+  def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new TransformerWithValue[P, R] {
       type V = self.V
 
       def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
-        self.presentWithValue(cell, ext).map { case c => Cell(expand(cell, c, ext), c.content) }
+        self.presentWithValue(cell, ext).map { case c => Cell(locate(c), c.content) }
+      }
+    }
+  }
+
+  /**
+   * Operator for preparing content prior to transforming.
+   *
+   * @param prep The function to apply prior to transforming.
+   *
+   * @return A transformer that prepares the content and then runs `this`.
+   */
+  def withPrepareWithValue(prep: (Cell[P], V) => Content) = {
+    new TransformerWithValue[P, Q] {
+      type V = self.V
+
+      def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
+        self.presentWithValue(Cell(cell.position, prep(cell, ext)), ext)
+      }
+    }
+  }
+
+  /**
+   * Operator for transforming and then updating the contents.
+   *
+   * @param mutate The mutation to apply after the transformation.
+   *
+   * @return A transformer that runs `this` and then updates the resulting contents.
+   */
+  def andThenMutateWithValue(mutate: (Cell[Q], V) => Content) = {
+    new TransformerWithValue[P, Q] {
+      type V = self.V
+
+      def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
+        self.presentWithValue(cell, ext).map { case c => Cell(c.position, mutate(c, ext)) }
+      }
+    }
+  }
+
+  /**
+   * Operator for transforming and then relocating the contents.
+   *
+   * @param locate The relocation to apply after the transformation.
+   *
+   * @return A transformer that runs `this` and then relocates the contents.
+   */
+  def andThenRelocateWithValue[R <: Position](locate: Locate.FromCellWithValue[Q, R, V])(
+    implicit ev: PosIncDep[Q, R]) = {
+    new TransformerWithValue[P, R] {
+      type V = self.V
+
+      def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
+        self.presentWithValue(cell, ext).map { case c => Cell(locate(c, ext), c.content) }
       }
     }
   }

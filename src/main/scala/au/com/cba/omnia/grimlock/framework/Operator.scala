@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.framework.pairwise
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /** Base trait for comparing two positions to determine if pairwise operation is to be applied. */
@@ -76,31 +77,46 @@ trait Operator[P <: Position, Q <: Position] extends OperatorWithValue[P, Q] { s
   def compute(left: Cell[P], right: Cell[P]): TraversableOnce[Cell[Q]]
 
   /**
-   * Operator for pairwise operations and then renaming dimensions.
+   * Operator for preparing content prior to pairwise operations.
    *
-   * @param rename The rename to apply after the operation.
+   * @param prep The function to apply prior to pariwise operations.
    *
-   * @return An operator that runs `this` and then renames the resulting dimension(s).
+   * @return An operator that prepares the content and then runs `this`.
    */
-  def andThenRename(rename: (Cell[P], Cell[P], Cell[Q]) => Q) = {
+  override def withPrepare(prep: (Cell[P]) => Content) = {
     new Operator[P, Q] {
       def compute(left: Cell[P], right: Cell[P]): TraversableOnce[Cell[Q]] = {
-        self.compute(left, right).map { case c => Cell(rename(left, right, c), c.content) }
+        self.compute(Cell(left.position, prep(left)), Cell(right.position, prep(right)))
       }
     }
   }
 
   /**
-   * Operator for pairwise operations and then expanding dimensions.
+   * Operator for pairwise operations and then updating the contents.
    *
-   * @param expand The expansion to apply after the operation.
+   * @param mutate The mutation to apply after the pairwise operations.
    *
-   * @return An operator that runs `this` and then expands the resulting dimensions.
+   * @return An operator that runs `this` and then updates the resulting contents.
    */
-  def andThenExpand[R <: Position](expand: (Cell[P], Cell[P], Cell[Q]) => R)(implicit ev: PosExpDep[Q, R]) = {
+  override def andThenMutate(mutate: (Cell[Q]) => Content) = {
+    new Operator[P, Q] {
+      def compute(left: Cell[P], right: Cell[P]): TraversableOnce[Cell[Q]] = {
+        self.compute(left, right).map { case c => Cell(c.position, mutate(c)) }
+      }
+    }
+  }
+
+  /**
+   * Operator for pairwise operations and then relocating the contents.
+   *
+   * @param locate The relocation to apply after the operation.
+   *
+   * @return An operator that runs `this` and then relocates the resulting content.
+   */
+  override def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new Operator[P, R] {
       def compute(left: Cell[P], right: Cell[P]): TraversableOnce[Cell[R]] = {
-        self.compute(left, right).map { case c => Cell(expand(left, right, c), c.content) }
+        self.compute(left, right).map { case c => Cell(locate(c), c.content) }
       }
     }
   }
@@ -124,36 +140,104 @@ trait OperatorWithValue[P <: Position, Q <: Position] extends java.io.Serializab
   def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[Q]]
 
   /**
-   * Operator for pairwise operations and then renaming dimensions.
+   * Operator for preparing content prior to pairwise operations.
    *
-   * @param rename The rename to apply after the operation.
+   * @param prep The function to apply prior to pariwise operations.
    *
-   * @return An operator that runs `this` and then renames the resulting dimension(s).
+   * @return An operator that prepares the content and then runs `this`.
    */
-  def andThenRenameWithValue(rename: (Cell[P], Cell[P], V, Cell[Q]) => Q) = {
+  def withPrepare(prep: (Cell[P]) => Content) = {
     new OperatorWithValue[P, Q] {
       type V = self.V
 
       def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
-        self.computeWithValue(left, right, ext).map { case c => Cell(rename(left, right, ext, c), c.content) }
+        self.computeWithValue(Cell(left.position, prep(left)), Cell(right.position, prep(right)), ext)
       }
     }
   }
 
   /**
-   * Operator for pairwise operations and then expanding dimensions.
+   * Operator for pairwise operations and then updating the contents.
    *
-   * @param expand The expansion to apply after the operation.
+   * @param mutate The mutation to apply after the pairwise operations.
    *
-   * @return An operator that runs `this` and then expands the resulting dimensions.
+   * @return An operator that runs `this` and then updates the resulting contents.
    */
-  def andThenExpandWithValue[R <: Position](expand: (Cell[P], Cell[P], V, Cell[Q]) => R)(
-    implicit ev: PosExpDep[Q, R]) = {
+  def andThenMutate(mutate: (Cell[Q]) => Content) = {
+    new OperatorWithValue[P, Q] {
+      type V = self.V
+
+      def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
+        self.computeWithValue(left, right, ext).map { case c => Cell(c.position, mutate(c)) }
+      }
+    }
+  }
+
+  /**
+   * Operator for pairwise operations and then relocating the contents.
+   *
+   * @param locate The relocation to apply after the operation.
+   *
+   * @return An operator that runs `this` and then relocates the resulting content.
+   */
+  def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new OperatorWithValue[P, R] {
       type V = self.V
 
       def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
-        self.computeWithValue(left, right, ext).map { case c => Cell(expand(left, right, ext, c), c.content) }
+        self.computeWithValue(left, right, ext).map { case c => Cell(locate(c), c.content) }
+      }
+    }
+  }
+
+  /**
+   * Operator for preparing content prior to pairwise operations.
+   *
+   * @param prep The function to apply prior to pariwise operations.
+   *
+   * @return An operator that prepares the content and then runs `this`.
+   */
+  def withPrepareWithValue(prep: (Cell[P], V) => Content) = {
+    new OperatorWithValue[P, Q] {
+      type V = self.V
+
+      def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
+        self.computeWithValue(Cell(left.position, prep(left, ext)), Cell(right.position, prep(right, ext)), ext)
+      }
+    }
+  }
+
+  /**
+   * Operator for pairwise operations and then updating the contents.
+   *
+   * @param mutate The mutation to apply after the pairwise operations.
+   *
+   * @return An operator that runs `this` and then updates the resulting contents.
+   */
+  def andThenMutateWithValue(mutate: (Cell[Q], V) => Content) = {
+    new OperatorWithValue[P, Q] {
+      type V = self.V
+
+      def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
+        self.computeWithValue(left, right, ext).map { case c => Cell(c.position, mutate(c, ext)) }
+      }
+    }
+  }
+
+  /**
+   * Operator for pairwise operations and then relocating the contents.
+   *
+   * @param locate The relocation to apply after the operation.
+   *
+   * @return An operator that runs `this` and then relocates the resulting content.
+   */
+  def andThenRelocateWithValue[R <: Position](locate: Locate.FromCellWithValue[Q, R, V])(
+    implicit ev: PosIncDep[Q, R]) = {
+    new OperatorWithValue[P, R] {
+      type V = self.V
+
+      def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
+        self.computeWithValue(left, right, ext).map { case c => Cell(locate(c, ext), c.content) }
       }
     }
   }

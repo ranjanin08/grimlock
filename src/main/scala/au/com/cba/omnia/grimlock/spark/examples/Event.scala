@@ -38,12 +38,12 @@ case class ExampleEvent(
   startTime: java.util.Date,
   duration: Long,
   instances: List[String],
-  details: String) extends Event
+  details: String) extends Structured
 
 object ExampleEvent {
   // Function to read a file with event data.
   def load(file: String)(implicit sc: SparkContext): RDD[Cell[Position1D]] = {
-    val es = EventSchema(ExampleEventCodex)
+    val es = StructuredSchema(ExampleEventCodex)
     sc.textFile(file)
       .flatMap { case s => es.decode(s).map { case e => Cell(Position1D(es.codex.fromValue(e.value).eventId), e) } }
   }
@@ -51,16 +51,16 @@ object ExampleEvent {
 
 // Define a codex for dealing with the example event. Note that comparison, for this example, is simply comparison
 // on the event id.
-case object ExampleEventCodex extends EventCodex {
+case object ExampleEventCodex extends StructuredCodex {
   val name = "example.event"
 
   type T = ExampleEvent
-  type V = EventValue[T]
+  type V = StructuredValue[T]
 
-  def toValue(value: T): V = EventValue(value, this)
+  def toValue(value: T): V = StructuredValue(value, this)
   def fromValue(value: Value): T = value.asInstanceOf[V].value
   def compare(x: Value, y: Value): Option[Int] = {
-    (x.asEvent, y.asEvent) match {
+    (x.asStructured, y.asStructured) match {
       case (Some(ExampleEvent(l, _, _, _, _, _)), Some(ExampleEvent(r, _, _, _, _, _))) => Some(l.compare(r))
       case _ => None
     }
@@ -85,7 +85,7 @@ case object ExampleEventCodex extends EventCodex {
 case class Denormalise() extends Transformer[Position1D, Position2D] {
   def present(cell: Cell[Position1D]): TraversableOnce[Cell[Position2D]] = {
     cell.content match {
-      case Content(_, EventValue(ExampleEvent(_, _, _, _, instances, _), _)) =>
+      case Content(_, StructuredValue(ExampleEvent(_, _, _, _, instances, _), _)) =>
         for { iid <- instances } yield { Cell(cell.position.append(iid), cell.content) }
       case _ => None
     }
@@ -98,7 +98,7 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
   stopwords: List[String] = Stopwords.English) extends Transformer[Position2D, Position3D] {
   def present(cell: Cell[Position2D]): TraversableOnce[Cell[Position3D]] = {
     cell.content match {
-      case Content(_, EventValue(ExampleEvent(_, _, _, _, _, details), _)) =>
+      case Content(_, StructuredValue(ExampleEvent(_, _, _, _, _, details), _)) =>
         // Get words from details. Optionally filter by length and/or stopwords.
         val words = details
           .toLowerCase

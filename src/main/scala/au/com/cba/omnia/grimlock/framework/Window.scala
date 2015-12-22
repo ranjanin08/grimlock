@@ -15,6 +15,7 @@
 package au.com.cba.omnia.grimlock.framework.window
 
 import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 
 /**
@@ -57,13 +58,36 @@ trait Window[P <: Position, S <: Position with ExpandablePosition, R <: Position
   def present(pos: S, out: O): TraversableOnce[Cell[Q]]
 
   /**
-   * Operator for generating derived data and then renaming dimensions.
+   * Operator for preparing content prior to generating derived data.
    *
-   * @param rename The rename to apply after the derived data has been generated.
+   * @param prep The function to apply prior to generating derived data.
    *
-   * @return A window that runs `this` and then renames the resulting dimension(s).
+   * @return A windowed function that prepares the content and then runs `this`.
    */
-  def andThenRename(rename: (Cell[Q]) => Q) = {
+  override def withPrepare(prep: (Cell[P]) => Content) = {
+    new Window[P, S, R, Q] {
+      type I = self.I
+      type T = self.T
+      type O = self.O
+
+      def prepare(cell: Cell[P]): I = self.prepare(Cell(cell.position, prep(cell)))
+
+      def initialise(rem: R, in: I): (T, TraversableOnce[O]) = self.initialise(rem, in)
+
+      def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
+
+      def present(pos: S, out: O): TraversableOnce[Cell[Q]] = self.present(pos, out)
+    }
+  }
+
+  /**
+   * Operator for generating derived data and then updating the contents.
+   *
+   * @param mutate The mutation to apply after generating derived data.
+   *
+   * @return A windowed function that runs `this` and then updates the resulting contents.
+   */
+  override def andThenMutate(mutate: (Cell[Q]) => Content) = {
     new Window[P, S, R, Q] {
       type I = self.I
       type T = self.T
@@ -76,19 +100,19 @@ trait Window[P <: Position, S <: Position with ExpandablePosition, R <: Position
       def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
       def present(pos: S, out: O): TraversableOnce[Cell[Q]] = {
-        self.present(pos, out).map { case c => Cell(rename(c), c.content) }
+        self.present(pos, out).map { case c => Cell(c.position, mutate(c)) }
       }
     }
   }
 
   /**
-   * Operator for generating derived data and then expanding dimensions.
+   * Operator for generating derived data and then relocating the contents.
    *
-   * @param expand The expansion to apply after the derived data has been generated.
+   * @param locate The relocation to apply after generating derived data.
    *
-   * @return A window that runs `this` and then expands the resulting dimensions.
+   * @return A windowed function that runs `this` and then relocates the contents.
    */
-  def andThenExpand[U <: Position](expand: (Cell[Q]) => U)(implicit ev: PosExpDep[Q, U]) = {
+  override def andThenRelocate[U <: Position](locate: Locate.FromCell[Q, U])(implicit ev: PosIncDep[Q, U]) = {
     new Window[P, S, R, U] {
       type I = self.I
       type T = self.T
@@ -101,7 +125,7 @@ trait Window[P <: Position, S <: Position with ExpandablePosition, R <: Position
       def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
       def present(pos: S, out: O): TraversableOnce[Cell[U]] = {
-        self.present(pos, out).map { case c => Cell(expand(c), c.content) }
+        self.present(pos, out).map { case c => Cell(locate(c), c.content) }
       }
     }
   }
@@ -176,13 +200,37 @@ trait WindowWithValue[P <: Position, S <: Position with ExpandablePosition, R <:
   def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[Q]]
 
   /**
-   * Operator for generating derived data and then renaming dimensions.
+   * Operator for preparing content prior to generating derived data.
    *
-   * @param rename The rename to apply after the derived data has been generated.
+   * @param prep The function to apply prior to generating derived data.
    *
-   * @return A window that runs `this` and then renames the resulting dimension(s).
+   * @return A windowed function that prepares the content and then runs `this`.
    */
-  def andThenRenameWithValue(rename: (Cell[Q], V) => Q) = {
+  def withPrepare(prep: (Cell[P]) => Content) = {
+    new WindowWithValue[P, S, R, Q] {
+      type V = self.V
+      type I = self.I
+      type T = self.T
+      type O = self.O
+
+      def prepareWithValue(cell: Cell[P], ext: V): I = self.prepareWithValue(Cell(cell.position, prep(cell)), ext)
+
+      def initialise(rem: R, in: I): (T, TraversableOnce[O]) = self.initialise(rem, in)
+
+      def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
+
+      def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[Q]] = self.presentWithValue(pos, out, ext)
+    }
+  }
+
+  /**
+   * Operator for generating derived data and then updating the contents.
+   *
+   * @param mutate The mutation to apply after generating derived data.
+   *
+   * @return A windowed function that runs `this` and then updates the resulting contents.
+   */
+  def andThenMutate(mutate: (Cell[Q]) => Content) = {
     new WindowWithValue[P, S, R, Q] {
       type V = self.V
       type I = self.I
@@ -196,19 +244,19 @@ trait WindowWithValue[P <: Position, S <: Position with ExpandablePosition, R <:
       def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
       def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[Q]] = {
-        self.presentWithValue(pos, out, ext).map { case c => Cell(rename(c, ext), c.content) }
+        self.presentWithValue(pos, out, ext).map { case c => Cell(c.position, mutate(c)) }
       }
     }
   }
 
   /**
-   * Operator for generating derived data and then expanding dimensions.
+   * Operator for generating derived data and then relocating the contents.
    *
-   * @param expand The expansion to apply after the derived data has been generated.
+   * @param locate The relocation to apply after generating derived data.
    *
-   * @return A window that runs `this` and then expands the resulting dimensions.
+   * @return A windowed function that runs `this` and then relocates the contents.
    */
-  def andThenExpandWithValue[U <: Position](expand: (Cell[Q], V) => U)(implicit ev: PosExpDep[Q, U]) = {
+  def andThenRelocate[U <: Position](locate: Locate.FromCell[Q, U])(implicit ev: PosIncDep[Q, U]) = {
     new WindowWithValue[P, S, R, U] {
       type V = self.V
       type I = self.I
@@ -222,7 +270,84 @@ trait WindowWithValue[P <: Position, S <: Position with ExpandablePosition, R <:
       def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
       def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[U]] = {
-        self.presentWithValue(pos, out, ext).map { case c => Cell(expand(c, ext), c.content) }
+        self.presentWithValue(pos, out, ext).map { case c => Cell(locate(c), c.content) }
+      }
+    }
+  }
+
+  /**
+   * Operator for preparing content prior to generating derived data.
+   *
+   * @param prep The function to apply prior to generating derived data.
+   *
+   * @return A windowed function that prepares the content and then runs `this`.
+   */
+  def withPrepareWithValue(prep: (Cell[P], V) => Content) = {
+    new WindowWithValue[P, S, R, Q] {
+      type V = self.V
+      type I = self.I
+      type T = self.T
+      type O = self.O
+
+      def prepareWithValue(cell: Cell[P], ext: V): I = self.prepareWithValue(Cell(cell.position, prep(cell, ext)), ext)
+
+      def initialise(rem: R, in: I): (T, TraversableOnce[O]) = self.initialise(rem, in)
+
+      def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
+
+      def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[Q]] = self.presentWithValue(pos, out, ext)
+    }
+  }
+
+  /**
+   * Operator for generating derived data and then updating the contents.
+   *
+   * @param mutate The mutation to apply after generating derived data.
+   *
+   * @return A windowed function that runs `this` and then updates the resulting contents.
+   */
+  def andThenMutateWithValue(mutate: (Cell[Q], V) => Content) = {
+    new WindowWithValue[P, S, R, Q] {
+      type V = self.V
+      type I = self.I
+      type T = self.T
+      type O = self.O
+
+      def prepareWithValue(cell: Cell[P], ext: V): I = self.prepareWithValue(cell, ext)
+
+      def initialise(rem: R, in: I): (T, TraversableOnce[O]) = self.initialise(rem, in)
+
+      def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
+
+      def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[Q]] = {
+        self.presentWithValue(pos, out, ext).map { case c => Cell(c.position, mutate(c, ext)) }
+      }
+    }
+  }
+
+  /**
+   * Operator for generating derived data and then relocating the contents.
+   *
+   * @param locate The relocation to apply after generating derived data.
+   *
+   * @return A windowed function that runs `this` and then relocates the contents.
+   */
+  def andThenRelocateWithValue[U <: Position](locate: Locate.FromCellWithValue[Q, U, V])(
+    implicit ev: PosIncDep[Q, U]) = {
+    new WindowWithValue[P, S, R, U] {
+      type V = self.V
+      type I = self.I
+      type T = self.T
+      type O = self.O
+
+      def prepareWithValue(cell: Cell[P], ext: V): I = self.prepareWithValue(cell, ext)
+
+      def initialise(rem: R, in: I): (T, TraversableOnce[O]) = self.initialise(rem, in)
+
+      def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
+
+      def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[U]] = {
+        self.presentWithValue(pos, out, ext).map { case c => Cell(locate(c, ext), c.content) }
       }
     }
   }
