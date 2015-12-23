@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock.framework
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
@@ -25,8 +26,6 @@ import au.com.cba.omnia.grimlock.framework.squash._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.window._
-
-import java.util.regex.Pattern
 
 import org.apache.hadoop.io.Writable
 
@@ -88,6 +87,40 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
    * @param tuner The tuner for the job.
    */
   def domain[T <: Tuner](tuner: T)(implicit ev: DomainTuners#V[T]): U[P]
+
+  /** Specifies tuners permitted on a call to `fill` with hetrogeneous data. */
+  type FillHeterogeneousTuners <: OneOf
+
+  /**
+   * Fill a matrix with `values` for a given `slice`.
+   *
+   * @param slice  Encapsulates the dimension(s) on which to fill.
+   * @param values The content to fill a matrix with.
+   * @param tuner  The tuner for the job.
+   *
+   * @return A `U[Cell[P]]` where all missing values have been filled in.
+   *
+   * @note This joins `values` onto this matrix, as such it can be used for imputing missing values. As
+   *       the join is an inner join, any positions in the matrix that aren't in `values` are filtered
+   *       from the resulting matrix.
+   */
+  def fillHeterogeneous[S <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[S]], tuner: T)(
+    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S,
+      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]]
+
+  /** Specifies tuners permitted on a call to `fill` with homogeneous data. */
+  type FillHomogeneousTuners <: OneOf
+
+  /**
+   * Fill a matrix with `value`.
+   *
+   * @param value The content to fill a matrix with.
+   * @param tuner The tuner for the job.
+   *
+   * @return A `U[Cell[P]]` where all missing values have been filled in.
+   */
+  def fillHomogeneous[T <: Tuner](value: Content, tuner: T)(implicit ev1: ClassTag[P],
+    ev2: FillHomogeneousTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `get`. */
   type GetTuners <: OneOf
@@ -211,23 +244,24 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
       ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]]
 
   /**
-   * Rename the coordinates of a dimension.
+   * Relocate the coordinates of the cells.
    *
-   * @param renamer Function that renames coordinates.
+   * @param locate Function that relocates coordinates.
    *
-   * @return A `U[Cell[P]]` where the position has been renamed.
+   * @return A `U[Cell[Q]]` where the cells have been relocated.
    */
-  def rename(renamer: (Cell[P]) => Option[P]): U[Cell[P]]
+  def relocate[Q <: Position](locate: Locate.OptionalFromCell[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]]
 
   /**
-   * Rename the coordinates of a dimension using user a suplied value.
+   * Relocate the coordinates of the cells using user a suplied value.
    *
-   * @param renamer Function that renames coordinates.
-   * @param value   A `E` holding a user supplied value.
+   * @param locate Function that relocates coordinates.
+   * @param value  A `E` holding a user supplied value.
    *
-   * @return A `U[Cell[P]]` where the position has been renamed.
+   * @return A `U[Cell[Q]]` where the cells have been relocated.
    */
-  def renameWithValue[W](renamer: (Cell[P], W) => Option[P], value: E[W]): U[Cell[P]]
+  def relocateWithValue[Q <: Position, W](locate: Locate.OptionalFromCellWithValue[P, Q, W], value: E[W])(
+    implicit ev: PosIncDep[P, Q]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `set` functions. */
   type SetTuners <: OneOf
@@ -425,6 +459,15 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
   def toText(writer: TextWriter): U[String]
 
   /**
+   * Merge all dimensions into a single.
+   *
+   * @param separator The separator to use when merging the coordinates.
+   *
+   * @return A `U[CellPosition1D]]` where all coordinates have been merged into a single string.
+   */
+  def toVector(separator: String = "|"): U[Cell[Position1D]]
+
+  /**
    * Transform the content of a matrix.
    *
    * @param transformers The transformer(s) to apply to the content.
@@ -534,40 +577,6 @@ object Matrix {
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
 trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] =>
-  /** Specifies tuners permitted on a call to `fill` with hetrogeneous data. */
-  type FillHeterogeneousTuners <: OneOf
-
-  /**
-   * Fill a matrix with `values` for a given `slice`.
-   *
-   * @param slice  Encapsulates the dimension(s) on which to fill.
-   * @param values The content to fill a matrix with.
-   * @param tuner  The tuner for the job.
-   *
-   * @return A `U[Cell[P]]` where all missing values have been filled in.
-   *
-   * @note This joins `values` onto this matrix, as such it can be used for imputing missing values. As
-   *       the join is an inner join, any positions in the matrix that aren't in `values` are filtered
-   *       from the resulting matrix.
-   */
-  def fillHeterogeneous[Q <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[Q]], tuner: T)(
-    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= Q,
-      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]]
-
-  /** Specifies tuners permitted on a call to `fill` with homogeneous data. */
-  type FillHomogeneousTuners <: OneOf
-
-  /**
-   * Fill a matrix with `value`.
-   *
-   * @param value The content to fill a matrix with.
-   * @param tuner The tuner for the job.
-   *
-   * @return A `U[Cell[P]]` where all missing values have been filled in.
-   */
-  def fillHomogeneous[T <: Tuner](value: Content, tuner: T)(implicit ev1: ClassTag[P],
-    ev2: FillHomogeneousTuners#V[T]): U[Cell[P]]
-
   /**
    * Melt one dimension of a matrix into another.
    *
@@ -610,38 +619,14 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    */
   def squashWithValue[D <: Dimension, W, T <: Tuner](dim: D, squasher: SquashableWithValue[P, W], value: E[W],
     tuner: T)(implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
-
-  /**
-   * Merge all dimensions into a single.
-   *
-   * @param separator The separator to use when merging the coordinates.
-   *
-   * @return A `U[CellPosition1D]]` where all coordinates have been merged into a single string.
-   */
-  def toVector(separator: String = "|"): U[Cell[Position1D]]
 }
 
 /** Base trait for methods that expands the number of dimension of a matrix. */
-trait ExpandableMatrix[P <: Position with ExpandablePosition] { self: Matrix[P] =>
-  /**
-   * Expand a matrix with extra dimension(s).
-   *
-   * @param expander A function that expands each position with extra dimension(s).
-   *
-   * @return A `U[Cell[Q]]` with extra dimension(s) added.
-   */
-  def expand[Q <: Position](expander: (Cell[P]) => TraversableOnce[Q])(implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
+trait ExpandableMatrix[P <: Position with ExpandablePosition with ReduceablePosition] { self: Matrix[P] =>
+  type ReshapeTuners <: OneOf
 
-  /**
-   * Expand a matrix with extra dimension(s) using a user supplied value.
-   *
-   * @param expander A function that expands each position with extra dimension(s).
-   * @param value    A `E` holding a user supplied value.
-   *
-   * @return A `U[Cell[Q]]` with extra dimension(s) added.
-   */
-  def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => TraversableOnce[Q], value: E[W])(
-    implicit ev: PosExpDep[P, Q]): U[Cell[Q]]
+  def reshape[D <: Dimension, T <: Tuner](dim: D, coordinate: Valueable, missing: Valueable, tuner: T)(
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: ReshapeTuners#V[T]): U[Cell[P#M]]
 }
 
 /**

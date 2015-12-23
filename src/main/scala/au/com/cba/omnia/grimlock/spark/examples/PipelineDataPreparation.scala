@@ -83,8 +83,7 @@ object PipelineDataPreparation {
     // Compute histogram on the categorical features in the training data.
     val histogram = train
       .filter(_.content.schema.kind.isSpecialisationOf(Type.Categorical))
-      .expand((c: Cell[Position2D]) => Some(c.position.append(
-        "%1$s=%2$s".format(c.position(Second).toShortString, c.content.value.toShortString))))
+      .relocate(Locate.AppendDimensionWithContent(Second))
       .summarise(Along(First), Count[Position3D, Position2D]())
 
     // Compute the counts for each categorical features.
@@ -115,20 +114,20 @@ object PipelineDataPreparation {
     // Determine which features to filter based on statistics. In this case remove all features that occur for 2 or
     // fewer instances. These are removed first to prevent indicator features from being created.
     val rem1 = stats
-      .which((cell: Cell[Position2D]) => (cell.position(Second) equ "count") && (cell.content.value leq 2))
+      .which(cell => (cell.position(Second) equ "count") && (cell.content.value leq 2))
       .names(Over(First))
 
     // Also remove constant features (standard deviation is 0, or 1 category). These are removed after indicators have
     // been created.
     val rem2 = stats
-      .which((cell: Cell[Position2D]) => ((cell.position(Second) equ "sd") && (cell.content.value equ 0)) ||
+      .which(cell => ((cell.position(Second) equ "sd") && (cell.content.value equ 0)) ||
           ((cell.position(Second) equ "num.cat") && (cell.content.value equ 1)))
       .names(Over(First))
 
     // Finally remove categoricals for which an individual category has only 1 value. These are removed after binarized
     // features have been created.
     val rem3 = stats
-      .which((cell: Cell[Position2D]) => (cell.position(Second) like ".*=.*".r) && (cell.content.value equ 1))
+      .which(cell => (cell.position(Second) like ".*=.*".r) && (cell.content.value equ 1))
       .names(Over(Second))
 
     // Define type of statistics map.

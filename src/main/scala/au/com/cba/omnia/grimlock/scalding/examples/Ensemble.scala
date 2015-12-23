@@ -90,7 +90,7 @@ class Ensemble(args: Args) extends Job(args) {
     partition
       .stream("Rscript " + key, List(key), Cell.toString("|", false, true), Cell.parse1D("|", StringCodex))
       .data // Keep only the data (ignoring errors).
-      .expand((cell: Cell[Position1D]) => Some(cell.position.append(key)))
+      .relocate(c => Some(c.position.append(key)))
   }
 
   // Define extractor to get weight out of weights map.
@@ -105,7 +105,7 @@ class Ensemble(args: Args) extends Job(args) {
   // 6/ Persist the final scores.
   // 7/ Compact the scores into a Map so they can be used to compute the Gini index with.
   val scores = data
-    .expand((cell: Cell[Position2D]) => Some(cell.position.append(math.abs(cell.position(First).hashCode % 10))))
+    .relocate(c => Some(c.position.append(math.abs(c.position(First).hashCode % 10))))
     .split(EnsembleSplit(scripts(0), scripts(1), scripts(2)))
     .forEach(scripts, trainAndScore)
     .merge(scripts)
@@ -125,7 +125,7 @@ class Ensemble(args: Args) extends Job(args) {
   // 4/ Persist the Gini Index to file.
   data
     .slice(Over(Second), "label", true)
-    .renameWithValue(renameWithScore, scores)
+    .relocateWithValue(renameWithScore, scores)
     .gini(Over(Second))
     .saveAsText(s"./demo.${output}/ensemble.gini.out")
     .toUnit

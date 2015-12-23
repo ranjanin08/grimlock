@@ -4881,7 +4881,8 @@ trait TestMatrixPairwise extends TestMatrix {
 
 object TestMatrixPairwise {
 
-  case class PlusX[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q]) extends OperatorWithValue[P, Q] {
+  case class PlusX[P <: Position, Q <: Position](
+    pos: Locate.OptionalFromPairwiseCells[P, Q]) extends OperatorWithValue[P, Q] {
     type V = Double
 
     val plus = Plus(pos)
@@ -4893,7 +4894,8 @@ object TestMatrixPairwise {
     }
   }
 
-  case class MinusX[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q]) extends OperatorWithValue[P, Q] {
+  case class MinusX[P <: Position, Q <: Position](
+    pos: Locate.OptionalFromPairwiseCells[P, Q]) extends OperatorWithValue[P, Q] {
     type V = Double
 
     val minus = Minus(pos)
@@ -7531,75 +7533,75 @@ object TestMatrixRename {
 
 class TestScaldingMatrixRename extends TestMatrixRename {
 
-  "A Matrix.rename" should "return its first renamed data in 1D" in {
+  "A Matrix.relocate" should "return its first renamed data in 1D" in {
     toPipe(data1)
-      .rename(TestMatrixRename.renamer(First))
+      .relocate(TestMatrixRename.renamer(First))
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first renamed data in 2D" in {
     toPipe(data2)
-      .rename(TestMatrixRename.renamer(First))
+      .relocate(TestMatrixRename.renamer(First))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its second renamed data in 2D" in {
     toPipe(data2)
-      .rename(TestMatrixRename.renamer(Second))
+      .relocate(TestMatrixRename.renamer(Second))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its first renamed data in 3D" in {
     toPipe(data3)
-      .rename(TestMatrixRename.renamer(First))
+      .relocate(TestMatrixRename.renamer(First))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second renamed data in 3D" in {
     toPipe(data3)
-      .rename(TestMatrixRename.renamer(Second))
+      .relocate(TestMatrixRename.renamer(Second))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its third renamed data in 3D" in {
     toPipe(data3)
-      .rename(TestMatrixRename.renamer(Third))
+      .relocate(TestMatrixRename.renamer(Third))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   "A Matrix.renameWithValue" should "return its first renamed data in 1D" in {
     toPipe(data1)
-      .renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
+      .relocateWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its first renamed data in 2D" in {
     toPipe(data2)
-      .renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
+      .relocateWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second renamed data in 2D" in {
     toPipe(data2)
-      .renameWithValue(TestMatrixRename.renamerWithValue(Second), ValuePipe(ext))
+      .relocateWithValue(TestMatrixRename.renamerWithValue(Second), ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its first renamed data in 3D" in {
     toPipe(data3)
-      .renameWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
+      .relocateWithValue(TestMatrixRename.renamerWithValue(First), ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its second renamed data in 3D" in {
     toPipe(data3)
-      .renameWithValue(TestMatrixRename.renamerWithValue(Second), ValuePipe(ext))
+      .relocateWithValue(TestMatrixRename.renamerWithValue(Second), ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its third renamed data in 3D" in {
     toPipe(data3)
-      .renameWithValue(TestMatrixRename.renamerWithValue(Third), ValuePipe(ext))
+      .relocateWithValue(TestMatrixRename.renamerWithValue(Third), ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result12
   }
 }
@@ -7608,73 +7610,73 @@ class TestSparkMatrixRename extends TestMatrixRename {
 
   "A Matrix.rename" should "return its first renamed data in 1D" in {
     toRDD(data1)
-      .rename(TestMatrixRename.renamer(First))
+      .relocate(TestMatrixRename.renamer(First))
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first renamed data in 2D" in {
     toRDD(data2)
-      .rename(TestMatrixRename.renamer(First))
+      .relocate(TestMatrixRename.renamer(First))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its second renamed data in 2D" in {
     toRDD(data2)
-      .rename(TestMatrixRename.renamer(Second))
+      .relocate(TestMatrixRename.renamer(Second))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its first renamed data in 3D" in {
     toRDD(data3)
-      .rename(TestMatrixRename.renamer(First))
+      .relocate(TestMatrixRename.renamer(First))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second renamed data in 3D" in {
     toRDD(data3)
-      .rename(TestMatrixRename.renamer(Second))
+      .relocate(TestMatrixRename.renamer(Second))
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its third renamed data in 3D" in {
     toRDD(data3)
-      .rename(TestMatrixRename.renamer(Third))
+      .relocate(TestMatrixRename.renamer(Third))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   "A Matrix.renameWithValue" should "return its first renamed data in 1D" in {
     toRDD(data1)
-      .renameWithValue(TestMatrixRename.renamerWithValue(First), ext)
+      .relocateWithValue(TestMatrixRename.renamerWithValue(First), ext)
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its first renamed data in 2D" in {
     toRDD(data2)
-      .renameWithValue(TestMatrixRename.renamerWithValue(First), ext)
+      .relocateWithValue(TestMatrixRename.renamerWithValue(First), ext)
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second renamed data in 2D" in {
     toRDD(data2)
-      .renameWithValue(TestMatrixRename.renamerWithValue(Second), ext)
+      .relocateWithValue(TestMatrixRename.renamerWithValue(Second), ext)
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its first renamed data in 3D" in {
     toRDD(data3)
-      .renameWithValue(TestMatrixRename.renamerWithValue(First), ext)
+      .relocateWithValue(TestMatrixRename.renamerWithValue(First), ext)
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its second renamed data in 3D" in {
     toRDD(data3)
-      .renameWithValue(TestMatrixRename.renamerWithValue(Second), ext)
+      .relocateWithValue(TestMatrixRename.renamerWithValue(Second), ext)
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its third renamed data in 3D" in {
     toRDD(data3)
-      .renameWithValue(TestMatrixRename.renamerWithValue(Third), ext)
+      .relocateWithValue(TestMatrixRename.renamerWithValue(Third), ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 }
@@ -8211,14 +8213,15 @@ object TestMatrixExpand {
 
   type PwE = Position with ExpandablePosition
 
-  def expander1D[P <: PwE](cell: Cell[P]): TraversableOnce[P#M] = Some(cell.position.append("abc"))
-  def expander2D[P <: PwE, Q <: PwE](cell: Cell[P])(implicit ev: P#M =:= Q): TraversableOnce[Q#M] = {
+  def expander1D[P <: PwE](cell: Cell[P]): Option[P#M] = Some(cell.position.append("abc"))
+  def expander2D[P <: PwE, Q <: PwE](cell: Cell[P])(implicit ev: P#M =:= Q): Option[Q#M] = {
     Some(cell.position.append("abc").append("def"))
   }
-  def expander3D[P <: PwE, Q <: PwE, R <: PwE](cell: Cell[P])(implicit ev1: P#M =:= Q,
-    ev2: Q#M =:= R): TraversableOnce[R#M] = Some(cell.position.append("abc").append("def").append("ghi"))
+  def expander3D[P <: PwE, Q <: PwE, R <: PwE](cell: Cell[P])(implicit ev1: P#M =:= Q, ev2: Q#M =:= R): Option[R#M] = {
+    Some(cell.position.append("abc").append("def").append("ghi"))
+  }
   def expander4D[P <: PwE, Q <: PwE, R <: PwE, S <: PwE](cell: Cell[P])(implicit ev1: P#M =:= Q, ev2: Q#M =:= R,
-    ev3: R#M =:= S): TraversableOnce[S#M] = Some(cell.position.append("abc").append("def").append("ghi").append("jkl"))
+    ev3: R#M =:= S): Option[S#M] = Some(cell.position.append("abc").append("def").append("ghi").append("jkl"))
 
   val expand1D2D = expander1D[Position1D] _
   val expand1D3D = expander2D[Position1D, Position2D] _
@@ -8232,13 +8235,14 @@ object TestMatrixExpand {
   val expand3D4D = expander1D[Position3D] _
   val expand3D5D = expander2D[Position3D, Position4D] _
 
-  def expander1DWithValue[P <: PwE](cell: Cell[P], ext: String): TraversableOnce[P#M] = Some(cell.position.append(ext))
-  def expander2DWithValue[P <: PwE, Q <: PwE](cell: Cell[P], ext: String)(
-    implicit ev: P#M =:= Q): TraversableOnce[Q#M] = Some(cell.position.append(ext).append("def"))
+  def expander1DWithValue[P <: PwE](cell: Cell[P], ext: String): Option[P#M] = Some(cell.position.append(ext))
+  def expander2DWithValue[P <: PwE, Q <: PwE](cell: Cell[P], ext: String)(implicit ev: P#M =:= Q): Option[Q#M] = {
+    Some(cell.position.append(ext).append("def"))
+  }
   def expander3DWithValue[P <: PwE, Q <: PwE, R <: PwE](cell: Cell[P], ext: String)(implicit ev1: P#M =:= Q,
-    ev2: Q#M =:= R): TraversableOnce[R#M] = Some(cell.position.append(ext).append("def").append("ghi"))
+    ev2: Q#M =:= R): Option[R#M] = Some(cell.position.append(ext).append("def").append("ghi"))
   def expander4DWithValue[P <: PwE, Q <: PwE, R <: PwE, S <: PwE](cell: Cell[P], ext: String)(implicit ev1: P#M =:= Q,
-    ev2: Q#M =:= R, ev3: R#M =:= S): TraversableOnce[S#M] = {
+    ev2: Q#M =:= R, ev3: R#M =:= S): Option[S#M] = {
     Some(cell.position.append(ext).append("def").append("ghi").append("jkl"))
   }
 
@@ -8259,109 +8263,109 @@ class TestScaldingMatrixExpand extends TestMatrixExpand {
 
   "A Matrix.expand" should "return its 1D expanded data in 1D" in {
     toPipe(data1)
-      .expand(TestMatrixExpand.expand1D2D)
+      .relocate(TestMatrixExpand.expand1D2D)
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its 2D expanded data in 1D" in {
     toPipe(data1)
-      .expand(TestMatrixExpand.expand1D3D)
+      .relocate(TestMatrixExpand.expand1D3D)
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its 3D expanded data in 1D" in {
     toPipe(data1)
-      .expand(TestMatrixExpand.expand1D4D)
+      .relocate(TestMatrixExpand.expand1D4D)
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its 4D expanded data in 1D" in {
     toPipe(data1)
-      .expand(TestMatrixExpand.expand1D5D)
+      .relocate(TestMatrixExpand.expand1D5D)
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its 1D expanded data in 2D" in {
     toPipe(data2)
-      .expand(TestMatrixExpand.expand2D3D)
+      .relocate(TestMatrixExpand.expand2D3D)
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its 2D expanded data in 2D" in {
     toPipe(data2)
-      .expand(TestMatrixExpand.expand2D4D)
+      .relocate(TestMatrixExpand.expand2D4D)
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its 3D expanded data in 2D" in {
     toPipe(data2)
-      .expand(TestMatrixExpand.expand2D5D)
+      .relocate(TestMatrixExpand.expand2D5D)
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its 1D expanded data in 3D" in {
     toPipe(data3)
-      .expand(TestMatrixExpand.expand3D4D)
+      .relocate(TestMatrixExpand.expand3D4D)
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its 2D expanded data in 3D" in {
     toPipe(data3)
-      .expand(TestMatrixExpand.expand3D5D)
+      .relocate(TestMatrixExpand.expand3D5D)
       .toList.sortBy(_.position) shouldBe result9
   }
 
   "A Matrix.expandWithValue" should "return its 1D expanded data in 1D" in {
     toPipe(data1)
-      .expandWithValue(TestMatrixExpand.expand1D2DWithValue, ValuePipe(ext))
+      .relocateWithValue(TestMatrixExpand.expand1D2DWithValue, ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its 2D expanded data in 1D" in {
     toPipe(data1)
-      .expandWithValue(TestMatrixExpand.expand1D3DWithValue, ValuePipe(ext))
+      .relocateWithValue(TestMatrixExpand.expand1D3DWithValue, ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its 3D expanded data in 1D" in {
     toPipe(data1)
-      .expandWithValue(TestMatrixExpand.expand1D4DWithValue, ValuePipe(ext))
+      .relocateWithValue(TestMatrixExpand.expand1D4DWithValue, ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its 4D expanded data in 1D" in {
     toPipe(data1)
-      .expandWithValue(TestMatrixExpand.expand1D5DWithValue, ValuePipe(ext))
+      .relocateWithValue(TestMatrixExpand.expand1D5DWithValue, ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its 1D expanded data in 2D" in {
     toPipe(data2)
-      .expandWithValue(TestMatrixExpand.expand2D3DWithValue, ValuePipe(ext))
+      .relocateWithValue(TestMatrixExpand.expand2D3DWithValue, ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its 2D expanded data in 2D" in {
     toPipe(data2)
-      .expandWithValue(TestMatrixExpand.expand2D4DWithValue, ValuePipe(ext))
+      .relocateWithValue(TestMatrixExpand.expand2D4DWithValue, ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its 3D expanded data in 2D" in {
     toPipe(data2)
-      .expandWithValue(TestMatrixExpand.expand2D5DWithValue, ValuePipe(ext))
+      .relocateWithValue(TestMatrixExpand.expand2D5DWithValue, ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its 1D expanded data in 3D" in {
     toPipe(data3)
-      .expandWithValue(TestMatrixExpand.expand3D4DWithValue, ValuePipe(ext))
+      .relocateWithValue(TestMatrixExpand.expand3D4DWithValue, ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its 2D expanded data in 3D" in {
     toPipe(data3)
-      .expandWithValue(TestMatrixExpand.expand3D5DWithValue, ValuePipe(ext))
+      .relocateWithValue(TestMatrixExpand.expand3D5DWithValue, ValuePipe(ext))
       .toList.sortBy(_.position) shouldBe result18
   }
 }
@@ -8370,109 +8374,109 @@ class TestSparkMatrixExpand extends TestMatrixExpand {
 
   "A Matrix.expand" should "return its 1D expanded data in 1D" in {
     toRDD(data1)
-      .expand(TestMatrixExpand.expand1D2D)
+      .relocate(TestMatrixExpand.expand1D2D)
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its 2D expanded data in 1D" in {
     toRDD(data1)
-      .expand(TestMatrixExpand.expand1D3D)
+      .relocate(TestMatrixExpand.expand1D3D)
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its 3D expanded data in 1D" in {
     toRDD(data1)
-      .expand(TestMatrixExpand.expand1D4D)
+      .relocate(TestMatrixExpand.expand1D4D)
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its 4D expanded data in 1D" in {
     toRDD(data1)
-      .expand(TestMatrixExpand.expand1D5D)
+      .relocate(TestMatrixExpand.expand1D5D)
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its expanded 1D data in 2D" in {
     toRDD(data2)
-      .expand(TestMatrixExpand.expand2D3D)
+      .relocate(TestMatrixExpand.expand2D3D)
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its expanded 2D data in 2D" in {
     toRDD(data2)
-      .expand(TestMatrixExpand.expand2D4D)
+      .relocate(TestMatrixExpand.expand2D4D)
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its expanded 3D data in 2D" in {
     toRDD(data2)
-      .expand(TestMatrixExpand.expand2D5D)
+      .relocate(TestMatrixExpand.expand2D5D)
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its expanded 1D data in 3D" in {
     toRDD(data3)
-      .expand(TestMatrixExpand.expand3D4D)
+      .relocate(TestMatrixExpand.expand3D4D)
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its expanded 2D data in 3D" in {
     toRDD(data3)
-      .expand(TestMatrixExpand.expand3D5D)
+      .relocate(TestMatrixExpand.expand3D5D)
       .toList.sortBy(_.position) shouldBe result9
   }
 
   "A Matrix.expandWithValue" should "return its 1D expanded data in 1D" in {
     toRDD(data1)
-      .expandWithValue(TestMatrixExpand.expand1D2DWithValue, ext)
+      .relocateWithValue(TestMatrixExpand.expand1D2DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its 2D expanded data in 1D" in {
     toRDD(data1)
-      .expandWithValue(TestMatrixExpand.expand1D3DWithValue, ext)
+      .relocateWithValue(TestMatrixExpand.expand1D3DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its 3D expanded data in 1D" in {
     toRDD(data1)
-      .expandWithValue(TestMatrixExpand.expand1D4DWithValue, ext)
+      .relocateWithValue(TestMatrixExpand.expand1D4DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result12
   }
 
   it should "return its 4D expanded data in 1D" in {
     toRDD(data1)
-      .expandWithValue(TestMatrixExpand.expand1D5DWithValue, ext)
+      .relocateWithValue(TestMatrixExpand.expand1D5DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result13
   }
 
   it should "return its 1D expanded data in 2D" in {
     toRDD(data2)
-      .expandWithValue(TestMatrixExpand.expand2D3DWithValue, ext)
+      .relocateWithValue(TestMatrixExpand.expand2D3DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result14
   }
 
   it should "return its 2D expanded data in 2D" in {
     toRDD(data2)
-      .expandWithValue(TestMatrixExpand.expand2D4DWithValue, ext)
+      .relocateWithValue(TestMatrixExpand.expand2D4DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result15
   }
 
   it should "return its 3D expanded data in 2D" in {
     toRDD(data2)
-      .expandWithValue(TestMatrixExpand.expand2D5DWithValue, ext)
+      .relocateWithValue(TestMatrixExpand.expand2D5DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result16
   }
 
   it should "return its 1D expanded data in 3D" in {
     toRDD(data3)
-      .expandWithValue(TestMatrixExpand.expand3D4DWithValue, ext)
+      .relocateWithValue(TestMatrixExpand.expand3D4DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result17
   }
 
   it should "return its 2D expanded data in 3D" in {
     toRDD(data3)
-      .expandWithValue(TestMatrixExpand.expand3D5DWithValue, ext)
+      .relocateWithValue(TestMatrixExpand.expand3D5DWithValue, ext)
       .toList.sortBy(_.position) shouldBe result18
   }
 }

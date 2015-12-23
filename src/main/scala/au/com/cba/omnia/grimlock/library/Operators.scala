@@ -24,7 +24,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 /** Convenience trait for operators that apply to `Double` values. */
 trait DoubleOperator[P <: Position, Q <: Position] extends Operator[P, Q] {
   /** Function to extract result position. */
-  val pos: Locate.FromPairwiseCells[P, Q]
+  val pos: Locate.OptionalFromPairwiseCells[P, Q]
 
   /** Indicator if pairwise operator `f()` should be called as `f(l, r)` or as `f(r, l)`. */
   val inverse: Boolean
@@ -47,25 +47,27 @@ trait DoubleOperator[P <: Position, Q <: Position] extends Operator[P, Q] {
 }
 
 /** Add two values. */
-case class Plus[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q]) extends DoubleOperator[P, Q] {
+case class Plus[P <: Position, Q <: Position](
+  pos: Locate.OptionalFromPairwiseCells[P, Q]) extends DoubleOperator[P, Q] {
   val inverse: Boolean = false
   protected def compute(l: Double, r: Double) = l + r
 }
 
 /** Subtract two values. */
-case class Minus[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q],
+case class Minus[P <: Position, Q <: Position](pos: Locate.OptionalFromPairwiseCells[P, Q],
   inverse: Boolean = false) extends DoubleOperator[P, Q] {
   protected def compute(l: Double, r: Double) = l - r
 }
 
 /** Multiply two values. */
-case class Times[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q]) extends DoubleOperator[P, Q] {
+case class Times[P <: Position, Q <: Position](
+  pos: Locate.OptionalFromPairwiseCells[P, Q]) extends DoubleOperator[P, Q] {
   val inverse: Boolean = false
   protected def compute(l: Double, r: Double) = l * r
 }
 
 /** Divide two values. */
-case class Divide[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q],
+case class Divide[P <: Position, Q <: Position](pos: Locate.OptionalFromPairwiseCells[P, Q],
   inverse: Boolean = false) extends DoubleOperator[P, Q] {
   protected def compute(l: Double, r: Double) = l / r
 }
@@ -77,7 +79,7 @@ case class Divide[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P,
  * @param value Pattern for the new (string) value of the pairwise contents. Use `%[12]$``s` for the string
  *              representations of the content.
  */
-case class Concatenate[P <: Position, Q <: Position](pos: Locate.FromPairwiseCells[P, Q],
+case class Concatenate[P <: Position, Q <: Position](pos: Locate.OptionalFromPairwiseCells[P, Q],
   value: String = "%1$s,%2$s") extends Operator[P, Q] {
   def compute(left: Cell[P], right: Cell[P]): TraversableOnce[Cell[Q]] = {
     pos(left, right) match {

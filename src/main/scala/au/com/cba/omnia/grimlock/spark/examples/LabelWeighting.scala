@@ -57,7 +57,7 @@ object LabelWeighting {
 
     // Compute histogram over the label values.
     val histogram = labels
-      .expand((c: Cell[Position1D]) => Some(c.position.append(c.content.value.toShortString)))
+      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(First), Count[Position2D, Position1D]())
 
     // Compute the total number of labels and compact result into a Map.

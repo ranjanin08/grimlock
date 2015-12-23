@@ -36,49 +36,21 @@ class Conditional(args: Args) extends Job(args) {
   // 1/ Read the data (ignoring errors), this returns a 2D matrix (row x feature).
   val (data, _) = loadText(s"${path}/exampleConditional.txt", Cell.parse2D())
 
-  // Get map of row id -> hair color
-  // 1/ Squash the matrix keeping only hair column.
-  // 2/ Compact vector into a map.
-  val hair = data
-    .squash(Second, KeepSlice[Position2D]("hair"))
-    .compact(Over(First))
-
-  // Get map of row id -> eye color
-  // 1/ Squash the matrix keeping only eye column.
-  // 2/ Compact vector into a map.
-  val eye = data
-    .squash(Second, KeepSlice[Position2D]("eye"))
-    .compact(Over(First))
-
-  // Get map of row id -> gender
-  // 1/ Squash the matrix keeping only gender column.
-  // 2/ Compact vector into a map.
-  val gender = data
-    .squash(Second, KeepSlice[Position2D]("gender"))
-    .compact(Over(First))
-
-  // Define function that expands based on the row id.
-  def expander[P <: Position with ExpandablePosition](cell: Cell[P],
-    ext: Map[Position1D, Content]): TraversableOnce[P#M] = {
-    ext.get(Position1D(cell.position(First))).map { case con => cell.position.append(con.value) }
-  }
-
   // Generate 3D matrix (hair color x eye color x gender)
-  // 1/ Expand matrix with hair color.
-  // 2/ Expand matrix with eye color.
-  // 3/ Expand matrix with gender.
-  // 4/ Keep only the 'value' column of the second dimension (dropping hair/eye/gender
-  //    columns as they are now extra dimensions).
-  // 5/ Squash the first dimension (row ids). As there is only one value for each
+  // 1/ Reshape matrix expanding it with hair color.
+  // 2/ Reshape matrix expanding it with eye color.
+  // 3/ Reshape matrix expanding it with gender.
+  // 4/ Melt the remaining 'value' column of the second dimension into the row key (first) dimension.
+  // 5/ Squash the first dimension (row ids + value). As there is only one value for each
   //    hair/eye/gender triplet, any squash function can be used.
   val heg = data
-    .expandWithValue(expander[Position2D], hair)
-    .expandWithValue(expander[Position3D], eye)
-    .expandWithValue(expander[Position4D], gender)
-    .squash(Second, KeepSlice[Position5D]("value"))
+    .reshape(Second, "hair", "missing")
+    .reshape(Second, "eye", "missing")
+    .reshape(Second, "gender", "missing")
+    .melt(Second, First)
     .squash(First, PreservingMaxPosition[Position4D]())
 
-  // Define an extractor for getting data out of the gender count map.
+  // Define an extractor for getting data out of the gender count (gcount) map.
   def extractor = ExtractWithDimension[Position2D, Content](Second).andThenPresent(_.value.asDouble)
 
   // Get the gender counts. Sum out hair and eye color.

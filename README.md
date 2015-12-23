@@ -4,6 +4,11 @@ Grimlock
 [![Build Status](https://travis-ci.org/CommBank/grimlock.svg?branch=master)](https://travis-ci.org/CommBank/grimlock)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/CommBank/grimlock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+Documentation
+-------------
+
+[Scaladoc](https://commbank.github.io/grimlock/latest/api/index.html)
+
 Overview
 --------
 
@@ -257,10 +262,10 @@ Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema(LongCodex),Long
 Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema(LongCodex),LongValue(2)))
 
 scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = List(
-     | Mean().andThenExpand(_.position.append("mean")),
-     | StandardDeviation().andThenExpand(_.position.append("sd")),
-     | Skewness().andThenExpand(_.position.append("skewness")),
-     | Kurtosis().andThenExpand(_.position.append("kurtosis")))
+     | Mean().andThenRelocate(_.position.append("mean")),
+     | StandardDeviation().andThenRelocate(_.position.append("sd")),
+     | Skewness().andThenRelocate(_.position.append("skewness")),
+     | Kurtosis().andThenRelocate(_.position.append("kurtosis")))
 
 scala> counts.summarise(Along(First), aggregators).dump
 Cell(Position1D(StringValue(mean)),Content(ContinuousSchema(DoubleCodex),DoubleValue(4.0)))
@@ -391,10 +396,10 @@ Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema(LongCodex),Long
 Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema(LongCodex),LongValue(2)))
 
 scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = List(
-     | Mean().andThenExpand(_.position.append("mean")),
-     | StandardDeviation().andThenExpand(_.position.append("sd")),
-     | Skewness().andThenExpand(_.position.append("skewness")),
-     | Kurtosis().andThenExpand(_.position.append("kurtosis")))
+     | Mean().andThenRelocate(_.position.append("mean")),
+     | StandardDeviation().andThenRelocate(_.position.append("sd")),
+     | Skewness().andThenRelocate(_.position.append("skewness")),
+     | Kurtosis().andThenRelocate(_.position.append("kurtosis")))
 
 scala> counts.summarise(Along(First), aggregators).foreach(println)
 Cell(Position1D(StringValue(mean)),Content(ContinuousSchema(DoubleCodex),DoubleValue(4.0)))
@@ -404,9 +409,4 @@ Cell(Position1D(StringValue(kurtosis)),Content(ContinuousSchema(DoubleCodex),Dou
 ```
 
 For more examples see [BasicOperations.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/BasicOperations.scala), [Conditional.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Conditional.scala), [DataAnalysis.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DataAnalysis.scala), [DerivedData.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/DerivedData.scala), [Ensemble.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Ensemble.scala), [Event.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Event.scala), [LabelWeighting.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/LabelWeighting.scala), [MutualInformation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/MutualInformation.scala), [PipelineDataPreparation.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/PipelineDataPreparation.scala) or [Scoring.scala](https://github.com/CommBank/grimlock/blob/master/src/main/scala/au/com/cba/omnia/grimlock/spark/examples/Scoring.scala).
-
-Documentation
--------------
-
-[Scaladoc](https://commbank.github.io/grimlock/latest/api/index.html)
 

@@ -145,6 +145,32 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   type DomainTuners = TP1
 
+  type FillHeterogeneousTuners = TP3
+  def fillHeterogeneous[S <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[S]], tuner: T = Default())(
+    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S,
+      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
+    val (p1, p2) = tuner.parameters match {
+      case Sequence2(f, s) => (f, s)
+      case p => (NoParameters, p)
+    }
+
+    domain(Default())
+      .keyBy { case p => slice.selected(p) }
+      .tunedJoin(p1, values.keyBy { case c => c.position.asInstanceOf[slice.S] })
+      .map { case (_, (p, c)) => (p, Cell(p, c.content)) }
+      .tunedLeftJoin(p2, data.keyBy { case c => c.position })
+      .map { case (_, (c, co)) => co.getOrElse(c) }
+  }
+
+  type FillHomogeneousTuners = TP2
+  def fillHomogeneous[T <: Tuner](value: Content, tuner: T = Default())(implicit ev1: ClassTag[P],
+    ev2: FillHomogeneousTuners#V[T]): U[Cell[P]] = {
+    domain(Default())
+      .keyBy { case p => p }
+      .tunedLeftJoin(tuner.parameters, data.keyBy { case c => c.position })
+      .map { case (p, (_, co)) => co.getOrElse(Cell(p, value)) }
+  }
+
   type GetTuners = TP2
   def get[I, T <: Tuner](positions: I, tuner: T = Default())(implicit ev1: PositionDistributable[I, P, RDD],
     ev2: ClassTag[P], ev3: GetTuners#V[T]): U[Cell[P]] = {
@@ -221,12 +247,13 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .flatMap { case (lc, rc) => operator.computeWithValue(lc, rc, value) }
   }
 
-  def rename(renamer: (Cell[P]) => Option[P]): U[Cell[P]] = {
-    data.flatMap { case c => renamer(c).map { Cell(_, c.content) } }
+  def relocate[Q <: Position](locate: Locate.OptionalFromCell[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
+    data.flatMap { case c => locate(c).map(Cell(_, c.content)) }
   }
 
-  def renameWithValue[W](renamer: (Cell[P], W) => Option[P], value: E[W]): U[Cell[P]] = {
-    data.flatMap { case c => renamer(c, value).map { Cell(_, c.content) } }
+  def relocateWithValue[Q <: Position, W](locate: Locate.OptionalFromCellWithValue[P, Q, W], value: E[W])(
+    implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
+    data.flatMap { case c => locate(c, value).map(Cell(_, c.content)) }
   }
 
   def saveAsText(file: String, writer: TextWriter = Cell.toString()): U[Cell[P]] = saveText(file, writer)
@@ -390,6 +417,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   def toText(writer: TextWriter): U[String] = data.flatMap(writer(_))
 
+  def toVector(separator: String): U[Cell[Position1D]] = {
+    data.map { case Cell(p, c) => Cell(Position1D(p.coordinates.map(_.toShortString).mkString(separator)), c) }
+  }
+
   def transform[Q <: Position](transformers: Transformable[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
     val transformer = transformers()
 
@@ -493,32 +524,6 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 
   import SparkImplicits._
 
-  type FillHeterogeneousTuners = TP3
-  def fillHeterogeneous[Q <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[Q]], tuner: T = Default())(
-    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= Q,
-      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
-    val (p1, p2) = tuner.parameters match {
-      case Sequence2(f, s) => (f, s)
-      case p => (NoParameters, p)
-    }
-
-    domain(Default())
-      .keyBy { case p => slice.selected(p) }
-      .tunedJoin(p1, values.keyBy { case c => c.position.asInstanceOf[slice.S] })
-      .map { case (_, (p, c)) => (p, Cell(p, c.content)) }
-      .tunedLeftJoin(p2, data.keyBy { case c => c.position })
-      .map { case (_, (c, co)) => co.getOrElse(c) }
-  }
-
-  type FillHomogeneousTuners = TP2
-  def fillHomogeneous[T <: Tuner](value: Content, tuner: T = Default())(implicit ev1: ClassTag[P],
-    ev2: FillHomogeneousTuners#V[T]): U[Cell[P]] = {
-    domain(Default())
-      .keyBy { case p => p }
-      .tunedLeftJoin(tuner.parameters, data.keyBy { case c => c.position })
-      .map { case (p, (_, co)) => co.getOrElse(Cell(p, value)) }
-  }
-
   def melt[D <: Dimension, G <: Dimension](dim: D, into: G, separator: String = ".")(implicit ev1: PosDimDep[P, D],
     ev2: PosDimDep[P, G], ne: D =!= G): U[Cell[P#L]] = {
     data.map { case Cell(p, c) => Cell(p.melt(dim, into, separator), c) }
@@ -544,22 +549,28 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
       .tunedReduce(tuner.parameters, (lt, rt) => squash.reduce(lt.asInstanceOf[squash.T], rt.asInstanceOf[squash.T]))
       .flatMap { case (p, t) => squash.presentWithValue(t.asInstanceOf[squash.T], value).map { case c => Cell(p, c) } }
   }
-
-  def toVector(separator: String): U[Cell[Position1D]] = {
-    data.map { case Cell(p, c) => Cell(Position1D(p.coordinates.map(_.toShortString).mkString(separator)), c) }
-  }
 }
 
 /** Base trait for methods that expand the number of dimension of a matrix using a `RDD[Cell[P]]`. */
-trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
+trait ExpandableMatrix[P <: Position with ExpandablePosition with ReduceablePosition]
+  extends BaseExpandableMatrix[P] { self: Matrix[P] =>
 
-  def expand[Q <: Position](expander: (Cell[P]) => TraversableOnce[Q])(implicit ev: PosExpDep[P, Q]): RDD[Cell[Q]] = {
-    data.flatMap { case c => expander(c).map { Cell(_, c.content) } }
-  }
+  import SparkImplicits._
 
-  def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => TraversableOnce[Q], value: W)(
-    implicit ev: PosExpDep[P, Q]): RDD[Cell[Q]] = {
-    data.flatMap { case c => expander(c, value).map { Cell(_, c.content) } }
+  type ReshapeTuners = TP2
+  def reshape[D <: Dimension, T <: Tuner](dim: D, coordinate: Valueable, missing: Valueable, tuner: T = Default())(
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: ReshapeTuners#V[T]): RDD[Cell[P#M]] = {
+    val keys = data
+      .collect[(P#L, Value)] { case c if (c.position(dim) equ coordinate) => (c.position.remove(dim), c.content.value) }
+
+    data
+      .collect[(P#L, Cell[P])] { case c if (c.position(dim) neq coordinate) => (c.position.remove(dim), c) }
+      .tunedLeftJoin(tuner.parameters, keys)
+      .map {
+        case (_, (c, v)) =>
+          val coord = v.getOrElse(missing())
+          c.relocate(_.position.append(coord))
+      }
   }
 }
 
@@ -640,7 +651,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val extractor = ExtractWithDimension[Position2D, Content](First).andThenPresent(_.value.asDouble)
 
     val mhist = data
-      .expand(c => Some(c.position.append(c.content.value.toShortString)))
+      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(dim), Count[Position3D, Position2D](), stuner)
 
     val mcount = mhist
@@ -656,7 +667,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val jhist = data
       .pairwise(slice, Upper,
         Concatenate(Locate.PrependPairwiseSelectedToRemainder[Position2D](slice, "%s,%s")), ptuner)
-      .expand(c => Some(c.position.append(c.content.value.toShortString)))
+      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(Second), Count[Position3D, Position2D](), stuner)
 
     val jcount = jhist

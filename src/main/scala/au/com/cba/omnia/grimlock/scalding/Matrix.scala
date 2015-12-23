@@ -206,6 +206,46 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   type DomainTuners = TP1
 
+  type FillHeterogeneousTuners = OneOf4[InMemory[NoParameters.type], InMemory[Reducers],
+                                        Default[NoParameters.type], Default[Reducers]]
+  def fillHeterogeneous[S <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[S]], tuner: T = Default())(
+    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S,
+      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
+    val vals = values.groupBy { case c => c.position.asInstanceOf[slice.S] }
+    val dense = tuner match {
+      case InMemory(_) =>
+        val semigroup = new com.twitter.algebird.Semigroup[Map[slice.S, Content]] {
+          def plus(l: Map[slice.S, Content], r: Map[slice.S, Content]): Map[slice.S, Content] = l ++ r
+        }
+
+        domain(Default())
+          .mapSideJoin(vals.map { case (p, c) => Map(p -> c.content) }.sum(semigroup),
+            (p: P, v: Map[slice.S, Content]) => v.get(slice.selected(p)).map { case c => Cell(p, c) },
+              Map.empty[slice.S, Content])
+      case _ =>
+        domain(Default())
+          .groupBy { case p => slice.selected(p) }
+          .tunedJoin(tuner, tuner.parameters, vals)
+          .map { case (_, (p, c)) => Cell(p, c.content) }
+    }
+
+    dense
+      .groupBy { case c => c.position }
+      .tuneReducers(tuner.parameters)
+      .leftJoin(data.groupBy { case c => c.position })
+      .map { case (p, (fc, co)) => co.getOrElse(fc) }
+  }
+
+  type FillHomogeneousTuners = TP2
+  def fillHomogeneous[T <: Tuner](value: Content, tuner: T = Default())(implicit ev1: ClassTag[P],
+    ev2: FillHomogeneousTuners#V[T]): U[Cell[P]] = {
+    domain(Default())
+      .asKeys
+      .tuneReducers(tuner.parameters)
+      .leftJoin(data.groupBy { case c => c.position })
+      .map { case (p, (_, co)) => co.getOrElse(Cell(p, value)) }
+  }
+
   type GetTuners = TP4
   def get[I, T <: Tuner](positions: I, tuner: T = InMemory())(implicit ev1: PositionDistributable[I, P, TypedPipe],
     ev2: ClassTag[P], ev3: GetTuners#V[T]): U[Cell[P]] = {
@@ -326,12 +366,13 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .flatMapWithValue(value) { case ((lc, rc), vo) => operator.computeWithValue(lc, rc, vo.get) }
   }
 
-  def rename(renamer: (Cell[P]) => Option[P]): U[Cell[P]] = {
-    data.flatMap { case c => renamer(c).map { Cell(_, c.content) } }
+  def relocate[Q <: Position](locate: Locate.OptionalFromCell[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
+    data.flatMap { case c => locate(c).map(Cell(_, c.content)) }
   }
 
-  def renameWithValue[W](renamer: (Cell[P], W) => Option[P], value: E[W]): U[Cell[P]] = {
-    data.flatMapWithValue(value) { case (c, vo) => renamer(c, vo.get).map { Cell(_, c.content) } }
+  def relocateWithValue[Q <: Position, W](locate: Locate.OptionalFromCellWithValue[P, Q, W], value: E[W])(
+    implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
+    data.flatMapWithValue(value) { case (c, vo) => locate(c, vo.get).map(Cell(_, c.content)) }
   }
 
   def saveAsText(file: String, writer: TextWriter = Cell.toString())(implicit flow: FlowDef,
@@ -349,9 +390,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   type ShapeTuners = TP2
   def shape[T <: Tuner](tuner: T = Default())(implicit ev: ShapeTuners#V[T]): U[Cell[Position1D]] = {
-    Grouped(data
+    data
       .flatMap { case c => c.position.coordinates.map(_.toString).zipWithIndex.map(_.swap) }
-      .tunedDistinct(tuner.parameters))
+      .tunedDistinct(tuner.parameters)
+      .group
       .size
       .map { case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema(LongCodex), s)) }
   }
@@ -559,9 +601,11 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       ev2: PosIncDep[S, Q], ev3: ClassTag[slice.S], ev4: SummariseTuners#V[T]): U[Cell[Q]] = {
     val aggregator = aggregators()
 
-    Grouped(data.mapWithValue(value) {
-      case (c, vo) => (slice.selected(c.position), aggregator.map { case a => a.prepareWithValue(c, vo.get) })
-    })
+    data
+      .mapWithValue(value) {
+        case (c, vo) => (slice.selected(c.position), aggregator.map { case a => a.prepareWithValue(c, vo.get) })
+      }
+      .group
       .tuneReducers(tuner.parameters)
       .reduce[List[Any]] {
         case (lt, rt) => (aggregator, lt, rt).zipped.map {
@@ -578,6 +622,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   def toSequence[K <: Writable, V <: Writable](writer: SequenceWriter[K, V]): U[(K, V)] = data.flatMap(writer(_))
 
   def toText(writer: TextWriter): U[String] = data.flatMap(writer(_))
+
+  def toVector(separator: String): U[Cell[Position1D]] = {
+    data.map { case Cell(p, c) => Cell(Position1D(p.coordinates.map(_.toShortString).mkString(separator)), c) }
+  }
 
   def transform[Q <: Position](transformers: Transformable[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
     val transformer = transformers()
@@ -726,46 +774,6 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 
   import ScaldingImplicits._
 
-  type FillHeterogeneousTuners = OneOf4[InMemory[NoParameters.type], InMemory[Reducers],
-                                        Default[NoParameters.type], Default[Reducers]]
-  def fillHeterogeneous[Q <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[Q]], tuner: T = Default())(
-    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= Q,
-      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
-    val vals = values.groupBy { case c => c.position.asInstanceOf[slice.S] }
-    val dense = tuner match {
-      case InMemory(_) =>
-        val semigroup = new com.twitter.algebird.Semigroup[Map[slice.S, Content]] {
-          def plus(l: Map[slice.S, Content], r: Map[slice.S, Content]): Map[slice.S, Content] = l ++ r
-        }
-
-        domain(Default())
-          .mapSideJoin(vals.map { case (p, c) => Map(p -> c.content) }.sum(semigroup),
-            (p: P, v: Map[slice.S, Content]) => v.get(slice.selected(p)).map { case c => Cell(p, c) },
-              Map.empty[slice.S, Content])
-      case _ =>
-        domain(Default())
-          .groupBy { case p => slice.selected(p) }
-          .tunedJoin(tuner, tuner.parameters, vals)
-          .map { case (_, (p, c)) => Cell(p, c.content) }
-    }
-
-    dense
-      .groupBy { case c => c.position }
-      .tuneReducers(tuner.parameters)
-      .leftJoin(data.groupBy { case c => c.position })
-      .map { case (p, (fc, co)) => co.getOrElse(fc) }
-  }
-
-  type FillHomogeneousTuners = TP2
-  def fillHomogeneous[T <: Tuner](value: Content, tuner: T = Default())(implicit ev1: ClassTag[P],
-    ev2: FillHomogeneousTuners#V[T]): U[Cell[P]] = {
-    domain(Default())
-      .asKeys
-      .tuneReducers(tuner.parameters)
-      .leftJoin(data.groupBy { case c => c.position })
-      .map { case (p, (_, co)) => co.getOrElse(Cell(p, value)) }
-  }
-
   def melt[D <: Dimension, G <: Dimension](dim: D, into: G, separator: String = ".")(implicit ev1: PosDimDep[P, D],
     ev2: PosDimDep[P, G], ne: D =!= G): U[Cell[P#L]] = {
     data.map { case Cell(p, c) => Cell(p.melt(dim, into, separator), c) }
@@ -795,23 +803,37 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
       .reduce[squash.T] { case (lt, rt) => squash.reduce(lt, rt) }
       .flatMapWithValue(value) { case ((p, t), vo) => squash.presentWithValue(t, vo.get).map { case c => Cell(p, c) } }
   }
-
-  def toVector(separator: String): U[Cell[Position1D]] = {
-    data.map { case Cell(p, c) => Cell(Position1D(p.coordinates.map(_.toShortString).mkString(separator)), c) }
-  }
 }
 
 /** Base trait for methods that expand the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
-trait ExpandableMatrix[P <: Position with ExpandablePosition] extends BaseExpandableMatrix[P] { self: Matrix[P] =>
+trait ExpandableMatrix[P <: Position with ExpandablePosition with ReduceablePosition]
+  extends BaseExpandableMatrix[P] { self: Matrix[P] =>
 
-  def expand[Q <: Position](expander: (Cell[P]) => TraversableOnce[Q])(
-    implicit ev: PosExpDep[P, Q]): TypedPipe[Cell[Q]] = {
-    data.flatMap { case c => expander(c).map { Cell(_, c.content) } }
-  }
+  import ScaldingImplicits._
 
-  def expandWithValue[Q <: Position, W](expander: (Cell[P], W) => TraversableOnce[Q], value: ValuePipe[W])(
-    implicit ev: PosExpDep[P, Q]): TypedPipe[Cell[Q]] = {
-    data.flatMapWithValue(value) { case (c, vo) => expander(c, vo.get).map { Cell(_, c.content) } }
+  type ReshapeTuners = TP4
+  def reshape[D <: Dimension, T <: Tuner](dim: D, coordinate: Valueable, missing: Valueable, tuner: T = Default())(
+    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: ReshapeTuners#V[T]): U[Cell[P#M]] = {
+    val keys = data
+      .collect[(P#L, Value)] { case c if (c.position(dim) equ coordinate) => (c.position.remove(dim), c.content.value) }
+    val values = data
+      .collect[(P#L, Cell[P])] { case c if (c.position(dim) neq coordinate) => (c.position.remove(dim), c) }
+    val append = (c: Cell[P], v: Option[Value]) => {
+      val coord = v.getOrElse(missing())
+      Some(c.relocate[P#M](_.position.append(coord)))
+    }
+
+    tuner match {
+      case InMemory(_) =>
+        values
+          .mapSideJoin(keys.toListValue((t: (P#L, Value)) => t), (t: (P#L, Cell[P]), v: List[(P#L, Value)]) =>
+            append(t._2, v.find(_._1 == t._1).map(_._2)), List.empty[(P#L, Value)])
+      case _ =>
+        values
+          .group
+          .tunedLeftJoin(tuner, tuner.parameters, keys)
+          .flatMap { case (_, (c, v)) => append(c, v) }
+    }
   }
 }
 
@@ -892,7 +914,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val extractor = ExtractWithDimension[Position2D, Content](First).andThenPresent(_.value.asDouble)
 
     val mhist = data
-      .expand(c => Some(c.position.append(c.content.value.toShortString)))
+      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(dim), Count[Position3D, Position2D](), stuner)
 
     val mcount = mhist
@@ -908,7 +930,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
     val jhist = data
       .pairwise(slice, Upper,
         Concatenate(Locate.PrependPairwiseSelectedToRemainder[Position2D](slice, "%s,%s")), ptuner)
-      .expand(c => Some(c.position.append(c.content.value.toShortString)))
+      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(Second), Count[Position3D, Position2D](), stuner)
 
     val jcount = jhist

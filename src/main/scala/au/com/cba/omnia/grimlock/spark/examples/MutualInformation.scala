@@ -78,7 +78,7 @@ object MutualInformation {
 
     // Compute histogram on the data.
     val mhist = data
-      .expand((c: Cell[Position2D]) => Some(c.position.append(c.content.value.toShortString)))
+      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(First), Count[Position3D, Position2D]())
 
     // Compute count of histogram elements.
@@ -101,7 +101,7 @@ object MutualInformation {
     val jhist = data
       .pairwise(Over(Second), Upper,
         Concatenate(Locate.PrependPairwiseSelectedToRemainder[Position2D](Over(Second), "%s,%s")))
-      .expand((c: Cell[Position2D]) => Some(c.position.append(c.content.value.toShortString)))
+      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(Second), Count[Position3D, Position2D]())
 
     // Compute count of histogram elements.

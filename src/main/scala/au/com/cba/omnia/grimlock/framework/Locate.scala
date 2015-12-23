@@ -25,13 +25,6 @@ object Locate {
   /** Extract position from cell with user provided value. */
   type FromCellWithValue[P <: Position, Q <: Position, V] = (Cell[P], V) => Q
 
-  /**
-   * Extract position for left and right cells.
-   *
-   * @note An `Option` is returned to allow for additional filtering.
-   */
-  type FromPairwiseCells[P <: Position, Q <: Position] = (Cell[P], Cell[P]) => Option[Q]
-
   /** Extract position for the selected cell and its remainder. */
   type FromSelectedAndRemainder[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position] = (S, R) => Q
 
@@ -40,6 +33,27 @@ object Locate {
 
   /** Extract position from selected position and a value. */
   type FromSelectedAndOutput[S <: Position with ExpandablePosition, T, Q <: Position] = (S, T) => Q
+
+  /**
+   * Extract position from cell.
+   *
+   * @note An `Option` is returned to allow for additional filtering.
+   */
+  type OptionalFromCell[P <: Position, Q <: Position] = (Cell[P]) => Option[Q]
+
+  /**
+   * Extract position from cell with user provided value.
+   *
+   * @note An `Option` is returned to allow for additional filtering.
+   */
+  type OptionalFromCellWithValue[P <: Position, Q <: Position, V] = (Cell[P], V) => Option[Q]
+
+  /**
+   * Extract position for left and right cells.
+   *
+   * @note An `Option` is returned to allow for additional filtering.
+   */
+  type OptionalFromPairwiseCells[P <: Position, Q <: Position] = (Cell[P], Cell[P]) => Option[Q]
 
   /**
    * Rename a dimension.
@@ -72,33 +86,6 @@ object Locate {
    */
   def AppendDimension[P <: Position with ExpandablePosition](name: Valueable): FromCell[P, P#M] = {
     (cell: Cell[P]) => cell.position.append(name)
-  }
-
-  /**
-   * Extract position use a name pattern.
-   *
-   * @param slice     Encapsulates the dimension(s) from which to construct the name.
-   * @param pattern   Name pattern of the new coordinate. Use `%[12]$``s` for the string representations of the
-   *                  left and right selected positions respectively.
-   * @param all       Indicates if all positions should be returned (true), or only if left and right remainder
-   *                  are equal.
-   * @param separator Separator to use when converting left and right positions to string.
-   *
-   * @note If a position is returned then it's always right cell's remainder with an additional coordinate prepended.
-   */
-  def PrependPairwiseSelectedToRemainder[P <: Position](slice: Slice[P], pattern: String, all: Boolean = false,
-    separator: String = "|"): FromPairwiseCells[P, slice.R#M] = {
-    (left: Cell[P], right: Cell[P]) =>
-      {
-        val reml = slice.remainder(left.position)
-        val remr = slice.remainder(right.position)
-
-        (all || reml == remr) match {
-          case true => Some(reml.prepend(pattern.format(slice.selected(left.position).toShortString(separator),
-            slice.selected(right.position).toShortString(separator))))
-          case false => None
-        }
-      }
   }
 
   /**
@@ -142,6 +129,46 @@ object Locate {
   def ExpandWithStringFromDouble[S <: Position with ExpandablePosition](
     name: String = "%1$f%%"): FromSelectedAndOutput[S, Double, S#M] = {
     (pos: S, value: Double) => pos.append(name.format(value))
+  }
+
+  /**
+   * Append a coordinate according a name pattern.
+   *
+   * @param dim  Dimension for which to update coordinate name.
+   * @param name Pattern for the new name of the coordinate at `dim`. Use `%[12]$``s` for the string
+   *             representations of the coordinate, and the content.
+   */
+  def AppendDimensionWithContent[P <: Position with ExpandablePosition](dim: Dimension, name: String = "%1$s=%2$s")(
+    implicit ev: PosDimDep[P, dim.type]): OptionalFromCell[P, P#M] = {
+    (cell: Cell[P]) =>
+      Some(cell.position.append(name.format(cell.position(dim).toShortString, cell.content.value.toShortString)))
+  }
+
+  /**
+   * Extract position use a name pattern.
+   *
+   * @param slice     Encapsulates the dimension(s) from which to construct the name.
+   * @param pattern   Name pattern of the new coordinate. Use `%[12]$``s` for the string representations of the
+   *                  left and right selected positions respectively.
+   * @param all       Indicates if all positions should be returned (true), or only if left and right remainder
+   *                  are equal.
+   * @param separator Separator to use when converting left and right positions to string.
+   *
+   * @note If a position is returned then it's always right cell's remainder with an additional coordinate prepended.
+   */
+  def PrependPairwiseSelectedToRemainder[P <: Position](slice: Slice[P], pattern: String, all: Boolean = false,
+    separator: String = "|"): OptionalFromPairwiseCells[P, slice.R#M] = {
+    (left: Cell[P], right: Cell[P]) =>
+      {
+        val reml = slice.remainder(left.position)
+        val remr = slice.remainder(right.position)
+
+        (all || reml == remr) match {
+          case true => Some(reml.prepend(pattern.format(slice.selected(left.position).toShortString(separator),
+            slice.selected(right.position).toShortString(separator))))
+          case false => None
+        }
+      }
   }
 }
 
