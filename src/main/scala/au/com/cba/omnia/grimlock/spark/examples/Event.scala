@@ -81,7 +81,7 @@ case object ExampleEventCodex extends StructuredCodex {
 }
 
 // Transformer for denormalising events; that is, create a separate cell in the matrix for each (event, instance) pair.
-// Assumes that the initial position is 1D with event id (as is the output from `read` above).
+// Assumes that the initial position is 1D with event id (as is the output from `load` above).
 case class Denormalise() extends Transformer[Position1D, Position2D] {
   def present(cell: Cell[Position1D]): TraversableOnce[Cell[Position2D]] = {
     cell.content match {
@@ -92,7 +92,7 @@ case class Denormalise() extends Transformer[Position1D, Position2D] {
   }
 }
 
-// For each event, get the details out. Split the details string, apply filtering, and (optinally) add ngrams. Then
+// For each event, get the details out. Split the details string, apply filtering, and (optionally) add ngrams. Then
 // simply return the count for each term (word or ngram) in the document (i.e. event).
 case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separator: String = "_",
   stopwords: List[String] = Stopwords.English) extends Transformer[Position2D, Position3D] {
@@ -130,7 +130,7 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
 object InstanceCentricTfIdf {
 
   def main(args: Array[String]) {
-    // Define implicit context for reading.
+    // Define implicit context for loading data.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
     // Path to data files, output folder

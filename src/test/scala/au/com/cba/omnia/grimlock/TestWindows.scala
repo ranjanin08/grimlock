@@ -582,8 +582,8 @@ class TestBinOp extends TestWindow {
 
 class TestCombinationWindow extends TestGrimlock {
 
-  def renamer(name: String)(cell: Cell[Position2D]): Position2D = {
-    cell.position.update(Second, name.format(cell.position(Second).toShortString))
+  def renamer(name: String)(cell: Cell[Position2D]): Option[Position2D] = {
+    Some(cell.position.update(Second, name.format(cell.position(Second).toShortString)))
   }
 
   "A CombinationWindow" should "present correctly" in {

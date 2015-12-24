@@ -57,6 +57,9 @@ trait Position {
 
   override def toString = "Position" + coordinates.length + "D(" + coordinates.map(_.toString).mkString(",") + ")"
 
+  /** Return this position as an option. */
+  def toOption(): Option[this.type] = Some(this)
+
   /**
    * Compare this object with another position.
    *

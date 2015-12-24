@@ -53,8 +53,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Compute histogram over the label values.
   val histogram = labels
-    .relocate(c => Some(c.position.append(c.content.value.toShortString)))
-    .summarise(Along(First), Count[Position2D, Position1D]())
+    .histogram(Along(First), Locate.AppendContentString[Position0D](), true)
 
   // Compute the total number of labels and compact result into a Map.
   val sum = labels
@@ -70,7 +69,7 @@ class LabelWeighting(args: Args) extends Job(args) {
 
   // Find the minimum ratio, and compact the result into a Map.
   val min = ratio
-    .summarise(Along(First), Min[Position1D, Position0D]().andThenRelocate(_.position.append("min")))
+    .summarise(Along(First), Min[Position1D, Position0D]().andThenRelocate(_.position.append("min").toOption))
     .compact(Over(First))
 
   // Divide the ratio by the minimum ratio, and compact the result into a Map.

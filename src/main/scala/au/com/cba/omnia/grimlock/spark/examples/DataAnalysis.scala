@@ -27,7 +27,7 @@ import org.apache.spark.{ SparkConf, SparkContext }
 object DataAnalysis {
 
   def main(args: Array[String]) {
-    // Define implicit context for reading.
+    // Define implicit context for loading data.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
     // Path to data files, output folder
@@ -39,10 +39,10 @@ object DataAnalysis {
 
     // Define moments to compute.
     val moments: List[Aggregator[Position1D, Position0D, Position1D]] = List(
-      Mean().andThenRelocate(_.position.append("mean")),
-      StandardDeviation().andThenRelocate(_.position.append("sd")),
-      Skewness().andThenRelocate(_.position.append("skewness")),
-      Kurtosis().andThenRelocate(_.position.append("kurtosis")))
+      Mean().andThenRelocate(_.position.append("mean").toOption),
+      StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+      Skewness().andThenRelocate(_.position.append("skewness").toOption),
+      Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption))
 
     // For the instances:
     //  1/ Compute the number of features for each instance;

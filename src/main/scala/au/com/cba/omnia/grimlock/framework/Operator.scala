@@ -116,7 +116,7 @@ trait Operator[P <: Position, Q <: Position] extends OperatorWithValue[P, Q] { s
   override def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new Operator[P, R] {
       def compute(left: Cell[P], right: Cell[P]): TraversableOnce[Cell[R]] = {
-        self.compute(left, right).map { case c => Cell(locate(c), c.content) }
+        self.compute(left, right).flatMap { case c => locate(c).map(Cell(_, c.content)) }
       }
     }
   }
@@ -185,7 +185,7 @@ trait OperatorWithValue[P <: Position, Q <: Position] extends java.io.Serializab
       type V = self.V
 
       def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
-        self.computeWithValue(left, right, ext).map { case c => Cell(locate(c), c.content) }
+        self.computeWithValue(left, right, ext).flatMap { case c => locate(c).map(Cell(_, c.content)) }
       }
     }
   }
@@ -237,7 +237,7 @@ trait OperatorWithValue[P <: Position, Q <: Position] extends java.io.Serializab
       type V = self.V
 
       def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
-        self.computeWithValue(left, right, ext).map { case c => Cell(locate(c, ext), c.content) }
+        self.computeWithValue(left, right, ext).flatMap { case c => locate(c, ext).map(Cell(_, c.content)) }
       }
     }
   }

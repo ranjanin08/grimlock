@@ -47,7 +47,7 @@ case class CustomPartition(dim: Dimension, left: String, right: String) extends 
 object PipelineDataPreparation {
 
   def main(args: Array[String]) {
-    // Define implicit context for reading.
+    // Define implicit context for loading data.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
     // Path to data files, output folder
@@ -67,14 +67,14 @@ object PipelineDataPreparation {
 
     // Define descriptive statistics to be computed on the training data.
     val dstats: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-      Count().andThenRelocate(_.position.append("count")),
-      Mean().andThenRelocate(_.position.append("mean")),
-      StandardDeviation().andThenRelocate(_.position.append("sd")),
-      Skewness().andThenRelocate(_.position.append("skewness")),
-      Kurtosis().andThenRelocate(_.position.append("kurtosis")),
-      Min().andThenRelocate(_.position.append("min")),
-      Max().andThenRelocate(_.position.append("max")),
-      MaxAbs().andThenRelocate(_.position.append("max.abs")))
+      Count().andThenRelocate(_.position.append("count").toOption),
+      Mean().andThenRelocate(_.position.append("mean").toOption),
+      StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+      Skewness().andThenRelocate(_.position.append("skewness").toOption),
+      Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption),
+      Min().andThenRelocate(_.position.append("min").toOption),
+      Max().andThenRelocate(_.position.append("max").toOption),
+      MaxAbs().andThenRelocate(_.position.append("max.abs").toOption))
 
     // Compute descriptive statistics on the training data.
     val descriptive = train
@@ -82,9 +82,7 @@ object PipelineDataPreparation {
 
     // Compute histogram on the categorical features in the training data.
     val histogram = train
-      .filter(_.content.schema.kind.isSpecialisationOf(Type.Categorical))
-      .relocate(Locate.AppendDimensionWithContent(Second))
-      .summarise(Along(First), Count[Position3D, Position2D]())
+      .histogram(Along(First), Locate.AppendDimensionAndContentString[Position1D](First))
 
     // Compute the counts for each categorical features.
     val counts = histogram
@@ -99,9 +97,9 @@ object PipelineDataPreparation {
 
     // Define summary statisics to compute on the histogram.
     val sstats: List[AggregatorWithValue[Position2D, Position1D, Position2D] { type V >: W }] = List(
-      Count().andThenRelocate(_.position.append("num.cat")),
-      Entropy(extractCount).andThenRelocate(_.position.append("entropy")),
-      FrequencyRatio().andThenRelocate(_.position.append("freq.ratio")))
+      Count().andThenRelocate(_.position.append("num.cat").toOption),
+      Entropy(extractCount).andThenRelocate(_.position.append("entropy").toOption),
+      FrequencyRatio().andThenRelocate(_.position.append("freq.ratio").toOption))
 
     // Compute summary statisics on the histogram.
     val summary = histogram

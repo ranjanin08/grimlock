@@ -43,7 +43,7 @@ case class AddWeight() extends TransformerWithValue[Position2D, Position3D] {
 object LabelWeighting {
 
   def main(args: Array[String]) {
-    // Define implicit context for reading.
+    // Define implicit context for loading data.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
     // Path to data files, output folder
@@ -57,8 +57,7 @@ object LabelWeighting {
 
     // Compute histogram over the label values.
     val histogram = labels
-      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
-      .summarise(Along(First), Count[Position2D, Position1D]())
+      .histogram(Along(First), Locate.AppendContentString[Position0D](), true)
 
     // Compute the total number of labels and compact result into a Map.
     val sum = labels
@@ -74,7 +73,7 @@ object LabelWeighting {
 
     // Find the minimum ratio, and compact the result into a Map.
     val min = ratio
-      .summarise(Along(First), Min[Position1D, Position0D]().andThenRelocate(_.position.append("min")))
+      .summarise(Along(First), Min[Position1D, Position0D]().andThenRelocate(_.position.append("min").toOption))
       .compact(Over(First))
 
     // Divide the ratio by the minimum ratio, and compact the result into a Map.

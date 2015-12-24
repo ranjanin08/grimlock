@@ -125,7 +125,7 @@ trait Window[P <: Position, S <: Position with ExpandablePosition, R <: Position
       def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
       def present(pos: S, out: O): TraversableOnce[Cell[U]] = {
-        self.present(pos, out).map { case c => Cell(locate(c), c.content) }
+        self.present(pos, out).flatMap { case c => locate(c).map(Cell(_, c.content)) }
       }
     }
   }
@@ -270,7 +270,7 @@ trait WindowWithValue[P <: Position, S <: Position with ExpandablePosition, R <:
       def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
       def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[U]] = {
-        self.presentWithValue(pos, out, ext).map { case c => Cell(locate(c), c.content) }
+        self.presentWithValue(pos, out, ext).flatMap { case c => locate(c).map(Cell(_, c.content)) }
       }
     }
   }
@@ -347,7 +347,7 @@ trait WindowWithValue[P <: Position, S <: Position with ExpandablePosition, R <:
       def update(rem: R, in: I, t: T): (T, TraversableOnce[O]) = self.update(rem, in, t)
 
       def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[U]] = {
-        self.presentWithValue(pos, out, ext).map { case c => Cell(locate(c, ext), c.content) }
+        self.presentWithValue(pos, out, ext).flatMap { case c => locate(c, ext).map(Cell(_, c.content)) }
       }
     }
   }

@@ -84,7 +84,7 @@ trait Transformer[P <: Position, Q <: Position] extends TransformerWithValue[P, 
   override def andThenRelocate[R <: Position](locate: Locate.FromCell[Q, R])(implicit ev: PosIncDep[Q, R]) = {
     new Transformer[P, R] {
       def present(cell: Cell[P]): TraversableOnce[Cell[R]] = {
-        self.present(cell).map { case c => Cell(locate(c), c.content) }
+        self.present(cell).flatMap { case c => locate(c).map(Cell(_, c.content)) }
       }
     }
   }
@@ -168,7 +168,7 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
       type V = self.V
 
       def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
-        self.presentWithValue(cell, ext).map { case c => Cell(locate(c), c.content) }
+        self.presentWithValue(cell, ext).flatMap { case c => locate(c).map(Cell(_, c.content)) }
       }
     }
   }
@@ -220,7 +220,7 @@ trait TransformerWithValue[P <: Position, Q <: Position] extends java.io.Seriali
       type V = self.V
 
       def presentWithValue(cell: Cell[P], ext: V): TraversableOnce[Cell[R]] = {
-        self.presentWithValue(cell, ext).map { case c => Cell(locate(c, ext), c.content) }
+        self.presentWithValue(cell, ext).flatMap { case c => locate(c, ext).map(Cell(_, c.content)) }
       }
     }
   }

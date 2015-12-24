@@ -48,6 +48,7 @@ import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 import au.com.cba.omnia.grimlock.framework.window._
 
 import au.com.cba.omnia.grimlock.spark.Matrix._
+import au.com.cba.omnia.grimlock.spark.distribution._
 
 import java.io.File
 import java.nio.file.{ Files, Paths }
@@ -247,11 +248,11 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .flatMap { case (lc, rc) => operator.computeWithValue(lc, rc, value) }
   }
 
-  def relocate[Q <: Position](locate: Locate.OptionalFromCell[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
+  def relocate[Q <: Position](locate: Locate.FromCell[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
     data.flatMap { case c => locate(c).map(Cell(_, c.content)) }
   }
 
-  def relocateWithValue[Q <: Position, W](locate: Locate.OptionalFromCellWithValue[P, Q, W], value: E[W])(
+  def relocateWithValue[Q <: Position, W](locate: Locate.FromCellWithValue[P, Q, W], value: E[W])(
     implicit ev: PosIncDep[P, Q]): U[Cell[Q]] = {
     data.flatMap { case c => locate(c, value).map(Cell(_, c.content)) }
   }
@@ -611,13 +612,13 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
       .transform(Power[Position2D](2))
       .summarise(slice, Sum[Position2D, slice.S](), stuner)
       .pairwise(Over(First), Lower,
-        Times(Locate.PrependPairwiseSelectedToRemainder[Position1D](Over(First), "(%1$s*%2$s)")), ptuner)
+        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position1D](Over(First), "(%1$s*%2$s)")), ptuner)
       .transform(SquareRoot[Position1D]())
       .compact(Over(First))
 
     centered
       .pairwise(slice, Lower,
-        Times(Locate.PrependPairwiseSelectedToRemainder[Position2D](slice, "(%1$s*%2$s)")), ptuner)
+        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position2D](slice, "(%1$s*%2$s)")), ptuner)
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
       .transformWithValue(Fraction(ExtractWithDimension[Position1D, Content](First)
         .andThenPresent(_.value.asDouble)), denom)
@@ -660,13 +661,13 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
-        .andThenRelocate(_.position.append("marginal")), mcount, stuner)
+        .andThenRelocate(_.position.append("marginal").toOption), mcount, stuner)
       .pairwise(Over(First), Upper,
-        Plus(Locate.PrependPairwiseSelectedToRemainder[Position2D](Over(First), "%s,%s")), ptuner)
+        Plus(Locate.PrependPairwiseSelectedStringToRemainder[Position2D](Over(First), "%s,%s")), ptuner)
 
     val jhist = data
       .pairwise(slice, Upper,
-        Concatenate(Locate.PrependPairwiseSelectedToRemainder[Position2D](slice, "%s,%s")), ptuner)
+        Concatenate(Locate.PrependPairwiseSelectedStringToRemainder[Position2D](slice, "%s,%s")), ptuner)
       .relocate(c => Some(c.position.append(c.content.value.toShortString)))
       .summarise(Along(Second), Count[Position3D, Position2D](), stuner)
 
@@ -676,7 +677,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val joint = jhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor, negate = true)
-        .andThenRelocate(_.position.append("joint")), jcount, stuner)
+        .andThenRelocate(_.position.append("joint").toOption), jcount, stuner)
 
     (marginal ++ joint)
       .summarise(Over(First), Sum[Position2D, Position1D](), stuner)
@@ -731,7 +732,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     tpr
       .pairwiseBetween(Along(First), Diagonal, fpr,
-        Times(Locate.PrependPairwiseSelectedToRemainder[Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
+        Times(Locate.PrependPairwiseSelectedStringToRemainder[Position2D](Along(First), "(%1$s*%2$s)")), ptuner)
       .summarise(Along(First), Sum[Position2D, Position1D](), stuner)
       .transformWithValue(Subtract(ExtractWithKey[Position1D, Double]("one"), true),
         Map(Position1D("one") -> 1.0))
@@ -896,7 +897,8 @@ object Matrix {
  *
  * @param data `RDD[Cell[Position1D]]`.
  */
-class Matrix1D(val data: RDD[Cell[Position1D]]) extends Matrix[Position1D] with ExpandableMatrix[Position1D] {
+class Matrix1D(val data: RDD[Cell[Position1D]]) extends Matrix[Position1D] with ExpandableMatrix[Position1D]
+  with ApproximateDistribution[Position1D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position1D] = names(Over(First))
 
   /**
@@ -925,7 +927,7 @@ class Matrix1D(val data: RDD[Cell[Position1D]]) extends Matrix[Position1D] with 
  * @param data `RDD[Cell[Position2D]]`.
  */
 class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
-  with ExpandableMatrix[Position2D] with MatrixDistance {
+  with ExpandableMatrix[Position2D] with MatrixDistance with ApproximateDistribution[Position2D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position2D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1150,7 +1152,7 @@ class Matrix2D(val data: RDD[Cell[Position2D]]) extends Matrix[Position2D] with 
  * @param data `RDD[Cell[Position3D]]`.
  */
 class Matrix3D(val data: RDD[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
-  with ExpandableMatrix[Position3D] {
+  with ExpandableMatrix[Position3D] with ApproximateDistribution[Position3D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position3D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1204,7 +1206,7 @@ class Matrix3D(val data: RDD[Cell[Position3D]]) extends Matrix[Position3D] with 
  * @param data `RDD[Cell[Position4D]]`.
  */
 class Matrix4D(val data: RDD[Cell[Position4D]]) extends Matrix[Position4D] with ReduceableMatrix[Position4D]
-  with ExpandableMatrix[Position4D] {
+  with ExpandableMatrix[Position4D] with ApproximateDistribution[Position4D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position4D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1266,7 +1268,7 @@ class Matrix4D(val data: RDD[Cell[Position4D]]) extends Matrix[Position4D] with 
  * @param data `RDD[Cell[Position5D]]`.
  */
 class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D]
-  with ExpandableMatrix[Position5D] {
+  with ExpandableMatrix[Position5D] with ApproximateDistribution[Position5D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position5D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1334,7 +1336,7 @@ class Matrix5D(val data: RDD[Cell[Position5D]]) extends Matrix[Position5D] with 
  * @param data `RDD[Cell[Position6D]]`.
  */
 class Matrix6D(val data: RDD[Cell[Position6D]]) extends Matrix[Position6D] with ReduceableMatrix[Position6D]
-  with ExpandableMatrix[Position6D] {
+  with ExpandableMatrix[Position6D] with ApproximateDistribution[Position6D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position6D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1409,7 +1411,7 @@ class Matrix6D(val data: RDD[Cell[Position6D]]) extends Matrix[Position6D] with 
  * @param data `RDD[Cell[Position7D]]`.
  */
 class Matrix7D(val data: RDD[Cell[Position7D]]) extends Matrix[Position7D] with ReduceableMatrix[Position7D]
-  with ExpandableMatrix[Position7D] {
+  with ExpandableMatrix[Position7D] with ApproximateDistribution[Position7D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position7D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1489,7 +1491,7 @@ class Matrix7D(val data: RDD[Cell[Position7D]]) extends Matrix[Position7D] with 
  * @param data `RDD[Cell[Position8D]]`.
  */
 class Matrix8D(val data: RDD[Cell[Position8D]]) extends Matrix[Position8D] with ReduceableMatrix[Position8D]
-  with ExpandableMatrix[Position8D] {
+  with ExpandableMatrix[Position8D] with ApproximateDistribution[Position8D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position8D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1576,7 +1578,8 @@ class Matrix8D(val data: RDD[Cell[Position8D]]) extends Matrix[Position8D] with 
  *
  * @param data `RDD[Cell[Position9D]]`.
  */
-class Matrix9D(val data: RDD[Cell[Position9D]]) extends Matrix[Position9D] with ReduceableMatrix[Position9D] {
+class Matrix9D(val data: RDD[Cell[Position9D]]) extends Matrix[Position9D] with ReduceableMatrix[Position9D]
+  with ApproximateDistribution[Position9D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position9D] = {
     names(Over(First))
       .map { case Position1D(c) => c }

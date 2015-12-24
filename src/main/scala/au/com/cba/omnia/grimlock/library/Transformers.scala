@@ -69,7 +69,7 @@ case class Indicator[P <: Position]() extends Transformer[P, P] {
 case class Binarise[P <: Position](pos: Locate.FromCell[P, P]) extends Transformer[P, P] {
   def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
     Transform.checkType(cell, Categorical) match {
-      case true => Some(Cell(pos(cell), Content(DiscreteSchema(LongCodex), 1)))
+      case true => pos(cell).map(Cell(_, Content(DiscreteSchema(LongCodex), 1)))
       case false => None
     }
   }

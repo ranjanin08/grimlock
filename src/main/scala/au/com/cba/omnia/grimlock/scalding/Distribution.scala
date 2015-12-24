@@ -14,7 +14,14 @@
 
 package au.com.cba.omnia.grimlock.scalding.distribution
 
-import au.com.cba.omnia.grimlock.framework._
+import au.com.cba.omnia.grimlock.framework.{
+  Cell,
+  Default,
+  Extract,
+  Locate,
+  Tuner,
+  Type
+}
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.distribution.{ ApproximateDistribution => BaseApproximateDistribution, _ }
@@ -22,22 +29,23 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
+import au.com.cba.omnia.grimlock.scalding._
+
 import com.twitter.scalding.typed.{ TypedPipe, ValuePipe }
 
 import scala.reflect.ClassTag
 
-object ApproximateDistribution extends BaseApproximateDistribution {
-  type U[A] = TypedPipe[A]
-  type E[B] = ValuePipe[B]
+trait ApproximateDistribution[P <: Position] extends BaseApproximateDistribution[P] { self: Matrix[P] =>
 
-  import au.com.cba.omnia.grimlock.scalding.ScaldingImplicits._
+  import ScaldingImplicits._
 
   type HistogramTuners = TP2
-  def histogram[P <: Position, Q <: Position, T <: Tuner](matrix: U[Cell[P]], slice: Slice[P],
-    name: Locate.FromCell[P, Q], all: Boolean, tuner: T = Default())(implicit ev1: PosExpDep[slice.S, Q],
-      ev2: ClassTag[Q], ev3: HistogramTuners#V[T]): U[Cell[Q]] = {
-    matrix
-      .collect { case c if (all || c.content.schema.kind.isSpecialisationOf(Type.Categorical)) => name(c) }
+  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
+    name: Locate.FromSelectedAndContent[S, Q], all: Boolean, tuner: T = Default())(implicit ev1: PosExpDep[slice.S, Q],
+      ev2: slice.S =:= S, ev3: ClassTag[Q], ev4: HistogramTuners#V[T]): U[Cell[Q]] = {
+    data
+      .filter { case c => (all || c.content.schema.kind.isSpecialisationOf(Type.Categorical)) }
+      .flatMap { case c => name(slice.selected(c.position), c.content) }
       .asKeys
       .tuneReducers(tuner.parameters)
       .size
@@ -45,14 +53,14 @@ object ApproximateDistribution extends BaseApproximateDistribution {
   }
 
   type QuantileTuners = TP2
-  def quantile[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](matrix: U[Cell[P]],
-    slice: Slice[P], probs: List[Double], quantiser: Quantile.Quantiser,
-      name: Locate.FromSelectedAndOutput[S, Double, Q], count: Extract[P, W, Long], value: E[W], tuner: T = Default())(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
+  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
+    probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
+      count: Extract[P, W, Long], value: E[W], tuner: T = Default())(implicit ev1: slice.S =:= S,
+        ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
           ev5: QuantileTuners#V[T]): U[Cell[Q]] = {
     val q = Quantile[P, S, Q, W](probs, count, quantiser, name)
 
-    matrix
+    data
       .filter(_.content.schema.kind.isSpecialisationOf(Type.Numerical))
       .mapWithValue(value) { case (c, vo) => (slice.selected(c.position), q.prepare(c, vo.get)) }
       .group
@@ -66,7 +74,7 @@ object ApproximateDistribution extends BaseApproximateDistribution {
             .scanLeft((t, List[q.O]())) { case ((t, _), i) => q.update(i, t, c) }
             .flatMap { case (_, o) => o }
       }
-      .map { case (p, o) => q.present(p, o) }
+      .flatMap { case (p, o) => q.present(p, o) }
   }
 }
 

@@ -232,11 +232,11 @@ class TestScalding6(args : Args) extends Job(args) {
     .toUnit
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-    Count().andThenRelocate(_.position.append("count")),
-    Mean().andThenRelocate(_.position.append("mean")),
-    Min().andThenRelocate(_.position.append("min")),
-    Max().andThenRelocate(_.position.append("max")),
-    MaxAbs().andThenRelocate(_.position.append("max.abs")))
+    Count().andThenRelocate(_.position.append("count").toOption),
+    Mean().andThenRelocate(_.position.append("mean").toOption),
+    Min().andThenRelocate(_.position.append("min").toOption),
+    Max().andThenRelocate(_.position.append("max").toOption),
+    MaxAbs().andThenRelocate(_.position.append("max.abs").toOption))
 
   load4TupleDataAddDate(path + "/someInputfile3.txt")
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -381,7 +381,8 @@ class TestScalding10(args : Args) extends Job(args) {
   val data = load4TupleDataAddDate(path + "/someInputfile3.txt")
 
   data
-    .summarise(Over(Second), Mean[Position3D, Position1D](true, true).andThenRelocate(_.position.append("mean")))
+    .summarise(Over(Second), Mean[Position3D, Position1D](true, true)
+      .andThenRelocate(_.position.append("mean").toOption))
     .saveAsCSV(Over(First), s"./tmp.${tool}/agg1.csv")
     .toUnit
 
@@ -389,19 +390,19 @@ class TestScalding10(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
                              "iid:0364354", "iid:0375226", "iid:0444510", "iid:1004305"), true)
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .summarise(Along(Second), Count[Position2D, Position1D]().andThenRelocate(_.position.append("count")))
+    .summarise(Along(Second), Count[Position2D, Position1D]().andThenRelocate(_.position.append("count").toOption))
     .saveAsCSV(Over(First), s"./tmp.${tool}/agg2.csv")
     .toUnit
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-    Count().andThenRelocate(_.position.append("count")),
-    Mean().andThenRelocate(_.position.append("mean")),
-    StandardDeviation().andThenRelocate(_.position.append("sd")),
-    Skewness().andThenRelocate(_.position.append("skewness")),
-    Kurtosis().andThenRelocate(_.position.append("kurtosis")),
-    Min().andThenRelocate(_.position.append("min")),
-    Max().andThenRelocate(_.position.append("max")),
-    MaxAbs().andThenRelocate(_.position.append("max.abs")))
+    Count().andThenRelocate(_.position.append("count").toOption),
+    Mean().andThenRelocate(_.position.append("mean").toOption),
+    StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+    Skewness().andThenRelocate(_.position.append("skewness").toOption),
+    Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption),
+    Min().andThenRelocate(_.position.append("min").toOption),
+    Max().andThenRelocate(_.position.append("max").toOption),
+    MaxAbs().andThenRelocate(_.position.append("max.abs").toOption))
 
   data
     .slice(Over(First), List("iid:0064402", "iid:0066848", "iid:0076357", "iid:0216406", "iid:0221707", "iid:0262443",
@@ -510,7 +511,7 @@ class TestScalding15(args : Args) extends Job(args) {
   data
     .slice(Over(Second), List("fid:A", "fid:C", "fid:E", "fid:G"), true)
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
-    .summarise(Along(Third), Sum[Position3D, Position2D]().andThenRelocate(_.position.append("sum")))
+    .summarise(Along(Third), Sum[Position3D, Position2D]().andThenRelocate(_.position.append("sum").toOption))
     .melt(Third, Second)
     .saveAsCSV(Over(First), s"./tmp.${tool}/rsh1.out")
     .toUnit
@@ -562,11 +563,11 @@ class TestScalding17(args : Args) extends Job(args) {
     .squash(Third, PreservingMaxPosition[Position3D]())
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-    Count().andThenRelocate(_.position.append("count")),
-    Mean().andThenRelocate(_.position.append("mean")),
-    Min().andThenRelocate(_.position.append("min")),
-    Max().andThenRelocate(_.position.append("max")),
-    MaxAbs().andThenRelocate(_.position.append("max.abs")))
+    Count().andThenRelocate(_.position.append("count").toOption),
+    Mean().andThenRelocate(_.position.append("mean").toOption),
+    Min().andThenRelocate(_.position.append("min").toOption),
+    Max().andThenRelocate(_.position.append("max").toOption),
+    MaxAbs().andThenRelocate(_.position.append("max.abs").toOption))
 
   val stats = data
     .summarise(Along(First), aggregators)
@@ -617,11 +618,11 @@ class TestScalding18(args : Args) extends Job(args) {
     .squash(Third, PreservingMaxPosition[Position3D]())
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-    Count().andThenRelocate(_.position.append("count")),
-    Mean().andThenRelocate(_.position.append("mean")),
-    Min().andThenRelocate(_.position.append("min")),
-    Max().andThenRelocate(_.position.append("max")),
-    MaxAbs().andThenRelocate(_.position.append("max.abs")))
+    Count().andThenRelocate(_.position.append("count").toOption),
+    Mean().andThenRelocate(_.position.append("mean").toOption),
+    Min().andThenRelocate(_.position.append("min").toOption),
+    Max().andThenRelocate(_.position.append("max").toOption),
+    MaxAbs().andThenRelocate(_.position.append("max.abs").toOption))
 
   val stats = data
     .summarise(Along(First), aggregators)
@@ -663,8 +664,8 @@ class TestScalding19(args : Args) extends Job(args) {
     .split(CustomPartition(First, "train", "test"))
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-    Count().andThenRelocate(_.position.append("count")),
-    MaxAbs().andThenRelocate(_.position.append("max.abs")))
+    Count().andThenRelocate(_.position.append("count").toOption),
+    MaxAbs().andThenRelocate(_.position.append("max.abs").toOption))
 
   val stats = parts
     .get("train")
@@ -855,7 +856,7 @@ class TestScalding26(args: Args) extends Job(args) {
 
   left
     .pairwiseBetween(Over(First), All, right,
-      Times(Locate.PrependPairwiseSelectedToRemainder[Position2D](Over(First), "(%1$s*%2$s)")))
+      Times(Locate.PrependPairwiseSelectedStringToRemainder[Position2D](Over(First), "(%1$s*%2$s)")))
     .saveAsText(s"./tmp.${tool}/alg.out")
     .toUnit
 }
@@ -931,12 +932,12 @@ class TestScalding28(args: Args) extends Job(args) {
                               ("iid:" + i, "fid:B", Content(NominalSchema(StringCodex), i.toString))) }
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
-    Count().andThenRelocate(_.position.append("count")),
-    Min().andThenRelocate(_.position.append("min")),
-    Max().andThenRelocate(_.position.append("max")),
-    Mean().andThenRelocate(_.position.append("mean")),
-    StandardDeviation().andThenRelocate(_.position.append("sd")),
-    Skewness().andThenRelocate(_.position.append("skewness")))
+    Count().andThenRelocate(_.position.append("count").toOption),
+    Min().andThenRelocate(_.position.append("min").toOption),
+    Max().andThenRelocate(_.position.append("max").toOption),
+    Mean().andThenRelocate(_.position.append("mean").toOption),
+    StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+    Skewness().andThenRelocate(_.position.append("skewness").toOption))
 
   val stats = data
     .summarise(Along(First), aggregators)

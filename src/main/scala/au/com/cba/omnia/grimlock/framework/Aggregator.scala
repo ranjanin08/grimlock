@@ -97,7 +97,9 @@ trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Posi
 
       def prepare(cell: Cell[P]): T = self.prepare(cell)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
-      def present(pos: S, t: T): Option[Cell[R]] = self.present(pos, t).map { case c => Cell(locate(c), c.content) }
+      def present(pos: S, t: T): Option[Cell[R]] = {
+        self.present(pos, t).flatMap { case c => locate(c).map(Cell(_, c.content)) }
+      }
     }
   }
 }
@@ -200,7 +202,7 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(cell, ext)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[R]] = {
-        self.presentWithValue(pos, t, ext).map { case c => Cell(locate(c), c.content) }
+        self.presentWithValue(pos, t, ext).flatMap { case c => locate(c).map(Cell(_, c.content)) }
       }
     }
   }
@@ -261,7 +263,7 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(cell, ext)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[R]] = {
-        self.presentWithValue(pos, t, ext).map { case c => Cell(locate(c, ext), c.content) }
+        self.presentWithValue(pos, t, ext).flatMap { case c => locate(c, ext).map(Cell(_, c.content)) }
       }
     }
   }

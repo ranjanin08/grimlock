@@ -57,7 +57,7 @@ case class EnsembleSplit(gbm: String, rf: String, lr: String) extends Partitione
 object Ensemble {
 
   def main(args: Array[String]) {
-    // Define implicit context for reading.
+    // Define implicit context for loading data.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
     // Path to data files, output folder
@@ -94,7 +94,7 @@ object Ensemble {
       partition
         .stream("Rscript " + key, List(key), Cell.toString("|", false, true), Cell.parse1D("|", StringCodex))
         .data // Keep only the data (ignoring errors).
-        .relocate(c => Some(c.position.append(key)))
+        .relocate(Locate.AppendValue[Position1D](key))
     }
 
     // Define extractor to get weight out of weights map.
@@ -109,7 +109,7 @@ object Ensemble {
     // 6/ Persist the final scores.
     // 7/ Compact the scores into a Map so they can be used to compute the Gini index with.
     val scores = data
-      .relocate(c => Some(c.position.append(math.abs(c.position(First).hashCode % 10))))
+      .relocate(c => c.position.append(math.abs(c.position(First).hashCode % 10)).toOption)
       .split(EnsembleSplit(scripts(0), scripts(1), scripts(2)))
       .forEach(scripts, trainAndScore)
       .merge(scripts)

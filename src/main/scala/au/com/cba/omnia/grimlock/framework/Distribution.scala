@@ -24,7 +24,7 @@ import au.com.cba.omnia.grimlock.framework.utility._
 import scala.reflect.ClassTag
 
 /** Trait for computing approximate distributions from a matrix. */
-trait ApproximateDistribution extends RawData with DefaultTuners with PositionOrdering {
+trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
 
   /** Specifies tuners permitted on a call to `histogram`. */
   type HistogramTuners <: OneOf
@@ -32,7 +32,6 @@ trait ApproximateDistribution extends RawData with DefaultTuners with PositionOr
   /**
    * Compute histogram.
    *
-   * @param matrix    Matrix on which to compute histogram.
    * @param slice     Encapsulates the dimension(s) to compute histogram on.
    * @param position  Function for extracting the position of the histogram.
    * @param all       Indicator if all values, or only categorical, should be used.
@@ -42,9 +41,9 @@ trait ApproximateDistribution extends RawData with DefaultTuners with PositionOr
    *
    * @note The histogram is computed on the positions returned by `position`.
    */
-  def histogram[P <: Position, Q <: Position, T <: Tuner](matrix: U[Cell[P]], slice: Slice[P],
-    position: Locate.FromCell[P, Q], all: Boolean = false, tuner: T)(implicit ev1: PosExpDep[slice.S, Q],
-      ev2: ClassTag[Q], ev3: HistogramTuners#V[T]): U[Cell[Q]]
+  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
+    position: Locate.FromSelectedAndContent[S, Q], all: Boolean = false, tuner: T)(implicit ev1: PosExpDep[slice.S, Q],
+      ev2: slice.S =:= S, ev3: ClassTag[Q], ev4: HistogramTuners#V[T]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `quantile`. */
   type QuantileTuners <: OneOf
@@ -52,7 +51,6 @@ trait ApproximateDistribution extends RawData with DefaultTuners with PositionOr
   /**
    * Compute sample quantiles.
    *
-   * @param matrix    Matrix on which to compute quantiles.
    * @param slice     Encapsulates the dimension(s) to compute quantiles on.
    * @param probs     List of probabilities; values must lie in (0, 1).
    * @param quantiser Function that determines the quantile indices into the order statistics.
@@ -65,11 +63,10 @@ trait ApproximateDistribution extends RawData with DefaultTuners with PositionOr
    *
    * @note Non numeric values result in `NaN` quantiles, while missing counts result in no quantiles.
    */
-  def quantile[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](matrix: U[Cell[P]],
-    slice: Slice[P], probs: List[Double], quantiser: Quantile.Quantiser,
-      position: Locate.FromSelectedAndOutput[S, Double, Q], count: Extract[P, W, Long], value: E[W], tuner: T)(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
-          ev5: QuantileTuners#V[T]): U[Cell[Q]]
+  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
+    probs: List[Double], quantiser: Quantile.Quantiser, position: Locate.FromSelectedAndOutput[S, Double, Q],
+      count: Extract[P, W, Long], value: E[W], tuner: T)(implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q],
+        ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: QuantileTuners#V[T]): U[Cell[Q]]
 }
 
 private[grimlock] case class Quantile[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](
@@ -110,7 +107,9 @@ private[grimlock] case class Quantile[P <: Position, S <: Position with Expandab
     }
   }
 
-  def present(pos: S, out: O): Cell[Q] = Cell(position(pos, out._1), Content(ContinuousSchema(DoubleCodex), out._2))
+  def present(pos: S, out: O): Option[Cell[Q]] = {
+    position(pos, out._1).map(Cell(_, Content(ContinuousSchema(DoubleCodex), out._2)))
+  }
 
   private def boundaries(count: Long): C = {
     probs

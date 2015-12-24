@@ -4,11 +4,6 @@ Grimlock
 [![Build Status](https://travis-ci.org/CommBank/grimlock.svg?branch=master)](https://travis-ci.org/CommBank/grimlock)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/CommBank/grimlock?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Documentation
--------------
-
-[Scaladoc](https://commbank.github.io/grimlock/latest/api/index.html)
-
 Overview
 --------
 
@@ -32,6 +27,11 @@ Grimlock has default implementations for many of the above tasks. It also has a 
 * Supports heterogeneous data;
 * Can be used in the Scalding/Spark REPL;
 * Supports basic as well as structured data types.
+
+Documentation
+-------------
+
+[Scaladoc](https://commbank.github.io/grimlock/latest/api/index.html)
 
 Concepts
 --------
@@ -262,10 +262,10 @@ Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema(LongCodex),Long
 Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema(LongCodex),LongValue(2)))
 
 scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = List(
-     | Mean().andThenRelocate(_.position.append("mean")),
-     | StandardDeviation().andThenRelocate(_.position.append("sd")),
-     | Skewness().andThenRelocate(_.position.append("skewness")),
-     | Kurtosis().andThenRelocate(_.position.append("kurtosis")))
+     | Mean().andThenRelocate(_.position.append("mean").toOption),
+     | StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+     | Skewness().andThenRelocate(_.position.append("skewness").toOption),
+     | Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption))
 
 scala> counts.summarise(Along(First), aggregators).dump
 Cell(Position1D(StringValue(mean)),Content(ContinuousSchema(DoubleCodex),DoubleValue(4.0)))
@@ -396,10 +396,10 @@ Cell(Position1D(StringValue(iid:0444510)),Content(DiscreteSchema(LongCodex),Long
 Cell(Position1D(StringValue(iid:1004305)),Content(DiscreteSchema(LongCodex),LongValue(2)))
 
 scala> val aggregators: List[Aggregator[Position1D, Position0D, Position1D]] = List(
-     | Mean().andThenRelocate(_.position.append("mean")),
-     | StandardDeviation().andThenRelocate(_.position.append("sd")),
-     | Skewness().andThenRelocate(_.position.append("skewness")),
-     | Kurtosis().andThenRelocate(_.position.append("kurtosis")))
+     | Mean().andThenRelocate(_.position.append("mean").toOption),
+     | StandardDeviation().andThenRelocate(_.position.append("sd").toOption),
+     | Skewness().andThenRelocate(_.position.append("skewness").toOption),
+     | Kurtosis().andThenRelocate(_.position.append("kurtosis").toOption))
 
 scala> counts.summarise(Along(First), aggregators).foreach(println)
 Cell(Position1D(StringValue(mean)),Content(ContinuousSchema(DoubleCodex),DoubleValue(4.0)))

@@ -32,7 +32,7 @@ trait MovingAverage[P <: Position, S <: Position with ExpandablePosition, R <: P
   def prepare(cell: Cell[P]): I = cell.content.value.asDouble.getOrElse(Double.NaN)
 
   def present(pos: S, out: O): TraversableOnce[Cell[Q]] = {
-    Some(Cell(position(pos, out._1), Content(ContinuousSchema(DoubleCodex), out._2)))
+    position(pos, out._1).map(Cell(_, Content(ContinuousSchema(DoubleCodex), out._2)))
   }
 }
 
@@ -159,7 +159,7 @@ case class CumulativeSum[P <: Position, S <: Position with ExpandablePosition, R
     }
   }
 
-  def present(pos: S, out: O): TraversableOnce[Cell[Q]] = Some(Cell(position(pos, out._1), Content(schema, out._2)))
+  def present(pos: S, out: O): TraversableOnce[Cell[Q]] = position(pos, out._1).map(Cell(_, Content(schema, out._2)))
 }
 
 /**
@@ -195,7 +195,7 @@ case class BinOp[P <: Position, S <: Position with ExpandablePosition, R <: Posi
   }
 
   def present(pos: S, out: O): TraversableOnce[Cell[Q]] = {
-    Some(Cell(position(pos, out._3, out._2), Content(ContinuousSchema(DoubleCodex), out._1)))
+    position(pos, out._3, out._2).map(Cell(_, Content(ContinuousSchema(DoubleCodex), out._1)))
   }
 
   private def getResult(rem: R, value: Double, result: Double, prev: R): (T, TraversableOnce[O]) = {

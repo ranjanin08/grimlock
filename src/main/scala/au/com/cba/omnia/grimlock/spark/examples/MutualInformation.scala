@@ -48,7 +48,7 @@ case class CeilingBucketing() extends Transformer[Position2D, Position2D] {
 object MutualInformation {
 
   def main(args: Array[String]) {
-    // Define implicit context for reading.
+    // Define implicit context for loading data.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
     // Path to data files
@@ -78,8 +78,7 @@ object MutualInformation {
 
     // Compute histogram on the data.
     val mhist = data
-      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
-      .summarise(Along(First), Count[Position3D, Position2D]())
+      .histogram(Along(First), Locate.AppendContentString[Position1D](), true)
 
     // Compute count of histogram elements.
     val mcount = mhist
@@ -91,18 +90,17 @@ object MutualInformation {
     // 2/ Compute pairwise sum of marginal entropies for all upper triangular values.
     val marginal = mhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor)
-        .andThenRelocate(_.position.append("marginal")), mcount)
-      .pairwise(Over(First), Upper, Plus(Locate.PrependPairwiseSelectedToRemainder[Position2D](Over(First), "%s,%s")))
+        .andThenRelocate(_.position.append("marginal").toOption), mcount)
+      .pairwise(Over(First), Upper,
+        Plus(Locate.PrependPairwiseSelectedStringToRemainder[Position2D](Over(First), "%s,%s")))
 
     // Compute histogram on pairwise data.
     // 1/ Generate pairwise values for all upper triangular values.
-    // 2/ Expand with content as an extra dimension.
-    // 3/ Aggregate out second dimension to get histogram counts.
+    // 2/ Compute histogram on pairwise values.
     val jhist = data
       .pairwise(Over(Second), Upper,
-        Concatenate(Locate.PrependPairwiseSelectedToRemainder[Position2D](Over(Second), "%s,%s")))
-      .relocate(c => Some(c.position.append(c.content.value.toShortString)))
-      .summarise(Along(Second), Count[Position3D, Position2D]())
+        Concatenate(Locate.PrependPairwiseSelectedStringToRemainder[Position2D](Over(Second), "%s,%s")))
+      .histogram(Along(Second), Locate.AppendContentString[Position1D](), true)
 
     // Compute count of histogram elements.
     val jcount = jhist
@@ -112,7 +110,7 @@ object MutualInformation {
     // Compute joint entropy
     val joint = jhist
       .summariseWithValue(Over(First), Entropy[Position2D, Position1D, W](extractor, negate = true)
-        .andThenRelocate(_.position.append("joint")), jcount)
+        .andThenRelocate(_.position.append("joint").toOption), jcount)
 
     // Generate mutual information
     // 1/ Sum marginal and negated joint entropy

@@ -27,7 +27,7 @@ import org.apache.spark.{ SparkConf, SparkContext }
 object BasicOperations {
 
   def main(args: Array[String]) {
-    // Define implicit context for reading.
+    // Define implicit context for loading data.
     implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
 
     // Path to data files, output folder

@@ -250,7 +250,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
    *
    * @return A `U[Cell[Q]]` where the cells have been relocated.
    */
-  def relocate[Q <: Position](locate: Locate.OptionalFromCell[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]]
+  def relocate[Q <: Position](locate: Locate.FromCell[P, Q])(implicit ev: PosIncDep[P, Q]): U[Cell[Q]]
 
   /**
    * Relocate the coordinates of the cells using user a suplied value.
@@ -260,7 +260,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
    *
    * @return A `U[Cell[Q]]` where the cells have been relocated.
    */
-  def relocateWithValue[Q <: Position, W](locate: Locate.OptionalFromCellWithValue[P, Q, W], value: E[W])(
+  def relocateWithValue[Q <: Position, W](locate: Locate.FromCellWithValue[P, Q, W], value: E[W])(
     implicit ev: PosIncDep[P, Q]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `set` functions. */
