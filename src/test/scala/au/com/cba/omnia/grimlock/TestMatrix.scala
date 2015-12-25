@@ -6970,6 +6970,11 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
 trait TestMatrixFill extends TestMatrix {
 
+  val result0 = List(Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 6.28)),
+    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
+    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("qux"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+
   val result1 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 6.28)),
     Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
     Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 18.84)),
@@ -7177,7 +7182,13 @@ trait TestMatrixFill extends TestMatrix {
 
 class TestScaldingMatrixFill extends TestMatrixFill {
 
-  "A Matrix.fill" should "return its filled data in 2D" in {
+  "A Matrix.fill" should "return its filled data in 1D" in {
+    toPipe(num1)
+      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
+      .toList.sortBy(_.position) shouldBe result0
+  }
+
+  it should "return its filled data in 2D" in {
     toPipe(num2)
       .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
       .toList.sortBy(_.position) shouldBe result1
@@ -7189,7 +7200,24 @@ class TestScaldingMatrixFill extends TestMatrixFill {
       .toList.sortBy(_.position) shouldBe result2
   }
 
-  "A Matrix.fill" should "return its first over filled data in 2D" in {
+  "A Matrix.fill" should "return its first over filled data in 1D" in {
+    val cells = toPipe(num1)
+
+    cells
+      .fillHeterogeneous(Over(First), cells.summarise(Over(First), Mean[Position1D, Position1D]()), InMemory())
+      .toList.sortBy(_.position) shouldBe result0
+  }
+
+  it should "return its first along filled data in 1D" in {
+    val cells = toPipe(num1)
+
+    cells
+      .fillHeterogeneous(Along(First), cells.summarise(Along(First), Mean[Position1D, Position0D]()),
+        InMemory(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result0
+  }
+
+  it should "return its first over filled data in 2D" in {
     val cells = toPipe(num2)
 
     cells
@@ -7289,7 +7317,13 @@ class TestScaldingMatrixFill extends TestMatrixFill {
 
 class TestSparkMatrixFill extends TestMatrixFill {
 
-  "A Matrix.fill" should "return its filled data in 2D" in {
+  "A Matrix.fill" should "return its filled data in 1D" in {
+    toRDD(num1)
+      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
+      .toList.sortBy(_.position) shouldBe result0
+  }
+
+  it should "return its filled data in 2D" in {
     toRDD(num2)
       .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
       .toList.sortBy(_.position) shouldBe result1
@@ -7301,7 +7335,24 @@ class TestSparkMatrixFill extends TestMatrixFill {
       .toList.sortBy(_.position) shouldBe result2
   }
 
-  "A Matrix.fill" should "return its first over filled data in 2D" in {
+  "A Matrix.fill" should "return its first over filled data in 1D" in {
+    val cells = toRDD(num1)
+
+    cells
+      .fillHeterogeneous(Over(First), cells.summarise(Over(First), Mean[Position1D, Position1D]()), Default())
+      .toList.sortBy(_.position) shouldBe result0
+  }
+
+  it should "return its first along filled data in 1D" in {
+    val cells = toRDD(num1)
+
+    cells
+      .fillHeterogeneous(Along(First), cells.summarise(Along(First), Mean[Position1D, Position0D]()),
+        Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result0
+  }
+
+  it should "return its first over filled data in 2D" in {
     val cells = toRDD(num2)
 
     cells

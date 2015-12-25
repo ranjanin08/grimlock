@@ -1126,11 +1126,11 @@ class TestScalding33(args: Args) extends Job(args) {
     ("c", "two", Content(NominalSchema(StringCodex), "bar")),
     ("c", "three", Content(ContinuousSchema(DoubleCodex), 12.56)))
 
-  val labels = new IterablePipe(
+  val labels = IterablePipe(
     List(Cell(Position1D("a"), Content(DiscreteSchema(LongCodex), 1)),
       Cell(Position1D("b"), Content(DiscreteSchema(LongCodex), 2))))
 
-  val importance = new IterablePipe(
+  val importance = IterablePipe(
     List(Cell(Position1D("a"), Content(ContinuousSchema(DoubleCodex), 0.5)),
       Cell(Position1D("b"), Content(ContinuousSchema(DoubleCodex), 0.75))))
 

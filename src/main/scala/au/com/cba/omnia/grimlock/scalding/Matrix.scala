@@ -858,8 +858,8 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   def correlation[ST <: Tuner, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(), ptuner: PT = Default())(
     implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R], ev3: SummariseTuners#V[ST],
       ev4: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
-    implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
-    implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+    implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
+    implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
     val mean = data
       .summarise(slice, Mean[Position2D, slice.S](), stuner)
@@ -899,7 +899,7 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   def mutualInformation[ST <: Tuner, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(),
     ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R], ev3: SummariseTuners#V[ST],
       ev4: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
-    implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+    implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
     val dim = slice match {
       case Over(First) => Second
@@ -959,8 +959,8 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   def gini[ST <: Tuner, WT <: Tuner, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(),
     wtuner: WT = Default(), ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R],
       ev3: SummariseTuners#V[ST], ev4: SlideTuners#V[WT], ev5: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
-    implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = new Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
-    implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = new Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
+    implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
+    implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
     def isPositive = (cell: Cell[Position2D]) => cell.content.value.asDouble.map(_ > 0).getOrElse(false)
     def isNegative = (cell: Cell[Position2D]) => cell.content.value.asDouble.map(_ <= 0).getOrElse(false)
@@ -1031,66 +1031,66 @@ object Matrix {
   }
 
   /** Conversion from `TypedPipe[Cell[Position1D]]` to a Scalding `Matrix1D`. */
-  implicit def TP2M1(data: TypedPipe[Cell[Position1D]]): Matrix1D = new Matrix1D(data)
+  implicit def TP2M1(data: TypedPipe[Cell[Position1D]]): Matrix1D = Matrix1D(data)
   /** Conversion from `TypedPipe[Cell[Position2D]]` to a Scalding `Matrix2D`. */
-  implicit def TP2M2(data: TypedPipe[Cell[Position2D]]): Matrix2D = new Matrix2D(data)
+  implicit def TP2M2(data: TypedPipe[Cell[Position2D]]): Matrix2D = Matrix2D(data)
   /** Conversion from `TypedPipe[Cell[Position3D]]` to a Scalding `Matrix3D`. */
-  implicit def TP2M3(data: TypedPipe[Cell[Position3D]]): Matrix3D = new Matrix3D(data)
+  implicit def TP2M3(data: TypedPipe[Cell[Position3D]]): Matrix3D = Matrix3D(data)
   /** Conversion from `TypedPipe[Cell[Position4D]]` to a Scalding `Matrix4D`. */
-  implicit def TP2M4(data: TypedPipe[Cell[Position4D]]): Matrix4D = new Matrix4D(data)
+  implicit def TP2M4(data: TypedPipe[Cell[Position4D]]): Matrix4D = Matrix4D(data)
   /** Conversion from `TypedPipe[Cell[Position5D]]` to a Scalding `Matrix5D`. */
-  implicit def TP2M5(data: TypedPipe[Cell[Position5D]]): Matrix5D = new Matrix5D(data)
+  implicit def TP2M5(data: TypedPipe[Cell[Position5D]]): Matrix5D = Matrix5D(data)
   /** Conversion from `TypedPipe[Cell[Position6D]]` to a Scalding `Matrix6D`. */
-  implicit def TP2M6(data: TypedPipe[Cell[Position6D]]): Matrix6D = new Matrix6D(data)
+  implicit def TP2M6(data: TypedPipe[Cell[Position6D]]): Matrix6D = Matrix6D(data)
   /** Conversion from `TypedPipe[Cell[Position7D]]` to a Scalding `Matrix7D`. */
-  implicit def TP2M7(data: TypedPipe[Cell[Position7D]]): Matrix7D = new Matrix7D(data)
+  implicit def TP2M7(data: TypedPipe[Cell[Position7D]]): Matrix7D = Matrix7D(data)
   /** Conversion from `TypedPipe[Cell[Position8D]]` to a Scalding `Matrix8D`. */
-  implicit def TP2M8(data: TypedPipe[Cell[Position8D]]): Matrix8D = new Matrix8D(data)
+  implicit def TP2M8(data: TypedPipe[Cell[Position8D]]): Matrix8D = Matrix8D(data)
   /** Conversion from `TypedPipe[Cell[Position9D]]` to a Scalding `Matrix9D`. */
-  implicit def TP2M9(data: TypedPipe[Cell[Position9D]]): Matrix9D = new Matrix9D(data)
+  implicit def TP2M9(data: TypedPipe[Cell[Position9D]]): Matrix9D = Matrix9D(data)
 
   /** Conversion from `List[Cell[Position1D]]` to a Scalding `Matrix1D`. */
-  implicit def L2TPM1(data: List[Cell[Position1D]]): Matrix1D = new Matrix1D(new IterablePipe(data))
+  implicit def L2TPM1(data: List[Cell[Position1D]]): Matrix1D = Matrix1D(IterablePipe(data))
   /** Conversion from `List[Cell[Position2D]]` to a Scalding `Matrix2D`. */
-  implicit def L2TPM2(data: List[Cell[Position2D]]): Matrix2D = new Matrix2D(new IterablePipe(data))
+  implicit def L2TPM2(data: List[Cell[Position2D]]): Matrix2D = Matrix2D(IterablePipe(data))
   /** Conversion from `List[Cell[Position3D]]` to a Scalding `Matrix3D`. */
-  implicit def L2TPM3(data: List[Cell[Position3D]]): Matrix3D = new Matrix3D(new IterablePipe(data))
+  implicit def L2TPM3(data: List[Cell[Position3D]]): Matrix3D = Matrix3D(IterablePipe(data))
   /** Conversion from `List[Cell[Position4D]]` to a Scalding `Matrix4D`. */
-  implicit def L2TPM4(data: List[Cell[Position4D]]): Matrix4D = new Matrix4D(new IterablePipe(data))
+  implicit def L2TPM4(data: List[Cell[Position4D]]): Matrix4D = Matrix4D(IterablePipe(data))
   /** Conversion from `List[Cell[Position5D]]` to a Scalding `Matrix5D`. */
-  implicit def L2TPM5(data: List[Cell[Position5D]]): Matrix5D = new Matrix5D(new IterablePipe(data))
+  implicit def L2TPM5(data: List[Cell[Position5D]]): Matrix5D = Matrix5D(IterablePipe(data))
   /** Conversion from `List[Cell[Position6D]]` to a Scalding `Matrix6D`. */
-  implicit def L2TPM6(data: List[Cell[Position6D]]): Matrix6D = new Matrix6D(new IterablePipe(data))
+  implicit def L2TPM6(data: List[Cell[Position6D]]): Matrix6D = Matrix6D(IterablePipe(data))
   /** Conversion from `List[Cell[Position7D]]` to a Scalding `Matrix7D`. */
-  implicit def L2TPM7(data: List[Cell[Position7D]]): Matrix7D = new Matrix7D(new IterablePipe(data))
+  implicit def L2TPM7(data: List[Cell[Position7D]]): Matrix7D = Matrix7D(IterablePipe(data))
   /** Conversion from `List[Cell[Position8D]]` to a Scalding `Matrix8D`. */
-  implicit def L2TPM8(data: List[Cell[Position8D]]): Matrix8D = new Matrix8D(new IterablePipe(data))
+  implicit def L2TPM8(data: List[Cell[Position8D]]): Matrix8D = Matrix8D(IterablePipe(data))
   /** Conversion from `List[Cell[Position9D]]` to a Scalding `Matrix9D`. */
-  implicit def L2TPM9(data: List[Cell[Position9D]]): Matrix9D = new Matrix9D(new IterablePipe(data))
+  implicit def L2TPM9(data: List[Cell[Position9D]]): Matrix9D = Matrix9D(IterablePipe(data))
 
   /** Conversion from `List[(Valueable, Content)]` to a Scalding `Matrix1D`. */
   implicit def LV1C2TPM1[V <% Valueable](list: List[(V, Content)]): Matrix1D = {
-    new Matrix1D(new IterablePipe(list.map { case (v, c) => Cell(Position1D(v), c) }))
+    Matrix1D(IterablePipe(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a Scalding `Matrix2D`. */
   implicit def LV2C2TPM2[V <% Valueable, W <% Valueable](list: List[(V, W, Content)]): Matrix2D = {
-    new Matrix2D(new IterablePipe(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
+    Matrix2D(IterablePipe(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a Scalding `Matrix3D`. */
   implicit def LV3C2TPM3[V <% Valueable, W <% Valueable, X <% Valueable](list: List[(V, W, X, Content)]): Matrix3D = {
-    new Matrix3D(new IterablePipe(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
+    Matrix3D(IterablePipe(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a Scalding `Matrix4D`. */
   implicit def LV4C2TPM4[V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable](
     list: List[(V, W, X, Y, Content)]): Matrix4D = {
-    new Matrix4D(new IterablePipe(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
+    Matrix4D(IterablePipe(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a Scalding `Matrix5D`.
    */
   implicit def LV5C2TPM5[V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(V, W, X, Y, Z, Content)]): Matrix5D = {
-    new Matrix5D(new IterablePipe(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
+    Matrix5D(IterablePipe(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
@@ -1098,7 +1098,7 @@ object Matrix {
    */
   implicit def LV6C2TPM6[U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(U, V, W, X, Y, Z, Content)]): Matrix6D = {
-    new Matrix6D(new IterablePipe(list.map { case (u, v, w, x, y, z, c) => Cell(Position6D(u, v, w, x, y, z), c) }))
+    Matrix6D(IterablePipe(list.map { case (u, v, w, x, y, z, c) => Cell(Position6D(u, v, w, x, y, z), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]`
@@ -1106,9 +1106,7 @@ object Matrix {
    */
   implicit def LV7C2TPM7[T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(T, U, V, W, X, Y, Z, Content)]): Matrix7D = {
-    new Matrix7D(new IterablePipe(list.map {
-      case (t, u, v, w, x, y, z, c) => Cell(Position7D(t, u, v, w, x, y, z), c)
-    }))
+    Matrix7D(IterablePipe(list.map { case (t, u, v, w, x, y, z, c) => Cell(Position7D(t, u, v, w, x, y, z), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
@@ -1116,9 +1114,7 @@ object Matrix {
    */
   implicit def LV8C2TPM8[S <% Valueable, T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(S, T, U, V, W, X, Y, Z, Content)]): Matrix8D = {
-    new Matrix8D(new IterablePipe(list.map {
-      case (s, t, u, v, w, x, y, z, c) => Cell(Position8D(s, t, u, v, w, x, y, z), c)
-    }))
+    Matrix8D(IterablePipe(list.map { case (s, t, u, v, w, x, y, z, c) => Cell(Position8D(s, t, u, v, w, x, y, z), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
@@ -1126,7 +1122,7 @@ object Matrix {
    */
   implicit def LV9C2TPM9[R <% Valueable, S <% Valueable, T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
     list: List[(R, S, T, U, V, W, X, Y, Z, Content)]): Matrix9D = {
-    new Matrix9D(new IterablePipe(list.map {
+    Matrix9D(IterablePipe(list.map {
       case (r, s, t, u, v, w, x, y, z, c) => Cell(Position9D(r, s, t, u, v, w, x, y, z), c)
     }))
   }
@@ -1143,7 +1139,7 @@ object Matrix {
  *
  * @param data `TypedPipe[Cell[Position1D]]`.
  */
-class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D] with ExpandableMatrix[Position1D]
+case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D] with ExpandableMatrix[Position1D]
   with ApproximateDistribution[Position1D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position1D] = names(Over(First))
 
@@ -1173,7 +1169,7 @@ class Matrix1D(val data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D]
  *
  * @param data `TypedPipe[Cell[Position2D]]`.
  */
-class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
+case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
   with ExpandableMatrix[Position2D] with MatrixDistance with ApproximateDistribution[Position2D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position2D] = {
     names(Over(First))
@@ -1397,7 +1393,7 @@ class Matrix2D(val data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D]
  *
  * @param data `TypedPipe[Cell[Position3D]]`.
  */
-class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
+case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
   with ExpandableMatrix[Position3D] with ApproximateDistribution[Position3D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position3D] = {
     names(Over(First))
@@ -1452,7 +1448,7 @@ class Matrix3D(val data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D]
  *
  * @param data `TypedPipe[Cell[Position4D]]`.
  */
-class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D] with ReduceableMatrix[Position4D]
+case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D] with ReduceableMatrix[Position4D]
   with ExpandableMatrix[Position4D] with ApproximateDistribution[Position4D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position4D] = {
     names(Over(First))
@@ -1515,7 +1511,7 @@ class Matrix4D(val data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D]
  *
  * @param data `TypedPipe[Cell[Position5D]]`.
  */
-class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D]
+case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D]
   with ExpandableMatrix[Position5D] with ApproximateDistribution[Position5D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position5D] = {
     names(Over(First))
@@ -1584,7 +1580,7 @@ class Matrix5D(val data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D]
  *
  * @param data `TypedPipe[Cell[Position6D]]`.
  */
-class Matrix6D(val data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D] with ReduceableMatrix[Position6D]
+case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D] with ReduceableMatrix[Position6D]
   with ExpandableMatrix[Position6D] with ApproximateDistribution[Position6D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position6D] = {
     names(Over(First))
@@ -1660,7 +1656,7 @@ class Matrix6D(val data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D]
  *
  * @param data `TypedPipe[Cell[Position7D]]`.
  */
-class Matrix7D(val data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D] with ReduceableMatrix[Position7D]
+case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D] with ReduceableMatrix[Position7D]
   with ExpandableMatrix[Position7D] with ApproximateDistribution[Position7D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position7D] = {
     names(Over(First))
@@ -1741,7 +1737,7 @@ class Matrix7D(val data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D]
  *
  * @param data `TypedPipe[Cell[Position8D]]`.
  */
-class Matrix8D(val data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D] with ReduceableMatrix[Position8D]
+case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D] with ReduceableMatrix[Position8D]
   with ExpandableMatrix[Position8D] with ApproximateDistribution[Position8D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position8D] = {
     names(Over(First))
@@ -1830,7 +1826,7 @@ class Matrix8D(val data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D]
  *
  * @param data `TypedPipe[Cell[Position9D]]`.
  */
-class Matrix9D(val data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D] with ReduceableMatrix[Position9D]
+case class Matrix9D(data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D] with ReduceableMatrix[Position9D]
   with ApproximateDistribution[Position9D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position9D] = {
     names(Over(First))
@@ -1928,12 +1924,12 @@ object Matrixable {
 
   /** Converts a `List[Cell[P]]` into a `TypedPipe[Cell[P]]`. */
   implicit def LC2TPM[P <: Position](t: List[Cell[P]]): BaseMatrixable[P, TypedPipe] = {
-    new BaseMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = new IterablePipe(t) }
+    new BaseMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = IterablePipe(t) }
   }
 
   /** Converts a `Cell[P]` into a `TypedPipe[Cell[P]]`. */
   implicit def C2TPM[P <: Position](t: Cell[P]): BaseMatrixable[P, TypedPipe] = {
-    new BaseMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = new IterablePipe(List(t)) }
+    new BaseMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = IterablePipe(List(t)) }
   }
 }
 

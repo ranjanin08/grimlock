@@ -31,6 +31,18 @@ class TestCell extends TestGrimlock {
       "foo.123.3.14"
   }
 
+  "A Cell" should "relocate" in {
+    Cell(Position2D("foo", 123), Content(ContinuousSchema(DoubleCodex), 3.14))
+      .relocate(_.position.append("abc")) shouldBe
+        (Cell(Position3D("foo", 123, "abc"), Content(ContinuousSchema(DoubleCodex), 3.14)))
+  }
+
+  "A Cell" should "mutate" in {
+    Cell(Position2D("foo", 123), Content(ContinuousSchema(DoubleCodex), 3.14))
+      .mutate(_ => Content(DiscreteSchema(LongCodex), 42)) shouldBe
+        (Cell(Position2D("foo", 123), Content(DiscreteSchema(LongCodex), 42)))
+  }
+
   val schema = ContinuousSchema(DoubleCodex)
   val dictionary = Map("123" -> schema)
 
