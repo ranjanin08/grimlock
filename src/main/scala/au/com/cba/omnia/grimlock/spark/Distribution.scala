@@ -61,15 +61,17 @@ trait ApproximateDistribution[P <: Position] extends BaseApproximateDistribution
     data
       .collect {
         case c if (c.content.schema.kind.isSpecialisationOf(Type.Numerical)) =>
-          (slice.selected(c.position), q.prepare(c, value))
+          val (double, count) = q.prepare(c, value)
+
+          ((slice.selected(c.position), count), double)
       }
       .groupByKey
       .flatMap {
-        case (p, itr) =>
+        case ((p, count), itr) =>
           val lst = itr
             .toList
-            .sortBy { case (v, _) => v }
-          val (t, c) = q.initialise(lst.head)
+            .sorted
+          val (t, c) = q.initialise(lst.head, count)
 
           lst
             .tail

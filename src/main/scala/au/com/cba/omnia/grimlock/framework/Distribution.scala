@@ -73,35 +73,30 @@ private[grimlock] case class Quantile[P <: Position, S <: Position with Expandab
   probs: List[Double], count: Extract[P, W, Long], quantiser: Quantile.Quantiser,
     position: Locate.FromSelectedAndOutput[S, Double, Q]) {
   type V = W
-  type I = (Double, Long)
   type C = List[(Long, Double, Double)]
   type T = (Double, Long, Long)
   type O = (Double, Double)
 
-  def prepare(cell: Cell[P], ext: V): I = {
+  def prepare(cell: Cell[P], ext: V): (Double, Long) = {
     (cell.content.value.asDouble.getOrElse(Double.NaN), count.extract(cell, ext).getOrElse(0L))
   }
 
-  def initialise(in: I): (T, C) = {
-    val count = in._2
+  def initialise(curr: Double, count: Long): (T, C) = {
     val index = 0
     val bounds = boundaries(count)
     val target = next(bounds, index)
-    val curr = in._1
 
     ((curr, index, target), bounds)
   }
 
-  def update(in: I, t: T, bounds: C): (T, List[O]) = {
-    val count = in._2
+  def update(curr: Double, t: T, bounds: C): (T, List[O]) = {
     val index = t._2 + 1
     val prev = t._1
     val target = t._3
-    val curr = in._1
 
     if (index == target) {
       ((curr, index, next(bounds, index)),
-        bounds.filter(_._1 == index).map { case (_, g, p) => (p, (1 - g) * prev + g * curr) })
+        bounds.collect { case (j, g, p) if (j == index) => (p, (1 - g) * prev + g * curr) })
     } else {
       ((curr, index, target), List())
     }
@@ -119,9 +114,9 @@ private[grimlock] case class Quantile[P <: Position, S <: Position with Expandab
   }
 
   private def next(boundaries: C, index: Long): Long = {
-    val i = boundaries.indexWhere(_._1 > index)
-
-    if (i < 0) { 0 } else { boundaries(i)._1 }
+    boundaries
+      .collectFirst { case (j, _, _) if j > index => j }
+      .getOrElse(0)
   }
 }
 

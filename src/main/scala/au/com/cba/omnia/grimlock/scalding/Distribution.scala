@@ -19,6 +19,7 @@ import au.com.cba.omnia.grimlock.framework.{
   Default,
   Extract,
   Locate,
+  Reducers,
   Tuner,
   Type
 }
@@ -60,21 +61,32 @@ trait ApproximateDistribution[P <: Position] extends BaseApproximateDistribution
           ev5: QuantileTuners#V[T]): U[Cell[Q]] = {
     val q = Quantile[P, S, Q, W](probs, count, quantiser, name)
 
-    data
+    val grouped = data
       .filter(_.content.schema.kind.isSpecialisationOf(Type.Numerical))
-      .mapWithValue(value) { case (c, vo) => (slice.selected(c.position), q.prepare(c, vo.get)) }
+      .mapWithValue(value) {
+        case (c, vo) =>
+          val (double, count) = q.prepare(c, vo.get)
+
+          ((slice.selected(c.position), count), double)
+      }
       .group
-      .tuneReducers(tuner.parameters)
-      .sortBy { case (v, _) => v }
+
+    val tuned = tuner.parameters match {
+      case Reducers(reducers) => grouped.withReducers(reducers)
+      case _ => grouped
+    }
+
+    tuned
+      .sorted
       .mapGroup {
-        case (_, itr) =>
-          val (t, c) = q.initialise(itr.next)
+        case ((_, count), itr) =>
+          val (t, c) = q.initialise(itr.next, count)
 
           itr
             .scanLeft((t, List[q.O]())) { case ((t, _), i) => q.update(i, t, c) }
             .flatMap { case (_, o) => o }
       }
-      .flatMap { case (p, o) => q.present(p, o) }
+      .flatMap { case ((p, _), o) => q.present(p, o) }
   }
 }
 
