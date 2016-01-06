@@ -214,3 +214,131 @@ class TestCombinationOperator extends TestOperators {
   }
 }
 
+case class PlusWithValue(
+  pos: Locate.FromPairwiseCells[Position1D, Position1D]) extends OperatorWithValue[Position1D, Position1D] {
+    type V = Map[Position1D, Content]
+
+    val plus = Plus(pos)
+
+    def computeWithValue(left: Cell[Position1D], right: Cell[Position1D], ext: V): TraversableOnce[Cell[Position1D]] = {
+      val offset = ext(left.position).value.asDouble.get
+
+      plus.compute(left, right).map {
+        case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema(DoubleCodex), d + offset))
+      }
+    }
+}
+
+class TestWithPrepareOperator extends TestOperators {
+
+  val pattern = "not.used"
+
+  val str = Cell(Position1D("x"), getDoubleContent(2))
+  val dbl = Cell(Position1D("y"), getDoubleContent(4))
+  val lng = Cell(Position1D("z"), getDoubleContent(8))
+
+  val ext = Map(Position1D("x") -> getDoubleContent(3),
+    Position1D("y") -> getDoubleContent(4),
+    Position1D("z") -> getDoubleContent(5))
+
+  def prepare(cell: Cell[Position1D]): Content = {
+    cell.content.value match {
+      case DoubleValue(2) => cell.content
+      case DoubleValue(4) => getStringContent("not.supported")
+      case DoubleValue(8) => getLongContent(8)
+    }
+  }
+
+  def prepareWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
+    (cell.content.value, ext(cell.position).value) match {
+      case (DoubleValue(2), DoubleValue(d)) => getDoubleContent(2 * d)
+      case (DoubleValue(4), _) => getStringContent("not.supported")
+      case (DoubleValue(8), DoubleValue(d)) => getLongContent(d.toLong)
+    }
+  }
+
+  val locate = (left: Cell[Position1D], right: Cell[Position1D]) => left.position.toOption
+
+  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
+  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
+
+  "An Operator" should "withPrepare correctly" in {
+    val obj = Plus[Position1D, Position1D](locate).withPrepare(prepare)
+
+    obj.compute(str, lng) shouldBe (List(Cell(str.position, getDoubleContent(2 + 8))))
+    obj.compute(str, dbl) shouldBe (List())
+  }
+
+  it should "withPrepareWithValue correctly (without value)" in {
+    val obj = PlusWithValue(locate).withPrepare(prepare)
+
+    obj.computeWithValue(str, lng, ext).toList shouldBe (List(Cell(str.position, getDoubleContent(2 + 8 + 3))))
+    obj.computeWithValue(str, dbl, ext).toList shouldBe (List())
+  }
+
+  it should "withPrepareWithValue correctly" in {
+    val obj = PlusWithValue(locate).withPrepareWithValue(prepareWithValue)
+
+    obj.computeWithValue(str, lng, ext).toList shouldBe (List(Cell(str.position, getDoubleContent(2 * 3 + 5 + 3))))
+    obj.computeWithValue(str, dbl, ext).toList shouldBe (List())
+  }
+}
+
+class TestAndThenMutateOperator extends TestOperators {
+
+  val pattern = "not.used"
+
+  val str = Cell(Position1D("x"), getDoubleContent(2))
+  val dbl = Cell(Position1D("y"), getDoubleContent(4))
+  val lng = Cell(Position1D("z"), getDoubleContent(8))
+
+  val ext = Map(Position1D("x") -> getDoubleContent(3),
+    Position1D("y") -> getDoubleContent(4),
+    Position1D("z") -> getDoubleContent(5))
+
+  def mutate(cell: Cell[Position1D]): Content = {
+    cell.content.value match {
+      case DoubleValue(10) => cell.content
+      case DoubleValue(6) => getStringContent("not.supported")
+
+      case DoubleValue(13) => cell.content
+      case DoubleValue(9) => getStringContent("not.supported")
+    }
+  }
+
+  def mutateWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
+    (cell.content.value, ext(cell.position).value) match {
+      case (DoubleValue(13), DoubleValue(d)) => getDoubleContent(2 * d)
+      case (DoubleValue(9), _) => getStringContent("not.supported")
+    }
+  }
+
+  val locate = (left: Cell[Position1D], right: Cell[Position1D]) => left.position.toOption
+
+  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
+  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
+
+  "An Operator" should "andThenMutate correctly" in {
+    val obj = Plus[Position1D, Position1D](locate).andThenMutate(mutate)
+
+    obj.compute(str, lng).toList shouldBe (List(Cell(str.position, getDoubleContent(2 + 8))))
+    obj.compute(str, dbl).toList shouldBe (List(Cell(str.position, getStringContent("not.supported"))))
+  }
+
+  it should "andThenMutateWithValue correctly (without value)" in {
+    val obj = PlusWithValue(locate).andThenMutate(mutate)
+
+    obj.computeWithValue(str, lng, ext).toList shouldBe (List(Cell(str.position, getDoubleContent(2 + 8 + 3))))
+    obj.computeWithValue(str, dbl, ext).toList shouldBe (List(Cell(str.position, getStringContent("not.supported"))))
+  }
+
+  it should "andThenMutateWithValue correctly" in {
+    val obj = PlusWithValue(locate).andThenMutateWithValue(mutateWithValue)
+
+    obj.computeWithValue(str, lng, ext).toList shouldBe (List(Cell(str.position, getDoubleContent(2 * 3))))
+    obj.computeWithValue(str, dbl, ext).toList shouldBe (List(Cell(str.position, getStringContent("not.supported"))))
+  }
+}
+

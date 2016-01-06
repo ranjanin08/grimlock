@@ -3259,3 +3259,107 @@ class TestEntropy extends TestAggregators {
   }
 }
 
+class TestWithPrepareAggregator extends TestAggregators {
+
+  val str = Cell(Position1D("x"), getStringContent("foo"))
+  val dbl = Cell(Position1D("y"), getDoubleContent(3.14))
+  val lng = Cell(Position1D("z"), getLongContent(42))
+
+  val ext = Map(Position1D("x") -> getDoubleContent(1),
+    Position1D("y") -> getDoubleContent(2),
+    Position1D("z") -> getDoubleContent(3))
+
+  def prepare(cell: Cell[Position1D]): Content = {
+    cell.content.value match {
+      case LongValue(_) => cell.content
+      case DoubleValue(_) => getStringContent("not.supported")
+      case StringValue(s) => getLongContent(s.length)
+    }
+  }
+
+  def prepareWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
+    (cell.content.value, ext(cell.position).value) match {
+      case (LongValue(l), DoubleValue(d)) => getLongContent(l * d.toLong)
+      case (DoubleValue(_), _) => getStringContent("not.supported")
+      case (StringValue(s), DoubleValue(d)) => getLongContent(s.length)
+    }
+  }
+
+  "An Aggregator" should "withPrepare prepare correctly" in {
+    val obj = Max[Position1D, Position1D]().withPrepare(prepare)
+
+    obj.prepare(str) shouldBe (3.0)
+    obj.prepare(dbl).compare(Double.NaN) shouldBe (0)
+    obj.prepare(lng) shouldBe (42.0)
+  }
+
+  it should "withPrepareWithValue correctly (without value)" in {
+    val obj = WeightedSum[Position1D, Position1D, Map[Position1D, Content]](
+      ExtractWithPosition().andThenPresent(_.value.asDouble)).withPrepare(prepare)
+
+    obj.prepareWithValue(str, ext) shouldBe (3.0)
+    obj.prepareWithValue(dbl, ext).compare(Double.NaN) shouldBe (0)
+    obj.prepareWithValue(lng, ext) shouldBe (3 * 42.0)
+  }
+
+  it should "withPrepareWithVaue correctly" in {
+    val obj = WeightedSum[Position1D, Position1D, Map[Position1D, Content]](
+      ExtractWithPosition().andThenPresent(_.value.asDouble)).withPrepareWithValue(prepareWithValue)
+
+    obj.prepareWithValue(str, ext) shouldBe (3.0)
+    obj.prepareWithValue(dbl, ext).compare(Double.NaN) shouldBe (0)
+    obj.prepareWithValue(lng, ext) shouldBe (3 * 3 * 42.0)
+  }
+}
+
+class TestAndThenMutateAggregator extends TestAggregators {
+
+  val x = Position1D("x")
+  val y = Position1D("y")
+  val z = Position1D("z")
+
+  val ext = Map(x -> getDoubleContent(3), y -> getDoubleContent(2), z -> getDoubleContent(1))
+
+  def mutate(cell: Cell[Position1D]): Content = {
+    cell.position match {
+      case Position1D(StringValue("x")) => cell.content
+      case Position1D(StringValue("y")) => getStringContent("not.supported")
+      case Position1D(StringValue("z")) => getLongContent(123)
+    }
+  }
+
+  def mutateWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
+    (cell.position, ext(cell.position).value) match {
+      case (Position1D(StringValue("x")), DoubleValue(d)) => getStringContent("x" * d.toInt)
+      case (Position1D(StringValue("y")), _) => getStringContent("not.supported")
+      case (Position1D(StringValue("z")), DoubleValue(d)) => getLongContent(d.toLong)
+    }
+  }
+
+  "An Aggregator" should "andThenMutate correctly" in {
+    val obj = Max[Position1D, Position1D]().andThenMutate(mutate)
+
+    obj.present(x, -1) shouldBe (Some(Cell(x, getDoubleContent(-1))))
+    obj.present(y, 3.14) shouldBe (Some(Cell(y, getStringContent("not.supported"))))
+    obj.present(z, 42) shouldBe (Some(Cell(z, getLongContent(123))))
+  }
+
+  it should "andThenMutateWithValue correctly (without value)" in {
+    val obj = WeightedSum[Position1D, Position1D, Map[Position1D, Content]](
+      ExtractWithPosition().andThenPresent(_.value.asDouble)).andThenMutate(mutate)
+
+    obj.presentWithValue(x, -1, ext) shouldBe (Some(Cell(x, getDoubleContent(-1))))
+    obj.presentWithValue(y, 3.14, ext) shouldBe (Some(Cell(y, getStringContent("not.supported"))))
+    obj.presentWithValue(z, 42, ext) shouldBe (Some(Cell(z, getLongContent(123))))
+  }
+
+  it should "andThenMutateWithValue correctly" in {
+    val obj = WeightedSum[Position1D, Position1D, Map[Position1D, Content]](
+      ExtractWithPosition().andThenPresent(_.value.asDouble)).andThenMutateWithValue(mutateWithValue)
+
+    obj.presentWithValue(x, -1, ext) shouldBe (Some(Cell(x, getStringContent("xxx"))))
+    obj.presentWithValue(y, 3.14, ext) shouldBe (Some(Cell(y, getStringContent("not.supported"))))
+    obj.presentWithValue(z, 42, ext) shouldBe (Some(Cell(z, getLongContent(1))))
+  }
+}
+

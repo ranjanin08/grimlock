@@ -989,3 +989,109 @@ class TestAndThenTransformerWithValue extends TestTransformers {
   }
 }
 
+class TestWithPrepareTransformer extends TestTransformers {
+
+  val str = Cell(Position1D("x"), getDoubleContent(2))
+  val dbl = Cell(Position1D("y"), getDoubleContent(4))
+  val lng = Cell(Position1D("z"), getDoubleContent(8))
+
+  val ext = Map(Position1D("x") -> getDoubleContent(3),
+    Position1D("y") -> getDoubleContent(4),
+    Position1D("z") -> getDoubleContent(5))
+
+  def prepare(cell: Cell[Position1D]): Content = {
+    cell.content.value match {
+      case DoubleValue(2) => cell.content
+      case DoubleValue(4) => getStringContent("not.supported")
+      case DoubleValue(8) => getLongContent(8)
+    }
+  }
+
+  def prepareWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
+    (cell.content.value, ext(cell.position).value) match {
+      case (DoubleValue(2), DoubleValue(d)) => getDoubleContent(2 * d)
+      case (DoubleValue(4), _) => getStringContent("not.supported")
+      case (DoubleValue(8), DoubleValue(d)) => getLongContent(d.toLong)
+    }
+  }
+
+  "A Transformer" should "withPrepare correctly" in {
+    val obj = Power[Position1D](2).withPrepare(prepare)
+
+    obj.present(str) shouldBe (List(Cell(str.position, getDoubleContent(4))))
+    obj.present(dbl) shouldBe (List())
+    obj.present(lng) shouldBe (List(Cell(lng.position, getDoubleContent(64))))
+  }
+
+  it should "withPrepareWithValue correctly (without value)" in {
+    val obj = Multiply[Position1D, Map[Position1D, Content]](
+      ExtractWithPosition().andThenPresent(_.value.asDouble)).withPrepare(prepare)
+
+    obj.presentWithValue(str, ext) shouldBe (List(Cell(str.position, getDoubleContent(2 * 3))))
+    obj.presentWithValue(dbl, ext) shouldBe (List())
+    obj.presentWithValue(lng, ext) shouldBe (List(Cell(lng.position, getDoubleContent(5 * 8))))
+  }
+
+  it should "withPrepareWithVaue correctly" in {
+    val obj = Multiply[Position1D, Map[Position1D, Content]](
+      ExtractWithPosition().andThenPresent(_.value.asDouble)).withPrepareWithValue(prepareWithValue)
+
+    obj.presentWithValue(str, ext) shouldBe (List(Cell(str.position, getDoubleContent(2 * 3 * 3))))
+    obj.presentWithValue(dbl, ext) shouldBe (List())
+    obj.presentWithValue(lng, ext) shouldBe (List(Cell(lng.position, getDoubleContent(5 * 5))))
+  }
+}
+
+class TestAndThenMutateTransformer extends TestTransformers {
+
+  val str = Cell(Position1D("x"), getDoubleContent(2))
+  val dbl = Cell(Position1D("y"), getDoubleContent(4))
+  val lng = Cell(Position1D("z"), getDoubleContent(8))
+
+  val ext = Map(Position1D("x") -> getDoubleContent(3),
+    Position1D("y") -> getDoubleContent(4),
+    Position1D("z") -> getDoubleContent(5))
+
+  def mutate(cell: Cell[Position1D]): Content = {
+    cell.position match {
+      case Position1D(StringValue("x")) => cell.content
+      case Position1D(StringValue("y")) => getStringContent("not.supported")
+      case Position1D(StringValue("z")) => getLongContent(8)
+    }
+  }
+
+  def mutateWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
+    (cell.position, ext(cell.position).value) match {
+      case (Position1D(StringValue("x")), DoubleValue(d)) => getDoubleContent(2 * d)
+      case (Position1D(StringValue("y")), _) => getStringContent("not.supported")
+      case (Position1D(StringValue("z")), DoubleValue(d)) => getLongContent(d.toLong)
+    }
+  }
+
+  "A Transfomer" should "andThenMutate correctly" in {
+    val obj = Power[Position1D](2).andThenMutate(mutate)
+
+    obj.present(str).toList shouldBe (List(Cell(str.position, getDoubleContent(4))))
+    obj.present(dbl).toList shouldBe (List(Cell(dbl.position, getStringContent("not.supported"))))
+    obj.present(lng).toList shouldBe (List(Cell(lng.position, getLongContent(8))))
+  }
+
+  it should "andThenMutateWithValue correctly (without value)" in {
+    val obj = Multiply[Position1D, Map[Position1D, Content]](
+      ExtractWithPosition().andThenPresent(_.value.asDouble)).andThenMutate(mutate)
+
+    obj.presentWithValue(str, ext).toList shouldBe (List(Cell(str.position, getDoubleContent(2 * 3))))
+    obj.presentWithValue(dbl, ext).toList shouldBe (List(Cell(dbl.position, getStringContent("not.supported"))))
+    obj.presentWithValue(lng, ext).toList shouldBe (List(Cell(lng.position, getLongContent(8))))
+  }
+
+  it should "andThenMutateWithValue correctly" in {
+    val obj = Multiply[Position1D, Map[Position1D, Content]](
+      ExtractWithPosition().andThenPresent(_.value.asDouble)).andThenMutateWithValue(mutateWithValue)
+
+    obj.presentWithValue(str, ext).toList shouldBe (List(Cell(str.position, getDoubleContent(2 * 3))))
+    obj.presentWithValue(dbl, ext).toList shouldBe (List(Cell(dbl.position, getStringContent("not.supported"))))
+    obj.presentWithValue(lng, ext).toList shouldBe (List(Cell(lng.position, getLongContent(5))))
+  }
+}
+

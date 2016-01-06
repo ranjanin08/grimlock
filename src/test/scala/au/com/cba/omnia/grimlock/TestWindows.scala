@@ -659,3 +659,144 @@ class TestCombinationWindow extends TestGrimlock {
   }
 }
 
+case class DeltaWithValue() extends WindowWithValue[Position1D, Position1D, Position0D, Position1D] {
+  type V = Map[Position1D, Content]
+  type I = Option[Double]
+  type T = Option[Double]
+  type O = Double
+
+  def prepareWithValue(cell: Cell[Position1D], ext: V): I = cell.content.value.asDouble
+
+  def initialise(rem: Position0D, in: I): (T, TraversableOnce[O]) = (in, None)
+
+  def update(rem: Position0D, in: I, t: T): (T, TraversableOnce[O]) = {
+   (in, (in, t) match {
+     case (Some(dc), Some(dt)) => Some(dc - dt)
+     case _ => None
+   })
+  }
+
+  def presentWithValue(pos: Position1D, out: O, ext: V): TraversableOnce[Cell[Position1D]] = {
+    Some(Cell(pos, Content(ContinuousSchema(DoubleCodex), ext(pos).value.asDouble.get * out)))
+  }
+}
+
+class TestWithPrepareWindow extends TestGrimlock {
+
+  val str = Cell(Position1D("x"), getStringContent("foo"))
+  val dbl = Cell(Position1D("y"), getDoubleContent(3.14))
+  val lng = Cell(Position1D("z"), getLongContent(42))
+
+  val ext = Map(Position1D("x") -> getDoubleContent(1),
+    Position1D("y") -> getDoubleContent(2),
+    Position1D("z") -> getDoubleContent(3))
+
+  def prepare(cell: Cell[Position1D]): Content = {
+    cell.content.value match {
+      case LongValue(_) => cell.content
+      case DoubleValue(_) => getStringContent("not.supported")
+      case StringValue(s) => getLongContent(s.length)
+    }
+  }
+
+  def prepareWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
+    (cell.content.value, ext(cell.position).value) match {
+      case (LongValue(l), DoubleValue(d)) => getLongContent(l * d.toLong)
+      case (DoubleValue(_), _) => getStringContent("not.supported")
+      case (StringValue(s), DoubleValue(d)) => getLongContent(s.length)
+    }
+  }
+
+  val locate = (sel: Position1D, rem: Position0D) => sel.toOption
+
+  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
+  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
+
+  "A Window" should "withPrepare prepare correctly" in {
+    val obj = CumulativeMovingAverage[Position1D, Position1D, Position0D, Position1D](locate).withPrepare(prepare)
+
+    obj.prepare(str) shouldBe (3.0)
+    obj.prepare(dbl).compare(Double.NaN) shouldBe (0)
+    obj.prepare(lng) shouldBe (42.0)
+  }
+
+  it should "withPrepareWithValue correctly (without value)" in {
+    val obj = DeltaWithValue().withPrepare(prepare)
+
+    obj.prepareWithValue(str, ext) shouldBe (Some(3.0))
+    obj.prepareWithValue(dbl, ext) shouldBe (None)
+    obj.prepareWithValue(lng, ext) shouldBe (Some(42.0))
+  }
+
+  it should "withPrepareWithVaue correctly" in {
+    val obj = DeltaWithValue().withPrepareWithValue(prepareWithValue)
+
+    obj.prepareWithValue(str, ext) shouldBe (Some(3.0))
+    obj.prepareWithValue(dbl, ext) shouldBe (None)
+    obj.prepareWithValue(lng, ext) shouldBe (Some(3 * 42.0))
+  }
+}
+
+class TestAndThenMutateWindow extends TestGrimlock {
+
+  val str = Cell(Position1D("x"), getStringContent("foo"))
+  val dbl = Cell(Position1D("y"), getDoubleContent(3.14))
+  val lng = Cell(Position1D("z"), getLongContent(42))
+
+  val ext = Map(Position1D("x") -> getDoubleContent(3),
+    Position1D("y") -> getDoubleContent(2),
+    Position1D("z") -> getDoubleContent(1))
+
+  def mutate(cell: Cell[Position1D]): Content = {
+    cell.position match {
+      case Position1D(StringValue("x")) => cell.content
+      case Position1D(StringValue("y")) => getStringContent("not.supported")
+      case Position1D(StringValue("z")) => getLongContent(42)
+    }
+  }
+
+  def mutateWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
+    (cell.position, ext(cell.position).value) match {
+      case (Position1D(StringValue("x")), DoubleValue(d)) => cell.content
+      case (Position1D(StringValue("y")), _) => getStringContent("not.supported")
+      case (Position1D(StringValue("z")), DoubleValue(d)) => getLongContent(42)
+    }
+  }
+
+  val locate = (sel: Position1D, rem: Position0D) => sel.toOption
+
+  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
+  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
+
+  "A Window" should "andThenMutate prepare correctly" in {
+    val obj = CumulativeMovingAverage[Position1D, Position1D, Position0D, Position1D](locate).andThenMutate(mutate)
+
+    obj.present(str.position, (Position0D(), 3.14)).toList shouldBe (List(Cell(str.position, getDoubleContent(3.14))))
+    obj.present(dbl.position, (Position0D(), 3.14)).toList shouldBe
+      (List(Cell(dbl.position, getStringContent("not.supported"))))
+    obj.present(lng.position, (Position0D(), 3.14)).toList shouldBe (List(Cell(lng.position, getLongContent(42))))
+  }
+
+  it should "andThenMutateWithValue correctly (without value)" in {
+    val obj = DeltaWithValue().andThenMutate(mutate)
+
+    obj.presentWithValue(str.position, 3.14, ext).toList shouldBe
+      (List(Cell(str.position, getDoubleContent(3 * 3.14))))
+    obj.presentWithValue(dbl.position, 3.14, ext).toList shouldBe
+      (List(Cell(dbl.position, getStringContent("not.supported"))))
+    obj.presentWithValue(lng.position, 3.14, ext).toList shouldBe (List(Cell(lng.position, getLongContent(42))))
+  }
+
+  it should "andThenMutateWithVaue correctly" in {
+    val obj = DeltaWithValue().andThenMutateWithValue(mutateWithValue)
+
+    obj.presentWithValue(str.position, 3.14, ext).toList shouldBe
+      (List(Cell(str.position, getDoubleContent(3 * 3.14))))
+    obj.presentWithValue(dbl.position, 3.14, ext).toList shouldBe
+      (List(Cell(dbl.position, getStringContent("not.supported"))))
+    obj.presentWithValue(lng.position, 3.14, ext).toList shouldBe (List(Cell(lng.position, getLongContent(42))))
+  }
+}
+
