@@ -25,7 +25,7 @@ import au.com.cba.omnia.grimlock.framework.position._
 case class Count[P <: Position, S <: Position with ExpandablePosition]() extends Aggregator[P, S, S] {
   type T = Long
 
-  def prepare(cell: Cell[P]): T = 1
+  def prepare(cell: Cell[P]): Option[T] = Some(1)
 
   def reduce(lt: T, rt: T): T = lt + rt
 
@@ -36,7 +36,7 @@ case class Count[P <: Position, S <: Position with ExpandablePosition]() extends
 case class DistinctCount[P <: Position, S <: Position with ExpandablePosition]() extends Aggregator[P, S, S] {
   type T = Set[Value]
 
-  def prepare(cell: Cell[P]): T = Set(cell.content.value)
+  def prepare(cell: Cell[P]): Option[T] = Some(Set(cell.content.value))
 
   def reduce(lt: T, rt: T): T = lt ++ rt
 
@@ -52,11 +52,25 @@ case class PredicateCount[P <: Position, S <: Position with ExpandablePosition](
   predicate: (Content) => Boolean) extends Aggregator[P, S, S] {
   type T = Long
 
-  def prepare(cell: Cell[P]): T = if (predicate(cell.content)) { 1 } else { 0 }
+  def prepare(cell: Cell[P]): Option[T] = Some(if (predicate(cell.content)) { 1 } else { 0 })
 
   def reduce(lt: T, rt: T): T = lt + rt
 
   def present(pos: S, t: T): Option[Cell[S]] = Some(Cell(pos, Content(DiscreteSchema(LongCodex), t)))
+}
+
+/** Trait for aggregators that can be filter based on the type. */
+private[aggregate] trait FilterAggregator[P <: Position] {
+
+  /** Indicates if filtering data is required. If so then any non-numeric value is filtered. */
+  val filter: Boolean
+
+  def prepareDouble(cell: Cell[P]): Option[Double] = {
+    (filter && !cell.content.schema.kind.isSpecialisationOf(Type.Numerical)) match {
+      case true => None
+      case false => Some(cell.content.value.asDouble.getOrElse(Double.NaN))
+    }
+  }
 }
 
 /** Trait for aggregators that can be lenient or strict when it comes to invalid (or unexpected) values. */
@@ -115,7 +129,7 @@ private[aggregate] trait StrictAggregator[P <: Position, S <: Position with Expa
 }
 
 private[aggregate] trait MomentsAggregator[P <: Position, S <: Position with ExpandablePosition]
-  extends StrictAggregator[P, S] { self: Aggregator[P, S, S] =>
+  extends FilterAggregator[P] with StrictAggregator[P, S] { self: Aggregator[P, S, S] =>
   /** Type of the state being aggregated. */
   type T = com.twitter.algebird.Moments
 
@@ -126,7 +140,7 @@ private[aggregate] trait MomentsAggregator[P <: Position, S <: Position with Exp
    *
    * @return State to reduce.
    */
-  def prepare(cell: Cell[P]): T = com.twitter.algebird.Moments(cell.content.value.asDouble.getOrElse(Double.NaN))
+  def prepare(cell: Cell[P]): Option[T] = prepareDouble(cell).map(com.twitter.algebird.Moments(_))
 
   protected def invalid(t: T): Boolean = t.mean.isNaN
   protected def reduction(lt: T, rt: T): T = com.twitter.algebird.Monoid.plus(lt, rt)
@@ -135,12 +149,14 @@ private[aggregate] trait MomentsAggregator[P <: Position, S <: Position with Exp
 /**
  * Mean of a distribution.
  *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Mean[P <: Position, S <: Position with ExpandablePosition](strict: Boolean = true,
+case class Mean[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
   nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
   protected def asDouble(t: T): Double = t.mean
 }
@@ -148,45 +164,51 @@ case class Mean[P <: Position, S <: Position with ExpandablePosition](strict: Bo
 /**
  * Standard deviation of a distribution.
  *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class StandardDeviation[P <: Position, S <: Position with ExpandablePosition](strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
+case class StandardDeviation[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true,
+  strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
   protected def asDouble(t: T): Double = t.stddev
 }
 
 /**
  * Skewness of a distribution.
  *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Skewness[P <: Position, S <: Position with ExpandablePosition](strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
+case class Skewness[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true,
+  strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
   protected def asDouble(t: T): Double = t.skewness
 }
 
 /**
  * Kurtosis of a distribution.
  *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Kurtosis[P <: Position, S <: Position with ExpandablePosition](strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
+case class Kurtosis[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true,
+  strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S] with MomentsAggregator[P, S] {
   protected def asDouble(t: T): Double = t.kurtosis
 }
 
 /** Base trait for aggregator that return a `Double` value. */
 private[aggregate] trait DoubleAggregator[P <: Position, S <: Position with ExpandablePosition]
-  extends StrictAggregator[P, S] { self: Aggregator[P, S, S] =>
+  extends FilterAggregator[P] with StrictAggregator[P, S] { self: Aggregator[P, S, S] =>
   /** Type of the state being aggregated. */
   type T = Double
 
@@ -197,7 +219,7 @@ private[aggregate] trait DoubleAggregator[P <: Position, S <: Position with Expa
    *
    * @return State to reduce.
    */
-  def prepare(cell: Cell[P]): T = cell.content.value.asDouble.getOrElse(Double.NaN)
+  def prepare(cell: Cell[P]): Option[T] = prepareDouble(cell)
 
   protected def invalid(t: T): Boolean = t.isNaN
   protected def asDouble(t: T): Double = t
@@ -206,12 +228,14 @@ private[aggregate] trait DoubleAggregator[P <: Position, S <: Position with Expa
 /**
  * Minimum value reduction.
  *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Min[P <: Position, S <: Position with ExpandablePosition](strict: Boolean = true,
+case class Min[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
   nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
   protected def reduction(lt: T, rt: T): T = math.min(lt, rt)
 }
@@ -219,12 +243,14 @@ case class Min[P <: Position, S <: Position with ExpandablePosition](strict: Boo
 /**
  * Maximum value reduction.
  *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Max[P <: Position, S <: Position with ExpandablePosition](strict: Boolean = true,
+case class Max[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
   nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
   protected def reduction(lt: T, rt: T): T = math.max(lt, rt)
 }
@@ -232,12 +258,14 @@ case class Max[P <: Position, S <: Position with ExpandablePosition](strict: Boo
 /**
  * Maximum absolute value reduction.
  *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class MaxAbs[P <: Position, S <: Position with ExpandablePosition](strict: Boolean = true,
+case class MaxAbs[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
   nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
   protected def reduction(lt: T, rt: T): T = math.max(math.abs(lt), math.abs(rt))
 }
@@ -245,12 +273,14 @@ case class MaxAbs[P <: Position, S <: Position with ExpandablePosition](strict: 
 /**
  * Sum value reduction.
  *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class Sum[P <: Position, S <: Position with ExpandablePosition](strict: Boolean = true,
+case class Sum[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true, strict: Boolean = true,
   nan: Boolean = false) extends Aggregator[P, S, S] with DoubleAggregator[P, S] {
   protected def reduction(lt: T, rt: T): T = lt + rt
 }
@@ -259,22 +289,26 @@ case class Sum[P <: Position, S <: Position with ExpandablePosition](strict: Boo
  * Weighted sum reduction. This is particularly useful for scoring linear models.
  *
  * @param weight Object that will extract, for `cell`, its corresponding weight.
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
 case class WeightedSum[P <: Position, S <: Position with ExpandablePosition, W](weight: Extract[P, W, Double],
-  strict: Boolean = true, nan: Boolean = false) extends AggregatorWithValue[P, S, S] {
+  filter: Boolean = true, strict: Boolean = true, nan: Boolean = false) extends AggregatorWithValue[P, S, S]
+    with FilterAggregator[P] {
   type T = Double
 
   type V = W
 
-  def prepareWithValue(cell: Cell[P], ext: V): T = {
-    (cell.content.value.asDouble, weight.extract(cell, ext)) match {
-      case (None, _) => Double.NaN
-      case (Some(_), None) => 0
-      case (Some(v), Some(w)) => v * w
+  def prepareWithValue(cell: Cell[P], ext: V): Option[T] = {
+    prepareDouble(cell).map {
+      case v => weight.extract(cell, ext) match {
+        case None => v * 0
+        case Some(w) => v * w
+      }
     }
   }
 
@@ -296,6 +330,8 @@ case class WeightedSum[P <: Position, S <: Position with ExpandablePosition, W](
  * Compute entropy.
  *
  * @param count  Object that will extract, for `cell`, its corresponding count.
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
@@ -304,16 +340,19 @@ case class WeightedSum[P <: Position, S <: Position with ExpandablePosition, W](
  * @param log    The log function to use.
  */
 case class Entropy[P <: Position, S <: Position with ExpandablePosition, W](count: Extract[P, W, Double],
-  strict: Boolean = true, nan: Boolean = false, negate: Boolean = false,
-  log: (Double) => Double = (x: Double) => math.log(x) / math.log(2)) extends AggregatorWithValue[P, S, S] {
+  filter: Boolean = true, strict: Boolean = true, nan: Boolean = false, negate: Boolean = false,
+    log: (Double) => Double = (x: Double) => math.log(x) / math.log(2)) extends AggregatorWithValue[P, S, S]
+      with FilterAggregator[P] {
   type T = (Long, Double)
 
   type V = W
 
-  def prepareWithValue(cell: Cell[P], ext: V): T = {
-    (cell.content.value.asDouble, count.extract(cell, ext)) match {
-      case (Some(v), Some(c)) => (1, (v / c) * log(v / c))
-      case _ => (1, Double.NaN)
+  def prepareWithValue(cell: Cell[P], ext: V): Option[T] = {
+    prepareDouble(cell).map {
+      case v => (1, count.extract(cell, ext) match {
+        case Some(c) => (v / c) * log(v / c)
+        case None => Double.NaN
+      })
     }
   }
 
@@ -335,20 +374,18 @@ case class Entropy[P <: Position, S <: Position with ExpandablePosition, W](coun
 /**
  * Compute frequency ratio.
  *
+ * @param filter Indicates if only numerical types should be aggregated. Is set then all categorical values are
+ *               filtered prior to aggregation.
  * @param strict Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
  *               If not then non-numeric values are silently ignored.
  * @param nan    Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
  *               data).
  */
-case class FrequencyRatio[P <: Position, S <: Position with ExpandablePosition](strict: Boolean = true,
-  nan: Boolean = false) extends Aggregator[P, S, S] {
+case class FrequencyRatio[P <: Position, S <: Position with ExpandablePosition](filter: Boolean = true,
+  strict: Boolean = true, nan: Boolean = false) extends Aggregator[P, S, S] with FilterAggregator[P] {
   type T = (Long, Double, Double)
 
-  def prepare(cell: Cell[P]): T = {
-    val value = cell.content.value.asDouble.getOrElse(Double.NaN)
-
-    (1, value, value)
-  }
+  def prepare(cell: Cell[P]): Option[T] = prepareDouble(cell).map { case d => (1, d, d) }
 
   def reduce(lt: T, rt: T): T = {
     if (lt._2.isNaN) { if (strict) { lt } else { rt } }

@@ -39,12 +39,12 @@ class TestCount extends TestAggregators {
     val obj = Count[Position2D, Position1D]()
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 1
+    t2 shouldBe Some(1)
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
     val c = obj.present(Position1D("foo"), r)
@@ -56,12 +56,12 @@ class TestCount extends TestAggregators {
       .andThenRelocate(_.position.append("count").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 1
+    t2 shouldBe Some(1)
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
     val c = obj.present(Position1D("foo"), r)
@@ -79,12 +79,12 @@ class TestMean extends TestAggregators {
     val obj = Mean[Position2D, Position1D]()
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
@@ -92,21 +92,21 @@ class TestMean extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and nan" in {
-    val obj = Mean[Position2D, Position1D](true, true)
+    val obj = Mean[Position2D, Position1D](false, true, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -115,21 +115,21 @@ class TestMean extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
-    val obj = Mean[Position2D, Position1D](true, false)
+    val obj = Mean[Position2D, Position1D](false, true, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -137,21 +137,21 @@ class TestMean extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and nan" in {
-    val obj = Mean[Position2D, Position1D](false, true)
+    val obj = Mean[Position2D, Position1D](false, false, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -159,21 +159,21 @@ class TestMean extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
-    val obj = Mean[Position2D, Position1D](false, false)
+    val obj = Mean[Position2D, Position1D](false, false, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -185,12 +185,12 @@ class TestMean extends TestAggregators {
       .andThenRelocate(_.position.append("mean").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
@@ -198,22 +198,22 @@ class TestMean extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
-    val obj = Mean[Position2D, Position1D](true, true)
+    val obj = Mean[Position2D, Position1D](false, true, true)
       .andThenRelocate(_.position.append("mean").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -222,22 +222,22 @@ class TestMean extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
-    val obj = Mean[Position2D, Position1D](true, false)
+    val obj = Mean[Position2D, Position1D](false, true, false)
       .andThenRelocate(_.position.append("mean").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -245,22 +245,22 @@ class TestMean extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and nan" in {
-    val obj = Mean[Position2D, Position1D](false, true)
+    val obj = Mean[Position2D, Position1D](false, false, true)
       .andThenRelocate(_.position.append("mean").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -268,26 +268,34 @@ class TestMean extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
-    val obj = Mean[Position2D, Position1D](false, false)
+    val obj = Mean[Position2D, Position1D](false, false, false)
       .andThenRelocate(_.position.append("mean").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
     c shouldBe Some(Cell(Position2D("foo", "mean"), getDoubleContent(1.5)))
+  }
+
+  it should "filter" in {
+    Mean[Position2D, Position1D](true).prepare(cell1) shouldBe Some(com.twitter.algebird.Moments(1))
+    Mean[Position2D, Position1D](false).prepare(cell1) shouldBe Some(com.twitter.algebird.Moments(1))
+    Mean[Position2D, Position1D](true).prepare(cell3) shouldBe None
+    Mean[Position2D, Position1D](false).prepare(cell3)
+      .map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
   }
 }
 
@@ -301,12 +309,12 @@ class TestStandardDeviation extends TestAggregators {
     val obj = StandardDeviation[Position2D, Position1D]()
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
@@ -314,21 +322,21 @@ class TestStandardDeviation extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and nan" in {
-    val obj = StandardDeviation[Position2D, Position1D](true, true)
+    val obj = StandardDeviation[Position2D, Position1D](false, true, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -337,21 +345,21 @@ class TestStandardDeviation extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
-    val obj = StandardDeviation[Position2D, Position1D](true, false)
+    val obj = StandardDeviation[Position2D, Position1D](false, true, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -359,21 +367,21 @@ class TestStandardDeviation extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and nan" in {
-    val obj = StandardDeviation[Position2D, Position1D](false, true)
+    val obj = StandardDeviation[Position2D, Position1D](false, false, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -381,21 +389,21 @@ class TestStandardDeviation extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
-    val obj = StandardDeviation[Position2D, Position1D](false, false)
+    val obj = StandardDeviation[Position2D, Position1D](false, false, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -407,12 +415,12 @@ class TestStandardDeviation extends TestAggregators {
       .andThenRelocate(_.position.append("sd").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
@@ -420,22 +428,22 @@ class TestStandardDeviation extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
-    val obj = StandardDeviation[Position2D, Position1D](true, true)
+    val obj = StandardDeviation[Position2D, Position1D](false, true, true)
       .andThenRelocate(_.position.append("sd").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -444,22 +452,22 @@ class TestStandardDeviation extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
-    val obj = StandardDeviation[Position2D, Position1D](true, false)
+    val obj = StandardDeviation[Position2D, Position1D](false, true, false)
       .andThenRelocate(_.position.append("sd").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -467,22 +475,22 @@ class TestStandardDeviation extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and nan" in {
-    val obj = StandardDeviation[Position2D, Position1D](false, true)
+    val obj = StandardDeviation[Position2D, Position1D](false, false, true)
       .andThenRelocate(_.position.append("sd").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -490,26 +498,34 @@ class TestStandardDeviation extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
-    val obj = StandardDeviation[Position2D, Position1D](false, false)
+    val obj = StandardDeviation[Position2D, Position1D](false, false, false)
       .andThenRelocate(_.position.append("sd").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
     c shouldBe Some(Cell(Position2D("foo", "sd"), getDoubleContent(0.5)))
+  }
+
+  it should "filter" in {
+    StandardDeviation[Position2D, Position1D](true).prepare(cell1) shouldBe Some(com.twitter.algebird.Moments(1))
+    StandardDeviation[Position2D, Position1D](false).prepare(cell1) shouldBe Some(com.twitter.algebird.Moments(1))
+    StandardDeviation[Position2D, Position1D](true).prepare(cell3) shouldBe None
+    StandardDeviation[Position2D, Position1D](false).prepare(cell3)
+      .map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
   }
 }
 
@@ -523,12 +539,12 @@ class TestSkewness extends TestAggregators {
     val obj = Skewness[Position2D, Position1D]()
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
@@ -536,21 +552,21 @@ class TestSkewness extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and nan" in {
-    val obj = Skewness[Position2D, Position1D](true, true)
+    val obj = Skewness[Position2D, Position1D](false, true, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -559,21 +575,21 @@ class TestSkewness extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
-    val obj = Skewness[Position2D, Position1D](true, false)
+    val obj = Skewness[Position2D, Position1D](false, true, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -581,21 +597,21 @@ class TestSkewness extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and nan" in {
-    val obj = Skewness[Position2D, Position1D](false, true)
+    val obj = Skewness[Position2D, Position1D](false, false, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -603,21 +619,21 @@ class TestSkewness extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
-    val obj = Skewness[Position2D, Position1D](false, false)
+    val obj = Skewness[Position2D, Position1D](false, false, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -629,12 +645,12 @@ class TestSkewness extends TestAggregators {
       .andThenRelocate(_.position.append("skewness").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
@@ -642,22 +658,22 @@ class TestSkewness extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
-    val obj = Skewness[Position2D, Position1D](true, true)
+    val obj = Skewness[Position2D, Position1D](false, true, true)
       .andThenRelocate(_.position.append("skewness").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -666,22 +682,22 @@ class TestSkewness extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
-    val obj = Skewness[Position2D, Position1D](true, false)
+    val obj = Skewness[Position2D, Position1D](false, true, false)
       .andThenRelocate(_.position.append("skewness").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -689,22 +705,22 @@ class TestSkewness extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and nan" in {
-    val obj = Skewness[Position2D, Position1D](false, true)
+    val obj = Skewness[Position2D, Position1D](false, false, true)
       .andThenRelocate(_.position.append("skewness").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -712,26 +728,34 @@ class TestSkewness extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
-    val obj = Skewness[Position2D, Position1D](false, false)
+    val obj = Skewness[Position2D, Position1D](false, false, false)
       .andThenRelocate(_.position.append("skewness").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
     c shouldBe Some(Cell(Position2D("foo", "skewness"), getDoubleContent(0)))
+  }
+
+  it should "filter" in {
+    Skewness[Position2D, Position1D](true).prepare(cell1) shouldBe Some(com.twitter.algebird.Moments(1))
+    Skewness[Position2D, Position1D](false).prepare(cell1) shouldBe Some(com.twitter.algebird.Moments(1))
+    Skewness[Position2D, Position1D](true).prepare(cell3) shouldBe None
+    Skewness[Position2D, Position1D](false).prepare(cell3)
+      .map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
   }
 }
 
@@ -745,12 +769,12 @@ class TestKurtosis extends TestAggregators {
     val obj = Kurtosis[Position2D, Position1D]()
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
@@ -758,21 +782,21 @@ class TestKurtosis extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and nan" in {
-    val obj = Kurtosis[Position2D, Position1D](true, true)
+    val obj = Kurtosis[Position2D, Position1D](false, true, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -781,21 +805,21 @@ class TestKurtosis extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
-    val obj = Kurtosis[Position2D, Position1D](true, false)
+    val obj = Kurtosis[Position2D, Position1D](false, true, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -803,21 +827,21 @@ class TestKurtosis extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and nan" in {
-    val obj = Kurtosis[Position2D, Position1D](false, true)
+    val obj = Kurtosis[Position2D, Position1D](false, false, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -825,21 +849,21 @@ class TestKurtosis extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
-    val obj = Kurtosis[Position2D, Position1D](false, false)
+    val obj = Kurtosis[Position2D, Position1D](false, false, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -851,12 +875,12 @@ class TestKurtosis extends TestAggregators {
       .andThenRelocate(_.position.append("kurtosis").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r)
@@ -864,22 +888,22 @@ class TestKurtosis extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
-    val obj = Kurtosis[Position2D, Position1D](true, true)
+    val obj = Kurtosis[Position2D, Position1D](false, true, true)
       .andThenRelocate(_.position.append("kurtosis").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -888,22 +912,22 @@ class TestKurtosis extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
-    val obj = Kurtosis[Position2D, Position1D](true, false)
+    val obj = Kurtosis[Position2D, Position1D](false, true, false)
       .andThenRelocate(_.position.append("kurtosis").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -911,22 +935,22 @@ class TestKurtosis extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and nan" in {
-    val obj = Kurtosis[Position2D, Position1D](false, true)
+    val obj = Kurtosis[Position2D, Position1D](false, false, true)
       .andThenRelocate(_.position.append("kurtosis").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
@@ -934,26 +958,34 @@ class TestKurtosis extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
-    val obj = Kurtosis[Position2D, Position1D](false, false)
+    val obj = Kurtosis[Position2D, Position1D](false, false, false)
       .andThenRelocate(_.position.append("kurtosis").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe com.twitter.algebird.Moments(1)
+    t1 shouldBe Some(com.twitter.algebird.Moments(1))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe com.twitter.algebird.Moments(2)
+    t2 shouldBe Some(com.twitter.algebird.Moments(2))
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe com.twitter.algebird.Moments(2, 1.5, 0.5, 0.0, 0.125)
 
     val c = obj.present(Position1D("foo"), r2)
     c shouldBe Some(Cell(Position2D("foo", "kurtosis"), getDoubleContent(-2)))
+  }
+
+  it should "filter" in {
+    Kurtosis[Position2D, Position1D](true).prepare(cell1) shouldBe Some(com.twitter.algebird.Moments(1))
+    Kurtosis[Position2D, Position1D](false).prepare(cell1) shouldBe Some(com.twitter.algebird.Moments(1))
+    Kurtosis[Position2D, Position1D](true).prepare(cell3) shouldBe None
+    Kurtosis[Position2D, Position1D](false).prepare(cell3)
+      .map(_.asInstanceOf[com.twitter.algebird.Moments].mean.compare(Double.NaN)) shouldBe Some(0)
   }
 }
 
@@ -967,12 +999,12 @@ class TestMin extends TestAggregators {
     val obj = Min[Position2D, Position1D]()
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe 1
 
     val c = obj.present(Position1D("foo"), r)
@@ -980,21 +1012,21 @@ class TestMin extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and nan" in {
-    val obj = Min[Position2D, Position1D](true, true)
+    val obj = Min[Position2D, Position1D](false, true, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 1
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1003,21 +1035,21 @@ class TestMin extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
-    val obj = Min[Position2D, Position1D](true, false)
+    val obj = Min[Position2D, Position1D](false, true, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 1
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1025,21 +1057,21 @@ class TestMin extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and nan" in {
-    val obj = Min[Position2D, Position1D](false, true)
+    val obj = Min[Position2D, Position1D](false, false, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 1
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 1
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1047,21 +1079,21 @@ class TestMin extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
-    val obj = Min[Position2D, Position1D](false, false)
+    val obj = Min[Position2D, Position1D](false, false, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 1
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 1
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1073,12 +1105,12 @@ class TestMin extends TestAggregators {
       .andThenRelocate(_.position.append("min").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe 1
 
     val c = obj.present(Position1D("foo"), r)
@@ -1086,22 +1118,22 @@ class TestMin extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
-    val obj = Min[Position2D, Position1D](true, true)
+    val obj = Min[Position2D, Position1D](false, true, true)
       .andThenRelocate(_.position.append("min").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 1
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1110,22 +1142,22 @@ class TestMin extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
-    val obj = Min[Position2D, Position1D](true, false)
+    val obj = Min[Position2D, Position1D](false, true, false)
       .andThenRelocate(_.position.append("min").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 1
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1133,22 +1165,22 @@ class TestMin extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and nan" in {
-    val obj = Min[Position2D, Position1D](false, true)
+    val obj = Min[Position2D, Position1D](false, false, true)
       .andThenRelocate(_.position.append("min").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 1
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 1
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1156,26 +1188,33 @@ class TestMin extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
-    val obj = Min[Position2D, Position1D](false, false)
+    val obj = Min[Position2D, Position1D](false, false, false)
       .andThenRelocate(_.position.append("min").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 1
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 1
 
     val c = obj.present(Position1D("foo"), r2)
     c shouldBe Some(Cell(Position2D("foo", "min"), getDoubleContent(1)))
+  }
+
+  it should "filter" in {
+    Min[Position2D, Position1D](true).prepare(cell1) shouldBe Some(1)
+    Min[Position2D, Position1D](false).prepare(cell1) shouldBe Some(1)
+    Min[Position2D, Position1D](true).prepare(cell3) shouldBe None
+    Min[Position2D, Position1D](false).prepare(cell3).map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 }
 
@@ -1189,12 +1228,12 @@ class TestMax extends TestAggregators {
     val obj = Max[Position2D, Position1D]()
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
     val c = obj.present(Position1D("foo"), r)
@@ -1202,21 +1241,21 @@ class TestMax extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and nan" in {
-    val obj = Max[Position2D, Position1D](true, true)
+    val obj = Max[Position2D, Position1D](false, true, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1225,21 +1264,21 @@ class TestMax extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
-    val obj = Max[Position2D, Position1D](true, false)
+    val obj = Max[Position2D, Position1D](false, true, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1247,21 +1286,21 @@ class TestMax extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and nan" in {
-    val obj = Max[Position2D, Position1D](false, true)
+    val obj = Max[Position2D, Position1D](false, false, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1269,21 +1308,21 @@ class TestMax extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
-    val obj = Max[Position2D, Position1D](false, false)
+    val obj = Max[Position2D, Position1D](false, false, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1295,12 +1334,12 @@ class TestMax extends TestAggregators {
       .andThenRelocate(_.position.append("max").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
     val c = obj.present(Position1D("foo"), r)
@@ -1308,22 +1347,22 @@ class TestMax extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
-    val obj = Max[Position2D, Position1D](true, true)
+    val obj = Max[Position2D, Position1D](false, true, true)
       .andThenRelocate(_.position.append("max").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1332,22 +1371,22 @@ class TestMax extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
-    val obj = Max[Position2D, Position1D](true, false)
+    val obj = Max[Position2D, Position1D](false, true, false)
       .andThenRelocate(_.position.append("max").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1355,22 +1394,22 @@ class TestMax extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and nan" in {
-    val obj = Max[Position2D, Position1D](false, true)
+    val obj = Max[Position2D, Position1D](false, false, true)
       .andThenRelocate(_.position.append("max").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1378,26 +1417,33 @@ class TestMax extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
-    val obj = Max[Position2D, Position1D](false, false)
+    val obj = Max[Position2D, Position1D](false, false, false)
       .andThenRelocate(_.position.append("max").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
     val c = obj.present(Position1D("foo"), r2)
     c shouldBe Some(Cell(Position2D("foo", "max"), getDoubleContent(2)))
+  }
+
+  it should "filter" in {
+    Max[Position2D, Position1D](true).prepare(cell1) shouldBe Some(1)
+    Max[Position2D, Position1D](false).prepare(cell1) shouldBe Some(1)
+    Max[Position2D, Position1D](true).prepare(cell3) shouldBe None
+    Max[Position2D, Position1D](false).prepare(cell3).map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 }
 
@@ -1411,12 +1457,12 @@ class TestMaxAbs extends TestAggregators {
     val obj = MaxAbs[Position2D, Position1D]()
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe -2
+    t2 shouldBe Some(-2)
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
     val c = obj.present(Position1D("foo"), r)
@@ -1424,21 +1470,21 @@ class TestMaxAbs extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and nan" in {
-    val obj = MaxAbs[Position2D, Position1D](true, true)
+    val obj = MaxAbs[Position2D, Position1D](false, true, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe -2
+    t2 shouldBe Some(-2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1447,21 +1493,21 @@ class TestMaxAbs extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
-    val obj = MaxAbs[Position2D, Position1D](true, false)
+    val obj = MaxAbs[Position2D, Position1D](false, true, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe -2
+    t2 shouldBe Some(-2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1469,21 +1515,21 @@ class TestMaxAbs extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and nan" in {
-    val obj = MaxAbs[Position2D, Position1D](false, true)
+    val obj = MaxAbs[Position2D, Position1D](false, false, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe -2
+    t2 shouldBe Some(-2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1491,21 +1537,21 @@ class TestMaxAbs extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
-    val obj = MaxAbs[Position2D, Position1D](false, false)
+    val obj = MaxAbs[Position2D, Position1D](false, false, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe -2
+    t2 shouldBe Some(-2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1517,12 +1563,12 @@ class TestMaxAbs extends TestAggregators {
       .andThenRelocate(_.position.append("max.abs").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe -2
+    t2 shouldBe Some(-2)
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe 2
 
     val c = obj.present(Position1D("foo"), r)
@@ -1530,22 +1576,22 @@ class TestMaxAbs extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
-    val obj = MaxAbs[Position2D, Position1D](true, true)
+    val obj = MaxAbs[Position2D, Position1D](false, true, true)
       .andThenRelocate(_.position.append("max.abs").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe -2
+    t2 shouldBe Some(-2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1554,22 +1600,22 @@ class TestMaxAbs extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
-    val obj = MaxAbs[Position2D, Position1D](true, false)
+    val obj = MaxAbs[Position2D, Position1D](false, true, false)
       .andThenRelocate(_.position.append("max.abs").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe -2
+    t2 shouldBe Some(-2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1577,22 +1623,22 @@ class TestMaxAbs extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and nan" in {
-    val obj = MaxAbs[Position2D, Position1D](false, true)
+    val obj = MaxAbs[Position2D, Position1D](false, false, true)
       .andThenRelocate(_.position.append("max.abs").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe -2
+    t2 shouldBe Some(-2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1600,26 +1646,33 @@ class TestMaxAbs extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
-    val obj = MaxAbs[Position2D, Position1D](false, false)
+    val obj = MaxAbs[Position2D, Position1D](false, false, false)
       .andThenRelocate(_.position.append("max.abs").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe -2
+    t2 shouldBe Some(-2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 2
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 2
 
     val c = obj.present(Position1D("foo"), r2)
     c shouldBe Some(Cell(Position2D("foo", "max.abs"), getDoubleContent(2)))
+  }
+
+  it should "filter" in {
+    MaxAbs[Position2D, Position1D](true).prepare(cell1) shouldBe Some(1)
+    MaxAbs[Position2D, Position1D](false).prepare(cell1) shouldBe Some(1)
+    MaxAbs[Position2D, Position1D](true).prepare(cell3) shouldBe None
+    MaxAbs[Position2D, Position1D](false).prepare(cell3).map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 }
 
@@ -1633,12 +1686,12 @@ class TestSum extends TestAggregators {
     val obj = Sum[Position2D, Position1D]()
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe 3
 
     val c = obj.present(Position1D("foo"), r)
@@ -1646,21 +1699,21 @@ class TestSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and nan" in {
-    val obj = Sum[Position2D, Position1D](true, true)
+    val obj = Sum[Position2D, Position1D](false, true, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1669,21 +1722,21 @@ class TestSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
-    val obj = Sum[Position2D, Position1D](true, false)
+    val obj = Sum[Position2D, Position1D](false, true, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1691,21 +1744,21 @@ class TestSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and nan" in {
-    val obj = Sum[Position2D, Position1D](false, true)
+    val obj = Sum[Position2D, Position1D](false, false, true)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1713,21 +1766,21 @@ class TestSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
-    val obj = Sum[Position2D, Position1D](false, false)
+    val obj = Sum[Position2D, Position1D](false, false, false)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1739,12 +1792,12 @@ class TestSum extends TestAggregators {
       .andThenRelocate(_.position.append("sum").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
-    val r = obj.reduce(t1, t2)
+    val r = obj.reduce(t1.get, t2.get)
     r shouldBe 3
 
     val c = obj.present(Position1D("foo"), r)
@@ -1752,22 +1805,22 @@ class TestSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
-    val obj = Sum[Position2D, Position1D](true, true)
+    val obj = Sum[Position2D, Position1D](false, true, true)
       .andThenRelocate(_.position.append("sum").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1776,22 +1829,22 @@ class TestSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
-    val obj = Sum[Position2D, Position1D](true, false)
+    val obj = Sum[Position2D, Position1D](false, true, false)
       .andThenRelocate(_.position.append("sum").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1799,22 +1852,22 @@ class TestSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and nan" in {
-    val obj = Sum[Position2D, Position1D](false, true)
+    val obj = Sum[Position2D, Position1D](false, false, true)
       .andThenRelocate(_.position.append("sum").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3
 
     val c = obj.present(Position1D("foo"), r2)
@@ -1822,30 +1875,37 @@ class TestSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
-    val obj = Sum[Position2D, Position1D](false, false)
+    val obj = Sum[Position2D, Position1D](false, false, false)
       .andThenRelocate(_.position.append("sum").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe 1
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe 2
+    t2 shouldBe Some(2)
 
     val t3 = obj.prepare(cell3)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3
 
     val c = obj.present(Position1D("foo"), r2)
     c shouldBe Some(Cell(Position2D("foo", "sum"), getDoubleContent(3)))
   }
+
+  it should "filter" in {
+    Sum[Position2D, Position1D](true).prepare(cell1) shouldBe Some(1)
+    Sum[Position2D, Position1D](false).prepare(cell1) shouldBe Some(1)
+    Sum[Position2D, Position1D](true).prepare(cell3) shouldBe None
+    Sum[Position2D, Position1D](false).prepare(cell3).map(_.compare(Double.NaN)) shouldBe Some(0)
+  }
 }
 
-class TestThresholdCount extends TestAggregators {
+class TestPredicateCount extends TestAggregators {
 
   val cell1 = Cell(Position2D("foo", "one"), getDoubleContent(-1))
   val cell2 = Cell(Position2D("foo", "two"), getDoubleContent(0))
@@ -1858,24 +1918,24 @@ class TestThresholdCount extends TestAggregators {
     val obj = PredicateCount[Position2D, Position1D](predicate)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe (1)
+    t1 shouldBe Some(1)
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe (1)
+    t2 shouldBe Some(1)
 
     val t3 = obj.prepare(cell3)
-    t3 shouldBe (0)
+    t3 shouldBe Some(0)
 
     val t4 = obj.prepare(cell4)
-    t4 shouldBe (0)
+    t4 shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe (2)
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe (2)
 
-    val r3 = obj.reduce(r2, t4)
+    val r3 = obj.reduce(r2, t4.get)
     r3 shouldBe (2)
 
     val c = obj.present(Position1D("foo"), r3)
@@ -1906,12 +1966,12 @@ class TestWeightedSum extends TestAggregators {
     val obj = WeightedSum[Position2D, Position1D, W](extractor1)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r1, ext)
@@ -1922,12 +1982,12 @@ class TestWeightedSum extends TestAggregators {
     val obj = WeightedSum[Position2D, Position1D, W](extractor2)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe 0
+    t1 shouldBe Some(0)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 3.14
+    t2 shouldBe Some(3.14)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r1, ext)
@@ -1935,21 +1995,21 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and nan" in {
-    val obj = WeightedSum[Position2D, Position1D, W](extractor1, true, true)
+    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, true, true)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -1958,21 +2018,21 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict and non-nan" in {
-    val obj = WeightedSum[Position2D, Position1D, W](extractor1, true, false)
+    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, true, false)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -1980,21 +2040,21 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and nan" in {
-    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, true)
+    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, false, true)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -2002,21 +2062,21 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict and non-nan" in {
-    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, false)
+    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, false, false)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -2028,12 +2088,12 @@ class TestWeightedSum extends TestAggregators {
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r1, ext)
@@ -2045,12 +2105,12 @@ class TestWeightedSum extends TestAggregators {
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe 0
+    t1 shouldBe Some(0)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 3.14
+    t2 shouldBe Some(3.14)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r1, ext)
@@ -2058,22 +2118,22 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and nan" in {
-    val obj = WeightedSum[Position2D, Position1D, W](extractor1, true, true)
+    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, true, true)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -2082,22 +2142,22 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict and non-nan" in {
-    val obj = WeightedSum[Position2D, Position1D, W](extractor1, true, false)
+    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, true, false)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -2105,22 +2165,22 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and nan" in {
-    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, true)
+    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, false, true)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -2128,22 +2188,22 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict and non-nan" in {
-    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, false)
+    val obj = WeightedSum[Position2D, Position1D, W](extractor1, false, false, false)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -2155,12 +2215,12 @@ class TestWeightedSum extends TestAggregators {
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r1, ext)
@@ -2172,12 +2232,12 @@ class TestWeightedSum extends TestAggregators {
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe 0
+    t1 shouldBe Some(0)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe -3.14
+    t2 shouldBe Some(-3.14)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe -3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r1, ext)
@@ -2185,22 +2245,22 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present multiple with strict and nan with format" in {
-    val obj = WeightedSum[Position2D, Position1D, W](ExtractWithName(First, "%1$s.model1"), true, true)
+    val obj = WeightedSum[Position2D, Position1D, W](ExtractWithName(First, "%1$s.model1"), false, true, true)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -2209,22 +2269,22 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present multiple with strict and non-nan with format" in {
-    val obj = WeightedSum[Position2D, Position1D, W](ExtractWithName(First, "%1$s.model1"), true, false)
+    val obj = WeightedSum[Position2D, Position1D, W](ExtractWithName(First, "%1$s.model1"), false, true, false)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -2232,22 +2292,22 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present multiple with non-strict and nan with format" in {
-    val obj = WeightedSum[Position2D, Position1D, W](ExtractWithName(First, "%1$s.model1"), false, true)
+    val obj = WeightedSum[Position2D, Position1D, W](ExtractWithName(First, "%1$s.model1"), false, false, true)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
@@ -2255,26 +2315,34 @@ class TestWeightedSum extends TestAggregators {
   }
 
   it should "prepare, reduce and present multiple with non-strict and non-nan with format" in {
-    val obj = WeightedSum[Position2D, Position1D, W](ExtractWithName(First, "%1$s.model1"), false, false)
+    val obj = WeightedSum[Position2D, Position1D, W](ExtractWithName(First, "%1$s.model1"), false, false, false)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("result").toOption)
 
     val t1 = obj.prepareWithValue(cell1, ext)
-    t1 shouldBe -3.14
+    t1 shouldBe Some(-3.14)
 
     val t2 = obj.prepareWithValue(cell2, ext)
-    t2 shouldBe 6.28
+    t2 shouldBe Some(6.28)
 
     val t3 = obj.prepareWithValue(cell3, ext)
-    t3.asInstanceOf[Double].compare(Double.NaN) shouldBe 0
+    t3.map(_.asInstanceOf[Double].compare(Double.NaN)) shouldBe Some(0)
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe 3.14
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe 3.14
 
     val c = obj.presentWithValue(Position1D("foo"), r2, ext)
     c shouldBe Some(Cell(Position2D("foo", "result"), getDoubleContent(3.14)))
+  }
+
+  it should "filter" in {
+    WeightedSum[Position2D, Position1D, W](extractor1, true).prepareWithValue(cell1, ext) shouldBe Some(-3.14)
+    WeightedSum[Position2D, Position1D, W](extractor1, false).prepareWithValue(cell1, ext) shouldBe Some(-3.14)
+    WeightedSum[Position2D, Position1D, W](extractor1, true).prepareWithValue(cell3, ext) shouldBe None
+    WeightedSum[Position2D, Position1D, W](extractor1, false).prepareWithValue(cell3, ext)
+      .map(_.compare(Double.NaN)) shouldBe Some(0)
   }
 }
 
@@ -2291,36 +2359,36 @@ class TestDistinctCount extends TestAggregators {
     val obj = DistinctCount[Position2D, Position1D]()
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe Set(DoubleValue(1))
+    t1 shouldBe Some(Set(DoubleValue(1)))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe Set(DoubleValue(1))
+    t2 shouldBe Some(Set(DoubleValue(1)))
 
     val t3 = obj.prepare(cell3)
-    t3 shouldBe Set(DoubleValue(1))
+    t3 shouldBe Some(Set(DoubleValue(1)))
 
     val t4 = obj.prepare(cell4)
-    t4 shouldBe Set(StringValue("abc"))
+    t4 shouldBe Some(Set(StringValue("abc")))
 
     val t5 = obj.prepare(cell5)
-    t5 shouldBe Set(StringValue("abc"))
+    t5 shouldBe Some(Set(StringValue("abc")))
 
     val t6 = obj.prepare(cell6)
-    t6 shouldBe Set(LongValue(123))
+    t6 shouldBe Some(Set(LongValue(123)))
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe Set(DoubleValue(1))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe Set(DoubleValue(1))
 
-    val r3 = obj.reduce(r2, t4)
+    val r3 = obj.reduce(r2, t4.get)
     r3 shouldBe Set(DoubleValue(1), StringValue("abc"))
 
-    val r4 = obj.reduce(r3, t5)
+    val r4 = obj.reduce(r3, t5.get)
     r4 shouldBe Set(DoubleValue(1), StringValue("abc"))
 
-    val r5 = obj.reduce(r4, t6)
+    val r5 = obj.reduce(r4, t6.get)
     r5 shouldBe Set(DoubleValue(1), StringValue("abc"), LongValue(123))
 
     val c = obj.present(Position1D("foo"), r5)
@@ -2332,36 +2400,36 @@ class TestDistinctCount extends TestAggregators {
       .andThenRelocate(_.position.append("count").toOption)
 
     val t1 = obj.prepare(cell1)
-    t1 shouldBe Set(DoubleValue(1))
+    t1 shouldBe Some(Set(DoubleValue(1)))
 
     val t2 = obj.prepare(cell2)
-    t2 shouldBe Set(DoubleValue(1))
+    t2 shouldBe Some(Set(DoubleValue(1)))
 
     val t3 = obj.prepare(cell3)
-    t3 shouldBe Set(DoubleValue(1))
+    t3 shouldBe Some(Set(DoubleValue(1)))
 
     val t4 = obj.prepare(cell4)
-    t4 shouldBe Set(StringValue("abc"))
+    t4 shouldBe Some(Set(StringValue("abc")))
 
     val t5 = obj.prepare(cell5)
-    t5 shouldBe Set(StringValue("abc"))
+    t5 shouldBe Some(Set(StringValue("abc")))
 
     val t6 = obj.prepare(cell6)
-    t6 shouldBe Set(LongValue(123))
+    t6 shouldBe Some(Set(LongValue(123)))
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe Set(DoubleValue(1))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe Set(DoubleValue(1))
 
-    val r3 = obj.reduce(r2, t4)
+    val r3 = obj.reduce(r2, t4.get)
     r3 shouldBe Set(DoubleValue(1), StringValue("abc"))
 
-    val r4 = obj.reduce(r3, t5)
+    val r4 = obj.reduce(r3, t5.get)
     r4 shouldBe Set(DoubleValue(1), StringValue("abc"))
 
-    val r5 = obj.reduce(r4, t6)
+    val r5 = obj.reduce(r4, t6.get)
     r5 shouldBe Set(DoubleValue(1), StringValue("abc"), LongValue(123))
 
     val c = obj.present(Position1D("foo"), r5)
@@ -2385,22 +2453,22 @@ class TestEntropy extends TestAggregators {
   type W = Map[Position1D, Double]
 
   "An Entropy" should "prepare, reduce and present" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2409,22 +2477,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict, nan negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, true, true)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true, true)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2434,22 +2502,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present strict, nan and non-negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, true, false)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true, false)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2459,22 +2527,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present single with strict, non-nan and negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, false, true)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false, true)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2483,22 +2551,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict, non-nan and non-negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, false, false)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false, false)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2507,22 +2575,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict, nan and negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true, true)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -2530,22 +2598,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict, nan and non-negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true, false)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -2553,22 +2621,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict, non-nan and negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false, true)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -2576,22 +2644,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict, non-nan and non-negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false, false)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -2599,22 +2667,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, log = log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, log = log4 _)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2623,22 +2691,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict, nan and negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, true, true, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true, true, log4 _)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2648,22 +2716,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict, nan and non-negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, true, false, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true, false, log4 _)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2673,22 +2741,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict, non-nan and negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, false, true, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false, true, log4 _)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2697,22 +2765,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with strict, non-nan and non-negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, false, false, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false, false, log4 _)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2721,22 +2789,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict, nan and negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true, true, log4 _)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -2744,22 +2812,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict, nan and non-negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true, false, log4 _)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -2767,22 +2835,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict, non-nan and negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false, true, log4 _)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -2790,22 +2858,22 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present with non-strict, non-nan and non-negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false, false, log4 _)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -2813,23 +2881,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2838,23 +2906,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict, nan and negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, true, true)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true, true)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2864,23 +2932,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present multiple with strict, nan and non-negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, true, false)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true, false)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2890,23 +2958,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict, non-nan and negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, false, true)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false, true)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2915,23 +2983,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict, non-nan and non-negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, false, false)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false, false)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -2940,23 +3008,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict, nan and negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true, true)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -2964,23 +3032,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict, nan and non-negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true, false)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -2988,23 +3056,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict, non-nan and negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false, true)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -3012,23 +3080,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict, non-nan and non-negate" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false, false)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log2(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log2(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log2(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log2(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log2(2.0/3) + 1.0/3 * log2(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -3036,23 +3104,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, log = log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, log = log4 _)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -3061,23 +3129,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict, nan and negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, true, true, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true, true, log4 _)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -3087,23 +3155,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict, nan and non-negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, true, false, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true, false, log4 _)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -3113,23 +3181,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict, non-nan and negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, false, true, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false, true, log4 _)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -3138,23 +3206,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with strict, non-nan and non-negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, true, false, false, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false, false, log4 _)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2._1 shouldBe 3
     r2._2.compare(Double.NaN) shouldBe 0
 
@@ -3163,23 +3231,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict, nan and negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, true, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true, true, log4 _)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -3187,23 +3255,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict, nan and non-negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, true, false, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true, false, log4 _)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -3211,23 +3279,23 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict, non-nan and negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, true, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false, true, log4 _)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
@@ -3235,27 +3303,37 @@ class TestEntropy extends TestAggregators {
   }
 
   it should "prepare, reduce and present expanded with non-strict, non-nan and non-negate with log" in {
-    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false, log4 _)
+    val obj = Entropy[Position2D, Position1D, W](extractor, false, false, false, false, log4 _)
       .andThenRelocateWithValue((c: Cell[Position1D], e: W) => c.position.append("entropy").toOption)
 
     val t1 = obj.prepareWithValue(cell1, count)
-    t1 shouldBe ((1, 1.0/3 * log4(1.0/3)))
+    t1 shouldBe Some(((1, 1.0/3 * log4(1.0/3))))
 
     val t2 = obj.prepareWithValue(cell2, count)
-    t2 shouldBe ((1, 2.0/3 * log4(2.0/3)))
+    t2 shouldBe Some(((1, 2.0/3 * log4(2.0/3))))
 
     val t3 = obj.prepareWithValue(cell3, count)
-    t3._1 shouldBe 1
-    t3._2.compare(Double.NaN) shouldBe 0
+    t3.get._1 shouldBe 1
+    t3.get._2.compare(Double.NaN) shouldBe 0
 
-    val r1 = obj.reduce(t1, t2)
+    val r1 = obj.reduce(t1.get, t2.get)
     r1 shouldBe ((2, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
-    val r2 = obj.reduce(r1, t3)
+    val r2 = obj.reduce(r1, t3.get)
     r2 shouldBe ((3, (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3))))
 
     val c = obj.presentWithValue(Position1D("foo"), r2, count)
     c shouldBe Some(Cell(Position2D("foo", "entropy"), getDoubleContent(- (2.0/3 * log4(2.0/3) + 1.0/3 * log4(1.0/3)))))
+  }
+
+  it should "filter" in {
+    Entropy[Position2D, Position1D, W](extractor, true).prepareWithValue(cell1, count) shouldBe
+      Some(((1, 1.0/3 * log2(1.0/3))))
+    Entropy[Position2D, Position1D, W](extractor, false).prepareWithValue(cell1, count) shouldBe
+      Some(((1, 1.0/3 * log2(1.0/3))))
+    Entropy[Position2D, Position1D, W](extractor, true).prepareWithValue(cell3, count) shouldBe None
+    Entropy[Position2D, Position1D, W](extractor, false).prepareWithValue(cell3, count)
+      .map { case (l, d) => (l, d.compare(Double.NaN)) } shouldBe Some((1, 0))
   }
 }
 
@@ -3286,29 +3364,29 @@ class TestWithPrepareAggregator extends TestAggregators {
   }
 
   "An Aggregator" should "withPrepare prepare correctly" in {
-    val obj = Max[Position1D, Position1D]().withPrepare(prepare)
+    val obj = Max[Position1D, Position1D](false).withPrepare(prepare)
 
-    obj.prepare(str) shouldBe (3.0)
-    obj.prepare(dbl).compare(Double.NaN) shouldBe (0)
-    obj.prepare(lng) shouldBe (42.0)
+    obj.prepare(str) shouldBe Some(3.0)
+    obj.prepare(dbl).map(_.compare(Double.NaN)) shouldBe Some(0)
+    obj.prepare(lng) shouldBe Some(42.0)
   }
 
   it should "withPrepareWithValue correctly (without value)" in {
     val obj = WeightedSum[Position1D, Position1D, Map[Position1D, Content]](
-      ExtractWithPosition().andThenPresent(_.value.asDouble)).withPrepare(prepare)
+      ExtractWithPosition().andThenPresent(_.value.asDouble), false).withPrepare(prepare)
 
-    obj.prepareWithValue(str, ext) shouldBe (3.0)
-    obj.prepareWithValue(dbl, ext).compare(Double.NaN) shouldBe (0)
-    obj.prepareWithValue(lng, ext) shouldBe (3 * 42.0)
+    obj.prepareWithValue(str, ext) shouldBe Some(3.0)
+    obj.prepareWithValue(dbl, ext).map(_.compare(Double.NaN)) shouldBe Some(0)
+    obj.prepareWithValue(lng, ext) shouldBe Some(3 * 42.0)
   }
 
   it should "withPrepareWithVaue correctly" in {
     val obj = WeightedSum[Position1D, Position1D, Map[Position1D, Content]](
-      ExtractWithPosition().andThenPresent(_.value.asDouble)).withPrepareWithValue(prepareWithValue)
+      ExtractWithPosition().andThenPresent(_.value.asDouble), false).withPrepareWithValue(prepareWithValue)
 
-    obj.prepareWithValue(str, ext) shouldBe (3.0)
-    obj.prepareWithValue(dbl, ext).compare(Double.NaN) shouldBe (0)
-    obj.prepareWithValue(lng, ext) shouldBe (3 * 3 * 42.0)
+    obj.prepareWithValue(str, ext) shouldBe Some(3.0)
+    obj.prepareWithValue(dbl, ext).map(_.compare(Double.NaN)) shouldBe Some(0)
+    obj.prepareWithValue(lng, ext) shouldBe Some(3 * 3 * 42.0)
   }
 }
 

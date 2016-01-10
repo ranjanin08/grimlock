@@ -390,11 +390,19 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val aggregator = aggregators()
 
     data
-      .map { case c => (slice.selected(c.position), aggregator.map { case a => a.prepare(c) }) }
-      .tunedReduce(tuner.parameters, (lt: List[Any], rt: List[Any]) =>
-        (aggregator, lt, rt).zipped.map { case (a, l, r) => a.reduce(l.asInstanceOf[a.T], r.asInstanceOf[a.T]) })
+      .map[(slice.S, List[Option[Any]])] {
+        case c => (slice.selected(c.position), aggregator.map { case a => a.prepare(c) })
+      }
+      .tunedReduce(tuner.parameters, (lt: List[Option[Any]], rt: List[Option[Any]]) =>
+        (aggregator, lt, rt).zipped.map {
+          case (a, Some(l), Some(r)) => Some(a.reduce(l.asInstanceOf[a.T], r.asInstanceOf[a.T]))
+          case (_, l, r) => if (l.isEmpty) { r } else { l }
+        })
       .flatMap {
-        case (p, t) => (aggregator, t).zipped.flatMap { case (a, s) => a.present(p, s.asInstanceOf[a.T]) }
+        case (p, t) => (aggregator, t).zipped.flatMap {
+          case (a, Some(s)) => a.present(p, s.asInstanceOf[a.T])
+          case _ => None
+        }
       }
   }
 
@@ -404,12 +412,18 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val aggregator = aggregators()
 
     data
-      .map { case c => (slice.selected(c.position), aggregator.map { case a => a.prepareWithValue(c, value) }) }
-      .tunedReduce(tuner.parameters, (lt: List[Any], rt: List[Any]) =>
-        (aggregator, lt, rt).zipped.map { case (a, l, r) => a.reduce(l.asInstanceOf[a.T], r.asInstanceOf[a.T]) })
+      .map[(slice.S, List[Option[Any]])] {
+        case c => (slice.selected(c.position), aggregator.map { case a => a.prepareWithValue(c, value) })
+      }
+      .tunedReduce(tuner.parameters, (lt: List[Option[Any]], rt: List[Option[Any]]) =>
+        (aggregator, lt, rt).zipped.map {
+          case (a, Some(l), Some(r)) => Some(a.reduce(l.asInstanceOf[a.T], r.asInstanceOf[a.T]))
+          case (_, l, r) => if (l.isEmpty) { r } else { l }
+        })
       .flatMap {
         case (p, t) => (aggregator, t).zipped.flatMap {
-          case (a, s) => a.presentWithValue(p, s.asInstanceOf[a.T], value)
+          case (a, Some(s)) => a.presentWithValue(p, s.asInstanceOf[a.T], value)
+          case _ => None
         }
       }
   }
@@ -706,12 +720,12 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 
     val pos = data
       .transform(Compare[Position2D](isPositive))
-      .summarise(slice, Sum[Position2D, slice.S](), stuner)
+      .summarise(slice, Sum[Position2D, slice.S](false), stuner)
       .compact(Over(First))
 
     val neg = data
       .transform(Compare[Position2D](isNegative))
-      .summarise(slice, Sum[Position2D, slice.S](), stuner)
+      .summarise(slice, Sum[Position2D, slice.S](false), stuner)
       .compact(Over(First))
 
     val tpr = data

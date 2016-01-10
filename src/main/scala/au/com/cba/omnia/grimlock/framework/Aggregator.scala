@@ -23,7 +23,7 @@ trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Posi
   extends AggregatorWithValue[P, S, Q] { self =>
   type V = Any
 
-  def prepareWithValue(cell: Cell[P], ext: V): T = prepare(cell)
+  def prepareWithValue(cell: Cell[P], ext: V): Option[T] = prepare(cell)
   def presentWithValue(pos: S, t: T, ext: V): Option[Cell[Q]] = present(pos, t)
 
   /**
@@ -31,9 +31,9 @@ trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Posi
    *
    * @param cell Cell which is to be aggregated. Note that its position is prior to `slice.selected` being applied.
    *
-   * @return State to reduce.
+   * @return Optional state to reduce (allow for filtering).
    */
-  def prepare(cell: Cell[P]): T
+  def prepare(cell: Cell[P]): Option[T]
 
   /**
    * Present the reduced content.
@@ -61,7 +61,7 @@ trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Posi
     new Aggregator[P, S, Q] {
       type T = self.T
 
-      def prepare(cell: Cell[P]): T = self.prepare(Cell(cell.position, prep(cell)))
+      def prepare(cell: Cell[P]): Option[T] = self.prepare(Cell(cell.position, prep(cell)))
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def present(pos: S, t: T): Option[Cell[Q]] = self.present(pos, t)
     }
@@ -78,7 +78,7 @@ trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Posi
     new Aggregator[P, S, Q] {
       type T = self.T
 
-      def prepare(cell: Cell[P]): T = self.prepare(cell)
+      def prepare(cell: Cell[P]): Option[T] = self.prepare(cell)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def present(pos: S, t: T): Option[Cell[Q]] = self.present(pos, t).map { case c => Cell(c.position, mutate(c)) }
     }
@@ -95,7 +95,7 @@ trait Aggregator[P <: Position, S <: Position with ExpandablePosition, Q <: Posi
     new Aggregator[P, S, R] {
       type T = self.T
 
-      def prepare(cell: Cell[P]): T = self.prepare(cell)
+      def prepare(cell: Cell[P]): Option[T] = self.prepare(cell)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def present(pos: S, t: T): Option[Cell[R]] = {
         self.present(pos, t).flatMap { case c => locate(c).map(Cell(_, c.content)) }
@@ -119,9 +119,9 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
    * @param cell Cell which is to be aggregated. Note that its position is prior to `slice.selected` being applied.
    * @param ext  User provided data required for preparation.
    *
-   * @return State to reduce.
+   * @return Optional state to reduce (allow for filtering).
    */
-  def prepareWithValue(cell: Cell[P], ext: V): T
+  def prepareWithValue(cell: Cell[P], ext: V): Option[T]
 
   /**
    * Standard reduce method.
@@ -161,7 +161,9 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       type T = self.T
       type V = self.V
 
-      def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(Cell(cell.position, prep(cell)), ext)
+      def prepareWithValue(cell: Cell[P], ext: V): Option[T] = {
+        self.prepareWithValue(Cell(cell.position, prep(cell)), ext)
+      }
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[Q]] = self.presentWithValue(pos, t, ext)
     }
@@ -179,7 +181,7 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       type T = self.T
       type V = self.V
 
-      def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(cell, ext)
+      def prepareWithValue(cell: Cell[P], ext: V): Option[T] = self.prepareWithValue(cell, ext)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[Q]] = {
         self.presentWithValue(pos, t, ext).map { case c => Cell(c.position, mutate(c)) }
@@ -199,7 +201,7 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       type T = self.T
       type V = self.V
 
-      def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(cell, ext)
+      def prepareWithValue(cell: Cell[P], ext: V): Option[T] = self.prepareWithValue(cell, ext)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[R]] = {
         self.presentWithValue(pos, t, ext).flatMap { case c => locate(c).map(Cell(_, c.content)) }
@@ -219,7 +221,7 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       type T = self.T
       type V = self.V
 
-      def prepareWithValue(cell: Cell[P], ext: V): T = {
+      def prepareWithValue(cell: Cell[P], ext: V): Option[T] = {
         self.prepareWithValue(Cell(cell.position, prep(cell, ext)), ext)
       }
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
@@ -239,7 +241,7 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       type T = self.T
       type V = self.V
 
-      def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(cell, ext)
+      def prepareWithValue(cell: Cell[P], ext: V): Option[T] = self.prepareWithValue(cell, ext)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[Q]] = {
         self.presentWithValue(pos, t, ext).map { case c => Cell(c.position, mutate(c, ext)) }
@@ -260,7 +262,7 @@ trait AggregatorWithValue[P <: Position, S <: Position with ExpandablePosition, 
       type T = self.T
       type V = self.V
 
-      def prepareWithValue(cell: Cell[P], ext: V): T = self.prepareWithValue(cell, ext)
+      def prepareWithValue(cell: Cell[P], ext: V): Option[T] = self.prepareWithValue(cell, ext)
       def reduce(lt: T, rt: T): T = self.reduce(lt, rt)
       def presentWithValue(pos: S, t: T, ext: V): Option[Cell[R]] = {
         self.presentWithValue(pos, t, ext).flatMap { case c => locate(c, ext).map(Cell(_, c.content)) }

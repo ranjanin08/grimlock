@@ -401,7 +401,7 @@ object TestSpark10 {
     val data = load4TupleDataAddDate(path + "/someInputfile3.txt")
 
     data
-      .summarise(Over(Second), Mean[Position3D, Position1D](true, true)
+      .summarise(Over(Second), Mean[Position3D, Position1D](false, true, true)
         .andThenRelocate(_.position.append("mean").toOption))
       .saveAsCSV(Over(First), s"./tmp.${tool}/agg1.csv")
       .toUnit
@@ -506,7 +506,7 @@ object TestSpark13 {
       .toUnit
 
     data
-      .fillHeterogeneous(Over(Second), all.summarise(Over(Second), Mean[Position3D, Position1D](true, true)))
+      .fillHeterogeneous(Over(Second), all.summarise(Over(Second), Mean[Position3D, Position1D](false, true, true)))
       .join(Over(First), inds)
       .saveAsCSV(Over(First), s"./tmp.${tool}/fll4.out")
       .toUnit
