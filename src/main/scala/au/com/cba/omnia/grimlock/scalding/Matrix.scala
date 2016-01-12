@@ -18,7 +18,7 @@ import au.com.cba.omnia.grimlock.framework.{
   Cell,
   Collate,
   Default,
-  ExpandableMatrix => BaseExpandableMatrix,
+  ReshapeableMatrix => BaseReshapeableMatrix,
   ExtractWithDimension,
   ExtractWithKey,
   InMemory,
@@ -812,23 +812,21 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
   }
 }
 
-/** Base trait for methods that expand the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
-trait ExpandableMatrix[P <: Position with ExpandablePosition with ReduceablePosition]
-  extends BaseExpandableMatrix[P] { self: Matrix[P] =>
+/** Base trait for methods that reshapes the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
+trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePosition]
+  extends BaseReshapeableMatrix[P] { self: Matrix[P] =>
 
   import ScaldingImplicits._
 
   type ReshapeTuners = TP4
-  def reshape[D <: Dimension, T <: Tuner](dim: D, coordinate: Valueable, missing: Valueable, tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: ReshapeTuners#V[T]): U[Cell[P#M]] = {
+  def reshape[D <: Dimension, Q <: Position, T <: Tuner](dim: D, coordinate: Valueable,
+    locate: Locate.FromCellAndOptionalValue[P, Q], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+      ev2: PosExpDep[P, Q], ev3: ClassTag[P#L], ev4: ReshapeTuners#V[T]): U[Cell[Q]] = {
     val keys = data
       .collect[(P#L, Value)] { case c if (c.position(dim) equ coordinate) => (c.position.remove(dim), c.content.value) }
     val values = data
       .collect[(P#L, Cell[P])] { case c if (c.position(dim) neq coordinate) => (c.position.remove(dim), c) }
-    val append = (c: Cell[P], v: Option[Value]) => {
-      val coord = v.getOrElse(missing())
-      Some(c.relocate[P#M](_.position.append(coord)))
-    }
+    val append = (c: Cell[P], v: Option[Value]) => locate(c, v).map(Cell(_, c.content))
 
     tuner match {
       case InMemory(_) =>
@@ -1145,7 +1143,7 @@ object Matrix {
  *
  * @param data `TypedPipe[Cell[Position1D]]`.
  */
-case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D] with ExpandableMatrix[Position1D]
+case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D]
   with ApproximateDistribution[Position1D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position1D] = names(Over(First))
 
@@ -1176,7 +1174,7 @@ case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D
  * @param data `TypedPipe[Cell[Position2D]]`.
  */
 case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
-  with ExpandableMatrix[Position2D] with MatrixDistance with ApproximateDistribution[Position2D] {
+  with ReshapeableMatrix[Position2D] with MatrixDistance with ApproximateDistribution[Position2D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position2D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1400,7 +1398,7 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D
  * @param data `TypedPipe[Cell[Position3D]]`.
  */
 case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
-  with ExpandableMatrix[Position3D] with ApproximateDistribution[Position3D] {
+  with ReshapeableMatrix[Position3D] with ApproximateDistribution[Position3D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position3D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1455,7 +1453,7 @@ case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D
  * @param data `TypedPipe[Cell[Position4D]]`.
  */
 case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D] with ReduceableMatrix[Position4D]
-  with ExpandableMatrix[Position4D] with ApproximateDistribution[Position4D] {
+  with ReshapeableMatrix[Position4D] with ApproximateDistribution[Position4D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position4D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1518,7 +1516,7 @@ case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D
  * @param data `TypedPipe[Cell[Position5D]]`.
  */
 case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D]
-  with ExpandableMatrix[Position5D] with ApproximateDistribution[Position5D] {
+  with ReshapeableMatrix[Position5D] with ApproximateDistribution[Position5D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position5D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1587,7 +1585,7 @@ case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D
  * @param data `TypedPipe[Cell[Position6D]]`.
  */
 case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D] with ReduceableMatrix[Position6D]
-  with ExpandableMatrix[Position6D] with ApproximateDistribution[Position6D] {
+  with ReshapeableMatrix[Position6D] with ApproximateDistribution[Position6D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position6D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1663,7 +1661,7 @@ case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D
  * @param data `TypedPipe[Cell[Position7D]]`.
  */
 case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D] with ReduceableMatrix[Position7D]
-  with ExpandableMatrix[Position7D] with ApproximateDistribution[Position7D] {
+  with ReshapeableMatrix[Position7D] with ApproximateDistribution[Position7D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position7D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1744,7 +1742,7 @@ case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D
  * @param data `TypedPipe[Cell[Position8D]]`.
  */
 case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D] with ReduceableMatrix[Position8D]
-  with ExpandableMatrix[Position8D] with ApproximateDistribution[Position8D] {
+  with ReshapeableMatrix[Position8D] with ApproximateDistribution[Position8D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position8D] = {
     names(Over(First))
       .map { case Position1D(c) => c }

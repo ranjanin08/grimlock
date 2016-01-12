@@ -16,6 +16,7 @@ package au.com.cba.omnia.grimlock.scalding.examples
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
+import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
@@ -36,6 +37,14 @@ class Conditional(args: Args) extends Job(args) {
   // 1/ Read the data (ignoring errors), this returns a 2D matrix (row x feature).
   val (data, _) = loadText(s"${path}/exampleConditional.txt", Cell.parse2D())
 
+  // Define function that appends the value as a string, or "missing" if no value is available
+  def cast[P <: Position with ExpandablePosition](cell: Cell[P], value: Option[Value]): Option[P#M] = {
+    Some(cell.position.append(value match {
+      case Some(v) => v.toShortString
+      case None => "missing"
+    }))
+  }
+
   // Generate 3D matrix (hair color x eye color x gender)
   // 1/ Reshape matrix expanding it with hair color.
   // 2/ Reshape matrix expanding it with eye color.
@@ -44,9 +53,9 @@ class Conditional(args: Args) extends Job(args) {
   // 5/ Squash the first dimension (row ids + value). As there is only one value for each
   //    hair/eye/gender triplet, any squash function can be used.
   val heg = data
-    .reshape(Second, "hair", "missing")
-    .reshape(Second, "eye", "missing")
-    .reshape(Second, "gender", "missing")
+    .reshape(Second, "hair", cast)
+    .reshape(Second, "eye", cast)
+    .reshape(Second, "gender", cast)
     .melt(Second, First)
     .squash(First, PreservingMaxPosition[Position4D]())
 

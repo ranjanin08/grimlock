@@ -8772,3 +8772,129 @@ class TestSparkMatrixToText extends TestMatrixToText {
   }
 }
 
+trait TestMatrixReshape extends TestMatrix {
+
+  val dataA = List(Cell(Position2D("foo", "letter"), Content(NominalSchema(StringCodex), "a")),
+    Cell(Position2D("foo", "number"), Content(DiscreteSchema(LongCodex), 1)),
+    Cell(Position2D("bar", "letter"), Content(NominalSchema(StringCodex), "b")),
+    Cell(Position2D("bar", "number"), Content(DiscreteSchema(LongCodex), 2)),
+    Cell(Position2D("baz", "letter"), Content(NominalSchema(StringCodex), "a")),
+    Cell(Position2D("qux", "number"), Content(DiscreteSchema(LongCodex), 2)))
+
+  val dataB = List(Cell(Position3D("foo", "letter", true), Content(NominalSchema(StringCodex), "a")),
+    Cell(Position3D("foo", "number", true), Content(DiscreteSchema(LongCodex), 1)),
+    Cell(Position3D("bar", "letter", true), Content(NominalSchema(StringCodex), "b")),
+    Cell(Position3D("bar", "number", true), Content(DiscreteSchema(LongCodex), 2)),
+    Cell(Position3D("baz", "letter", true), Content(NominalSchema(StringCodex), "a")),
+    Cell(Position3D("qux", "number", true), Content(DiscreteSchema(LongCodex), 2)),
+    Cell(Position3D("foo", "number", false), Content(DiscreteSchema(LongCodex), 3)),
+    Cell(Position3D("bar", "letter", false), Content(NominalSchema(StringCodex), "c")),
+    Cell(Position3D("baz", "number", false), Content(DiscreteSchema(LongCodex), 4)),
+    Cell(Position3D("qux", "letter", false), Content(NominalSchema(StringCodex), "d")))
+
+  val result1 = List(Cell(Position3D("bar", "letter", "a"), Content(NominalSchema(StringCodex), "b")),
+    Cell(Position3D("bar", "number", "NA"), Content(DiscreteSchema(LongCodex), 2)),
+    Cell(Position3D("foo", "letter", "a"), Content(NominalSchema(StringCodex), "a")),
+    Cell(Position3D("foo", "number", "NA"), Content(DiscreteSchema(LongCodex), 1)),
+    Cell(Position3D("qux", "number", "NA"), Content(DiscreteSchema(LongCodex), 2)))
+
+  val result2 = List(Cell(Position3D("bar", "number", "b"), Content(DiscreteSchema(LongCodex), 2)),
+    Cell(Position3D("foo", "number", "a"), Content(DiscreteSchema(LongCodex), 1)),
+    Cell(Position3D("qux", "number", "NA"), Content(DiscreteSchema(LongCodex), 2)))
+
+  val result3 = List(Cell(Position4D("bar", "letter", false, "d"), Content(NominalSchema(StringCodex), "c")),
+    Cell(Position4D("bar", "letter", true, "NA"), Content(NominalSchema(StringCodex), "b")),
+    Cell(Position4D("bar", "number", true, "2"), Content(DiscreteSchema(LongCodex), 2)),
+    Cell(Position4D("baz", "letter", true, "NA"), Content(NominalSchema(StringCodex), "a")),
+    Cell(Position4D("baz", "number", false, "NA"), Content(DiscreteSchema(LongCodex), 4)),
+    Cell(Position4D("foo", "letter", true, "NA"), Content(NominalSchema(StringCodex), "a")),
+    Cell(Position4D("foo", "number", false, "NA"), Content(DiscreteSchema(LongCodex), 3)),
+    Cell(Position4D("foo", "number", true, "2"), Content(DiscreteSchema(LongCodex), 1)))
+
+  val result4 = List(Cell(Position4D("bar", "letter", false, "NA"), Content(NominalSchema(StringCodex), "c")),
+    Cell(Position4D("bar", "letter", true, "2"), Content(NominalSchema(StringCodex), "b")),
+    Cell(Position4D("baz", "letter", true, "NA"), Content(NominalSchema(StringCodex), "a")),
+    Cell(Position4D("foo", "letter", true, "1"), Content(NominalSchema(StringCodex), "a")),
+    Cell(Position4D("qux", "letter", false, "NA"), Content(NominalSchema(StringCodex), "d")))
+
+  val result5 = List(Cell(Position4D("bar", "letter", false, "b"), Content(NominalSchema(StringCodex), "c")),
+    Cell(Position4D("baz", "number", false, "NA"), Content(DiscreteSchema(LongCodex), 4)),
+    Cell(Position4D("foo", "number", false, "1"), Content(DiscreteSchema(LongCodex), 3)),
+    Cell(Position4D("qux", "letter", false, "NA"), Content(NominalSchema(StringCodex), "d")))
+}
+
+object TestMatrixReshape {
+  def cast[P <: Position with ExpandablePosition](cell: Cell[P], value: Option[Value]): Option[P#M] = {
+    Some(cell.position.append(value match {
+      case Some(v) => v.toShortString
+      case None => "NA"
+    }))
+  }
+}
+
+class TestScaldingMatrixReshape extends TestMatrixReshape {
+
+  "A Matrix.reshape" should "reshape its first dimension in 2D" in {
+    toPipe(dataA)
+      .reshape(First, "baz", TestMatrixReshape.cast, InMemory())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "reshape its second dimension in 2D" in {
+    toPipe(dataA)
+      .reshape(Second, "letter", TestMatrixReshape.cast, Default())
+      .toList.sortBy(_.position) shouldBe result2
+  }
+
+  it should "reshape its first dimension in 3D" in {
+    toPipe(dataB)
+      .reshape(First, "qux", TestMatrixReshape.cast, Default(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result3
+  }
+
+  it should "reshape its second dimension in 3D" in {
+    toPipe(dataB)
+      .reshape(Second, "number", TestMatrixReshape.cast, Unbalanced(Reducers(123)))
+      .toList.sortBy(_.position) shouldBe result4
+  }
+
+  it should "reshape its third dimension in 3D" in {
+    toPipe(dataB)
+      .reshape(Third, true, TestMatrixReshape.cast, InMemory())
+      .toList.sortBy(_.position) shouldBe result5
+  }
+}
+
+class TestSparkMatrixReshape extends TestMatrixReshape {
+
+  "A Matrix.reshape" should "reshape its first dimension in 2D" in {
+    toRDD(dataA)
+      .reshape(First, "baz", TestMatrixReshape.cast, Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "reshape its second dimension in 2D" in {
+    toRDD(dataA)
+      .reshape(Second, "letter", TestMatrixReshape.cast, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result2
+  }
+
+  it should "reshape its first dimension in 3D" in {
+    toRDD(dataB)
+      .reshape(First, "qux", TestMatrixReshape.cast, Default())
+      .toList.sortBy(_.position) shouldBe result3
+  }
+
+  it should "reshape its second dimension in 3D" in {
+    toRDD(dataB)
+      .reshape(Second, "number", TestMatrixReshape.cast, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result4
+  }
+
+  it should "reshape its third dimension in 3D" in {
+    toRDD(dataB)
+      .reshape(Third, true, TestMatrixReshape.cast, Default())
+      .toList.sortBy(_.position) shouldBe result5
+  }
+}
+

@@ -26,6 +26,9 @@ object Locate {
   /** Extract position from cell with user provided value. */
   type FromCellWithValue[P <: Position, Q <: Position, V] = (Cell[P], V) => Option[Q]
 
+  /** Extract position from cell and an optional value. */
+  type FromCellAndOptionalValue[P <: Position, Q <: Position] = (Cell[P], Option[Value]) => Option[Q]
+
   /** Extract position for left and right cells. */
   type FromPairwiseCells[P <: Position, Q <: Position] = (Cell[P], Cell[P]) => Option[Q]
 

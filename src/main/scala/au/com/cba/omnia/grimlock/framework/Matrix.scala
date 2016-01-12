@@ -621,12 +621,13 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
     tuner: T)(implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
 }
 
-/** Base trait for methods that expands the number of dimension of a matrix. */
-trait ExpandableMatrix[P <: Position with ExpandablePosition with ReduceablePosition] { self: Matrix[P] =>
+/** Base trait for methods that reshapes the number of dimension of a matrix. */
+trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePosition] { self: Matrix[P] =>
   type ReshapeTuners <: OneOf
 
-  def reshape[D <: Dimension, T <: Tuner](dim: D, coordinate: Valueable, missing: Valueable, tuner: T)(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: ReshapeTuners#V[T]): U[Cell[P#M]]
+  def reshape[D <: Dimension, Q <: Position, T <: Tuner](dim: D, coordinate: Valueable,
+    locate: Locate.FromCellAndOptionalValue[P, Q], tuner: T)(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[P, Q],
+      ev3: ClassTag[P#L], ev4: ReshapeTuners#V[T]): U[Cell[Q]]
 }
 
 /**
