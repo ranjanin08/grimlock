@@ -81,15 +81,11 @@ trait ApproximateDistribution[P <: Position] extends BaseApproximateDistribution
       .mapGroup {
         case ((_, count), itr) =>
           val first = itr.next
-          val (t, c) = q.initialise(first, count)
+          val (t, c, o) = q.initialise(first, count)
 
-          if (!itr.hasNext) {
-            q.update(first, t, c)._2.toIterator
-          } else {
-            itr
-              .scanLeft((t, List[q.O]())) { case ((t, _), i) => q.update(i, t, c) }
-              .flatMap { case (_, o) => o }
-          }
+          o.toIterator ++ itr
+            .scanLeft((t, List[q.O]())) { case ((t, _), i) => q.update(i, t, c) }
+            .flatMap { case (_, o) => o }
       }
       .flatMap { case ((p, _), o) => q.present(p, o) }
   }

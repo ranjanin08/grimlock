@@ -21,6 +21,7 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
+import scala.math.BigDecimal
 import scala.reflect.ClassTag
 
 /** Trait for computing approximate distributions from a matrix. */
@@ -73,7 +74,7 @@ private[grimlock] case class Quantile[P <: Position, S <: Position with Expandab
   probs: List[Double], count: Extract[P, W, Long], quantiser: Quantile.Quantiser,
     position: Locate.FromSelectedAndOutput[S, Double, Q]) {
   type V = W
-  type C = List[(Long, Double, Double)]
+  type C = (Long, List[(Long, Double, Double)])
   type T = (Double, Long, Long)
   type O = (Double, Double)
 
@@ -81,42 +82,60 @@ private[grimlock] case class Quantile[P <: Position, S <: Position with Expandab
     (cell.content.value.asDouble.getOrElse(Double.NaN), count.extract(cell, ext).getOrElse(0L))
   }
 
-  def initialise(curr: Double, count: Long): (T, C) = {
+  def initialise(curr: Double, count: Long): (T, C, List[O]) = {
     val index = 0
     val bounds = boundaries(count)
     val target = next(bounds, index)
 
-    ((curr, index, target), bounds)
+    val first = if (count == 1) {
+      bounds.map { case (_, _, p) => (p, curr) }
+    } else {
+      bounds.collect { case (j, _, p) if (j == index) => (p, curr) }
+    }
+
+    ((curr, index, target), (count, bounds), first)
   }
 
-  def update(curr: Double, t: T, bounds: C): (T, List[O]) = {
+  def update(curr: Double, t: T, state: C): (T, List[O]) = {
     val index = t._2 + 1
     val prev = t._1
     val target = t._3
+    val count = state._1
+    val bounds = state._2
+
+    val last = if (index == (count - 1)) {
+      bounds.collect { case (j, g, p) if (j == count) => (p, curr) }
+    } else {
+      List()
+    }
 
     if (index == target) {
       ((curr, index, next(bounds, index)),
-        bounds.collect { case (j, g, p) if (j == index) => (p, (1 - g) * prev + g * curr) })
+        last ++ bounds.collect { case (j, g, p) if (j == index) => (p, (1 - g) * prev + g * curr) })
     } else {
-      ((curr, index, target), List())
+      ((curr, index, target), last)
     }
   }
 
   def present(pos: S, out: O): Option[Cell[Q]] = {
-    position(pos, out._1).map(Cell(_, Content(ContinuousSchema(DoubleCodex), out._2)))
+    position(pos, out._1).map(Cell(_, Content(ContinuousSchema(DoubleCodex), round(out._2))))
   }
 
-  private def boundaries(count: Long): C = {
+  private def boundaries(count: Long): List[(Long, Double, Double)] = {
     probs
       .sorted
       .map { case p => (quantiser(p, count), p) }
       .map { case ((j, g), p) => (j, g, p) }
   }
 
-  private def next(boundaries: C, index: Long): Long = {
+  private def next(boundaries: List[(Long, Double, Double)], index: Long): Long = {
     boundaries
       .collectFirst { case (j, _, _) if j > index => j }
       .getOrElse(0)
+  }
+
+  private def round(value: Double, places: Int = 6): Double = {
+    BigDecimal(value).setScale(places, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 }
 
@@ -203,7 +222,7 @@ object Quantile {
    *
    * @see https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
    */
-  val Type9: Quantiser = (p: Double, n: Long) => { TypeX(p, n, (p / 4) + 3 / 8) }
+  val Type9: Quantiser = (p: Double, n: Long) => { TypeX(p, n, (p / 4) + (3.0 / 8)) }
 
   private val TypeX = (p: Double, n: Long, m: Double) => {
     val npm = n * p + m

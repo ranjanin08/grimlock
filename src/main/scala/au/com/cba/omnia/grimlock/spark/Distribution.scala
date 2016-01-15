@@ -70,16 +70,12 @@ trait ApproximateDistribution[P <: Position] extends BaseApproximateDistribution
         case ((p, count), itr) =>
           val lst = itr.toList.sorted
           val first = lst.head
-          val (t, c) = q.initialise(first, count)
+          val (t, c, o) = q.initialise(first, count)
 
-          if (lst.tail.isEmpty) {
-            q.update(first, t, c)._2.flatMap(q.present(p, _))
-          } else {
-            lst
-              .tail
-              .scanLeft((t, List[q.O]())) { case ((t, _), i) => q.update(i, t, c) }
-              .flatMap { case (_, o) => o.flatMap(q.present(p, _)) }
-          }
+          o.flatMap(q.present(p, _)) ++ lst
+            .tail
+            .scanLeft((t, List[q.O]())) { case ((t, _), i) => q.update(i, t, c) }
+            .flatMap { case (_, o) => o.flatMap(q.present(p, _)) }
       }
   }
 }

@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.distribution._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
@@ -323,6 +324,176 @@ class TestSparkHistogram extends TestDistribution {
     toRDD(data3)
       .histogram(Along(Third), Locate.AppendContentString[Position2D](), false, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result12
+  }
+}
+
+trait TestQuantile extends TestGrimlock {
+
+  val ext = Map(Position1D(1) -> 1L, Position1D(3) -> 3L)
+
+  val probs = List(0.2, 0.4, 0.6, 0.8)
+
+  val data1 = List(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)))
+
+  val data2 = List(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 6.28)),
+    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 9.42)))
+
+  val data3 = List(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 3.14)))
+
+  val data4 = List(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("bar"), Content(NominalSchema(StringCodex), "abc")),
+    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 9.42)))
+
+  val result1 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 3.14)))
+
+  val result2 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 6.28)),
+    Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 6.28)),
+    Cell(Position1D("quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 9.42)))
+
+  val result3 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 6.28)),
+    Cell(Position1D("quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 6.28)))
+
+  val result4 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 3.768)),
+    Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 5.652)),
+    Cell(Position1D("quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 7.536)))
+
+  val result5 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 3.454)),
+    Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 5.338)),
+    Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 7.222)),
+    Cell(Position1D("quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 9.106)))
+
+  val result6 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 5.024)),
+    Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 7.536)),
+    Cell(Position1D("quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 9.42)))
+
+  val result7 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 4.396)),
+    Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 5.652)),
+    Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 6.908)),
+    Cell(Position1D("quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 8.164)))
+
+  val result8 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 5.233333)),
+    Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 7.326667)),
+    Cell(Position1D("quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 9.42)))
+
+  val result9 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 3.2185)),
+    Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 5.2595)),
+    Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 7.3005)),
+    Cell(Position1D("quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 9.3415)))
+}
+
+object TestQuantile {
+
+  def name[S <: Position with ExpandablePosition] = {
+    (pos: S, value: Double) => pos.append("quantile=%f".format(value)).toOption
+  }
+}
+
+class TestScaldingQuantile extends TestQuantile {
+
+  "A quantile" should "return its first along 1 value in 1D" in {
+    toPipe(data1)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data1)
+      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along 3 value in 1D" in {
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result2
+
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result2
+
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result3
+
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result4
+
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result5
+
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result6
+
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result7
+
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result8
+
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+      .toList.sortBy(_.position) shouldBe result9
   }
 }
 
