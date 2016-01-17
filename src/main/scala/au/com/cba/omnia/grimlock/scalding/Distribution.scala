@@ -42,10 +42,11 @@ trait ApproximateDistribution[P <: Position] extends BaseApproximateDistribution
 
   type HistogramTuners = TP2
   def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
-    name: Locate.FromSelectedAndContent[S, Q], all: Boolean, tuner: T = Default())(implicit ev1: PosExpDep[slice.S, Q],
-      ev2: slice.S =:= S, ev3: ClassTag[Q], ev4: HistogramTuners#V[T]): U[Cell[Q]] = {
+    name: Locate.FromSelectedAndContent[S, Q], filter: Boolean, tuner: T = Default())(
+      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q],
+        ev4: HistogramTuners#V[T]): U[Cell[Q]] = {
     data
-      .filter { case c => (all || c.content.schema.kind.isSpecialisationOf(Type.Categorical)) }
+      .filter { case c => (!filter || c.content.schema.kind.isSpecialisationOf(Type.Categorical)) }
       .flatMap { case c => name(slice.selected(c.position), c.content) }
       .asKeys
       .tuneReducers(tuner.parameters)
@@ -56,13 +57,17 @@ trait ApproximateDistribution[P <: Position] extends BaseApproximateDistribution
   type QuantileTuners = TP2
   def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
-      count: Extract[P, W, Long], value: E[W], tuner: T = Default())(implicit ev1: slice.S =:= S,
-        ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
+      count: Extract[P, W, Long], value: E[W], filter: Boolean, nan: Boolean, tuner: T = Default())(
+        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
           ev5: QuantileTuners#V[T]): U[Cell[Q]] = {
-    val q = Quantile[P, S, Q, W](probs, count, quantiser, name)
+    val q = Quantile[P, S, Q, W](probs, count, quantiser, name, nan)
 
-    val grouped = data
-      .filter(_.content.schema.kind.isSpecialisationOf(Type.Numerical))
+    val filtered = filter match {
+      case true => data.filter(_.content.schema.kind.isSpecialisationOf(Type.Numerical))
+      case false => data
+    }
+
+    val grouped = filtered
       .mapWithValue(value) {
         case (c, vo) =>
           val (double, count) = q.prepare(c, vo.get)

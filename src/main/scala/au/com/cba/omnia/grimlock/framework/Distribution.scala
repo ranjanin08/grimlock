@@ -35,7 +35,7 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
    *
    * @param slice     Encapsulates the dimension(s) to compute histogram on.
    * @param position  Function for extracting the position of the histogram.
-   * @param all       Indicator if all values, or only categorical, should be used.
+   * @param filter    Indicator if numerical values shoud be filtered or not.
    * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[Q]]' with the histogram.
@@ -43,8 +43,8 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
    * @note The histogram is computed on the positions returned by `position`.
    */
   def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
-    position: Locate.FromSelectedAndContent[S, Q], all: Boolean = false, tuner: T)(implicit ev1: PosExpDep[slice.S, Q],
-      ev2: slice.S =:= S, ev3: ClassTag[Q], ev4: HistogramTuners#V[T]): U[Cell[Q]]
+    position: Locate.FromSelectedAndContent[S, Q], filter: Boolean = true, tuner: T)(
+      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q], ev4: HistogramTuners#V[T]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `quantile`. */
   type QuantileTuners <: OneOf
@@ -58,6 +58,8 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
    * @param position  Function for extracting the position of the quantile.
    * @param count     Function that extracts the count value statistics from the user provided value.
    * @param value     Value holding the counts.
+   * @param filter    Indicator if categorical values should be filtered or not.
+   * @param nan       Indicator if NaN quantiles should be output or not.
    * @param tuner     The tuner for the job.
    *
    * @return A `U[Cell[Q]]' with the quantiles.
@@ -66,13 +68,14 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
    */
   def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, position: Locate.FromSelectedAndOutput[S, Double, Q],
-      count: Extract[P, W, Long], value: E[W], tuner: T)(implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q],
-        ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S], ev5: QuantileTuners#V[T]): U[Cell[Q]]
+      count: Extract[P, W, Long], value: E[W], filter: Boolean = true, nan: Boolean = false, tuner: T)(
+        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
+          ev5: QuantileTuners#V[T]): U[Cell[Q]]
 }
 
 private[grimlock] case class Quantile[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](
   probs: List[Double], count: Extract[P, W, Long], quantiser: Quantile.Quantiser,
-    position: Locate.FromSelectedAndOutput[S, Double, Q]) {
+    position: Locate.FromSelectedAndOutput[S, Double, Q], nan: Boolean) {
   type V = W
   type C = (Long, List[(Long, Double, Double)])
   type T = (Double, Long, Long)
@@ -87,10 +90,12 @@ private[grimlock] case class Quantile[P <: Position, S <: Position with Expandab
     val bounds = boundaries(count)
     val target = next(bounds, index)
 
-    val first = if (count == 1) {
+    val first = if (count == 0) {
+      bounds.map { case (_, _, p) => (p, Double.NaN) }
+    } else if (count == 1) {
       bounds.map { case (_, _, p) => (p, curr) }
     } else {
-      bounds.collect { case (j, _, p) if (j == index) => (p, curr) }
+      bounds.collect { case (j, _, p) if (j == index && count != 0) => (p, curr) }
     }
 
     ((curr, index, target), (count, bounds), first)
@@ -104,7 +109,7 @@ private[grimlock] case class Quantile[P <: Position, S <: Position with Expandab
     val bounds = state._2
 
     val last = if (index == (count - 1)) {
-      bounds.collect { case (j, g, p) if (j == count) => (p, curr) }
+      bounds.collect { case (j, _, p) if (j == count) => (p, curr) }
     } else {
       List()
     }
@@ -118,7 +123,11 @@ private[grimlock] case class Quantile[P <: Position, S <: Position with Expandab
   }
 
   def present(pos: S, out: O): Option[Cell[Q]] = {
-    position(pos, out._1).map(Cell(_, Content(ContinuousSchema(DoubleCodex), round(out._2))))
+    if (!out._2.isNaN || nan) {
+      position(pos, out._1).map(Cell(_, Content(ContinuousSchema(DoubleCodex), round(out._2))))
+    } else {
+      None
+    }
   }
 
   private def boundaries(count: Long): List[(Long, Double, Double)] = {
@@ -135,7 +144,7 @@ private[grimlock] case class Quantile[P <: Position, S <: Position with Expandab
   }
 
   private def round(value: Double, places: Int = 6): Double = {
-    BigDecimal(value).setScale(places, BigDecimal.RoundingMode.HALF_UP).toDouble
+    if (value.isNaN) { value } else { BigDecimal(value).setScale(places, BigDecimal.RoundingMode.HALF_UP).toDouble }
   }
 }
 

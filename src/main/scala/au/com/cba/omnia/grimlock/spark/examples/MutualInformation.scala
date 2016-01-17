@@ -78,7 +78,7 @@ object MutualInformation {
 
     // Compute histogram on the data.
     val mhist = data
-      .histogram(Along(First), Locate.AppendContentString[Position1D](), true)
+      .histogram(Along(First), Locate.AppendContentString[Position1D](), false)
 
     // Compute count of histogram elements.
     val mcount = mhist
@@ -100,7 +100,7 @@ object MutualInformation {
     val jhist = data
       .pairwise(Over(Second), Upper,
         Concatenate(Locate.PrependPairwiseSelectedStringToRemainder[Position2D](Over(Second), "%s,%s")))
-      .histogram(Along(Second), Locate.AppendContentString[Position1D](), true)
+      .histogram(Along(Second), Locate.AppendContentString[Position1D](), false)
 
     // Compute count of histogram elements.
     val jcount = jhist

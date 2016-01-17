@@ -181,73 +181,73 @@ class TestScaldingHistogram extends TestDistribution {
 
   "A histogram" should "return its first over in 1D" in {
     toPipe(data1)
-      .histogram(Over(First), Locate.AppendContentString[Position1D](), false, Default())
+      .histogram(Over(First), Locate.AppendContentString[Position1D](), true, Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first along in 1D" in {
     toPipe(data1)
-      .histogram(Along(First), Locate.AppendContentString[Position0D](), false, Default(Reducers(12)))
+      .histogram(Along(First), Locate.AppendContentString[Position0D](), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first over in 2D" in {
     toPipe(data2)
-      .histogram(Over(First), Locate.AppendContentString[Position1D](), false, Default())
+      .histogram(Over(First), Locate.AppendContentString[Position1D](), true, Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its first along in 2D" in {
     toPipe(data2)
-      .histogram(Along(First), Locate.AppendContentString[Position1D](), false, Default(Reducers(12)))
+      .histogram(Along(First), Locate.AppendContentString[Position1D](), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second over in 2D" in {
     toPipe(data2)
-      .histogram(Over(Second), Locate.AppendContentString[Position1D](), true, Default())
+      .histogram(Over(Second), Locate.AppendContentString[Position1D](), false, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its second along in 2D" in {
     toPipe(data2)
-      .histogram(Along(Second), Locate.AppendContentString[Position1D](), true, Default(Reducers(12)))
+      .histogram(Along(Second), Locate.AppendContentString[Position1D](), false, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first over in 3D" in {
     toPipe(data3)
-      .histogram(Over(First), Locate.AppendContentString[Position1D](), true, Default())
+      .histogram(Over(First), Locate.AppendContentString[Position1D](), false, Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its first along in 3D" in {
     toPipe(data3)
-      .histogram(Along(First), Locate.AppendContentString[Position2D](), true, Default(Reducers(12)))
+      .histogram(Along(First), Locate.AppendContentString[Position2D](), false, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second over in 3D" in {
     toPipe(data3)
-      .histogram(Over(Second), Locate.AppendContentString[Position1D](), false, Default())
+      .histogram(Over(Second), Locate.AppendContentString[Position1D](), true, Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its second along in 3D" in {
     toPipe(data3)
-      .histogram(Along(Second), Locate.AppendContentString[Position2D](), false, Default(Reducers(12)))
+      .histogram(Along(Second), Locate.AppendContentString[Position2D](), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third over in 3D" in {
     toPipe(data3)
-      .histogram(Over(Third), Locate.AppendContentString[Position1D](), false, Default())
+      .histogram(Over(Third), Locate.AppendContentString[Position1D](), true, Default())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its third along in 3D" in {
     toPipe(data3)
-      .histogram(Along(Third), Locate.AppendContentString[Position2D](), false, Default(Reducers(12)))
+      .histogram(Along(Third), Locate.AppendContentString[Position2D](), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result12
   }
 }
@@ -256,80 +256,80 @@ class TestSparkHistogram extends TestDistribution {
 
   "A histogram" should "return its first over in 1D" in {
     toRDD(data1)
-      .histogram(Over(First), Locate.AppendContentString[Position1D](), false, Default())
+      .histogram(Over(First), Locate.AppendContentString[Position1D](), true, Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first along in 1D" in {
     toRDD(data1)
-      .histogram(Along(First), Locate.AppendContentString[Position0D](), false, Default(Reducers(12)))
+      .histogram(Along(First), Locate.AppendContentString[Position0D](), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first over in 2D" in {
     toRDD(data2)
-      .histogram(Over(First), Locate.AppendContentString[Position1D](), false, Default())
+      .histogram(Over(First), Locate.AppendContentString[Position1D](), true, Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its first along in 2D" in {
     toRDD(data2)
-      .histogram(Along(First), Locate.AppendContentString[Position1D](), false, Default(Reducers(12)))
+      .histogram(Along(First), Locate.AppendContentString[Position1D](), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second over in 2D" in {
     toRDD(data2)
-      .histogram(Over(Second), Locate.AppendContentString[Position1D](), true, Default())
+      .histogram(Over(Second), Locate.AppendContentString[Position1D](), false, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its second along in 2D" in {
     toRDD(data2)
-      .histogram(Along(Second), Locate.AppendContentString[Position1D](), true, Default(Reducers(12)))
+      .histogram(Along(Second), Locate.AppendContentString[Position1D](), false, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first over in 3D" in {
     toRDD(data3)
-      .histogram(Over(First), Locate.AppendContentString[Position1D](), true, Default())
+      .histogram(Over(First), Locate.AppendContentString[Position1D](), false, Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its first along in 3D" in {
     toRDD(data3)
-      .histogram(Along(First), Locate.AppendContentString[Position2D](), true, Default(Reducers(12)))
+      .histogram(Along(First), Locate.AppendContentString[Position2D](), false, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second over in 3D" in {
     toRDD(data3)
-      .histogram(Over(Second), Locate.AppendContentString[Position1D](), false, Default())
+      .histogram(Over(Second), Locate.AppendContentString[Position1D](), true, Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its second along in 3D" in {
     toRDD(data3)
-      .histogram(Along(Second), Locate.AppendContentString[Position2D](), false, Default(Reducers(12)))
+      .histogram(Along(Second), Locate.AppendContentString[Position2D](), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third over in 3D" in {
     toRDD(data3)
-      .histogram(Over(Third), Locate.AppendContentString[Position1D](), false, Default())
+      .histogram(Over(Third), Locate.AppendContentString[Position1D](), true, Default())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return its third along in 3D" in {
     toRDD(data3)
-      .histogram(Along(Third), Locate.AppendContentString[Position2D](), false, Default(Reducers(12)))
+      .histogram(Along(Third), Locate.AppendContentString[Position2D](), true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result12
   }
 }
 
 trait TestQuantile extends TestGrimlock {
 
-  val ext = Map(Position1D(1) -> 1L, Position1D(3) -> 3L)
+  val ext = Map(Position1D(1) -> 1L, Position1D(3) -> 3L, Position1D(8) -> 8L)
 
   val probs = List(0.2, 0.4, 0.6, 0.8)
 
@@ -343,8 +343,27 @@ trait TestQuantile extends TestGrimlock {
     Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 3.14)),
     Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 3.14)))
 
-  val data4 = List(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position1D("bar"), Content(NominalSchema(StringCodex), "abc")),
+  val data4 = List(Cell(Position2D("row1", "col1"), Content(DiscreteSchema(LongCodex), 2)),
+    Cell(Position2D("row2", "col1"), Content(DiscreteSchema(LongCodex), 3)),
+    Cell(Position2D("row3", "col1"), Content(DiscreteSchema(LongCodex), 4)),
+    Cell(Position2D("row4", "col1"), Content(DiscreteSchema(LongCodex), 5)),
+    Cell(Position2D("row5", "col1"), Content(DiscreteSchema(LongCodex), 4)),
+    Cell(Position2D("row6", "col1"), Content(DiscreteSchema(LongCodex), 4)),
+    Cell(Position2D("row7", "col1"), Content(DiscreteSchema(LongCodex), 1)),
+    Cell(Position2D("row8", "col1"), Content(DiscreteSchema(LongCodex), 4)),
+    Cell(Position2D("row1", "col2"), Content(DiscreteSchema(LongCodex), 42)),
+    Cell(Position2D("row2", "col2"), Content(DiscreteSchema(LongCodex), 42)),
+    Cell(Position2D("row3", "col2"), Content(DiscreteSchema(LongCodex), 42)),
+    Cell(Position2D("row4", "col2"), Content(DiscreteSchema(LongCodex), 42)),
+    Cell(Position2D("row5", "col2"), Content(DiscreteSchema(LongCodex), 42)),
+    Cell(Position2D("row6", "col2"), Content(DiscreteSchema(LongCodex), 42)),
+    Cell(Position2D("row7", "col2"), Content(DiscreteSchema(LongCodex), 42)),
+    Cell(Position2D("row8", "col2"), Content(DiscreteSchema(LongCodex), 42)))
+
+  val data5 = data4.map(_.relocate(_.position.permute(List(Second, First))))
+
+  val data6 = List(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("bar"), Content(NominalSchema(StringCodex), "6.28")),
     Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 9.42)))
 
   val result1 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
@@ -391,6 +410,84 @@ trait TestQuantile extends TestGrimlock {
     Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 5.2595)),
     Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 7.3005)),
     Cell(Position1D("quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 9.3415)))
+
+  val result10 = List(Cell(Position2D("col1", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 2.0)),
+    Cell(Position2D("col1", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col1", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col1", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col2", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 42.0)))
+
+  val result11 = List(Cell(Position2D("col1", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 2.0)),
+    Cell(Position2D("col1", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 3.0)),
+    Cell(Position2D("col1", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col1", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col2", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 42.0)))
+
+  val result12 = List(Cell(Position2D("col1", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 1.6)),
+    Cell(Position2D("col1", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 3.2)),
+    Cell(Position2D("col1", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col1", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col2", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 42.0)))
+
+  val result13 = List(Cell(Position2D("col1", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 2.1)),
+    Cell(Position2D("col1", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 3.7)),
+    Cell(Position2D("col1", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col1", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col2", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 42.0)))
+
+  val result14 = List(Cell(Position2D("col1", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 1.8)),
+    Cell(Position2D("col1", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 3.6)),
+    Cell(Position2D("col1", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col1", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 4.2)),
+    Cell(Position2D("col2", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 42.0)))
+
+  val result15 = List(Cell(Position2D("col1", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 2.4)),
+    Cell(Position2D("col1", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 3.8)),
+    Cell(Position2D("col1", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col1", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col2", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 42.0)))
+
+  val result16 = List(Cell(Position2D("col1", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 2.0)),
+    Cell(Position2D("col1", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 3.666667)),
+    Cell(Position2D("col1", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col1", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col2", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 42.0)))
+
+  val result17 = List(Cell(Position2D("col1", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 2.025)),
+    Cell(Position2D("col1", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 3.675)),
+    Cell(Position2D("col1", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col1", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 4.0)),
+    Cell(Position2D("col2", "quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 42.0)),
+    Cell(Position2D("col2", "quantile=0.800000"), Content(ContinuousSchema(DoubleCodex), 42.0)))
+
+  val result18 = List(Some(0), Some(0), Some(0), Some(0))
+
+  val result19 = List(Cell(Position1D("quantile=0.200000"), Content(ContinuousSchema(DoubleCodex), 3.14)),
+    Cell(Position1D("quantile=0.400000"), Content(ContinuousSchema(DoubleCodex), 9.42)),
+    Cell(Position1D("quantile=0.600000"), Content(ContinuousSchema(DoubleCodex), 9.42)))
 }
 
 object TestQuantile {
@@ -405,95 +502,720 @@ class TestScaldingQuantile extends TestQuantile {
   "A quantile" should "return its first along 1 value in 1D" in {
     toPipe(data1)
       .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), true, true, Default())
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
       .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), true, true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
       .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), true, true, Default())
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
       .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), true, true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
       .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), true, true, Default())
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
       .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), true, true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
       .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), true, true, Default())
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
       .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), true, true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result1
 
     toPipe(data1)
       .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](1), ValuePipe(ext), true, true, Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
-  it should "return its first along 3 value in 1D" in {
+  it should "return its first along 3 values in 1D" in {
     toPipe(data2)
       .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
 
     toPipe(data2)
       .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default())
       .toList.sortBy(_.position) shouldBe result2
 
     toPipe(data2)
       .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result3
 
     toPipe(data2)
       .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default())
       .toList.sortBy(_.position) shouldBe result4
 
     toPipe(data2)
       .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result5
 
     toPipe(data2)
       .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default())
       .toList.sortBy(_.position) shouldBe result6
 
     toPipe(data2)
       .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result7
 
     toPipe(data2)
       .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default())
       .toList.sortBy(_.position) shouldBe result8
 
     toPipe(data2)
       .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D],
-        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), Default())
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result9
+  }
+
+  it should "return its first along 3 equal values in 1D" in {
+    toPipe(data3)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result1
+
+    toPipe(data3)
+      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along values in 2D" in {
+    toPipe(data4)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data4)
+      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data4)
+      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data4)
+      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data4)
+      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data4)
+      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data4)
+      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its first over values in 2D" in {
+    toPipe(data5)
+      .quantile(Over(First), probs, Quantile.Type1, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .quantile(Over(First), probs, Quantile.Type2, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .quantile(Over(First), probs, Quantile.Type3, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data5)
+      .quantile(Over(First), probs, Quantile.Type4, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data5)
+      .quantile(Over(First), probs, Quantile.Type5, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data5)
+      .quantile(Over(First), probs, Quantile.Type6, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data5)
+      .quantile(Over(First), probs, Quantile.Type7, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data5)
+      .quantile(Over(First), probs, Quantile.Type8, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data5)
+      .quantile(Over(First), probs, Quantile.Type9, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second along values in 2D" in {
+    toPipe(data5)
+      .quantile(Along(Second), probs, Quantile.Type1, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .quantile(Along(Second), probs, Quantile.Type2, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data5)
+      .quantile(Along(Second), probs, Quantile.Type3, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data5)
+      .quantile(Along(Second), probs, Quantile.Type4, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data5)
+      .quantile(Along(Second), probs, Quantile.Type5, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data5)
+      .quantile(Along(Second), probs, Quantile.Type6, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data5)
+      .quantile(Along(Second), probs, Quantile.Type7, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data5)
+      .quantile(Along(Second), probs, Quantile.Type8, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data5)
+      .quantile(Along(Second), probs, Quantile.Type9, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second over values in 2D" in {
+    toPipe(data4)
+      .quantile(Over(Second), probs, Quantile.Type1, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .quantile(Over(Second), probs, Quantile.Type2, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result10
+
+    toPipe(data4)
+      .quantile(Over(Second), probs, Quantile.Type3, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toPipe(data4)
+      .quantile(Over(Second), probs, Quantile.Type4, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result12
+
+    toPipe(data4)
+      .quantile(Over(Second), probs, Quantile.Type5, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toPipe(data4)
+      .quantile(Over(Second), probs, Quantile.Type6, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result14
+
+    toPipe(data4)
+      .quantile(Over(Second), probs, Quantile.Type7, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toPipe(data4)
+      .quantile(Over(Second), probs, Quantile.Type8, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.sortBy(_.position) shouldBe result16
+
+    toPipe(data4)
+      .quantile(Over(Second), probs, Quantile.Type9, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ValuePipe(ext), true, true, Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return with missing count" in {
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](0), ValuePipe(ext), true, true, Default(Reducers(12)))
+      .toList.map(_.content.value.asDouble.map(_.compare(Double.NaN))) shouldBe result18
+
+    toPipe(data2)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](0), ValuePipe(ext), true, false, Default())
+      .toList.sortBy(_.position) shouldBe List()
+  }
+
+  it should "return with non-numeric data" in {
+    val res1 = toPipe(data6)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), false, true, Default(Reducers(12)))
+      .toList.sortBy(_.position)
+    res1(0) shouldBe result19(0)
+    res1(1) shouldBe result19(1)
+    res1(2) shouldBe result19(2)
+    res1(3).position shouldBe Position1D("quantile=0.800000")
+    res1(3).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+
+    toPipe(data6)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ValuePipe(ext), false, false, Default())
+      .toList.sortBy(_.position) shouldBe result19
+  }
+}
+
+class TestSparkQuantile extends TestQuantile {
+
+  "A quantile" should "return its first along 1 value in 1D" in {
+    toRDD(data1)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data1)
+      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](1), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along 3 values in 1D" in {
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result2
+
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result2
+
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result3
+
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result4
+
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result5
+
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result6
+
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result7
+
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result8
+
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result9
+  }
+
+  it should "return its first along 3 equal values in 1D" in {
+    toRDD(data3)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+
+    toRDD(data3)
+      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result1
+  }
+
+  it should "return its first along values in 2D" in {
+    toRDD(data4)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .quantile(Along(First), probs, Quantile.Type2, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .quantile(Along(First), probs, Quantile.Type3, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data4)
+      .quantile(Along(First), probs, Quantile.Type4, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data4)
+      .quantile(Along(First), probs, Quantile.Type5, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data4)
+      .quantile(Along(First), probs, Quantile.Type6, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data4)
+      .quantile(Along(First), probs, Quantile.Type7, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data4)
+      .quantile(Along(First), probs, Quantile.Type8, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data4)
+      .quantile(Along(First), probs, Quantile.Type9, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its first over values in 2D" in {
+    toRDD(data5)
+      .quantile(Over(First), probs, Quantile.Type1, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .quantile(Over(First), probs, Quantile.Type2, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .quantile(Over(First), probs, Quantile.Type3, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data5)
+      .quantile(Over(First), probs, Quantile.Type4, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data5)
+      .quantile(Over(First), probs, Quantile.Type5, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data5)
+      .quantile(Over(First), probs, Quantile.Type6, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data5)
+      .quantile(Over(First), probs, Quantile.Type7, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data5)
+      .quantile(Over(First), probs, Quantile.Type8, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data5)
+      .quantile(Over(First), probs, Quantile.Type9, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second along values in 2D" in {
+    toRDD(data5)
+      .quantile(Along(Second), probs, Quantile.Type1, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .quantile(Along(Second), probs, Quantile.Type2, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data5)
+      .quantile(Along(Second), probs, Quantile.Type3, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data5)
+      .quantile(Along(Second), probs, Quantile.Type4, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data5)
+      .quantile(Along(Second), probs, Quantile.Type5, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data5)
+      .quantile(Along(Second), probs, Quantile.Type6, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data5)
+      .quantile(Along(Second), probs, Quantile.Type7, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data5)
+      .quantile(Along(Second), probs, Quantile.Type8, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data5)
+      .quantile(Along(Second), probs, Quantile.Type9, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return its second over values in 2D" in {
+    toRDD(data4)
+      .quantile(Over(Second), probs, Quantile.Type1, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .quantile(Over(Second), probs, Quantile.Type2, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result10
+
+    toRDD(data4)
+      .quantile(Over(Second), probs, Quantile.Type3, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result11
+
+    toRDD(data4)
+      .quantile(Over(Second), probs, Quantile.Type4, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result12
+
+    toRDD(data4)
+      .quantile(Over(Second), probs, Quantile.Type5, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result13
+
+    toRDD(data4)
+      .quantile(Over(Second), probs, Quantile.Type6, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result14
+
+    toRDD(data4)
+      .quantile(Over(Second), probs, Quantile.Type7, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result15
+
+    toRDD(data4)
+      .quantile(Over(Second), probs, Quantile.Type8, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result16
+
+    toRDD(data4)
+      .quantile(Over(Second), probs, Quantile.Type9, TestQuantile.name[Position1D],
+        ExtractWithKey[Position2D, Long](8), ext, true, true, Default())
+      .toList.sortBy(_.position) shouldBe result17
+  }
+
+  it should "return with missing count" in {
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](0), ext, true, true, Default())
+      .toList.map(_.content.value.asDouble.map(_.compare(Double.NaN))) shouldBe result18
+
+    toRDD(data2)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](0), ext, true, false, Default())
+      .toList.sortBy(_.position) shouldBe List()
+  }
+
+  it should "return with non-numeric data" in {
+    val res1 = toRDD(data6)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, false, true, Default())
+      .toList.sortBy(_.position)
+    res1(0) shouldBe result19(0)
+    res1(1) shouldBe result19(1)
+    res1(2) shouldBe result19(2)
+    res1(3).position shouldBe Position1D("quantile=0.800000")
+    res1(3).content.value.asDouble.map(_.compare(Double.NaN)) shouldBe Some(0)
+
+    toRDD(data6)
+      .quantile(Along(First), probs, Quantile.Type1, TestQuantile.name[Position0D],
+        ExtractWithKey[Position1D, Long](3), ext, false, false, Default())
+      .toList.sortBy(_.position) shouldBe result19
   }
 }
 
