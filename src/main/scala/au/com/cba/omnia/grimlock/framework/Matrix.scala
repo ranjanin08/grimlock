@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock.framework
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.distribution._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
@@ -302,7 +303,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
    * @return A `U[Cell[Position1D]]`. The position consists of a string value with the name of the dimension
    *         (`dim.toString`). The content has the actual size in it as a discrete variable.
    */
-  def size[D <: Dimension, T <: Tuner](dim: D, distinct: Boolean = false, tuner: T)(implicit ev1: PosDimDep[P, D],
+  def size[T <: Tuner](dim: Dimension, distinct: Boolean = false, tuner: T)(implicit ev1: PosDimDep[P, dim.D],
     ev2: SizeTuners#V[T]): U[Cell[Position1D]]
 
   /** Specifies tuners permitted on a call to `slice`. */
@@ -589,8 +590,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    * @note A melt coordinate is always a string value constructed from the string representation of the `dim` and
    *       `into` coordinates.
    */
-  def melt[D <: Dimension, G <: Dimension](dim: D, into: G, separator: String = ".")(implicit ev1: PosDimDep[P, D],
-    ev2: PosDimDep[P, G], ne: D =!= G): U[Cell[P#L]]
+  def melt(dim: Dimension, into: Dimension, separator: String = ".")(implicit ev1: PosDimDep[P, dim.D],
+    ev2: PosDimDep[P, into.D], ne: dim.D =!= into.D): U[Cell[P#L]]
 
   /** Specifies tuners permitted on a call to `squash` functions. */
   type SquashTuners <: OneOf
@@ -604,7 +605,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squash[D <: Dimension, T <: Tuner](dim: D, squasher: Squashable[P], tuner: T)(implicit ev1: PosDimDep[P, D],
+  def squash[T <: Tuner](dim: Dimension, squasher: Squashable[P], tuner: T)(implicit ev1: PosDimDep[P, dim.D],
     ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
 
   /**
@@ -617,17 +618,170 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squashWithValue[D <: Dimension, W, T <: Tuner](dim: D, squasher: SquashableWithValue[P, W], value: E[W],
-    tuner: T)(implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
+  def squashWithValue[W, T <: Tuner](dim: Dimension, squasher: SquashableWithValue[P, W], value: E[W],
+    tuner: T)(implicit ev1: PosDimDep[P, dim.D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
 }
 
 /** Base trait for methods that reshapes the number of dimension of a matrix. */
 trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePosition] { self: Matrix[P] =>
   type ReshapeTuners <: OneOf
 
-  def reshape[D <: Dimension, Q <: Position, T <: Tuner](dim: D, coordinate: Valueable,
-    locate: Locate.FromCellAndOptionalValue[P, Q], tuner: T)(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[P, Q],
+  def reshape[Q <: Position, T <: Tuner](dim: Dimension, coordinate: Valueable,
+    locate: Locate.FromCellAndOptionalValue[P, Q], tuner: T)(implicit ev1: PosDimDep[P, dim.D], ev2: PosExpDep[P, Q],
       ev3: ClassTag[P#L], ev4: ReshapeTuners#V[T]): U[Cell[Q]]
+}
+
+/** Base trait for 1D specific operations. */
+trait Matrix1D extends Matrix[Position1D] with ApproximateDistribution[Position1D] {
+}
+
+/** Base trait for 2D specific operations. */
+trait Matrix2D extends Matrix[Position2D] with ReduceableMatrix[Position2D] with ReshapeableMatrix[Position2D]
+  with ApproximateDistribution[Position2D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension)(implicit ev1: PosDimDep[Position2D, dim1.D],
+    ev2: PosDimDep[Position2D, dim2.D], ev3: dim1.D =!= dim2.D): U[Cell[Position2D]]
+}
+
+/** Base trait for 3D specific operations. */
+trait Matrix3D extends Matrix[Position3D] with ReduceableMatrix[Position3D] with ReshapeableMatrix[Position3D]
+  with ApproximateDistribution[Position3D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension)(implicit ev1: PosDimDep[Position3D, dim1.D],
+    ev2: PosDimDep[Position3D, dim2.D], ev3: PosDimDep[Position3D, dim3.D],
+      ev4: Distinct3[dim1.D, dim2.D, dim3.D]): U[Cell[Position3D]]
+}
+
+/** Base trait for 4D specific operations. */
+trait Matrix4D extends Matrix[Position4D] with ReduceableMatrix[Position4D] with ReshapeableMatrix[Position4D]
+  with ApproximateDistribution[Position4D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   */
+ def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension)(
+   implicit ev1: PosDimDep[Position4D, dim1.D], ev2: PosDimDep[Position4D, dim2.D],
+     ev3: PosDimDep[Position4D, dim3.D], ev4: PosDimDep[Position4D, dim4.D],
+       ev5: Distinct4[dim1.D, dim2.D, dim3.D, dim4.D]): U[Cell[Position4D]]
+}
+
+/** Base trait for 5D specific operations. */
+trait Matrix5D extends Matrix[Position5D] with ReduceableMatrix[Position5D]
+  with ReshapeableMatrix[Position5D] with ApproximateDistribution[Position5D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   * @param dim5 Dimension to use for the fifth coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension)(
+    implicit ev1: PosDimDep[Position5D, dim1.D], ev2: PosDimDep[Position5D, dim2.D],
+      ev3: PosDimDep[Position5D, dim3.D], ev4: PosDimDep[Position5D, dim4.D], ev5: PosDimDep[Position5D, dim5.D],
+        ev6: Distinct5[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D]): U[Cell[Position5D]]
+}
+
+/** Base trait for 6D specific operations. */
+trait Matrix6D extends Matrix[Position6D] with ReduceableMatrix[Position6D] with ReshapeableMatrix[Position6D]
+  with ApproximateDistribution[Position6D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   * @param dim5 Dimension to use for the fifth coordinate.
+   * @param dim6 Dimension to use for the sixth coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension)(
+    implicit ev1: PosDimDep[Position6D, dim1.D], ev2: PosDimDep[Position6D, dim2.D],
+      ev3: PosDimDep[Position6D, dim3.D], ev4: PosDimDep[Position6D, dim4.D],
+        ev5: PosDimDep[Position6D, dim5.D], ev6: PosDimDep[Position6D, dim6.D],
+          ev7: Distinct6[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D]): U[Cell[Position6D]]
+}
+
+/** Base trait for 7D specific operations. */
+trait Matrix7D extends Matrix[Position7D] with ReduceableMatrix[Position7D] with ReshapeableMatrix[Position7D]
+  with ApproximateDistribution[Position7D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   * @param dim5 Dimension to use for the fifth coordinate.
+   * @param dim6 Dimension to use for the sixth coordinate.
+   * @param dim7 Dimension to use for the seventh coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension,
+    dim7: Dimension)(implicit ev1: PosDimDep[Position7D, dim1.D], ev2: PosDimDep[Position7D, dim2.D],
+      ev3: PosDimDep[Position7D, dim3.D], ev4: PosDimDep[Position7D, dim4.D], ev5: PosDimDep[Position7D, dim5.D],
+        ev6: PosDimDep[Position7D, dim6.D], ev7: PosDimDep[Position7D, dim7.D],
+          ev8: Distinct7[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D]): U[Cell[Position7D]]
+}
+
+/** Base trait for 8D specific operations. */
+trait  Matrix8D extends Matrix[Position8D] with ReduceableMatrix[Position8D] with ReshapeableMatrix[Position8D]
+  with ApproximateDistribution[Position8D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   * @param dim5 Dimension to use for the fifth coordinate.
+   * @param dim6 Dimension to use for the sixth coordinate.
+   * @param dim7 Dimension to use for the seventh coordinate.
+   * @param dim8 Dimension to use for the eighth coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension,
+    dim7: Dimension, dim8: Dimension)(implicit ev1: PosDimDep[Position8D, dim1.D], ev2: PosDimDep[Position8D, dim2.D],
+      ev3: PosDimDep[Position8D, dim3.D], ev4: PosDimDep[Position8D, dim4.D], ev5: PosDimDep[Position8D, dim5.D],
+        ev6: PosDimDep[Position8D, dim6.D], ev7: PosDimDep[Position8D, dim7.D], ev8: PosDimDep[Position8D, dim8.D],
+          ev9: Distinct8[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D]): U[Cell[Position8D]]
+}
+
+/** Base trait for 9D specific operations. */
+trait Matrix9D extends Matrix[Position9D] with ReduceableMatrix[Position9D] with ApproximateDistribution[Position9D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   * @param dim5 Dimension to use for the fifth coordinate.
+   * @param dim6 Dimension to use for the sixth coordinate.
+   * @param dim7 Dimension to use for the seventh coordinate.
+   * @param dim8 Dimension to use for the eighth coordinate.
+   * @param dim9 Dimension to use for the ninth coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension,
+    dim7: Dimension, dim8: Dimension, dim9: Dimension)(implicit ev1: PosDimDep[Position9D, dim1.D],
+      ev2: PosDimDep[Position9D, dim2.D], ev3: PosDimDep[Position9D, dim3.D], ev4: PosDimDep[Position9D, dim4.D],
+        ev5: PosDimDep[Position9D, dim5.D], ev6: PosDimDep[Position9D, dim6.D], ev7: PosDimDep[Position9D, dim7.D],
+          ev8: PosDimDep[Position9D, dim8.D], ev9: PosDimDep[Position9D, dim9.D],
+            ev10: Distinct9[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D, dim9.D]): U[Cell[Position9D]]
 }
 
 /**

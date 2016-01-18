@@ -16,8 +16,8 @@ package au.com.cba.omnia.grimlock.scalding.position
 
 import au.com.cba.omnia.grimlock.framework.{ Default, NoParameters, Tuner }
 import au.com.cba.omnia.grimlock.framework.position.{
-  Positions => BasePositions,
-  PositionDistributable => BasePositionDistributable,
+  Positions => FwPositions,
+  PositionDistributable => FwPositionDistributable,
   _
 }
 import au.com.cba.omnia.grimlock.framework.utility._
@@ -36,7 +36,7 @@ import scala.reflect.ClassTag
  *
  * @param data The `TypedPipe[Position]`.
  */
-class Positions[P <: Position](val data: TypedPipe[P]) extends BasePositions[P] with Persist[P] {
+class Positions[P <: Position](val data: TypedPipe[P]) extends FwPositions[P] with Persist[P] {
   type U[A] = TypedPipe[A]
 
   type NamesTuners = OneOf1[Default[NoParameters.type]]
@@ -62,20 +62,20 @@ object Positions {
 /** Scalding companion object for the `PositionDistributable` type class. */
 object PositionDistributable {
   /** Converts a `TypedPipe[Position]` to a `TypedPipe[Position]`; that is, it's a pass through. */
-  implicit def TPP2TPPD[P <: Position]: BasePositionDistributable[TypedPipe[P], P, TypedPipe] = {
-    new BasePositionDistributable[TypedPipe[P], P, TypedPipe] { def convert(t: TypedPipe[P]): TypedPipe[P] = t }
+  implicit def TPP2TPPD[P <: Position]: FwPositionDistributable[TypedPipe[P], P, TypedPipe] = {
+    new FwPositionDistributable[TypedPipe[P], P, TypedPipe] { def convert(t: TypedPipe[P]): TypedPipe[P] = t }
   }
 
   /** Converts a `List[Positionable]` to a `TypedPipe[Position]`. */
-  implicit def LP2TPPD[T <% Positionable[P], P <: Position]: BasePositionDistributable[List[T], P, TypedPipe] = {
-    new BasePositionDistributable[List[T], P, TypedPipe] {
+  implicit def LP2TPPD[T <% Positionable[P], P <: Position]: FwPositionDistributable[List[T], P, TypedPipe] = {
+    new FwPositionDistributable[List[T], P, TypedPipe] {
       def convert(t: List[T]): TypedPipe[P] = IterablePipe(t.map { case p => p() })
     }
   }
 
   /** Converts a `Positionable` to a `TypedPipe[Position]`. */
-  implicit def P2TPPD[T <% Positionable[P], P <: Position]: BasePositionDistributable[T, P, TypedPipe] = {
-    new BasePositionDistributable[T, P, TypedPipe] {
+  implicit def P2TPPD[T <% Positionable[P], P <: Position]: FwPositionDistributable[T, P, TypedPipe] = {
+    new FwPositionDistributable[T, P, TypedPipe] {
       def convert(t: T): TypedPipe[P] = IterablePipe(List(t()))
     }
   }

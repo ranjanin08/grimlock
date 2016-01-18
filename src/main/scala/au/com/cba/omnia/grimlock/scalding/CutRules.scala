@@ -16,12 +16,12 @@ package au.com.cba.omnia.grimlock.scalding.transform
 
 import au.com.cba.omnia.grimlock.framework.position._
 
-import au.com.cba.omnia.grimlock.library.transform.{ CutRules => BaseCutRules }
+import au.com.cba.omnia.grimlock.library.transform.{ CutRules => FwCutRules }
 
 import com.twitter.scalding.typed.{ LiteralValue, ValuePipe }
 
 /** Implement cut rules using Scalding. */
-object CutRules extends BaseCutRules {
+object CutRules extends FwCutRules {
   type E[A] = ValuePipe[A]
 
   def fixed(ext: ValuePipe[Stats], min: Positionable[Position1D], max: Positionable[Position1D],

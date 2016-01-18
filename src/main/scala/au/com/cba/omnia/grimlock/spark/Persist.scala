@@ -14,12 +14,12 @@
 
 package au.com.cba.omnia.grimlock.spark
 
-import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist }
+import au.com.cba.omnia.grimlock.framework.{ Persist => FwPersist }
 
 import org.apache.spark.rdd.RDD
 
 /** Trait for peristing a Spark `RDD`. */
-trait Persist[T] extends BasePersist[T] with java.io.Serializable {
+trait Persist[T] extends FwPersist[T] with java.io.Serializable {
   /** The data to persist. */
   val data: RDD[T]
 

@@ -16,10 +16,10 @@ package au.com.cba.omnia.grimlock.spark.transform
 
 import au.com.cba.omnia.grimlock.framework.position._
 
-import au.com.cba.omnia.grimlock.library.transform.{ CutRules => BaseCutRules }
+import au.com.cba.omnia.grimlock.library.transform.{ CutRules => FwCutRules }
 
 /** Implement cut rules for Spark. */
-object CutRules extends BaseCutRules {
+object CutRules extends FwCutRules {
   type E[A] = A
 
   def fixed(ext: Stats, min: Positionable[Position1D], max: Positionable[Position1D],

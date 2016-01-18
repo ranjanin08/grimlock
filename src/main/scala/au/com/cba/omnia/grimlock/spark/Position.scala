@@ -16,8 +16,8 @@ package au.com.cba.omnia.grimlock.spark.position
 
 import au.com.cba.omnia.grimlock.framework.{ Default, NoParameters, Reducers, Tuner }
 import au.com.cba.omnia.grimlock.framework.position.{
-  Positions => BasePositions,
-  PositionDistributable => BasePositionDistributable,
+  Positions => FwPositions,
+  PositionDistributable => FwPositionDistributable,
   _
 }
 import au.com.cba.omnia.grimlock.framework.utility._
@@ -35,7 +35,7 @@ import scala.reflect.ClassTag
  *
  * @param data The `RDD[Position]`.
  */
-class Positions[P <: Position](val data: RDD[P]) extends BasePositions[P] with Persist[P] {
+class Positions[P <: Position](val data: RDD[P]) extends FwPositions[P] with Persist[P] {
   type U[A] = RDD[A]
 
   import SparkImplicits._
@@ -62,22 +62,22 @@ object Positions {
 /** Spark Companion object for the `PositionDistributable` type class. */
 object PositionDistributable {
   /** Converts a `RDD[Position]` to a `RDD[Position]`; that is, it's a pass through. */
-  implicit def RDDP2RDDPD[P <: Position]: BasePositionDistributable[RDD[P], P, RDD] = {
-    new BasePositionDistributable[RDD[P], P, RDD] { def convert(t: RDD[P]): RDD[P] = t }
+  implicit def RDDP2RDDPD[P <: Position]: FwPositionDistributable[RDD[P], P, RDD] = {
+    new FwPositionDistributable[RDD[P], P, RDD] { def convert(t: RDD[P]): RDD[P] = t }
   }
 
   /** Converts a `List[Positionable]` to a `RDD[Position]`. */
   implicit def LP2RDDPD[T <% Positionable[P], P <: Position](implicit sc: SparkContext,
-    ct: ClassTag[P]): BasePositionDistributable[List[T], P, RDD] = {
-    new BasePositionDistributable[List[T], P, RDD] {
+    ct: ClassTag[P]): FwPositionDistributable[List[T], P, RDD] = {
+    new FwPositionDistributable[List[T], P, RDD] {
       def convert(t: List[T]): RDD[P] = sc.parallelize(t.map { case p => p() })
     }
   }
 
   /** Converts a `Positionable` to a `RDD[Position]`. */
   implicit def P2RDDPD[T <% Positionable[P], P <: Position](implicit sc: SparkContext,
-    ct: ClassTag[P]): BasePositionDistributable[T, P, RDD] = {
-    new BasePositionDistributable[T, P, RDD] { def convert(t: T): RDD[P] = sc.parallelize(List(t())) }
+    ct: ClassTag[P]): FwPositionDistributable[T, P, RDD] = {
+    new FwPositionDistributable[T, P, RDD] { def convert(t: T): RDD[P] = sc.parallelize(List(t())) }
   }
 }
 

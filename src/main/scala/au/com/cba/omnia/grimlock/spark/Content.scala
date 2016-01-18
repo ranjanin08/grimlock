@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.spark.content
 
-import au.com.cba.omnia.grimlock.framework.content.{ Contents => BaseContents, _ }
+import au.com.cba.omnia.grimlock.framework.content.{ Contents => FwContents, _ }
 
 import au.com.cba.omnia.grimlock.spark._
 
@@ -25,7 +25,7 @@ import org.apache.spark.rdd.RDD
  *
  * @param data The `RDD[Content]`.
  */
-class Contents(val data: RDD[Content]) extends BaseContents with Persist[Content] {
+class Contents(val data: RDD[Content]) extends FwContents with Persist[Content] {
   type U[A] = RDD[A]
 
   def saveAsText(file: String, writer: TextWriter = Content.toString()): U[Content] = saveText(file, writer)

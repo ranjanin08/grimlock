@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.scalding.content
 
-import au.com.cba.omnia.grimlock.framework.content.{ Contents => BaseContents, _ }
+import au.com.cba.omnia.grimlock.framework.content.{ Contents => FwContents, _ }
 
 import au.com.cba.omnia.grimlock.scalding._
 
@@ -27,7 +27,7 @@ import com.twitter.scalding.typed.TypedPipe
  *
  * @param data The `TypedPipe[Content]`.
  */
-class Contents(val data: TypedPipe[Content]) extends BaseContents with Persist[Content] {
+class Contents(val data: TypedPipe[Content]) extends FwContents with Persist[Content] {
   type U[A] = TypedPipe[A]
 
   def saveAsText(file: String, writer: TextWriter = Content.toString())(implicit flow: FlowDef,

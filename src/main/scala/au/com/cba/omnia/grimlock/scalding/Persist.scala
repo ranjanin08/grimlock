@@ -14,14 +14,14 @@
 
 package au.com.cba.omnia.grimlock.scalding
 
-import au.com.cba.omnia.grimlock.framework.{ Persist => BasePersist }
+import au.com.cba.omnia.grimlock.framework.{ Persist => FwPersist }
 
 import cascading.flow.FlowDef
 import com.twitter.scalding.{ Mode, TextLine }
 import com.twitter.scalding.typed.{ TypedPipe, TypedSink }
 
 /** Trait for peristing a Scalding `TypedPipe`. */
-trait Persist[T] extends BasePersist[T] {
+trait Persist[T] extends FwPersist[T] {
   /** The data to persist. */
   val data: TypedPipe[T]
 

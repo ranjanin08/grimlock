@@ -15,7 +15,7 @@
 package au.com.cba.omnia.grimlock.scalding.partition
 
 import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner, Sequence2 }
-import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => BasePartitions }
+import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => FwPartitions }
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
@@ -32,7 +32,7 @@ import scala.reflect.ClassTag
  *
  * @param data The `TypedPipe[(I, Cell[P])]`.
  */
-class Partitions[P <: Position, I: Ordering](val data: TypedPipe[(I, Cell[P])]) extends BasePartitions[P, I]
+class Partitions[P <: Position, I: Ordering](val data: TypedPipe[(I, Cell[P])]) extends FwPartitions[P, I]
   with Persist[(I, Cell[P])] {
   type U[A] = TypedPipe[A]
 
