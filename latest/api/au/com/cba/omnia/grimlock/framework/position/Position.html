@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for dealing with positions.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/framework/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for dealing with positions.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
@@ -482,6 +482,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position#toOption" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="toOption():Option[Position.this.type]"></a>
+      <a id="toOption():Option[Position.this.type]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toOption</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a>.this.type]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.Position@toOption():Option[Position.this.type]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Return this position as an option.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.Position#toShortString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toShortString(separator:String):String"></a>
       <a id="toShortString(String):String"></a>
@@ -502,7 +519,7 @@
 </p></div><dl class="paramcmts block"><dt class="param">separator</dt><dd class="cmt"><p>The separator to use between the coordinates.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Short string representation.
 </p></dd></dl></div>
-    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
       <h4 class="signature">
@@ -518,25 +535,25 @@
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> → AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.Position#update" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="update[T](dim:au.com.cba.omnia.grimlock.framework.position.Dimension,t:T)(implicitev:au.com.cba.omnia.grimlock.framework.encoding.Valueable[T]):Position.this.type"></a>
-      <a id="update[T](Dimension,T)(Valueable[T]):Position.this.type"></a>
+      <a id="update(dim:au.com.cba.omnia.grimlock.framework.position.Dimension,value:au.com.cba.omnia.grimlock.framework.encoding.Valueable):Position.this.type"></a>
+      <a id="update(Dimension,Valueable):Position.this.type"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">update</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="dim">dim: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position.update.T">T</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position.update.T">T</span>]</span>)</span><span class="result">: <a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a>.this.type</span>
+        <span class="name">update</span><span class="params">(<span name="dim">dim: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>, <span name="value">value: <a href="../encoding/Valueable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Valueable">Valueable</a></span>)</span><span class="result">: <a href="" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a>.this.type</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.Position@update[T](dim:au.com.cba.omnia.grimlock.framework.position.Dimension,t:T)(implicitev:au.com.cba.omnia.grimlock.framework.encoding.Valueable[T]):Position.this.type" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.Position@update(dim:au.com.cba.omnia.grimlock.framework.position.Dimension,value:au.com.cba.omnia.grimlock.framework.encoding.Valueable):Position.this.type" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Update the coordinate at <code>dim</code> with <code>t</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Update the coordinate at <code>dim</code> with <code>t</code>.
-</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to set.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The coordinate to set.
+</p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to set.</p></dd><dt class="param">value</dt><dd class="cmt"><p>The coordinate to set.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A position of the same size as <code>this</code> but with <code>t</code> set at index <code>dim</code>.
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">

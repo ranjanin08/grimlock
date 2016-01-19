@@ -51,7 +51,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Binary partition based on the hash code of a coordinate.
 </p></div><dl class="paramcmts block"><dt class="param">dim</dt><dd class="cmt"><p>The dimension to partition on.</p></dd><dt class="param">ratio</dt><dd class="cmt"><p>The binary split ratio (relative to <code>base</code>).</p></dd><dt class="param">left</dt><dd class="cmt"><p>The identifier for the left partition.</p></dd><dt class="param">right</dt><dd class="cmt"><p>The identifier for the right partition.</p></dd><dt class="param">base</dt><dd class="cmt"><p>The base for the ratio.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/library/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the ratio. While the position is assigned to the left
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/library/Partitioners.scala" target="_blank">Partitioners.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>The hash code modulo <code>base</code> is used for comparison with the ratio. While the position is assigned to the left
       partition if it is less or equal to the <code>ratio</code> value.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
@@ -226,10 +226,10 @@
     </span>
       <p class="shortcomment cmt">Assign the cell to a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition.
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to assign to a partition.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances of <code>T</code> identify the partitions.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Zero or more partitition identifiers.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit">BinaryHashSplit</a> → <a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitioner#assignWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="assignWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Partitioner.this.V):TraversableOnce[T]"></a>
+      <a id="assignWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Partitioner.this.V):TraversableOnce[I]"></a>
       <a id="assignWithValue(Cell[P],V):TraversableOnce[S]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -240,13 +240,13 @@
         <span class="name">assignWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.V">V</a></span>)</span><span class="result">: <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit.S">S</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@assignWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Partitioner.this.V):TraversableOnce[T]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit@assignWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Partitioner.this.V):TraversableOnce[I]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Assign the cell to a partition using a user supplied value.</p><div class="fullcomment"><div class="comment cmt"><p>Assign the cell to a partition using a user supplied value.
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to assign to a partition.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>The user supplied value.
-</p></dd><dt>returns</dt><dd class="cmt"><p>Optional of either a <code>T</code> or a <code>List[T]</code>, where the instances of <code>T</code> identify the partitions.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Zero or more partitition identifiers.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/partition/Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a> → <a href="../../framework/partition/PartitionerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.PartitionerWithValue">PartitionerWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.partition.BinaryHashSplit#base" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="base:Int"></a>

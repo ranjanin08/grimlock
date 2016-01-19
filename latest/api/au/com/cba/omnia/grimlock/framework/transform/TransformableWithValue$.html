@@ -47,13 +47,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">TransformableWithValue</span>
+        <span class="name">TransformableWithValue</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the <code>TransformableWithValue</code> type class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/framework/Transformer.scala" target="_blank">Transformer.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the <code>TransformableWithValue</code> trait.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Transformer.scala" target="_blank">Transformer.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -71,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue"><span>TransformableWithValue</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue"><span>TransformableWithValue</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -148,211 +148,71 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#CPPMW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CPPMW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;au.com.cba.omnia.grimlock.framework.Cell[P#M],P,P#M,W]"></a>
-      <a id="CPPMW2TWV[P&lt;:PositionwithExpandablePosition,W]:TransformableWithValue[(Cell[P],W)⇒Cell[TransformableWithValue.CPPMW2TWV.P.M],P,TransformableWithValue.CPPMW2TWV.P.M,W]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#CQW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CQW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;au.com.cba.omnia.grimlock.framework.Cell[Q]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[P,Q,W]"></a>
+      <a id="CQW2TWV[P&lt;:Position,Q&lt;:Position,W]((Cell[P],W)⇒Cell[Q]):TransformableWithValue[P,Q,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">CPPMW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="W">W</span>]</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPPMW2TWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPPMW2TWV.W">W</span>) ⇒ <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition.M">TransformableWithValue.CPPMW2TWV.P.M</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPPMW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition.M">TransformableWithValue.CPPMW2TWV.P.M</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPPMW2TWV.W">W</span>]</span>
+        <span class="name">CQW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="t">t: (<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CQW2TWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CQW2TWV.W">W</span>) ⇒ <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CQW2TWV.Q">Q</span>]</span>)</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CQW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CQW2TWV.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CQW2TWV.W">W</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@CPPMW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;au.com.cba.omnia.grimlock.framework.Cell[P#M],P,P#M,W]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P], W) =&gt; Cell[P#M]</code> to a <code>TransformerWithValue[P, P#M] { type V &gt;: W }</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#CPPW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CPPW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;au.com.cba.omnia.grimlock.framework.Cell[P],P,P,W]"></a>
-      <a id="CPPW2TWV[P&lt;:Position,W]:TransformableWithValue[(Cell[P],W)⇒Cell[P],P,P,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">CPPW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPPW2TWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPPW2TWV.W">W</span>) ⇒ <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPPW2TWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPPW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPPW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPPW2TWV.W">W</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@CPPW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;au.com.cba.omnia.grimlock.framework.Cell[P],P,P,W]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P], W) =&gt; Cell[P]</code> to a <code>TransformerWithValue[P, P] { type V &gt;: W }</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#CPQW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CPQW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[P,Q]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;au.com.cba.omnia.grimlock.framework.Cell[Q],P,Q,W]"></a>
-      <a id="CPQW2TWV[P&lt;:Position,Q&lt;:Position,W](PosExpDep[P,Q]):TransformableWithValue[(Cell[P],W)⇒Cell[Q],P,Q,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">CPQW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPQW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPQW2TWV.Q">Q</span>]</span>)</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPQW2TWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPQW2TWV.W">W</span>) ⇒ <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPQW2TWV.Q">Q</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPQW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPQW2TWV.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.CPQW2TWV.W">W</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@CPQW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[P,Q]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;au.com.cba.omnia.grimlock.framework.Cell[Q],P,Q,W]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@CQW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;au.com.cba.omnia.grimlock.framework.Cell[Q]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[P,Q,W]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Converts a <code>(Cell[P], W) =&gt; Cell[Q]</code> to a <code>TransformerWithValue[P, Q] { type V &gt;: W }</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#LCPPMW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LCPPMW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;List[au.com.cba.omnia.grimlock.framework.Cell[P#M]],P,P#M,W]"></a>
-      <a id="LCPPMW2TWV[P&lt;:PositionwithExpandablePosition,W]:TransformableWithValue[(Cell[P],W)⇒List[Cell[TransformableWithValue.LCPPMW2TWV.P.M]],P,TransformableWithValue.LCPPMW2TWV.P.M,W]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#LCQW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LCQW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;List[au.com.cba.omnia.grimlock.framework.Cell[Q]]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[P,Q,W]"></a>
+      <a id="LCQW2TWV[P&lt;:Position,Q&lt;:Position,W]((Cell[P],W)⇒List[Cell[Q]]):TransformableWithValue[P,Q,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">LCPPMW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="W">W</span>]</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPPMW2TWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPPMW2TWV.W">W</span>) ⇒ <span class="extype" name="scala.List">List</span>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition.M">TransformableWithValue.LCPPMW2TWV.P.M</span>]], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPPMW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition.M">TransformableWithValue.LCPPMW2TWV.P.M</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPPMW2TWV.W">W</span>]</span>
+        <span class="name">LCQW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="t">t: (<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCQW2TWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCQW2TWV.W">W</span>) ⇒ <span class="extype" name="scala.List">List</span>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCQW2TWV.Q">Q</span>]]</span>)</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCQW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCQW2TWV.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCQW2TWV.W">W</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@LCPPMW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;List[au.com.cba.omnia.grimlock.framework.Cell[P#M]],P,P#M,W]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P], W) =&gt; List[Cell[P#M]]</code> to a <code>TransformerWithValue[P, P#M] { type V &gt;: W }</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#LCPPW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LCPPW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;List[au.com.cba.omnia.grimlock.framework.Cell[P]],P,P,W]"></a>
-      <a id="LCPPW2TWV[P&lt;:Position,W]:TransformableWithValue[(Cell[P],W)⇒List[Cell[P]],P,P,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LCPPW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPPW2TWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPPW2TWV.W">W</span>) ⇒ <span class="extype" name="scala.List">List</span>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPPW2TWV.P">P</span>]], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPPW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPPW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPPW2TWV.W">W</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@LCPPW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;List[au.com.cba.omnia.grimlock.framework.Cell[P]],P,P,W]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P], W) =&gt; List[Cell[P]]</code> to a <code>TransformerWithValue[P, P] { type V &gt;: W }</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#LCPQW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LCPQW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[P,Q]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;List[au.com.cba.omnia.grimlock.framework.Cell[Q]],P,Q,W]"></a>
-      <a id="LCPQW2TWV[P&lt;:Position,Q&lt;:Position,W](PosExpDep[P,Q]):TransformableWithValue[(Cell[P],W)⇒List[Cell[Q]],P,Q,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LCPQW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPQW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPQW2TWV.Q">Q</span>]</span>)</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPQW2TWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPQW2TWV.W">W</span>) ⇒ <span class="extype" name="scala.List">List</span>[<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPQW2TWV.Q">Q</span>]], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPQW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPQW2TWV.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LCPQW2TWV.W">W</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@LCPQW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[P,Q]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;List[au.com.cba.omnia.grimlock.framework.Cell[Q]],P,Q,W]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@LCQW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;List[au.com.cba.omnia.grimlock.framework.Cell[Q]]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[P,Q,W]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Converts a <code>(Cell[P], W) =&gt; List[Cell[Q]]</code> to a <code>TransformerWithValue[P, Q] { type V &gt;: W }</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#LTPPMW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LTPPMW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,P#M]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[List[T],P,P#M,W]"></a>
-      <a id="LTPPMW2TWV[P&lt;:PositionwithExpandablePosition,T&lt;:TransformerWithValue[P,TransformableWithValue.LTPPMW2TWV.P.M]{typeV&gt;:W},W]:TransformableWithValue[List[T],P,TransformableWithValue.LTPPMW2TWV.P.M,W]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#LTWV2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LTWV2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:List[au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV&gt;:W}]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[P,Q,W]"></a>
+      <a id="LTWV2TWV[P&lt;:Position,Q&lt;:Position,W](List[TransformerWithValue[P,Q]{typeV&gt;:W}]):TransformableWithValue[P,Q,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">LTPPMW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="T">T &lt;: <a href="TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPPMW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition.M">TransformableWithValue.LTPPMW2TWV.P.M</span>] { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPPMW2TWV.T">T</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPPMW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition.M">TransformableWithValue.LTPPMW2TWV.P.M</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPPMW2TWV.W">W</span>]</span>
+        <span class="name">LTWV2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="scala.List">List</span>[<a href="TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTWV2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTWV2TWV.Q">Q</span>] { type V &gt;: W }]</span>)</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTWV2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTWV2TWV.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTWV2TWV.W">W</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@LTPPMW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,P#M]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[List[T],P,P#M,W]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>List[TransformerWithValue[P, P#M] { type V &gt;: W }]</code> to a single
-<code>TransformerWithValue[P, P#M] { type V &gt;: W }</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#LTPPW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LTPPW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,P]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[List[T],P,P,W]"></a>
-      <a id="LTPPW2TWV[P&lt;:Position,T&lt;:TransformerWithValue[P,P]{typeV&gt;:W},W]:TransformableWithValue[List[T],P,P,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LTPPW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPPW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPPW2TWV.P">P</span>] { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPPW2TWV.T">T</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPPW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPPW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPPW2TWV.W">W</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@LTPPW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,P]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[List[T],P,P,W]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>List[TransformerWithValue[P, P] { type V &gt;: W }]</code> to a single
-<code>TransformerWithValue[P, P] { type V &gt;: W }</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#LTPQ2WTWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LTPQ2WTWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV&gt;:W},W](implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[P,Q]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[List[T],P,Q,W]"></a>
-      <a id="LTPQ2WTWV[P&lt;:Position,Q&lt;:Position,T&lt;:TransformerWithValue[P,Q]{typeV&gt;:W},W](PosExpDep[P,Q]):TransformableWithValue[List[T],P,Q,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LTPQ2WTWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPQ2WTWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPQ2WTWV.Q">Q</span>] { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPQ2WTWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPQ2WTWV.Q">Q</span>]</span>)</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPQ2WTWV.T">T</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPQ2WTWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPQ2WTWV.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.LTPQ2WTWV.W">W</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@LTPQ2WTWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV&gt;:W},W](implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[P,Q]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[List[T],P,Q,W]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@LTWV2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:List[au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV&gt;:W}]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[P,Q,W]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Converts a <code>List[TransformerWithValue[P, Q] { type V &gt;: W }]</code> to a single
 <code>TransformerWithValue[P, Q] { type V &gt;: W }</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#TPPMW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TPPMW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,P#M]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[T,P,P#M,W]"></a>
-      <a id="TPPMW2TWV[P&lt;:PositionwithExpandablePosition,T&lt;:TransformerWithValue[P,TransformableWithValue.TPPMW2TWV.P.M]{typeV&gt;:W},W]:TransformableWithValue[T,P,TransformableWithValue.TPPMW2TWV.P.M,W]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#TWV2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TWV2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV&gt;:W}):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[P,Q,W]"></a>
+      <a id="TWV2TWV[P&lt;:Position,Q&lt;:Position,W](TransformerWithValue[P,Q]{typeV&gt;:W}):TransformableWithValue[P,Q,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">TPPMW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="T">T &lt;: <a href="TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPPMW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition.M">TransformableWithValue.TPPMW2TWV.P.M</span>] { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPPMW2TWV.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPPMW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition.M">TransformableWithValue.TPPMW2TWV.P.M</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPPMW2TWV.W">W</span>]</span>
+        <span class="name">TWV2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="t">t: <a href="TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TWV2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TWV2TWV.Q">Q</span>] { type V &gt;: W }</span>)</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TWV2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TWV2TWV.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TWV2TWV.W">W</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@TPPMW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,P#M]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[T,P,P#M,W]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>TransformerWithValue[P, P#M] { type V &gt;: W }</code> to a <code>TransformerWithValue[P, P#M] { type V &gt;: W }</code>;
-that is, it is a pass through.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#TPPW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TPPW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,P]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[T,P,P,W]"></a>
-      <a id="TPPW2TWV[P&lt;:Position,T&lt;:TransformerWithValue[P,P]{typeV&gt;:W},W]:TransformableWithValue[T,P,P,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">TPPW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPPW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPPW2TWV.P">P</span>] { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPPW2TWV.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPPW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPPW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPPW2TWV.W">W</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@TPPW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,P]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[T,P,P,W]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>TransformerWithValue[P, P] { type V &gt;: W }</code> to a <code>TransformerWithValue[P, P] { type V &gt;: W }</code>;
-that is, it is a pass through.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue#TPQW2TWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TPQW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV&gt;:W},W](implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[P,Q]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[T,P,Q,W]"></a>
-      <a id="TPQW2TWV[P&lt;:Position,Q&lt;:Position,T&lt;:TransformerWithValue[P,Q]{typeV&gt;:W},W](PosExpDep[P,Q]):TransformableWithValue[T,P,Q,W]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">TPQW2TWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPQW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPQW2TWV.Q">Q</span>] { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPQW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPQW2TWV.Q">Q</span>]</span>)</span><span class="result">: <a href="TransformableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue">TransformableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPQW2TWV.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPQW2TWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPQW2TWV.Q">Q</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue.TPQW2TWV.W">W</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@TPQW2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV&gt;:W},W](implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[P,Q]):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[T,P,Q,W]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue$@TWV2TWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV&gt;:W}):au.com.cba.omnia.grimlock.framework.transform.TransformableWithValue[P,Q,W]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -669,7 +529,11 @@ that is, it is a pass through.</p>
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>

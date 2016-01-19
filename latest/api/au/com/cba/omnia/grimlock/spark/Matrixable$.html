@@ -49,7 +49,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Spark companion object for the <code>Matrixable</code> type class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/spark/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Spark companion object for the <code>Matrixable</code> trait.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/spark/Matrix.scala" target="_blank">Matrix.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -147,52 +147,52 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Matrixable#C2RDDM" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="C2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](implicitsc:org.apache.spark.SparkContext,implicitct:scala.reflect.ClassTag[P]):au.com.cba.omnia.grimlock.framework.Matrixable[au.com.cba.omnia.grimlock.framework.Cell[P],P,org.apache.spark.rdd.RDD]"></a>
-      <a id="C2RDDM[P&lt;:Position](SparkContext,ClassTag[P]):Matrixable[Cell[P],P,RDD]"></a>
+      <a id="C2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:au.com.cba.omnia.grimlock.framework.Cell[P])(implicitsc:org.apache.spark.SparkContext,implicitct:scala.reflect.ClassTag[P]):au.com.cba.omnia.grimlock.framework.Matrixable[P,org.apache.spark.rdd.RDD]"></a>
+      <a id="C2RDDM[P&lt;:Position](Cell[P])(SparkContext,ClassTag[P]):Matrixable[P,RDD]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">C2RDDM</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>, <span name="ct">ct: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.C2RDDM.P">P</span>]</span>)</span><span class="result">: <a href="../framework/Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrixable">Matrixable</a>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.C2RDDM.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.C2RDDM.P">P</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>]</span>
+        <span class="name">C2RDDM</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="t">t: <a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.C2RDDM.P">P</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>, <span name="ct">ct: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.C2RDDM.P">P</span>]</span>)</span><span class="result">: <a href="../framework/Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrixable">Matrixable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.C2RDDM.P">P</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrixable$@C2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](implicitsc:org.apache.spark.SparkContext,implicitct:scala.reflect.ClassTag[P]):au.com.cba.omnia.grimlock.framework.Matrixable[au.com.cba.omnia.grimlock.framework.Cell[P],P,org.apache.spark.rdd.RDD]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrixable$@C2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:au.com.cba.omnia.grimlock.framework.Cell[P])(implicitsc:org.apache.spark.SparkContext,implicitct:scala.reflect.ClassTag[P]):au.com.cba.omnia.grimlock.framework.Matrixable[P,org.apache.spark.rdd.RDD]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Converts a <code>Cell[P]</code> into a <code>RDD[Cell[P]]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.spark.Matrixable#LC2RDDM" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LC2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](implicitsc:org.apache.spark.SparkContext,implicitct:scala.reflect.ClassTag[P]):au.com.cba.omnia.grimlock.framework.Matrixable[List[au.com.cba.omnia.grimlock.framework.Cell[P]],P,org.apache.spark.rdd.RDD]"></a>
-      <a id="LC2RDDM[P&lt;:Position](SparkContext,ClassTag[P]):Matrixable[List[Cell[P]],P,RDD]"></a>
+      <a id="LC2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:List[au.com.cba.omnia.grimlock.framework.Cell[P]])(implicitsc:org.apache.spark.SparkContext,implicitct:scala.reflect.ClassTag[P]):au.com.cba.omnia.grimlock.framework.Matrixable[P,org.apache.spark.rdd.RDD]"></a>
+      <a id="LC2RDDM[P&lt;:Position](List[Cell[P]])(SparkContext,ClassTag[P]):Matrixable[P,RDD]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">LC2RDDM</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>, <span name="ct">ct: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.LC2RDDM.P">P</span>]</span>)</span><span class="result">: <a href="../framework/Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrixable">Matrixable</a>[<span class="extype" name="scala.List">List</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.LC2RDDM.P">P</span>]], <span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.LC2RDDM.P">P</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>]</span>
+        <span class="name">LC2RDDM</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="t">t: <span class="extype" name="scala.List">List</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.LC2RDDM.P">P</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>, <span name="ct">ct: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.LC2RDDM.P">P</span>]</span>)</span><span class="result">: <a href="../framework/Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrixable">Matrixable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.LC2RDDM.P">P</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrixable$@LC2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](implicitsc:org.apache.spark.SparkContext,implicitct:scala.reflect.ClassTag[P]):au.com.cba.omnia.grimlock.framework.Matrixable[List[au.com.cba.omnia.grimlock.framework.Cell[P]],P,org.apache.spark.rdd.RDD]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrixable$@LC2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:List[au.com.cba.omnia.grimlock.framework.Cell[P]])(implicitsc:org.apache.spark.SparkContext,implicitct:scala.reflect.ClassTag[P]):au.com.cba.omnia.grimlock.framework.Matrixable[P,org.apache.spark.rdd.RDD]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Converts a <code>List[Cell[P]]</code> into a <code>RDD[Cell[P]]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.spark.Matrixable#RDDC2RDDM" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="RDDC2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.Matrixable[org.apache.spark.rdd.RDD[au.com.cba.omnia.grimlock.framework.Cell[P]],P,org.apache.spark.rdd.RDD]"></a>
-      <a id="RDDC2RDDM[P&lt;:Position]:Matrixable[RDD[Cell[P]],P,RDD]"></a>
+      <a id="RDDC2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:org.apache.spark.rdd.RDD[au.com.cba.omnia.grimlock.framework.Cell[P]]):au.com.cba.omnia.grimlock.framework.Matrixable[P,org.apache.spark.rdd.RDD]"></a>
+      <a id="RDDC2RDDM[P&lt;:Position](RDD[Cell[P]]):Matrixable[P,RDD]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">RDDC2RDDM</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="../framework/Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrixable">Matrixable</a>[<span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.RDDC2RDDM.P">P</span>]], <span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.RDDC2RDDM.P">P</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>]</span>
+        <span class="name">RDDC2RDDM</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="t">t: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.RDDC2RDDM.P">P</span>]]</span>)</span><span class="result">: <a href="../framework/Matrixable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrixable">Matrixable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Matrixable.RDDC2RDDM.P">P</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrixable$@RDDC2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.Matrixable[org.apache.spark.rdd.RDD[au.com.cba.omnia.grimlock.framework.Cell[P]],P,org.apache.spark.rdd.RDD]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Matrixable$@RDDC2RDDM[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](t:org.apache.spark.rdd.RDD[au.com.cba.omnia.grimlock.framework.Cell[P]]):au.com.cba.omnia.grimlock.framework.Matrixable[P,org.apache.spark.rdd.RDD]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>

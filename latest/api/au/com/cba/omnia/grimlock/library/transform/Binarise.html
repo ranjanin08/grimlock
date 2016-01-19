@@ -28,12 +28,10 @@
         </head>
         <body class="type">
       <div id="definition">
-        <a href="Binarise$.html" title="See companion object"><img src="../../../../../../../lib/class_to_object_big.png" /></a>
+        <img src="../../../../../../../lib/class_big.png" />
         <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.library">library</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.transform">transform</a></p>
-        <h1><a href="Binarise$.html" title="See companion object">Binarise</a></h1><h3><span class="morelinks"><div>
-            Related Docs:
-            <a href="Binarise$.html" title="See companion object">object Binarise</a>
-            | <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.transform">package transform</a>
+        <h1>Binarise</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.library.transform">package transform</a>
           </div></span></h3><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
@@ -47,13 +45,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Binarise</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="presenter">presenter: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span></span>)</span><span class="result"> extends <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">Binarise</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <a href="../../framework/Locate$.html#FromCell[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCell">FromCell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>)</span><span class="result"> extends <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Binarise categorical variables.
-</p></div><dl class="paramcmts block"><dt class="param">presenter</dt><dd class="cmt"><p>Function that returns the updated position.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/library/Transformers.scala" target="_blank">Transformers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Binarisation is only applied to categorical variables.
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>Function that returns the updated position.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/library/Transformers.scala" target="_blank">Transformers.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>Binarisation is only applied to categorical variables.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
@@ -95,7 +93,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.library.transform.Binarise#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(presenter:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;P):au.com.cba.omnia.grimlock.library.transform.Binarise[P]"></a>
+      <a id="&lt;init&gt;(pos:au.com.cba.omnia.grimlock.framework.Locate.FromCell[P,P]):au.com.cba.omnia.grimlock.library.transform.Binarise[P]"></a>
       <a id="&lt;init&gt;:Binarise[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -103,14 +101,14 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Binarise</span><span class="params">(<span name="presenter">presenter: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span></span>)</span>
+        <span class="name">Binarise</span><span class="params">(<span name="pos">pos: <a href="../../framework/Locate$.html#FromCell[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCell">FromCell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@&lt;init&gt;(presenter:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;P):au.com.cba.omnia.grimlock.library.transform.Binarise[P]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@&lt;init&gt;(pos:au.com.cba.omnia.grimlock.framework.Locate.FromCell[P,P]):au.com.cba.omnia.grimlock.library.transform.Binarise[P]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">presenter</dt><dd class="cmt"><p>Function that returns the updated position.
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>Function that returns the updated position.
 </p></dd></dl></div>
     </li></ol>
             </div>
@@ -212,85 +210,85 @@
 </p></div><dl class="paramcmts block"><dt class="param">that</dt><dd class="cmt"><p>The transformation to perform after <code>this</code>.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then <code>that</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.Transformer#andThenExpand" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenExpand[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[P],au.com.cba.omnia.grimlock.framework.Cell[Q])=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.transform.Transformer[P,R]"></a>
-      <a id="andThenExpand[R&lt;:Position]((Cell[P],Cell[P])⇒R)(PosExpDep[P,R]):Transformer[P,R]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.transform.Transformer#andThenMutate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenMutate(mutate:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.transform.Transformer[P,Q]"></a>
+      <a id="andThenMutate((Cell[P])⇒Content):Transformer[P,P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenExpand</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer.andThenExpand.R">R</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer.andThenExpand.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer.andThenExpand.R">R</span>]</span>
+        <span class="name">andThenMutate</span><span class="params">(<span name="mutate">mutate: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@andThenExpand[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[P],au.com.cba.omnia.grimlock.framework.Cell[Q])=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.transform.Transformer[P,R]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@andThenMutate(mutate:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.transform.Transformer[P,Q]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for transforming and then expanding dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for transforming and then expanding dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">expand</dt><dd class="cmt"><p>The expansion to apply after the transformation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then expands the resulting dimensions.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue#andThenExpandWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenExpandWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[P],au.com.cba.omnia.grimlock.framework.Cell[Q],TransformerWithValue.this.V)=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,R]{typeV=TransformerWithValue.this.V}"></a>
-      <a id="andThenExpandWithValue[R&lt;:Position]((Cell[P],Cell[P],V)⇒R)(PosExpDep[P,R]):TransformerWithValue[P,R]{typeV=Binarise.this.V}"></a>
+      <p class="shortcomment cmt">Operator for transforming and then updating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for transforming and then updating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">mutate</dt><dd class="cmt"><p>The mutation to apply after the transformation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then updates the resulting contents.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a> → <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue#andThenMutateWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenMutateWithValue(mutate:(au.com.cba.omnia.grimlock.framework.Cell[Q],TransformerWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV=TransformerWithValue.this.V}"></a>
+      <a id="andThenMutateWithValue((Cell[P],V)⇒Content):TransformerWithValue[P,P]{typeV=Binarise.this.V}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenExpandWithValue</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.Binarise.V">V</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue.andThenExpandWithValue.R">R</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue.andThenExpandWithValue.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue.andThenExpandWithValue.R">R</span>] { type V = Binarise.this.V }</span>
+        <span class="name">andThenMutateWithValue</span><span class="params">(<span name="mutate">mutate: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.Binarise.V">V</a>) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>] { type V = Binarise.this.V }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@andThenExpandWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[P],au.com.cba.omnia.grimlock.framework.Cell[Q],TransformerWithValue.this.V)=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,R]{typeV=TransformerWithValue.this.V}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@andThenMutateWithValue(mutate:(au.com.cba.omnia.grimlock.framework.Cell[Q],TransformerWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV=TransformerWithValue.this.V}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for transforming and then expanding dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for transforming and then expanding dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">expand</dt><dd class="cmt"><p>The expansion to apply after the transformation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then expands the resulting dimensions.
+      <p class="shortcomment cmt">Operator for transforming and then updating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for transforming and then updating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">mutate</dt><dd class="cmt"><p>The mutation to apply after the transformation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then updates the resulting contents.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.Transformer#andThenRename" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenRename(rename:(au.com.cba.omnia.grimlock.framework.Cell[P],au.com.cba.omnia.grimlock.framework.Cell[Q])=&gt;Q):au.com.cba.omnia.grimlock.framework.transform.Transformer[P,Q]"></a>
-      <a id="andThenRename((Cell[P],Cell[P])⇒P):Transformer[P,P]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.transform.Transformer#andThenRelocate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenRelocate[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCell[Q,R])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.transform.Transformer[P,R]"></a>
+      <a id="andThenRelocate[R&lt;:Position](FromCell[P,R])(PosIncDep[P,R]):Transformer[P,R]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenRename</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span></span>)</span><span class="result">: <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>
+        <span class="name">andThenRelocate</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="locate">locate: <a href="../../framework/Locate$.html#FromCell[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCell">FromCell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer.andThenRelocate.R">R</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosIncDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosIncDep">PosIncDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer.andThenRelocate.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer.andThenRelocate.R">R</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@andThenRename(rename:(au.com.cba.omnia.grimlock.framework.Cell[P],au.com.cba.omnia.grimlock.framework.Cell[Q])=&gt;Q):au.com.cba.omnia.grimlock.framework.transform.Transformer[P,Q]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@andThenRelocate[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCell[Q,R])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.transform.Transformer[P,R]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for transforming and then renaming dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for transforming and then renaming dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">rename</dt><dd class="cmt"><p>The rename to apply after the transformation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then renames the resulting dimension(s).
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue#andThenRenameWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenRenameWithValue(rename:(au.com.cba.omnia.grimlock.framework.Cell[P],au.com.cba.omnia.grimlock.framework.Cell[Q],TransformerWithValue.this.V)=&gt;Q):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV=TransformerWithValue.this.V}"></a>
-      <a id="andThenRenameWithValue((Cell[P],Cell[P],V)⇒P):TransformerWithValue[P,P]{typeV=Binarise.this.V}"></a>
+      <p class="shortcomment cmt">Operator for transforming and then relocating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for transforming and then relocating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">locate</dt><dd class="cmt"><p>The relocation to apply after the transformation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then relocates the contents.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a> → <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue#andThenRelocateWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenRelocateWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue[Q,R,TransformerWithValue.this.V])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,R]{typeV=TransformerWithValue.this.V}"></a>
+      <a id="andThenRelocateWithValue[R&lt;:Position](FromCellWithValue[P,R,V])(PosIncDep[P,R]):TransformerWithValue[P,R]{typeV=Binarise.this.V}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenRenameWithValue</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.Binarise.V">V</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span></span>)</span><span class="result">: <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>] { type V = Binarise.this.V }</span>
+        <span class="name">andThenRelocateWithValue</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="locate">locate: <a href="../../framework/Locate$.html#FromCellWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,V]=(au.com.cba.omnia.grimlock.framework.Cell[P],V)=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue">FromCellWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue.andThenRelocateWithValue.R">R</span>, <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.Binarise.V">V</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosIncDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosIncDep">PosIncDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue.andThenRelocateWithValue.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue.andThenRelocateWithValue.R">R</span>] { type V = Binarise.this.V }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@andThenRenameWithValue(rename:(au.com.cba.omnia.grimlock.framework.Cell[P],au.com.cba.omnia.grimlock.framework.Cell[Q],TransformerWithValue.this.V)=&gt;Q):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV=TransformerWithValue.this.V}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@andThenRelocateWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue[Q,R,TransformerWithValue.this.V])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,R]{typeV=TransformerWithValue.this.V}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for transforming and then renaming dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for transforming and then renaming dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">rename</dt><dd class="cmt"><p>The rename to apply after the transformation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then renames the resulting dimension(s).
+      <p class="shortcomment cmt">Operator for transforming and then relocating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for transforming and then relocating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">locate</dt><dd class="cmt"><p>The relocation to apply after the transformation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that runs <code>this</code> and then relocates the contents.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue#andThenWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="andThenWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](that:au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[Q,R]{typeV&gt;:TransformerWithValue.this.V}):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,R]{typeV=TransformerWithValue.this.V}"></a>
@@ -477,6 +475,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.library.transform.Binarise#pos" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="pos:au.com.cba.omnia.grimlock.framework.Locate.FromCell[P,P]"></a>
+      <a id="pos:FromCell[P,P]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">pos</span><span class="result">: <a href="../../framework/Locate$.html#FromCell[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCell">FromCell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@pos:au.com.cba.omnia.grimlock.framework.Locate.FromCell[P,P]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Function that returns the updated position.</p>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.Binarise#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="present(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):TraversableOnce[au.com.cba.omnia.grimlock.framework.Cell[P]]"></a>
       <a id="present(Cell[P]):TraversableOnce[Cell[P]]"></a>
@@ -517,23 +532,6 @@
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>The cell to transform.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>Externally provided data needed for the transformation.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>TraversableOnce</code> of transformed cells.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a> → <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.library.transform.Binarise#presenter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="presenter:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;P"></a>
-      <a id="presenter:(Cell[P])⇒P"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">presenter</span><span class="result">: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@presenter:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;P" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Function that returns the updated position.</p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -620,6 +618,46 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.transform.Transformer#withPrepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withPrepare(prep:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.transform.Transformer[P,Q]"></a>
+      <a id="withPrepare((Cell[P])⇒Content):Transformer[P,P]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withPrepare</span><span class="params">(<span name="prep">prep: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@withPrepare(prep:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.transform.Transformer[P,Q]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Operator for preparing content prior to transforming.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for preparing content prior to transforming.
+</p></div><dl class="paramcmts block"><dt class="param">prep</dt><dd class="cmt"><p>The function to apply prior to transforming.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that prepares the content and then runs <code>this</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a> → <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue#withPrepareWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withPrepareWithValue(prep:(au.com.cba.omnia.grimlock.framework.Cell[P],TransformerWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV=TransformerWithValue.this.V}"></a>
+      <a id="withPrepareWithValue((Cell[P],V)⇒Content):TransformerWithValue[P,P]{typeV=Binarise.this.V}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withPrepareWithValue</span><span class="params">(<span name="prep">prep: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.transform.Binarise.V">V</a>) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>] { type V = Binarise.this.V }</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.Binarise@withPrepareWithValue(prep:(au.com.cba.omnia.grimlock.framework.Cell[P],TransformerWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue[P,Q]{typeV=TransformerWithValue.this.V}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Operator for preparing content prior to transforming.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for preparing content prior to transforming.
+</p></div><dl class="paramcmts block"><dt class="param">prep</dt><dd class="cmt"><p>The function to apply prior to transforming.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A transformer that prepares the content and then runs <code>this</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/transform/TransformerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.TransformerWithValue">TransformerWithValue</a></dd></dl></div>
     </li></ol>
             </div>
 

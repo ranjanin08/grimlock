@@ -28,10 +28,12 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../../../../../lib/class_big.png" />
+        <a href="ExtractWithSelected$.html" title="See companion object"><img src="../../../../../../lib/trait_to_object_big.png" /></a>
         <p id="owner"><a href="../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a></p>
-        <h1>ExtractWithSelected</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">package framework</a>
+        <h1><a href="ExtractWithSelected$.html" title="See companion object">ExtractWithSelected</a></h1><h3><span class="morelinks"><div>
+            Related Docs:
+            <a href="ExtractWithSelected$.html" title="See companion object">object ExtractWithSelected</a>
+            | <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">package framework</a>
           </div></span></h3><span class="permalink">
       <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.ExtractWithSelected" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
@@ -42,19 +44,16 @@
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">ExtractWithSelected</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="position/Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>]</span>, <span name="R">R</span>]</span><span class="params">(<span name="slice">slice: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.S">S</span></span>)</span><span class="result"> extends <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">framework.ExtractWithSelected.S.S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">ExtractWithSelected</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R</span>]</span><span class="result"> extends <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>]</span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Extract from a <code>Map[S#S, R]</code> using the selected position(s) of the cell.
-</p></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>The slice used to extract the selected position(s) from the cell which are used as the key
-             into the map.
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/framework/Extract.scala" target="_blank">Extract.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Extract from a <code>Map[slice.S, R]</code> using the selected position(s) of the cell.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Extract.scala" target="_blank">Extract.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S.S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -72,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected"><span>ExtractWithSelected</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Extract"><span>Extract</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected"><span>ExtractWithSelected</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Extract"><span>Extract</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -90,29 +89,7 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(slice:S):au.com.cba.omnia.grimlock.framework.ExtractWithSelected[P,S,R]"></a>
-      <a id="&lt;init&gt;:ExtractWithSelected[P,S,R]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
-      </span>
-      <span class="symbol">
-        <span class="name">ExtractWithSelected</span><span class="params">(<span name="slice">slice: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.S">S</span></span>)</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.ExtractWithSelected@&lt;init&gt;(slice:S):au.com.cba.omnia.grimlock.framework.ExtractWithSelected[P,S,R]" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">slice</dt><dd class="cmt"><p>The slice used to extract the selected position(s) from the cell which are used as the key
-             into the map.
-</p></dd></dl></div>
-    </li></ol>
-            </div>
+        
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
@@ -125,7 +102,7 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">V</span><span class="result"> = <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S.S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>]</span>
+        <span class="name">V</span><span class="result"> = <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.ExtractWithSelected@V=W" title="Permalink" target="_top">
@@ -136,10 +113,30 @@
     </li></ol>
             </div>
 
-        
+        <div id="values" class="values members">
+              <h3>Abstract Value Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected#slice" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="slice:au.com.cba.omnia.grimlock.framework.position.Slice[P]{typeS=T}"></a>
+      <a id="slice:Slice[P]{typeS=T}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">slice</span><span class="result">: <a href="position/Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>] { type S = T }</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.ExtractWithSelected@slice:au.com.cba.omnia.grimlock.framework.position.Slice[P]{typeS=T}" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The slice used to extract the selected position(s) from the cell which are used as the key into the map.</p>
+    </li></ol>
+            </div>
 
         <div id="values" class="values members">
-              <h3>Value Members</h3>
+              <h3>Concrete Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a>
       <a id="!=(Any):Boolean"></a>
@@ -193,14 +190,14 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.Extract#andThenPresent" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="andThenPresent[S](presenter:R=&gt;Option[S]):au.com.cba.omnia.grimlock.framework.Extract[P,W,S]"></a>
-      <a id="andThenPresent[S]((R)⇒Option[S]):Extract[P,Map[S.S,R],S]"></a>
+      <a id="andThenPresent[S]((R)⇒Option[S]):Extract[P,Map[T,R],S]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenPresent</span><span class="tparams">[<span name="S">S</span>]</span><span class="params">(<span name="presenter">presenter: (<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Extract.andThenPresent.S">S</span>]</span>)</span><span class="result">: <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S.S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.Extract.andThenPresent.S">S</span>]</span>
+        <span class="name">andThenPresent</span><span class="tparams">[<span name="S">S</span>]</span><span class="params">(<span name="presenter">presenter: (<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Extract.andThenPresent.S">S</span>]</span>)</span><span class="result">: <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.Extract.andThenPresent.S">S</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.ExtractWithSelected@andThenPresent[S](presenter:R=&gt;Option[S]):au.com.cba.omnia.grimlock.framework.Extract[P,W,S]" title="Permalink" target="_top">
@@ -268,6 +265,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a>
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.ExtractWithSelected@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected#extract" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="extract(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:ExtractWithSelected.this.V):Option[R]"></a>
       <a id="extract(Cell[P],V):Option[R]"></a>
@@ -324,6 +338,23 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.ExtractWithSelected@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.ExtractWithSelected@hashCode():Int" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -396,24 +427,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected#slice" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="slice:S"></a>
-      <a id="slice:S"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">slice</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.S">S</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.ExtractWithSelected@slice:S" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">The slice used to extract the selected position(s) from the cell which are used as the key
-             into the map.</p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -431,6 +444,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <a id="toString():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.ExtractWithSelected@toString():String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -509,14 +539,8 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
-            </div><div class="parent" name="scala.Product">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a></h3>
-            </div><div class="parent" name="scala.Equals">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.Extract">
-              <h3>Inherited from <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S.S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>]</h3>
+        <div class="parent" name="au.com.cba.omnia.grimlock.framework.Extract">
+              <h3>Inherited from <a href="Extract.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Extract">Extract</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.P">P</span>, <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.ExtractWithSelected.R">R</span>]</h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">

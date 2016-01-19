@@ -47,13 +47,13 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Windowable</span><span class="tparams">[<span name="T">T</span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <span class="name">Windowable</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Type class for transforming a type <code>T</code> to a <code>Window[S, R, Q]</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/framework/Window.scala" target="_blank">Window.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for transforming a type <code>T</code> to a <code>Window[S, R, Q]</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Window.scala" target="_blank">Window.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -71,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.window.Windowable"><span>Windowable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.window.Windowable"><span>Windowable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -95,25 +95,23 @@
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.window.Windowable#convert" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="convert(t:T):au.com.cba.omnia.grimlock.framework.window.Window[S,R,Q]"></a>
-      <a id="convert(T):Window[S,R,Q]"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.window.Windowable#apply" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="apply():au.com.cba.omnia.grimlock.framework.window.Window[P,S,R,Q]"></a>
+      <a id="apply():Window[P,S,R,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">convert</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowable.T">T</span></span>)</span><span class="result">: <a href="Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowable.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowable.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowable.Q">Q</span>]</span>
+        <span class="name">apply</span><span class="params">()</span><span class="result">: <a href="Window.html" class="extype" name="au.com.cba.omnia.grimlock.framework.window.Window">Window</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowable.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowable.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowable.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.window.Windowable.Q">Q</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.window.Windowable@convert(t:T):au.com.cba.omnia.grimlock.framework.window.Window[S,R,Q]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.window.Windowable@apply():au.com.cba.omnia.grimlock.framework.window.Window[P,S,R,Q]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a <code>Window[S, R, Q]</code> for type <code>T</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a <code>Window[S, R, Q]</code> for type <code>T</code>.
-</p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>Object that can be converted to a <code>Window[S, R, Q]</code>.
-</p></dd></dl></div>
+      <p class="shortcomment cmt">Returns a <code>Window[S, R, Q]</code> for this type <code>T</code>.</p>
     </li></ol>
             </div>
 
@@ -481,7 +479,9 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>

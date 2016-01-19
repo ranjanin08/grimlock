@@ -67,39 +67,39 @@
         <div id="types" class="types members">
               <h3>Type Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.sample.Sampleable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Sampleable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef"></a>
-      <a id="Sampleable[T,P&lt;:Position]:Sampleable[T,P]"></a>
+      <a id="Sampleable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
+      <a id="Sampleable[P&lt;:Position]:Sampleable[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Sampleable.html"><span class="name">Sampleable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <a href="Sampleable.html"><span class="name">Sampleable</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.package@Sampleable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.package@Sampleable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>Sampler[P]</code>.</p>
+      <p class="shortcomment cmt">Trait for transforming a type <code>T</code> to a <code>Sampler[P]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="SampleableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef"></a>
-      <a id="SampleableWithValue[T,P&lt;:Position,W]:SampleableWithValue[T,P,W]"></a>
+      <a id="SampleableWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsSerializable"></a>
+      <a id="SampleableWithValue[P&lt;:Position,W]:SampleableWithValue[P,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="SampleableWithValue.html"><span class="name">SampleableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <a href="SampleableWithValue.html"><span class="name">SampleableWithValue</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.package@SampleableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.package@SampleableWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>SamplerWithValue[P]</code>.</p>
+      <p class="shortcomment cmt">Trait for transforming a type <code>T</code> to a <code>SamplerWithValue[P]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.sample.Sampler" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Sampler[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSamplerWithValue[P]"></a>
       <a id="Sampler[P&lt;:Position]:Sampler[P]"></a>
@@ -150,14 +150,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Sampleable$.html"><span class="name">Sampleable</span></a>
+        <a href="Sampleable$.html"><span class="name">Sampleable</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.package@Sampleable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Companion object for the <code>Sampleable</code> type class.</p>
+      <p class="shortcomment cmt">Companion object for the <code>Sampleable</code> trait.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="SampleableWithValue"></a>
       <a id="SampleableWithValue:SampleableWithValue"></a>
@@ -167,14 +167,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="SampleableWithValue$.html"><span class="name">SampleableWithValue</span></a>
+        <a href="SampleableWithValue$.html"><span class="name">SampleableWithValue</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.package@SampleableWithValue" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Companion object for the <code>SampleableWithValue</code> type class.</p>
+      <p class="shortcomment cmt">Companion object for the <code>SampleableWithValue</code> trait.</p>
     </li></ol>
             </div>
 

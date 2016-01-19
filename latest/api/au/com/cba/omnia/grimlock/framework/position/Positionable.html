@@ -47,11 +47,11 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Positionable</span><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+        <span class="name">Positionable</span><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Type class for transforming a type <code>T</code> into a <code>Position</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/framework/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Type class for transforming a type <code>T</code> into a <code>Position</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -95,25 +95,23 @@
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Positionable#convert" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="convert(t:T):P"></a>
-      <a id="convert(T):P"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Positionable#apply" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="apply():P"></a>
+      <a id="apply():P"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">convert</span><span class="params">(<span name="t">t: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable.T">T</span></span>)</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable.P">P</span></span>
+        <span class="name">apply</span><span class="params">()</span><span class="result">: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable.P">P</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.Positionable@convert(t:T):P" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.Positionable@apply():P" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Returns a position for type <code>T</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Returns a position for type <code>T</code>.
-</p></div><dl class="paramcmts block"><dt class="param">t</dt><dd class="cmt"><p>Object that can be converted to a position.
-</p></dd></dl></div>
+      <p class="shortcomment cmt">Returns a position for this type <code>T</code>.</p>
     </li></ol>
             </div>
 

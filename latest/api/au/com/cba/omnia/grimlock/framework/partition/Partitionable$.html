@@ -47,13 +47,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">Partitionable</span>
+        <span class="name">Partitionable</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the <code>Partitionable</code> type class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/framework/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the <code>Partitionable</code> trait.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -71,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable"><span>Partitionable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable"><span>Partitionable</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -148,414 +148,74 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LPPBln2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LPPBln2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Boolean]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,Boolean]"></a>
-      <a id="LPPBln2P[P&lt;:Position,T&lt;:Partitioner[P,Boolean]]:Partitionable[List[T],P,Boolean]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LPPBln2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPBln2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPBln2P.T">T</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPBln2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LPPBln2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Boolean]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,Boolean]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>List[Partitioner[P, Boolean]]</code> to a single <code>Partitioner[P, Boolean]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LPPDbl2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LPPDbl2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Double]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,Double]"></a>
-      <a id="LPPDbl2P[P&lt;:Position,T&lt;:Partitioner[P,Double]]:Partitionable[List[T],P,Double]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LPPDbl2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPDbl2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPDbl2P.T">T</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPDbl2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LPPDbl2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Double]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,Double]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>List[Partitioner[P, Double]]</code> to a single <code>Partitioner[P, Double]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LPPInt2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LPPInt2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Int]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,Int]"></a>
-      <a id="LPPInt2P[P&lt;:Position,T&lt;:Partitioner[P,Int]]:Partitionable[List[T],P,Int]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LPPInt2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPInt2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPInt2P.T">T</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPInt2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LPPInt2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Int]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,Int]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>List[Partitioner[P, Int]]</code> to a single <code>Partitioner[P, Int]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LPPLng2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LPPLng2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Long]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,Long]"></a>
-      <a id="LPPLng2P[P&lt;:Position,T&lt;:Partitioner[P,Long]]:Partitionable[List[T],P,Long]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LPPLng2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPLng2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPLng2P.T">T</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPLng2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LPPLng2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Long]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,Long]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>List[Partitioner[P, Long]]</code> to a single <code>Partitioner[P, Long]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LPPS2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LPPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,S]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,S]"></a>
-      <a id="LPPS2P[P&lt;:Position,S,T&lt;:Partitioner[P,S]]:Partitionable[List[T],P,S]"></a>
+      <a id="LPPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I](t:List[au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,I]]):au.com.cba.omnia.grimlock.framework.partition.Partitionable[P,I]"></a>
+      <a id="LPPS2P[P&lt;:Position,I](List[Partitioner[P,I]]):Partitionable[P,I]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">LPPS2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPS2P.S">S</span>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPS2P.T">T</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPS2P.S">S</span>]</span>
+        <span class="name">LPPS2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="I">I</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="scala.List">List</span>[<a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPS2P.I">I</span>]]</span>)</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPS2P.I">I</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LPPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,S]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,S]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LPPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I](t:List[au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,I]]):au.com.cba.omnia.grimlock.framework.partition.Partitionable[P,I]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Converts a <code>List[Partitioner[P, S]]</code> to a single <code>Partitioner[P, S]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LPPStr2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LPPStr2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,String]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,String]"></a>
-      <a id="LPPStr2P[P&lt;:Position,T&lt;:Partitioner[P,String]]:Partitionable[List[T],P,String]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LPPStr2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPStr2P.P">P</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPStr2P.T">T</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LPPStr2P.P">P</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LPPStr2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,String]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[List[T],P,String]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>List[Partitioner[P, String]]</code> to a single <code>Partitioner[P, String]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LSPBln2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LSPBln2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[Boolean],P,Boolean]"></a>
-      <a id="LSPBln2P[P&lt;:Position]:Partitionable[(Cell[P])⇒List[Boolean],P,Boolean]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LSPBln2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPBln2P.P">P</span>]) ⇒ <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPBln2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LSPBln2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[Boolean],P,Boolean]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; List[Boolean]</code> to a <code>Partitioner[P, Boolean]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LSPDbl2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LSPDbl2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[Double],P,Double]"></a>
-      <a id="LSPDbl2P[P&lt;:Position]:Partitionable[(Cell[P])⇒List[Double],P,Double]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LSPDbl2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPDbl2P.P">P</span>]) ⇒ <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPDbl2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LSPDbl2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[Double],P,Double]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; List[Double]</code> to a <code>Partitioner[P, Double]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LSPInt2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LSPInt2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[Int],P,Int]"></a>
-      <a id="LSPInt2P[P&lt;:Position]:Partitionable[(Cell[P])⇒List[Int],P,Int]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LSPInt2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPInt2P.P">P</span>]) ⇒ <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPInt2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LSPInt2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[Int],P,Int]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; List[Int]</code> to a <code>Partitioner[P, Int]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LSPLng2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LSPLng2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[Long],P,Long]"></a>
-      <a id="LSPLng2P[P&lt;:Position]:Partitionable[(Cell[P])⇒List[Long],P,Long]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LSPLng2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPLng2P.P">P</span>]) ⇒ <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPLng2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LSPLng2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[Long],P,Long]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; List[Long]</code> to a <code>Partitioner[P, Long]</code>.</p>
+      <p class="shortcomment cmt">Converts a <code>List[Partitioner[P, I]]</code> to a single <code>Partitioner[P, I]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LSPS2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LSPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[S],P,S]"></a>
-      <a id="LSPS2P[P&lt;:Position,S]:Partitionable[(Cell[P])⇒List[S],P,S]"></a>
+      <a id="LSPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I](t:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[I]):au.com.cba.omnia.grimlock.framework.partition.Partitionable[P,I]"></a>
+      <a id="LSPS2P[P&lt;:Position,I]((Cell[P])⇒List[I]):Partitionable[P,I]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">LSPS2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPS2P.P">P</span>]) ⇒ <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPS2P.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPS2P.S">S</span>]</span>
+        <span class="name">LSPS2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="I">I</span>]</span><span class="params">(<span name="t">t: (<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPS2P.P">P</span>]) ⇒ <span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPS2P.I">I</span>]</span>)</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPS2P.I">I</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LSPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[S],P,S]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LSPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I](t:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[I]):au.com.cba.omnia.grimlock.framework.partition.Partitionable[P,I]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; List[S]</code> to a <code>Partitioner[P, S]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#LSPStr2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LSPStr2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[String],P,String]"></a>
-      <a id="LSPStr2P[P&lt;:Position]:Partitionable[(Cell[P])⇒List[String],P,String]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">LSPStr2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPStr2P.P">P</span>]) ⇒ <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.LSPStr2P.P">P</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@LSPStr2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;List[String],P,String]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; List[String]</code> to a <code>Partitioner[P, String]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#PPBln2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="PPBln2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Boolean]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,Boolean]"></a>
-      <a id="PPBln2P[P&lt;:Position,T&lt;:Partitioner[P,Boolean]]:Partitionable[T,P,Boolean]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">PPBln2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPBln2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPBln2P.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPBln2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@PPBln2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Boolean]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,Boolean]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>Partitioner[P, Boolean]</code> to a <code>Partitioner[P, Boolean]</code>; that is, it is a pass through.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#PPDbl2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="PPDbl2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Double]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,Double]"></a>
-      <a id="PPDbl2P[P&lt;:Position,T&lt;:Partitioner[P,Double]]:Partitionable[T,P,Double]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">PPDbl2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPDbl2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPDbl2P.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPDbl2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@PPDbl2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Double]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,Double]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>Partitioner[P, Double]</code> to a <code>Partitioner[P, Double]</code>; that is, it is a pass through.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#PPInt2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="PPInt2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Int]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,Int]"></a>
-      <a id="PPInt2P[P&lt;:Position,T&lt;:Partitioner[P,Int]]:Partitionable[T,P,Int]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">PPInt2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPInt2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPInt2P.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPInt2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@PPInt2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Int]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,Int]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>Partitioner[P, Int]</code> to a <code>Partitioner[P, Int]</code>; that is, it is a pass through.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#PPLng2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="PPLng2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Long]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,Long]"></a>
-      <a id="PPLng2P[P&lt;:Position,T&lt;:Partitioner[P,Long]]:Partitionable[T,P,Long]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">PPLng2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPLng2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPLng2P.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPLng2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@PPLng2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,Long]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,Long]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>Partitioner[P, Long]</code> to a <code>Partitioner[P, Long]</code>; that is, it is a pass through.</p>
+      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; List[S]</code> to a <code>Partitioner[P, I]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#PPS2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="PPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,S]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,S]"></a>
-      <a id="PPS2P[P&lt;:Position,S,T&lt;:Partitioner[P,S]]:Partitionable[T,P,S]"></a>
+      <a id="PPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I](t:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,I]):au.com.cba.omnia.grimlock.framework.partition.Partitionable[P,I]"></a>
+      <a id="PPS2P[P&lt;:Position,I](Partitioner[P,I]):Partitionable[P,I]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">PPS2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPS2P.S">S</span>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPS2P.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPS2P.S">S</span>]</span>
+        <span class="name">PPS2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="I">I</span>]</span><span class="params">(<span name="t">t: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPS2P.I">I</span>]</span>)</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPS2P.I">I</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@PPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,S]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,S]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@PPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I](t:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,I]):au.com.cba.omnia.grimlock.framework.partition.Partitionable[P,I]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Converts a <code>Partitioner[P, S]</code> to a <code>Partitioner[P, S]</code>; that is, it is a pass through.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#PPStr2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="PPStr2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,String]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,String]"></a>
-      <a id="PPStr2P[P&lt;:Position,T&lt;:Partitioner[P,String]]:Partitionable[T,P,String]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">PPStr2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="Partitioner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitioner">Partitioner</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPStr2P.P">P</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPStr2P.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.PPStr2P.P">P</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@PPStr2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.partition.Partitioner[P,String]]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[T,P,String]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>Partitioner[P, String]</code> to a <code>Partitioner[P, String]</code>; that is, it is a pass through.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#SPBln2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SPBln2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Boolean,P,Boolean]"></a>
-      <a id="SPBln2P[P&lt;:Position]:Partitionable[(Cell[P])⇒Boolean,P,Boolean]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">SPBln2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPBln2P.P">P</span>]) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPBln2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@SPBln2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Boolean,P,Boolean]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; Boolean</code> to a <code>Partitioner[P, Boolean]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#SPDbl2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SPDbl2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Double,P,Double]"></a>
-      <a id="SPDbl2P[P&lt;:Position]:Partitionable[(Cell[P])⇒Double,P,Double]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">SPDbl2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPDbl2P.P">P</span>]) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPDbl2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@SPDbl2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Double,P,Double]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; Double</code> to a <code>Partitioner[P, Double]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#SPInt2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SPInt2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Int,P,Int]"></a>
-      <a id="SPInt2P[P&lt;:Position]:Partitionable[(Cell[P])⇒Int,P,Int]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">SPInt2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPInt2P.P">P</span>]) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPInt2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@SPInt2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Int,P,Int]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; Int</code> to a <code>Partitioner[P, Int]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#SPLng2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SPLng2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Long,P,Long]"></a>
-      <a id="SPLng2P[P&lt;:Position]:Partitionable[(Cell[P])⇒Long,P,Long]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">SPLng2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPLng2P.P">P</span>]) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPLng2P.P">P</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@SPLng2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Long,P,Long]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; Long</code> to a <code>Partitioner[P, Long]</code>.</p>
+      <p class="shortcomment cmt">Converts a <code>Partitioner[P, I]</code> to a <code>Partitioner[P, I]</code>; that is, it is a pass through.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#SPS2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;S,P,S]"></a>
-      <a id="SPS2P[P&lt;:Position,S]:Partitionable[(Cell[P])⇒S,P,S]"></a>
+      <a id="SPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I](t:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;I):au.com.cba.omnia.grimlock.framework.partition.Partitionable[P,I]"></a>
+      <a id="SPS2P[P&lt;:Position,I]((Cell[P])⇒I):Partitionable[P,I]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">SPS2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S</span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPS2P.P">P</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPS2P.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPS2P.S">S</span>]</span>
+        <span class="name">SPS2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="I">I</span>]</span><span class="params">(<span name="t">t: (<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPS2P.P">P</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPS2P.I">I</span></span>)</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPS2P.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPS2P.I">I</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@SPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,S]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;S,P,S]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@SPS2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I](t:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;I):au.com.cba.omnia.grimlock.framework.partition.Partitionable[P,I]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; S</code> to a <code>Partitioner[P, S]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitionable#SPStr2P" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SPStr2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;String,P,String]"></a>
-      <a id="SPStr2P[P&lt;:Position]:Partitionable[(Cell[P])⇒String,P,String]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">SPStr2P</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result">: <a href="Partitionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable">Partitionable</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPStr2P.P">P</span>]) ⇒ <span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitionable.SPStr2P.P">P</span>, <span class="extype" name="scala.Predef.String">String</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitionable$@SPStr2P[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]:au.com.cba.omnia.grimlock.framework.partition.Partitionable[au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;String,P,String]" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; String</code> to a <code>Partitioner[P, String]</code>.</p>
+      <p class="shortcomment cmt">Converts a <code>(Cell[P]) =&gt; I</code> to a <code>Partitioner[P, S]</code>.</p>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -867,7 +527,11 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>

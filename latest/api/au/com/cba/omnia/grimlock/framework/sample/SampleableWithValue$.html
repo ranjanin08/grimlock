@@ -47,13 +47,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">SampleableWithValue</span>
+        <span class="name">SampleableWithValue</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the <code>SampleableWithValue</code> type class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/framework/Sampler.scala" target="_blank">Sampler.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the <code>SampleableWithValue</code> trait.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Sampler.scala" target="_blank">Sampler.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -71,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue"><span>SampleableWithValue</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue"><span>SampleableWithValue</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -149,52 +149,52 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue#CW2SWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CW2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]:au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;Boolean,P,W]"></a>
-      <a id="CW2SWV[P&lt;:Position,W]:SampleableWithValue[(Cell[P],W)⇒Boolean,P,W]"></a>
+      <a id="CW2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;Boolean):au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[P,W]"></a>
+      <a id="CW2SWV[P&lt;:Position,W]((Cell[P],W)⇒Boolean):SampleableWithValue[P,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">CW2SWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result">: <a href="SampleableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue">SampleableWithValue</a>[(<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.CW2SWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.CW2SWV.W">W</span>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.CW2SWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.CW2SWV.W">W</span>]</span>
+        <span class="name">CW2SWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="t">t: (<a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.CW2SWV.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.CW2SWV.W">W</span>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="SampleableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue">SampleableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.CW2SWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.CW2SWV.W">W</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue$@CW2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]:au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;Boolean,P,W]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue$@CW2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:(au.com.cba.omnia.grimlock.framework.Cell[P],W)=&gt;Boolean):au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[P,W]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Converts a <code>(Cell[P], W) =&gt; Boolean</code> to a <code>SamplerWithValue[P]</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue#LS2SWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LS2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue[P]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[List[T],P,W]"></a>
-      <a id="LS2SWV[P&lt;:Position,T&lt;:SamplerWithValue[P]{typeV&gt;:W},W]:SampleableWithValue[List[T],P,W]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue#LSWV2SWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LSWV2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:List[au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue[P]{typeV&gt;:W}]):au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[P,W]"></a>
+      <a id="LSWV2SWV[P&lt;:Position,W](List[SamplerWithValue[P]{typeV&gt;:W}]):SampleableWithValue[P,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">LS2SWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.LS2SWV.P">P</span>] { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="result">: <a href="SampleableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue">SampleableWithValue</a>[<span class="extype" name="scala.List">List</span>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.LS2SWV.T">T</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.LS2SWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.LS2SWV.W">W</span>]</span>
+        <span class="name">LSWV2SWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="scala.List">List</span>[<a href="SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.LSWV2SWV.P">P</span>] { type V &gt;: W }]</span>)</span><span class="result">: <a href="SampleableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue">SampleableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.LSWV2SWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.LSWV2SWV.W">W</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue$@LS2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue[P]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[List[T],P,W]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue$@LSWV2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:List[au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue[P]{typeV&gt;:W}]):au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[P,W]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Converts a <code>List[SamplerWithValue[P] { type V &gt;: W }]</code> to a single <code>SamplerWithValue[P] { type V &gt;: W }</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue#S2SWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="S2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue[P]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[T,P,W]"></a>
-      <a id="S2SWV[P&lt;:Position,T&lt;:SamplerWithValue[P]{typeV&gt;:W},W]:SampleableWithValue[T,P,W]"></a>
+      <p class="shortcomment cmt">Converts a <code>List[SamplerWithValue[P] { type V &gt;: W }]</code> to a <code>SamplerWithValue[P] { type V &gt;: W }</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue#SWV2SWV" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SWV2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue[P]{typeV&gt;:W}):au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[P,W]"></a>
+      <a id="SWV2SWV[P&lt;:Position,W](SamplerWithValue[P]{typeV&gt;:W}):SampleableWithValue[P,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">S2SWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="T">T &lt;: <a href="SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.S2SWV.P">P</span>] { type V &gt;: W }</span>, <span name="W">W</span>]</span><span class="result">: <a href="SampleableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue">SampleableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.S2SWV.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.S2SWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.S2SWV.W">W</span>]</span>
+        <span class="name">SWV2SWV</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="params">(<span name="t">t: <a href="SamplerWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue">SamplerWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.SWV2SWV.P">P</span>] { type V &gt;: W }</span>)</span><span class="result">: <a href="SampleableWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue">SampleableWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.SWV2SWV.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue.SWV2SWV.W">W</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue$@S2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue[P]{typeV&gt;:W},W]:au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[T,P,W]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue$@SWV2SWV[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W](t:au.com.cba.omnia.grimlock.framework.sample.SamplerWithValue[P]{typeV&gt;:W}):au.com.cba.omnia.grimlock.framework.sample.SampleableWithValue[P,W]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -510,7 +510,11 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>

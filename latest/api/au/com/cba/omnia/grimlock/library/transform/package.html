@@ -115,7 +115,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Binarise.html"><span class="name">Binarise</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="presenter">presenter: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span></span>)</span><span class="result"> extends <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Binarise.html"><span class="name">Binarise</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="pos">pos: <a href="../../framework/Locate$.html#FromCell[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCell">FromCell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>]</span>)</span><span class="result"> extends <a href="../../framework/transform/Transformer.html" class="extype" name="au.com.cba.omnia.grimlock.framework.transform.Transformer">Transformer</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.transform.Binarise.P">P</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.package@Binarise[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsTransformer[P,P]withProductwithSerializable" title="Permalink" target="_top">
@@ -123,7 +123,7 @@
       </a>
     </span>
       <p class="shortcomment cmt">Binarise categorical variables.</p><div class="fullcomment"><div class="comment cmt"><p>Binarise categorical variables.
-</p></div><dl class="paramcmts block"><dt class="param">presenter</dt><dd class="cmt"><p>Function that returns the updated position.
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>Function that returns the updated position.
 </p></dd></dl><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Binarisation is only applied to categorical variables.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.BooleanTf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -206,7 +206,7 @@
 </p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Cut is only applied to numerical variables.
 </p></span></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.transform.CutRules" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="CutRulesextendsAnyRef"></a>
+      <a id="CutRulesextendsRawData"></a>
       <a id="CutRules:CutRules"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -214,10 +214,10 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="CutRules.html"><span class="name">CutRules</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <a href="CutRules.html"><span class="name">CutRules</span></a><span class="result"> extends <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.package@CutRulesextendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.package@CutRulesextendsRawData" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -444,27 +444,7 @@
 
         
 
-        <div id="values" class="values members">
-              <h3>Value Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.library.transform.Binarise" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Binarise"></a>
-      <a id="Binarise:Binarise"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="Binarise$.html"><span class="name">Binarise</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.transform.package@Binarise" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Companion object to <code>Binarise</code> case class.</p>
-    </li></ol>
-            </div>
+        
 
         
 

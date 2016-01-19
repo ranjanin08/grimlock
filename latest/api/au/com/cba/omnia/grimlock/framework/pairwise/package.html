@@ -84,69 +84,69 @@
     </span>
       <p class="shortcomment cmt">Base trait for comparing two positions to determine if pairwise operation is to be applied.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.Operable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Operable[T,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef"></a>
-      <a id="Operable[T,S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position]:Operable[T,S,R,Q]"></a>
+      <a id="Operable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
+      <a id="Operable[P&lt;:Position,Q&lt;:Position]:Operable[P,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Operable.html"><span class="name">Operable</span></a><span class="tparams">[<span name="T">T</span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <a href="Operable.html"><span class="name">Operable</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.pairwise.package@Operable[T,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.pairwise.package@Operable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>Operator[S, R, Q]</code>.</p>
+      <p class="shortcomment cmt">Trait for transforming a type <code>T</code> to an <code>Operator[P, Q]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.OperableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="OperableWithValue[T,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef"></a>
-      <a id="OperableWithValue[T,S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position,W]:OperableWithValue[T,S,R,Q,W]"></a>
+      <a id="OperableWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsSerializable"></a>
+      <a id="OperableWithValue[P&lt;:Position,Q&lt;:Position,W]:OperableWithValue[P,Q,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="OperableWithValue.html"><span class="name">OperableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <a href="OperableWithValue.html"><span class="name">OperableWithValue</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.pairwise.package@OperableWithValue[T,S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.pairwise.package@OperableWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>OperatorWithValue</code>.</p>
+      <p class="shortcomment cmt">Trait for transforming a type <code>T</code> to an <code>OperatorWithValue[P, Q]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.Operator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Operator[S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsOperatorWithValue[S,R,Q]"></a>
-      <a id="Operator[S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position]:Operator[S,R,Q]"></a>
+      <a id="Operator[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsOperatorWithValue[P,Q]"></a>
+      <a id="Operator[P&lt;:Position,Q&lt;:Position]:Operator[P,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Operator.html"><span class="name">Operator</span></a><span class="tparams">[<span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="OperatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.OperatorWithValue">OperatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator.R">R</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator.Q">Q</span>]</span>
+        <a href="Operator.html"><span class="name">Operator</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="OperatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.OperatorWithValue">OperatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.pairwise.Operator.Q">Q</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.pairwise.package@Operator[S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsOperatorWithValue[S,R,Q]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.pairwise.package@Operator[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsOperatorWithValue[P,Q]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Base trait for computing pairwise values.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.OperatorWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="OperatorWithValue[S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
-      <a id="OperatorWithValue[S&lt;:PositionwithExpandablePosition,R&lt;:PositionwithExpandablePosition,Q&lt;:Position]:OperatorWithValue[S,R,Q]"></a>
+      <a id="OperatorWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
+      <a id="OperatorWithValue[P&lt;:Position,Q&lt;:Position]:OperatorWithValue[P,Q]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="OperatorWithValue.html"><span class="name">OperatorWithValue</span></a><span class="tparams">[<span name="S">S &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="R">R &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+        <a href="OperatorWithValue.html"><span class="name">OperatorWithValue</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="Q">Q &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.pairwise.package@OperatorWithValue[S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,R&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.pairwise.package@OperatorWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -235,14 +235,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Operable$.html"><span class="name">Operable</span></a>
+        <a href="Operable$.html"><span class="name">Operable</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.pairwise.package@Operable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Companion object for the <code>Operable</code> type class.</p>
+      <p class="shortcomment cmt">Companion object for the <code>Operable</code> trait.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.OperableWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="OperableWithValue"></a>
       <a id="OperableWithValue:OperableWithValue"></a>
@@ -252,14 +252,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="OperableWithValue$.html"><span class="name">OperableWithValue</span></a>
+        <a href="OperableWithValue$.html"><span class="name">OperableWithValue</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.pairwise.package@OperableWithValue" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Companion object for the <code>OperableWithValue</code> type class.</p>
+      <p class="shortcomment cmt">Companion object for the <code>OperableWithValue</code> trait.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.pairwise.Upper" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="Upper"></a>
       <a id="Upper:Upper"></a>

@@ -66,27 +66,26 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Along" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Along[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapAlongPosition,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsSlice[P]withMapable[P]withProductwithSerializable"></a>
-      <a id="Along[P&lt;:PositionwithReduceablePositionwithMapAlongPosition,D&lt;:Dimension]:Along[P,D]"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Along" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="Along[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapAlongPosition]extendsSlice[P]withMapable[P]"></a>
+      <a id="Along[P&lt;:PositionwithReduceablePositionwithMapAlongPosition]:Along[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Along.html"><span class="name">Along</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>, <span name="D">D &lt;: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="dimension">dimension: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.D">D</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.D">D</span>]</span>)</span><span class="result"> extends <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.P">P</span>] with <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.P">P</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Along.html"><span class="name">Along</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>]</span><span class="result"> extends <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.P">P</span>] with <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Along.P">P</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Along[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapAlongPosition,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsSlice[P]withMapable[P]withProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Along[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapAlongPosition]extendsSlice[P]withMapable[P]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Indicates that the selected coordinates are all except the one indexed by <code>dimension</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Indicates that the selected coordinates are all except the one indexed by <code>dimension</code>. In other words, when a
 groupBy is performed, it is performed using a <code>Position</code> (type <code>ReduceablePosition.L</code>) consisting of all coordinates
 except that at index <code>dimension</code>.
-</p></div><dl class="paramcmts block"><dt class="param">dimension</dt><dd class="cmt"><p>Dimension of the coordinate to exclude.
-</p></dd></dl></div>
+</p></div></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.Dimension" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="DimensionextendsAnyRef"></a>
       <a id="Dimension:Dimension"></a>
@@ -189,26 +188,25 @@ except that at index <code>dimension</code>.
       </a>
     </span>
       <p class="shortcomment cmt">Base trait for converting a position to a <code>Map</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Over" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Over[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapOverPosition,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsSlice[P]withMapable[P]withProductwithSerializable"></a>
-      <a id="Over[P&lt;:PositionwithReduceablePositionwithMapOverPosition,D&lt;:Dimension]:Over[P,D]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Over" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="Over[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapOverPosition]extendsSlice[P]withMapable[P]"></a>
+      <a id="Over[P&lt;:PositionwithReduceablePositionwithMapOverPosition]:Over[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Over.html"><span class="name">Over</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a></span>, <span name="D">D &lt;: <a href="Dimension.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Dimension">Dimension</a></span>]</span><span class="params">(<span name="dimension">dimension: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.D">D</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="PosDimDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosDimDep">PosDimDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.D">D</span>]</span>)</span><span class="result"> extends <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.P">P</span>] with <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.P">P</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Over.html"><span class="name">Over</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a></span>]</span><span class="result"> extends <a href="Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.P">P</span>] with <a href="Mapable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Mapable">Mapable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Over.P">P</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Over[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapOverPosition,D&lt;:au.com.cba.omnia.grimlock.framework.position.Dimension]extendsSlice[P]withMapable[P]withProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Over[P&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ReduceablePositionwithau.com.cba.omnia.grimlock.framework.position.MapOverPosition]extendsSlice[P]withMapable[P]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Indicates that the selected coordinate is indexed by <code>dimension</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Indicates that the selected coordinate is indexed by <code>dimension</code>. In other words, when a groupBy is performed, it is
 performed using a <code>Position1D</code> consisting of the coordinate at index <code>dimension</code>.
-</p></div><dl class="paramcmts block"><dt class="param">dimension</dt><dd class="cmt"><p>Dimension of the selected coordinate.
-</p></dd></dl></div>
+</p></div></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PermutablePositionextendsAnyRef"></a>
       <a id="PermutablePosition:PermutablePosition"></a>
@@ -260,6 +258,23 @@ performed using a <code>Position1D</code> consisting of the coordinate at index 
       </a>
     </span>
       <p class="shortcomment cmt">Trait for capturing the dependency between a position and its expansion.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.PosIncDep" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="PosIncDep[A&lt;:au.com.cba.omnia.grimlock.framework.position.Position,B&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
+      <a id="PosIncDep[A&lt;:Position,B&lt;:Position]:PosIncDep[A,B]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PosIncDep.html"><span class="name">PosIncDep</span></a><span class="tparams">[<span name="A">A &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="B">B &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@PosIncDep[A&lt;:au.com.cba.omnia.grimlock.framework.position.Position,B&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Trait for capturing the dependency between a position and its increment (which may be the same).</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.Position" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PositionextendsAnyRef"></a>
       <a id="Position:Position"></a>
@@ -296,177 +311,159 @@ performed using a <code>Position1D</code> consisting of the coordinate at index 
       <p class="shortcomment cmt">Position for zero dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Position for zero dimensions.
 </p></div><dl class="attributes block"> <dt>Note</dt><dd><span class="cmt"><p>Position0D exists so things like <code>names(Over(First))</code> work.
 </p></span></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position1D" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Position1DextendsPositionwithReduceablePositionwithExpandablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position1D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Position1DextendsPositionwithReduceablePositionwithExpandablePositionwithMapOverPositionwithMapAlongPosition"></a>
       <a id="Position1D:Position1D"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Position1D.html"><span class="name">Position1D</span></a><span class="params">(<span name="first">first: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position1D.html"><span class="name">Position1D</span></a><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position1DextendsPositionwithReduceablePositionwithExpandablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position1DextendsPositionwithReduceablePositionwithExpandablePositionwithMapOverPositionwithMapAlongPosition" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Position for 1 dimensional data.</p><div class="fullcomment"><div class="comment cmt"><p>Position for 1 dimensional data.
-</p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>Coordinate for the first dimension.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position2D" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Position2DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable"></a>
+      <p class="shortcomment cmt">Position for 1 dimensional data.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position2D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Position2DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition"></a>
       <a id="Position2D:Position2D"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Position2D.html"><span class="name">Position2D</span></a><span class="params">(<span name="first">first: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="second">second: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position2D.html"><span class="name">Position2D</span></a><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position2DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position2DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Position for 2 dimensional data.</p><div class="fullcomment"><div class="comment cmt"><p>Position for 2 dimensional data.
-</p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>Coordinate for the first dimension.</p></dd><dt class="param">second</dt><dd class="cmt"><p>Coordinate for the second dimension.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position3D" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Position3DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable"></a>
+      <p class="shortcomment cmt">Position for 2 dimensional data.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position3D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Position3DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition"></a>
       <a id="Position3D:Position3D"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Position3D.html"><span class="name">Position3D</span></a><span class="params">(<span name="first">first: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="second">second: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="third">third: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position3D.html"><span class="name">Position3D</span></a><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position3DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position3DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Position for 3 dimensional data.</p><div class="fullcomment"><div class="comment cmt"><p>Position for 3 dimensional data.
-</p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>Coordinate for the first dimension.</p></dd><dt class="param">second</dt><dd class="cmt"><p>Coordinate for the second dimension.</p></dd><dt class="param">third</dt><dd class="cmt"><p>Coordinate for the third dimension.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position4D" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Position4DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable"></a>
+      <p class="shortcomment cmt">Position for 3 dimensional data.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position4D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Position4DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition"></a>
       <a id="Position4D:Position4D"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Position4D.html"><span class="name">Position4D</span></a><span class="params">(<span name="first">first: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="second">second: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="third">third: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fourth">fourth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position4D.html"><span class="name">Position4D</span></a><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position4DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position4DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Position for 4 dimensional data.</p><div class="fullcomment"><div class="comment cmt"><p>Position for 4 dimensional data.
-</p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>Coordinate for the first dimension.</p></dd><dt class="param">second</dt><dd class="cmt"><p>Coordinate for the second dimension.</p></dd><dt class="param">third</dt><dd class="cmt"><p>Coordinate for the third dimension.</p></dd><dt class="param">fourth</dt><dd class="cmt"><p>Coordinate for the fourth dimension.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position5D" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Position5DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable"></a>
+      <p class="shortcomment cmt">Position for 4 dimensional data.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position5D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Position5DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition"></a>
       <a id="Position5D:Position5D"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Position5D.html"><span class="name">Position5D</span></a><span class="params">(<span name="first">first: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="second">second: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="third">third: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fourth">fourth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fifth">fifth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position5D.html"><span class="name">Position5D</span></a><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position5DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position5DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Position for 5 dimensional data.</p><div class="fullcomment"><div class="comment cmt"><p>Position for 5 dimensional data.
-</p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>Coordinate for the first dimension.</p></dd><dt class="param">second</dt><dd class="cmt"><p>Coordinate for the second dimension.</p></dd><dt class="param">third</dt><dd class="cmt"><p>Coordinate for the third dimension.</p></dd><dt class="param">fourth</dt><dd class="cmt"><p>Coordinate for the fourth dimension.</p></dd><dt class="param">fifth</dt><dd class="cmt"><p>Coordinate for the fifth dimension.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position6D" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Position6DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable"></a>
+      <p class="shortcomment cmt">Position for 5 dimensional data.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position6D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Position6DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition"></a>
       <a id="Position6D:Position6D"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Position6D.html"><span class="name">Position6D</span></a><span class="params">(<span name="first">first: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="second">second: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="third">third: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fourth">fourth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fifth">fifth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="sixth">sixth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position6D.html"><span class="name">Position6D</span></a><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position6DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position6DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Position for 6 dimensional data.</p><div class="fullcomment"><div class="comment cmt"><p>Position for 6 dimensional data.
-</p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>Coordinate for the first dimension.</p></dd><dt class="param">second</dt><dd class="cmt"><p>Coordinate for the second dimension.</p></dd><dt class="param">third</dt><dd class="cmt"><p>Coordinate for the third dimension.</p></dd><dt class="param">fourth</dt><dd class="cmt"><p>Coordinate for the fourth dimension.</p></dd><dt class="param">fifth</dt><dd class="cmt"><p>Coordinate for the fifth dimension.</p></dd><dt class="param">sixth</dt><dd class="cmt"><p>Coordinate for the sixth dimension.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position7D" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Position7DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable"></a>
+      <p class="shortcomment cmt">Position for 6 dimensional data.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position7D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Position7DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition"></a>
       <a id="Position7D:Position7D"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Position7D.html"><span class="name">Position7D</span></a><span class="params">(<span name="first">first: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="second">second: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="third">third: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fourth">fourth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fifth">fifth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="sixth">sixth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="seventh">seventh: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position7D.html"><span class="name">Position7D</span></a><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position7DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position7DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Position for 7 dimensional data.</p><div class="fullcomment"><div class="comment cmt"><p>Position for 7 dimensional data.
-</p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>Coordinate for the first dimension.</p></dd><dt class="param">second</dt><dd class="cmt"><p>Coordinate for the second dimension.</p></dd><dt class="param">third</dt><dd class="cmt"><p>Coordinate for the third dimension.</p></dd><dt class="param">fourth</dt><dd class="cmt"><p>Coordinate for the fourth dimension.</p></dd><dt class="param">fifth</dt><dd class="cmt"><p>Coordinate for the fifth dimension.</p></dd><dt class="param">sixth</dt><dd class="cmt"><p>Coordinate for the sixth dimension.</p></dd><dt class="param">seventh</dt><dd class="cmt"><p>Coordinate for the seventh dimension.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position8D" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Position8DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable"></a>
+      <p class="shortcomment cmt">Position for 7 dimensional data.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position8D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Position8DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition"></a>
       <a id="Position8D:Position8D"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Position8D.html"><span class="name">Position8D</span></a><span class="params">(<span name="first">first: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="second">second: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="third">third: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fourth">fourth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fifth">fifth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="sixth">sixth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="seventh">seventh: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="eighth">eighth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position8D.html"><span class="name">Position8D</span></a><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position8DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position8DextendsPositionwithReduceablePositionwithExpandablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Position for 8 dimensional data.</p><div class="fullcomment"><div class="comment cmt"><p>Position for 8 dimensional data.
-</p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>Coordinate for the first dimension.</p></dd><dt class="param">second</dt><dd class="cmt"><p>Coordinate for the second dimension.</p></dd><dt class="param">third</dt><dd class="cmt"><p>Coordinate for the third dimension.</p></dd><dt class="param">fourth</dt><dd class="cmt"><p>Coordinate for the fourth dimension.</p></dd><dt class="param">fifth</dt><dd class="cmt"><p>Coordinate for the fifth dimension.</p></dd><dt class="param">sixth</dt><dd class="cmt"><p>Coordinate for the sixth dimension.</p></dd><dt class="param">seventh</dt><dd class="cmt"><p>Coordinate for the seventh dimension.</p></dd><dt class="param">eighth</dt><dd class="cmt"><p>Coordinate for the eighth dimension.
-</p></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position9D" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Position9DextendsPositionwithReduceablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable"></a>
+      <p class="shortcomment cmt">Position for 8 dimensional data.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Position9D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Position9DextendsPositionwithReduceablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition"></a>
       <a id="Position9D:Position9D"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Position9D.html"><span class="name">Position9D</span></a><span class="params">(<span name="first">first: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="second">second: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="third">third: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fourth">fourth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="fifth">fifth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="sixth">sixth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="seventh">seventh: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="eighth">eighth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>, <span name="ninth">ninth: <a href="../encoding/Value.html" class="extype" name="au.com.cba.omnia.grimlock.framework.encoding.Value">Value</a></span>)</span><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position9D.html"><span class="name">Position9D</span></a><span class="result"> extends <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="ReduceablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ReduceablePosition">ReduceablePosition</a> with <a href="PermutablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PermutablePosition">PermutablePosition</a> with <a href="MapOverPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapOverPosition">MapOverPosition</a> with <a href="MapAlongPosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.MapAlongPosition">MapAlongPosition</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position9DextendsPositionwithReduceablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPositionwithProductwithSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position9DextendsPositionwithReduceablePositionwithPermutablePositionwithMapOverPositionwithMapAlongPosition" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Position for 9 dimensional data.</p><div class="fullcomment"><div class="comment cmt"><p>Position for 9 dimensional data.
-</p></div><dl class="paramcmts block"><dt class="param">first</dt><dd class="cmt"><p>Coordinate for the first dimension.</p></dd><dt class="param">second</dt><dd class="cmt"><p>Coordinate for the second dimension.</p></dd><dt class="param">third</dt><dd class="cmt"><p>Coordinate for the third dimension.</p></dd><dt class="param">fourth</dt><dd class="cmt"><p>Coordinate for the fourth dimension.</p></dd><dt class="param">fifth</dt><dd class="cmt"><p>Coordinate for the fifth dimension.</p></dd><dt class="param">sixth</dt><dd class="cmt"><p>Coordinate for the sixth dimension.</p></dd><dt class="param">seventh</dt><dd class="cmt"><p>Coordinate for the seventh dimension.</p></dd><dt class="param">eighth</dt><dd class="cmt"><p>Coordinate for the eighth dimension.</p></dd><dt class="param">ninth</dt><dd class="cmt"><p>Coordinate for the ninth dimension.
-</p></dd></dl></div>
+      <p class="shortcomment cmt">Position for 9 dimensional data.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.PositionDistributable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PositionDistributable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,U[_]]extendsAnyRef"></a>
       <a id="PositionDistributable[T,P&lt;:Position,U[_]]:PositionDistributable[T,P,U]"></a>
@@ -485,41 +482,41 @@ performed using a <code>Position1D</code> consisting of the coordinate at index 
     </span>
       <p class="shortcomment cmt">Type class for transforming a type <code>T</code> into a <code>U[Position]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.PositionListable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="PositionListable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
-      <a id="PositionListable[T,P&lt;:Position]:PositionListable[T,P]"></a>
+      <a id="PositionListable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
+      <a id="PositionListable[P&lt;:Position]:PositionListable[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="PositionListable.html"><span class="name">PositionListable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+        <a href="PositionListable.html"><span class="name">PositionListable</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@PositionListable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@PositionListable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Type class for transforming a type <code>T</code> into a <code>List[Position]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.Positionable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Positionable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
-      <a id="Positionable[T,P&lt;:Position]:Positionable[T,P]"></a>
+      <a id="Positionable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
+      <a id="Positionable[P&lt;:Position]:Positionable[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Positionable.html"><span class="name">Positionable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
+        <a href="Positionable.html"><span class="name">Positionable</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Positionable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Positionable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Type class for transforming a type <code>T</code> into a <code>Position</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.Positions" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Positions[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef"></a>
+      <a id="Positions[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsRawData"></a>
       <a id="Positions[P&lt;:Position]:Positions[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -527,10 +524,10 @@ performed using a <code>Position1D</code> consisting of the coordinate at index 
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Positions.html"><span class="name">Positions</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <a href="Positions.html"><span class="name">Positions</span></a><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Positions[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Positions[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsRawData" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -576,7 +573,24 @@ performed using a <code>Position1D</code> consisting of the coordinate at index 
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Dimension" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Along" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Along"></a>
+      <a id="Along:Along"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Along$.html"><span class="name">Along</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Along" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to <code>Along</code> trait.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Dimension" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="Dimension"></a>
       <a id="Dimension:Dimension"></a>
       <h4 class="signature">
@@ -697,6 +711,23 @@ dimension.
       </a>
     </span>
       <p class="shortcomment cmt">Type for ninth dimension.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Over" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Over"></a>
+      <a id="Over:Over"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Over$.html"><span class="name">Over</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Over" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion object to <code>Over</code> trait.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.Position" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Position"></a>
       <a id="Position:Position"></a>
@@ -723,7 +754,7 @@ dimension.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Position1D$.html"><span class="name">Position1D</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position1D$.html"><span class="name">Position1D</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position1D" title="Permalink" target="_top">
@@ -740,7 +771,7 @@ dimension.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Position2D$.html"><span class="name">Position2D</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position2D$.html"><span class="name">Position2D</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position2D" title="Permalink" target="_top">
@@ -757,7 +788,7 @@ dimension.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Position3D$.html"><span class="name">Position3D</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position3D$.html"><span class="name">Position3D</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position3D" title="Permalink" target="_top">
@@ -774,7 +805,7 @@ dimension.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Position4D$.html"><span class="name">Position4D</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position4D$.html"><span class="name">Position4D</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position4D" title="Permalink" target="_top">
@@ -791,7 +822,7 @@ dimension.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Position5D$.html"><span class="name">Position5D</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position5D$.html"><span class="name">Position5D</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position5D" title="Permalink" target="_top">
@@ -808,7 +839,7 @@ dimension.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Position6D$.html"><span class="name">Position6D</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position6D$.html"><span class="name">Position6D</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position6D" title="Permalink" target="_top">
@@ -825,7 +856,7 @@ dimension.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Position7D$.html"><span class="name">Position7D</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position7D$.html"><span class="name">Position7D</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position7D" title="Permalink" target="_top">
@@ -842,7 +873,7 @@ dimension.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Position8D$.html"><span class="name">Position8D</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position8D$.html"><span class="name">Position8D</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position8D" title="Permalink" target="_top">
@@ -859,7 +890,7 @@ dimension.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Position9D$.html"><span class="name">Position9D</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Position9D$.html"><span class="name">Position9D</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.package@Position9D" title="Permalink" target="_top">
@@ -883,7 +914,7 @@ dimension.
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Companion object for the <code>PositionListable</code> type class.</p>
+      <p class="shortcomment cmt">Companion object for the <code>PositionListable</code> trait.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.Positionable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Positionable"></a>
       <a id="Positionable:Positionable"></a>
@@ -900,7 +931,7 @@ dimension.
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Companion object for the <a href="Positionable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positionable">Positionable</a> type class.</p>
+      <p class="shortcomment cmt">Companion object for the <code>Positionable</code> trait.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.Second" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Second"></a>
       <a id="Second:Second"></a>

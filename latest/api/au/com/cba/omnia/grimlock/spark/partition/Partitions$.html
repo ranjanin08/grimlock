@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the Spark <code>Partitions</code> class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/spark/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object for the Spark <code>Partitions</code> class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/spark/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -149,22 +149,22 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.partition.Partitions#RDDTC2RDDP" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="RDDTC2RDDP[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](data:org.apache.spark.rdd.RDD[(T,au.com.cba.omnia.grimlock.framework.Cell[P])])(implicitevidence$2:Ordering[T]):au.com.cba.omnia.grimlock.spark.partition.Partitions[T,P]"></a>
-      <a id="RDDTC2RDDP[T,P&lt;:Position](RDD[(T,Cell[P])])(Ordering[T]):Partitions[T,P]"></a>
+      <a id="RDDTC2RDDP[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I](data:org.apache.spark.rdd.RDD[(I,au.com.cba.omnia.grimlock.framework.Cell[P])])(implicitevidence$2:Ordering[I]):au.com.cba.omnia.grimlock.spark.partition.Partitions[P,I]"></a>
+      <a id="RDDTC2RDDP[P&lt;:Position,I](RDD[(I,Cell[P])])(Ordering[I]):Partitions[P,I]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">RDDTC2RDDP</span><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="data">data: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.RDDTC2RDDP.T">T</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.RDDTC2RDDP.P">P</span>])]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.RDDTC2RDDP.T">T</span>]</span>)</span><span class="result">: <a href="Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions">Partitions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.RDDTC2RDDP.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.RDDTC2RDDP.P">P</span>]</span>
+        <span class="name">RDDTC2RDDP</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="I">I</span>]</span><span class="params">(<span name="data">data: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.RDDTC2RDDP.I">I</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.RDDTC2RDDP.P">P</span>])]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.RDDTC2RDDP.I">I</span>]</span>)</span><span class="result">: <a href="Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions">Partitions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.RDDTC2RDDP.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions.RDDTC2RDDP.I">I</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.partition.Partitions$@RDDTC2RDDP[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position](data:org.apache.spark.rdd.RDD[(T,au.com.cba.omnia.grimlock.framework.Cell[P])])(implicitevidence$2:Ordering[T]):au.com.cba.omnia.grimlock.spark.partition.Partitions[T,P]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.partition.Partitions$@RDDTC2RDDP[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I](data:org.apache.spark.rdd.RDD[(I,au.com.cba.omnia.grimlock.framework.Cell[P])])(implicitevidence$2:Ordering[I]):au.com.cba.omnia.grimlock.spark.partition.Partitions[P,I]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Conversion from <code>RDD[(T, Cell[P])]</code> to a Spark <code>Partitions</code>.</p>
+      <p class="shortcomment cmt">Conversion from <code>RDD[(I, Cell[P])]</code> to a Spark <code>Partitions</code>.</p>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>

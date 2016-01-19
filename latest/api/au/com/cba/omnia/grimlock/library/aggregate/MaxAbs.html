@@ -45,17 +45,18 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">MaxAbs</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../../framework/position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="strict">strict: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="nan">nan: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">false</span></span>)</span><span class="result"> extends <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>] with <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DoubleAggregator">DoubleAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">MaxAbs</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="S">S &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a> with <a href="../../framework/position/ExpandablePosition.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.ExpandablePosition">ExpandablePosition</a></span>]</span><span class="params">(<span name="filter">filter: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="strict">strict: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="nan">nan: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">false</span></span>)</span><span class="result"> extends <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>] with <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DoubleAggregator">DoubleAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Maximum absolute value reduction.
-</p></div><dl class="paramcmts block"><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+</p></div><dl class="paramcmts block"><dt class="param">filter</dt><dd class="cmt"><p>Indicates if only numerical types should be aggregated. Is set then all categorical values are
+              filtered prior to aggregation.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
               data).
-</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/library/Aggregators.scala" target="_blank">Aggregators.scala</a></dd></dl><div class="toggleContainer block">
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/library/Aggregators.scala" target="_blank">Aggregators.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DoubleAggregator">DoubleAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator">StrictAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DoubleAggregator">DoubleAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator">StrictAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.FilterAggregator">FilterAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>], <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -73,7 +74,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs"><span>MaxAbs</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.DoubleAggregator"><span>DoubleAggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator"><span>StrictAggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator"><span>Aggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue"><span>AggregatorWithValue</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs"><span>MaxAbs</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.DoubleAggregator"><span>DoubleAggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator"><span>StrictAggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.library.aggregate.FilterAggregator"><span>FilterAggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator"><span>Aggregator</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue"><span>AggregatorWithValue</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -94,7 +95,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(strict:Boolean,nan:Boolean):au.com.cba.omnia.grimlock.library.aggregate.MaxAbs[P,S]"></a>
+      <a id="&lt;init&gt;(filter:Boolean,strict:Boolean,nan:Boolean):au.com.cba.omnia.grimlock.library.aggregate.MaxAbs[P,S]"></a>
       <a id="&lt;init&gt;:MaxAbs[P,S]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -102,14 +103,15 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">MaxAbs</span><span class="params">(<span name="strict">strict: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="nan">nan: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">false</span></span>)</span>
+        <span class="name">MaxAbs</span><span class="params">(<span name="filter">filter: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="strict">strict: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">true</span></span>, <span name="nan">nan: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a> = <span class="symbol">false</span></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@&lt;init&gt;(strict:Boolean,nan:Boolean):au.com.cba.omnia.grimlock.library.aggregate.MaxAbs[P,S]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@&lt;init&gt;(filter:Boolean,strict:Boolean,nan:Boolean):au.com.cba.omnia.grimlock.library.aggregate.MaxAbs[P,S]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">filter</dt><dd class="cmt"><p>Indicates if only numerical types should be aggregated. Is set then all categorical values are
+              filtered prior to aggregation.</p></dd><dt class="param">strict</dt><dd class="cmt"><p>Indicates if strict data handling is required. If so then any non-numeric value fails the reduction.
               If not then non-numeric values are silently ignored.</p></dd><dt class="param">nan</dt><dd class="cmt"><p>Indicator if 'NaN' string should be output if the reduction failed (for example due to non-numeric
               data).
 </p></dd></dl></div>
@@ -210,85 +212,85 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#andThenExpand" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenExpand[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T}"></a>
-      <a id="andThenExpand[R&lt;:Position]((Cell[S])⇒R)(PosExpDep[S,R]):Aggregator[P,S,R]{typeT=MaxAbs.this.T}"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#andThenMutate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenMutate(mutate:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}"></a>
+      <a id="andThenMutate((Cell[S])⇒Content):Aggregator[P,S,S]{typeT=MaxAbs.this.T}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenExpand</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenExpand.R">R</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenExpand.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenExpand.R">R</span>] { type T = MaxAbs.this.T }</span>
+        <span class="name">andThenMutate</span><span class="params">(<span name="mutate">mutate: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>]) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>] { type T = MaxAbs.this.T }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@andThenExpand[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@andThenMutate(mutate:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for aggregating and then expanding dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then expanding dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">expand</dt><dd class="cmt"><p>The expansion to apply after the aggregation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then expands the resulting dimensions.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenExpandWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenExpandWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
-      <a id="andThenExpandWithValue[R&lt;:Position]((Cell[S],V)⇒R)(PosExpDep[S,R]):AggregatorWithValue[P,S,R]{.../*2definitionsintyperefinement*/}"></a>
+      <p class="shortcomment cmt">Operator for aggregating and then updating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then updating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">mutate</dt><dd class="cmt"><p>The mutation to apply after the aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then updates the resulting contents.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenMutateWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenMutateWithValue(mutate:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
+      <a id="andThenMutateWithValue((Cell[S],V)⇒Content):AggregatorWithValue[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenExpandWithValue</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.V">V</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span>] { ... /* 2 definitions in type refinement */ }</span>
+        <span class="name">andThenMutateWithValue</span><span class="params">(<span name="mutate">mutate: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.V">V</a>) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@andThenExpandWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@andThenMutateWithValue(mutate:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for aggregating and then expanding dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then expanding dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">expand</dt><dd class="cmt"><p>The expansion to apply after the aggregation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then expands the resulting dimensions.
+      <p class="shortcomment cmt">Operator for aggregating and then updating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then updating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">mutate</dt><dd class="cmt"><p>The mutation to apply after the aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then updates the resulting contents.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#andThenRename" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenRename(rename:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;Q):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}"></a>
-      <a id="andThenRename((Cell[S])⇒S):Aggregator[P,S,S]{typeT=MaxAbs.this.T}"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#andThenRelocate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenRelocate[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCell[Q,R])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T}"></a>
+      <a id="andThenRelocate[R&lt;:Position](FromCell[S,R])(PosIncDep[S,R]):Aggregator[P,S,R]{typeT=MaxAbs.this.T}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenRename</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span></span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>] { type T = MaxAbs.this.T }</span>
+        <span class="name">andThenRelocate</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="locate">locate: <a href="../../framework/Locate$.html#FromCell[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCell">FromCell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosIncDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosIncDep">PosIncDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>] { type T = MaxAbs.this.T }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@andThenRename(rename:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;Q):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@andThenRelocate[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCell[Q,R])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for aggregating and then renaming dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then renaming dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">rename</dt><dd class="cmt"><p>The rename to apply after the aggregation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then renames the resulting dimension(s).
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenRenameWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenRenameWithValue(rename:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;Q):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
-      <a id="andThenRenameWithValue((Cell[S],V)⇒S):AggregatorWithValue[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
+      <p class="shortcomment cmt">Operator for aggregating and then relocating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then relocating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">locate</dt><dd class="cmt"><p>The relocation to apply after the aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then relocates the resulting contents.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenRelocateWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenRelocateWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue[Q,R,AggregatorWithValue.this.V])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
+      <a id="andThenRelocateWithValue[R&lt;:Position](FromCellWithValue[S,R,V])(PosIncDep[S,R]):AggregatorWithValue[P,S,R]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenRenameWithValue</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.V">V</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
+        <span class="name">andThenRelocateWithValue</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="locate">locate: <a href="../../framework/Locate$.html#FromCellWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,V]=(au.com.cba.omnia.grimlock.framework.Cell[P],V)=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue">FromCellWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>, <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.V">V</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosIncDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosIncDep">PosIncDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@andThenRenameWithValue(rename:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;Q):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@andThenRelocateWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue[Q,R,AggregatorWithValue.this.V])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for aggregating and then renaming dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then renaming dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">rename</dt><dd class="cmt"><p>The rename to apply after the aggregation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then renames the resulting dimension(s).
+      <p class="shortcomment cmt">Operator for aggregating and then relocating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then relocating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">locate</dt><dd class="cmt"><p>The relocation to apply after the aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then relocates the resulting contents.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.DoubleAggregator#asDouble" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asDouble(t:DoubleAggregator.this.T):Double"></a>
@@ -364,6 +366,24 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs#filter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="filter:Boolean"></a>
+      <a id="filter:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">filter</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@filter:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Indicates if only numerical types should be aggregated.</p><div class="fullcomment"><div class="comment cmt"><p>Indicates if only numerical types should be aggregated. Is set then all categorical values are
+              filtered prior to aggregation.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs">MaxAbs</a> → FilterAggregator</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -510,18 +530,18 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.DoubleAggregator#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):DoubleAggregator.this.T"></a>
-      <a id="prepare(Cell[P]):T"></a>
+      <a id="prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[DoubleAggregator.this.T]"></a>
+      <a id="prepare(Cell[P]):Option[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepare</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>]</span>)</span><span class="result">: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.T">T</a></span>
+        <span class="name">prepare</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>]</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.T">T</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):DoubleAggregator.this.T" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[DoubleAggregator.this.T]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -529,25 +549,42 @@
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be aggregated. Note that its position is prior to <code>slice.selected</code> being applied.
 </p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd>DoubleAggregator</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#prepareWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Aggregator.this.V):Aggregator.this.T"></a>
-      <a id="prepareWithValue(Cell[P],V):T"></a>
+    </li><li name="au.com.cba.omnia.grimlock.library.aggregate.FilterAggregator#prepareDouble" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="prepareDouble(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[Double]"></a>
+      <a id="prepareDouble(Cell[P]):Option[Double]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepareWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.V">V</a></span>)</span><span class="result">: <a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.T">T</a></span>
+        <span class="name">prepareDouble</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>]</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Aggregator.this.V):Aggregator.this.T" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@prepareDouble(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[Double]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>FilterAggregator</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#prepareWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Aggregator.this.V):Option[Aggregator.this.T]"></a>
+      <a id="prepareWithValue(Cell[P],V):Option[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">prepareWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.V">V</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="#T=Double" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.T">T</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Aggregator.this.V):Option[Aggregator.this.T]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be aggregated. Note that its position is prior to <code>slice.selected</code> being applied.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for preparation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional state to reduce (allow for filtering).
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="present(pos:S,t:StrictAggregator.this.T):Option[au.com.cba.omnia.grimlock.framework.Cell[S]]"></a>
@@ -738,6 +775,46 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#withPrepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withPrepare(prep:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}"></a>
+      <a id="withPrepare((Cell[P])⇒Content):Aggregator[P,S,S]{typeT=MaxAbs.this.T}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withPrepare</span><span class="params">(<span name="prep">prep: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>]) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>] { type T = MaxAbs.this.T }</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@withPrepare(prep:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Operator for preparing content prior to aggregating.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for preparing content prior to aggregating.
+</p></div><dl class="paramcmts block"><dt class="param">prep</dt><dd class="cmt"><p>The function to apply prior to aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that prepares the content and then runs <code>this</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#withPrepareWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withPrepareWithValue(prep:(au.com.cba.omnia.grimlock.framework.Cell[P],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
+      <a id="withPrepareWithValue((Cell[P],V)⇒Content):AggregatorWithValue[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withPrepareWithValue</span><span class="params">(<span name="prep">prep: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.V">V</a>) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.MaxAbs@withPrepareWithValue(prep:(au.com.cba.omnia.grimlock.framework.Cell[P],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Operator for preparing content prior to aggregating.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for preparing content prior to aggregating.
+</p></div><dl class="paramcmts block"><dt class="param">prep</dt><dd class="cmt"><p>The function to apply prior to aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that prepares the content and then runs <code>this</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -757,6 +834,8 @@
               <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DoubleAggregator">DoubleAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>]</h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator">
               <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.StrictAggregator">StrictAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.library.aggregate.FilterAggregator">
+              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.FilterAggregator">FilterAggregator</span>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>]</h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">
               <h3>Inherited from <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.MaxAbs.S">S</span>]</h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">

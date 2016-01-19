@@ -45,13 +45,13 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Positions</span><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <span class="name">Positions</span><span class="tparams">[<span name="P">P &lt;: <a href="Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that represents the positions of a matrix.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/framework/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that represents the positions of a matrix.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
             <span class="toggle">Known Subclasses</span>
             <div class="subClasses hiddenContent"><a href="../../scalding/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.position.Positions">Positions</a>, <a href="../../spark/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions">Positions</a></div>
@@ -72,7 +72,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.position.Positions"><span>Positions</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.position.Positions"><span>Positions</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.RawData"><span>RawData</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -94,7 +94,24 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.position.Positions.NamesTuners" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.RawData.E" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="E[_]"></a>
+      <a id="E[_]:E[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">E</span><span class="tparams">[<span name="_">_</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.Positions@E[_]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of 'wrapper' around user provided data.</p><div class="fullcomment"><div class="comment cmt"><p>Type of 'wrapper' around user provided data.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd>RawData</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.position.Positions.NamesTuners" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="NamesTuners&lt;:au.com.cba.omnia.grimlock.framework.utility.OneOf"></a>
       <a id="NamesTuners:NamesTuners"></a>
       <h4 class="signature">
@@ -110,8 +127,8 @@
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      
-    </li><li name="au.com.cba.omnia.grimlock.framework.position.Positions.U" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <p class="shortcomment cmt">Specifies tuners permitted on a call to <code>names</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.RawData.U" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="U[_]"></a>
       <a id="U[_]:U[_]"></a>
       <h4 class="signature">
@@ -127,7 +144,7 @@
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type of the underlying data structure (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying data structure (i.e. TypedPipe or RDD).</p></div></div>
+      <p class="shortcomment cmt">Type of the underlying (raw) data structure (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying (raw) data structure (i.e. TypedPipe or RDD).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd>RawData</dd></dl></div>
     </li></ol>
             </div>
 
@@ -428,18 +445,18 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.position.Positions#slice" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="slice[T](positions:T,keep:Boolean)(implicitev1:au.com.cba.omnia.grimlock.framework.position.PositionListable[T,P],implicitev2:scala.reflect.ClassTag[P]):Positions.this.U[P]"></a>
-      <a id="slice[T](T,Boolean)(PositionListable[T,P],ClassTag[P]):U[P]"></a>
+      <a id="slice(positions:au.com.cba.omnia.grimlock.framework.position.PositionListable[P],keep:Boolean)(implicitev1:scala.reflect.ClassTag[P]):Positions.this.U[P]"></a>
+      <a id="slice(PositionListable[P],Boolean)(ClassTag[P]):U[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">slice</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="positions">positions: <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.slice.T">T</span></span>, <span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="PositionListable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PositionListable">PositionListable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.slice.T">T</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.P">P</span>]</span>, <span name="ev2">ev2: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.P">P</span>]</span>
+        <span class="name">slice</span><span class="params">(<span name="positions">positions: <a href="PositionListable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PositionListable">PositionListable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.P">P</span>]</span>, <span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.P">P</span>]</span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions.P">P</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.Positions@slice[T](positions:T,keep:Boolean)(implicitev1:au.com.cba.omnia.grimlock.framework.position.PositionListable[T,P],implicitev2:scala.reflect.ClassTag[P]):Positions.this.U[P]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.position.Positions@slice(positions:au.com.cba.omnia.grimlock.framework.position.PositionListable[P],keep:Boolean)(implicitev1:scala.reflect.ClassTag[P]):Positions.this.U[P]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -580,7 +597,9 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="au.com.cba.omnia.grimlock.framework.RawData">
+              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>

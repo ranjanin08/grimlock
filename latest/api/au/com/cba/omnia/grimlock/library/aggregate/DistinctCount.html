@@ -49,7 +49,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Distinct count reductions.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(ae2b55d22d0c3f25de007df2416f5beaec4b8ee2)//src/main/scala/au/com/cba/omnia/grimlock/library/Aggregators.scala" target="_blank">Aggregators.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Distinct count reductions.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/library/Aggregators.scala" target="_blank">Aggregators.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>], <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -203,85 +203,85 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#andThenExpand" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenExpand[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T}"></a>
-      <a id="andThenExpand[R&lt;:Position]((Cell[S])⇒R)(PosExpDep[S,R]):Aggregator[P,S,R]{typeT=DistinctCount.this.T}"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#andThenMutate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenMutate(mutate:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}"></a>
+      <a id="andThenMutate((Cell[S])⇒Content):Aggregator[P,S,S]{typeT=DistinctCount.this.T}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenExpand</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenExpand.R">R</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenExpand.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenExpand.R">R</span>] { type T = DistinctCount.this.T }</span>
+        <span class="name">andThenMutate</span><span class="params">(<span name="mutate">mutate: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>]) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>] { type T = DistinctCount.this.T }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@andThenExpand[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@andThenMutate(mutate:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for aggregating and then expanding dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then expanding dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">expand</dt><dd class="cmt"><p>The expansion to apply after the aggregation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then expands the resulting dimensions.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenExpandWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenExpandWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
-      <a id="andThenExpandWithValue[R&lt;:Position]((Cell[S],V)⇒R)(PosExpDep[S,R]):AggregatorWithValue[P,S,R]{.../*2definitionsintyperefinement*/}"></a>
+      <p class="shortcomment cmt">Operator for aggregating and then updating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then updating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">mutate</dt><dd class="cmt"><p>The mutation to apply after the aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then updates the resulting contents.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenMutateWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenMutateWithValue(mutate:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
+      <a id="andThenMutateWithValue((Cell[S],V)⇒Content):AggregatorWithValue[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenExpandWithValue</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="expand">expand: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.V">V</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosExpDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosExpDep">PosExpDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenExpandWithValue.R">R</span>] { ... /* 2 definitions in type refinement */ }</span>
+        <span class="name">andThenMutateWithValue</span><span class="params">(<span name="mutate">mutate: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.V">V</a>) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@andThenExpandWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](expand:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;R)(implicitev:au.com.cba.omnia.grimlock.framework.position.PosExpDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@andThenMutateWithValue(mutate:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for aggregating and then expanding dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then expanding dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">expand</dt><dd class="cmt"><p>The expansion to apply after the aggregation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then expands the resulting dimensions.
+      <p class="shortcomment cmt">Operator for aggregating and then updating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then updating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">mutate</dt><dd class="cmt"><p>The mutation to apply after the aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then updates the resulting contents.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#andThenRename" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenRename(rename:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;Q):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}"></a>
-      <a id="andThenRename((Cell[S])⇒S):Aggregator[P,S,S]{typeT=DistinctCount.this.T}"></a>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#andThenRelocate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenRelocate[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCell[Q,R])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T}"></a>
+      <a id="andThenRelocate[R&lt;:Position](FromCell[S,R])(PosIncDep[S,R]):Aggregator[P,S,R]{typeT=DistinctCount.this.T}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenRename</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>]) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span></span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>] { type T = DistinctCount.this.T }</span>
+        <span class="name">andThenRelocate</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="locate">locate: <a href="../../framework/Locate$.html#FromCell[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCell">FromCell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosIncDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosIncDep">PosIncDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator.andThenRelocate.R">R</span>] { type T = DistinctCount.this.T }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@andThenRename(rename:au.com.cba.omnia.grimlock.framework.Cell[Q]=&gt;Q):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@andThenRelocate[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCell[Q,R])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,R]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for aggregating and then renaming dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then renaming dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">rename</dt><dd class="cmt"><p>The rename to apply after the aggregation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then renames the resulting dimension(s).
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenRenameWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="andThenRenameWithValue(rename:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;Q):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
-      <a id="andThenRenameWithValue((Cell[S],V)⇒S):AggregatorWithValue[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
+      <p class="shortcomment cmt">Operator for aggregating and then relocating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then relocating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">locate</dt><dd class="cmt"><p>The relocation to apply after the aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then relocates the resulting contents.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#andThenRelocateWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="andThenRelocateWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue[Q,R,AggregatorWithValue.this.V])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
+      <a id="andThenRelocateWithValue[R&lt;:Position](FromCellWithValue[S,R,V])(PosIncDep[S,R]):AggregatorWithValue[P,S,R]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">andThenRenameWithValue</span><span class="params">(<span name="rename">rename: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.V">V</a>) ⇒ <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
+        <span class="name">andThenRelocateWithValue</span><span class="tparams">[<span name="R">R &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="locate">locate: <a href="../../framework/Locate$.html#FromCellWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,V]=(au.com.cba.omnia.grimlock.framework.Cell[P],V)=&gt;Option[Q]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue">FromCellWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>, <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.V">V</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="../../framework/position/PosIncDep.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PosIncDep">PosIncDep</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>]</span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue.andThenRelocateWithValue.R">R</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@andThenRenameWithValue(rename:(au.com.cba.omnia.grimlock.framework.Cell[Q],AggregatorWithValue.this.V)=&gt;Q):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@andThenRelocateWithValue[R&lt;:au.com.cba.omnia.grimlock.framework.position.Position](locate:au.com.cba.omnia.grimlock.framework.Locate.FromCellWithValue[Q,R,AggregatorWithValue.this.V])(implicitev:au.com.cba.omnia.grimlock.framework.position.PosIncDep[Q,R]):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,R]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Operator for aggregating and then renaming dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then renaming dimensions.
-</p></div><dl class="paramcmts block"><dt class="param">rename</dt><dd class="cmt"><p>The rename to apply after the aggregation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then renames the resulting dimension(s).
+      <p class="shortcomment cmt">Operator for aggregating and then relocating the contents.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for aggregating and then relocating the contents.
+</p></div><dl class="paramcmts block"><dt class="param">locate</dt><dd class="cmt"><p>The relocation to apply after the aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that runs <code>this</code> and then relocates the resulting contents.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
@@ -449,44 +449,44 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):DistinctCount.this.T"></a>
-      <a id="prepare(Cell[P]):T"></a>
+      <a id="prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[DistinctCount.this.T]"></a>
+      <a id="prepare(Cell[P]):Option[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepare</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>]</span>)</span><span class="result">: <a href="#T=Set[au.com.cba.omnia.grimlock.framework.encoding.Value]" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.T">T</a></span>
+        <span class="name">prepare</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>]</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="#T=Set[au.com.cba.omnia.grimlock.framework.encoding.Value]" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.T">T</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):DistinctCount.this.T" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@prepare(cell:au.com.cba.omnia.grimlock.framework.Cell[P]):Option[DistinctCount.this.T]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be aggregated. Note that its position is prior to <code>slice.selected</code> being applied.
-</p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional state to reduce (allow for filtering).
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount">DistinctCount</a> → <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#prepareWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Aggregator.this.V):Aggregator.this.T"></a>
-      <a id="prepareWithValue(Cell[P],V):T"></a>
+      <a id="prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Aggregator.this.V):Option[Aggregator.this.T]"></a>
+      <a id="prepareWithValue(Cell[P],V):Option[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">prepareWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.V">V</a></span>)</span><span class="result">: <a href="#T=Set[au.com.cba.omnia.grimlock.framework.encoding.Value]" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.T">T</a></span>
+        <span class="name">prepareWithValue</span><span class="params">(<span name="cell">cell: <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>]</span>, <span name="ext">ext: <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.V">V</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="#T=Set[au.com.cba.omnia.grimlock.framework.encoding.Value]" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.T">T</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Aggregator.this.V):Aggregator.this.T" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@prepareWithValue(cell:au.com.cba.omnia.grimlock.framework.Cell[P],ext:Aggregator.this.V):Option[Aggregator.this.T]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Prepare for reduction.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare for reduction.
 </p></div><dl class="paramcmts block"><dt class="param">cell</dt><dd class="cmt"><p>Cell which is to be aggregated. Note that its position is prior to <code>slice.selected</code> being applied.</p></dd><dt class="param">ext</dt><dd class="cmt"><p>User provided data required for preparation.
-</p></dd><dt>returns</dt><dd class="cmt"><p>State to reduce.
+</p></dd><dt>returns</dt><dd class="cmt"><p>Optional state to reduce (allow for filtering).
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount#present" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="present(pos:S,t:DistinctCount.this.T):Option[au.com.cba.omnia.grimlock.framework.Cell[S]]"></a>
@@ -505,7 +505,7 @@
       </a>
     </span>
       <p class="shortcomment cmt">Present the reduced content.</p><div class="fullcomment"><div class="comment cmt"><p>Present the reduced content.
-</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by <code>Slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.
+</p></div><dl class="paramcmts block"><dt class="param">pos</dt><dd class="cmt"><p>The reduced position. That is, the position returned by <code>slice.selected</code>.</p></dd><dt class="param">t</dt><dd class="cmt"><p>The reduced state.
 </p></dd><dt>returns</dt><dd class="cmt"><p>Optional cell where the position is <code>pos</code> and the content is derived from <code>t</code>.
 </p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount">DistinctCount</a> → <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a></dd><dt>Note</dt><dd><span class="cmt"><p>An <code>Option</code> is used in the return type to allow aggregators to be selective in what content they apply to.
       For example, computing the mean is undefined for categorical variables. The aggregator now has the option to
@@ -642,6 +642,46 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator#withPrepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withPrepare(prep:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}"></a>
+      <a id="withPrepare((Cell[P])⇒Content):Aggregator[P,S,S]{typeT=DistinctCount.this.T}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withPrepare</span><span class="params">(<span name="prep">prep: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>]) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>] { type T = DistinctCount.this.T }</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@withPrepare(prep:au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.Aggregator[P,S,Q]{typeT=Aggregator.this.T}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Operator for preparing content prior to aggregating.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for preparing content prior to aggregating.
+</p></div><dl class="paramcmts block"><dt class="param">prep</dt><dd class="cmt"><p>The function to apply prior to aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that prepares the content and then runs <code>this</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/Aggregator.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.Aggregator">Aggregator</a> → <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue#withPrepareWithValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withPrepareWithValue(prep:(au.com.cba.omnia.grimlock.framework.Cell[P],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}"></a>
+      <a id="withPrepareWithValue((Cell[P],V)⇒Content):AggregatorWithValue[P,S,S]{.../*2definitionsintyperefinement*/}"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withPrepareWithValue</span><span class="params">(<span name="prep">prep: (<a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>], <a href="#V=Any" class="extmbr" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.V">V</a>) ⇒ <a href="../../framework/content/Content.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Content">Content</a></span>)</span><span class="result">: <a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a>[<span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>, <span class="extype" name="au.com.cba.omnia.grimlock.library.aggregate.DistinctCount.S">S</span>] { ... /* 2 definitions in type refinement */ }</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.library.aggregate.DistinctCount@withPrepareWithValue(prep:(au.com.cba.omnia.grimlock.framework.Cell[P],AggregatorWithValue.this.V)=&gt;au.com.cba.omnia.grimlock.framework.content.Content):au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue[P,S,Q]{typeT=AggregatorWithValue.this.T;typeV=AggregatorWithValue.this.V}" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Operator for preparing content prior to aggregating.</p><div class="fullcomment"><div class="comment cmt"><p>Operator for preparing content prior to aggregating.
+</p></div><dl class="paramcmts block"><dt class="param">prep</dt><dd class="cmt"><p>The function to apply prior to aggregation.
+</p></dd><dt>returns</dt><dd class="cmt"><p>An aggregator that prepares the content and then runs <code>this</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/aggregate/AggregatorWithValue.html" class="extype" name="au.com.cba.omnia.grimlock.framework.aggregate.AggregatorWithValue">AggregatorWithValue</a></dd></dl></div>
     </li></ol>
             </div>
 

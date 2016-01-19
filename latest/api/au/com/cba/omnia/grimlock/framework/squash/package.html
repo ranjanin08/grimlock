@@ -67,39 +67,39 @@
         <div id="types" class="types members">
               <h3>Type Members</h3>
               <ol><li name="au.com.cba.omnia.grimlock.framework.squash.Squashable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Squashable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef"></a>
-      <a id="Squashable[T,P&lt;:Position]:Squashable[T,P]"></a>
+      <a id="Squashable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable"></a>
+      <a id="Squashable[P&lt;:Position]:Squashable[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Squashable.html"><span class="name">Squashable</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <a href="Squashable.html"><span class="name">Squashable</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@Squashable[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@Squashable[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>Squasher[P]</code>.</p>
+      <p class="shortcomment cmt">Trait for transforming a type <code>T</code> to a <code>Squasher[P]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.squash.SquashableWithValue" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="SquashableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef"></a>
-      <a id="SquashableWithValue[T,P&lt;:Position,W]:SquashableWithValue[T,P,W]"></a>
+      <a id="SquashableWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsSerializable"></a>
+      <a id="SquashableWithValue[P&lt;:Position,W]:SquashableWithValue[P,W]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="SquashableWithValue.html"><span class="name">SquashableWithValue</span></a><span class="tparams">[<span name="T">T</span>, <span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <a href="SquashableWithValue.html"><span class="name">SquashableWithValue</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="W">W</span>]</span><span class="result"> extends <span class="extype" name="java.io.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@SquashableWithValue[T,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@SquashableWithValue[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,W]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>SquasherWithValue[P]</code>.</p>
+      <p class="shortcomment cmt">Trait for transforming a type <code>T</code> to a <code>SquasherWithValue[P]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.squash.Squasher" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="Squasher[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsSquasherWithValue[P]"></a>
       <a id="Squasher[P&lt;:Position]:Squasher[P]"></a>
@@ -150,14 +150,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Squashable$.html"><span class="name">Squashable</span></a>
+        <a href="Squashable$.html"><span class="name">Squashable</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@Squashable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Companion object for the <code>Squashable</code> type class.</p>
+      <p class="shortcomment cmt">Companion object for the <code>Squashable</code> trait.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.squash.SquashableWithValue" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="SquashableWithValue"></a>
       <a id="SquashableWithValue:SquashableWithValue"></a>
@@ -167,14 +167,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="SquashableWithValue$.html"><span class="name">SquashableWithValue</span></a>
+        <a href="SquashableWithValue$.html"><span class="name">SquashableWithValue</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.squash.package@SquashableWithValue" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Companion object for the <code>SquashableWithValue</code> type class.</p>
+      <p class="shortcomment cmt">Companion object for the <code>SquashableWithValue</code> trait.</p>
     </li></ol>
             </div>
 
