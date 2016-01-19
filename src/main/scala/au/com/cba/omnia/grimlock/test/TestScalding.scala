@@ -34,6 +34,7 @@ import au.com.cba.omnia.grimlock.library.squash._
 import au.com.cba.omnia.grimlock.library.transform._
 import au.com.cba.omnia.grimlock.library.window._
 
+import au.com.cba.omnia.grimlock.scalding.environment._
 import au.com.cba.omnia.grimlock.scalding.content.Contents._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.Matrixable._
@@ -80,6 +81,7 @@ object TestScaldingReader {
 
 class TestScalding1(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -104,6 +106,7 @@ class TestScalding1(args : Args) extends Job(args) {
 
 class TestScalding2(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -128,6 +131,7 @@ class TestScalding2(args : Args) extends Job(args) {
 
 class TestScalding3(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -144,6 +148,7 @@ class TestScalding3(args : Args) extends Job(args) {
 
 class TestScalding4(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -170,6 +175,7 @@ class TestScalding4(args : Args) extends Job(args) {
 
 class TestScalding5(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -205,6 +211,7 @@ class TestScalding5(args : Args) extends Job(args) {
 
 class TestScalding6(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -252,6 +259,7 @@ class TestScalding6(args : Args) extends Job(args) {
 
 class TestScalding7(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -271,6 +279,7 @@ class TestScalding7(args : Args) extends Job(args) {
 
 class TestScalding8(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -316,6 +325,7 @@ class TestScalding8(args : Args) extends Job(args) {
 
 class TestScalding9(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -375,6 +385,7 @@ class TestScalding9(args : Args) extends Job(args) {
 
 class TestScalding10(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -415,6 +426,7 @@ class TestScalding10(args : Args) extends Job(args) {
 
 class TestScalding11(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -438,6 +450,7 @@ class TestScalding11(args : Args) extends Job(args) {
 
 class TestScalding12(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -459,6 +472,7 @@ class TestScalding12(args : Args) extends Job(args) {
 
 class TestScalding13(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -488,6 +502,7 @@ class TestScalding13(args : Args) extends Job(args) {
 
 class TestScalding14(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -503,6 +518,7 @@ class TestScalding14(args : Args) extends Job(args) {
 
 class TestScalding15(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -536,6 +552,7 @@ class TestScalding15(args : Args) extends Job(args) {
 
 class TestScalding16(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -553,6 +570,7 @@ class TestScalding16(args : Args) extends Job(args) {
 
 class TestScalding17(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -608,6 +626,7 @@ class TestScalding17(args : Args) extends Job(args) {
 
 class TestScalding18(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -639,6 +658,7 @@ class TestScalding18(args : Args) extends Job(args) {
 
 class TestScalding19(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -698,6 +718,7 @@ class TestScalding19(args : Args) extends Job(args) {
 
 class TestScalding20(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -711,6 +732,7 @@ class TestScalding20(args : Args) extends Job(args) {
 
 class TestScalding21(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -739,6 +761,7 @@ class TestScalding21(args : Args) extends Job(args) {
 
 class TestScalding22(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -780,6 +803,7 @@ class TestScalding22(args : Args) extends Job(args) {
 
 class TestScalding23(args : Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -807,6 +831,7 @@ class TestScalding23(args : Args) extends Job(args) {
 
 class TestScalding24(args: Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -836,6 +861,7 @@ class TestScalding24(args: Args) extends Job(args) {
 
 class TestScalding25(args: Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -848,6 +874,7 @@ class TestScalding25(args: Args) extends Job(args) {
 
 class TestScalding26(args: Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -863,6 +890,7 @@ class TestScalding26(args: Args) extends Job(args) {
 
 class TestScalding27(args: Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -924,6 +952,7 @@ class TestScalding27(args: Args) extends Job(args) {
 
 class TestScalding28(args: Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
 
   val data = List
@@ -989,6 +1018,7 @@ class TestScalding28(args: Args) extends Job(args) {
 
 class TestScalding29(args: Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
 
   val schema = DiscreteSchema(LongCodex)
@@ -1021,6 +1051,7 @@ class TestScalding29(args: Args) extends Job(args) {
 
 class TestScalding30(args: Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
 
   val schema = DiscreteSchema(LongCodex)
@@ -1043,6 +1074,7 @@ class TestScalding30(args: Args) extends Job(args) {
 
 class TestScalding31(args: Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
   val path = args("path")
 
@@ -1056,6 +1088,7 @@ class TestScalding31(args: Args) extends Job(args) {
 
 class TestScalding32(args: Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
 
   List(("a", Content(ContinuousSchema(DoubleCodex), 3.14)),
@@ -1115,6 +1148,7 @@ class TestScalding32(args: Args) extends Job(args) {
 
 class TestScalding33(args: Args) extends Job(args) {
 
+  implicit val ctx = Context()
   val tool = "scalding"
 
   val data = List(("a", "one", Content(ContinuousSchema(DoubleCodex), 3.14)),

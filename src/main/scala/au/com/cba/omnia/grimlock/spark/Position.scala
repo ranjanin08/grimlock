@@ -24,8 +24,8 @@ import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.spark._
+import au.com.cba.omnia.grimlock.spark.environment._
 
-import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
 import scala.reflect.ClassTag
@@ -35,8 +35,7 @@ import scala.reflect.ClassTag
  *
  * @param data The `RDD[Position]`.
  */
-class Positions[P <: Position](val data: RDD[P]) extends FwPositions[P] with Persist[P] {
-  type U[A] = RDD[A]
+case class Positions[P <: Position](data: RDD[P]) extends FwPositions[P] with Persist[P] {
 
   import SparkImplicits._
 
@@ -46,7 +45,7 @@ class Positions[P <: Position](val data: RDD[P]) extends FwPositions[P] with Per
     data.map { case p => slice.selected(p) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
   }
 
-  def saveAsText(file: String, writer: TextWriter = Position.toString()): U[P] = saveText(file, writer)
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[P] = saveText(file, writer)
 
   protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[P] = {
     data.filter { case p => !keep ^ f(p) }
@@ -56,7 +55,7 @@ class Positions[P <: Position](val data: RDD[P]) extends FwPositions[P] with Per
 /** Companion object for the Spark `Positions` class. */
 object Positions {
   /** Converts a `RDD[Position]` to a Spark `Positions`. */
-  implicit def RDDP2RDDP[P <: Position](data: RDD[P]): Positions[P] = new Positions(data)
+  implicit def RDDP2RDDP[P <: Position](data: RDD[P]): Positions[P] = Positions(data)
 }
 
 /** Spark Companion object for the `PositionDistributable` type class. */
@@ -67,17 +66,17 @@ object PositionDistributable {
   }
 
   /** Converts a `List[Positionable]` to a `RDD[Position]`. */
-  implicit def LP2RDDPD[T <% Positionable[P], P <: Position](implicit sc: SparkContext,
+  implicit def LP2RDDPD[T <% Positionable[P], P <: Position](implicit ctx: Context,
     ct: ClassTag[P]): FwPositionDistributable[List[T], P, RDD] = {
     new FwPositionDistributable[List[T], P, RDD] {
-      def convert(t: List[T]): RDD[P] = sc.parallelize(t.map { case p => p() })
+      def convert(t: List[T]): RDD[P] = ctx.context.parallelize(t.map { case p => p() })
     }
   }
 
   /** Converts a `Positionable` to a `RDD[Position]`. */
-  implicit def P2RDDPD[T <% Positionable[P], P <: Position](implicit sc: SparkContext,
+  implicit def P2RDDPD[T <% Positionable[P], P <: Position](implicit ctx: Context,
     ct: ClassTag[P]): FwPositionDistributable[T, P, RDD] = {
-    new FwPositionDistributable[T, P, RDD] { def convert(t: T): RDD[P] = sc.parallelize(List(t())) }
+    new FwPositionDistributable[T, P, RDD] { def convert(t: T): RDD[P] = ctx.context.parallelize(List(t())) }
   }
 }
 

@@ -16,35 +16,35 @@ package au.com.cba.omnia.grimlock.spark.transform
 
 import au.com.cba.omnia.grimlock.framework.position._
 
+import au.com.cba.omnia.grimlock.spark.environment._
+
 import au.com.cba.omnia.grimlock.library.transform.{ CutRules => FwCutRules }
 
 /** Implement cut rules for Spark. */
-object CutRules extends FwCutRules {
-  type E[A] = A
+object CutRules extends FwCutRules with UserData {
+  def fixed(ext: E[Stats], min: Positionable[Position1D], max: Positionable[Position1D],
+    k: Long): E[Map[Position1D, List[Double]]] = fixedFromStats(ext, min, max, k)
 
-  def fixed(ext: Stats, min: Positionable[Position1D], max: Positionable[Position1D],
-    k: Long): Map[Position1D, List[Double]] = fixedFromStats(ext, min, max, k)
+  def squareRootChoice(ext: E[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): E[Map[Position1D, List[Double]]] = squareRootChoiceFromStats(ext, count, min, max)
 
-  def squareRootChoice(ext: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
-    max: Positionable[Position1D]): Map[Position1D, List[Double]] = squareRootChoiceFromStats(ext, count, min, max)
+  def sturgesFormula(ext: E[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): E[Map[Position1D, List[Double]]] = sturgesFormulaFromStats(ext, count, min, max)
 
-  def sturgesFormula(ext: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
-    max: Positionable[Position1D]): Map[Position1D, List[Double]] = sturgesFormulaFromStats(ext, count, min, max)
+  def riceRule(ext: E[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D]): E[Map[Position1D, List[Double]]] = riceRuleFromStats(ext, count, min, max)
 
-  def riceRule(ext: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
-    max: Positionable[Position1D]): Map[Position1D, List[Double]] = riceRuleFromStats(ext, count, min, max)
-
-  def doanesFormula(ext: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
-    max: Positionable[Position1D], skewness: Positionable[Position1D]): Map[Position1D, List[Double]] = {
+  def doanesFormula(ext: E[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D], skewness: Positionable[Position1D]): E[Map[Position1D, List[Double]]] = {
     doanesFormulaFromStats(ext, count, min, max, skewness)
   }
 
-  def scottsNormalReferenceRule(ext: Stats, count: Positionable[Position1D], min: Positionable[Position1D],
-    max: Positionable[Position1D], sd: Positionable[Position1D]): Map[Position1D, List[Double]] = {
+  def scottsNormalReferenceRule(ext: E[Stats], count: Positionable[Position1D], min: Positionable[Position1D],
+    max: Positionable[Position1D], sd: Positionable[Position1D]): E[Map[Position1D, List[Double]]] = {
     scottsNormalReferenceRuleFromStats(ext, count, min, max, sd)
   }
 
-  def breaks[P <% Positionable[Position1D]](range: Map[P, List[Double]]): Map[Position1D, List[Double]] = {
+  def breaks[P <% Positionable[Position1D]](range: Map[P, List[Double]]): E[Map[Position1D, List[Double]]] = {
     breaksFromMap(range)
   }
 }

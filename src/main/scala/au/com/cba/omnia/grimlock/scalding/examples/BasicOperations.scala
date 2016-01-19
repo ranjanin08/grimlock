@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock.scalding.examples
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.position._
 
+import au.com.cba.omnia.grimlock.scalding.environment._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.position.Positions._
 import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
@@ -25,6 +26,9 @@ import au.com.cba.omnia.grimlock.scalding.Types._
 import com.twitter.scalding.{ Args, Job }
 
 class BasicOperations(args: Args) extends Job(args) {
+
+  // Define implicit context.
+  implicit val ctx = Context()
 
   // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")

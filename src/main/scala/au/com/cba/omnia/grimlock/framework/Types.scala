@@ -90,5 +90,15 @@ object Type {
 }
 
 /** Base trait that represents the variable type along the dimensions of a matrix. */
-trait Types[P <: Position] extends RawData { }
+trait Types[P <: Position] extends Persist[(P, Type)] {
+  /**
+   * Persist to disk.
+   *
+   * @param file   Name of the output file.
+   * @param writer Writer that converts `(P, Type)` to string.
+   *
+   * @return A `U[(P, Type)]` which is this object's data.
+   */
+  def saveAsText(file: String, writer: TextWriter = Type.toString())(implicit ctx: C): U[(P, Type)]
+}
 

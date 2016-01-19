@@ -188,5 +188,15 @@ object Content {
 private[content] case class ContentImpl(schema: Schema, value: Value) extends Content
 
 /** Base trait that represents the contents of a matrix. */
-trait Contents extends RawData { }
+trait Contents extends Persist[Content] {
+  /**
+   * Persist to disk.
+   *
+   * @param file   Name of the output file.
+   * @param writer Writer that converts `Content` to string.
+   *
+   * @return A `U[Content]` which is this object's data.
+   */
+  def saveAsText(file: String, writer: TextWriter = Content.toString())(implicit ctx: C): U[Content]
+}
 

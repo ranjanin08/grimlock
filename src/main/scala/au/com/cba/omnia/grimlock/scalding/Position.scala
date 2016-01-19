@@ -25,8 +25,6 @@ import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.scalding._
 
-import cascading.flow.FlowDef
-import com.twitter.scalding.Mode
 import com.twitter.scalding.typed.{ IterablePipe, TypedPipe }
 
 import scala.reflect.ClassTag
@@ -36,17 +34,14 @@ import scala.reflect.ClassTag
  *
  * @param data The `TypedPipe[Position]`.
  */
-class Positions[P <: Position](val data: TypedPipe[P]) extends FwPositions[P] with Persist[P] {
-  type U[A] = TypedPipe[A]
-
+case class Positions[P <: Position](data: TypedPipe[P]) extends FwPositions[P] with Persist[P] {
   type NamesTuners = OneOf1[Default[NoParameters.type]]
   def names[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
     ev2: ClassTag[slice.S], ev3: NamesTuners#V[T]): U[slice.S] = {
     data.map { case p => slice.selected(p) }.distinct(Position.Ordering[slice.S]())
   }
 
-  def saveAsText(file: String, writer: TextWriter = Position.toString())(implicit flow: FlowDef,
-    mode: Mode): U[P] = saveText(file, writer)
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[P] = saveText(file, writer)
 
   protected def slice(keep: Boolean, f: P => Boolean)(implicit ev: ClassTag[P]): U[P] = {
     data.filter { case p => !keep ^ f(p) }
@@ -56,7 +51,7 @@ class Positions[P <: Position](val data: TypedPipe[P]) extends FwPositions[P] wi
 /** Companion object for the Scalding `Positions` class. */
 object Positions {
   /** Converts a `TypedPipe[Position]` to a `Positions`. */
-  implicit def TPP2TPP[P <: Position](data: TypedPipe[P]): Positions[P] = new Positions(data)
+  implicit def TPP2TPP[P <: Position](data: TypedPipe[P]): Positions[P] = Positions(data)
 }
 
 /** Scalding companion object for the `PositionDistributable` type class. */

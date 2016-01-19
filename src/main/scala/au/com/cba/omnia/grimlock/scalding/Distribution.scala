@@ -32,8 +32,6 @@ import au.com.cba.omnia.grimlock.framework.utility._
 
 import au.com.cba.omnia.grimlock.scalding._
 
-import com.twitter.scalding.typed.{ TypedPipe, ValuePipe }
-
 import scala.reflect.ClassTag
 
 trait ApproximateDistribution[P <: Position] extends FwApproximateDistribution[P] { self: Matrix[P] =>

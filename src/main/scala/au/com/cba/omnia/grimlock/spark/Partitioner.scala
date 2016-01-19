@@ -30,9 +30,8 @@ import scala.reflect.ClassTag
  *
  * @param data The `RDD[(I, Cell[P])]`.
  */
-class Partitions[P <: Position, I: Ordering](val data: RDD[(I, Cell[P])]) extends FwPartitions[P, I]
+case class Partitions[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]) extends FwPartitions[P, I]
   with Persist[(I, Cell[P])] {
-  type U[A] = RDD[A]
 
   import SparkImplicits._
 
@@ -61,12 +60,12 @@ class Partitions[P <: Position, I: Ordering](val data: RDD[(I, Cell[P])]) extend
 
   def remove(id: I): U[(I, Cell[P])] = data.filter { case (i, _) => i != id }
 
-  def saveAsText(file: String, writer: TextWriter = Partition.toString()): U[(I, Cell[P])] = saveText(file, writer)
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[(I, Cell[P])] = saveText(file, writer)
 }
 
 /** Companion object for the Spark `Partitions` class. */
 object Partitions {
   /** Conversion from `RDD[(I, Cell[P])]` to a Spark `Partitions`. */
-  implicit def RDDTC2RDDP[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]): Partitions[P, I] = new Partitions(data)
+  implicit def RDDTC2RDDP[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]): Partitions[P, I] = Partitions(data)
 }
 

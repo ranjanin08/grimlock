@@ -26,6 +26,7 @@ import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.pairwise._
 import au.com.cba.omnia.grimlock.library.squash._
 
+import au.com.cba.omnia.grimlock.spark.environment._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 
 import org.apache.spark.{ SparkConf, SparkContext }
@@ -48,8 +49,8 @@ case class CeilingBucketing() extends Transformer[Position2D, Position2D] {
 object MutualInformation {
 
   def main(args: Array[String]) {
-    // Define implicit context for loading data.
-    implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
+    // Define implicit context.
+    implicit val ctx = Context(new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf()))
 
     // Path to data files
     val path = if (args.length > 1) args(1) else "../../data"

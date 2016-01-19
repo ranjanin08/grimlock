@@ -21,6 +21,7 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.window._
 
+import au.com.cba.omnia.grimlock.spark.environment._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 
 import org.apache.spark.{ SparkConf, SparkContext }
@@ -69,8 +70,8 @@ case class Gradient(dim: Dimension) extends Window[Position3D, Position2D, Posit
 object DerivedData {
 
   def main(args: Array[String]) {
-    // Define implicit context for loading data.
-    implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
+    // Define implicit context.
+    implicit val ctx = Context(new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf()))
 
     // Path to data files, output folder
     val path = if (args.length > 1) args(1) else "../../data"

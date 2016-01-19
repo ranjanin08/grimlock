@@ -16,23 +16,20 @@ package au.com.cba.omnia.grimlock.scalding
 
 import au.com.cba.omnia.grimlock.framework.TunerParameters
 
-import com.twitter.scalding.{ Config, Mode }
+import au.com.cba.omnia.grimlock.scalding.environment._
 
+/** Trait for tuned jobs involving a `Execution`. */
 trait Execution extends TunerParameters {
   type P = Execution
 
-  val config: Config
-  val mode: Mode
+  /** The Scalding operating contex. */
+  val context: Context
 }
 
+/** Companion object to `Execution` trait, defines apply/unapply methods. */
 object Execution {
-  def apply()(implicit cfg: Config, md: Mode): Execution = {
-    new Execution {
-      val config = cfg
-      val mode = md
-    }
-  }
+  def apply()(implicit ctx: Context): Execution = new Execution { val context = ctx }
 
-  def unapply(e: Execution): Option[(Config, Mode)] = Some((e.config, e.mode))
+  def unapply(e: Execution): Option[(Context)] = Some(e.context)
 }
 

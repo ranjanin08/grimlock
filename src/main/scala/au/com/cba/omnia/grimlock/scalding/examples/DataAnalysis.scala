@@ -20,11 +20,15 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 import au.com.cba.omnia.grimlock.library.aggregate._
 
+import au.com.cba.omnia.grimlock.scalding.environment._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 
 import com.twitter.scalding.{ Args, Job }
 
 class DataAnalysis(args: Args) extends Job(args) {
+
+  // Define implicit context.
+  implicit val ctx = Context()
 
   // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")

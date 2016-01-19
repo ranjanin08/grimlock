@@ -24,6 +24,7 @@ import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
+import au.com.cba.omnia.grimlock.scalding.environment._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.partition.Partitions._
 import au.com.cba.omnia.grimlock.scalding.position.PositionDistributable._
@@ -45,6 +46,9 @@ case class CustomPartition(dim: Dimension, left: String, right: String) extends 
 }
 
 class PipelineDataPreparation(args: Args) extends Job(args) {
+
+  // Define implicit context.
+  implicit val ctx = Context()
 
   // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")

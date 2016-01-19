@@ -16,26 +16,16 @@ package au.com.cba.omnia.grimlock.scalding
 
 import au.com.cba.omnia.grimlock.framework.{ Persist => FwPersist }
 
-import cascading.flow.FlowDef
-import com.twitter.scalding.{ Mode, TextLine }
-import com.twitter.scalding.typed.{ TypedPipe, TypedSink }
+import au.com.cba.omnia.grimlock.scalding.environment._
+
+import com.twitter.scalding.TextLine
+import com.twitter.scalding.typed.TypedSink
 
 /** Trait for peristing a Scalding `TypedPipe`. */
-trait Persist[T] extends FwPersist[T] {
-  /** The data to persist. */
-  val data: TypedPipe[T]
+trait Persist[T] extends FwPersist[T] with DistributedData with Environment {
+  protected def saveText(file: String, writer: TextWriter)(implicit ctx: C): U[T] = {
+    import ctx._
 
-  /**
-   * Persist to disk.
-   *
-   * @param file   Name of the output file.
-   * @param writer Writer that converts `T` to string.
-   *
-   * @return A Scalding `TypedPipe[T]` which is this object's data.
-   */
-  def saveAsText(file: String, writer: TextWriter)(implicit flow: FlowDef, mode: Mode): TypedPipe[T]
-
-  protected def saveText(file: String, writer: TextWriter)(implicit flow: FlowDef, mode: Mode): TypedPipe[T] = {
     data
       .flatMap(writer(_))
       .write(TypedSink(TextLine(file)))

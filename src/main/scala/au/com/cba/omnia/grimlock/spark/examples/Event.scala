@@ -25,6 +25,7 @@ import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
+import au.com.cba.omnia.grimlock.spark.environment._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 
 import org.apache.spark.{ SparkConf, SparkContext }
@@ -42,9 +43,9 @@ case class ExampleEvent(
 
 object ExampleEvent {
   // Function to read a file with event data.
-  def load(file: String)(implicit sc: SparkContext): RDD[Cell[Position1D]] = {
+  def load(file: String)(implicit ctx: Context): RDD[Cell[Position1D]] = {
     val es = StructuredSchema(ExampleEventCodex)
-    sc.textFile(file)
+    ctx.context.textFile(file)
       .flatMap { case s => es.decode(s).map { case e => Cell(Position1D(es.codex.fromValue(e.value).eventId), e) } }
   }
 }
@@ -130,8 +131,8 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
 object InstanceCentricTfIdf {
 
   def main(args: Array[String]) {
-    // Define implicit context for loading data.
-    implicit val spark = new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf())
+    // Define implicit context.
+    implicit val ctx = Context(new SparkContext(args(0), "Grimlock Spark Demo", new SparkConf()))
 
     // Path to data files, output folder
     val path = if (args.length > 1) args(1) else "../../data"

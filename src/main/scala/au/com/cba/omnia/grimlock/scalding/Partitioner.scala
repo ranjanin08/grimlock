@@ -21,8 +21,6 @@ import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
 import au.com.cba.omnia.grimlock.scalding._
 
-import cascading.flow.FlowDef
-import com.twitter.scalding.Mode
 import com.twitter.scalding.typed.{ Grouped, TypedPipe }
 
 import scala.reflect.ClassTag
@@ -32,25 +30,23 @@ import scala.reflect.ClassTag
  *
  * @param data The `TypedPipe[(I, Cell[P])]`.
  */
-class Partitions[P <: Position, I: Ordering](val data: TypedPipe[(I, Cell[P])]) extends FwPartitions[P, I]
+case class Partitions[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])]) extends FwPartitions[P, I]
   with Persist[(I, Cell[P])] {
-  type U[A] = TypedPipe[A]
-
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
   type ForAllTuners = OneOf2[Default[Execution], Default[Sequence2[Reducers, Execution]]]
   def forAll[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T)(
     implicit ev1: ClassTag[I], ev2: ForAllTuners#V[T]): U[(I, Cell[Q])] = {
-    val (config, mode, identifiers) = tuner.parameters match {
-      case Execution(cfg, md) => (cfg, md, ids(Default()))
-      case Sequence2(r @ Reducers(_), Execution(cfg, md)) => (cfg, md, ids(Default(r)))
+    val (context, identifiers) = tuner.parameters match {
+      case Execution(ctx) => (ctx, ids(Default()))
+      case Sequence2(r @ Reducers(_), Execution(ctx)) => (ctx, ids(Default(r)))
     }
 
     val keys = identifiers
       .collect { case i if !exclude.contains(i) => List(i) }
       .sum
       .getExecution
-      .waitFor(config, mode)
+      .waitFor(context.config, context.mode)
       .getOrElse(throw new Exception("unable to get ids list"))
 
     forEach(keys, fn)
@@ -78,15 +74,12 @@ class Partitions[P <: Position, I: Ordering](val data: TypedPipe[(I, Cell[P])]) 
 
   def remove(id: I): U[(I, Cell[P])] = data.filter { case (i, _) => i != id }
 
-  def saveAsText(file: String, writer: TextWriter = Partition.toString())(implicit flow: FlowDef,
-    mode: Mode): U[(I, Cell[P])] = saveText(file, writer)
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[(I, Cell[P])] = saveText(file, writer)
 }
 
 /** Companion object for the Scalding `Partitions` class. */
 object Partitions {
   /** Conversion from `TypedPipe[(I, Cell[P])]` to a Scalding `Partitions`. */
-  implicit def TPTC2TPP[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])]): Partitions[P, I] = {
-    new Partitions(data)
-  }
+  implicit def TPTC2TPP[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])]): Partitions[P, I] = Partitions(data)
 }
 

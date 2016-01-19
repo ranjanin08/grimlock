@@ -16,6 +16,7 @@ package au.com.cba.omnia.grimlock.spark
 
 import au.com.cba.omnia.grimlock.framework.{
   Cell,
+  Consume,
   Default,
   ReshapeableMatrix => FwReshapeableMatrix,
   ExtractWithDimension,
@@ -56,15 +57,14 @@ import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 import au.com.cba.omnia.grimlock.framework.window._
 
-import au.com.cba.omnia.grimlock.spark.Matrix._
 import au.com.cba.omnia.grimlock.spark.distribution._
+import au.com.cba.omnia.grimlock.spark.environment._
 
 import java.io.File
 import java.nio.file.{ Files, Paths }
 
 import org.apache.hadoop.io.Writable
 
-import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
 import scala.collection.immutable.HashSet
@@ -112,9 +112,7 @@ private[spark] object SparkImplicits {
 }
 
 /** Base trait for matrix operations using a `RDD[Cell[P]]`. */
-trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] {
-  type U[A] = RDD[A]
-  type E[B] = B
+trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserData {
   type M = Matrix[P]
 
   import SparkImplicits._
@@ -266,7 +264,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] {
     data.flatMap { case c => locate(c, value).map(Cell(_, c.content)) }
   }
 
-  def saveAsText(file: String, writer: TextWriter = Cell.toString()): U[Cell[P]] = saveText(file, writer)
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[Cell[P]] = saveText(file, writer)
 
   type SetTuners = TP2
   def set[T <: Tuner](values: FwMatrixable[P, RDD], tuner: T = Default())(implicit ev1: ClassTag[P],
@@ -506,8 +504,6 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] {
       .collect { case (_, (c, (_, predicate))) if predicate(c) => c.position }
   }
 
-  val data: U[Cell[P]]
-
   protected def saveDictionary(slice: Slice[P], file: String, dictionary: String, separator: String)(
     implicit ev: ClassTag[slice.S]) = {
     val numbered = names(slice)
@@ -603,6 +599,8 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   import au.com.cba.omnia.grimlock.library.pairwise._
   import au.com.cba.omnia.grimlock.library.transform._
   import au.com.cba.omnia.grimlock.library.window._
+
+  import au.com.cba.omnia.grimlock.spark.Matrix._
 
   /**
    * Compute correlations.
@@ -760,155 +758,144 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   }
 }
 
-object Matrix {
-  /**
-   * Read column oriented, pipe separated matrix text data into a `RDD[Cell[P]]`.
-   *
-   * @param file   The text file to read from.
-   * @param parser The parser that converts a single line to a cell.
-   */
+object Matrix extends Consume with DistributedData with Environment {
   def loadText[P <: Position](file: String, parser: FwMatrix.TextParser[P])(
-    implicit sc: SparkContext): (RDD[Cell[P]], RDD[String]) = {
-    val rdd = sc.textFile(file).flatMap { parser(_) }
+    implicit ctx: C): (U[Cell[P]], U[String]) = {
+    val rdd = ctx.context.textFile(file).flatMap { parser(_) }
 
     (rdd.collect { case Left(c) => c }, rdd.collect { case Right(e) => e })
   }
 
-  /**
-   * Read binary key-value (sequence) matrix data into a `RDD[Cell[P]]`.
-   *
-   * @param file   The text file to read from.
-   * @param parser The parser that converts a single key-value to a cell.
-   */
   def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String,
-    parser: FwMatrix.SequenceParser[K, V, P])(implicit sc: SparkContext, ev1: ClassTag[K],
-      ev2: ClassTag[V]): (RDD[Cell[P]], RDD[String]) = {
-    val pipe = sc.sequenceFile[K, V](file).flatMap { case (k, v) => parser(k, v) }
+    parser: FwMatrix.SequenceParser[K, V, P])(implicit ctx: C, ev1: Manifest[K],
+      ev2: Manifest[V]): (U[Cell[P]], U[String]) = {
+    val pipe = ctx.context.sequenceFile[K, V](file).flatMap { case (k, v) => parser(k, v) }
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
   }
 
-  /** Conversion from `RDD[Cell[Position1D]]` to a Spark `Matrix1D`. */
-  implicit def RDD2M1(data: RDD[Cell[Position1D]]): Matrix1D = Matrix1D(data)
-  /** Conversion from `RDD[Cell[Position2D]]` to a Spark `Matrix2D`. */
-  implicit def RDD2M2(data: RDD[Cell[Position2D]]): Matrix2D = Matrix2D(data)
-  /** Conversion from `RDD[Cell[Position3D]]` to a Spark `Matrix3D`. */
-  implicit def RDD2M3(data: RDD[Cell[Position3D]]): Matrix3D = Matrix3D(data)
-  /** Conversion from `RDD[Cell[Position4D]]` to a Spark `Matrix4D`. */
-  implicit def RDD2M4(data: RDD[Cell[Position4D]]): Matrix4D = Matrix4D(data)
-  /** Conversion from `RDD[Cell[Position5D]]` to a Spark `Matrix5D`. */
-  implicit def RDD2M5(data: RDD[Cell[Position5D]]): Matrix5D = Matrix5D(data)
-  /** Conversion from `RDD[Cell[Position6D]]` to a Spark `Matrix6D`. */
-  implicit def RDD2M6(data: RDD[Cell[Position6D]]): Matrix6D = Matrix6D(data)
-  /** Conversion from `RDD[Cell[Position7D]]` to a Spark `Matrix7D`. */
-  implicit def RDD2M7(data: RDD[Cell[Position7D]]): Matrix7D = Matrix7D(data)
-  /** Conversion from `RDD[Cell[Position8D]]` to a Spark `Matrix8D`. */
-  implicit def RDD2M8(data: RDD[Cell[Position8D]]): Matrix8D = Matrix8D(data)
-  /** Conversion from `RDD[Cell[Position9D]]` to a Spark `Matrix9D`. */
-  implicit def RDD2M9(data: RDD[Cell[Position9D]]): Matrix9D = Matrix9D(data)
+  /** Conversion from `U[Cell[Position1D]]` to a Spark `Matrix1D`. */
+  implicit def RDD2M1(data: U[Cell[Position1D]]): Matrix1D = Matrix1D(data)
+  /** Conversion from `U[Cell[Position2D]]` to a Spark `Matrix2D`. */
+  implicit def RDD2M2(data: U[Cell[Position2D]]): Matrix2D = Matrix2D(data)
+  /** Conversion from `U[Cell[Position3D]]` to a Spark `Matrix3D`. */
+  implicit def RDD2M3(data: U[Cell[Position3D]]): Matrix3D = Matrix3D(data)
+  /** Conversion from `U[Cell[Position4D]]` to a Spark `Matrix4D`. */
+  implicit def RDD2M4(data: U[Cell[Position4D]]): Matrix4D = Matrix4D(data)
+  /** Conversion from `U[Cell[Position5D]]` to a Spark `Matrix5D`. */
+  implicit def RDD2M5(data: U[Cell[Position5D]]): Matrix5D = Matrix5D(data)
+  /** Conversion from `U[Cell[Position6D]]` to a Spark `Matrix6D`. */
+  implicit def RDD2M6(data: U[Cell[Position6D]]): Matrix6D = Matrix6D(data)
+  /** Conversion from `U[Cell[Position7D]]` to a Spark `Matrix7D`. */
+  implicit def RDD2M7(data: U[Cell[Position7D]]): Matrix7D = Matrix7D(data)
+  /** Conversion from `U[Cell[Position8D]]` to a Spark `Matrix8D`. */
+  implicit def RDD2M8(data: U[Cell[Position8D]]): Matrix8D = Matrix8D(data)
+  /** Conversion from `U[Cell[Position9D]]` to a Spark `Matrix9D`. */
+  implicit def RDD2M9(data: U[Cell[Position9D]]): Matrix9D = Matrix9D(data)
 
   /** Conversion from `List[Cell[Position1D]]` to a Spark `Matrix1D`. */
-  implicit def L2RDDM1(data: List[Cell[Position1D]])(implicit sc: SparkContext): Matrix1D = {
-    Matrix1D(sc.parallelize(data))
+  implicit def L2RDDM1(data: List[Cell[Position1D]])(implicit ctx: C): Matrix1D = {
+    Matrix1D(ctx.context.parallelize(data))
   }
   /** Conversion from `List[Cell[Position2D]]` to a Spark `Matrix2D`. */
-  implicit def L2RDDM2(data: List[Cell[Position2D]])(implicit sc: SparkContext): Matrix2D = {
-    Matrix2D(sc.parallelize(data))
+  implicit def L2RDDM2(data: List[Cell[Position2D]])(implicit ctx: C): Matrix2D = {
+    Matrix2D(ctx.context.parallelize(data))
   }
   /** Conversion from `List[Cell[Position3D]]` to a Spark `Matrix3D`. */
-  implicit def L2RDDM3(data: List[Cell[Position3D]])(implicit sc: SparkContext): Matrix3D = {
-    Matrix3D(sc.parallelize(data))
+  implicit def L2RDDM3(data: List[Cell[Position3D]])(implicit ctx: C): Matrix3D = {
+    Matrix3D(ctx.context.parallelize(data))
   }
   /** Conversion from `List[Cell[Position4D]]` to a Spark `Matrix4D`. */
-  implicit def L2RDDM4(data: List[Cell[Position4D]])(implicit sc: SparkContext): Matrix4D = {
-    Matrix4D(sc.parallelize(data))
+  implicit def L2RDDM4(data: List[Cell[Position4D]])(implicit ctx: C): Matrix4D = {
+    Matrix4D(ctx.context.parallelize(data))
   }
   /** Conversion from `List[Cell[Position5D]]` to a Spark `Matrix5D`. */
-  implicit def L2RDDM5(data: List[Cell[Position5D]])(implicit sc: SparkContext): Matrix5D = {
-    Matrix5D(sc.parallelize(data))
+  implicit def L2RDDM5(data: List[Cell[Position5D]])(implicit ctx: C): Matrix5D = {
+    Matrix5D(ctx.context.parallelize(data))
   }
   /** Conversion from `List[Cell[Position6D]]` to a Spark `Matrix6D`. */
-  implicit def L2RDDM6(data: List[Cell[Position6D]])(implicit sc: SparkContext): Matrix6D = {
-    Matrix6D(sc.parallelize(data))
+  implicit def L2RDDM6(data: List[Cell[Position6D]])(implicit ctx: C): Matrix6D = {
+    Matrix6D(ctx.context.parallelize(data))
   }
   /** Conversion from `List[Cell[Position7D]]` to a Spark `Matrix7D`. */
-  implicit def L2RDDM7(data: List[Cell[Position7D]])(implicit sc: SparkContext): Matrix7D = {
-    Matrix7D(sc.parallelize(data))
+  implicit def L2RDDM7(data: List[Cell[Position7D]])(implicit ctx: C): Matrix7D = {
+    Matrix7D(ctx.context.parallelize(data))
   }
   /** Conversion from `List[Cell[Position8D]]` to a Spark `Matrix8D`. */
-  implicit def L2RDDM8(data: List[Cell[Position8D]])(implicit sc: SparkContext): Matrix8D = {
-    Matrix8D(sc.parallelize(data))
+  implicit def L2RDDM8(data: List[Cell[Position8D]])(implicit ctx: C): Matrix8D = {
+    Matrix8D(ctx.context.parallelize(data))
   }
   /** Conversion from `List[Cell[Position9D]]` to a Spark `Matrix9D`. */
-  implicit def L2RDDM9(data: List[Cell[Position9D]])(implicit sc: SparkContext): Matrix9D = {
-    Matrix9D(sc.parallelize(data))
+  implicit def L2RDDM9(data: List[Cell[Position9D]])(implicit ctx: C): Matrix9D = {
+    Matrix9D(ctx.context.parallelize(data))
   }
 
   /** Conversion from `List[(Valueable, Content)]` to a Spark `Matrix1D`. */
-  implicit def LV1C2RDDM1[V <% Valueable](list: List[(V, Content)])(implicit sc: SparkContext): Matrix1D = {
-    Matrix1D(sc.parallelize(list.map { case (v, c) => Cell(Position1D(v), c) }))
+  implicit def LV1C2RDDM1[V <% Valueable](list: List[(V, Content)])(implicit ctx: C): Matrix1D = {
+    Matrix1D(ctx.context.parallelize(list.map { case (v, c) => Cell(Position1D(v), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Content)]` to a Spark `Matrix2D`. */
-  implicit def LV2C2RDDM2[V <% Valueable, W <% Valueable](list: List[(V, W, Content)])(
-    implicit sc: SparkContext): Matrix2D = {
-    Matrix2D(sc.parallelize(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
+  implicit def LV2C2RDDM2[V <% Valueable, W <% Valueable](list: List[(V, W, Content)])(implicit ctx: C): Matrix2D = {
+    Matrix2D(ctx.context.parallelize(list.map { case (v, w, c) => Cell(Position2D(v, w), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix3D`. */
   implicit def LV3C2RDDM3[V <% Valueable, W <% Valueable, X <% Valueable](
-    list: List[(V, W, X, Content)])(implicit sc: SparkContext): Matrix3D = {
-    Matrix3D(sc.parallelize(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
+    list: List[(V, W, X, Content)])(implicit ctx: C): Matrix3D = {
+    Matrix3D(ctx.context.parallelize(list.map { case (v, w, x, c) => Cell(Position3D(v, w, x), c) }))
   }
   /** Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix4D`. */
   implicit def LV4C2RDDM4[V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable](
-    list: List[(V, W, X, Y, Content)])(implicit sc: SparkContext): Matrix4D = {
-    Matrix4D(sc.parallelize(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
+    list: List[(V, W, X, Y, Content)])(implicit ctx: C): Matrix4D = {
+    Matrix4D(ctx.context.parallelize(list.map { case (v, w, x, y, c) => Cell(Position4D(v, w, x, y), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a Spark `Matrix5D`.
    */
   implicit def LV5C2RDDM5[V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
-    list: List[(V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix5D = {
-    Matrix5D(sc.parallelize(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
+    list: List[(V, W, X, Y, Z, Content)])(implicit ctx: C): Matrix5D = {
+    Matrix5D(ctx.context.parallelize(list.map { case (v, w, x, y, z, c) => Cell(Position5D(v, w, x, y, z), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
    * Spark `Matrix6D`.
    */
-  implicit def LV6C2RDDM6[U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
-    list: List[(U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix6D = {
-    Matrix6D(sc.parallelize(list.map { case (u, v, w, x, y, z, c) => Cell(Position6D(u, v, w, x, y, z), c) }))
+  implicit def LV6C2RDDM6[T <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
+    list: List[(T, V, W, X, Y, Z, Content)])(implicit ctx: C): Matrix6D = {
+    Matrix6D(ctx.context.parallelize(list.map { case (t, v, w, x, y, z, c) => Cell(Position6D(t, v, w, x, y, z), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
    * Spark `Matrix7D`.
    */
-  implicit def LV7C2RDDM7[T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
-    list: List[(T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix7D = {
-    Matrix7D(sc.parallelize(list.map { case (t, u, v, w, x, y, z, c) => Cell(Position7D(t, u, v, w, x, y, z), c) }))
+  implicit def LV7C2RDDM7[S <% Valueable, T <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
+    list: List[(S, T, V, W, X, Y, Z, Content)])(implicit ctx: C): Matrix7D = {
+    Matrix7D(ctx.context.parallelize(list.map {
+      case (s, t, v, w, x, y, z, c) => Cell(Position7D(s, t, v, w, x, y, z), c)
+    }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
    * Content)]` to a Spark `Matrix8D`.
    */
-  implicit def LV8C2RDDM8[S <% Valueable, T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
-    list: List[(S, T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix8D = {
-    Matrix8D(sc.parallelize(list.map {
-      case (s, t, u, v, w, x, y, z, c) => Cell(Position8D(s, t, u, v, w, x, y, z), c)
+  implicit def LV8C2RDDM8[R <% Valueable, S <% Valueable, T <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
+    list: List[(R, S, T, V, W, X, Y, Z, Content)])(implicit ctx: C): Matrix8D = {
+    Matrix8D(ctx.context.parallelize(list.map {
+      case (r, s, t, v, w, x, y, z, c) => Cell(Position8D(r, s, t, v, w, x, y, z), c)
     }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
    * Valueable, Content)]` to a Spark `Matrix9D`.
    */
-  implicit def LV9C2RDDM9[R <% Valueable, S <% Valueable, T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
-    list: List[(R, S, T, U, V, W, X, Y, Z, Content)])(implicit sc: SparkContext): Matrix9D = {
-    Matrix9D(sc.parallelize(list.map {
-      case (r, s, t, u, v, w, x, y, z, c) => Cell(Position9D(r, s, t, u, v, w, x, y, z), c)
+  implicit def LV9C2RDDM9[Q <% Valueable, R <% Valueable, S <% Valueable, T <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
+    list: List[(Q, R, S, T, V, W, X, Y, Z, Content)])(implicit ctx: C): Matrix9D = {
+    Matrix9D(ctx.context.parallelize(list.map {
+      case (q, r, s, t, v, w, x, y, z, c) => Cell(Position9D(q, r, s, t, v, w, x, y, z), c)
     }))
   }
 
   /** Conversion from matrix with errors tuple to `MatrixWithParseErrors`. */
-  implicit def RDD2MWPE[P <: Position](t: (RDD[Cell[P]], RDD[String])): MatrixWithParseErrors[P, RDD] = {
+  implicit def RDD2MWPE[P <: Position](t: (U[Cell[P]], U[String])): MatrixWithParseErrors[P, RDD] = {
     MatrixWithParseErrors(t._1, t._2)
   }
 }
@@ -922,16 +909,7 @@ case class Matrix1D(data: RDD[Cell[Position1D]]) extends FwMatrix1D with Matrix[
   with ApproximateDistribution[Position1D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position1D] = names(Over(First))
 
-  /**
-   * Persist a `Matrix1D` as sparse matrix file (index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position1D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position1D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position1D]] = {
     data
       .keyBy { case c => c.position }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -962,23 +940,8 @@ case class Matrix2D(data: RDD[Cell[Position2D]]) extends FwMatrix2D with Matrix[
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2)), c) }
   }
 
-  /**
-   * Persist a `Matrix2D` as a CSV file.
-   *
-   * @param slice       Encapsulates the dimension that makes up the columns.
-   * @param file        File to write to.
-   * @param separator   Column separator to use.
-   * @param escapee     The method for escaping the separator character.
-   * @param writeHeader Indicator of the header should be written to a separate file.
-   * @param header      Postfix for the header file name.
-   * @param writeRowId  Indicator if row names should be written.
-   * @param rowId       Column name of row names.
-   *
-   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   */
-  def saveAsCSV(slice: Slice[Position2D], file: String, separator: String = "|", escapee: Escape = Quote("|"),
-    writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true, rowId: String = "id")(
-      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+  def saveAsCSV(slice: Slice[Position2D], file: String, separator: String, escapee: Escape, writeHeader: Boolean,
+    header: String, writeRowId: Boolean, rowId: String)(implicit ctx: C, ct: ClassTag[slice.S]): U[Cell[Position2D]] = {
     val escape = (str: String) => escapee.escape(str)
     val columns = data
       .map { case c => ((), HashSet(escape(slice.remainder(c.position)(First).toShortString))) }
@@ -1009,16 +972,7 @@ case class Matrix2D(data: RDD[Cell[Position2D]]) extends FwMatrix2D with Matrix[
     data
   }
 
-  /**
-   * Persist a `Matrix2D` as sparse matrix file (index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position2D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position2D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1031,81 +985,25 @@ case class Matrix2D(data: RDD[Cell[Position2D]]) extends FwMatrix2D with Matrix[
     data
   }
 
-  /**
-   * Persist a `Matrix2D` as a Vowpal Wabbit file.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
-   * @param tag        Indicator if the selected position should be added as a tag.
-   * @param separator  Separator to use in dictionary.
-   *
-   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   */
-  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String = "%s.dict", tag: Boolean = false,
-    separator: String = "|")(implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String, tag: Boolean, separator: String)(
+    implicit ctx: C, ct: ClassTag[slice.S]): U[Cell[Position2D]] = {
     saveAsVW(slice, file, None, None, tag, dictionary, separator)
   }
 
-  /**
-   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param labels     The labels.
-   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
-   * @param tag        Indicator if the selected position should be added as a tag.
-   * @param separator  Separator to use in dictionary.
-   *
-   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note The labels are joined to the data keeping only those examples for which data and a label are available.
-   */
-  def saveAsVWWithLabels(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
-    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(
-      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+  def saveAsVWWithLabels(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]], dictionary: String,
+    tag: Boolean, separator: String)(implicit ctx: C, ct: ClassTag[slice.S]): U[Cell[Position2D]] = {
     saveAsVW(slice, file, Some(labels), None, tag, dictionary, separator)
   }
 
-  /**
-   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided importance weights.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param importance The importance weights.
-   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
-   * @param tag        Indicator if the selected position should be added as a tag.
-   * @param separator  Separator to use in dictionary.
-   *
-   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
-   */
   def saveAsVWWithImportance(slice: Slice[Position2D], file: String, importance: U[Cell[Position1D]],
-    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(
-      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    dictionary: String, tag: Boolean, separator: String)(implicit ctx: C,
+      ct: ClassTag[slice.S]): U[Cell[Position2D]] = {
     saveAsVW(slice, file, None, Some(importance), tag, dictionary, separator)
   }
 
-  /**
-   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels and importance weights.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param labels     The labels.
-   * @param importance The importance weights.
-   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
-   * @param tag        Indicator if the selected position should be added as a tag.
-   * @param separator  Separator to use in dictionary.
-   *
-   * @return A `RDD[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note The labels and weights are joined to the data keeping only those examples for which data and a label
-   *       and weight are available.
-   */
   def saveAsVWWithLabelsAndImportance(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
-    importance: U[Cell[Position1D]], dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(
-      implicit ev: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    importance: U[Cell[Position1D]], dictionary: String, tag: Boolean, separator: String)(implicit ctx: C,
+      ct: ClassTag[slice.S]): U[Cell[Position2D]] = {
     saveAsVW(slice, file, Some(labels), Some(importance), tag, dictionary, separator)
   }
 
@@ -1183,16 +1081,7 @@ case class Matrix3D(data: RDD[Cell[Position3D]]) extends FwMatrix3D with Matrix[
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3)), c) }
   }
 
-  /**
-   * Persist a `Matrix3D` as sparse matrix file (index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position3D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position3D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position3D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1232,16 +1121,7 @@ case class Matrix4D(data: RDD[Cell[Position4D]]) extends FwMatrix4D with Matrix[
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4)), c) }
   }
 
-  /**
-   * Persist a `Matrix4D` as sparse matrix file (index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position4D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position4D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position4D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1288,16 +1168,7 @@ case class Matrix5D(data: RDD[Cell[Position5D]]) extends FwMatrix5D with Matrix[
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5)), c) }
   }
 
-  /**
-   * Persist a `Matrix5D` as sparse matrix file (index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position5D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position5D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position5D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1350,16 +1221,7 @@ case class Matrix6D(data: RDD[Cell[Position6D]]) extends FwMatrix6D with Matrix[
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6)), c) }
   }
 
-  /**
-   * Persist a `Matrix6D` as sparse matrix file (index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position6D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position6D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position6D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1416,16 +1278,7 @@ case class Matrix7D(data: RDD[Cell[Position7D]]) extends FwMatrix7D with Matrix[
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6, dim7)), c) }
   }
 
-  /**
-   * Persist a `Matrix7D` as sparse matrix file (index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position7D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position7D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position7D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1486,16 +1339,7 @@ case class Matrix8D(data: RDD[Cell[Position8D]]) extends FwMatrix8D with Matrix[
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6, dim7, dim8)), c) }
   }
 
-  /**
-   * Persist a `Matrix8D` as sparse matrix file (index, index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position8D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position8D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position8D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1561,16 +1405,7 @@ case class Matrix9D(data: RDD[Cell[Position9D]]) extends FwMatrix9D with Matrix[
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6, dim7, dim8, dim9)), c) }
   }
 
-  /**
-   * Persist a `Matrix9D` as sparse matrix file (index, index, index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `RDD[Cell[Position9D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|"): U[Cell[Position9D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position9D]] = {
     data
       .keyBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1617,14 +1452,14 @@ object Matrixable {
   }
 
   /** Converts a `List[Cell[P]]` into a `RDD[Cell[P]]`. */
-  implicit def LC2RDDM[P <: Position](t: List[Cell[P]])(implicit sc: SparkContext,
+  implicit def LC2RDDM[P <: Position](t: List[Cell[P]])(implicit ctx: Context,
     ct: ClassTag[P]): FwMatrixable[P, RDD] = {
-    new FwMatrixable[P, RDD] { def apply(): RDD[Cell[P]] = sc.parallelize(t) }
+    new FwMatrixable[P, RDD] { def apply(): RDD[Cell[P]] = ctx.context.parallelize(t) }
   }
 
   /** Converts a `Cell[P]` into a `RDD[Cell[P]]`. */
-  implicit def C2RDDM[P <: Position](t: Cell[P])(implicit sc: SparkContext, ct: ClassTag[P]): FwMatrixable[P, RDD] = {
-    new FwMatrixable[P, RDD] { def apply(): RDD[Cell[P]] = sc.parallelize(List(t)) }
+  implicit def C2RDDM[P <: Position](t: Cell[P])(implicit ctx: Context, ct: ClassTag[P]): FwMatrixable[P, RDD] = {
+    new FwMatrixable[P, RDD] { def apply(): RDD[Cell[P]] = ctx.context.parallelize(List(t)) }
   }
 }
 

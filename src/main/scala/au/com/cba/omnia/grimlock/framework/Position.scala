@@ -926,7 +926,7 @@ object Position9D {
 private case class Position9DImpl(coordinates: List[Value]) extends Position9D
 
 /** Base trait that represents the positions of a matrix. */
-trait Positions[P <: Position] extends RawData {
+trait Positions[P <: Position] extends Persist[P] {
 
   /** Specifies tuners permitted on a call to `names`. */
   type NamesTuners <: OneOf
@@ -944,6 +944,16 @@ trait Positions[P <: Position] extends RawData {
    */
   def names[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: ClassTag[slice.S],
     ev3: NamesTuners#V[T]): U[slice.S]
+
+  /**
+   * Persist to disk.
+   *
+   * @param file   Name of the output file.
+   * @param writer Writer that converts `P` to string.
+   *
+   * @return A `U[P]` which is this object's data.
+   */
+  def saveAsText(file: String, writer: TextWriter = Position.toString())(implicit ctx: C): U[P]
 
   /**
    * Slice the positions using a regular expression.

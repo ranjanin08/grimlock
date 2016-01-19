@@ -55,7 +55,7 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
    * @param slice     Encapsulates the dimension(s) to compute quantiles on.
    * @param probs     List of probabilities; values must lie in (0, 1).
    * @param quantiser Function that determines the quantile indices into the order statistics.
-   * @param position  Function for extracting the position of the quantile.
+   * @param name      Function for extracting the position of the quantile.
    * @param count     Function that extracts the count value statistics from the user provided value.
    * @param value     Value holding the counts.
    * @param filter    Indicator if categorical values should be filtered or not.
@@ -67,7 +67,7 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
    * @note Non numeric values result in `NaN` quantiles, while missing counts result in no quantiles.
    */
   def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
-    probs: List[Double], quantiser: Quantile.Quantiser, position: Locate.FromSelectedAndOutput[S, Double, Q],
+    probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
       count: Extract[P, W, Long], value: E[W], filter: Boolean = true, nan: Boolean = false, tuner: T)(
         implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
           ev5: QuantileTuners#V[T]): U[Cell[Q]]

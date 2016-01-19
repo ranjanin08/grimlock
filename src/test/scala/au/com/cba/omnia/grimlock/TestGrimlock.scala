@@ -16,6 +16,8 @@ package au.com.cba.omnia.grimlock
 
 import au.com.cba.omnia.grimlock.framework.position._
 
+import cascading.flow.FlowDef
+
 import com.twitter.scalding.{ Config, Local }
 import com.twitter.scalding.typed.{ IterablePipe, TypedPipe }
 
@@ -29,14 +31,16 @@ import scala.reflect.ClassTag
 
 trait TestGrimlock extends FlatSpec with Matchers {
 
-  implicit val sc = TestGrimlock.spark
+  private implicit val flow = new FlowDef
+  private implicit val mode = Local(true)
+  private implicit val config = Config.defaultFrom(mode)
 
-  implicit val mode = Local(true)
-  implicit val config = Config.defaultFrom(mode)
+  implicit val scaldingCtx = au.com.cba.omnia.grimlock.scalding.environment.Context()
+  implicit val sparkCtx = au.com.cba.omnia.grimlock.spark.environment.Context(TestGrimlock.spark)
 
   implicit def PositionOrdering[T <: Position] = Position.Ordering[T]()
 
-  def toRDD[T](list: List[T])(implicit ev: ClassTag[T]): RDD[T] = sc.parallelize(list)
+  def toRDD[T](list: List[T])(implicit ev: ClassTag[T]): RDD[T] = TestGrimlock.spark.parallelize(list)
   def toPipe[T](list: List[T]): TypedPipe[T] = IterablePipe(list)
 
   implicit def toList[T](rdd: RDD[T]): List[T] = rdd.toLocalIterator.toList
