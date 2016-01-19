@@ -21,6 +21,8 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 import java.util.regex.Pattern
 
+import org.apache.hadoop.io.Writable
+
 import scala.reflect.ClassTag
 
 /**
@@ -62,6 +64,15 @@ case class Cell[P <: Position](position: P, content: Content) {
 
 /** Companion object to the Cell class. */
 object Cell {
+  /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
+  type Predicate[P <: Position] = Cell[P] => Boolean
+
+  /** Type for parsing a string into either a `Cell[P]` or an error message. */
+  type TextParser[P <: Position] = (String) => TraversableOnce[Either[Cell[P], String]]
+
+  /** Type for parsing a key value tuple into either a `Cell[P]` or an error message. */
+  type SequenceParser[K <: Writable, V <: Writable, P <: Position] = (K, V) => TraversableOnce[Either[Cell[P], String]]
+
   /**
    * Parse a line into a `Cell[Position1D]`.
    *

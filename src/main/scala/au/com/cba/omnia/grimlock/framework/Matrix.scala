@@ -412,7 +412,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @note The `command` must be installed on each node of the cluster.
    */
   def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
-    parser: Matrix.TextParser[Q]): (U[Cell[Q]], U[String])
+    parser: Cell.TextParser[Q]): (U[Cell[Q]], U[String])
 
   /**
    * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
@@ -563,7 +563,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[P]` of the positions for which the content matches `predicate`.
    */
-  def which(predicate: Matrix.Predicate[P])(implicit ev: ClassTag[P]): U[P]
+  def which(predicate: Cell.Predicate[P])(implicit ev: ClassTag[P]): U[P]
 
   /**
    * Query the contents of one of more positions of a matrix and return the positions of those that match the
@@ -587,6 +587,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
   // TODO: Add machine learning operations (SVD/finding cliques/etc.) - use Spark instead?
 }
 
+/** Base trait for loading data into a matrix. */
 trait Consume extends DistributedData with Environment {
   /**
    * Read column oriented, pipe separated matrix text data into a `U[Cell[P]]`.
@@ -594,7 +595,7 @@ trait Consume extends DistributedData with Environment {
    * @param file   The text file to read from.
    * @param parser The parser that converts a single line to a cell.
    */
-  def loadText[P <: Position](file: String, parser: Matrix.TextParser[P])(implicit ctx: C): (U[Cell[P]], U[String])
+  def loadText[P <: Position](file: String, parser: Cell.TextParser[P])(implicit ctx: C): (U[Cell[P]], U[String])
 
   /**
    * Read binary key-value (sequence) matrix data into a `U[Cell[P]]`.
@@ -602,20 +603,8 @@ trait Consume extends DistributedData with Environment {
    * @param file   The text file to read from.
    * @param parser The parser that converts a single key-value to a cell.
    */
-  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String, parser: Matrix.SequenceParser[K, V, P])(
+  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String, parser: Cell.SequenceParser[K, V, P])(
     implicit ctx: C, ev1: Manifest[K], ev2: Manifest[V]): (U[Cell[P]], U[String])
-}
-
-/** Companion object to `Matrix` trait. */
-object Matrix {
-  /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
-  type Predicate[P <: Position] = Cell[P] => Boolean
-
-  /** Type for parsing a string into either a `Cell[P]` or an error message. */
-  type TextParser[P <: Position] = (String) => TraversableOnce[Either[Cell[P], String]]
-
-  /** Type for parsing a key value tuple into either a `Cell[P]` or an error message. */
-  type SequenceParser[K <: Writable, V <: Writable, P <: Position] = (K, V) => TraversableOnce[Either[Cell[P], String]]
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
@@ -927,13 +916,13 @@ trait Matrixable[P <: Position, U[_]] extends java.io.Serializable {
   def apply(): U[Cell[P]]
 }
 
-/** Type class for transforming a type `T` to a `List[(U[S], Matrix.Predicate[P])]`. */
+/** Type class for transforming a type `T` to a `List[(U[S], Cell.Predicate[P])]`. */
 trait Predicateable[T, P <: Position, S <: Position, U[_]] {
   /**
-   * Returns a `List[(U[S], Matrix.Predicate[P])]` for type `T`.
+   * Returns a `List[(U[S], Cell.Predicate[P])]` for type `T`.
    *
-   * @param t Object that can be converted to a `List[(U[S], Matrix.Predicate[P])]`.
+   * @param t Object that can be converted to a `List[(U[S], Cell.Predicate[P])]`.
    */
-  def convert(t: T): List[(U[S], Matrix.Predicate[P])]
+  def convert(t: T): List[(U[S], Cell.Predicate[P])]
 }
 

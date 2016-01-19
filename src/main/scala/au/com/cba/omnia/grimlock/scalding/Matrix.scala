@@ -115,7 +115,7 @@ private[scalding] object ScaldingImplicits {
   implicit class PipeTuner[P](pipe: TypedPipe[P]) {
     def collate(parameters: TunerParameters): TypedPipe[P] = {
       parameters match {
-        case Collate => pipe.forceToDisk
+        case Collate() => pipe.forceToDisk
         case _ => pipe
       }
     }
@@ -159,8 +159,8 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
 
   import ScaldingImplicits._
 
-  protected type TP4 = OneOf4[InMemory[NoParameters.type],
-                              Default[NoParameters.type], Default[Reducers],
+  protected type TP4 = OneOf4[InMemory[NoParameters],
+                              Default[NoParameters], Default[Reducers],
                               Unbalanced[Reducers]]
 
   type ChangeTuners = TP4
@@ -214,8 +214,8 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
 
   type DomainTuners = TP1
 
-  type FillHeterogeneousTuners = OneOf4[InMemory[NoParameters.type], InMemory[Reducers],
-                                        Default[NoParameters.type], Default[Reducers]]
+  type FillHeterogeneousTuners = OneOf4[InMemory[NoParameters], InMemory[Reducers],
+                                        Default[NoParameters], Default[Reducers]]
   def fillHeterogeneous[S <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[S]], tuner: T = Default())(
     implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S,
       ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
@@ -272,15 +272,15 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     }
   }
 
-  type JoinTuners = OneOf7[InMemory[NoParameters.type], InMemory[Reducers],
-                           Default[NoParameters.type], Default[Reducers], Default[Sequence2[Reducers, Reducers]],
+  type JoinTuners = OneOf7[InMemory[NoParameters], InMemory[Reducers],
+                           Default[NoParameters], Default[Reducers], Default[Sequence2[Reducers, Reducers]],
                            Unbalanced[Reducers], Unbalanced[Sequence2[Reducers, Reducers]]]
   def join[T <: Tuner](slice: Slice[P], that: M, tuner: T = Default())(implicit ev1: P =!= Position1D,
     ev2: ClassTag[slice.S], ev3: JoinTuners#V[T]): U[Cell[P]] = {
     val (p1, p2) = (tuner, tuner.parameters) match {
       case (_, Sequence2(f, s)) => (f, s)
-      case (InMemory(_), p) => (p, NoParameters)
-      case (_, p) => (NoParameters, p)
+      case (InMemory(_), p) => (p, NoParameters())
+      case (_, p) => (NoParameters(), p)
     }
     val keep = Grouped(names(slice).map { case p => (p, ()) })
       .tuneReducers(p1)
@@ -322,8 +322,8 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       .tunedDistinct(tuner.parameters)
   }
 
-  type PairwiseTuners = OneOf14[InMemory[NoParameters.type],
-                                Default[NoParameters.type],
+  type PairwiseTuners = OneOf14[InMemory[NoParameters],
+                                Default[NoParameters],
                                 Default[Reducers],
                                 Default[Sequence2[Redistribute, Redistribute]],
                                 Default[Sequence2[Redistribute, Reducers]],
@@ -436,7 +436,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     }
   }
 
-  type SlideTuners = OneOf4[Default[NoParameters.type],
+  type SlideTuners = OneOf4[Default[NoParameters],
                             Default[Redistribute],
                             Default[Reducers],
                             Default[Sequence2[Redistribute, Reducers]]]
@@ -447,9 +447,9 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     val window = windows()
     val (partitions, reducers) = tuner.parameters match {
       case Sequence2(rp @ Redistribute(_), rr @ Reducers(_)) => (rp, rr)
-      case rp @ Redistribute(_) => (rp, NoParameters)
-      case rr @ Reducers(_) => (NoParameters, rr)
-      case _ => (NoParameters, NoParameters)
+      case rp @ Redistribute(_) => (rp, NoParameters())
+      case rr @ Reducers(_) => (NoParameters(), rr)
+      case _ => (NoParameters(), NoParameters())
     }
 
     data
@@ -475,9 +475,9 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     val window = windows()
     val (partitions, reducers) = tuner.parameters match {
       case Sequence2(rp @ Redistribute(_), rr @ Reducers(_)) => (rp, rr)
-      case rp @ Redistribute(_) => (rp, NoParameters)
-      case rr @ Reducers(_) => (NoParameters, rr)
-      case _ => (NoParameters, NoParameters)
+      case rp @ Redistribute(_) => (rp, NoParameters())
+      case rr @ Reducers(_) => (NoParameters(), rr)
+      case _ => (NoParameters(), NoParameters())
     }
 
     data
@@ -511,7 +511,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
-    parser: FwMatrix.TextParser[Q]): (U[Cell[Q]], U[String]) = {
+    parser: Cell.TextParser[Q]): (U[Cell[Q]], U[String]) = {
     val contents = files.map { case f => (new File(f).getName, Files.readAllBytes(Paths.get(f))) }
     val smfn = (k: Unit, itr: Iterator[String]) => {
       val tmp = Files.createTempDirectory("grimlock-")
@@ -684,7 +684,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   type WhichTuners = TP4
-  def which(predicate: FwMatrix.Predicate[P])(implicit ev: ClassTag[P]): U[P] = {
+  def which(predicate: Cell.Predicate[P])(implicit ev: ClassTag[P]): U[P] = {
     data.collect { case c if predicate(c) => c.position }
   }
 
@@ -697,7 +697,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
 
     tuner match {
       case InMemory(_) =>
-        type M = Map[slice.S, List[FwMatrix.Predicate[P]]]
+        type M = Map[slice.S, List[Cell.Predicate[P]]]
         val semigroup = new com.twitter.algebird.Semigroup[M] {
           def plus(l: M, r: M): M = { (l.toSeq ++ r.toSeq).groupBy(_._1).mapValues(_.map(_._2).toList.flatten) }
         }
@@ -706,7 +706,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
           .mapSideJoin(pp.map { case (pos, pred) => Map(pos -> List(pred)) }.sum(semigroup),
             (c: Cell[P], v: M) => v.get(slice.selected(c.position)).flatMap {
               case lst => if (lst.exists((pred) => pred(c))) { Some(c.position) } else { None }
-            }, Map.empty[slice.S, List[FwMatrix.Predicate[P]]])
+            }, Map.empty[slice.S, List[Cell.Predicate[P]]])
       case _ =>
         data
           .groupBy { case c => slice.selected(c.position) }
@@ -743,16 +743,16 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       case _ =>
         val (rr, rj, lr, lj) = tuner.parameters match {
           case Sequence2(Sequence2(rr, rj), Sequence2(lr, lj)) => (rr, rj, lr, lj)
-          case Sequence2(rj @ Reducers(_), Sequence2(lr, lj)) => (NoParameters, rj, lr, lj)
-          case Sequence2(rr @ Redistribute(_), Sequence2(lr, lj)) => (rr, NoParameters, lr, lj)
-          case Sequence2(Sequence2(rr, rj), lj @ Reducers(_)) => (rr, rj, NoParameters, lj)
-          case Sequence2(Sequence2(rr, rj), lr @ Redistribute(_)) => (rr, rj, lr, NoParameters)
-          case Sequence2(rj @ Reducers(_), lj @ Reducers(_)) => (NoParameters, rj, NoParameters, lj)
-          case Sequence2(rr @ Redistribute(_), lj @ Reducers(_)) => (rr, NoParameters, NoParameters, lj)
-          case Sequence2(rj @ Reducers(_), lr @ Redistribute(_)) => (NoParameters, rj, lr, NoParameters)
-          case Sequence2(rr @ Redistribute(_), lr @ Redistribute(_)) => (rr, NoParameters, lr, NoParameters)
-          case lj @ Reducers(_) => (NoParameters, NoParameters, NoParameters, lj)
-          case _ => (NoParameters, NoParameters, NoParameters, NoParameters)
+          case Sequence2(rj @ Reducers(_), Sequence2(lr, lj)) => (NoParameters(), rj, lr, lj)
+          case Sequence2(rr @ Redistribute(_), Sequence2(lr, lj)) => (rr, NoParameters(), lr, lj)
+          case Sequence2(Sequence2(rr, rj), lj @ Reducers(_)) => (rr, rj, NoParameters(), lj)
+          case Sequence2(Sequence2(rr, rj), lr @ Redistribute(_)) => (rr, rj, lr, NoParameters())
+          case Sequence2(rj @ Reducers(_), lj @ Reducers(_)) => (NoParameters(), rj, NoParameters(), lj)
+          case Sequence2(rr @ Redistribute(_), lj @ Reducers(_)) => (rr, NoParameters(), NoParameters(), lj)
+          case Sequence2(rj @ Reducers(_), lr @ Redistribute(_)) => (NoParameters(), rj, lr, NoParameters())
+          case Sequence2(rr @ Redistribute(_), lr @ Redistribute(_)) => (rr, NoParameters(), lr, NoParameters())
+          case lj @ Reducers(_) => (NoParameters(), NoParameters(), NoParameters(), lj)
+          case _ => (NoParameters(), NoParameters(), NoParameters(), NoParameters())
         }
         val ordering = Position.Ordering[slice.S]()
         val right = rdata
@@ -1016,16 +1016,15 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 }
 
 object Matrix extends Consume with DistributedData with Environment {
-  def loadText[P <: Position](file: String, parser: FwMatrix.TextParser[P])(
+  def loadText[P <: Position](file: String, parser: Cell.TextParser[P])(
     implicit ctx: C): (U[Cell[P]], U[String]) = {
     val pipe = TypedPipe.from(TextLine(file)).flatMap { parser(_) }
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
   }
 
-  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String,
-    parser: FwMatrix.SequenceParser[K, V, P])(implicit ctx: C, ev1: Manifest[K],
-      ev2: Manifest[V]): (U[Cell[P]], U[String]) = {
+  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String, parser: Cell.SequenceParser[K, V, P])(
+    implicit ctx: C, ev1: Manifest[K], ev2: Manifest[V]): (U[Cell[P]], U[String]) = {
     val pipe = TypedPipe.from(WritableSequenceFile[K, V](file)).flatMap { case (k, v) => parser(k, v) }
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
@@ -1722,23 +1721,21 @@ object Matrixable {
 /** Scalding companion object for the `Predicateable` type class. */
 object Predicateable {
   /**
-   * Converts a `List[(PositionDistributable[I, S, U], Matrix.Predicate[P])]` to a
-   * `List[(U[S], FwMatrix.Predicate[P])]`.
+   * Converts a `List[(PositionDistributable[I, S, U], Cell.Predicate[P])]` to a `List[(U[S], Cell.Predicate[P])]`.
    */
-  implicit def PDPT2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): FwPredicateable[(I, FwMatrix.Predicate[P]), P, S, TypedPipe] = {
-    new FwPredicateable[(I, FwMatrix.Predicate[P]), P, S, TypedPipe] {
-      def convert(t: (I, FwMatrix.Predicate[P])): List[(TypedPipe[S], FwMatrix.Predicate[P])] = {
-        List((ev.convert(t._1), t._2))
-      }
+  implicit def PDPT2LTPP[I, P <: Position, S <: Position](
+    implicit ev: PositionDistributable[I, S, TypedPipe]): FwPredicateable[(I, Cell.Predicate[P]), P, S, TypedPipe] = {
+    new FwPredicateable[(I, Cell.Predicate[P]), P, S, TypedPipe] {
+      def convert(t: (I, Cell.Predicate[P])): List[(TypedPipe[S], Cell.Predicate[P])] = List((ev.convert(t._1), t._2))
     }
   }
 
   /**
-   * Converts a `(PositionDistributable[I, S, U], Matrix.Predicate[P])` to a `List[(U[S], FwMatrix.Predicate[P])]`.
+   * Converts a `(PositionDistributable[I, S, U], Cell.Predicate[P])` to a `List[(U[S], Cell.Predicate[P])]`.
    */
-  implicit def LPDP2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): FwPredicateable[List[(I, FwMatrix.Predicate[P])], P, S, TypedPipe] = {
-    new FwPredicateable[List[(I, FwMatrix.Predicate[P])], P, S, TypedPipe] {
-      def convert(t: List[(I, FwMatrix.Predicate[P])]): List[(TypedPipe[S], FwMatrix.Predicate[P])] = {
+  implicit def LPDP2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): FwPredicateable[List[(I, Cell.Predicate[P])], P, S, TypedPipe] = {
+    new FwPredicateable[List[(I, Cell.Predicate[P])], P, S, TypedPipe] {
+      def convert(t: List[(I, Cell.Predicate[P])]): List[(TypedPipe[S], Cell.Predicate[P])] = {
         t.map { case (i, p) => (ev.convert(i), p) }
       }
     }

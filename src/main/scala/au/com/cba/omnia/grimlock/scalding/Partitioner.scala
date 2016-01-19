@@ -60,7 +60,7 @@ case class Partitions[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])])
 
   def get(id: I): U[Cell[P]] = data.collect { case (i, c) if (id == i) => c }
 
-  type IdsTuners = OneOf2[Default[NoParameters.type], Default[Reducers]]
+  type IdsTuners = OneOf2[Default[NoParameters], Default[Reducers]]
   def ids[T <: Tuner](tuner: T = Default())(implicit ev1: ClassTag[I], ev2: IdsTuners#V[T]): U[I] = {
     val keys = Grouped(data.map { case (i, _) => (i, ()) })
 

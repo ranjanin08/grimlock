@@ -35,7 +35,7 @@ import scala.reflect.ClassTag
  * @param data The `TypedPipe[Position]`.
  */
 case class Positions[P <: Position](data: TypedPipe[P]) extends FwPositions[P] with Persist[P] {
-  type NamesTuners = OneOf1[Default[NoParameters.type]]
+  type NamesTuners = OneOf1[Default[NoParameters]]
   def names[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
     ev2: ClassTag[slice.S], ev3: NamesTuners#V[T]): U[slice.S] = {
     data.map { case p => slice.selected(p) }.distinct(Position.Ordering[slice.S]())

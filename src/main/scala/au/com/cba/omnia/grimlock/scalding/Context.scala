@@ -34,9 +34,14 @@ import com.twitter.scalding.typed.{ TypedPipe, ValuePipe }
  * @param config The job `Config`.
  */
 case class Context(flow: FlowDef, mode: Mode, config: Config) extends FwContext {
-  implicit val f = flow
-  implicit val m = mode
-  implicit val c = config
+  /** Implicit FlowDef for write operations. */
+  implicit val implicitFlow = flow
+
+  /** Implicit Mode for write and Execution.waitFor operations. */
+  implicit val implicitMode = mode
+
+  /** Implicit Config for Execution.waitFor operations. */
+  implicit val implicitConfig = config
 }
 
 /** Companion object to `Context` with additional constructors. */

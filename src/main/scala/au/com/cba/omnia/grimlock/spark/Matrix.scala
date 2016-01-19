@@ -159,7 +159,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
     val (p1, p2) = tuner.parameters match {
       case Sequence2(f, s) => (f, s)
-      case p => (NoParameters, p)
+      case p => (NoParameters(), p)
     }
 
     domain(Default())
@@ -193,7 +193,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     ev2: ClassTag[slice.S], ev3: JoinTuners#V[T]): U[Cell[P]] = {
     val (p1, p2) = tuner.parameters match {
       case Sequence2(f, s) => (f, s)
-      case p => (NoParameters, p)
+      case p => (NoParameters(), p)
     }
 
     (data ++ that.data)
@@ -213,7 +213,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     data.map { case c => slice.selected(c.position) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
   }
 
-  type PairwiseTuners = OneOf6[Default[NoParameters.type],
+  type PairwiseTuners = OneOf6[Default[NoParameters],
                                Default[Reducers],
                                Default[Sequence2[Reducers, Reducers]],
                                Default[Sequence2[Reducers, Sequence2[Reducers, Reducers]]],
@@ -369,7 +369,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
-    parser: FwMatrix.TextParser[Q]): (U[Cell[Q]], U[String]) = {
+    parser: Cell.TextParser[Q]): (U[Cell[Q]], U[String]) = {
     val result = data
       .flatMap(writer(_))
       .pipe(command)
@@ -487,7 +487,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   type WhichTuners = TP2
-  def which(predicate: FwMatrix.Predicate[P])(implicit ev: ClassTag[P]): U[P] = {
+  def which(predicate: Cell.Predicate[P])(implicit ev: ClassTag[P]): U[P] = {
     data.collect { case c if predicate(c) => c.position }
   }
 
@@ -520,11 +520,11 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     rdata: U[Cell[P]])(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R]): U[(Cell[P], Cell[P])] = {
     val (rr, rj, lr, lj) = tuner.parameters match {
       case Sequence2(Sequence2(rr, rj), Sequence2(lr, lj)) => (rr, rj, lr, lj)
-      case Sequence2(rj @ Reducers(_), Sequence2(lr, lj)) => (NoParameters, rj, lr, lj)
-      case Sequence2(Sequence2(rr, rj), lj @ Reducers(_)) => (rr, rj, NoParameters, lj)
-      case Sequence2(rj @ Reducers(_), lj @ Reducers(_)) => (NoParameters, rj, NoParameters, lj)
-      case lj @ Reducers(_) => (NoParameters, NoParameters, NoParameters, lj)
-      case _ => (NoParameters, NoParameters, NoParameters, NoParameters)
+      case Sequence2(rj @ Reducers(_), Sequence2(lr, lj)) => (NoParameters(), rj, lr, lj)
+      case Sequence2(Sequence2(rr, rj), lj @ Reducers(_)) => (rr, rj, NoParameters(), lj)
+      case Sequence2(rj @ Reducers(_), lj @ Reducers(_)) => (NoParameters(), rj, NoParameters(), lj)
+      case lj @ Reducers(_) => (NoParameters(), NoParameters(), NoParameters(), lj)
+      case _ => (NoParameters(), NoParameters(), NoParameters(), NoParameters())
     }
     val ordering = Position.Ordering[slice.S]()
 
@@ -759,16 +759,15 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
 }
 
 object Matrix extends Consume with DistributedData with Environment {
-  def loadText[P <: Position](file: String, parser: FwMatrix.TextParser[P])(
+  def loadText[P <: Position](file: String, parser: Cell.TextParser[P])(
     implicit ctx: C): (U[Cell[P]], U[String]) = {
     val rdd = ctx.context.textFile(file).flatMap { parser(_) }
 
     (rdd.collect { case Left(c) => c }, rdd.collect { case Right(e) => e })
   }
 
-  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String,
-    parser: FwMatrix.SequenceParser[K, V, P])(implicit ctx: C, ev1: Manifest[K],
-      ev2: Manifest[V]): (U[Cell[P]], U[String]) = {
+  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String, parser: Cell.SequenceParser[K, V, P])(
+    implicit ctx: C, ev1: Manifest[K], ev2: Manifest[V]): (U[Cell[P]], U[String]) = {
     val pipe = ctx.context.sequenceFile[K, V](file).flatMap { case (k, v) => parser(k, v) }
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
@@ -1466,23 +1465,22 @@ object Matrixable {
 /** Spark companion object for the `Predicateable` type class. */
 object Predicateable {
   /**
-   * Converts a `List[(PositionDistributable[I, S, U], Matrix.Predicate[P])]` to a
-   * `List[(U[S], FwMatrix.Predicate[P])]`.
+   * Converts a `List[(PositionDistributable[I, S, U], Cell.Predicate[P])]` to a `List[(U[S], Cell.Predicate[P])]`.
    */
-  implicit def PDPT2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, RDD]): FwPredicateable[(I, FwMatrix.Predicate[P]), P, S, RDD] = {
-    new FwPredicateable[(I, FwMatrix.Predicate[P]), P, S, RDD] {
-      def convert(t: (I, FwMatrix.Predicate[P])): List[(RDD[S], FwMatrix.Predicate[P])] = {
-        List((ev.convert(t._1), t._2))
-      }
+  implicit def PDPT2LTPP[I, P <: Position, S <: Position](
+    implicit ev: PositionDistributable[I, S, RDD]): FwPredicateable[(I, Cell.Predicate[P]), P, S, RDD] = {
+    new FwPredicateable[(I, Cell.Predicate[P]), P, S, RDD] {
+      def convert(t: (I, Cell.Predicate[P])): List[(RDD[S], Cell.Predicate[P])] = List((ev.convert(t._1), t._2))
     }
   }
 
   /**
-   * Converts a `(PositionDistributable[I, S, U], Matrix.Predicate[P])` to a `List[(U[S], FwMatrix.Predicate[P])]`.
+   * Converts a `(PositionDistributable[I, S, U], Cell.Predicate[P])` to a `List[(U[S], Cell.Predicate[P])]`.
    */
-  implicit def LPDP2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, RDD]): FwPredicateable[List[(I, FwMatrix.Predicate[P])], P, S, RDD] = {
-    new FwPredicateable[List[(I, FwMatrix.Predicate[P])], P, S, RDD] {
-      def convert(t: List[(I, FwMatrix.Predicate[P])]): List[(RDD[S], FwMatrix.Predicate[P])] = {
+  implicit def LPDP2LTPP[I, P <: Position, S <: Position](
+    implicit ev: PositionDistributable[I, S, RDD]): FwPredicateable[List[(I, Cell.Predicate[P])], P, S, RDD] = {
+    new FwPredicateable[List[(I, Cell.Predicate[P])], P, S, RDD] {
+      def convert(t: List[(I, Cell.Predicate[P])]): List[(RDD[S], Cell.Predicate[P])] = {
         t.map { case (i, p) => (ev.convert(i), p) }
       }
     }

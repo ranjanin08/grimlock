@@ -196,8 +196,15 @@ import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.library.aggregate._
+import au.com.cba.omnia.grimlock.scalding.environment._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 
+```
+
+Next, for convenience, set up grimlock's Context as an implicit:
+
+```
+scala> implicit val context = Context()
 ```
 
 The next step is to read in data (be sure to change <path to> to the correct path to the Grimlock repo):
@@ -324,14 +331,15 @@ import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.library.aggregate._
+import au.com.cba.omnia.grimlock.spark.environment._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 
 ```
 
-Next, for convenience, set up the SparkContext as an implicit:
+Next, for convenience, set up grimlock's Context as an implicit:
 
 ```
-scala> implicit val context = sc
+scala> implicit val context = Context(sc)
 ```
 
 The next step is to read in data (be sure to change <path to> to the correct path to the Grimlock repo):
