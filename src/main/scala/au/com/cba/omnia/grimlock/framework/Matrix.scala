@@ -17,7 +17,9 @@ package au.com.cba.omnia.grimlock.framework
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
+import au.com.cba.omnia.grimlock.framework.distribution._
 import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.environment._
 import au.com.cba.omnia.grimlock.framework.pairwise._
 import au.com.cba.omnia.grimlock.framework.partition._
 import au.com.cba.omnia.grimlock.framework.position._
@@ -32,7 +34,7 @@ import org.apache.hadoop.io.Writable
 import scala.reflect.ClassTag
 
 /** Base trait for matrix operations. */
-trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTuners with PositionOrdering {
+trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultTuners with PositionOrdering {
 
   /** Self-type of a specific implementation of this API. */
   type M <: Matrix[P]
@@ -263,6 +265,28 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
   def relocateWithValue[Q <: Position, W](locate: Locate.FromCellWithValue[P, Q, W], value: E[W])(
     implicit ev: PosIncDep[P, Q]): U[Cell[Q]]
 
+  /**
+   * Persist as a sparse matrix file (index, value).
+   *
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name.
+   * @param separator  Column separator to use in dictionary file.
+   *
+   * @return A `U[Cell[P]]`; that is it returns `data`.
+   */
+  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(
+    implicit ctx: C): U[Cell[P]]
+
+  /**
+   * Persist to disk.
+   *
+   * @param file   Name of the output file.
+   * @param writer Writer that converts `Cell[P]` to string.
+   *
+   * @return A `U[Cell[P]]`; that is it returns `data`.
+   */
+  def saveAsText(file: String, writer: TextWriter = Cell.toString())(implicit ctx: C): U[Cell[P]]
+
   /** Specifies tuners permitted on a call to `set` functions. */
   type SetTuners <: OneOf
 
@@ -302,7 +326,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
    * @return A `U[Cell[Position1D]]`. The position consists of a string value with the name of the dimension
    *         (`dim.toString`). The content has the actual size in it as a discrete variable.
    */
-  def size[D <: Dimension, T <: Tuner](dim: D, distinct: Boolean = false, tuner: T)(implicit ev1: PosDimDep[P, D],
+  def size[T <: Tuner](dim: Dimension, distinct: Boolean = false, tuner: T)(implicit ev1: PosDimDep[P, dim.D],
     ev2: SizeTuners#V[T]): U[Cell[Position1D]]
 
   /** Specifies tuners permitted on a call to `slice`. */
@@ -388,7 +412,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
    * @note The `command` must be installed on each node of the cluster.
    */
   def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
-    parser: Matrix.TextParser[Q]): (U[Cell[Q]], U[String])
+    parser: Cell.TextParser[Q]): (U[Cell[Q]], U[String])
 
   /**
    * Sample a matrix according to some `sampler`. It keeps only those cells for which `sampler` returns true.
@@ -539,7 +563,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
    *
    * @return A `U[P]` of the positions for which the content matches `predicate`.
    */
-  def which(predicate: Matrix.Predicate[P])(implicit ev: ClassTag[P]): U[P]
+  def which(predicate: Cell.Predicate[P])(implicit ev: ClassTag[P]): U[P]
 
   /**
    * Query the contents of one of more positions of a matrix and return the positions of those that match the
@@ -563,16 +587,24 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with RawData with DefaultTu
   // TODO: Add machine learning operations (SVD/finding cliques/etc.) - use Spark instead?
 }
 
-/** Companion object to `Matrix` trait. */
-object Matrix {
-  /** Predicate used in, for example, the `which` methods of a matrix for finding content. */
-  type Predicate[P <: Position] = Cell[P] => Boolean
+/** Base trait for loading data into a matrix. */
+trait Consume extends DistributedData with Environment {
+  /**
+   * Read column oriented, pipe separated matrix text data into a `U[Cell[P]]`.
+   *
+   * @param file   The text file to read from.
+   * @param parser The parser that converts a single line to a cell.
+   */
+  def loadText[P <: Position](file: String, parser: Cell.TextParser[P])(implicit ctx: C): (U[Cell[P]], U[String])
 
-  /** Type for parsing a string into either a `Cell[P]` or an error message. */
-  type TextParser[P <: Position] = (String) => TraversableOnce[Either[Cell[P], String]]
-
-  /** Type for parsing a key value tuple into either a `Cell[P]` or an error message. */
-  type SequenceParser[K <: Writable, V <: Writable, P <: Position] = (K, V) => TraversableOnce[Either[Cell[P], String]]
+  /**
+   * Read binary key-value (sequence) matrix data into a `U[Cell[P]]`.
+   *
+   * @param file   The text file to read from.
+   * @param parser The parser that converts a single key-value to a cell.
+   */
+  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String, parser: Cell.SequenceParser[K, V, P])(
+    implicit ctx: C, ev1: Manifest[K], ev2: Manifest[V]): (U[Cell[P]], U[String])
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
@@ -589,8 +621,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    * @note A melt coordinate is always a string value constructed from the string representation of the `dim` and
    *       `into` coordinates.
    */
-  def melt[D <: Dimension, G <: Dimension](dim: D, into: G, separator: String = ".")(implicit ev1: PosDimDep[P, D],
-    ev2: PosDimDep[P, G], ne: D =!= G): U[Cell[P#L]]
+  def melt(dim: Dimension, into: Dimension, separator: String = ".")(implicit ev1: PosDimDep[P, dim.D],
+    ev2: PosDimDep[P, into.D], ne: dim.D =!= into.D): U[Cell[P#L]]
 
   /** Specifies tuners permitted on a call to `squash` functions. */
   type SquashTuners <: OneOf
@@ -604,7 +636,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squash[D <: Dimension, T <: Tuner](dim: D, squasher: Squashable[P], tuner: T)(implicit ev1: PosDimDep[P, D],
+  def squash[T <: Tuner](dim: Dimension, squasher: Squashable[P], tuner: T)(implicit ev1: PosDimDep[P, dim.D],
     ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
 
   /**
@@ -617,17 +649,257 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squashWithValue[D <: Dimension, W, T <: Tuner](dim: D, squasher: SquashableWithValue[P, W], value: E[W],
-    tuner: T)(implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
+  def squashWithValue[W, T <: Tuner](dim: Dimension, squasher: SquashableWithValue[P, W], value: E[W],
+    tuner: T)(implicit ev1: PosDimDep[P, dim.D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
 }
 
 /** Base trait for methods that reshapes the number of dimension of a matrix. */
 trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePosition] { self: Matrix[P] =>
   type ReshapeTuners <: OneOf
 
-  def reshape[D <: Dimension, Q <: Position, T <: Tuner](dim: D, coordinate: Valueable,
-    locate: Locate.FromCellAndOptionalValue[P, Q], tuner: T)(implicit ev1: PosDimDep[P, D], ev2: PosExpDep[P, Q],
+  def reshape[Q <: Position, T <: Tuner](dim: Dimension, coordinate: Valueable,
+    locate: Locate.FromCellAndOptionalValue[P, Q], tuner: T)(implicit ev1: PosDimDep[P, dim.D], ev2: PosExpDep[P, Q],
       ev3: ClassTag[P#L], ev4: ReshapeTuners#V[T]): U[Cell[Q]]
+}
+
+/** Base trait for 1D specific operations. */
+trait Matrix1D extends Matrix[Position1D] with ApproximateDistribution[Position1D] { }
+
+/** Base trait for 2D specific operations. */
+trait Matrix2D extends Matrix[Position2D] with ReduceableMatrix[Position2D] with ReshapeableMatrix[Position2D]
+  with ApproximateDistribution[Position2D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension)(implicit ev1: PosDimDep[Position2D, dim1.D],
+    ev2: PosDimDep[Position2D, dim2.D], ev3: dim1.D =!= dim2.D): U[Cell[Position2D]]
+
+  /**
+   * Persist as a CSV file.
+   *
+   * @param slice       Encapsulates the dimension that makes up the columns.
+   * @param file        File to write to.
+   * @param separator   Column separator to use.
+   * @param escapee     The method for escaping the separator character.
+   * @param writeHeader Indicator of the header should be written to a separate file.
+   * @param header      Postfix for the header file name.
+   * @param writeRowId  Indicator if row names should be written.
+   * @param rowId       Column name of row names.
+   *
+   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   */
+  def saveAsCSV(slice: Slice[Position2D], file: String, separator: String = "|", escapee: Escape = Quote("|"),
+    writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true, rowId: String = "id")(
+      implicit ctx: C, ct: ClassTag[slice.S]): U[Cell[Position2D]]
+
+  /**
+   * Persist a `Matrix2D` as a Vowpal Wabbit file.
+   *
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
+   * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
+   *
+   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   */
+  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String = "%s.dict", tag: Boolean = false,
+    separator: String = "|")(implicit ctx: C, ct: ClassTag[slice.S]): U[Cell[Position2D]]
+
+  /**
+   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels.
+   *
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param labels     The labels.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
+   * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
+   *
+   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   *
+   * @note The labels are joined to the data keeping only those examples for which data and a label are available.
+   */
+  def saveAsVWWithLabels(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
+    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(implicit ctx: C,
+      ct: ClassTag[slice.S]): U[Cell[Position2D]]
+
+  /**
+   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided importance weights.
+   *
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param importance The importance weights.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
+   * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
+   *
+   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   *
+   * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
+   */
+  def saveAsVWWithImportance(slice: Slice[Position2D], file: String, importance: U[Cell[Position1D]],
+    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(implicit ctx: C,
+      ct: ClassTag[slice.S]): U[Cell[Position2D]]
+
+  /**
+   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels and importance weights.
+   *
+   * @param slice      Encapsulates the dimension that makes up the columns.
+   * @param file       File to write to.
+   * @param labels     The labels.
+   * @param importance The importance weights.
+   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
+   * @param tag        Indicator if the selected position should be added as a tag.
+   * @param separator  Separator to use in dictionary.
+   *
+   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
+   *
+   * @note The labels and weights are joined to the data keeping only those examples for which data and a label
+   *       and weight are available.
+   */
+  def saveAsVWWithLabelsAndImportance(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
+    importance: U[Cell[Position1D]], dictionary: String = "%s.dict", tag: Boolean = false,
+      separator: String = "|")(implicit ctx: C, ct: ClassTag[slice.S]): U[Cell[Position2D]]
+}
+
+/** Base trait for 3D specific operations. */
+trait Matrix3D extends Matrix[Position3D] with ReduceableMatrix[Position3D] with ReshapeableMatrix[Position3D]
+  with ApproximateDistribution[Position3D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension)(implicit ev1: PosDimDep[Position3D, dim1.D],
+    ev2: PosDimDep[Position3D, dim2.D], ev3: PosDimDep[Position3D, dim3.D],
+      ev4: Distinct3[dim1.D, dim2.D, dim3.D]): U[Cell[Position3D]]
+}
+
+/** Base trait for 4D specific operations. */
+trait Matrix4D extends Matrix[Position4D] with ReduceableMatrix[Position4D] with ReshapeableMatrix[Position4D]
+  with ApproximateDistribution[Position4D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   */
+ def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension)(
+   implicit ev1: PosDimDep[Position4D, dim1.D], ev2: PosDimDep[Position4D, dim2.D],
+     ev3: PosDimDep[Position4D, dim3.D], ev4: PosDimDep[Position4D, dim4.D],
+       ev5: Distinct4[dim1.D, dim2.D, dim3.D, dim4.D]): U[Cell[Position4D]]
+}
+
+/** Base trait for 5D specific operations. */
+trait Matrix5D extends Matrix[Position5D] with ReduceableMatrix[Position5D]
+  with ReshapeableMatrix[Position5D] with ApproximateDistribution[Position5D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   * @param dim5 Dimension to use for the fifth coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension)(
+    implicit ev1: PosDimDep[Position5D, dim1.D], ev2: PosDimDep[Position5D, dim2.D],
+      ev3: PosDimDep[Position5D, dim3.D], ev4: PosDimDep[Position5D, dim4.D], ev5: PosDimDep[Position5D, dim5.D],
+        ev6: Distinct5[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D]): U[Cell[Position5D]]
+}
+
+/** Base trait for 6D specific operations. */
+trait Matrix6D extends Matrix[Position6D] with ReduceableMatrix[Position6D] with ReshapeableMatrix[Position6D]
+  with ApproximateDistribution[Position6D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   * @param dim5 Dimension to use for the fifth coordinate.
+   * @param dim6 Dimension to use for the sixth coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension)(
+    implicit ev1: PosDimDep[Position6D, dim1.D], ev2: PosDimDep[Position6D, dim2.D],
+      ev3: PosDimDep[Position6D, dim3.D], ev4: PosDimDep[Position6D, dim4.D],
+        ev5: PosDimDep[Position6D, dim5.D], ev6: PosDimDep[Position6D, dim6.D],
+          ev7: Distinct6[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D]): U[Cell[Position6D]]
+}
+
+/** Base trait for 7D specific operations. */
+trait Matrix7D extends Matrix[Position7D] with ReduceableMatrix[Position7D] with ReshapeableMatrix[Position7D]
+  with ApproximateDistribution[Position7D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   * @param dim5 Dimension to use for the fifth coordinate.
+   * @param dim6 Dimension to use for the sixth coordinate.
+   * @param dim7 Dimension to use for the seventh coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension,
+    dim7: Dimension)(implicit ev1: PosDimDep[Position7D, dim1.D], ev2: PosDimDep[Position7D, dim2.D],
+      ev3: PosDimDep[Position7D, dim3.D], ev4: PosDimDep[Position7D, dim4.D], ev5: PosDimDep[Position7D, dim5.D],
+        ev6: PosDimDep[Position7D, dim6.D], ev7: PosDimDep[Position7D, dim7.D],
+          ev8: Distinct7[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D]): U[Cell[Position7D]]
+}
+
+/** Base trait for 8D specific operations. */
+trait  Matrix8D extends Matrix[Position8D] with ReduceableMatrix[Position8D] with ReshapeableMatrix[Position8D]
+  with ApproximateDistribution[Position8D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   * @param dim5 Dimension to use for the fifth coordinate.
+   * @param dim6 Dimension to use for the sixth coordinate.
+   * @param dim7 Dimension to use for the seventh coordinate.
+   * @param dim8 Dimension to use for the eighth coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension,
+    dim7: Dimension, dim8: Dimension)(implicit ev1: PosDimDep[Position8D, dim1.D], ev2: PosDimDep[Position8D, dim2.D],
+      ev3: PosDimDep[Position8D, dim3.D], ev4: PosDimDep[Position8D, dim4.D], ev5: PosDimDep[Position8D, dim5.D],
+        ev6: PosDimDep[Position8D, dim6.D], ev7: PosDimDep[Position8D, dim7.D], ev8: PosDimDep[Position8D, dim8.D],
+          ev9: Distinct8[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D]): U[Cell[Position8D]]
+}
+
+/** Base trait for 9D specific operations. */
+trait Matrix9D extends Matrix[Position9D] with ReduceableMatrix[Position9D] with ApproximateDistribution[Position9D] {
+  /**
+   * Permute the order of the coordinates in a position.
+   *
+   * @param dim1 Dimension to use for the first coordinate.
+   * @param dim2 Dimension to use for the second coordinate.
+   * @param dim3 Dimension to use for the third coordinate.
+   * @param dim4 Dimension to use for the fourth coordinate.
+   * @param dim5 Dimension to use for the fifth coordinate.
+   * @param dim6 Dimension to use for the sixth coordinate.
+   * @param dim7 Dimension to use for the seventh coordinate.
+   * @param dim8 Dimension to use for the eighth coordinate.
+   * @param dim9 Dimension to use for the ninth coordinate.
+   */
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension,
+    dim7: Dimension, dim8: Dimension, dim9: Dimension)(implicit ev1: PosDimDep[Position9D, dim1.D],
+      ev2: PosDimDep[Position9D, dim2.D], ev3: PosDimDep[Position9D, dim3.D], ev4: PosDimDep[Position9D, dim4.D],
+        ev5: PosDimDep[Position9D, dim5.D], ev6: PosDimDep[Position9D, dim6.D], ev7: PosDimDep[Position9D, dim7.D],
+          ev8: PosDimDep[Position9D, dim8.D], ev9: PosDimDep[Position9D, dim9.D],
+            ev10: Distinct9[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D, dim9.D]): U[Cell[Position9D]]
 }
 
 /**
@@ -644,22 +916,13 @@ trait Matrixable[P <: Position, U[_]] extends java.io.Serializable {
   def apply(): U[Cell[P]]
 }
 
-/** Type class for transforming a type `T` to a `List[(U[S], Matrix.Predicate[P])]`. */
+/** Type class for transforming a type `T` to a `List[(U[S], Cell.Predicate[P])]`. */
 trait Predicateable[T, P <: Position, S <: Position, U[_]] {
   /**
-   * Returns a `List[(U[S], Matrix.Predicate[P])]` for type `T`.
+   * Returns a `List[(U[S], Cell.Predicate[P])]` for type `T`.
    *
-   * @param t Object that can be converted to a `List[(U[S], Matrix.Predicate[P])]`.
+   * @param t Object that can be converted to a `List[(U[S], Cell.Predicate[P])]`.
    */
-  def convert(t: T): List[(U[S], Matrix.Predicate[P])]
-}
-
-/** Specify raw data types. */
-private[grimlock] trait RawData {
-  /** Type of the underlying (raw) data structure (i.e. TypedPipe or RDD). */
-  type U[_]
-
-  /** Type of 'wrapper' around user provided data. */
-  type E[_]
+  def convert(t: T): List[(U[S], Cell.Predicate[P])]
 }
 

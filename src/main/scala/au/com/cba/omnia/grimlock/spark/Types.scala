@@ -14,7 +14,7 @@
 
 package au.com.cba.omnia.grimlock.spark
 
-import au.com.cba.omnia.grimlock.framework.{ Type, Types => BaseTypes }
+import au.com.cba.omnia.grimlock.framework.{ Type, Types => FwTypes }
 import au.com.cba.omnia.grimlock.framework.position._
 
 import org.apache.spark.rdd.RDD
@@ -26,15 +26,13 @@ import org.apache.spark.rdd.RDD
  *
  * @note This class represents the variable type along the dimensions of a matrix.
  */
-class Types[P <: Position](val data: RDD[(P, Type)]) extends BaseTypes[P] with Persist[(P, Type)] {
-  type U[A] = RDD[A]
-
-  def saveAsText(file: String, writer: TextWriter = Type.toString()): U[(P, Type)] = saveText(file, writer)
+case class Types[P <: Position](data: RDD[(P, Type)]) extends FwTypes[P] with Persist[(P, Type)] {
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[(P, Type)] = saveText(file, writer)
 }
 
 /** Companion object for the Spark `Types` class. */
 object Types {
   /** Conversion from `RDD[(Position, Type)]` to a `Types`. */
-  implicit def RDDPT2RDDT[P <: Position](data: RDD[(P, Type)]): Types[P] = new Types(data)
+  implicit def RDDPT2RDDT[P <: Position](data: RDD[(P, Type)]): Types[P] = Types(data)
 }
 

@@ -34,6 +34,7 @@ import au.com.cba.omnia.grimlock.library.squash._
 import au.com.cba.omnia.grimlock.library.transform._
 import au.com.cba.omnia.grimlock.library.window._
 
+import au.com.cba.omnia.grimlock.spark.environment._
 import au.com.cba.omnia.grimlock.spark.content.Contents._
 import au.com.cba.omnia.grimlock.spark.Matrix._
 import au.com.cba.omnia.grimlock.spark.Matrixable._
@@ -52,7 +53,7 @@ import org.apache.spark.rdd.RDD
 import scala.io.Source
 
 object TestSparkReader {
-  def load4TupleDataAddDate(file: String)(implicit sc: SparkContext): RDD[Cell[Position3D]] = {
+  def load4TupleDataAddDate(file: String)(implicit ctx: Context): RDD[Cell[Position3D]] = {
     def hashDate(v: String) = {
       val cal = java.util.Calendar.getInstance()
       cal.setTime(DateCodex().fromValue(DateCodex().decode("2014-05-14").get))
@@ -60,7 +61,7 @@ object TestSparkReader {
       DateValue(cal.getTime(), DateCodex())
     }
 
-    sc.textFile(file)
+    ctx.context.textFile(file)
       .flatMap {
         _.trim.split(java.util.regex.Pattern.quote("|"), 4) match {
           case Array(i, f, e, v) =>
@@ -81,7 +82,7 @@ object TestSparkReader {
 
 object TestSpark1 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -107,7 +108,7 @@ object TestSpark1 {
 
 object TestSpark2 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -133,7 +134,7 @@ object TestSpark2 {
 
 object TestSpark3 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -151,7 +152,7 @@ object TestSpark3 {
 
 object TestSpark4 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -179,7 +180,7 @@ object TestSpark4 {
 
 object TestSpark5 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -216,7 +217,7 @@ object TestSpark5 {
 
 object TestSpark6 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -265,7 +266,7 @@ object TestSpark6 {
 
 object TestSpark7 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -286,7 +287,7 @@ object TestSpark7 {
 
 object TestSpark8 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -333,7 +334,7 @@ object TestSpark8 {
 
 object TestSpark9 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -394,7 +395,7 @@ object TestSpark9 {
 
 object TestSpark10 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -436,7 +437,7 @@ object TestSpark10 {
 
 object TestSpark11 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -461,7 +462,7 @@ object TestSpark11 {
 
 object TestSpark12 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -484,7 +485,7 @@ object TestSpark12 {
 
 object TestSpark13 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -515,7 +516,7 @@ object TestSpark13 {
 
 object TestSpark14 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -532,7 +533,7 @@ object TestSpark14 {
 
 object TestSpark15 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -567,7 +568,7 @@ object TestSpark15 {
 
 object TestSpark16 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -586,7 +587,7 @@ object TestSpark16 {
 
 object TestSpark17 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -643,7 +644,7 @@ object TestSpark17 {
 
 object TestSpark18 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -676,7 +677,7 @@ object TestSpark18 {
 
 object TestSpark19 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -737,7 +738,7 @@ object TestSpark19 {
 
 object TestSpark20 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -752,7 +753,7 @@ object TestSpark20 {
 
 object TestSpark21 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -782,7 +783,7 @@ object TestSpark21 {
 
 object TestSpark22 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -825,7 +826,7 @@ object TestSpark22 {
 
 object TestSpark23 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -854,7 +855,7 @@ object TestSpark23 {
 
 object TestSpark24 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -885,7 +886,7 @@ object TestSpark24 {
 
 object TestSpark25 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -899,7 +900,7 @@ object TestSpark25 {
 
 object TestSpark26 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -916,7 +917,7 @@ object TestSpark26 {
 
 object TestSpark27 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -979,7 +980,7 @@ object TestSpark27 {
 
 object TestSpark28 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
 
     val data = List
@@ -1046,7 +1047,7 @@ object TestSpark28 {
 
 object TestSpark29 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
 
     val schema = DiscreteSchema(LongCodex)
@@ -1080,7 +1081,7 @@ object TestSpark29 {
 
 object TestSpark30 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
 
     val schema = DiscreteSchema(LongCodex)
@@ -1104,7 +1105,7 @@ object TestSpark30 {
 
 object TestSpark31 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
     val path = args(1)
 
@@ -1119,7 +1120,7 @@ object TestSpark31 {
 
 object TestSpark32 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
 
     List(("a", Content(ContinuousSchema(DoubleCodex), 3.14)),
@@ -1180,7 +1181,7 @@ object TestSpark32 {
 
 object TestSpark33 {
   def main(args: Array[String]) {
-    implicit val spark = new SparkContext(args(0), "Test Spark", new SparkConf())
+    implicit val ctx = Context(new SparkContext(args(0), "Test Spark", new SparkConf()))
     val tool = "spark"
 
     val data = List(("a", "one", Content(ContinuousSchema(DoubleCodex), 3.14)),
@@ -1192,11 +1193,11 @@ object TestSpark33 {
       ("c", "two", Content(NominalSchema(StringCodex), "bar")),
       ("c", "three", Content(ContinuousSchema(DoubleCodex), 12.56)))
 
-    val labels = spark.parallelize(
+    val labels = ctx.context.parallelize(
       List(Cell(Position1D("a"), Content(DiscreteSchema(LongCodex), 1)),
         Cell(Position1D("b"), Content(DiscreteSchema(LongCodex), 2))))
 
-    val importance = spark.parallelize(
+    val importance = ctx.context.parallelize(
       List(Cell(Position1D("a"), Content(ContinuousSchema(DoubleCodex), 0.5)),
         Cell(Position1D("b"), Content(ContinuousSchema(DoubleCodex), 0.75))))
 

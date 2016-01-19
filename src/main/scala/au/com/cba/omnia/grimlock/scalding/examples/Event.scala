@@ -25,10 +25,10 @@ import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.library.aggregate._
 import au.com.cba.omnia.grimlock.library.transform._
 
+import au.com.cba.omnia.grimlock.scalding.environment._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 
-import cascading.flow.FlowDef
-import com.twitter.scalding.{ Args, Job, Mode, TextLine }
+import com.twitter.scalding.{ Args, Job, TextLine }
 import com.twitter.scalding.TDsl.sourceToTypedPipe
 import com.twitter.scalding.typed.TypedPipe
 
@@ -44,7 +44,7 @@ case class ExampleEvent(
 
 object ExampleEvent {
   // Function to read a file with event data.
-  def load(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position1D]] = {
+  def load(file: String): TypedPipe[Cell[Position1D]] = {
     val es = StructuredSchema(ExampleEventCodex)
     TextLine(file)
       .flatMap { case s => es.decode(s).map { case e => Cell(Position1D(es.codex.fromValue(e.value).eventId), e) } }
@@ -130,6 +130,9 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
 
 // Simple tf-idf example (input data is same as tf-idf example here: http://en.wikipedia.org/wiki/Tf%E2%80%93idf).
 class InstanceCentricTfIdf(args: Args) extends Job(args) {
+
+  // Define implicit context.
+  implicit val ctx = Context()
 
   // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")

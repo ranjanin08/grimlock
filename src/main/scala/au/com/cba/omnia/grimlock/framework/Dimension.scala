@@ -16,30 +16,33 @@ package au.com.cba.omnia.grimlock.framework.position
 
 /** Base trait for dimensions of a matrix. */
 sealed trait Dimension {
+  /** Self type of this dimension (for PosDimDep checking). */
+  type D <: Dimension
+
   /** Index of the dimension (starting at 0). */
   val index: Int
 }
 
 /** Type for first dimension. */
-case object First extends Dimension { val index = 0 }
+case object First extends Dimension { type D = First.type; val index = 0 }
 /** Type for second dimension. */
-case object Second extends Dimension { val index = 1 }
+case object Second extends Dimension { type D = Second.type; val index = 1 }
 /** Type for third dimension. */
-case object Third extends Dimension { val index = 2 }
+case object Third extends Dimension { type D = Third.type; val index = 2 }
 /** Type for fourth dimension. */
-case object Fourth extends Dimension { val index = 3 }
+case object Fourth extends Dimension { type D = Fourth.type; val index = 3 }
 /** Type for fifth dimension. */
-case object Fifth extends Dimension { val index = 4 }
+case object Fifth extends Dimension { type D = Fifth.type; val index = 4 }
 /** Type for sixth dimension. */
-case object Sixth extends Dimension { val index = 5 }
+case object Sixth extends Dimension { type D = Sixth.type; val index = 5 }
 /** Type for seventh dimension. */
-case object Seventh extends Dimension { val index = 6 }
+case object Seventh extends Dimension { type D = Seventh.type; val index = 6 }
 /** Type for eighth dimension. */
-case object Eighth extends Dimension { val index = 7 }
+case object Eighth extends Dimension { type D = Eighth.type; val index = 7 }
 /** Type for ninth dimension. */
-case object Ninth extends Dimension { val index = 8 }
+case object Ninth extends Dimension { type D = Ninth.type; val index = 8 }
 /** Type for last dimension. */
-case object Last extends Dimension { val index = -1 }
+case object Last extends Dimension { type D = Last.type; val index = -1 }
 
 /** Trait for capturing the dependency between a position and a dimension. */
 trait PosDimDep[A <: Position, B <: Dimension] extends java.io.Serializable

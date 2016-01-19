@@ -18,6 +18,7 @@ import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
+import au.com.cba.omnia.grimlock.framework.environment._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.Type._
@@ -303,7 +304,7 @@ case class Cut[P <: Position, W](bins: Extract[P, W, List[Double]]) extends Tran
 }
 
 /** Base trait that defined various rules for cutting continuous data. */
-trait CutRules extends RawData {
+trait CutRules extends UserData {
 
   /** Type of statistics data from which the number of bins is computed. */
   type Stats = Map[Position1D, Map[Position1D, Content]]

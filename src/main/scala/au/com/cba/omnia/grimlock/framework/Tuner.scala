@@ -32,13 +32,13 @@ trait TunerParameters extends java.io.Serializable {
 }
 
 /** Indicates that the data should be collated. */
-case object Collate extends TunerParameters {
-  type P = Collate.type
+case class Collate() extends TunerParameters {
+  type P = Collate
 }
 
 /** Indicates that no special operations are to be performed. */
-case object NoParameters extends TunerParameters {
-  type P = NoParameters.type
+case class NoParameters() extends TunerParameters {
+  type P = NoParameters
 }
 
 /**
@@ -79,10 +79,10 @@ sealed trait Tuner extends java.io.Serializable {
 }
 
 /** Indicates that some of the data can fit in memory (permits map-side only operations). */
-case class InMemory[Q <: TunerParameters](parameters: Q = NoParameters) extends Tuner { type P = Q }
+case class InMemory[Q <: TunerParameters](parameters: Q = NoParameters()) extends Tuner { type P = Q }
 
 /** Indicates that the data is (reasonably) evenly distributed. */
-case class Default[Q <: TunerParameters](parameters: Q = NoParameters) extends Tuner { type P = Q }
+case class Default[Q <: TunerParameters](parameters: Q = NoParameters()) extends Tuner { type P = Q }
 
 /** Companion object to `Default`. */
 object Default {
@@ -115,8 +115,8 @@ object Unbalanced {
 
 /** Some common sets of default permitted tuners. */
 private[grimlock] trait DefaultTuners {
-  protected type TP1 = OneOf1[Default[NoParameters.type]]
-  protected type TP2 = OneOf2[Default[NoParameters.type], Default[Reducers]]
-  protected type TP3 = OneOf3[Default[NoParameters.type], Default[Reducers], Default[Sequence2[Reducers, Reducers]]]
+  protected type TP1 = OneOf1[Default[NoParameters]]
+  protected type TP2 = OneOf2[Default[NoParameters], Default[Reducers]]
+  protected type TP3 = OneOf3[Default[NoParameters], Default[Reducers], Default[Sequence2[Reducers, Reducers]]]
 }
 

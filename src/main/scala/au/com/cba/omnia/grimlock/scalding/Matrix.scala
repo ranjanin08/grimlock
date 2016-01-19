@@ -17,19 +17,29 @@ package au.com.cba.omnia.grimlock.scalding
 import au.com.cba.omnia.grimlock.framework.{
   Cell,
   Collate,
+  Consume,
   Default,
-  ReshapeableMatrix => BaseReshapeableMatrix,
+  ReshapeableMatrix => FwReshapeableMatrix,
   ExtractWithDimension,
   ExtractWithKey,
   InMemory,
   Locate,
-  Matrix => BaseMatrix,
-  Matrixable => BaseMatrixable,
+  Matrix => FwMatrix,
+  Matrix1D => FwMatrix1D,
+  Matrix2D => FwMatrix2D,
+  Matrix3D => FwMatrix3D,
+  Matrix4D => FwMatrix4D,
+  Matrix5D => FwMatrix5D,
+  Matrix6D => FwMatrix6D,
+  Matrix7D => FwMatrix7D,
+  Matrix8D => FwMatrix8D,
+  Matrix9D => FwMatrix9D,
+  Matrixable => FwMatrixable,
   MatrixWithParseErrors,
   NoParameters,
-  Predicateable => BasePredicateable,
+  Predicateable => FwPredicateable,
   Redistribute,
-  ReduceableMatrix => BaseReduceableMatrix,
+  ReduceableMatrix => FwReduceableMatrix,
   Reducers,
   Sequence2,
   Tuner,
@@ -51,11 +61,10 @@ import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 import au.com.cba.omnia.grimlock.framework.window._
 
-import au.com.cba.omnia.grimlock.scalding.Matrix._
 import au.com.cba.omnia.grimlock.scalding.distribution._
+import au.com.cba.omnia.grimlock.scalding.environment._
 
-import cascading.flow.FlowDef
-import com.twitter.scalding.{ Mode, TextLine, WritableSequenceFile }
+import com.twitter.scalding.{ TextLine, WritableSequenceFile }
 import com.twitter.scalding.typed.{ IterablePipe, Grouped, TypedPipe, TypedSink, ValuePipe }
 
 import java.io.{ File, OutputStreamWriter, PrintWriter }
@@ -106,7 +115,7 @@ private[scalding] object ScaldingImplicits {
   implicit class PipeTuner[P](pipe: TypedPipe[P]) {
     def collate(parameters: TunerParameters): TypedPipe[P] = {
       parameters match {
-        case Collate => pipe.forceToDisk
+        case Collate() => pipe.forceToDisk
         case _ => pipe
       }
     }
@@ -145,15 +154,13 @@ private[scalding] object ScaldingImplicits {
 }
 
 /** Base trait for matrix operations using a `TypedPipe[Cell[P]]`. */
-trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
-  type U[A] = TypedPipe[A]
-  type E[B] = ValuePipe[B]
+trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserData {
   type M = Matrix[P]
 
   import ScaldingImplicits._
 
-  protected type TP4 = OneOf4[InMemory[NoParameters.type],
-                              Default[NoParameters.type], Default[Reducers],
+  protected type TP4 = OneOf4[InMemory[NoParameters],
+                              Default[NoParameters], Default[Reducers],
                               Unbalanced[Reducers]]
 
   type ChangeTuners = TP4
@@ -207,8 +214,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   type DomainTuners = TP1
 
-  type FillHeterogeneousTuners = OneOf4[InMemory[NoParameters.type], InMemory[Reducers],
-                                        Default[NoParameters.type], Default[Reducers]]
+  type FillHeterogeneousTuners = OneOf4[InMemory[NoParameters], InMemory[Reducers],
+                                        Default[NoParameters], Default[Reducers]]
   def fillHeterogeneous[S <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[S]], tuner: T = Default())(
     implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S,
       ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
@@ -265,15 +272,15 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     }
   }
 
-  type JoinTuners = OneOf7[InMemory[NoParameters.type], InMemory[Reducers],
-                           Default[NoParameters.type], Default[Reducers], Default[Sequence2[Reducers, Reducers]],
+  type JoinTuners = OneOf7[InMemory[NoParameters], InMemory[Reducers],
+                           Default[NoParameters], Default[Reducers], Default[Sequence2[Reducers, Reducers]],
                            Unbalanced[Reducers], Unbalanced[Sequence2[Reducers, Reducers]]]
   def join[T <: Tuner](slice: Slice[P], that: M, tuner: T = Default())(implicit ev1: P =!= Position1D,
     ev2: ClassTag[slice.S], ev3: JoinTuners#V[T]): U[Cell[P]] = {
     val (p1, p2) = (tuner, tuner.parameters) match {
       case (_, Sequence2(f, s)) => (f, s)
-      case (InMemory(_), p) => (p, NoParameters)
-      case (_, p) => (NoParameters, p)
+      case (InMemory(_), p) => (p, NoParameters())
+      case (_, p) => (NoParameters(), p)
     }
     val keep = Grouped(names(slice).map { case p => (p, ()) })
       .tuneReducers(p1)
@@ -295,13 +302,13 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
   type MaterialiseTuners = OneOf1[Default[Execution]]
   def materialise[T <: Tuner](tuner: T)(implicit ev: MaterialiseTuners#V[T]): List[Cell[P]] = {
-    val (config, mode) = tuner.parameters match {
-      case Execution(cfg, md) => (cfg, md)
+    val context = tuner.parameters match {
+      case Execution(ctx) => ctx
     }
 
     data
       .toIterableExecution
-      .waitFor(config, mode) match {
+      .waitFor(context.config, context.mode) match {
         case scala.util.Success(itr) => itr.toList
         case _ => List.empty
       }
@@ -315,8 +322,8 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       .tunedDistinct(tuner.parameters)
   }
 
-  type PairwiseTuners = OneOf14[InMemory[NoParameters.type],
-                                Default[NoParameters.type],
+  type PairwiseTuners = OneOf14[InMemory[NoParameters],
+                                Default[NoParameters],
                                 Default[Reducers],
                                 Default[Sequence2[Redistribute, Redistribute]],
                                 Default[Sequence2[Redistribute, Reducers]],
@@ -376,11 +383,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     data.flatMapWithValue(value) { case (c, vo) => locate(c, vo.get).map(Cell(_, c.content)) }
   }
 
-  def saveAsText(file: String, writer: TextWriter = Cell.toString())(implicit flow: FlowDef,
-    mode: Mode): U[Cell[P]] = saveText(file, writer)
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[Cell[P]] = saveText(file, writer)
 
   type SetTuners = TP2
-  def set[T <: Tuner](values: BaseMatrixable[P, TypedPipe], tuner: T = Default())(implicit ev1: ClassTag[P],
+  def set[T <: Tuner](values: FwMatrixable[P, TypedPipe], tuner: T = Default())(implicit ev1: ClassTag[P],
     ev2: SetTuners#V[T]): U[Cell[P]] = {
     data
       .groupBy { case c => c.position }
@@ -400,7 +406,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type SizeTuners = TP2
-  def size[D <: Dimension, T <: Tuner](dim: D, distinct: Boolean, tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+  def size[T <: Tuner](dim: Dimension, distinct: Boolean, tuner: T = Default())(implicit ev1: PosDimDep[P, dim.D],
     ev2: SizeTuners#V[T]): U[Cell[Position1D]] = {
     val coords = data.map { case c => c.position(dim) }
     val dist = if (distinct) { coords } else { coords.tunedDistinct(tuner.parameters)(Value.Ordering) }
@@ -430,7 +436,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     }
   }
 
-  type SlideTuners = OneOf4[Default[NoParameters.type],
+  type SlideTuners = OneOf4[Default[NoParameters],
                             Default[Redistribute],
                             Default[Reducers],
                             Default[Sequence2[Redistribute, Reducers]]]
@@ -441,9 +447,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val window = windows()
     val (partitions, reducers) = tuner.parameters match {
       case Sequence2(rp @ Redistribute(_), rr @ Reducers(_)) => (rp, rr)
-      case rp @ Redistribute(_) => (rp, NoParameters)
-      case rr @ Reducers(_) => (NoParameters, rr)
-      case _ => (NoParameters, NoParameters)
+      case rp @ Redistribute(_) => (rp, NoParameters())
+      case rr @ Reducers(_) => (NoParameters(), rr)
+      case _ => (NoParameters(), NoParameters())
     }
 
     data
@@ -469,9 +475,9 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     val window = windows()
     val (partitions, reducers) = tuner.parameters match {
       case Sequence2(rp @ Redistribute(_), rr @ Reducers(_)) => (rp, rr)
-      case rp @ Redistribute(_) => (rp, NoParameters)
-      case rr @ Reducers(_) => (NoParameters, rr)
-      case _ => (NoParameters, NoParameters)
+      case rp @ Redistribute(_) => (rp, NoParameters())
+      case rr @ Reducers(_) => (NoParameters(), rr)
+      case _ => (NoParameters(), NoParameters())
     }
 
     data
@@ -505,7 +511,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   def stream[Q <: Position](command: String, files: List[String], writer: TextWriter,
-    parser: BaseMatrix.TextParser[Q]): (U[Cell[Q]], U[String]) = {
+    parser: Cell.TextParser[Q]): (U[Cell[Q]], U[String]) = {
     val contents = files.map { case f => (new File(f).getName, Files.readAllBytes(Paths.get(f))) }
     val smfn = (k: Unit, itr: Iterator[String]) => {
       val tmp = Files.createTempDirectory("grimlock-")
@@ -678,12 +684,12 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
   }
 
   type WhichTuners = TP4
-  def which(predicate: BaseMatrix.Predicate[P])(implicit ev: ClassTag[P]): U[P] = {
+  def which(predicate: Cell.Predicate[P])(implicit ev: ClassTag[P]): U[P] = {
     data.collect { case c if predicate(c) => c.position }
   }
 
   def whichByPositions[I, T <: Tuner](slice: Slice[P], predicates: I, tuner: T = InMemory())(
-    implicit ev1: BasePredicateable[I, P, slice.S, TypedPipe], ev2: ClassTag[slice.S], ev3: ClassTag[P],
+    implicit ev1: FwPredicateable[I, P, slice.S, TypedPipe], ev2: ClassTag[slice.S], ev3: ClassTag[P],
       ev4: WhichTuners#V[T]): U[P] = {
     val pp = ev1.convert(predicates)
       .map { case (pos, pred) => pos.map { case p => (p, pred) } }
@@ -691,7 +697,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 
     tuner match {
       case InMemory(_) =>
-        type M = Map[slice.S, List[BaseMatrix.Predicate[P]]]
+        type M = Map[slice.S, List[Cell.Predicate[P]]]
         val semigroup = new com.twitter.algebird.Semigroup[M] {
           def plus(l: M, r: M): M = { (l.toSeq ++ r.toSeq).groupBy(_._1).mapValues(_.map(_._2).toList.flatten) }
         }
@@ -700,7 +706,7 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
           .mapSideJoin(pp.map { case (pos, pred) => Map(pos -> List(pred)) }.sum(semigroup),
             (c: Cell[P], v: M) => v.get(slice.selected(c.position)).flatMap {
               case lst => if (lst.exists((pred) => pred(c))) { Some(c.position) } else { None }
-            }, Map.empty[slice.S, List[BaseMatrix.Predicate[P]]])
+            }, Map.empty[slice.S, List[Cell.Predicate[P]]])
       case _ =>
         data
           .groupBy { case c => slice.selected(c.position) }
@@ -709,10 +715,10 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
     }
   }
 
-  val data: U[Cell[P]]
-
   protected def saveDictionary(slice: Slice[P], file: String, dictionary: String, separator: String)(
-    implicit ev1: ClassTag[slice.S], flow: FlowDef, mode: Mode) = {
+    implicit ctx: C, ct: ClassTag[slice.S]) = {
+    import ctx._
+
     val numbered = names(slice)
       .groupAll
       .mapGroup { case (_, itr) => itr.zipWithIndex }
@@ -737,16 +743,16 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
       case _ =>
         val (rr, rj, lr, lj) = tuner.parameters match {
           case Sequence2(Sequence2(rr, rj), Sequence2(lr, lj)) => (rr, rj, lr, lj)
-          case Sequence2(rj @ Reducers(_), Sequence2(lr, lj)) => (NoParameters, rj, lr, lj)
-          case Sequence2(rr @ Redistribute(_), Sequence2(lr, lj)) => (rr, NoParameters, lr, lj)
-          case Sequence2(Sequence2(rr, rj), lj @ Reducers(_)) => (rr, rj, NoParameters, lj)
-          case Sequence2(Sequence2(rr, rj), lr @ Redistribute(_)) => (rr, rj, lr, NoParameters)
-          case Sequence2(rj @ Reducers(_), lj @ Reducers(_)) => (NoParameters, rj, NoParameters, lj)
-          case Sequence2(rr @ Redistribute(_), lj @ Reducers(_)) => (rr, NoParameters, NoParameters, lj)
-          case Sequence2(rj @ Reducers(_), lr @ Redistribute(_)) => (NoParameters, rj, lr, NoParameters)
-          case Sequence2(rr @ Redistribute(_), lr @ Redistribute(_)) => (rr, NoParameters, lr, NoParameters)
-          case lj @ Reducers(_) => (NoParameters, NoParameters, NoParameters, lj)
-          case _ => (NoParameters, NoParameters, NoParameters, NoParameters)
+          case Sequence2(rj @ Reducers(_), Sequence2(lr, lj)) => (NoParameters(), rj, lr, lj)
+          case Sequence2(rr @ Redistribute(_), Sequence2(lr, lj)) => (rr, NoParameters(), lr, lj)
+          case Sequence2(Sequence2(rr, rj), lj @ Reducers(_)) => (rr, rj, NoParameters(), lj)
+          case Sequence2(Sequence2(rr, rj), lr @ Redistribute(_)) => (rr, rj, lr, NoParameters())
+          case Sequence2(rj @ Reducers(_), lj @ Reducers(_)) => (NoParameters(), rj, NoParameters(), lj)
+          case Sequence2(rr @ Redistribute(_), lj @ Reducers(_)) => (rr, NoParameters(), NoParameters(), lj)
+          case Sequence2(rj @ Reducers(_), lr @ Redistribute(_)) => (NoParameters(), rj, lr, NoParameters())
+          case Sequence2(rr @ Redistribute(_), lr @ Redistribute(_)) => (rr, NoParameters(), lr, NoParameters())
+          case lj @ Reducers(_) => (NoParameters(), NoParameters(), NoParameters(), lj)
+          case _ => (NoParameters(), NoParameters(), NoParameters(), NoParameters())
         }
         val ordering = Position.Ordering[slice.S]()
         val right = rdata
@@ -777,18 +783,18 @@ trait Matrix[P <: Position] extends BaseMatrix[P] with Persist[Cell[P]] {
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled using a `TypedPipe[Cell[P]]`. */
-trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduceableMatrix[P] { self: Matrix[P] =>
+trait ReduceableMatrix[P <: Position with ReduceablePosition] extends FwReduceableMatrix[P] { self: Matrix[P] =>
 
   import ScaldingImplicits._
 
-  def melt[D <: Dimension, G <: Dimension](dim: D, into: G, separator: String = ".")(implicit ev1: PosDimDep[P, D],
-    ev2: PosDimDep[P, G], ne: D =!= G): U[Cell[P#L]] = {
+  def melt(dim: Dimension, into: Dimension, separator: String = ".")(implicit ev1: PosDimDep[P, dim.D],
+    ev2: PosDimDep[P, into.D], ne: dim.D =!= into.D): U[Cell[P#L]] = {
     data.map { case Cell(p, c) => Cell(p.melt(dim, into, separator), c) }
   }
 
   type SquashTuners = TP2
-  def squash[D <: Dimension, T <: Tuner](dim: D, squasher: Squashable[P], tuner: T = Default())(
-    implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]] = {
+  def squash[T <: Tuner](dim: Dimension, squasher: Squashable[P], tuner: T = Default())(
+    implicit ev1: PosDimDep[P, dim.D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]] = {
     val squash = squasher()
 
     data
@@ -799,8 +805,9 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
       .flatMap { case (p, t) => squash.present(t).map { case c => Cell(p, c) } }
   }
 
-  def squashWithValue[D <: Dimension, W, T <: Tuner](dim: D, squasher: SquashableWithValue[P, W], value: E[W],
-    tuner: T = Default())(implicit ev1: PosDimDep[P, D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]] = {
+  def squashWithValue[W, T <: Tuner](dim: Dimension, squasher: SquashableWithValue[P, W], value: E[W],
+    tuner: T = Default())(implicit ev1: PosDimDep[P, dim.D], ev2: ClassTag[P#L],
+      ev3: SquashTuners#V[T]): U[Cell[P#L]] = {
     val squash = squasher()
 
     data
@@ -814,13 +821,13 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends BaseReduce
 
 /** Base trait for methods that reshapes the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
 trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePosition]
-  extends BaseReshapeableMatrix[P] { self: Matrix[P] =>
+  extends FwReshapeableMatrix[P] { self: Matrix[P] =>
 
   import ScaldingImplicits._
 
   type ReshapeTuners = TP4
-  def reshape[D <: Dimension, Q <: Position, T <: Tuner](dim: D, coordinate: Valueable,
-    locate: Locate.FromCellAndOptionalValue[P, Q], tuner: T = Default())(implicit ev1: PosDimDep[P, D],
+  def reshape[Q <: Position, T <: Tuner](dim: Dimension, coordinate: Valueable,
+    locate: Locate.FromCellAndOptionalValue[P, Q], tuner: T = Default())(implicit ev1: PosDimDep[P, dim.D],
       ev2: PosExpDep[P, Q], ev3: ClassTag[P#L], ev4: ReshapeTuners#V[T]): U[Cell[Q]] = {
     val keys = data
       .collect[(P#L, Value)] { case c if (c.position(dim) equ coordinate) => (c.position.remove(dim), c.content.value) }
@@ -849,6 +856,8 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   import au.com.cba.omnia.grimlock.library.pairwise._
   import au.com.cba.omnia.grimlock.library.transform._
   import au.com.cba.omnia.grimlock.library.window._
+
+  import au.com.cba.omnia.grimlock.scalding.Matrix._
 
   /**
    * Compute correlations.
@@ -1006,52 +1015,39 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
   }
 }
 
-object Matrix {
-  /**
-   * Read column oriented, pipe separated matrix text data into a `TypedPipe[Cell[P]]`.
-   *
-   * @param file   The text file to read from.
-   * @param parser The parser that converts a single line to a cell.
-   */
-  def loadText[P <: Position](file: String,
-    parser: BaseMatrix.TextParser[P]): (TypedPipe[Cell[P]], TypedPipe[String]) = {
+object Matrix extends Consume with DistributedData with Environment {
+  def loadText[P <: Position](file: String, parser: Cell.TextParser[P])(
+    implicit ctx: C): (U[Cell[P]], U[String]) = {
     val pipe = TypedPipe.from(TextLine(file)).flatMap { parser(_) }
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
   }
 
-  /**
-   * Read binary key-value (sequence) matrix data into a `TypedPipe[Cell[P]]`.
-   *
-   * @param file   The text file to read from.
-   * @param parser The parser that converts a single key-value to a cell.
-   */
-  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String,
-    parser: BaseMatrix.SequenceParser[K, V, P])(implicit ev1: Manifest[K],
-      ev2: Manifest[V]): (TypedPipe[Cell[P]], TypedPipe[String]) = {
+  def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String, parser: Cell.SequenceParser[K, V, P])(
+    implicit ctx: C, ev1: Manifest[K], ev2: Manifest[V]): (U[Cell[P]], U[String]) = {
     val pipe = TypedPipe.from(WritableSequenceFile[K, V](file)).flatMap { case (k, v) => parser(k, v) }
 
     (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
   }
 
-  /** Conversion from `TypedPipe[Cell[Position1D]]` to a Scalding `Matrix1D`. */
-  implicit def TP2M1(data: TypedPipe[Cell[Position1D]]): Matrix1D = Matrix1D(data)
-  /** Conversion from `TypedPipe[Cell[Position2D]]` to a Scalding `Matrix2D`. */
-  implicit def TP2M2(data: TypedPipe[Cell[Position2D]]): Matrix2D = Matrix2D(data)
-  /** Conversion from `TypedPipe[Cell[Position3D]]` to a Scalding `Matrix3D`. */
-  implicit def TP2M3(data: TypedPipe[Cell[Position3D]]): Matrix3D = Matrix3D(data)
-  /** Conversion from `TypedPipe[Cell[Position4D]]` to a Scalding `Matrix4D`. */
-  implicit def TP2M4(data: TypedPipe[Cell[Position4D]]): Matrix4D = Matrix4D(data)
-  /** Conversion from `TypedPipe[Cell[Position5D]]` to a Scalding `Matrix5D`. */
-  implicit def TP2M5(data: TypedPipe[Cell[Position5D]]): Matrix5D = Matrix5D(data)
-  /** Conversion from `TypedPipe[Cell[Position6D]]` to a Scalding `Matrix6D`. */
-  implicit def TP2M6(data: TypedPipe[Cell[Position6D]]): Matrix6D = Matrix6D(data)
-  /** Conversion from `TypedPipe[Cell[Position7D]]` to a Scalding `Matrix7D`. */
-  implicit def TP2M7(data: TypedPipe[Cell[Position7D]]): Matrix7D = Matrix7D(data)
-  /** Conversion from `TypedPipe[Cell[Position8D]]` to a Scalding `Matrix8D`. */
-  implicit def TP2M8(data: TypedPipe[Cell[Position8D]]): Matrix8D = Matrix8D(data)
-  /** Conversion from `TypedPipe[Cell[Position9D]]` to a Scalding `Matrix9D`. */
-  implicit def TP2M9(data: TypedPipe[Cell[Position9D]]): Matrix9D = Matrix9D(data)
+  /** Conversion from `U[Cell[Position1D]]` to a Scalding `Matrix1D`. */
+  implicit def TP2M1(data: U[Cell[Position1D]]): Matrix1D = Matrix1D(data)
+  /** Conversion from `U[Cell[Position2D]]` to a Scalding `Matrix2D`. */
+  implicit def TP2M2(data: U[Cell[Position2D]]): Matrix2D = Matrix2D(data)
+  /** Conversion from `U[Cell[Position3D]]` to a Scalding `Matrix3D`. */
+  implicit def TP2M3(data: U[Cell[Position3D]]): Matrix3D = Matrix3D(data)
+  /** Conversion from `U[Cell[Position4D]]` to a Scalding `Matrix4D`. */
+  implicit def TP2M4(data: U[Cell[Position4D]]): Matrix4D = Matrix4D(data)
+  /** Conversion from `U[Cell[Position5D]]` to a Scalding `Matrix5D`. */
+  implicit def TP2M5(data: U[Cell[Position5D]]): Matrix5D = Matrix5D(data)
+  /** Conversion from `U[Cell[Position6D]]` to a Scalding `Matrix6D`. */
+  implicit def TP2M6(data: U[Cell[Position6D]]): Matrix6D = Matrix6D(data)
+  /** Conversion from `U[Cell[Position7D]]` to a Scalding `Matrix7D`. */
+  implicit def TP2M7(data: U[Cell[Position7D]]): Matrix7D = Matrix7D(data)
+  /** Conversion from `U[Cell[Position8D]]` to a Scalding `Matrix8D`. */
+  implicit def TP2M8(data: U[Cell[Position8D]]): Matrix8D = Matrix8D(data)
+  /** Conversion from `U[Cell[Position9D]]` to a Scalding `Matrix9D`. */
+  implicit def TP2M9(data: U[Cell[Position9D]]): Matrix9D = Matrix9D(data)
 
   /** Conversion from `List[Cell[Position1D]]` to a Scalding `Matrix1D`. */
   implicit def L2TPM1(data: List[Cell[Position1D]]): Matrix1D = Matrix1D(IterablePipe(data))
@@ -1100,40 +1096,39 @@ object Matrix {
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]` to a
    * Scalding `Matrix6D`.
    */
-  implicit def LV6C2TPM6[U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
-    list: List[(U, V, W, X, Y, Z, Content)]): Matrix6D = {
-    Matrix6D(IterablePipe(list.map { case (u, v, w, x, y, z, c) => Cell(Position6D(u, v, w, x, y, z), c) }))
+  implicit def LV6C2TPM6[T <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
+    list: List[(T, V, W, X, Y, Z, Content)]): Matrix6D = {
+    Matrix6D(IterablePipe(list.map { case (t, v, w, x, y, z, c) => Cell(Position6D(t, v, w, x, y, z), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Content)]`
    * to a Scalding `Matrix7D`.
    */
-  implicit def LV7C2TPM7[T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
-    list: List[(T, U, V, W, X, Y, Z, Content)]): Matrix7D = {
-    Matrix7D(IterablePipe(list.map { case (t, u, v, w, x, y, z, c) => Cell(Position7D(t, u, v, w, x, y, z), c) }))
+  implicit def LV7C2TPM7[S <% Valueable, T <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
+    list: List[(S, T, V, W, X, Y, Z, Content)]): Matrix7D = {
+    Matrix7D(IterablePipe(list.map { case (s, t, v, w, x, y, z, c) => Cell(Position7D(s, t, v, w, x, y, z), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
    * Content)]` to a Scalding `Matrix8D`.
    */
-  implicit def LV8C2TPM8[S <% Valueable, T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
-    list: List[(S, T, U, V, W, X, Y, Z, Content)]): Matrix8D = {
-    Matrix8D(IterablePipe(list.map { case (s, t, u, v, w, x, y, z, c) => Cell(Position8D(s, t, u, v, w, x, y, z), c) }))
+  implicit def LV8C2TPM8[R <% Valueable, S <% Valueable, T <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
+    list: List[(R, S, T, V, W, X, Y, Z, Content)]): Matrix8D = {
+    Matrix8D(IterablePipe(list.map { case (r, s, t, v, w, x, y, z, c) => Cell(Position8D(r, s, t, v, w, x, y, z), c) }))
   }
   /**
    * Conversion from `List[(Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable, Valueable,
    * Valueable, Content)]` to a Scalding `Matrix9D`.
    */
-  implicit def LV9C2TPM9[R <% Valueable, S <% Valueable, T <% Valueable, U <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
-    list: List[(R, S, T, U, V, W, X, Y, Z, Content)]): Matrix9D = {
+  implicit def LV9C2TPM9[Q <% Valueable, R <% Valueable, S <% Valueable, T <% Valueable, V <% Valueable, W <% Valueable, X <% Valueable, Y <% Valueable, Z <% Valueable](
+    list: List[(Q, R, S, T, V, W, X, Y, Z, Content)]): Matrix9D = {
     Matrix9D(IterablePipe(list.map {
-      case (r, s, t, u, v, w, x, y, z, c) => Cell(Position9D(r, s, t, u, v, w, x, y, z), c)
+      case (q, r, s, t, v, w, x, y, z, c) => Cell(Position9D(q, r, s, t, v, w, x, y, z), c)
     }))
   }
 
   /** Conversion from matrix with errors tuple to `MatrixWithParseErrors`. */
-  implicit def TP2MWPE[P <: Position](
-    t: (TypedPipe[Cell[P]], TypedPipe[String])): MatrixWithParseErrors[P, TypedPipe] = {
+  implicit def TP2MWPE[P <: Position](t: (U[Cell[P]], U[String])): MatrixWithParseErrors[P, TypedPipe] = {
     MatrixWithParseErrors(t._1, t._2)
   }
 }
@@ -1143,21 +1138,13 @@ object Matrix {
  *
  * @param data `TypedPipe[Cell[Position1D]]`.
  */
-case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D]
+case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends FwMatrix1D with Matrix[Position1D]
   with ApproximateDistribution[Position1D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position1D] = names(Over(First))
 
-  /**
-   * Persist a `Matrix1D` as sparse matrix file (index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position1D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
-    mode: Mode): U[Cell[Position1D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position1D]] = {
+    import ctx._
+
     data
       .groupBy { case c => c.position }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1173,8 +1160,9 @@ case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends Matrix[Position1D
  *
  * @param data `TypedPipe[Cell[Position2D]]`.
  */
-case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D] with ReduceableMatrix[Position2D]
-  with ReshapeableMatrix[Position2D] with MatrixDistance with ApproximateDistribution[Position2D] {
+case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D with Matrix[Position2D]
+  with ReduceableMatrix[Position2D] with ReshapeableMatrix[Position2D] with MatrixDistance
+    with ApproximateDistribution[Position2D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position2D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1182,34 +1170,15 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D
       .map { case (c1, c2) => Position2D(c1, c2) }
   }
 
-  /**
-   * Permute the order of the coordinates in a position.
-   *
-   * @param first  Dimension used for the first coordinate.
-   * @param second Dimension used for the second coordinate.
-   */
-  def permute[D <: Dimension, F <: Dimension](first: D, second: F)(implicit ev1: PosDimDep[Position2D, D],
-    ev2: PosDimDep[Position2D, F], ev3: D =!= F): U[Cell[Position2D]] = {
-    data.map { case Cell(p, c) => Cell(p.permute(List(first, second)), c) }
+  def permute(dim1: Dimension, dim2: Dimension)(implicit ev1: PosDimDep[Position2D, dim1.D],
+    ev2: PosDimDep[Position2D, dim2.D], ev3: dim1.D =!= dim2.D): U[Cell[Position2D]] = {
+    data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2)), c) }
   }
 
-  /**
-   * Persist a `Matrix2D` as a CSV file.
-   *
-   * @param slice       Encapsulates the dimension that makes up the columns.
-   * @param file        File to write to.
-   * @param separator   Column separator to use.
-   * @param escapee     The method for escaping the separator character.
-   * @param writeHeader Indicator of the header should be written to a separate file.
-   * @param header      Postfix for the header file name.
-   * @param writeRowId  Indicator if row names should be written.
-   * @param rowId       Column name of row names.
-   *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
-   */
-  def saveAsCSV(slice: Slice[Position2D], file: String, separator: String = "|", escapee: Escape = Quote("|"),
-    writeHeader: Boolean = true, header: String = "%s.header", writeRowId: Boolean = true, rowId: String = "id")(
-      implicit ev1: ClassTag[slice.S], flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
+  def saveAsCSV(slice: Slice[Position2D], file: String, separator: String, escapee: Escape, writeHeader: Boolean,
+    header: String, writeRowId: Boolean, rowId: String)(implicit ctx: C, ct: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    import ctx._
+
     val escape = (str: String) => escapee.escape(str)
     val semigroup = new com.twitter.algebird.Semigroup[HashSet[String]] {
       def plus(l: HashSet[String], r: HashSet[String]): HashSet[String] = l ++ r
@@ -1242,17 +1211,9 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D
     data
   }
 
-  /**
-   * Persist a `Matrix2D` as sparse matrix file (index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
-    mode: Mode): U[Cell[Position2D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position2D]] = {
+    import ctx._
+
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1265,83 +1226,33 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D
     data
   }
 
-  /**
-   * Persist a `Matrix2D` as a Vowpal Wabbit file.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
-   * @param tag        Indicator if the selected position should be added as a tag.
-   * @param separator  Separator to use in dictionary.
-   *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
-   */
-  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String = "%s.dict", tag: Boolean = false,
-    separator: String = "|")(implicit flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
+  def saveAsVW(slice: Slice[Position2D], file: String, dictionary: String, tag: Boolean, separator: String)(
+    implicit ctx: C, ct: ClassTag[slice.S]): U[Cell[Position2D]] = {
     saveAsVW(slice, file, None, None, tag, dictionary, separator)
   }
 
-  /**
-   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param labels     The labels.
-   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
-   * @param tag        Indicator if the selected position should be added as a tag.
-   * @param separator  Separator to use in dictionary.
-   *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note The labels are joined to the data keeping only those examples for which data and a label are available.
-   */
-  def saveAsVWWithLabels(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
-    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(implicit flow: FlowDef,
-      mode: Mode): U[Cell[Position2D]] = saveAsVW(slice, file, Some(labels), None, tag, dictionary, separator)
+  def saveAsVWWithLabels(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]], dictionary: String,
+    tag: Boolean, separator: String)(implicit ctx: C, ct: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, Some(labels), None, tag, dictionary, separator)
+  }
 
-  /**
-   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided importance weights.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param importance The importance weights.
-   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
-   * @param tag        Indicator if the selected position should be added as a tag.
-   * @param separator  Separator to use in dictionary.
-   *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note The weights are joined to the data keeping only those examples for which data and a weight are available.
-   */
   def saveAsVWWithImportance(slice: Slice[Position2D], file: String, importance: U[Cell[Position1D]],
-    dictionary: String = "%s.dict", tag: Boolean = false, separator: String = "|")(implicit flow: FlowDef,
-      mode: Mode): U[Cell[Position2D]] = saveAsVW(slice, file, None, Some(importance), tag, dictionary, separator)
+    dictionary: String, tag: Boolean, separator: String)(implicit ctx: C,
+      ct: ClassTag[slice.S]): U[Cell[Position2D]] = {
+    saveAsVW(slice, file, None, Some(importance), tag, dictionary, separator)
+  }
 
-  /**
-   * Persist a `Matrix2D` as a Vowpal Wabbit file with the provided labels and importance weights.
-   *
-   * @param slice      Encapsulates the dimension that makes up the columns.
-   * @param file       File to write to.
-   * @param labels     The labels.
-   * @param importance The importance weights.
-   * @param dictionary Pattern for the dictionary file name, use `%``s` for the file name.
-   * @param tag        Indicator if the selected position should be added as a tag.
-   * @param separator  Separator to use in dictionary.
-   *
-   * @return A `TypedPipe[Cell[Position2D]]`; that is it returns `data`.
-   *
-   * @note The labels and weights are joined to the data keeping only those examples for which data and a label
-   *       and weight are available.
-   */
   def saveAsVWWithLabelsAndImportance(slice: Slice[Position2D], file: String, labels: U[Cell[Position1D]],
-    importance: U[Cell[Position1D]], dictionary: String = "%s.dict", tag: Boolean = false,
-      separator: String = "|")(implicit flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
+    importance: U[Cell[Position1D]], dictionary: String, tag: Boolean, separator: String)(implicit ctx: C,
+      ct: ClassTag[slice.S]): U[Cell[Position2D]] = {
     saveAsVW(slice, file, Some(labels), Some(importance), tag, dictionary, separator)
   }
 
   private def saveAsVW(slice: Slice[Position2D], file: String, labels: Option[U[Cell[Position1D]]],
     importance: Option[U[Cell[Position1D]]], tag: Boolean, dictionary: String, separator: String)(
-      implicit flow: FlowDef, mode: Mode): U[Cell[Position2D]] = {
+      implicit ctx: C): U[Cell[Position2D]] = {
+    import ctx._
+
     val dict = data
       .map { c => (slice.remainder(c.position)(First).toShortString, ()) }
       .group
@@ -1397,8 +1308,8 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends Matrix[Position2D
  *
  * @param data `TypedPipe[Cell[Position3D]]`.
  */
-case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D] with ReduceableMatrix[Position3D]
-  with ReshapeableMatrix[Position3D] with ApproximateDistribution[Position3D] {
+case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends FwMatrix3D with Matrix[Position3D]
+  with ReduceableMatrix[Position3D] with ReshapeableMatrix[Position3D] with ApproximateDistribution[Position3D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position3D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1407,30 +1318,15 @@ case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D
       .map { case ((c1, c2), c3) => Position3D(c1, c2, c3) }
   }
 
-  /**
-   * Permute the order of the coordinates in a position.
-   *
-   * @param first  Dimension used for the first coordinate.
-   * @param second Dimension used for the second coordinate.
-   * @param third  Dimension used for the third coordinate.
-   */
-  def permute[D <: Dimension, F <: Dimension, G <: Dimension](first: D, second: F, third: G)(
-    implicit ev1: PosDimDep[Position3D, D], ev2: PosDimDep[Position3D, F], ev3: PosDimDep[Position3D, G],
-      ev4: Distinct3[D, F, G]): U[Cell[Position3D]] = {
-    data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third)), c) }
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension)(implicit ev1: PosDimDep[Position3D, dim1.D],
+    ev2: PosDimDep[Position3D, dim2.D], ev3: PosDimDep[Position3D, dim3.D],
+      ev4: Distinct3[dim1.D, dim2.D, dim3.D]): U[Cell[Position3D]] = {
+    data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3)), c) }
   }
 
-  /**
-   * Persist a `Matrix3D` as sparse matrix file (index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position3D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
-    mode: Mode): U[Cell[Position3D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position3D]] = {
+    import ctx._
+
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1452,8 +1348,8 @@ case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends Matrix[Position3D
  *
  * @param data `TypedPipe[Cell[Position4D]]`.
  */
-case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D] with ReduceableMatrix[Position4D]
-  with ReshapeableMatrix[Position4D] with ApproximateDistribution[Position4D] {
+case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends FwMatrix4D with Matrix[Position4D]
+  with ReduceableMatrix[Position4D] with ReshapeableMatrix[Position4D] with ApproximateDistribution[Position4D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position4D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1463,31 +1359,16 @@ case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D
       .map { case (((c1, c2), c3), c4) => Position4D(c1, c2, c3, c4) }
   }
 
-  /**
-   * Permute the order of the coordinates in a position.
-   *
-   * @param first  Dimension used for the first coordinate.
-   * @param second Dimension used for the second coordinate.
-   * @param third  Dimension used for the third coordinate.
-   * @param fourth Dimension used for the fourth coordinate.
-   */
-  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension](first: D, second: F, third: G,
-    fourth: H)(implicit ev1: PosDimDep[Position4D, D], ev2: PosDimDep[Position4D, F], ev3: PosDimDep[Position4D, G],
-      ev4: PosDimDep[Position4D, H], ev5: Distinct4[D, F, G, H]): U[Cell[Position4D]] = {
-    data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth)), c) }
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension)(
+    implicit ev1: PosDimDep[Position4D, dim1.D], ev2: PosDimDep[Position4D, dim2.D],
+      ev3: PosDimDep[Position4D, dim3.D], ev4: PosDimDep[Position4D, dim4.D],
+        ev5: Distinct4[dim1.D, dim2.D, dim3.D, dim4.D]): U[Cell[Position4D]] = {
+    data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4)), c) }
   }
 
-  /**
-   * Persist a `Matrix4D` as sparse matrix file (index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position4D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
-    mode: Mode): U[Cell[Position4D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position4D]] = {
+    import ctx._
+
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1515,8 +1396,8 @@ case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends Matrix[Position4D
  *
  * @param data `TypedPipe[Cell[Position5D]]`.
  */
-case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D] with ReduceableMatrix[Position5D]
-  with ReshapeableMatrix[Position5D] with ApproximateDistribution[Position5D] {
+case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends FwMatrix5D with Matrix[Position5D]
+  with ReduceableMatrix[Position5D] with ReshapeableMatrix[Position5D] with ApproximateDistribution[Position5D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position5D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1527,33 +1408,16 @@ case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D
       .map { case ((((c1, c2), c3), c4), c5) => Position5D(c1, c2, c3, c4, c5) }
   }
 
-  /**
-   * Permute the order of the coordinates in a position.
-   *
-   * @param first  Dimension used for the first coordinate.
-   * @param second Dimension used for the second coordinate.
-   * @param third  Dimension used for the third coordinate.
-   * @param fourth Dimension used for the fourth coordinate.
-   * @param fifth  Dimension used for the fifth coordinate.
-   */
-  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension](first: D, second: F,
-    third: G, fourth: H, fifth: I)(implicit ev1: PosDimDep[Position5D, D], ev2: PosDimDep[Position5D, F],
-      ev3: PosDimDep[Position5D, G], ev4: PosDimDep[Position5D, H], ev5: PosDimDep[Position5D, I],
-        ev6: Distinct5[D, F, G, H, I]): U[Cell[Position5D]] = {
-    data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth)), c) }
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension)(
+    implicit ev1: PosDimDep[Position5D, dim1.D], ev2: PosDimDep[Position5D, dim2.D],
+      ev3: PosDimDep[Position5D, dim3.D], ev4: PosDimDep[Position5D, dim4.D], ev5: PosDimDep[Position5D, dim5.D],
+          ev6: Distinct5[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D]): U[Cell[Position5D]] = {
+    data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5)), c) }
   }
 
-  /**
-   * Persist a `Matrix5D` as sparse matrix file (index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position5D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
-    mode: Mode): U[Cell[Position5D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position5D]] = {
+    import ctx._
+
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1584,8 +1448,8 @@ case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends Matrix[Position5D
  *
  * @param data `TypedPipe[Cell[Position6D]]`.
  */
-case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D] with ReduceableMatrix[Position6D]
-  with ReshapeableMatrix[Position6D] with ApproximateDistribution[Position6D] {
+case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends FwMatrix6D with Matrix[Position6D]
+  with ReduceableMatrix[Position6D] with ReshapeableMatrix[Position6D] with ApproximateDistribution[Position6D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position6D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1597,35 +1461,17 @@ case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D
       .map { case (((((c1, c2), c3), c4), c5), c6) => Position6D(c1, c2, c3, c4, c5, c6) }
   }
 
-  /**
-   * Permute the order of the coordinates in a position.
-   *
-   * @param first  Dimension used for the first coordinate.
-   * @param second Dimension used for the second coordinate.
-   * @param third  Dimension used for the third coordinate.
-   * @param fourth Dimension used for the fourth coordinate.
-   * @param fifth  Dimension used for the fifth coordinate.
-   * @param sixth  Dimension used for the sixth coordinate.
-   */
-  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension](
-    first: D, second: F, third: G, fourth: H, fifth: I, sixth: J)(implicit ev1: PosDimDep[Position6D, D],
-      ev2: PosDimDep[Position6D, F], ev3: PosDimDep[Position6D, G], ev4: PosDimDep[Position6D, H],
-        ev5: PosDimDep[Position6D, I], ev6: PosDimDep[Position6D, J],
-          ev7: Distinct6[D, F, G, H, I, J]): U[Cell[Position6D]] = {
-    data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth, sixth)), c) }
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension)(
+    implicit ev1: PosDimDep[Position6D, dim1.D], ev2: PosDimDep[Position6D, dim2.D],
+      ev3: PosDimDep[Position6D, dim3.D], ev4: PosDimDep[Position6D, dim4.D],
+        ev5: PosDimDep[Position6D, dim5.D], ev6: PosDimDep[Position6D, dim6.D],
+          ev7: Distinct6[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D]): U[Cell[Position6D]] = {
+    data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6)), c) }
   }
 
-  /**
-   * Persist a `Matrix6D` as sparse matrix file (index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position6D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
-    mode: Mode): U[Cell[Position6D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position6D]] = {
+    import ctx._
+
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1660,8 +1506,8 @@ case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends Matrix[Position6D
  *
  * @param data `TypedPipe[Cell[Position7D]]`.
  */
-case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D] with ReduceableMatrix[Position7D]
-  with ReshapeableMatrix[Position7D] with ApproximateDistribution[Position7D] {
+case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends FwMatrix7D with Matrix[Position7D]
+  with ReduceableMatrix[Position7D] with ReshapeableMatrix[Position7D] with ApproximateDistribution[Position7D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position7D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1674,36 +1520,17 @@ case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D
       .map { case ((((((c1, c2), c3), c4), c5), c6), c7) => Position7D(c1, c2, c3, c4, c5, c6, c7) }
   }
 
-  /**
-   * Permute the order of the coordinates in a position.
-   *
-   * @param first   Dimension used for the first coordinate.
-   * @param second  Dimension used for the second coordinate.
-   * @param third   Dimension used for the third coordinate.
-   * @param fourth  Dimension used for the fourth coordinate.
-   * @param fifth   Dimension used for the fifth coordinate.
-   * @param sixth   Dimension used for the sixth coordinate.
-   * @param seventh Dimension used for the seventh coordinate.
-   */
-  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension](
-    first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K)(implicit ev1: PosDimDep[Position7D, D],
-      ev2: PosDimDep[Position7D, F], ev3: PosDimDep[Position7D, G], ev4: PosDimDep[Position7D, H],
-        ev5: PosDimDep[Position7D, I], ev6: PosDimDep[Position7D, J], ev7: PosDimDep[Position7D, K],
-          ev8: Distinct7[D, F, G, H, I, J, K]): U[Cell[Position7D]] = {
-    data.map { case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth, sixth, seventh)), c) }
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension,
+    dim7: Dimension)(implicit ev1: PosDimDep[Position7D, dim1.D], ev2: PosDimDep[Position7D, dim2.D],
+      ev3: PosDimDep[Position7D, dim3.D], ev4: PosDimDep[Position7D, dim4.D], ev5: PosDimDep[Position7D, dim5.D],
+        ev6: PosDimDep[Position7D, dim6.D], ev7: PosDimDep[Position7D, dim7.D],
+          ev8: Distinct7[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D]): U[Cell[Position7D]] = {
+    data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6, dim7)), c) }
   }
 
-  /**
-   * Persist a `Matrix7D` as sparse matrix file (index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position7D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
-    mode: Mode): U[Cell[Position7D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position7D]] = {
+    import ctx._
+
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1741,8 +1568,8 @@ case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends Matrix[Position7D
  *
  * @param data `TypedPipe[Cell[Position8D]]`.
  */
-case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D] with ReduceableMatrix[Position8D]
-  with ReshapeableMatrix[Position8D] with ApproximateDistribution[Position8D] {
+case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends FwMatrix8D with Matrix[Position8D]
+  with ReduceableMatrix[Position8D] with ReshapeableMatrix[Position8D] with ApproximateDistribution[Position8D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position8D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1756,40 +1583,17 @@ case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D
       .map { case (((((((c1, c2), c3), c4), c5), c6), c7), c8) => Position8D(c1, c2, c3, c4, c5, c6, c7, c8) }
   }
 
-  /**
-   * Permute the order of the coordinates in a position.
-   *
-   * @param first   Dimension used for the first coordinate.
-   * @param second  Dimension used for the second coordinate.
-   * @param third   Dimension used for the third coordinate.
-   * @param fourth  Dimension used for the fourth coordinate.
-   * @param fifth   Dimension used for the fifth coordinate.
-   * @param sixth   Dimension used for the sixth coordinate.
-   * @param seventh Dimension used for the seventh coordinate.
-   * @param eighth  Dimension used for the eighth coordinate.
-   */
-  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension, L <: Dimension](
-    first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K, eighth: L)(
-      implicit ev1: PosDimDep[Position8D, D], ev2: PosDimDep[Position8D, F], ev3: PosDimDep[Position8D, G],
-        ev4: PosDimDep[Position8D, H], ev5: PosDimDep[Position8D, I], ev6: PosDimDep[Position8D, J],
-          ev7: PosDimDep[Position8D, K], ev8: PosDimDep[Position8D, L],
-            ev9: Distinct8[D, F, G, H, I, J, K, L]): U[Cell[Position8D]] = {
-    data.map {
-      case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth, sixth, seventh, eighth)), c)
-    }
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension,
+    dim7: Dimension, dim8: Dimension)(implicit ev1: PosDimDep[Position8D, dim1.D], ev2: PosDimDep[Position8D, dim2.D],
+      ev3: PosDimDep[Position8D, dim3.D], ev4: PosDimDep[Position8D, dim4.D], ev5: PosDimDep[Position8D, dim5.D],
+        ev6: PosDimDep[Position8D, dim6.D], ev7: PosDimDep[Position8D, dim7.D], ev8: PosDimDep[Position8D, dim8.D],
+            ev9: Distinct8[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D]): U[Cell[Position8D]] = {
+    data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6, dim7, dim8)), c) }
   }
 
-  /**
-   * Persist a `Matrix8D` as sparse matrix file (index, index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position8D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
-    mode: Mode): U[Cell[Position8D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position8D]] = {
+    import ctx._
+
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1830,8 +1634,8 @@ case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends Matrix[Position8D
  *
  * @param data `TypedPipe[Cell[Position9D]]`.
  */
-case class Matrix9D(data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D] with ReduceableMatrix[Position9D]
-  with ApproximateDistribution[Position9D] {
+case class Matrix9D(data: TypedPipe[Cell[Position9D]]) extends FwMatrix9D with Matrix[Position9D]
+  with ReduceableMatrix[Position9D] with ApproximateDistribution[Position9D] {
   def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position9D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
@@ -1846,41 +1650,18 @@ case class Matrix9D(data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D
       .map { case ((((((((c1, c2), c3), c4), c5), c6), c7), c8), c9) => Position9D(c1, c2, c3, c4, c5, c6, c7, c8, c9) }
   }
 
-  /**
-   * Permute the order of the coordinates in a position.
-   *
-   * @param first   Dimension used for the first coordinate.
-   * @param second  Dimension used for the second coordinate.
-   * @param third   Dimension used for the third coordinate.
-   * @param fourth  Dimension used for the fourth coordinate.
-   * @param fifth   Dimension used for the fifth coordinate.
-   * @param sixth   Dimension used for the sixth coordinate.
-   * @param seventh Dimension used for the seventh coordinate.
-   * @param eighth  Dimension used for the eighth coordinate.
-   * @param ninth   Dimension used for the ninth coordinate.
-   */
-  def permute[D <: Dimension, F <: Dimension, G <: Dimension, H <: Dimension, I <: Dimension, J <: Dimension, K <: Dimension, L <: Dimension, N <: Dimension](
-    first: D, second: F, third: G, fourth: H, fifth: I, sixth: J, seventh: K, eighth: L, ninth: N)(
-      implicit ev1: PosDimDep[Position9D, D], ev2: PosDimDep[Position9D, F], ev3: PosDimDep[Position9D, G],
-        ev4: PosDimDep[Position9D, H], ev5: PosDimDep[Position9D, I], ev6: PosDimDep[Position9D, J],
-          ev7: PosDimDep[Position9D, K], ev8: PosDimDep[Position9D, L], ev9: PosDimDep[Position9D, N],
-            ev10: Distinct9[D, F, G, H, I, J, K, L, N]): U[Cell[Position9D]] = {
-    data.map {
-      case Cell(p, c) => Cell(p.permute(List(first, second, third, fourth, fifth, sixth, seventh, eighth, ninth)), c)
-    }
+  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension, dim6: Dimension,
+    dim7: Dimension, dim8: Dimension, dim9: Dimension)(implicit ev1: PosDimDep[Position9D, dim1.D],
+      ev2: PosDimDep[Position9D, dim2.D], ev3: PosDimDep[Position9D, dim3.D], ev4: PosDimDep[Position9D, dim4.D],
+        ev5: PosDimDep[Position9D, dim5.D], ev6: PosDimDep[Position9D, dim6.D], ev7: PosDimDep[Position9D, dim7.D],
+          ev8: PosDimDep[Position9D, dim8.D], ev9: PosDimDep[Position9D, dim9.D],
+            ev10: Distinct9[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D, dim9.D]): U[Cell[Position9D]] = {
+    data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6, dim7, dim8, dim9)), c) }
   }
 
-  /**
-   * Persist a `Matrix9D` as sparse matrix file (index, index, index, index, index, index, index, index, index, value).
-   *
-   * @param file       File to write to.
-   * @param dictionary Pattern for the dictionary file name.
-   * @param separator  Column separator to use in dictionary file.
-   *
-   * @return A `TypedPipe[Cell[Position9D]]`; that is it returns `data`.
-   */
-  def saveAsIV(file: String, dictionary: String = "%1$s.dict.%2$d", separator: String = "|")(implicit flow: FlowDef,
-    mode: Mode): U[Cell[Position9D]] = {
+  def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position9D]] = {
+    import ctx._
+
     data
       .groupBy { case c => Position1D(c.position(First)) }
       .join(saveDictionary(Over(First), file, dictionary, separator))
@@ -1922,41 +1703,39 @@ case class Matrix9D(data: TypedPipe[Cell[Position9D]]) extends Matrix[Position9D
 /** Scalding companion object for the `Matrixable` trait. */
 object Matrixable {
   /** Converts a `TypedPipe[Cell[P]]` into a `TypedPipe[Cell[P]]`; that is, it is a  pass through. */
-  implicit def TPC2TPM[P <: Position](t: TypedPipe[Cell[P]]): BaseMatrixable[P, TypedPipe] = {
-    new BaseMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = t }
+  implicit def TPC2TPM[P <: Position](t: TypedPipe[Cell[P]]): FwMatrixable[P, TypedPipe] = {
+    new FwMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = t }
   }
 
   /** Converts a `List[Cell[P]]` into a `TypedPipe[Cell[P]]`. */
-  implicit def LC2TPM[P <: Position](t: List[Cell[P]]): BaseMatrixable[P, TypedPipe] = {
-    new BaseMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = IterablePipe(t) }
+  implicit def LC2TPM[P <: Position](t: List[Cell[P]]): FwMatrixable[P, TypedPipe] = {
+    new FwMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = IterablePipe(t) }
   }
 
   /** Converts a `Cell[P]` into a `TypedPipe[Cell[P]]`. */
-  implicit def C2TPM[P <: Position](t: Cell[P]): BaseMatrixable[P, TypedPipe] = {
-    new BaseMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = IterablePipe(List(t)) }
+  implicit def C2TPM[P <: Position](t: Cell[P]): FwMatrixable[P, TypedPipe] = {
+    new FwMatrixable[P, TypedPipe] { def apply(): TypedPipe[Cell[P]] = IterablePipe(List(t)) }
   }
 }
 
 /** Scalding companion object for the `Predicateable` type class. */
 object Predicateable {
   /**
-   * Converts a `List[(PositionDistributable[I, S, U], Matrix.Predicate[P])]` to a
-   * `List[(U[S], BaseMatrix.Predicate[P])]`.
+   * Converts a `List[(PositionDistributable[I, S, U], Cell.Predicate[P])]` to a `List[(U[S], Cell.Predicate[P])]`.
    */
-  implicit def PDPT2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, TypedPipe] = {
-    new BasePredicateable[(I, BaseMatrix.Predicate[P]), P, S, TypedPipe] {
-      def convert(t: (I, BaseMatrix.Predicate[P])): List[(TypedPipe[S], BaseMatrix.Predicate[P])] = {
-        List((ev.convert(t._1), t._2))
-      }
+  implicit def PDPT2LTPP[I, P <: Position, S <: Position](
+    implicit ev: PositionDistributable[I, S, TypedPipe]): FwPredicateable[(I, Cell.Predicate[P]), P, S, TypedPipe] = {
+    new FwPredicateable[(I, Cell.Predicate[P]), P, S, TypedPipe] {
+      def convert(t: (I, Cell.Predicate[P])): List[(TypedPipe[S], Cell.Predicate[P])] = List((ev.convert(t._1), t._2))
     }
   }
 
   /**
-   * Converts a `(PositionDistributable[I, S, U], Matrix.Predicate[P])` to a `List[(U[S], BaseMatrix.Predicate[P])]`.
+   * Converts a `(PositionDistributable[I, S, U], Cell.Predicate[P])` to a `List[(U[S], Cell.Predicate[P])]`.
    */
-  implicit def LPDP2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, TypedPipe] = {
-    new BasePredicateable[List[(I, BaseMatrix.Predicate[P])], P, S, TypedPipe] {
-      def convert(t: List[(I, BaseMatrix.Predicate[P])]): List[(TypedPipe[S], BaseMatrix.Predicate[P])] = {
+  implicit def LPDP2LTPP[I, P <: Position, S <: Position](implicit ev: PositionDistributable[I, S, TypedPipe]): FwPredicateable[List[(I, Cell.Predicate[P])], P, S, TypedPipe] = {
+    new FwPredicateable[List[(I, Cell.Predicate[P])], P, S, TypedPipe] {
+      def convert(t: List[(I, Cell.Predicate[P])]): List[(TypedPipe[S], Cell.Predicate[P])] = {
         t.map { case (i, p) => (ev.convert(i), p) }
       }
     }

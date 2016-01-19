@@ -21,6 +21,7 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.window._
 
+import au.com.cba.omnia.grimlock.scalding.environment._
 import au.com.cba.omnia.grimlock.scalding.Matrix._
 
 import com.twitter.scalding.{ Args, Job }
@@ -67,6 +68,9 @@ case class Gradient(dim: Dimension) extends Window[Position3D, Position2D, Posit
 }
 
 class DerivedData(args: Args) extends Job(args) {
+
+  // Define implicit context.
+  implicit val ctx = Context()
 
   // Path to data files, output folder
   val path = args.getOrElse("path", "../../data")

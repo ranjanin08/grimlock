@@ -14,10 +14,15 @@
 
 package au.com.cba.omnia.grimlock.framework
 
+import au.com.cba.omnia.grimlock.framework.environment._
+
 import org.apache.hadoop.io.Writable
 
 /** Base trait for persisting data. */
-trait Persist[T] {
+trait Persist[T] extends DistributedData with Environment {
+  /** The data to persist. */
+  val data: U[T]
+
   /**
    *   Convenience function for suppressing ‘Discarded non-unit value’ compiler warnings.
    *

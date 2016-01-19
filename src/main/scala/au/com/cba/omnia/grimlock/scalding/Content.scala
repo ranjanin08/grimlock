@@ -14,12 +14,10 @@
 
 package au.com.cba.omnia.grimlock.scalding.content
 
-import au.com.cba.omnia.grimlock.framework.content.{ Contents => BaseContents, _ }
+import au.com.cba.omnia.grimlock.framework.content.{ Contents => FwContents, _ }
 
 import au.com.cba.omnia.grimlock.scalding._
 
-import cascading.flow.FlowDef
-import com.twitter.scalding.Mode
 import com.twitter.scalding.typed.TypedPipe
 
 /**
@@ -27,16 +25,13 @@ import com.twitter.scalding.typed.TypedPipe
  *
  * @param data The `TypedPipe[Content]`.
  */
-class Contents(val data: TypedPipe[Content]) extends BaseContents with Persist[Content] {
-  type U[A] = TypedPipe[A]
-
-  def saveAsText(file: String, writer: TextWriter = Content.toString())(implicit flow: FlowDef,
-    mode: Mode): U[Content] = saveText(file, writer)
+case class Contents(data: TypedPipe[Content]) extends FwContents with Persist[Content] {
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[Content] = saveText(file, writer)
 }
 
 /** Companion object for the Scalding `Contents` class. */
 object Contents {
   /** Converts a `TypedPipe[Content]` to a `Contents`. */
-  implicit def TPC2TPC(data: TypedPipe[Content]): Contents = new Contents(data)
+  implicit def TPC2TPC(data: TypedPipe[Content]): Contents = Contents(data)
 }
 

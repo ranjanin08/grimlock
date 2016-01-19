@@ -15,7 +15,7 @@
 package au.com.cba.omnia.grimlock.spark.partition
 
 import au.com.cba.omnia.grimlock.framework.{ Cell, Default, NoParameters, Reducers, Tuner }
-import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => BasePartitions }
+import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => FwPartitions }
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 
@@ -30,15 +30,14 @@ import scala.reflect.ClassTag
  *
  * @param data The `RDD[(I, Cell[P])]`.
  */
-class Partitions[P <: Position, I: Ordering](val data: RDD[(I, Cell[P])]) extends BasePartitions[P, I]
+case class Partitions[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]) extends FwPartitions[P, I]
   with Persist[(I, Cell[P])] {
-  type U[A] = RDD[A]
 
   import SparkImplicits._
 
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  type ForAllTuners = OneOf2[Default[NoParameters.type], Default[Reducers]]
+  type ForAllTuners = OneOf2[Default[NoParameters], Default[Reducers]]
   def forAll[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T = Default())(
     implicit ev1: ClassTag[I], ev2: ForAllTuners#V[T]): U[(I, Cell[Q])] = {
     forEach(ids(tuner).toLocalIterator.toList.filter(!exclude.contains(_)), fn)
@@ -52,7 +51,7 @@ class Partitions[P <: Position, I: Ordering](val data: RDD[(I, Cell[P])]) extend
 
   def get(id: I): U[Cell[P]] = data.collect { case (i, c) if (id == i) => c }
 
-  type IdsTuners = OneOf2[Default[NoParameters.type], Default[Reducers]]
+  type IdsTuners = OneOf2[Default[NoParameters], Default[Reducers]]
   def ids[T <: Tuner](tuner: T = Default())(implicit ev1: ClassTag[I], ev2: IdsTuners#V[T]): U[I] = {
     data.keys.tunedDistinct(tuner.parameters)
   }
@@ -61,12 +60,12 @@ class Partitions[P <: Position, I: Ordering](val data: RDD[(I, Cell[P])]) extend
 
   def remove(id: I): U[(I, Cell[P])] = data.filter { case (i, _) => i != id }
 
-  def saveAsText(file: String, writer: TextWriter = Partition.toString()): U[(I, Cell[P])] = saveText(file, writer)
+  def saveAsText(file: String, writer: TextWriter)(implicit ctx: C): U[(I, Cell[P])] = saveText(file, writer)
 }
 
 /** Companion object for the Spark `Partitions` class. */
 object Partitions {
   /** Conversion from `RDD[(I, Cell[P])]` to a Spark `Partitions`. */
-  implicit def RDDTC2RDDP[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]): Partitions[P, I] = new Partitions(data)
+  implicit def RDDTC2RDDP[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]): Partitions[P, I] = Partitions(data)
 }
 

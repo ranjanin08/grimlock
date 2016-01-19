@@ -53,7 +53,7 @@ trait PartitionerWithValue[P <: Position, I] {
 }
 
 /** Base trait that represents the partitions of matrices */
-trait Partitions[P <: Position, I] extends RawData {
+trait Partitions[P <: Position, I] extends Persist[(I, Cell[P])] {
 
   /**
    * Add a partition.
@@ -129,6 +129,16 @@ trait Partitions[P <: Position, I] extends RawData {
    * @return A `U[(I, Cell[P])]` with the selected parition removed.
    */
   def remove(id: I): U[(I, Cell[P])]
+
+  /**
+   * Persist to disk.
+   *
+   * @param file   Name of the output file.
+   * @param writer Writer that converts `(I, Cell[P])` to string.
+   *
+   * @return A `U[(I, Cell[P])]` which is this object's data.
+   */
+  def saveAsText(file: String, writer: TextWriter = Partition.toString())(implicit ctx: C): U[(I, Cell[P])]
 }
 
 /** Object for `Partition` functions. */

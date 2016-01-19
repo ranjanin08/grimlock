@@ -24,18 +24,16 @@ import au.com.cba.omnia.grimlock.framework.{
 }
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.distribution.{ ApproximateDistribution => BaseApproximateDistribution, _ }
+import au.com.cba.omnia.grimlock.framework.distribution.{ ApproximateDistribution => FwApproximateDistribution, _ }
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
 import au.com.cba.omnia.grimlock.spark._
 
-import org.apache.spark.rdd.RDD
-
 import scala.reflect.ClassTag
 
-trait ApproximateDistribution[P <: Position] extends BaseApproximateDistribution[P] { self: Matrix[P] =>
+trait ApproximateDistribution[P <: Position] extends FwApproximateDistribution[P] { self: Matrix[P] =>
 
   import SparkImplicits._
 
