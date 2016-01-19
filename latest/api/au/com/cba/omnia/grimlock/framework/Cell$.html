@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to the Cell class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Cell.scala" target="_blank">Cell.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Companion object to the Cell class.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(fafc3eb99d2eae5f07a07e856713e8a7be5e14a7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Cell.scala" target="_blank">Cell.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -91,7 +91,61 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.Cell.Predicate" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Predicate[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Boolean"></a>
+      <a id="Predicate[P&lt;:Position]:Predicate[P]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Predicate</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> = (<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Cell.Predicate.P">P</span>]) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Cell$@Predicate[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=au.com.cba.omnia.grimlock.framework.Cell[P]=&gt;Boolean" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Predicate used in, for example, the <code>which</code> methods of a matrix for finding content.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Cell.SequenceParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SequenceParser[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=(K,V)=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]]"></a>
+      <a id="SequenceParser[K&lt;:Writable,V&lt;:Writable,P&lt;:Position]:SequenceParser[K,V,P]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">SequenceParser</span><span class="tparams">[<span name="K">K &lt;: <span class="extype" name="org.apache.hadoop.io.Writable">Writable</span></span>, <span name="V">V &lt;: <span class="extype" name="org.apache.hadoop.io.Writable">Writable</span></span>, <span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> = (<span class="extype" name="au.com.cba.omnia.grimlock.framework.Cell.SequenceParser.K">K</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Cell.SequenceParser.V">V</span>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Either">Either</span>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Cell.SequenceParser.P">P</span>], <span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Cell$@SequenceParser[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable,P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=(K,V)=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type for parsing a key value tuple into either a <code>Cell[P]</code> or an error message.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Cell.TextParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TextParser[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=String=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]]"></a>
+      <a id="TextParser[P&lt;:Position]:TextParser[P]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TextParser</span><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> = (<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Either">Either</span>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Cell.TextParser.P">P</span>], <span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Cell$@TextParser[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]=String=&gt;TraversableOnce[Either[au.com.cba.omnia.grimlock.framework.Cell[P],String]]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type for parsing a string into either a <code>Cell[P]</code> or an error message.</p>
+    </li></ol>
+            </div>
 
         
 

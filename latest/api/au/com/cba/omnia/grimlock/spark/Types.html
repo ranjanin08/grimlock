@@ -44,18 +44,19 @@
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">class</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Types</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="../framework/Types.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Types">framework.Types</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>] with <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)]</span>
+        <span class="name">Types</span><span class="tparams">[<span name="P">P &lt;: <a href="../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="data">data: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)]</span>)</span><span class="result"> extends <a href="../framework/Types.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Types">framework.Types</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>] with <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>RDD[(Position, Type)]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/spark/Types.scala" target="_blank">Types.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This class represents the variable type along the dimensions of a matrix.
+</p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p><code>RDD[(Position, Type)]</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(fafc3eb99d2eae5f07a07e856713e8a7be5e14a7)//src/main/scala/au/com/cba/omnia/grimlock/spark/Types.scala" target="_blank">Types.scala</a></dd><dt>Note</dt><dd><span class="cmt"><p>This class represents the variable type along the dimensions of a matrix.
 </p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)], <a href="../framework/Types.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Types">framework.Types</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.Environment">Environment</a>, <a href="environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData">DistributedData</a>, <a href="../framework/Types.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Types">framework.Types</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>], <a href="../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)], <a href="../framework/environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a>, <a href="../framework/environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -73,7 +74,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.spark.Types"><span>Types</span></li><li class="in" name="au.com.cba.omnia.grimlock.spark.Persist"><span>Persist</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Persist"><span>Persist</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Types"><span>Types</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.RawData"><span>RawData</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.spark.Types"><span>Types</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.spark.Persist"><span>Persist</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="au.com.cba.omnia.grimlock.spark.environment.Environment"><span>Environment</span></li><li class="in" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData"><span>DistributedData</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Types"><span>Types</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Persist"><span>Persist</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.environment.Environment"><span>Environment</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData"><span>DistributedData</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -116,23 +117,23 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.RawData.E" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="E[_]"></a>
-      <a id="E[_]:E[_]"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.spark.environment.Environment.C" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="C=au.com.cba.omnia.grimlock.spark.environment.Context"></a>
+      <a id="C:C"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier">abstract </span>
+        <span class="modifier"></span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">E</span><span class="tparams">[<span name="_">_</span>]</span>
+        <span class="name">C</span><span class="result"> = <a href="environment/Context.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.Context">Context</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@E[_]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@C=au.com.cba.omnia.grimlock.spark.environment.Context" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type of 'wrapper' around user provided data.</p><div class="fullcomment"><div class="comment cmt"><p>Type of 'wrapper' around user provided data.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd>RawData</dd></dl></div>
+      <p class="shortcomment cmt">Type of the operating context.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the operating context.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.Environment">Environment</a> → <a href="../framework/environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.Persist.SequenceWriter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="SequenceWriter[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable]=T=&gt;TraversableOnce[(K,V)]"></a>
       <a id="SequenceWriter[K&lt;:Writable,V&lt;:Writable]:SequenceWriter[K,V]"></a>
@@ -167,23 +168,23 @@
       </a>
     </span>
       <p class="shortcomment cmt">Shorthand type for converting a <code>T</code> to string.</p><div class="fullcomment"><div class="comment cmt"><p>Shorthand type for converting a <code>T</code> to string.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.spark.Types.U" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="U[A]=org.apache.spark.rdd.RDD[A]"></a>
-      <a id="U[A]:U[A]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.spark.environment.DistributedData.U" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="U[X]=org.apache.spark.rdd.RDD[X]"></a>
+      <a id="U[X]:U[X]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">U</span><span class="tparams">[<span name="A">A</span>]</span><span class="result"> = <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.U.A">A</span>]</span>
+        <span class="name">U</span><span class="tparams">[<span name="X">X</span>]</span><span class="result"> = <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData.U.X">X</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@U[A]=org.apache.spark.rdd.RDD[A]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@U[X]=org.apache.spark.rdd.RDD[X]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type of the underlying (raw) data structure (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying (raw) data structure (i.e. TypedPipe or RDD).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.Types">Types</a> → RawData</dd></dl></div>
+      <p class="shortcomment cmt">Type of the underlying (raw) data structure (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying (raw) data structure (i.e. TypedPipe or RDD).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData">DistributedData</a> → <a href="../framework/environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -299,7 +300,7 @@
       </a>
     </span>
       <p class="shortcomment cmt"><code>RDD[(Position, Type)]</code>.</p><div class="fullcomment"><div class="comment cmt"><p><code>RDD[(Position, Type)]</code>.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.Types">Types</a> → <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a></dd></dl></div>
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.Types">Types</a> → <a href="../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -317,23 +318,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="equals(x$1:Any):Boolean"></a>
-      <a id="equals(Any):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@equals(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -370,23 +354,6 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@getClass():Class[_]" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hashCode():Int"></a>
-      <a id="hashCode():Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@hashCode():Int" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -460,38 +427,38 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Types#saveAsText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="saveAsText(file:String,writer:Types.this.TextWriter):Types.this.U[(P,au.com.cba.omnia.grimlock.framework.Type)]"></a>
-      <a id="saveAsText(String,TextWriter):U[(P,Type)]"></a>
+      <a id="saveAsText(file:String,writer:Types.this.TextWriter)(implicitctx:Types.this.C):Types.this.U[(P,au.com.cba.omnia.grimlock.framework.Type)]"></a>
+      <a id="saveAsText(String,TextWriter)(C):U[(P,Type)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">saveAsText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: <a href="#TextWriter=T=&gt;TraversableOnce[String]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Types.TextWriter">TextWriter</a> = <span class="symbol"><span class="name"><a href="../../../../../package.html">Type.toString()</a></span></span></span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Types.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)]</span>
+        <span class="name">saveAsText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: <a href="#TextWriter=T=&gt;TraversableOnce[String]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Types.TextWriter">TextWriter</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ctx">ctx: <a href="#C=au.com.cba.omnia.grimlock.spark.environment.Context" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Types.C">C</a></span>)</span><span class="result">: <a href="#U[X]=org.apache.spark.rdd.RDD[X]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Types.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@saveAsText(file:String,writer:Types.this.TextWriter):Types.this.U[(P,au.com.cba.omnia.grimlock.framework.Type)]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@saveAsText(file:String,writer:Types.this.TextWriter)(implicitctx:Types.this.C):Types.this.U[(P,au.com.cba.omnia.grimlock.framework.Type)]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Persist to disk.</p><div class="fullcomment"><div class="comment cmt"><p>Persist to disk.
-</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">writer</dt><dd class="cmt"><p>Writer that converts <code>T</code> to string.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Spark <code>RDD[T]</code> which is this object's data.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.Types">Types</a> → <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">writer</dt><dd class="cmt"><p>Writer that converts <code>(P, Type)</code> to string.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(P, Type)]</code> which is this object's data.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.Types">Types</a> → <a href="../framework/Types.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Types">Types</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Persist#saveText" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="saveText(file:String,writer:Persist.this.TextWriter):org.apache.spark.rdd.RDD[T]"></a>
-      <a id="saveText(String,TextWriter):RDD[(P,Type)]"></a>
+      <a id="saveText(file:String,writer:Persist.this.TextWriter)(implicitctx:Persist.this.C):Persist.this.U[T]"></a>
+      <a id="saveText(String,TextWriter)(C):U[(P,Type)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">saveText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: <a href="#TextWriter=T=&gt;TraversableOnce[String]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Types.TextWriter">TextWriter</a></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)]</span>
+        <span class="name">saveText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: <a href="#TextWriter=T=&gt;TraversableOnce[String]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Types.TextWriter">TextWriter</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ctx">ctx: <a href="#C=au.com.cba.omnia.grimlock.spark.environment.Context" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Types.C">C</a></span>)</span><span class="result">: <a href="#U[X]=org.apache.spark.rdd.RDD[X]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.Types.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@saveText(file:String,writer:Persist.this.TextWriter):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@saveText(file:String,writer:Persist.this.TextWriter)(implicitctx:Persist.this.C):Persist.this.U[T]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -513,23 +480,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString():String"></a>
-      <a id="toString():String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.spark.Types@toString():String" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.Persist#toUnit" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toUnit():Unit"></a>
       <a id="toUnit():Unit"></a>
@@ -627,16 +577,28 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="au.com.cba.omnia.grimlock.spark.Persist">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
+            </div><div class="parent" name="scala.Product">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a></h3>
+            </div><div class="parent" name="scala.Equals">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.spark.Persist">
               <h3>Inherited from <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)]</h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.Persist">
-              <h3>Inherited from <a href="../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.spark.environment.Environment">
+              <h3>Inherited from <a href="environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.Environment">Environment</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData">
+              <h3>Inherited from <a href="environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData">DistributedData</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.Types">
               <h3>Inherited from <a href="../framework/Types.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Types">framework.Types</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>]</h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.RawData">
-              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.Persist">
+              <h3>Inherited from <a href="../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.spark.Types.P">P</span>, <a href="../framework/Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.environment.Environment">
+              <h3>Inherited from <a href="../framework/environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">
+              <h3>Inherited from <a href="../framework/environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

@@ -45,16 +45,16 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Partitions</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="I">I</span>]</span><span class="result"> extends <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span></span>
+        <span class="name">Partitions</span><span class="tparams">[<span name="P">P &lt;: <a href="../position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="I">I</span>]</span><span class="result"> extends <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])]</span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that represents the partitions of matrices</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait that represents the partitions of matrices</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(fafc3eb99d2eae5f07a07e856713e8a7be5e14a7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Partitioner.scala" target="_blank">Partitioner.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])], <a href="../environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a>, <a href="../environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
             <span class="toggle">Known Subclasses</span>
-            <div class="subClasses hiddenContent"><a href="../../scalding/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions">Partitions</a>, <a href="../../spark/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions">Partitions</a></div>
+            <div class="subClasses hiddenContent"><a href="../../spark/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions">Partitions</a>, <a href="../../scalding/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions">Partitions</a></div>
           </div></div>
         
 
@@ -72,7 +72,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.partition.Partitions"><span>Partitions</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.RawData"><span>RawData</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.partition.Partitions"><span>Partitions</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Persist"><span>Persist</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.environment.Environment"><span>Environment</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData"><span>DistributedData</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -94,23 +94,23 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.RawData.E" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="E[_]"></a>
-      <a id="E[_]:E[_]"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.environment.Environment.C" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="C&lt;:au.com.cba.omnia.grimlock.framework.environment.Context"></a>
+      <a id="C:C"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">E</span><span class="tparams">[<span name="_">_</span>]</span>
+        <span class="name">C</span><span class="result"> &lt;: <a href="../environment/Context.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Context">Context</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitions@E[_]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitions@C&lt;:au.com.cba.omnia.grimlock.framework.environment.Context" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type of 'wrapper' around user provided data.</p><div class="fullcomment"><div class="comment cmt"><p>Type of 'wrapper' around user provided data.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd>RawData</dd></dl></div>
+      <p class="shortcomment cmt">Type of the operating context.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the operating context.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions.ForAllTuners" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ForAllTuners&lt;:au.com.cba.omnia.grimlock.framework.utility.OneOf"></a>
       <a id="ForAllTuners:ForAllTuners"></a>
@@ -145,7 +145,41 @@
       </a>
     </span>
       <p class="shortcomment cmt">Specifies tuners permitted on a call to <code>ids</code>.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.RawData.U" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+    </li><li name="au.com.cba.omnia.grimlock.framework.Persist.SequenceWriter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="SequenceWriter[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable]=T=&gt;TraversableOnce[(K,V)]"></a>
+      <a id="SequenceWriter[K&lt;:Writable,V&lt;:Writable]:SequenceWriter[K,V]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">SequenceWriter</span><span class="tparams">[<span name="K">K &lt;: <span class="extype" name="org.apache.hadoop.io.Writable">Writable</span></span>, <span name="V">V &lt;: <span class="extype" name="org.apache.hadoop.io.Writable">Writable</span></span>]</span><span class="result"> = ((<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Persist.SequenceWriter.K">K</span>, <span class="extype" name="au.com.cba.omnia.grimlock.framework.Persist.SequenceWriter.V">V</span>)]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitions@SequenceWriter[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable]=T=&gt;TraversableOnce[(K,V)]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Shorthand type for converting a <code>T</code> to key value tuple.</p><div class="fullcomment"><div class="comment cmt"><p>Shorthand type for converting a <code>T</code> to key value tuple.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Persist.TextWriter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TextWriter=T=&gt;TraversableOnce[String]"></a>
+      <a id="TextWriter:TextWriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TextWriter</span><span class="result"> = ((<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitions@TextWriter=T=&gt;TraversableOnce[String]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Shorthand type for converting a <code>T</code> to string.</p><div class="fullcomment"><div class="comment cmt"><p>Shorthand type for converting a <code>T</code> to string.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.environment.DistributedData.U" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="U[_]"></a>
       <a id="U[_]:U[_]"></a>
       <h4 class="signature">
@@ -161,7 +195,7 @@
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type of the underlying (raw) data structure (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying (raw) data structure (i.e. TypedPipe or RDD).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd>RawData</dd></dl></div>
+      <p class="shortcomment cmt">Type of the underlying (raw) data structure (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying (raw) data structure (i.e. TypedPipe or RDD).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -187,6 +221,23 @@
 </p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>The partition identifier.</p></dd><dt class="param">partition</dt><dd class="cmt"><p>The partition to add.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(I, Cell[P])]</code> containing existing and new paritions.
 </p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Persist#data" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="data:Persist.this.U[T]"></a>
+      <a id="data:U[(I,Cell[P])]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">data</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitions@data:Persist.this.U[T]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The data to persist.</p><div class="fullcomment"><div class="comment cmt"><p>The data to persist.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions#forAll" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="forAll[Q&lt;:au.com.cba.omnia.grimlock.framework.position.Position,T&lt;:au.com.cba.omnia.grimlock.framework.Tuner](fn:(I,Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[P]])=&gt;Partitions.this.U[au.com.cba.omnia.grimlock.framework.Cell[Q]],exclude:List[I],tuner:T)(implicitev1:scala.reflect.ClassTag[I],implicitev2:Partitions.this.ForAllTuners#V[T]):Partitions.this.U[(I,au.com.cba.omnia.grimlock.framework.Cell[Q])]"></a>
       <a id="forAll[Q&lt;:Position,T&lt;:Tuner]((I,U[Cell[P]])⇒U[Cell[Q]],List[I],T)(ClassTag[I],ForAllTuners.V[T]):U[(I,Cell[Q])]"></a>
@@ -307,6 +358,26 @@
       <p class="shortcomment cmt">Remove a partition.</p><div class="fullcomment"><div class="comment cmt"><p>Remove a partition.
 </p></div><dl class="paramcmts block"><dt class="param">id</dt><dd class="cmt"><p>The identifier for the partition to remove.
 </p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(I, Cell[P])]</code> with the selected parition removed.
+</p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.partition.Partitions#saveAsText" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="saveAsText(file:String,writer:Partitions.this.TextWriter)(implicitctx:Partitions.this.C):Partitions.this.U[(I,au.com.cba.omnia.grimlock.framework.Cell[P])]"></a>
+      <a id="saveAsText(String,TextWriter)(C):U[(I,Cell[P])]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">saveAsText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: <a href="#TextWriter=T=&gt;TraversableOnce[String]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.TextWriter">TextWriter</a> = <span class="symbol"><span class="name"><a href="Partition$.html">Partition.toString()</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ctx">ctx: <a href="#C&lt;:au.com.cba.omnia.grimlock.framework.environment.Context" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.C">C</a></span>)</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.U">U</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitions@saveAsText(file:String,writer:Partitions.this.TextWriter)(implicitctx:Partitions.this.C):Partitions.this.U[(I,au.com.cba.omnia.grimlock.framework.Cell[P])]" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Persist to disk.</p><div class="fullcomment"><div class="comment cmt"><p>Persist to disk.
+</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">writer</dt><dd class="cmt"><p>Writer that converts <code>(I, Cell[P])</code> to string.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[(I, Cell[P])]</code> which is this object's data.
 </p></dd></dl></div>
     </li></ol>
             </div>
@@ -597,6 +668,25 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Persist#toUnit" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toUnit():Unit"></a>
+      <a id="toUnit():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toUnit</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.partition.Partitions@toUnit():Unit" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">  Convenience function for suppressing ‘Discarded non-unit value’ compiler warnings.</p><div class="fullcomment"><div class="comment cmt"><p>  Convenience function for suppressing ‘Discarded non-unit value’ compiler warnings.</p><p>  These occur when the output of a function is not assigned to a variable (for a non-unit return).
+  This function ensures that such warnings are suppressed, it does not affect the flow or outcome.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -675,8 +765,12 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="au.com.cba.omnia.grimlock.framework.RawData">
-              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span></h3>
+        <div class="parent" name="au.com.cba.omnia.grimlock.framework.Persist">
+              <h3>Inherited from <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.I">I</span>, <a href="../Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions.P">P</span>])]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.environment.Environment">
+              <h3>Inherited from <a href="../environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">
+              <h3>Inherited from <a href="../environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

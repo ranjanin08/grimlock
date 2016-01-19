@@ -66,23 +66,25 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Partitions[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I]extendsPartitions[P,I]withPersist[(I,au.com.cba.omnia.grimlock.framework.Cell[P])]"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.scalding.partition.Partitions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Partitions[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I]extendsPartitions[P,I]withPersist[(I,au.com.cba.omnia.grimlock.framework.Cell[P])]withProductwithSerializable"></a>
       <a id="Partitions[P&lt;:Position,I]:Partitions[P,I]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">class</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Partitions.html"><span class="name">Partitions</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="I">I</span>]</span><span class="result"> extends <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">framework.partition.Partitions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.I">I</span>] with <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.I">I</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])]</span>
+        <a href="Partitions.html"><span class="name">Partitions</span></a><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>, <span name="I">I</span>]</span><span class="params">(<span name="data">data: <span class="extype" name="com.twitter.scalding.typed.TypedPipe">TypedPipe</span>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.I">I</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="evidence$1">evidence$1: <span class="extype" name="scala.Ordering">Ordering</span>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.I">I</span>]</span>)</span><span class="result"> extends <a href="../../framework/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">framework.partition.Partitions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>, <span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.I">I</span>] with <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.I">I</span>, <a href="../../framework/Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions.P">P</span>])] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.scalding.partition.package@Partitions[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I]extendsPartitions[P,I]withPersist[(I,au.com.cba.omnia.grimlock.framework.Cell[P])]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.scalding.partition.package@Partitions[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,I]extendsPartitions[P,I]withPersist[(I,au.com.cba.omnia.grimlock.framework.Cell[P])]withProductwithSerializable" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Rich wrapper around a <code>TypedPipe[(I, Cell[P])]</code>.</p>
+      <p class="shortcomment cmt">Rich wrapper around a <code>TypedPipe[(I, Cell[P])]</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Rich wrapper around a <code>TypedPipe[(I, Cell[P])]</code>.
+</p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>The <code>TypedPipe[(I, Cell[P])]</code>.
+</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -99,7 +101,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="Partitions$.html"><span class="name">Partitions</span></a>
+        <a href="Partitions$.html"><span class="name">Partitions</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.scalding.partition.package@Partitions" title="Permalink" target="_top">

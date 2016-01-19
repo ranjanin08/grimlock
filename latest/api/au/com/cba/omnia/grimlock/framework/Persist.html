@@ -45,16 +45,16 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Persist</span><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <span class="name">Persist</span><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a> with <a href="environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for persisting data.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/framework/Persist.scala" target="_blank">Persist.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base trait for persisting data.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(fafc3eb99d2eae5f07a07e856713e8a7be5e14a7)//src/main/scala/au/com/cba/omnia/grimlock/framework/Persist.scala" target="_blank">Persist.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a>, <a href="environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
             <span class="toggle">Known Subclasses</span>
-            <div class="subClasses hiddenContent"><a href="../scalding/content/Contents.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.content.Contents">Contents</a>, <a href="../spark/content/Contents.html" class="extype" name="au.com.cba.omnia.grimlock.spark.content.Contents">Contents</a>, <a href="../scalding/Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix">Matrix</a>, <a href="../spark/Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix">Matrix</a>, <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>, <a href="../spark/Matrix1D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix1D">Matrix1D</a>, <a href="../scalding/Matrix1D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix1D">Matrix1D</a>, <a href="../spark/Matrix2D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix2D">Matrix2D</a>, <a href="../scalding/Matrix2D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix2D">Matrix2D</a>, <a href="../spark/Matrix3D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix3D">Matrix3D</a>, <a href="../scalding/Matrix3D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix3D">Matrix3D</a>, <a href="../scalding/Matrix4D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix4D">Matrix4D</a>, <a href="../spark/Matrix4D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix4D">Matrix4D</a>, <a href="../scalding/Matrix5D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix5D">Matrix5D</a>, <a href="../spark/Matrix5D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix5D">Matrix5D</a>, <a href="../spark/Matrix6D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix6D">Matrix6D</a>, <a href="../scalding/Matrix6D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix6D">Matrix6D</a>, <a href="../spark/Matrix7D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix7D">Matrix7D</a>, <a href="../scalding/Matrix7D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix7D">Matrix7D</a>, <a href="../spark/Matrix8D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix8D">Matrix8D</a>, <a href="../scalding/Matrix8D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix8D">Matrix8D</a>, <a href="../scalding/Matrix9D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix9D">Matrix9D</a>, <a href="../spark/Matrix9D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix9D">Matrix9D</a>, <a href="../scalding/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions">Partitions</a>, <a href="../spark/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions">Partitions</a>, <a href="../scalding/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Persist">Persist</a>, <a href="../spark/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>, <a href="../scalding/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.position.Positions">Positions</a>, <a href="../spark/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions">Positions</a>, <a href="../spark/Types.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Types">Types</a>, <a href="../scalding/Types.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Types">Types</a></div>
+            <div class="subClasses hiddenContent"><a href="../spark/content/Contents.html" class="extype" name="au.com.cba.omnia.grimlock.spark.content.Contents">Contents</a>, <a href="content/Contents.html" class="extype" name="au.com.cba.omnia.grimlock.framework.content.Contents">Contents</a>, <a href="../scalding/content/Contents.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.content.Contents">Contents</a>, <a href="../scalding/Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix">Matrix</a>, <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>, <a href="../spark/Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix">Matrix</a>, <a href="../scalding/Matrix1D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix1D">Matrix1D</a>, <a href="Matrix1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix1D">Matrix1D</a>, <a href="../spark/Matrix1D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix1D">Matrix1D</a>, <a href="../spark/Matrix2D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix2D">Matrix2D</a>, <a href="../scalding/Matrix2D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix2D">Matrix2D</a>, <a href="Matrix2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix2D">Matrix2D</a>, <a href="Matrix3D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix3D">Matrix3D</a>, <a href="../scalding/Matrix3D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix3D">Matrix3D</a>, <a href="../spark/Matrix3D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix3D">Matrix3D</a>, <a href="../scalding/Matrix4D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix4D">Matrix4D</a>, <a href="Matrix4D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix4D">Matrix4D</a>, <a href="../spark/Matrix4D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix4D">Matrix4D</a>, <a href="Matrix5D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix5D">Matrix5D</a>, <a href="../spark/Matrix5D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix5D">Matrix5D</a>, <a href="../scalding/Matrix5D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix5D">Matrix5D</a>, <a href="../scalding/Matrix6D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix6D">Matrix6D</a>, <a href="Matrix6D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix6D">Matrix6D</a>, <a href="../spark/Matrix6D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix6D">Matrix6D</a>, <a href="../spark/Matrix7D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix7D">Matrix7D</a>, <a href="../scalding/Matrix7D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix7D">Matrix7D</a>, <a href="Matrix7D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix7D">Matrix7D</a>, <a href="../spark/Matrix8D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix8D">Matrix8D</a>, <a href="Matrix8D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix8D">Matrix8D</a>, <a href="../scalding/Matrix8D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix8D">Matrix8D</a>, <a href="Matrix9D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix9D">Matrix9D</a>, <a href="../spark/Matrix9D.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Matrix9D">Matrix9D</a>, <a href="../scalding/Matrix9D.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Matrix9D">Matrix9D</a>, <a href="../scalding/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.partition.Partitions">Partitions</a>, <a href="../spark/partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.spark.partition.Partitions">Partitions</a>, <a href="partition/Partitions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.partition.Partitions">Partitions</a>, <a href="../scalding/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Persist">Persist</a>, <a href="../spark/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>, <a href="../spark/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions">Positions</a>, <a href="../scalding/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.position.Positions">Positions</a>, <a href="position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions">Positions</a>, <a href="Types.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Types">Types</a>, <a href="../scalding/Types.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.Types">Types</a>, <a href="../spark/Types.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Types">Types</a></div>
           </div></div>
         
 
@@ -72,7 +72,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.framework.Persist"><span>Persist</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.Persist"><span>Persist</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.environment.Environment"><span>Environment</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData"><span>DistributedData</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -94,7 +94,24 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.Persist.SequenceWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="au.com.cba.omnia.grimlock.framework.environment.Environment.C" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="C&lt;:au.com.cba.omnia.grimlock.framework.environment.Context"></a>
+      <a id="C:C"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">C</span><span class="result"> &lt;: <a href="environment/Context.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Context">Context</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Persist@C&lt;:au.com.cba.omnia.grimlock.framework.environment.Context" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of the operating context.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the operating context.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Persist.SequenceWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="SequenceWriter[K&lt;:org.apache.hadoop.io.Writable,V&lt;:org.apache.hadoop.io.Writable]=T=&gt;TraversableOnce[(K,V)]"></a>
       <a id="SequenceWriter[K&lt;:Writable,V&lt;:Writable]:SequenceWriter[K,V]"></a>
       <h4 class="signature">
@@ -128,13 +145,50 @@
       </a>
     </span>
       <p class="shortcomment cmt">Shorthand type for converting a <code>T</code> to string.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.environment.DistributedData.U" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="U[_]"></a>
+      <a id="U[_]:U[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">U</span><span class="tparams">[<span name="_">_</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Persist@U[_]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of the underlying (raw) data structure (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying (raw) data structure (i.e. TypedPipe or RDD).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a></dd></dl></div>
     </li></ol>
             </div>
 
-        
+        <div id="values" class="values members">
+              <h3>Abstract Value Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.Persist#data" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="data:Persist.this.U[T]"></a>
+      <a id="data:U[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">data</span><span class="result">: <a href="#U[_]" class="extmbr" name="au.com.cba.omnia.grimlock.framework.Persist.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Persist.T">T</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.Persist@data:Persist.this.U[T]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The data to persist.</p>
+    </li></ol>
+            </div>
 
         <div id="values" class="values members">
-              <h3>Value Members</h3>
+              <h3>Concrete Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a>
       <a id="!=(Any):Boolean"></a>
@@ -516,7 +570,11 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="au.com.cba.omnia.grimlock.framework.environment.Environment">
+              <h3>Inherited from <a href="environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">
+              <h3>Inherited from <a href="environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></h3>

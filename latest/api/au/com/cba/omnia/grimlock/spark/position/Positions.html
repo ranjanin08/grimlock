@@ -44,17 +44,18 @@
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">class</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Positions</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="../../framework/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions">framework.position.Positions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>] with <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
+        <span class="name">Positions</span><span class="tparams">[<span name="P">P &lt;: <a href="../../framework/position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="params">(<span name="data">data: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>)</span><span class="result"> extends <a href="../../framework/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions">framework.position.Positions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>] with <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Rich wrapper around a <code>RDD[Position]</code>.
-</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/spark/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>The <code>RDD[Position]</code>.
+</p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(fafc3eb99d2eae5f07a07e856713e8a7be5e14a7)//src/main/scala/au/com/cba/omnia/grimlock/spark/Position.scala" target="_blank">Position.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>], <a href="../../framework/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions">framework.position.Positions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>], <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>], <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.Environment">Environment</a>, <a href="../environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData">DistributedData</a>, <a href="../../framework/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions">framework.position.Positions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>], <a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>], <a href="../../framework/environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a>, <a href="../../framework/environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -72,7 +73,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.spark.position.Positions"><span>Positions</span></li><li class="in" name="au.com.cba.omnia.grimlock.spark.Persist"><span>Persist</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Persist"><span>Persist</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.position.Positions"><span>Positions</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.RawData"><span>RawData</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.spark.position.Positions"><span>Positions</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="au.com.cba.omnia.grimlock.spark.Persist"><span>Persist</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="au.com.cba.omnia.grimlock.spark.environment.Environment"><span>Environment</span></li><li class="in" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData"><span>DistributedData</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.position.Positions"><span>Positions</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.Persist"><span>Persist</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.environment.Environment"><span>Environment</span></li><li class="in" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData"><span>DistributedData</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -115,25 +116,25 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.framework.RawData.E" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="E[_]"></a>
-      <a id="E[_]:E[_]"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.spark.environment.Environment.C" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="C=au.com.cba.omnia.grimlock.spark.environment.Context"></a>
+      <a id="C:C"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier">abstract </span>
+        <span class="modifier"></span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">E</span><span class="tparams">[<span name="_">_</span>]</span>
+        <span class="name">C</span><span class="result"> = <a href="../environment/Context.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.Context">Context</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@E[_]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@C=au.com.cba.omnia.grimlock.spark.environment.Context" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type of 'wrapper' around user provided data.</p><div class="fullcomment"><div class="comment cmt"><p>Type of 'wrapper' around user provided data.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd>RawData</dd></dl></div>
+      <p class="shortcomment cmt">Type of the operating context.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the operating context.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.Environment">Environment</a> → <a href="../../framework/environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.position.Positions.NamesTuners" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="NamesTuners=au.com.cba.omnia.grimlock.framework.utility.OneOf.OneOf2[au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters.type],au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers]]"></a>
+      <a id="NamesTuners=au.com.cba.omnia.grimlock.framework.utility.OneOf.OneOf2[au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters],au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers]]"></a>
       <a id="NamesTuners:NamesTuners"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -141,10 +142,10 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">NamesTuners</span><span class="result"> = <a href="../../framework/utility/OneOf.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf">OneOf</a> { type V[X] = &lt;:&lt;[au.com.cba.omnia.grimlock.framework.utility.OneOf.NotNot[X],au.com.cba.omnia.grimlock.framework.utility.OneOf.Or2[au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters.type],au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers]]] }</span>
+        <span class="name">NamesTuners</span><span class="result"> = <a href="../../framework/utility/OneOf.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.OneOf">OneOf</a> { type V[X] = &lt;:&lt;[au.com.cba.omnia.grimlock.framework.utility.OneOf.NotNot[X],au.com.cba.omnia.grimlock.framework.utility.OneOf.Or2[au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters],au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers]]] }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@NamesTuners=au.com.cba.omnia.grimlock.framework.utility.OneOf.OneOf2[au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters.type],au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers]]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@NamesTuners=au.com.cba.omnia.grimlock.framework.utility.OneOf.OneOf2[au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters],au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers]]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -183,23 +184,23 @@
       </a>
     </span>
       <p class="shortcomment cmt">Shorthand type for converting a <code>T</code> to string.</p><div class="fullcomment"><div class="comment cmt"><p>Shorthand type for converting a <code>T</code> to string.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a></dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.spark.position.Positions.U" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="U[A]=org.apache.spark.rdd.RDD[A]"></a>
-      <a id="U[A]:U[A]"></a>
+    </li><li name="au.com.cba.omnia.grimlock.spark.environment.DistributedData.U" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="U[X]=org.apache.spark.rdd.RDD[X]"></a>
+      <a id="U[X]:U[X]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">U</span><span class="tparams">[<span name="A">A</span>]</span><span class="result"> = <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.U.A">A</span>]</span>
+        <span class="name">U</span><span class="tparams">[<span name="X">X</span>]</span><span class="result"> = <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData.U.X">X</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@U[A]=org.apache.spark.rdd.RDD[A]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@U[X]=org.apache.spark.rdd.RDD[X]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type of the underlying (raw) data structure (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying (raw) data structure (i.e. TypedPipe or RDD).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions">Positions</a> → RawData</dd></dl></div>
+      <p class="shortcomment cmt">Type of the underlying (raw) data structure (i.e.</p><div class="fullcomment"><div class="comment cmt"><p>Type of the underlying (raw) data structure (i.e. TypedPipe or RDD).</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData">DistributedData</a> → <a href="../../framework/environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -315,7 +316,7 @@
       </a>
     </span>
       <p class="shortcomment cmt">The <code>RDD[Position]</code>.</p><div class="fullcomment"><div class="comment cmt"><p>The <code>RDD[Position]</code>.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions">Positions</a> → <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a></dd></dl></div>
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions">Positions</a> → <a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -333,23 +334,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="equals(x$1:Any):Boolean"></a>
-      <a id="equals(Any):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@equals(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -390,23 +374,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hashCode():Int"></a>
-      <a id="hashCode():Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@hashCode():Int" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -425,18 +392,18 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.position.Positions#names" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="names[T&lt;:au.com.cba.omnia.grimlock.framework.Tuner](slice:au.com.cba.omnia.grimlock.framework.position.Slice[P],tuner:T)(implicitev1:au.com.cba.omnia.grimlock.framework.utility.=!=[slice.S,au.com.cba.omnia.grimlock.framework.position.Position0D],implicitev2:scala.reflect.ClassTag[slice.S],implicitev3:&lt;:&lt;[(T=&gt;Nothing)=&gt;Nothing,au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters.type]=&gt;Nothingwithau.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers]=&gt;Nothing=&gt;Nothing]):Positions.this.U[slice.S]"></a>
-      <a id="names[T&lt;:Tuner](Slice[P],T)(=!=[S,Position0D],ClassTag[S],&lt;:&lt;[((T)⇒Nothing)⇒Nothing,((Default[NoParameters.type])⇒Nothingwith(Default[Reducers])⇒Nothing)⇒Nothing]):U[S]"></a>
+      <a id="names[T&lt;:au.com.cba.omnia.grimlock.framework.Tuner](slice:au.com.cba.omnia.grimlock.framework.position.Slice[P],tuner:T)(implicitev1:au.com.cba.omnia.grimlock.framework.utility.=!=[slice.S,au.com.cba.omnia.grimlock.framework.position.Position0D],implicitev2:scala.reflect.ClassTag[slice.S],implicitev3:&lt;:&lt;[(T=&gt;Nothing)=&gt;Nothing,au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters]=&gt;Nothingwithau.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers]=&gt;Nothing=&gt;Nothing]):Positions.this.U[slice.S]"></a>
+      <a id="names[T&lt;:Tuner](Slice[P],T)(=!=[S,Position0D],ClassTag[S],&lt;:&lt;[((T)⇒Nothing)⇒Nothing,((Default[NoParameters])⇒Nothingwith(Default[Reducers])⇒Nothing)⇒Nothing]):U[S]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">names</span><span class="tparams">[<span name="T">T &lt;: <a href="../../framework/Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a></span>]</span><span class="params">(<span name="slice">slice: <a href="../../framework/position/Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>, <span name="tuner">tuner: <span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.names.T">T</span> = <span class="symbol"><span class="name"><a href="../../../../../../package.html">Default()</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="../../framework/utility/$eq$bang$eq.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.=!=">=!=</a>[<a href="../../framework/position/Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>, <a href="../../framework/position/Position0D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position0D">Position0D</a>]</span>, <span name="ev2">ev2: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<a href="../../framework/position/Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>]</span>, <span name="ev3">ev3: <span class="extype" name="scala.Predef.&lt;:&lt;">&lt;:&lt;</span>[((<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.names.T">T</span>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a>, ((<a href="../../framework/Default.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Default">Default</a>[<a href="../../framework/NoParameters$.html" class="extype" name="au.com.cba.omnia.grimlock.framework.NoParameters">NoParameters</a>.type]) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a> with (<a href="../../framework/Default.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Default">Default</a>[<a href="../../framework/Reducers.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Reducers">Reducers</a>]) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<a href="../../framework/position/Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>]</span>
+        <span class="name">names</span><span class="tparams">[<span name="T">T &lt;: <a href="../../framework/Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a></span>]</span><span class="params">(<span name="slice">slice: <a href="../../framework/position/Slice.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Slice">Slice</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>, <span name="tuner">tuner: <span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.names.T">T</span> = <span class="symbol"><span class="name"><a href="../../../../../../package.html">Default()</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="../../framework/utility/$eq$bang$eq.html" class="extype" name="au.com.cba.omnia.grimlock.framework.utility.=!=">=!=</a>[<a href="../../framework/position/Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>, <a href="../../framework/position/Position0D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position0D">Position0D</a>]</span>, <span name="ev2">ev2: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<a href="../../framework/position/Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>]</span>, <span name="ev3">ev3: <span class="extype" name="scala.Predef.&lt;:&lt;">&lt;:&lt;</span>[((<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.names.T">T</span>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a>, ((<a href="../../framework/Default.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Default">Default</a>[<a href="../../framework/NoParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.NoParameters">NoParameters</a>]) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a> with (<a href="../../framework/Default.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Default">Default</a>[<a href="../../framework/Reducers.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Reducers">Reducers</a>]) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a>]</span>)</span><span class="result">: <a href="#U[X]=org.apache.spark.rdd.RDD[X]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<a href="../../framework/position/Slice.html#S&lt;:au.com.cba.omnia.grimlock.framework.position.Positionwithau.com.cba.omnia.grimlock.framework.position.ExpandablePosition" class="extmbr" name="au.com.cba.omnia.grimlock.framework.position.Slice.S">S</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@names[T&lt;:au.com.cba.omnia.grimlock.framework.Tuner](slice:au.com.cba.omnia.grimlock.framework.position.Slice[P],tuner:T)(implicitev1:au.com.cba.omnia.grimlock.framework.utility.=!=[slice.S,au.com.cba.omnia.grimlock.framework.position.Position0D],implicitev2:scala.reflect.ClassTag[slice.S],implicitev3:&lt;:&lt;[(T=&gt;Nothing)=&gt;Nothing,au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters.type]=&gt;Nothingwithau.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers]=&gt;Nothing=&gt;Nothing]):Positions.this.U[slice.S]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@names[T&lt;:au.com.cba.omnia.grimlock.framework.Tuner](slice:au.com.cba.omnia.grimlock.framework.position.Slice[P],tuner:T)(implicitev1:au.com.cba.omnia.grimlock.framework.utility.=!=[slice.S,au.com.cba.omnia.grimlock.framework.position.Position0D],implicitev2:scala.reflect.ClassTag[slice.S],implicitev3:&lt;:&lt;[(T=&gt;Nothing)=&gt;Nothing,au.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.NoParameters]=&gt;Nothingwithau.com.cba.omnia.grimlock.framework.Default[au.com.cba.omnia.grimlock.framework.Reducers]=&gt;Nothing=&gt;Nothing]):Positions.this.U[slice.S]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -498,38 +465,38 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.position.Positions#saveAsText" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="saveAsText(file:String,writer:Positions.this.TextWriter):Positions.this.U[P]"></a>
-      <a id="saveAsText(String,TextWriter):U[P]"></a>
+      <a id="saveAsText(file:String,writer:Positions.this.TextWriter)(implicitctx:Positions.this.C):Positions.this.U[P]"></a>
+      <a id="saveAsText(String,TextWriter)(C):U[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">saveAsText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: <a href="#TextWriter=T=&gt;TraversableOnce[String]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.TextWriter">TextWriter</a> = <span class="symbol"><span class="name"><a href="../../../../../../package.html">Position.toString()</a></span></span></span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
+        <span class="name">saveAsText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: <a href="#TextWriter=T=&gt;TraversableOnce[String]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.TextWriter">TextWriter</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ctx">ctx: <a href="#C=au.com.cba.omnia.grimlock.spark.environment.Context" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.C">C</a></span>)</span><span class="result">: <a href="#U[X]=org.apache.spark.rdd.RDD[X]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@saveAsText(file:String,writer:Positions.this.TextWriter):Positions.this.U[P]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@saveAsText(file:String,writer:Positions.this.TextWriter)(implicitctx:Positions.this.C):Positions.this.U[P]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Persist to disk.</p><div class="fullcomment"><div class="comment cmt"><p>Persist to disk.
-</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">writer</dt><dd class="cmt"><p>Writer that converts <code>T</code> to string.
-</p></dd><dt>returns</dt><dd class="cmt"><p>A Spark <code>RDD[T]</code> which is this object's data.
-</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions">Positions</a> → <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">file</dt><dd class="cmt"><p>Name of the output file.</p></dd><dt class="param">writer</dt><dd class="cmt"><p>Writer that converts <code>P</code> to string.
+</p></dd><dt>returns</dt><dd class="cmt"><p>A <code>U[P]</code> which is this object's data.
+</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions">Positions</a> → <a href="../../framework/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions">Positions</a></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.spark.Persist#saveText" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="saveText(file:String,writer:Persist.this.TextWriter):org.apache.spark.rdd.RDD[T]"></a>
-      <a id="saveText(String,TextWriter):RDD[P]"></a>
+      <a id="saveText(file:String,writer:Persist.this.TextWriter)(implicitctx:Persist.this.C):Persist.this.U[T]"></a>
+      <a id="saveText(String,TextWriter)(C):U[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">saveText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: <a href="#TextWriter=T=&gt;TraversableOnce[String]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.TextWriter">TextWriter</a></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
+        <span class="name">saveText</span><span class="params">(<span name="file">file: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="writer">writer: <a href="#TextWriter=T=&gt;TraversableOnce[String]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.TextWriter">TextWriter</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ctx">ctx: <a href="#C=au.com.cba.omnia.grimlock.spark.environment.Context" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.C">C</a></span>)</span><span class="result">: <a href="#U[X]=org.apache.spark.rdd.RDD[X]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@saveText(file:String,writer:Persist.this.TextWriter):org.apache.spark.rdd.RDD[T]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@saveText(file:String,writer:Persist.this.TextWriter)(implicitctx:Persist.this.C):Persist.this.U[T]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -543,7 +510,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">slice</span><span class="params">(<span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
+        <span class="name">slice</span><span class="params">(<span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="f">f: (<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>) ⇒ <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>)</span><span class="result">: <a href="#U[X]=org.apache.spark.rdd.RDD[X]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@slice(keep:Boolean,f:P=&gt;Boolean)(implicitev:scala.reflect.ClassTag[P]):Positions.this.U[P]" title="Permalink" target="_top">
@@ -560,7 +527,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">slice</span><span class="params">(<span name="positions">positions: <a href="../../framework/position/PositionListable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PositionListable">PositionListable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>, <span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
+        <span class="name">slice</span><span class="params">(<span name="positions">positions: <a href="../../framework/position/PositionListable.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.PositionListable">PositionListable</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>, <span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev1">ev1: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>)</span><span class="result">: <a href="#U[X]=org.apache.spark.rdd.RDD[X]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@slice(positions:au.com.cba.omnia.grimlock.framework.position.PositionListable[P],keep:Boolean)(implicitev1:scala.reflect.ClassTag[P]):Positions.this.U[P]" title="Permalink" target="_top">
@@ -580,7 +547,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">slice</span><span class="params">(<span name="regex">regex: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.util.matching.Regex" class="extype" target="_top">Regex</a></span>, <span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>)</span><span class="result">: <a href="#U[A]=org.apache.spark.rdd.RDD[A]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
+        <span class="name">slice</span><span class="params">(<span name="regex">regex: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.util.matching.Regex" class="extype" target="_top">Regex</a></span>, <span name="keep">keep: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="separator">separator: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>)</span><span class="result">: <a href="#U[X]=org.apache.spark.rdd.RDD[X]" class="extmbr" name="au.com.cba.omnia.grimlock.spark.position.Positions.U">U</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@slice(regex:scala.util.matching.Regex,keep:Boolean,separator:String)(implicitev:scala.reflect.ClassTag[P]):Positions.this.U[P]" title="Permalink" target="_top">
@@ -609,23 +576,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString():String"></a>
-      <a id="toString():String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.position.Positions@toString():String" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.Persist#toUnit" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toUnit():Unit"></a>
       <a id="toUnit():Unit"></a>
@@ -723,16 +673,28 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="au.com.cba.omnia.grimlock.spark.Persist">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
+            </div><div class="parent" name="scala.Product">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a></h3>
+            </div><div class="parent" name="scala.Equals">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.spark.Persist">
               <h3>Inherited from <a href="../Persist.html" class="extype" name="au.com.cba.omnia.grimlock.spark.Persist">Persist</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.Persist">
-              <h3>Inherited from <a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.spark.environment.Environment">
+              <h3>Inherited from <a href="../environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.Environment">Environment</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData">
+              <h3>Inherited from <a href="../environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.spark.environment.DistributedData">DistributedData</a></h3>
             </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.position.Positions">
               <h3>Inherited from <a href="../../framework/position/Positions.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Positions">framework.position.Positions</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</h3>
-            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.RawData">
-              <h3>Inherited from <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.Persist">
+              <h3>Inherited from <a href="../../framework/Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">framework.Persist</a>[<span class="extype" name="au.com.cba.omnia.grimlock.spark.position.Positions.P">P</span>]</h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.environment.Environment">
+              <h3>Inherited from <a href="../../framework/environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></h3>
+            </div><div class="parent" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">
+              <h3>Inherited from <a href="../../framework/environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

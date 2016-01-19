@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(005914a02c63700874dca92c27785c7b43bce1de)//src/main/scala/au/com/cba/omnia/grimlock/scalding/Tuner.scala" target="_blank">Tuner.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Trait for tuned jobs involving a <code>Execution</code>.</p></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(fafc3eb99d2eae5f07a07e856713e8a7be5e14a7)//src/main/scala/au/com/cba/omnia/grimlock/scalding/Tuner.scala" target="_blank">Tuner.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="../framework/TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -115,40 +115,23 @@
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="au.com.cba.omnia.grimlock.scalding.Execution#config" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="config:com.twitter.scalding.Config"></a>
-      <a id="config:Config"></a>
+              <ol><li name="au.com.cba.omnia.grimlock.scalding.Execution#context" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="context:au.com.cba.omnia.grimlock.scalding.environment.Context"></a>
+      <a id="context:Context"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">config</span><span class="result">: <span class="extype" name="com.twitter.scalding.Config">Config</span></span>
+        <span class="name">context</span><span class="result">: <a href="environment/Context.html" class="extype" name="au.com.cba.omnia.grimlock.scalding.environment.Context">Context</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.scalding.Execution@config:com.twitter.scalding.Config" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.scalding.Execution@context:au.com.cba.omnia.grimlock.scalding.environment.Context" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
-      
-    </li><li name="au.com.cba.omnia.grimlock.scalding.Execution#mode" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="mode:com.twitter.scalding.Mode"></a>
-      <a id="mode:Mode"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">mode</span><span class="result">: <span class="extype" name="com.twitter.scalding.Mode">Mode</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.scalding.Execution@mode:com.twitter.scalding.Mode" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      
+      <p class="shortcomment cmt">The Scalding operating contex.</p>
     </li></ol>
             </div>
 

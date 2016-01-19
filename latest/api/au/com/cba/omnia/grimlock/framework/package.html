@@ -85,6 +85,40 @@
       <p class="shortcomment cmt">Cell in a matrix.</p><div class="fullcomment"><div class="comment cmt"><p>Cell in a matrix.
 </p></div><dl class="paramcmts block"><dt class="param">position</dt><dd class="cmt"><p>The position of the cell in the matri.</p></dd><dt class="param">content</dt><dd class="cmt"><p>The contents of the cell.
 </p></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Collate" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CollateextendsTunerParameterswithProductwithSerializable"></a>
+      <a id="Collate:Collate"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Collate.html"><span class="name">Collate</span></a><span class="params">()</span><span class="result"> extends <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@CollateextendsTunerParameterswithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Indicates that the data should be collated.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Consume" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ConsumeextendsDistributedDatawithEnvironment"></a>
+      <a id="Consume:Consume"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Consume.html"><span class="name">Consume</span></a><span class="result"> extends <a href="environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a> with <a href="environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@ConsumeextendsDistributedDatawithEnvironment" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for loading data into a matrix.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Default" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Default[Q&lt;:au.com.cba.omnia.grimlock.framework.TunerParameters]extendsTunerwithProductwithSerializable"></a>
       <a id="Default[Q&lt;:TunerParameters]:Default[Q]"></a>
@@ -94,7 +128,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="Default.html"><span class="name">Default</span></a><span class="tparams">[<span name="Q">Q &lt;: <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a></span>]</span><span class="params">(<span name="parameters">parameters: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Default.Q">Q</span> = <span class="symbol"><span class="name"><a href="NoParameters$.html">NoParameters</a></span></span></span>)</span><span class="result"> extends <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="Default.html"><span class="name">Default</span></a><span class="tparams">[<span name="Q">Q &lt;: <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a></span>]</span><span class="params">(<span name="parameters">parameters: <span class="extype" name="au.com.cba.omnia.grimlock.framework.Default.Q">Q</span> = <span class="symbol">NoParameters()</span></span>)</span><span class="result"> extends <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Default[Q&lt;:au.com.cba.omnia.grimlock.framework.TunerParameters]extendsTunerwithProductwithSerializable" title="Permalink" target="_top">
@@ -266,7 +300,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="InMemory.html"><span class="name">InMemory</span></a><span class="tparams">[<span name="Q">Q &lt;: <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a></span>]</span><span class="params">(<span name="parameters">parameters: <span class="extype" name="au.com.cba.omnia.grimlock.framework.InMemory.Q">Q</span> = <span class="symbol"><span class="name"><a href="NoParameters$.html">NoParameters</a></span></span></span>)</span><span class="result"> extends <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="InMemory.html"><span class="name">InMemory</span></a><span class="tparams">[<span name="Q">Q &lt;: <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a></span>]</span><span class="params">(<span name="parameters">parameters: <span class="extype" name="au.com.cba.omnia.grimlock.framework.InMemory.Q">Q</span> = <span class="symbol">NoParameters()</span></span>)</span><span class="result"> extends <a href="Tuner.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Tuner">Tuner</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@InMemory[Q&lt;:au.com.cba.omnia.grimlock.framework.TunerParameters]extendsTunerwithProductwithSerializable" title="Permalink" target="_top">
@@ -275,7 +309,7 @@
     </span>
       <p class="shortcomment cmt">Indicates that some of the data can fit in memory (permits map-side only operations).</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Matrix" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Matrix[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsPersist[au.com.cba.omnia.grimlock.framework.Cell[P]]withRawDatawithDefaultTunerswithPositionOrdering"></a>
+      <a id="Matrix[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsPersist[au.com.cba.omnia.grimlock.framework.Cell[P]]withUserDatawithDefaultTunerswithPositionOrdering"></a>
       <a id="Matrix[P&lt;:Position]:Matrix[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -283,14 +317,167 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Matrix.html"><span class="name">Matrix</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix.P">P</span>]] with <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span> with <span class="extype" name="au.com.cba.omnia.grimlock.framework.DefaultTuners">DefaultTuners</span> with <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.PositionOrdering">PositionOrdering</span></span>
+        <a href="Matrix.html"><span class="name">Matrix</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a>[<a href="Cell.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Cell">Cell</a>[<span class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix.P">P</span>]] with <a href="environment/UserData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.UserData">UserData</a> with <span class="extype" name="au.com.cba.omnia.grimlock.framework.DefaultTuners">DefaultTuners</span> with <span class="extype" name="au.com.cba.omnia.grimlock.framework.position.PositionOrdering">PositionOrdering</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsPersist[au.com.cba.omnia.grimlock.framework.Cell[P]]withRawDatawithDefaultTunerswithPositionOrdering" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsPersist[au.com.cba.omnia.grimlock.framework.Cell[P]]withUserDatawithDefaultTunerswithPositionOrdering" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
       <p class="shortcomment cmt">Base trait for matrix operations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix1D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Matrix1DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position1D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position1D]"></a>
+      <a id="Matrix1D:Matrix1D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Matrix1D.html"><span class="name">Matrix1D</span></a><span class="result"> extends <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>[<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>] with <a href="distribution/ApproximateDistribution.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution.ApproximateDistribution">ApproximateDistribution</a>[<a href="position/Position1D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position1D">Position1D</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix1DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position1D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position1D]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for 1D specific operations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix2D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Matrix2DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position2D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position2D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position2D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position2D]"></a>
+      <a id="Matrix2D:Matrix2D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Matrix2D.html"><span class="name">Matrix2D</span></a><span class="result"> extends <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>[<a href="position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>] with <a href="ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a>[<a href="position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>] with <a href="ReshapeableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReshapeableMatrix">ReshapeableMatrix</a>[<a href="position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>] with <a href="distribution/ApproximateDistribution.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution.ApproximateDistribution">ApproximateDistribution</a>[<a href="position/Position2D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position2D">Position2D</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix2DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position2D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position2D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position2D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position2D]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for 2D specific operations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix3D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Matrix3DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position3D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position3D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position3D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position3D]"></a>
+      <a id="Matrix3D:Matrix3D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Matrix3D.html"><span class="name">Matrix3D</span></a><span class="result"> extends <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>[<a href="position/Position3D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position3D">Position3D</a>] with <a href="ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a>[<a href="position/Position3D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position3D">Position3D</a>] with <a href="ReshapeableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReshapeableMatrix">ReshapeableMatrix</a>[<a href="position/Position3D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position3D">Position3D</a>] with <a href="distribution/ApproximateDistribution.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution.ApproximateDistribution">ApproximateDistribution</a>[<a href="position/Position3D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position3D">Position3D</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix3DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position3D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position3D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position3D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position3D]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for 3D specific operations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix4D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Matrix4DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position4D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position4D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position4D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position4D]"></a>
+      <a id="Matrix4D:Matrix4D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Matrix4D.html"><span class="name">Matrix4D</span></a><span class="result"> extends <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>[<a href="position/Position4D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position4D">Position4D</a>] with <a href="ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a>[<a href="position/Position4D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position4D">Position4D</a>] with <a href="ReshapeableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReshapeableMatrix">ReshapeableMatrix</a>[<a href="position/Position4D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position4D">Position4D</a>] with <a href="distribution/ApproximateDistribution.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution.ApproximateDistribution">ApproximateDistribution</a>[<a href="position/Position4D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position4D">Position4D</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix4DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position4D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position4D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position4D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position4D]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for 4D specific operations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix5D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Matrix5DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position5D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position5D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position5D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position5D]"></a>
+      <a id="Matrix5D:Matrix5D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Matrix5D.html"><span class="name">Matrix5D</span></a><span class="result"> extends <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>[<a href="position/Position5D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position5D">Position5D</a>] with <a href="ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a>[<a href="position/Position5D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position5D">Position5D</a>] with <a href="ReshapeableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReshapeableMatrix">ReshapeableMatrix</a>[<a href="position/Position5D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position5D">Position5D</a>] with <a href="distribution/ApproximateDistribution.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution.ApproximateDistribution">ApproximateDistribution</a>[<a href="position/Position5D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position5D">Position5D</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix5DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position5D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position5D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position5D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position5D]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for 5D specific operations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix6D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Matrix6DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position6D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position6D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position6D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position6D]"></a>
+      <a id="Matrix6D:Matrix6D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Matrix6D.html"><span class="name">Matrix6D</span></a><span class="result"> extends <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>[<a href="position/Position6D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position6D">Position6D</a>] with <a href="ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a>[<a href="position/Position6D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position6D">Position6D</a>] with <a href="ReshapeableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReshapeableMatrix">ReshapeableMatrix</a>[<a href="position/Position6D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position6D">Position6D</a>] with <a href="distribution/ApproximateDistribution.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution.ApproximateDistribution">ApproximateDistribution</a>[<a href="position/Position6D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position6D">Position6D</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix6DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position6D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position6D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position6D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position6D]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for 6D specific operations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix7D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Matrix7DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position7D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position7D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position7D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position7D]"></a>
+      <a id="Matrix7D:Matrix7D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Matrix7D.html"><span class="name">Matrix7D</span></a><span class="result"> extends <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>[<a href="position/Position7D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position7D">Position7D</a>] with <a href="ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a>[<a href="position/Position7D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position7D">Position7D</a>] with <a href="ReshapeableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReshapeableMatrix">ReshapeableMatrix</a>[<a href="position/Position7D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position7D">Position7D</a>] with <a href="distribution/ApproximateDistribution.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution.ApproximateDistribution">ApproximateDistribution</a>[<a href="position/Position7D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position7D">Position7D</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix7DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position7D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position7D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position7D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position7D]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for 7D specific operations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix8D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Matrix8DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position8D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position8D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position8D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position8D]"></a>
+      <a id="Matrix8D:Matrix8D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Matrix8D.html"><span class="name">Matrix8D</span></a><span class="result"> extends <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>[<a href="position/Position8D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position8D">Position8D</a>] with <a href="ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a>[<a href="position/Position8D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position8D">Position8D</a>] with <a href="ReshapeableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReshapeableMatrix">ReshapeableMatrix</a>[<a href="position/Position8D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position8D">Position8D</a>] with <a href="distribution/ApproximateDistribution.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution.ApproximateDistribution">ApproximateDistribution</a>[<a href="position/Position8D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position8D">Position8D</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix8DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position8D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position8D]withReshapeableMatrix[au.com.cba.omnia.grimlock.framework.position.Position8D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position8D]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for 8D specific operations.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix9D" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Matrix9DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position9D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position9D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position9D]"></a>
+      <a id="Matrix9D:Matrix9D"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Matrix9D.html"><span class="name">Matrix9D</span></a><span class="result"> extends <a href="Matrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Matrix">Matrix</a>[<a href="position/Position9D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position9D">Position9D</a>] with <a href="ReduceableMatrix.html" class="extype" name="au.com.cba.omnia.grimlock.framework.ReduceableMatrix">ReduceableMatrix</a>[<a href="position/Position9D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position9D">Position9D</a>] with <a href="distribution/ApproximateDistribution.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution.ApproximateDistribution">ApproximateDistribution</a>[<a href="position/Position9D.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position9D">Position9D</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix9DextendsMatrix[au.com.cba.omnia.grimlock.framework.position.Position9D]withReduceableMatrix[au.com.cba.omnia.grimlock.framework.position.Position9D]withApproximateDistribution[au.com.cba.omnia.grimlock.framework.position.Position9D]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Base trait for 9D specific operations.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.MatrixWithParseErrors" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="MatrixWithParseErrors[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position,U[_]]extendsProductwithSerializable"></a>
       <a id="MatrixWithParseErrors[P&lt;:Position,U[_]]:MatrixWithParseErrors[P,U]"></a>
@@ -327,8 +514,25 @@
       </a>
     </span>
       <p class="shortcomment cmt">Type class for transforming a type <code>T</code> into a <code>U[Cell[P]]</code>.</p>
+    </li><li name="au.com.cba.omnia.grimlock.framework.NoParameters" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NoParametersextendsTunerParameterswithProductwithSerializable"></a>
+      <a id="NoParameters:NoParameters"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="NoParameters.html"><span class="name">NoParameters</span></a><span class="params">()</span><span class="result"> extends <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@NoParametersextendsTunerParameterswithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Indicates that no special operations are to be performed.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Persist" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Persist[T]extendsAnyRef"></a>
+      <a id="Persist[T]extendsDistributedDatawithEnvironment"></a>
       <a id="Persist[T]:Persist[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -336,10 +540,10 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Persist.html"><span class="name">Persist</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <a href="Persist.html"><span class="name">Persist</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="environment/DistributedData.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.DistributedData">DistributedData</a> with <a href="environment/Environment.html" class="extype" name="au.com.cba.omnia.grimlock.framework.environment.Environment">Environment</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Persist[T]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Persist[T]extendsDistributedDatawithEnvironment" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -360,7 +564,7 @@
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>List[(U[S], Matrix.Predicate[P])]</code>.</p>
+      <p class="shortcomment cmt">Type class for transforming a type <code>T</code> to a <code>List[(U[S], Cell.Predicate[P])]</code>.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Redistribute" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="RedistributeextendsTunerParameterswithProductwithSerializable"></a>
       <a id="Redistribute:Redistribute"></a>
@@ -507,7 +711,7 @@
 </p></div><dl class="paramcmts block"><dt class="param">base</dt><dd class="cmt"><p>Optional parent variable type.</p></dd><dt class="param">name</dt><dd class="cmt"><p>Name of the variable type.
 </p></dd></dl></div>
     </li><li name="au.com.cba.omnia.grimlock.framework.Types" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="Types[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsRawData"></a>
+      <a id="Types[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsPersist[(P,au.com.cba.omnia.grimlock.framework.Type)]"></a>
       <a id="Types[P&lt;:Position]:Types[P]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -515,10 +719,10 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Types.html"><span class="name">Types</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <span class="extype" name="au.com.cba.omnia.grimlock.framework.RawData">RawData</span></span>
+        <a href="Types.html"><span class="name">Types</span></a><span class="tparams">[<span name="P">P &lt;: <a href="position/Position.html" class="extype" name="au.com.cba.omnia.grimlock.framework.position.Position">Position</a></span>]</span><span class="result"> extends <a href="Persist.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Persist">Persist</a>[(<span class="extype" name="au.com.cba.omnia.grimlock.framework.Types.P">P</span>, <a href="Type.html" class="extype" name="au.com.cba.omnia.grimlock.framework.Type">Type</a>)]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Types[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsRawData" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Types[P&lt;:au.com.cba.omnia.grimlock.framework.position.Position]extendsPersist[(P,au.com.cba.omnia.grimlock.framework.Type)]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -564,23 +768,6 @@
       </a>
     </span>
       <p class="shortcomment cmt">Companion object to the Cell class.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.Collate" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Collate"></a>
-      <a id="Collate:Collate"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="Collate$.html"><span class="name">Collate</span></a><span class="result"> extends <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Collate" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Indicates that the data should be collated.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Default" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Default"></a>
       <a id="Default:Default"></a>
@@ -734,40 +921,6 @@
       </a>
     </span>
       
-    </li><li name="au.com.cba.omnia.grimlock.framework.Matrix" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Matrix"></a>
-      <a id="Matrix:Matrix"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="Matrix$.html"><span class="name">Matrix</span></a>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@Matrix" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Companion object to <code>Matrix</code> trait.</p>
-    </li><li name="au.com.cba.omnia.grimlock.framework.NoParameters" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="NoParameters"></a>
-      <a id="NoParameters:NoParameters"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="NoParameters$.html"><span class="name">NoParameters</span></a><span class="result"> extends <a href="TunerParameters.html" class="extype" name="au.com.cba.omnia.grimlock.framework.TunerParameters">TunerParameters</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@NoParameters" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Indicates that no special operations are to be performed.</p>
     </li><li name="au.com.cba.omnia.grimlock.framework.Type" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Type"></a>
       <a id="Type:Type"></a>
@@ -866,6 +1019,23 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@encoding" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      
+    </li><li name="au.com.cba.omnia.grimlock.framework.environment" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="environment"></a>
+      <a id="environment:environment"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="environment/package.html"><span class="name">environment</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#au.com.cba.omnia.grimlock.framework.package@environment" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" />
       </a>
     </span>
