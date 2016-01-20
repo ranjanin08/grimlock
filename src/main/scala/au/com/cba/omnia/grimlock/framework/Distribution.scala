@@ -73,7 +73,7 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
           ev5: QuantileTuners#V[T]): U[Cell[Q]]
 }
 
-private[grimlock] case class Quantile[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](
+private[grimlock] case class QuantileImpl[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](
   probs: List[Double], count: Extract[P, W, Long], quantiser: Quantile.Quantiser,
     position: Locate.FromSelectedAndOutput[S, Double, Q], nan: Boolean) {
   type V = W

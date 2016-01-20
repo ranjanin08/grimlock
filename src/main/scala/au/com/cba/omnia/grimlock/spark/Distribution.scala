@@ -55,7 +55,7 @@ trait ApproximateDistribution[P <: Position] extends FwApproximateDistribution[P
       count: Extract[P, W, Long], value: E[W], filter: Boolean, nan: Boolean, tuner: T = Default())(
         implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
           ev5: QuantileTuners#V[T]): U[Cell[Q]] = {
-    val q = Quantile[P, S, Q, W](probs, count, quantiser, name, nan)
+    val q = QuantileImpl[P, S, Q, W](probs, count, quantiser, name, nan)
 
     data
       .collect {
