@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>BasicOperations - au.com.cba.omnia.grimlock.spark.examples.BasicOperations</title>
-          <meta name="description" content="BasicOperations - au.com.cba.omnia.grimlock.spark.examples.BasicOperations" />
-          <meta name="keywords" content="BasicOperations au.com.cba.omnia.grimlock.spark.examples.BasicOperations" />
+          <title>Quantile - au.com.cba.omnia.grimlock.framework.distribution.Quantile</title>
+          <meta name="description" content="Quantile - au.com.cba.omnia.grimlock.framework.distribution.Quantile" />
+          <meta name="keywords" content="Quantile au.com.cba.omnia.grimlock.framework.distribution.Quantile" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../../index.html';
-            var hash = 'au.com.cba.omnia.grimlock.spark.examples.BasicOperations$';
+            var hash = 'au.com.cba.omnia.grimlock.framework.distribution.Quantile$';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -29,11 +29,11 @@
         <body class="value">
       <div id="definition">
         <img src="../../../../../../../lib/object_big.png" />
-        <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.spark">spark</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.spark.examples">examples</a></p>
-        <h1>BasicOperations</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.spark.examples">package examples</a>
+        <p id="owner"><a href="../../../../../../package.html" class="extype" name="au">au</a>.<a href="../../../../../package.html" class="extype" name="au.com">com</a>.<a href="../../../../package.html" class="extype" name="au.com.cba">cba</a>.<a href="../../../package.html" class="extype" name="au.com.cba.omnia">omnia</a>.<a href="../../package.html" class="extype" name="au.com.cba.omnia.grimlock">grimlock</a>.<a href="../package.html" class="extype" name="au.com.cba.omnia.grimlock.framework">framework</a>.<a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution">distribution</a></p>
+        <h1>Quantile</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="au.com.cba.omnia.grimlock.framework.distribution">package distribution</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -45,11 +45,11 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">BasicOperations</span>
+        <span class="name">Quantile</span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(95ce00d50bb66f094809946decb7312a4ed0f89f)//src/main/scala/au/com/cba/omnia/grimlock/spark/examples/BasicOperations.scala" target="_blank">BasicOperations.scala</a></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/CommBank/grimlock/tree/Dirty(95ce00d50bb66f094809946decb7312a4ed0f89f)//src/main/scala/au/com/cba/omnia/grimlock/framework/Distribution.scala" target="_blank">Distribution.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
@@ -69,7 +69,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="au.com.cba.omnia.grimlock.spark.examples.BasicOperations"><span>BasicOperations</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="au.com.cba.omnia.grimlock.framework.distribution.Quantile"><span>Quantile</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -89,7 +89,27 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Quantiser=(Double,Long)=&gt;(Long,Double)"></a>
+      <a id="Quantiser:Quantiser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Quantiser</span><span class="result"> = (<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>) ⇒ (<a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Double" class="extype" target="_top">Double</a>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@Quantiser=(Double,Long)=&gt;(Long,Double)" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Type of quantiser function.</p>
+    </li></ol>
+            </div>
 
         
 
@@ -107,7 +127,7 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -124,7 +144,7 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@##():Int" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@##():Int" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -141,11 +161,193 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.distribution.Quantile#Type1" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Type1:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser"></a>
+      <a id="Type1:Quantiser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Type1</span><span class="result">: <a href="#Quantiser=(Double,Long)=&gt;(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser">Quantiser</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@Type1:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute quantile indices and gamma coefficient according to R's Type 1 rule; inverse of empirical
+distribution function.</p><div class="fullcomment"><div class="comment cmt"><p>Compute quantile indices and gamma coefficient according to R's Type 1 rule; inverse of empirical
+distribution function.
+</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p>https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.distribution.Quantile#Type2" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Type2:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser"></a>
+      <a id="Type2:Quantiser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Type2</span><span class="result">: <a href="#Quantiser=(Double,Long)=&gt;(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser">Quantiser</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@Type2:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute quantile indices and gamma coefficient according to R's Type 2 rule; similar to type 1 but
+with averaging at discontinuities.</p><div class="fullcomment"><div class="comment cmt"><p>Compute quantile indices and gamma coefficient according to R's Type 2 rule; similar to type 1 but
+with averaging at discontinuities.
+</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p>https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.distribution.Quantile#Type3" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Type3:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser"></a>
+      <a id="Type3:Quantiser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Type3</span><span class="result">: <a href="#Quantiser=(Double,Long)=&gt;(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser">Quantiser</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@Type3:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute quantile indices and gamma coefficient according to R's Type 3 rule; nearest even order statistic.</p><div class="fullcomment"><div class="comment cmt"><p>Compute quantile indices and gamma coefficient according to R's Type 3 rule; nearest even order statistic.
+</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p>https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.distribution.Quantile#Type4" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Type4:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser"></a>
+      <a id="Type4:Quantiser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Type4</span><span class="result">: <a href="#Quantiser=(Double,Long)=&gt;(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser">Quantiser</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@Type4:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute quantile indices and gamma coefficient according to R's Type 4 rule; linear interpolation of
+the empirical cdf.</p><div class="fullcomment"><div class="comment cmt"><p>Compute quantile indices and gamma coefficient according to R's Type 4 rule; linear interpolation of
+the empirical cdf.
+</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p>https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.distribution.Quantile#Type5" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Type5:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser"></a>
+      <a id="Type5:Quantiser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Type5</span><span class="result">: <a href="#Quantiser=(Double,Long)=&gt;(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser">Quantiser</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@Type5:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute quantile indices and gamma coefficient according to R's Type 5 rule; a piecewise linear function
+where the knots are the values midway through the steps of the empirical cdf.</p><div class="fullcomment"><div class="comment cmt"><p>Compute quantile indices and gamma coefficient according to R's Type 5 rule; a piecewise linear function
+where the knots are the values midway through the steps of the empirical cdf.
+</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p>https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.distribution.Quantile#Type6" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Type6:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser"></a>
+      <a id="Type6:Quantiser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Type6</span><span class="result">: <a href="#Quantiser=(Double,Long)=&gt;(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser">Quantiser</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@Type6:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute quantile indices and gamma coefficient according to R's Type 6 rule; p[k] = E[F(x[k])].</p><div class="fullcomment"><div class="comment cmt"><p>Compute quantile indices and gamma coefficient according to R's Type 6 rule; p[k] = E[F(x[k])].
+</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p>https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.distribution.Quantile#Type7" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Type7:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser"></a>
+      <a id="Type7:Quantiser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Type7</span><span class="result">: <a href="#Quantiser=(Double,Long)=&gt;(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser">Quantiser</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@Type7:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute quantile indices and gamma coefficient according to R's Type 7 rule; p[k] = mode[F(x[k])].</p><div class="fullcomment"><div class="comment cmt"><p>Compute quantile indices and gamma coefficient according to R's Type 7 rule; p[k] = mode[F(x[k])].
+</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p>https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.distribution.Quantile#Type8" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Type8:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser"></a>
+      <a id="Type8:Quantiser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Type8</span><span class="result">: <a href="#Quantiser=(Double,Long)=&gt;(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser">Quantiser</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@Type8:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute quantile indices and gamma coefficient according to R's Type 8 rule; p[k] =~ median[F(x[k])].</p><div class="fullcomment"><div class="comment cmt"><p>Compute quantile indices and gamma coefficient according to R's Type 8 rule; p[k] =~ median[F(x[k])]. The
+resulting quantile estimates are approximately median-unbiased regardless of the distribution of x.
+</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p>https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+</p></span></dd></dl></div>
+    </li><li name="au.com.cba.omnia.grimlock.framework.distribution.Quantile#Type9" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Type9:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser"></a>
+      <a id="Type9:Quantiser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Type9</span><span class="result">: <a href="#Quantiser=(Double,Long)=&gt;(Long,Double)" class="extmbr" name="au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser">Quantiser</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@Type9:au.com.cba.omnia.grimlock.framework.distribution.Quantile.Quantiser" title="Permalink" target="_top">
+        <img src="../../../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute quantile indices and gamma coefficient according to R's Type 9 rule; quantile estimates are
+approximately unbiased for the expected order statistics if x is normally distributed.</p><div class="fullcomment"><div class="comment cmt"><p>Compute quantile indices and gamma coefficient according to R's Type 9 rule; quantile estimates are
+approximately unbiased for the expected order statistics if x is normally distributed.
+</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p>https://stat.ethz.ch/R-manual/R-devel/library/stats/html/quantile.html
+</p></span></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -158,7 +360,7 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -175,7 +377,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@clone():Object" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@clone():Object" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -198,7 +400,7 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -215,7 +417,7 @@
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@equals(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -232,7 +434,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@finalize():Unit" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -255,7 +457,7 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -272,7 +474,7 @@
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@hashCode():Int" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@hashCode():Int" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -289,28 +491,11 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="au.com.cba.omnia.grimlock.spark.examples.BasicOperations#main" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="main(args:Array[String]):Unit"></a>
-      <a id="main(Array[String]):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">main</span><span class="params">(<span name="args">args: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Array" class="extype" target="_top">Array</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@main(args:Array[String]):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../../lib/permalink.png" />
-      </a>
-    </span>
-      
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -323,7 +508,7 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -340,7 +525,7 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@notify():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@notify():Unit" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -357,7 +542,7 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -374,7 +559,7 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -391,7 +576,7 @@
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@toString():String" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@toString():String" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -408,7 +593,7 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@wait():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@wait():Unit" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -431,7 +616,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
@@ -454,7 +639,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.spark.examples.BasicOperations$@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../../../../../index.html#au.com.cba.omnia.grimlock.framework.distribution.Quantile$@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../../../../../../lib/permalink.png" />
       </a>
     </span>
