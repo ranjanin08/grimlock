@@ -420,4 +420,4 @@ For more examples see [BasicOperations.scala](https://github.com/CommBank/grimlo
 
 Acknowledgement
 ---------------
-We would like to thank the YourKit team for their support in providing us with their excellent [Java Profiler](https://www.yourkit.com/java/profiler/index.jsp). 
+We would like to thank the YourKit team for their support in providing us with their excellent [Java Profiler](https://www.yourkit.com/java/profiler/index.jsp). ![YourKit Logo](yk_logo.png)
