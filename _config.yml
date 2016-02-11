@@ -2,4 +2,4 @@ name: grimlock
 exclude: [Gemfile]
 markdown: kramdown
 
-releaseVersion:  "0.0.2-20160209021953-9413780"
+releaseVersion:  "0.0.2-20160211020527-82de27d"
