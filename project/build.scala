@@ -42,6 +42,7 @@ object build extends Build {
     scalaVersion.apply(scalaVersion => {
      (depend.hadoopClasspath
         ++ depend.scalding()
+        ++ depend.shapeless()
         ++ Seq(
             noHadoop("org.apache.spark"   %% "spark-core"         % "1.5.0")
               exclude("com.twitter", "chill-java")

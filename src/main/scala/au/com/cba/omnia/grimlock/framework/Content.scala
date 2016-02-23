@@ -14,189 +14,85 @@
 
 package au.com.cba.omnia.grimlock.framework.content
 
+import java.util.regex.Pattern
+
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 
 /** Contents of a cell in a matrix. */
 trait Content {
+  type T
+
   /** Schema (description) of the value. */
-  val schema: Schema
+  val schema: Schema { type S = T }
+
   /** The value of the variable. */
-  val value: Value
+  val value: Value { type V = T }
+
+  def isValid() = schema.validate(value)
 
   override def toString(): String = "Content(" + schema.toString + "," + value.toString + ")"
 
   /**
-   * Converts the content to a consise (terse) string.
-   *
-   * @return Short string representation.
-   */
+    * Converts the content to a consise (terse) string.
+    *
+    * @return Short string representation.
+    */
   def toShortString(): String = value.toShortString
 
   /**
-   * Converts the content to a consise (terse) string.
-   *
-   * @param separator The separator to use between the fields.
-   *
-   * @return Short string representation.
-   */
-  def toShortString(separator: String): String = schema.toShortString(separator) + separator + value.toShortString
+    * Converts the content to a consise (terse) string.
+    *
+    * @param separator The separator to use between the fields.
+    * @return Short string representation.
+    */
+  def toShortString(separator: String): String = {
+    value.codec.toShortString + separator + schema.toShortString(value.codec) + separator + value.toShortString
+  }
 }
 
 object Content {
-  /** Standard `unapply` method for pattern matching. */
+  type Parser = (String) => Option[Content]
+
+  /**
+    * Construct a content using a continuous schema and numeric value.
+    *
+    * @param schema Schema of the variable value.
+    * @param value  Numeric value of the variable.
+    */
+  def apply[X](schema: Schema { type S = X }, value: Valueable { type T = X }): Content = ContentImpl(schema, value())
+
   def unapply(con: Content): Option[(Schema, Value)] = Some((con.schema, con.value))
 
-  /**
-   * Construct a content using a continuous schema and numeric value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Numeric value of the variable.
-   */
-  def apply[T](schema: ContinuousSchema[Codex.DoubleCodex], value: T)(implicit num: Numeric[T]): Content = {
-    import num._
-    ContentImpl(schema, DoubleValue(value.toDouble))
+  def parse[T](codec: Codec { type C = T }, schema: Schema { type S = T }): Parser = {
+    (str: String) => {
+      codec
+        .decode(str)
+        .flatMap {
+          case v if (schema.validate(v)) => Some(Content(schema, v))
+          case _ => None
+        }
+    }
   }
 
-  /**
-   * Construct a content using a continuous schema and integral value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Integral value of the variable.
-   */
-  def apply[T](schema: ContinuousSchema[Codex.LongCodex], value: T)(implicit num: Integral[T]): Content = {
-    import num._
-    ContentImpl(schema, LongValue(value.toLong))
+  def fromShortString(str: String, separator: String = "|"): Option[Content] = {
+    str.split(Pattern.quote(separator)) match {
+      case Array(c, s, v) =>
+        Codec.fromShortString(c)
+          .flatMap {
+            case codec =>
+              Schema.fromShortString(codec, s).flatMap { case schema => Content.parse[codec.C](codec, schema)(v) }
+          }
+      case _ => None
+    }
   }
-
-  /**
-   * Construct a content using a discrete schema and integral value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Integral value of the variable.
-   */
-  def apply[T](schema: DiscreteSchema[Codex.LongCodex], value: T)(implicit num: Integral[T]): Content = {
-    import num._
-    ContentImpl(schema, LongValue(value.toLong))
-  }
-
-  /**
-   * Construct a content using a nominal schema and value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Value of the variable.
-   *
-   * @note The value is converted, and stored, as `String`.
-   */
-  def apply[T](schema: NominalSchema[Codex.StringCodex], value: T): Content = {
-    ContentImpl(schema, StringValue(value.toString))
-  }
-
-  /**
-   * Construct a content using a nominal schema and numeric value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Numeric value of the variable.
-   */
-  def apply[T](schema: NominalSchema[Codex.DoubleCodex], value: T)(implicit num: Numeric[T]): Content = {
-    import num._
-    ContentImpl(schema, DoubleValue(value.toDouble))
-  }
-
-  /**
-   * Construct a content using a nominal schema and integral value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Integral value of the variable.
-   */
-  def apply[T](schema: NominalSchema[Codex.LongCodex], value: T)(implicit num: Integral[T]): Content = {
-    import num._
-    ContentImpl(schema, LongValue(value.toLong))
-  }
-
-  /**
-   * Construct a content using a nominal schema and boolean value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Boolean value of the variable.
-   */
-  def apply(schema: NominalSchema[Codex.BooleanCodex], value: Boolean): Content = {
-    ContentImpl(schema, BooleanValue(value))
-  }
-
-  /**
-   * Construct a content using a ordinal schema and value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Value of the variable.
-   *
-   * @note The value is converted, and stored, as `String`.
-   */
-  def apply[T](schema: OrdinalSchema[Codex.StringCodex], value: T): Content = {
-    ContentImpl(schema, StringValue(value.toString))
-  }
-
-  /**
-   * Construct a content using a ordinal schema and numeric value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Numeric value of the variable.
-   */
-  def apply[T](schema: OrdinalSchema[Codex.DoubleCodex], value: T)(implicit num: Numeric[T]): Content = {
-    import num._
-    ContentImpl(schema, DoubleValue(value.toDouble))
-  }
-
-  /**
-   * Construct a content using a ordinal schema and integral value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Integral value of the variable.
-   */
-  def apply[T](schema: OrdinalSchema[Codex.LongCodex], value: T)(implicit num: Integral[T]): Content = {
-    import num._
-    ContentImpl(schema, LongValue(value.toLong))
-  }
-
-  /**
-   * Construct a content using a date schema and `java.util.Date` value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  Date value of the variable.
-   */
-  def apply(schema: DateSchema[Codex.DateCodex], value: java.util.Date): Content = {
-    ContentImpl(schema, DateValue(value, schema.codex))
-  }
-
-  /**
-   * Construct a content using a schema and value.
-   *
-   * @param schema Schema of the variable value.
-   * @param value  The value
-   *
-   * @note The caller must ensure that `schema` and `value` both have the same codex.
-   */
-  // TODO: Is is possible to enforce that both codex have to be the same?
-  def apply[S <: Schema, V <: Value](schema: S, value: V): Content = ContentImpl(schema, value)
 
   def toString(separator: String = "|", descriptive: Boolean = false): (Content) => TraversableOnce[String] = {
     (t: Content) => if (descriptive) { Some(t.toString) } else { Some(t.toShortString(separator)) }
   }
 }
 
-private[content] case class ContentImpl(schema: Schema, value: Value) extends Content
-
-/** Base trait that represents the contents of a matrix. */
-trait Contents extends Persist[Content] {
-  /**
-   * Persist to disk.
-   *
-   * @param file   Name of the output file.
-   * @param writer Writer that converts `Content` to string.
-   *
-   * @return A `U[Content]` which is this object's data.
-   */
-  def saveAsText(file: String, writer: TextWriter = Content.toString())(implicit ctx: C): U[Content]
+private case class ContentImpl[X](schema: Schema { type S = X }, value: Value { type V = X }) extends Content {
+  type T = X
 }
-
