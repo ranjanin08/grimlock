@@ -163,7 +163,7 @@ class PipelineDataPreparation(args: Args) extends Job(args) {
       .slice(Over(Second), rem3, false)
 
     (ind ++ csb)
-      //.fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0))
+      //.fillHomogeneous(Content(ContinuousSchema[Double](), 0))
       .saveAsCSV(Over(First), s"./demo.${output}/${key}.csv")
   }
 

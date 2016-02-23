@@ -15,9 +15,12 @@
 package au.com.cba.omnia.grimlock.framework
 
 import au.com.cba.omnia.grimlock.framework.content._
-import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
+
+import java.util.regex.Pattern
+
+import org.apache.hadoop.io.Writable
 
 import scala.util.Try
 
@@ -25,18 +28,12 @@ import shapeless._
 import shapeless.ops.hlist._
 import shapeless.ops.traversable.FromTraversable
 
-import java.util.regex.Pattern
-
-import org.apache.hadoop.io.Writable
-
 private trait PosFromArgs extends DepFn0 with Serializable
 
 private object PosFromArgs {
   type Aux[Out0] = PosFromArgs { type Out = Out0 }
 
   def apply(implicit p: PosFromArgs): Aux[p.Out] = p
-
-  // TODO: Is it possible to put these implicits as methods on their corresponding PositionXD objects?
 
   implicit def position1D[A <: Value]: Aux[(A :: HNil) => Position1D] =
     new PosFromArgs {
@@ -83,11 +80,11 @@ private trait CellFactory[P <: Product] {
 private object CellFactory {
   type Aux[P <: Product, Out0] = CellFactory[P] { type Out = Out0 }
 
-  private object toFns extends Poly1 {
-    implicit def default[C <: Codec] = at[C]((c: C) => (s: String) => c.decode(s))
+  object toFns extends Poly1 {
+    implicit def default[C <: Codec]: Case.Aux[C, String => Option[Value]] = at[C]((c: C) => (s: String) => c.decode(s))
   }
 
-  private object Sequence extends Poly2 {
+  object Sequence extends Poly2 {
     implicit def caseSome[L <: HList, T](implicit prep: Prepend[L, T :: HNil]) = at[Option[L], Option[T]] {
       case (a, v) =>
         for {
@@ -97,12 +94,11 @@ private object CellFactory {
     }
   }
 
-  // TODO: Is it posible to make this available without an implicit?
   implicit def makeCell[R <: Position, P <: Product, L <: HList, CO <: HList, MC <: HList, AO <: HList, FO <: HList](
-                                                                                                                      implicit gen: Generic.Aux[P, L], cm: ConstMapper.Aux[String, L, CO], tr: FromTraversable[CO],
-                                                                                                                      ma: Mapper.Aux[toFns.type, L, MC], za: ZipApply.Aux[MC, CO, AO],
-                                                                                                                      f: LeftFolder.Aux[AO, Option[HNil.type], Sequence.type, Option[FO]],
-                                                                                                                      p: PosFromArgs.Aux[FO => R]): Aux[P, Option[Cell[R]]] = new CellFactory[P] {
+    implicit gen: Generic.Aux[P, L], cm: ConstMapper.Aux[String, L, CO], tr: FromTraversable[CO],
+      ma: Mapper.Aux[toFns.type, L, MC], za: ZipApply.Aux[MC, CO, AO],
+        f: LeftFolder.Aux[AO, Option[HNil.type], Sequence.type, Option[FO]],
+          p: PosFromArgs.Aux[FO => R]): Aux[P, Option[Cell[R]]] = new CellFactory[P] {
     type Out = Option[Cell[R]]
 
     def apply(cds: P, pos: Array[String], value: String, decoder: Content.Parser): Out = {
@@ -118,31 +114,33 @@ private object CellFactory {
 }
 
 /**
-  * Cell in a matrix.
-  *
-  * @param position The position of the cell in the matri.
-  * @param content  The contents of the cell.
-  */
+ * Cell in a matrix.
+ *
+ * @param position The position of the cell in the matri.
+ * @param content  The contents of the cell.
+ */
 case class Cell[P <: Position](position: P, content: Content) {
   /**
-    * Relocate this cell.
-    *
-    * @param relocator Function that returns the new position for this cell.
-    */
+   * Relocate this cell.
+   *
+   * @param relocator Function that returns the new position for this cell.
+   */
   def relocate[Q <: Position](relocator: (Cell[P]) => Q): Cell[Q] = Cell(relocator(this), content)
+
   /**
-    * Mutate the content of this cell.
-    *
-    * @param mutator Function that returns the new content for this cell.
-    */
+   * Mutate the content of this cell.
+   *
+   * @param mutator Function that returns the new content for this cell.
+   */
   def mutate(mutator: (Cell[P]) => Content): Cell[P] = Cell(position, mutator(this))
+
   /**
-    * Return string representation of a cell.
-    *
-    * @param separator   The separator to use between various fields.
-    * @param descriptive Indicator if descriptive string is required or not.
-    * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
-    */
+   * Return string representation of a cell.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
+   */
   def toString(separator: String, descriptive: Boolean, schema: Boolean = true): String = {
     (descriptive, schema) match {
       case (true, _) => position.toString + separator + content.toString
@@ -163,6 +161,252 @@ object Cell {
   /** Type for parsing a key value tuple into either a `Cell[P]` or an error message. */
   type SequenceParser[K <: Writable, V <: Writable, P <: Position] = (K, V) => TraversableOnce[Either[Cell[P], String]]
 
+  /**
+   * Parse a line into a `Cell[Position1D]`.
+   *
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param line      The line to parse.
+   */
+  def parse1D(separator: String = "|", first: Codec = StringCodec)(
+    line: String): Option[Either[Cell[Position1D], String]] = {
+    parseXD[Position1D, Tuple1[Codec]](1, separator, Tuple1(first), line)
+  }
+
+  /**
+   * Parse a line data into a `Cell[Position1D]` with a dictionary.
+   *
+   * @param dict      The dictionary describing the features in the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param line      The line to parse.
+   */
+  def parse1DWithDictionary(dict: Map[String, Content.Parser], separator: String = "|", first: Codec = StringCodec)(
+    line: String): Option[Either[Cell[Position1D], String]] = {
+    parseXDWithDictionary[Position1D, Tuple1[Codec], First.type](1, First, dict, separator, Tuple1(first), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position1D]` with a schema.
+   *
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param line      The line to parse.
+   */
+  def parse1DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec)(
+    line: String): Option[Either[Cell[Position1D], String]] = {
+    parseXDWithSchema[Position1D, Tuple1[Codec]](1, schema, separator, Tuple1(first), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position2D]`.
+   *
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param line      The line to parse.
+   */
+  def parse2D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec)(
+    line: String): Option[Either[Cell[Position2D], String]] = {
+    parseXD[Position2D, (Codec, Codec)](2, separator, (first, second), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position2D]` with a dictionary.
+   *
+   * @param dict      The dictionary describing the features in the data.
+   * @param dim       The dimension on which to apply the dictionary.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param line      The line to parse.
+   */
+  def parse2DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
+    first: Codec = StringCodec, second: Codec = StringCodec)(line: String)(
+      implicit ev:PosDimDep[Position2D, D]): Option[Either[Cell[Position2D], String]] = {
+    parseXDWithDictionary[Position2D, (Codec, Codec), D](2, dim, dict, separator, (first, second), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position2D]` with a schema.
+   *
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param line      The line to parse.
+   */
+  def parse2DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
+    second: Codec = StringCodec)(line: String): Option[Either[Cell[Position2D], String]] = {
+    parseXDWithSchema[Position2D, (Codec,Codec)](2, schema, separator, (first, second), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position3D]`.
+   *
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param line      The line to parse.
+   */
+  def parse3D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
+    third: Codec = StringCodec)(line: String): Option[Either[Cell[Position3D], String]] = {
+    parseXD[Position3D, (Codec, Codec, Codec)](3, separator, (first, second, third), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position3D]` with a dictionary.
+   *
+   * @param dict      The dictionary describing the features in the data.
+   * @param dim       The dimension on which to apply the dictionary.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param line      The line to parse.
+   */
+  def parse3DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
+    first: Codec = StringCodec, second: Codec = StringCodec, third: Codec = StringCodec)(line: String)(
+      implicit ev: PosDimDep[Position3D, D]): Option[Either[Cell[Position3D], String]] = {
+    parseXDWithDictionary[Position3D, (Codec, Codec, Codec), D](3, dim, dict, separator, (first, second, third), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position3D]` with a schema.
+   *
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param line      The line to parse.
+   */
+  def parse3DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
+    second: Codec = StringCodec, third: Codec = StringCodec)(
+      line: String): Option[Either[Cell[Position3D], String]] = {
+    parseXDWithSchema[Position3D, (Codec,Codec, Codec)](3, schema, separator, (first, second, third), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position4D]`.
+   *
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param line      The line to parse.
+   */
+  def parse4D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
+    third: Codec = StringCodec, fourth: Codec = StringCodec)(
+      line: String): Option[Either[Cell[Position4D], String]] = {
+    parseXD[Position4D, (Codec, Codec, Codec, Codec)](4, separator, (first, second, third, fourth), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position4D]` with a dictionary.
+   *
+   * @param dict      The dictionary describing the features in the data.
+   * @param dim       The dimension on which to apply the dictionary.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param line      The line to parse.
+   */
+  def parse4DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
+    first: Codec = StringCodec, second: Codec = StringCodec, third: Codec = StringCodec, fourth: Codec = StringCodec)(
+      line: String)(implicit ev: PosDimDep[Position4D, D]): Option[Either[Cell[Position4D], String]] = {
+    parseXDWithDictionary[Position4D, (Codec, Codec, Codec, Codec), D](4, dim, dict, separator,
+      (first, second, third, fourth), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position4D]` with a schema.
+   *
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param line      The line to parse.
+   */
+  def parse4DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
+    second: Codec = StringCodec, third: Codec = StringCodec, fourth: Codec = StringCodec)(
+      line: String): Option[Either[Cell[Position4D], String]] = {
+    parseXDWithSchema[Position4D, (Codec,Codec, Codec, Codec)](4, schema, separator,
+      (first, second, third, fourth), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position5D]`.
+   *
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   * @param line      The line to parse.
+   */
+  def parse5D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
+    third: Codec = StringCodec, fourth: Codec = StringCodec, fifth: Codec = StringCodec)(
+      line: String): Option[Either[Cell[Position5D], String]] = {
+    parseXD[Position5D, (Codec, Codec, Codec, Codec, Codec)](5, separator, (first, second, third, fourth, fifth), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position5D]` with a dictionary.
+   *
+   * @param dict      The dictionary describing the features in the data.
+   * @param dim       The dimension on which to apply the dictionary.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   * @param line      The line to parse.
+   */
+  def parse5DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
+    first: Codec = StringCodec, second: Codec = StringCodec, third: Codec = StringCodec, fourth: Codec = StringCodec,
+      fifth: Codec = StringCodec)(line: String)(
+        implicit ev: PosDimDep[Position5D, D]): Option[Either[Cell[Position5D], String]] = {
+    parseXDWithDictionary[Position5D, (Codec, Codec, Codec, Codec, Codec), D](5, dim, dict, separator,
+      (first, second, third, fourth, fifth), line)
+  }
+
+  /**
+   * Parse a line into a `Cell[Position5D]` with a schema.
+   *
+   * @param schema    The schema for decoding the data.
+   * @param separator The column separator.
+   * @param first     The codex for decoding the first dimension.
+   * @param second    The codex for decoding the second dimension.
+   * @param third     The codex for decoding the third dimension.
+   * @param fourth    The codex for decoding the fourth dimension.
+   * @param fifth     The codex for decoding the fifth dimension.
+   * @param line      The line to parse.
+   */
+  def parse5DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
+    second: Codec = StringCodec, third: Codec = StringCodec, fourth: Codec = StringCodec, fifth: Codec = StringCodec)(
+      line: String): Option[Either[Cell[Position5D], String]] = {
+    parseXDWithSchema[Position5D, (Codec, Codec,Codec, Codec, Codec)](5, schema, separator,
+      (first, second, third, fourth, fifth), line)
+  }
+
+  /**
+   * Parse a line into a `List[Cell[Position2D]]` with column definitions.
+   *
+   * @param columns   `List[(String, Content.Parser)]` describing each column in the table.
+   * @param pkeyIndex Index (into `columns`) describing which column is the primary key.
+   * @param separator The column separator.
+   * @param line      The line to parse.
+   */
   def parseTable(columns: List[(String, Content.Parser)], pkeyIndex: Int = 0, separator: String = "\u0001")(
     line: String): List[Either[Cell[Position2D], String]] = {
     val parts = line.trim.split(Pattern.quote(separator), columns.length)
@@ -183,8 +427,15 @@ object Cell {
     }
   }
 
+  /**
+   * Return function that returns a string representation of a cell.
+   *
+   * @param separator   The separator to use between various fields.
+   * @param descriptive Indicator if descriptive string is required or not.
+   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
+   */
   def toString[P <: Position](separator: String = "|", descriptive: Boolean = false,
-                              schema: Boolean = true): (Cell[P]) => TraversableOnce[String] = {
+    schema: Boolean = true): (Cell[P]) => TraversableOnce[String] = {
     (t: Cell[P]) => Some(t.toString(separator, descriptive, schema))
   }
 
@@ -198,8 +449,8 @@ object Cell {
     }
 
   private def parseXDWithSchema[R <: Position, P <: Product](split: Int, schema: Content.Parser,
-                                                             separator: String = "|", codecs: P, line: String)(
-                                                              implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[Cell[R], String]] = {
+    separator: String = "|", codecs: P, line: String)(
+      implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[Cell[R], String]] = {
     line.trim.split(Pattern.quote(separator), split + 1).splitAt(split) match {
       case (pos, Array(v)) =>
         mc(codecs, pos, v, schema)
@@ -209,8 +460,8 @@ object Cell {
   }
 
   private def parseXDWithDictionary[R <: Position, P <: Product, D <: Dimension](split: Int, dim: D,
-                                                                                 dict: Map[String, Content.Parser], separator: String = "|", codecs: P, line: String)(
-                                                                                  implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[Cell[R], String]] = {
+    dict: Map[String, Content.Parser], separator: String = "|", codecs: P, line: String)(
+      implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[Cell[R], String]] = {
     def getD(positions: Array[String]): Option[Content.Parser] = for {
       pos <- Try(positions(dim.index)).toOption
       decoder <- dict.get(pos)
@@ -225,277 +476,6 @@ object Cell {
       }
       case _ => Some(Right("Unable to split: '" + line + "'"))
     }
-  }
-
-  /**
-   * Parse a line into a `Cell[Position1D]`.
-   *
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param line      The line to parse.
-   */
-  def parse1D(separator: String = "|", first: Codec = StringCodec)(line: String) = {
-    parseXD[Position1D, Tuple1[Codec]](1, separator, Tuple1(first), line)
-  }
-
-  /**
-   * Parse a line data into a `Cell[Position1D]` with a dictionary.
-   *
-   * @param dict      The dictionary describing the features in the data.
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param line      The line to parse.
-   */
-  def parse1DWithDictionary(dict: Map[String, Content.Parser], separator: String = "|",
-                            first: Codec = StringCodec)(line: String) = {
-    parseXDWithDictionary[Position1D, Tuple1[Codec], First.type](1, First, dict, separator, Tuple1(first), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position1D]` with a schema.
-   *
-   * @param schema    The schema for decoding the data.
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param line      The line to parse.
-   */
-  def parse1DWithSchema(schema: Content.Parser, separator: String = "|",
-                        first: Codec = StringCodec)(line: String) = {
-    parseXDWithSchema[Position1D, Tuple1[Codec]](1, schema, separator, Tuple1(first), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position2D]`.
-   *
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param line      The line to parse.
-   */
-  def parse2D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec)(line: String) = {
-    parseXD[Position2D, (Codec, Codec)](2, separator, (first, second), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position2D]` with a dictionary.
-   *
-   * @param dict      The dictionary describing the features in the data.
-   * @param dim       The dimension on which to apply the dictionary.
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param line      The line to parse.
-   */
-  def parse2DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D,
-                                            separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec)(
-                                             line: String)(implicit ev:PosDimDep[Position2D, D]) = {
-    parseXDWithDictionary[Position2D, (Codec, Codec), D](2, dim, dict, separator, (first, second), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position2D]` with a schema.
-   *
-   * @param schema    The schema for decoding the data.
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param line      The line to parse.
-   */
-  def parse2DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
-                        second: Codec = StringCodec)(line: String) = {
-    parseXDWithSchema[Position2D, (Codec,Codec)](2, schema, separator, (first, second), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position3D]`.
-   *
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param line      The line to parse.
-   */
-  def parse3D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
-              third: Codec = StringCodec)(line: String) = {
-    parseXD[Position3D, (Codec, Codec, Codec)](3, separator, (first, second, third), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position3D]` with a dictionary.
-   *
-   * @param dict      The dictionary describing the features in the data.
-   * @param dim       The dimension on which to apply the dictionary.
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param line      The line to parse.
-   */
-  def parse3DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D,
-                                            separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
-                                            third: Codec = StringCodec)(line: String)(implicit ev: PosDimDep[Position3D, D]) = {
-    parseXDWithDictionary[Position3D, (Codec, Codec, Codec), D](3, dim, dict, separator, (first, second, third), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position3D]` with a schema.
-   *
-   * @param schema    The schema for decoding the data.
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param line      The line to parse.
-   */
-  def parse3DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
-                        second: Codec = StringCodec, third: Codec = StringCodec)(line: String) = {
-    parseXDWithSchema[Position3D, (Codec,Codec, Codec)](3, schema, separator, (first, second, third), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position4D]`.
-   *
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
-   * @param line      The line to parse.
-   */
-  def parse4D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
-              third: Codec = StringCodec, fourth: Codec = StringCodec)(line: String) = {
-    parseXD[Position4D, (Codec, Codec, Codec, Codec)](4, separator, (first, second, third, fourth), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position4D]` with a dictionary.
-   *
-   * @param dict      The dictionary describing the features in the data.
-   * @param dim       The dimension on which to apply the dictionary.
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
-   * @param line      The line to parse.
-   */
-  def parse4DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D,
-                                            separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec, third: Codec = StringCodec,
-                                            fourth: Codec = StringCodec)(line: String)(implicit ev: PosDimDep[Position4D, D]) = {
-    parseXDWithDictionary[Position4D, (Codec, Codec, Codec, Codec), D](4, dim, dict, separator,
-      (first, second, third, fourth), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position4D]` with a schema.
-   *
-   * @param schema    The schema for decoding the data.
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
-   * @param line      The line to parse.
-   */
-  def parse4DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
-                        second: Codec = StringCodec, third: Codec = StringCodec, fourth: Codec = StringCodec)(line: String) = {
-    parseXDWithSchema[Position4D, (Codec,Codec, Codec, Codec)](4, schema, separator,
-      (first, second, third, fourth), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position5D]`.
-   *
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
-   * @param fifth     The codex for decoding the fifth dimension.
-   * @param line      The line to parse.
-   */
-  def parse5D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
-              third: Codec = StringCodec, fourth: Codec = StringCodec, fifth: Codec = StringCodec)(line: String) = {
-    parseXD[Position5D, (Codec, Codec, Codec, Codec, Codec)](5, separator, (first, second, third, fourth, fifth), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position5D]` with a dictionary.
-   *
-   * @param dict      The dictionary describing the features in the data.
-   * @param dim       The dimension on which to apply the dictionary.
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
-   * @param fifth     The codex for decoding the fifth dimension.
-   * @param line      The line to parse.
-   */
-  def parse5DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D,
-                                            separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec, third: Codec = StringCodec,
-                                            fourth: Codec = StringCodec, fifth: Codec = StringCodec)(line: String)(implicit ev: PosDimDep[Position5D, D]) = {
-    parseXDWithDictionary[Position5D, (Codec, Codec, Codec, Codec, Codec), D](5, dim, dict, separator,
-      (first, second, third, fourth, fifth), line)
-  }
-
-  /**
-   * Parse a line into a `Cell[Position5D]` with a schema.
-   *
-   * @param schema    The schema for decoding the data.
-   * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
-   * @param fifth     The codex for decoding the fifth dimension.
-   * @param line      The line to parse.
-   */
-  def parse5DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
-                        second: Codec = StringCodec, third: Codec = StringCodec, fourth: Codec = StringCodec, fifth: Codec = StringCodec)(
-                         line: String) = {
-    parseXDWithSchema[Position5D, (Codec, Codec,Codec, Codec, Codec)](5, schema, separator,
-      (first, second, third, fourth, fifth), line)
-  }
-
-  /**
-   * Parse a line into a `List[Cell[Position2D]]` with column definitions.
-   *
-   * @param columns   `List[(String, Schema)]` describing each column in the table.
-   * @param pkeyIndex Index (into `columns`) describing which column is the primary key.
-   * @param separator The column separator.
-   * @param line      The line to parse.
-   */
-  def parseTable(columns: List[(String, Schema)], pkeyIndex: Int = 0, separator: String = "\u0001")(
-    line: String): List[Either[Cell[Position2D], String]] = {
-    val parts = line.trim.split(Pattern.quote(separator), columns.length)
-
-    (parts.length == columns.length) match {
-      case true =>
-        val pkey = parts(pkeyIndex)
-
-        columns.zipWithIndex.flatMap {
-          case ((name, schema), idx) if (idx != pkeyIndex) =>
-            schema.decode(parts(idx)) match {
-              case Some(con) => Some(Left(Cell(Position2D(pkey, name), con)))
-              case _ => Some(Right("Unable to decode: '" + line + "'"))
-            }
-          case _ => None
-        }
-      case _ => List(Right("Unable to split: '" + line + "'"))
-    }
-  }
-
-  /**
-   * Return function that returns a string representation of a cell.
-   *
-   * @param separator   The separator to use between various fields.
-   * @param descriptive Indicator if descriptive string is required or not.
-   * @param schema      Indicator if schema is required or not (only used if descriptive is `false`).
-   */
-  def toString[P <: Position](separator: String = "|", descriptive: Boolean = false,
-    schema: Boolean = true): (Cell[P]) => TraversableOnce[String] = {
-    (t: Cell[P]) => Some(t.toString(separator, descriptive, schema))
   }
 }
 

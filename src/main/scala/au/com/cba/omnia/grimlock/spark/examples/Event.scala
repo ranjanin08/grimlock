@@ -119,7 +119,7 @@ case class WordCounts(minLength: Long = Long.MinValue, ngrams: Int = 1, separato
         terms
           .groupBy(identity)
           .map {
-            case (k, v) => Cell(cell.position.append(k), Content(DiscreteSchema(LongCodex), v.size))
+            case (k, v) => Cell(cell.position.append(k), Content(DiscreteSchema[Long](), v.size))
           }
           .toList
       case _ => None

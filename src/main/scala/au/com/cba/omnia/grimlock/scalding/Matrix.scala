@@ -164,12 +164,12 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
                               Unbalanced[Reducers]]
 
   type ChangeTuners = TP4
-  def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Schema, tuner: T = InMemory())(
+  def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Content.Parser, tuner: T = InMemory())(
     implicit ev1: PositionDistributable[I, slice.S, TypedPipe], ev2: ClassTag[slice.S],
       ev3: ChangeTuners#V[T]): U[Cell[P]] = {
     val pos = ev1.convert(positions)
     val update = (change: Boolean, cell: Cell[P]) => change match {
-      case true => schema.decode(cell.content.value.toShortString).map { case con => Cell(cell.position, con) }
+      case true => schema(cell.content.value.toShortString).map { case con => Cell(cell.position, con) }
       case false => Some(cell)
     }
 
@@ -402,7 +402,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       .tunedDistinct(tuner.parameters)
       .group
       .size
-      .map { case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema(LongCodex), s)) }
+      .map { case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema[Long](), s)) }
   }
 
   type SizeTuners = TP2
@@ -414,7 +414,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     dist
       .map { case _ => 1L }
       .sum
-      .map { case sum => Cell(Position1D(dim.toString), Content(DiscreteSchema(LongCodex), sum)) }
+      .map { case sum => Cell(Position1D(dim.toString), Content(DiscreteSchema[Long](), sum)) }
   }
 
   type SliceTuners = TP4

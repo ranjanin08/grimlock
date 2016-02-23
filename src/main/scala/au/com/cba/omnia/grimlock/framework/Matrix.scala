@@ -16,7 +16,6 @@ package au.com.cba.omnia.grimlock.framework
 
 import au.com.cba.omnia.grimlock.framework.aggregate._
 import au.com.cba.omnia.grimlock.framework.content._
-import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.distribution._
 import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.environment._
@@ -52,7 +51,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[Cell[P]]' with the changed contents.
    */
-  def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Schema, tuner: T)(
+  def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Content.Parser, tuner: T)(
     implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S], ev3: ChangeTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `compact` functions. */

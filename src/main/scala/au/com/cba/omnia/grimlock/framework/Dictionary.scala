@@ -19,23 +19,22 @@ import au.com.cba.omnia.grimlock.framework.encoding.Codec
 
 import java.util.regex.Pattern
 
-
-
 import scala.io.Source
 
 object Dictionary {
   /**
-    * Load a dictionary from file.
-    *
-    * @param source    Source to read dictionary data from.
-    * @param separator Separator for splitting dictionary into data fields.
-    * @param key       Index (into data fields) for schema key.
-    * @param encoding  Index (into data fields) for the encoding identifier.
-    * @param schema    Index (into data fields) for the schema identifier
-    * @return A tuple consisting of the dictionary object and an iterator containing parse errors.
-    */
+   * Load a dictionary from file.
+   *
+   * @param source    Source to read dictionary data from.
+   * @param separator Separator for splitting dictionary into data fields.
+   * @param key       Index (into data fields) for schema key.
+   * @param encoding  Index (into data fields) for the encoding identifier.
+   * @param schema    Index (into data fields) for the schema identifier
+   *
+   * @return A tuple consisting of the dictionary object and an iterator containing parse errors.
+   */
   def load(source: Source, separator: String = "|", key: Int = 0, encoding: Int = 1,
-           schema: Int = 2): (Map[String, Content.Parser], Iterator[String]) = {
+    schema: Int = 2): (Map[String, Content.Parser], Iterator[String]) = {
     val result = source
       .getLines()
       .map {
@@ -47,7 +46,7 @@ object Dictionary {
             case false =>
               val parser = Codec.fromShortString(parts(encoding))
                 .flatMap {
-                  case codec => Schema.fromShortString(codec, parts(schema))
+                  case codec => Schema.fromShortString(parts(schema), codec)
                     .map { case schema => Content.parse[codec.C](codec, schema) }
                 }
 
@@ -61,3 +60,4 @@ object Dictionary {
     (result.collect { case Left(entry) => entry }.toMap, result.collect { case Right(error) => error })
   }
 }
+

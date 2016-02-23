@@ -118,7 +118,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   import SparkImplicits._
 
   type ChangeTuners = TP2
-  def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Schema, tuner: T = Default())(
+  def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Content.Parser, tuner: T = Default())(
     implicit ev1: PositionDistributable[I, slice.S, RDD], ev2: ClassTag[slice.S],
       ev3: ChangeTuners#V[T]): U[Cell[P]] = {
     data
@@ -126,7 +126,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       .tunedLeftJoin(tuner.parameters, ev1.convert(positions).keyBy { case p => p })
       .flatMap {
         case (_, (c, po)) => po match {
-          case Some(_) => schema.decode(c.content.value.toShortString).map { case con => Cell(c.position, con) }
+          case Some(_) => schema(c.content.value.toShortString).map { case con => Cell(c.position, con) }
           case None => Some(c)
         }
       }
@@ -282,7 +282,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       .tunedDistinct(tuner.parameters)
       .groupBy { case (s, i) => i }
       .map {
-        case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema(LongCodex), s.size))
+        case (i, s) => Cell(Position1D(Dimension.All(i).toString), Content(DiscreteSchema[Long](), s.size))
       }
   }
 
@@ -294,7 +294,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
 
     dist
       .context
-      .parallelize(List(Cell(Position1D(dim.toString), Content(DiscreteSchema(LongCodex), dist.count))))
+      .parallelize(List(Cell(Position1D(dim.toString), Content(DiscreteSchema[Long](), dist.count))))
   }
 
   type SliceTuners = TP2

@@ -58,19 +58,19 @@ object TestScaldingReader {
   def load4TupleDataAddDate(file: String)(implicit flow: FlowDef, mode: Mode): TypedPipe[Cell[Position3D]] = {
     def hashDate(v: String) = {
       val cal = java.util.Calendar.getInstance()
-      cal.setTime(DateCodex().fromValue(DateCodex().decode("2014-05-14").get))
+      cal.setTime((new java.text.SimpleDateFormat("yyyy-MM-dd")).parse("2014-05-14"))
       cal.add(java.util.Calendar.DATE, -(v.hashCode % 21)) // Generate 3 week window prior to date
-      DateValue(cal.getTime(), DateCodex())
+      DateValue(cal.getTime(), DateCodec())
     }
 
     (TypedPsv[(String, String, String, String)](file))
       .flatMap {
         case (i, f, e, v) =>
           val schema = e match {
-            case StringCodex.name => NominalSchema(StringCodex)
+            case StringCodex.name => NominalSchema[String]()
             case _ => scala.util.Try(v.toLong).toOption match {
-              case Some(_) => ContinuousSchema[Codex.LongCodex](LongCodex, Long.MinValue, Long.MaxValue)
-              case None => ContinuousSchema[Codex.DoubleCodex](DoubleCodex, Double.MinValue, Double.MaxValue)
+              case Some(_) => ContinuousSchema[Long](Long.MinValue, Long.MaxValue)
+              case None => ContinuousSchema[Double](Double.MinValue, Double.MaxValue)
             }
           }
 
@@ -92,13 +92,13 @@ class TestScalding1(args : Args) extends Job(args) {
     .toUnit
 
   data
-    .set(Cell(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
-      Content(ContinuousSchema(LongCodex), 1234)))
+    .set(Cell(Position3D("iid:1548763", "fid:Y", DateCodec().decode("2014-04-26").get),
+      Content(ContinuousSchema[Long](), 1234)))
     .slice(Over(First), "iid:1548763", true)
     .saveAsText(s"./tmp.${tool}/dat2.out", Cell.toString(descriptive = true))
     .toUnit
 
-  loadText(path + "/smallInputfile.txt", Cell.parse3D(third = DateCodex()))
+  loadText(path + "/smallInputfile.txt", Cell.parse3D(third = DateCodec()))
     .data
     .saveAsText(s"./tmp.${tool}/dat3.out", Cell.toString(descriptive = true))
     .toUnit
@@ -266,13 +266,13 @@ class TestScalding7(args : Args) extends Job(args) {
   val data = load4TupleDataAddDate(path + "/someInputfile3.txt")
 
   data
-    .get(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get))
+    .get(Position3D("iid:1548763", "fid:Y", DateCodec().decode("2014-04-26").get))
     .saveAsText(s"./tmp.${tool}/get1.out", Cell.toString(descriptive = true))
     .toUnit
 
   data
-    .get(List(Position3D("iid:1548763", "fid:Y", DateCodex().decode("2014-04-26").get),
-              Position3D("iid:1303823", "fid:A", DateCodex().decode("2014-05-05").get)))
+    .get(List(Position3D("iid:1548763", "fid:Y", DateCodec().decode("2014-04-26").get),
+              Position3D("iid:1303823", "fid:A", DateCodec().decode("2014-05-05").get)))
     .saveAsText(s"./tmp.${tool}/get2.out", Cell.toString(descriptive = true))
     .toUnit
 }
@@ -334,8 +334,8 @@ class TestScalding9(args : Args) extends Job(args) {
   case class StringPartitioner(dim: Dimension) extends Partitioner[Position2D, String] {
     def assign(cell: Cell[Position2D]): TraversableOnce[String] = {
       List(cell.position(dim) match {
-        case StringValue("fid:A") => "training"
-        case StringValue("fid:B") => "testing"
+        case StringValue("fid:A", _) => "training"
+        case StringValue("fid:B", _) => "testing"
       }, "scoring")
     }
   }
@@ -353,8 +353,8 @@ class TestScalding9(args : Args) extends Job(args) {
   case class IntTuplePartitioner(dim: Dimension) extends Partitioner[Position2D, (Int, Int, Int)] {
     def assign(cell: Cell[Position2D]): TraversableOnce[(Int, Int, Int)] = {
       List(cell.position(dim) match {
-        case StringValue("fid:A") => (1, 0, 0)
-        case StringValue("fid:B") => (0, 1, 0)
+        case StringValue("fid:A", _) => (1, 0, 0)
+        case StringValue("fid:B", _) => (0, 1, 0)
       }, (0, 0, 1))
     }
   }
@@ -460,12 +460,12 @@ class TestScalding12(args : Args) extends Job(args) {
 
   data
     .squash(Third, PreservingMaxPosition[Position3D]())
-    .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
+    .fillHomogeneous(Content(ContinuousSchema[Long](), 0))
     .saveAsCSV(Over(First), s"./tmp.${tool}/fll1.out")
     .toUnit
 
   data
-    .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
+    .fillHomogeneous(Content(ContinuousSchema[Long](), 0))
     .saveAsText(s"./tmp.${tool}/fll3.out", Cell.toString(descriptive = true))
     .toUnit
 }
@@ -485,11 +485,11 @@ class TestScalding13(args : Args) extends Job(args) {
 
   val inds = data
     .transform(Indicator[Position2D]().andThenRelocate(Locate.RenameDimension(Second, "%1$s.ind")))
-    .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
+    .fillHomogeneous(Content(ContinuousSchema[Long](), 0))
 
   data
     .join(Over(First), inds)
-    .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
+    .fillHomogeneous(Content(ContinuousSchema[Long](), 0))
     .saveAsCSV(Over(First), s"./tmp.${tool}/fll2.out")
     .toUnit
 
@@ -511,7 +511,7 @@ class TestScalding14(args : Args) extends Job(args) {
     .slice(Over(First), List("iid:0221707", "iid:0364354"), true)
 
   data
-    .change(Over(Second), "fid:A", NominalSchema(LongCodex))
+    .change(Over(Second), "fid:A", Content.parse(LongCodec, NominalSchema[Long]()))
     .saveAsText(s"./tmp.${tool}/chg1.out", Cell.toString(descriptive = true))
     .toUnit
 }
@@ -707,7 +707,7 @@ class TestScalding19(args : Args) extends Job(args) {
     pipe
       .slice(Over(Second), rem, false)
       .transformWithValue(transforms, stats.compact(Over(First)))
-      .fillHomogeneous(Content(ContinuousSchema(LongCodex), 0))
+      .fillHomogeneous(Content(ContinuousSchema[Long](), 0))
       .saveAsCSV(Over(First), s"./tmp.${tool}/pln_" + key + ".csv")
   }
 
@@ -724,7 +724,7 @@ class TestScalding20(args : Args) extends Job(args) {
 
   val (dictionary, _) = Dictionary.load(Source.fromFile(path + "/dict.txt"))
 
-  loadText(path + "/ivoryInputfile1.txt", Cell.parse3DWithDictionary(dictionary, Second, third = DateCodex()))
+  loadText(path + "/ivoryInputfile1.txt", Cell.parse3DWithDictionary(dictionary, Second, third = DateCodec()))
     .data
     .saveAsText(s"./tmp.${tool}/ivr1.out")
     .toUnit
@@ -785,7 +785,7 @@ class TestScalding22(args : Args) extends Job(args) {
 
     def present(pos: Position1D, out: O): TraversableOnce[Cell[Position2D]] = {
       Some(Cell(pos.append(out._2.toShortString("") + "-" + out._3.toShortString("")),
-        Content(ContinuousSchema(DoubleCodex), out._1)))
+        Content(ContinuousSchema[Double](), out._1)))
     }
   }
 
@@ -816,7 +816,7 @@ class TestScalding23(args : Args) extends Job(args) {
 
       (left.position(First) == right.position(First)) match {
         case true => Some(Cell(right.position.remove(Second).append("(" + xc + "-" + yc + ")^2"),
-          Content(ContinuousSchema(DoubleCodex),
+          Content(ContinuousSchema[Double](),
             math.pow(left.content.value.asLong.get - right.content.value.asLong.get, 2))))
         case false => None
       }
@@ -837,9 +837,9 @@ class TestScalding24(args: Args) extends Job(args) {
 
   // see http://www.mathsisfun.com/data/correlation.html for data
 
-  val schema = List(("day", NominalSchema(StringCodex)),
-                    ("temperature", ContinuousSchema(DoubleCodex)),
-                    ("sales", DiscreteSchema(LongCodex)))
+  val schema = List(("day", Content.parse(StringCodec, NominalSchema[String]())),
+                    ("temperature", Content.parse(DoubleCodec, ContinuousSchema[Double]())),
+                    ("sales", Content.parse(LongCodec, DiscreteSchema[Long]())))
   val (data, _) = loadText(path + "/somePairwise2.txt", Cell.parseTable(schema, separator = "|"))
 
   data
@@ -847,10 +847,10 @@ class TestScalding24(args: Args) extends Job(args) {
     .saveAsText(s"./tmp.${tool}/pws2.out")
     .toUnit
 
-  val schema2 = List(("day", NominalSchema(StringCodex)),
-                     ("temperature", ContinuousSchema(DoubleCodex)),
-                     ("sales", DiscreteSchema(LongCodex)),
-                     ("neg.sales", DiscreteSchema(LongCodex)))
+  val schema2 = List(("day", Content.parse(StringCodec, NominalSchema[String]())),
+                     ("temperature", Content.parse(DoubleCodec, ContinuousSchema[Double]())),
+                     ("sales", Content.parse(LongCodec, DiscreteSchema[Long]())),
+                     ("neg.sales", Content.parse(LongCodec, DiscreteSchema[Long]())))
   val (data2, _) = loadText(path + "/somePairwise3.txt", Cell.parseTable(schema2, separator = "|"))
 
   data2
@@ -896,35 +896,35 @@ class TestScalding27(args: Args) extends Job(args) {
 
   // http://www.statisticshowto.com/moving-average/
 
-  loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+  loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodec))
     .data
     .slide(Over(Second), SimpleMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
       Locate.AppendRemainderDimension[Position1D, Position1D](First)))
     .saveAsText(s"./tmp.${tool}/sma1.out")
     .toUnit
 
-  loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+  loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodec))
     .data
     .slide(Over(Second), SimpleMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
       Locate.AppendRemainderDimension[Position1D, Position1D](First), all = true))
     .saveAsText(s"./tmp.${tool}/sma2.out")
     .toUnit
 
-  loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+  loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodec))
     .data
     .slide(Over(Second), CenteredMovingAverage[Position2D, Position1D, Position1D, Position2D](2,
       Locate.AppendRemainderDimension[Position1D, Position1D](First)))
     .saveAsText(s"./tmp.${tool}/tma.out")
     .toUnit
 
-  loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+  loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodec))
     .data
     .slide(Over(Second), WeightedMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
       Locate.AppendRemainderDimension[Position1D, Position1D](First)))
     .saveAsText(s"./tmp.${tool}/wma1.out")
     .toUnit
 
-  loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodex))
+  loadText(path + "/simMovAvgInputfile.txt", Cell.parse2D(first = LongCodec))
     .data
     .slide(Over(Second), WeightedMovingAverage[Position2D, Position1D, Position1D, Position2D](5,
       Locate.AppendRemainderDimension[Position1D, Position1D](First), all = true))
@@ -957,8 +957,8 @@ class TestScalding28(args: Args) extends Job(args) {
 
   val data = List
     .range(0, 16)
-    .flatMap { case i => List(("iid:" + i, "fid:A", Content(ContinuousSchema(LongCodex), i)),
-                              ("iid:" + i, "fid:B", Content(NominalSchema(StringCodex), i.toString))) }
+    .flatMap { case i => List(("iid:" + i, "fid:A", Content(ContinuousSchema[Long](), i)),
+                              ("iid:" + i, "fid:B", Content(NominalSchema[String](), i.toString))) }
 
   val aggregators: List[Aggregator[Position2D, Position1D, Position2D]] = List(
     Count().andThenRelocate(_.position.append("count").toOption),
@@ -1021,7 +1021,7 @@ class TestScalding29(args: Args) extends Job(args) {
   implicit val ctx = Context()
   val tool = "scalding"
 
-  val schema = DiscreteSchema(LongCodex)
+  val schema = DiscreteSchema[Long]()
   val data = List(("mod:123", "iid:A", Content(schema, 1)),
     ("mod:123", "iid:B", Content(schema, 1)),
     ("mod:123", "iid:C", Content(schema, 0)),
@@ -1054,7 +1054,7 @@ class TestScalding30(args: Args) extends Job(args) {
   implicit val ctx = Context()
   val tool = "scalding"
 
-  val schema = DiscreteSchema(LongCodex)
+  val schema = DiscreteSchema[Long]()
   val data = List(("iid:A", Content(schema, 0)),
     ("iid:B", Content(schema, 1)),
     ("iid:C", Content(schema, 2)),
@@ -1066,7 +1066,7 @@ class TestScalding30(args: Args) extends Job(args) {
 
   data
     .stream("Rscript double.R", List("double.R"), Cell.toString("|", false, true),
-      Cell.parse2D("#", StringCodex, LongCodex))
+      Cell.parse2D("#", StringCodec, LongCodec))
     .data
     .saveAsText(s"./tmp.${tool}/strm.out")
     .toUnit
@@ -1078,7 +1078,7 @@ class TestScalding31(args: Args) extends Job(args) {
   val tool = "scalding"
   val path = args("path")
 
-  val (data, errors) = loadText(path + "/badInputfile.txt", Cell.parse3D(third = DateCodex()))
+  val (data, errors) = loadText(path + "/badInputfile.txt", Cell.parse3D(third = DateCodec()))
 
   data
     .saveAsText(s"./tmp.${tool}/yok.out", Cell.toString(descriptive = true))
@@ -1091,57 +1091,57 @@ class TestScalding32(args: Args) extends Job(args) {
   implicit val ctx = Context()
   val tool = "scalding"
 
-  List(("a", Content(ContinuousSchema(DoubleCodex), 3.14)),
-       ("b", Content(DiscreteSchema(LongCodex), 42)),
-       ("c", Content(NominalSchema(StringCodex), "foo")))
+  List(("a", Content(ContinuousSchema[Double](), 3.14)),
+       ("b", Content(DiscreteSchema[Long](), 42)),
+       ("c", Content(NominalSchema[String](), "foo")))
     .saveAsIV(s"./tmp.${tool}/iv1.out")
     .toUnit
 
-  List(("a", "d", Content(ContinuousSchema(DoubleCodex), 3.14)),
-       ("b", "c", Content(DiscreteSchema(LongCodex), 42)),
-       ("c", "b", Content(NominalSchema(StringCodex), "foo")))
+  List(("a", "d", Content(ContinuousSchema[Double](), 3.14)),
+       ("b", "c", Content(DiscreteSchema[Long](), 42)),
+       ("c", "b", Content(NominalSchema[String](), "foo")))
     .saveAsIV(s"./tmp.${tool}/iv2.out")
     .toUnit
 
-  List(("a", "d", "c", Content(ContinuousSchema(DoubleCodex), 3.14)),
-       ("b", "c", "d", Content(DiscreteSchema(LongCodex), 42)),
-       ("c", "b", "e", Content(NominalSchema(StringCodex), "foo")))
+  List(("a", "d", "c", Content(ContinuousSchema[Double](), 3.14)),
+       ("b", "c", "d", Content(DiscreteSchema[Long](), 42)),
+       ("c", "b", "e", Content(NominalSchema[String](), "foo")))
     .saveAsIV(s"./tmp.${tool}/iv3.out")
     .toUnit
 
-  List(("a", "d", "c", "d", Content(ContinuousSchema(DoubleCodex), 3.14)),
-       ("b", "c", "d", "e", Content(DiscreteSchema(LongCodex), 42)),
-       ("c", "b", "e", "f", Content(NominalSchema(StringCodex), "foo")))
+  List(("a", "d", "c", "d", Content(ContinuousSchema[Double](), 3.14)),
+       ("b", "c", "d", "e", Content(DiscreteSchema[Long](), 42)),
+       ("c", "b", "e", "f", Content(NominalSchema[String](), "foo")))
     .saveAsIV(s"./tmp.${tool}/iv4.out")
     .toUnit
 
-  List(("a", "d", "c", "d", "e", Content(ContinuousSchema(DoubleCodex), 3.14)),
-       ("b", "c", "d", "e", "f", Content(DiscreteSchema(LongCodex), 42)),
-       ("c", "b", "e", "f", "g", Content(NominalSchema(StringCodex), "foo")))
+  List(("a", "d", "c", "d", "e", Content(ContinuousSchema[Double](), 3.14)),
+       ("b", "c", "d", "e", "f", Content(DiscreteSchema[Long](), 42)),
+       ("c", "b", "e", "f", "g", Content(NominalSchema[String](), "foo")))
     .saveAsIV(s"./tmp.${tool}/iv5.out")
     .toUnit
 
-  List(("a", "d", "c", "d", "e", "f", Content(ContinuousSchema(DoubleCodex), 3.14)),
-       ("b", "c", "d", "e", "f", "g", Content(DiscreteSchema(LongCodex), 42)),
-       ("c", "b", "e", "f", "g", "h", Content(NominalSchema(StringCodex), "foo")))
+  List(("a", "d", "c", "d", "e", "f", Content(ContinuousSchema[Double](), 3.14)),
+       ("b", "c", "d", "e", "f", "g", Content(DiscreteSchema[Long](), 42)),
+       ("c", "b", "e", "f", "g", "h", Content(NominalSchema[String](), "foo")))
     .saveAsIV(s"./tmp.${tool}/iv6.out")
     .toUnit
 
-  List(("a", "d", "c", "d", "e", "f", "g", Content(ContinuousSchema(DoubleCodex), 3.14)),
-       ("b", "c", "d", "e", "f", "g", "h", Content(DiscreteSchema(LongCodex), 42)),
-       ("c", "b", "e", "f", "g", "h", "i", Content(NominalSchema(StringCodex), "foo")))
+  List(("a", "d", "c", "d", "e", "f", "g", Content(ContinuousSchema[Double](), 3.14)),
+       ("b", "c", "d", "e", "f", "g", "h", Content(DiscreteSchema[Long](), 42)),
+       ("c", "b", "e", "f", "g", "h", "i", Content(NominalSchema[String](), "foo")))
     .saveAsIV(s"./tmp.${tool}/iv7.out")
     .toUnit
 
-  List(("a", "d", "c", "d", "e", "f", "g", "h", Content(ContinuousSchema(DoubleCodex), 3.14)),
-       ("b", "c", "d", "e", "f", "g", "h", "i", Content(DiscreteSchema(LongCodex), 42)),
-       ("c", "b", "e", "f", "g", "h", "i", "j", Content(NominalSchema(StringCodex), "foo")))
+  List(("a", "d", "c", "d", "e", "f", "g", "h", Content(ContinuousSchema[Double](), 3.14)),
+       ("b", "c", "d", "e", "f", "g", "h", "i", Content(DiscreteSchema[Long](), 42)),
+       ("c", "b", "e", "f", "g", "h", "i", "j", Content(NominalSchema[String](), "foo")))
     .saveAsIV(s"./tmp.${tool}/iv8.out")
     .toUnit
 
-  List(("a", "d", "c", "d", "e", "f", "g", "h", "i", Content(ContinuousSchema(DoubleCodex), 3.14)),
-       ("b", "c", "d", "e", "f", "g", "h", "i", "j", Content(DiscreteSchema(LongCodex), 42)),
-       ("c", "b", "e", "f", "g", "h", "i", "j", "k", Content(NominalSchema(StringCodex), "foo")))
+  List(("a", "d", "c", "d", "e", "f", "g", "h", "i", Content(ContinuousSchema[Double](), 3.14)),
+       ("b", "c", "d", "e", "f", "g", "h", "i", "j", Content(DiscreteSchema[Long](), 42)),
+       ("c", "b", "e", "f", "g", "h", "i", "j", "k", Content(NominalSchema[String](), "foo")))
     .saveAsIV(s"./tmp.${tool}/iv9.out")
     .toUnit
 }
@@ -1151,22 +1151,22 @@ class TestScalding33(args: Args) extends Job(args) {
   implicit val ctx = Context()
   val tool = "scalding"
 
-  val data = List(("a", "one", Content(ContinuousSchema(DoubleCodex), 3.14)),
-    ("a", "two", Content(NominalSchema(StringCodex), "foo")),
-    ("a", "three", Content(DiscreteSchema(LongCodex), 42)),
-    ("b", "one", Content(ContinuousSchema(DoubleCodex), 6.28)),
-    ("b", "two", Content(DiscreteSchema(LongCodex), 123)),
-    ("b", "three", Content(ContinuousSchema(DoubleCodex), 9.42)),
-    ("c", "two", Content(NominalSchema(StringCodex), "bar")),
-    ("c", "three", Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val data = List(("a", "one", Content(ContinuousSchema[Double](), 3.14)),
+    ("a", "two", Content(NominalSchema[String](), "foo")),
+    ("a", "three", Content(DiscreteSchema[Long](), 42)),
+    ("b", "one", Content(ContinuousSchema[Double](), 6.28)),
+    ("b", "two", Content(DiscreteSchema[Long](), 123)),
+    ("b", "three", Content(ContinuousSchema[Double](), 9.42)),
+    ("c", "two", Content(NominalSchema[String](), "bar")),
+    ("c", "three", Content(ContinuousSchema[Double](), 12.56)))
 
   val labels = IterablePipe(
-    List(Cell(Position1D("a"), Content(DiscreteSchema(LongCodex), 1)),
-      Cell(Position1D("b"), Content(DiscreteSchema(LongCodex), 2))))
+    List(Cell(Position1D("a"), Content(DiscreteSchema[Long](), 1)),
+      Cell(Position1D("b"), Content(DiscreteSchema[Long](), 2))))
 
   val importance = IterablePipe(
-    List(Cell(Position1D("a"), Content(ContinuousSchema(DoubleCodex), 0.5)),
-      Cell(Position1D("b"), Content(ContinuousSchema(DoubleCodex), 0.75))))
+    List(Cell(Position1D("a"), Content(ContinuousSchema[Double](), 0.5)),
+      Cell(Position1D("b"), Content(ContinuousSchema[Double](), 0.75))))
 
   data
     .saveAsVW(Over(First), s"./tmp.${tool}/vw0.out", tag=false)

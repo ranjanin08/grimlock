@@ -94,15 +94,15 @@ case class HashSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Int, Int)
  * @param date  The date around which to split.
  * @param left  The identifier for the left partition.
  * @param right The identifier for the right partition.
- * @param codex  The date codex used for comparison.
+ * @param codec The date codec used for comparison.
  *
  * @note The position is assigned to the `left` partition if it is less or equal to the `date` value, to `right`
  *       otherwise.
  */
 case class BinaryDateSplit[P <: Position, S](dim: Dimension, date: Date, left: S, right: S,
-  codex: DateCodex) extends Partitioner[P, S] {
+  codec: DateCodec) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
-    codex.compare(cell.position(dim), codex.toValue(date)).map { case cmp => if (cmp <= 0) left else right }
+    codec.compare(cell.position(dim), DateValue(date, codec)).map { case cmp => if (cmp <= 0) left else right }
   }
 }
 
@@ -115,16 +115,16 @@ case class BinaryDateSplit[P <: Position, S](dim: Dimension, date: Date, left: S
  * @param left   The identifier for the left partition.
  * @param middle The identifier for the middle partition.
  * @param right  The identifier for the right partition.
- * @param codex  The date codex used for comparison.
+ * @param codec  The date codec used for comparison.
  *
  * @note The position is assigned to the partition `left` if it is less or equal to `lower`, `middle` if it is less or
  *       equal to `upper` or else to `right`.
  */
 case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper: Date, left: S, middle: S, right: S,
-  codex: DateCodex) extends Partitioner[P, S] {
+  codec: DateCodec) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
-    (codex.compare(cell.position(dim), codex.toValue(lower)),
-      codex.compare(cell.position(dim), codex.toValue(upper))) match {
+    (codec.compare(cell.position(dim), DateValue(lower, codec)),
+      codec.compare(cell.position(dim), DateValue(upper, codec))) match {
         case (Some(l), Some(u)) => Some(if (l <= 0) left else if (u <= 0) middle else right)
         case _ => None
       }
@@ -136,19 +136,19 @@ case class TernaryDateSplit[P <: Position, S](dim: Dimension, lower: Date, upper
  *
  * @param dim    The dimension to partition on.
  * @param ranges A `Map` holding the partitions and date ranges for each partition.
- * @param codex  The date codex used for comparison.
+ * @param codec  The date codec used for comparison.
  *
  * @note A position falls in a range if it is (strictly) greater than the lower value (first value in tuple) and less
  *       or equal to the upper value (second value in tuple).
  */
 case class DateSplit[P <: Position, S](dim: Dimension, ranges: Map[S, (Date, Date)],
-  codex: DateCodex) extends Partitioner[P, S] {
+  codec: DateCodec) extends Partitioner[P, S] {
   def assign(cell: Cell[P]): TraversableOnce[S] = {
     ranges
       .flatMap {
         case (k, (lower, upper)) =>
-          (codex.compare(cell.position(dim), codex.toValue(lower)),
-            codex.compare(cell.position(dim), codex.toValue(upper))) match {
+          (codec.compare(cell.position(dim), DateValue(lower, codec)),
+            codec.compare(cell.position(dim), DateValue(upper, codec))) match {
               case (Some(l), Some(u)) if (l > 0 && u <= 0) => Some(k)
               case _ => None
             }

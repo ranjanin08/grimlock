@@ -38,7 +38,7 @@ import scala.io.Source
 case class CeilingBucketing() extends Transformer[Position2D, Position2D] {
   def present(cell: Cell[Position2D]): TraversableOnce[Cell[Position2D]] = {
     val con = (cell.content.schema.kind.isSpecialisationOf(Type.Numerical), cell.content.value.asDouble) match {
-      case (true, Some(d)) => Content(NominalSchema(LongCodex), math.ceil(d).toLong)
+      case (true, Some(d)) => Content(NominalSchema[Long](), math.ceil(d).toLong)
       case _ => cell.content
     }
 
@@ -66,7 +66,7 @@ object MutualInformation {
     //    (instance x feature).
     // 4/ Bucket all continuous variables by rounding them.
     val data = loadText(s"${path}/exampleMutual.txt",
-        Cell.parse3DWithDictionary(dictionary, Second, third = DateCodex()))
+        Cell.parse3DWithDictionary(dictionary, Second, third = DateCodec()))
       .data
       .squash(Third, PreservingMinPosition[Position3D]())
       .transform(CeilingBucketing())

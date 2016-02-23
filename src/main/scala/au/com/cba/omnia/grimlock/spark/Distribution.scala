@@ -25,7 +25,6 @@ import au.com.cba.omnia.grimlock.framework.{
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.distribution.{ ApproximateDistribution => FwApproximateDistribution, _ }
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
@@ -46,7 +45,7 @@ trait ApproximateDistribution[P <: Position] extends FwApproximateDistribution[P
       .filter { case c => (!filter || c.content.schema.kind.isSpecialisationOf(Type.Categorical)) }
       .flatMap { case c => name(slice.selected(c.position), c.content).map((_, 1L)) }
       .tunedReduce(tuner.parameters, _ + _)
-      .map { case (p, s) => Cell(p, Content(DiscreteSchema(LongCodex), s)) }
+      .map { case (p, s) => Cell(p, Content(DiscreteSchema[Long](), s)) }
   }
 
   type QuantileTuners = TP1

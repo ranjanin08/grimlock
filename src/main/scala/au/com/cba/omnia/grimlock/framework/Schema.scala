@@ -14,27 +14,35 @@
 
 package au.com.cba.omnia.grimlock.framework.content.metadata
 
-import java.util.Date
-
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.encoding._
+
+import java.util.Date
 
 import scala.reflect._
 
 /** Base trait for variable schemas. */
 trait Schema {
+  /** Type of the schema's data. */
   type S
 
   /** The type of variable. */
   val kind: Type
 
+  /**
+   * Validates if a value confirms to this schema.
+   *
+   * @param value The value to validate.
+   *
+   * @return True is the value confirms to this schema, false otherwise.
+   */
   def validate(value: Value { type V = S }): Boolean
 
   /**
     * Return a consise (terse) string representation of a schema.
     *
-    * @param separator Separator to use between various fields.
+    * @param codec The codec used to encode this schema's data.
     */
   def toShortString(codec: Codec { type C = S }): String = {
     kind.toShortString + round(paramString(true, s => codec.encode(s)))
@@ -51,19 +59,29 @@ trait Schema {
   private def square(str: String): String = if (str.isEmpty) str else "[" + str + "]"
 }
 
+/** Companion object to the `Schema` trait. */
 object Schema {
-  def fromShortString(codec: Codec, str: String): Option[Schema { type S = codec.C }] = {
+  /**
+   * Parse a schema from a string.
+   *
+   * @param str String from which to parse the schema.
+   * @param cdc Codec with which to decode the data.
+   *
+   * @return A `Some[Schema]` in case of success, `None` otherwise.
+   */
+  def fromShortString(str: String, cdc: Codec): Option[Schema { type S = cdc.C }] = {
     str match {
-      case ContinuousSchema.Pattern(_) => ContinuousSchema.fromShortString(str, codec)
-      case DiscreteSchema.Pattern(_, _) => DiscreteSchema.fromShortString(str, codec)
-      case NominalSchema.Pattern(_) => NominalSchema.fromShortString(str, codec)
-      case OrdinalSchema.Pattern(_) => OrdinalSchema.fromShortString(str, codec)
-      case DateSchema.Pattern(_) => DateSchema.fromShortString(str, codec)
+      case ContinuousSchema.Pattern(_) => ContinuousSchema.fromShortString(str, cdc)
+      case DiscreteSchema.Pattern(_, _) => DiscreteSchema.fromShortString(str, cdc)
+      case NominalSchema.Pattern(_) => NominalSchema.fromShortString(str, cdc)
+      case OrdinalSchema.Pattern(_) => OrdinalSchema.fromShortString(str, cdc)
+      case DateSchema.Pattern(_) => DateSchema.fromShortString(str, cdc)
       case _ => None
     }
   }
 }
 
+/** Trait for dealing with schema parameters. */
 trait SchemaParameters {
   protected def parse(codec: Codec, value: String): Option[codec.C] = codec.decode(value).map(_.value)
 
@@ -116,7 +134,8 @@ trait NumericalSchema[T] extends Schema {
  * Schema for continuous variables.
  *
  * @param range The optional range of the variable.
-  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
+ *
+ * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
  *       object.
  */
 case class ContinuousSchema[T: ClassTag] private (range: Option[(T, T)])(
@@ -129,34 +148,37 @@ case class ContinuousSchema[T: ClassTag] private (range: Option[(T, T)])(
   protected def typeString(): String = classTag[T].runtimeClass.getSimpleName
 }
 
+/** Companion object to `ContinuousSchema` case class. */
 object ContinuousSchema extends SchemaParameters {
-  /** Pattern for matching short string continuous value with parameters. */
+  /** Pattern for matching short string continuous schema. */
   val Pattern = (Type.Continuous.name + """(?:\((?:(.*?:.*))?\))?""").r
 
+  /** Construct a continuous schema with unbounded range. */
   def apply[T: ClassTag]()(implicit ev: Numeric[T]): ContinuousSchema[T] = ContinuousSchema(None)
 
   /**
-    * Construct a continuous schema with bounded range.
-    *
-    * @param lower The lower bound (minimum value).
-    * @param upper The upper bound (maximum value).
-    */
+   * Construct a continuous schema with bounded range.
+   *
+   * @param lower The lower bound (minimum value).
+   * @param upper The upper bound (maximum value).
+   */
   def apply[T: ClassTag](lower: T, upper: T)(implicit ev: Numeric[T]): ContinuousSchema[T] = {
     ContinuousSchema(Some((lower, upper)))
   }
 
   /**
-    * Parse continuous schema parameters
-    *
-    * @param str The string representation
-    * @param codec The codec to parse with.
-    * @return An `Option` of `ContinuousSchema` if all parameters parse correctly, `None` otherwise.
-    */
-  def fromShortString(str: String, codec: Codec): Option[ContinuousSchema[codec.C]] = {
-    (codec.tag, codec.numeric, str) match {
+   * Parse a continuous schema from string.
+   *
+   * @param str The string to parse
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[ContinuousSchema]` if successful, `None` otherwise.
+   */
+  def fromShortString(str: String, cdc: Codec): Option[ContinuousSchema[cdc.C]] = {
+    (cdc.tag, cdc.numeric, str) match {
       case (Some(tag), Some(ev), Pattern(null)) => Some(ContinuousSchema()(tag, ev))
       case (Some(tag), Some(ev), Pattern(range)) =>
-        parseRange(codec, range).map { case (lower, upper) => ContinuousSchema(lower, upper)(tag, ev) }
+        parseRange(cdc, range).map { case (lower, upper) => ContinuousSchema(lower, upper)(tag, ev) }
       case _ => None
     }
   }
@@ -165,9 +187,10 @@ object ContinuousSchema extends SchemaParameters {
 /**
  * Schema for discrete variables.
  *
- * @param range   The optional range of the variable
- * @param step    The optional step size.
-  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
+ * @param range The optional range of the variable
+ * @param step  The optional step size.
+ *
+ * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
  *       object.
  */
 case class DiscreteSchema[T: ClassTag] private (range: Option[(T, T)], step: Option[T])(
@@ -186,38 +209,38 @@ case class DiscreteSchema[T: ClassTag] private (range: Option[(T, T)], step: Opt
   protected def typeString(): String = classTag[T].runtimeClass.getSimpleName
 }
 
+/** Companion object to `DiscreteSchema` case class. */
 object DiscreteSchema extends SchemaParameters {
+  /** Pattern for matching short string discrete schema. */
   val Pattern = (Type.Discrete.name + """(?:\((?:(.*?:.*?),(.*))?\))?""").r
 
-  /**
-    * Construct a discrete schema with unbounded range and step size 1.
-    *
-    */
+  /** Construct a discrete schema with unbounded range and step size 1. */
   def apply[T: ClassTag]()(implicit ev: Integral[T]): DiscreteSchema[T] = DiscreteSchema(None, None)
 
   /**
-    * Construct a discrete schema with bounded range and step size.
-    *
-    * @param lower The lower bound (minimum value).
-    * @param upper The upper bound (maximum value).
-    * @param step    The step size.
-    */
+   * Construct a discrete schema with bounded range and step size.
+   *
+   * @param lower The lower bound (minimum value).
+   * @param upper The upper bound (maximum value).
+   * @param step  The step size.
+   */
   def apply[T: ClassTag](lower: T, upper: T, step: T)(implicit ev: Integral[T]): DiscreteSchema[T] = {
     DiscreteSchema(Some((lower, upper)), Some(step))
   }
 
   /**
-    * Parse discrete schema parameters
-    *
-    * @param str The string to parse
-    * @param codec The codex to parse with.
-    * @return An `Option` of `DiscreteSchema` if all parameters parse correctly, `None` otherwise.
-    */
-  def fromShortString(str: String, codec: Codec): Option[DiscreteSchema[codec.C]] = {
-    (codec.tag, codec.integral, str) match {
+   * Parse a discrete schema from string.
+   *
+   * @param str The string to parse
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[DiscreteSchema]` if successful, `None` otherwise.
+   */
+  def fromShortString(str: String, cdc: Codec): Option[DiscreteSchema[cdc.C]] = {
+    (cdc.tag, cdc.integral, str) match {
       case (Some(tag), Some(ev), Pattern(null, null)) => Some(DiscreteSchema()(tag, ev))
       case (Some(tag), Some(ev), Pattern(range, step)) => {
-        (parseRange(codec, range), parse(codec, step)) match {
+        (parseRange(cdc, range), parse(cdc, step)) match {
           case (Some((lower, upper)), Some(step)) => Some(DiscreteSchema(lower, upper, step)(tag, ev))
           case _ => None
         }
@@ -231,7 +254,7 @@ object DiscreteSchema extends SchemaParameters {
 trait CategoricalSchema[T] extends Schema with SchemaParameters {
   type S = T
 
-  /** values the variable can take. */
+  /** Values the variable can take. */
   val domain: Set[S]
 
   def validate(value: Value { type V = S }): Boolean = domain.isEmpty || domain.contains(value.value)
@@ -240,45 +263,43 @@ trait CategoricalSchema[T] extends Schema with SchemaParameters {
 }
 
 /**
-  * Schema for nominal variables.
-  *
-  * @param domain The values of the variable.
-  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
-  *       object.
-  */
+ * Schema for nominal variables.
+ *
+ * @param domain The values of the variable.
+ */
 case class NominalSchema[T: ClassTag](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
   val kind = Type.Nominal
 
   protected def typeString(): String = classTag[T].runtimeClass.getSimpleName
 }
 
-/** Companion object to `NominalSchema`. */
+/** Companion object to `NominalSchema` case class. */
 object NominalSchema extends SchemaParameters {
+  /** Pattern for matching short string nominal schema. */
   val Pattern = (Type.Nominal.name + """(?:\((?:(.*?))?\))?""").r
 
   /**
-    * Parse nominal schema parameters
-    *
-    * @param str The string to parse
-    * @param codec  The codex to parse with.
-    * @return An `Option` of `NominalSchema` if all parameters parse correctly, `None` otherwise.
-    */
-  def fromShortString(str: String, codec: Codec): Option[NominalSchema[codec.C]] = {
-    (codec.tag, str) match {
+   * Parse a nominal schema from string.
+   *
+   * @param str The string to parse
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[NominalSchema]` if successful, `None` otherwise.
+   */
+  def fromShortString(str: String, cdc: Codec): Option[NominalSchema[cdc.C]] = {
+    (cdc.tag, str) match {
       case (Some(tag), Pattern(null)) => Some(NominalSchema()(tag))
-      case (Some(tag), Pattern(domain)) => parseSet(codec, domain).map(NominalSchema(_)(tag))
+      case (Some(tag), Pattern(domain)) => parseSet(cdc, domain).map(NominalSchema(_)(tag))
       case _ => None
     }
   }
 }
 
 /**
-  * Schema for ordinal variables.
-  *
-  * @param domain The optional values of the variable.
-  * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
-  *       object.
-  */
+ * Schema for ordinal variables.
+ *
+ * @param domain The optional values of the variable.
+ */
 case class OrdinalSchema[T: ClassTag](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
   val kind = Type.Ordinal
 
@@ -286,30 +307,35 @@ case class OrdinalSchema[T: ClassTag](domain: Set[T] = Set[T]()) extends Categor
 }
 
 /** Companion object to `OrdinalSchema`. */
-
 object OrdinalSchema extends SchemaParameters {
-
-  /** Pattern for matching short string ordinal value with parameters. */
+  /** Pattern for matching short string ordinal schema. */
   val Pattern = (Type.Ordinal.name + """(?:\((?:(.*?))?\))?""").r
 
   /**
-    * Parse ordinal schema parameters
-    *
-    * @param str The string to parse
-    * @param codec  The codex to parse with.
-    * @return An `Option` of `OrdinalSchema` if all parameters parse correctly, `None` otherwise.
-    */
-
-  def fromShortString(str: String, codec: Codec): Option[OrdinalSchema[codec.C]] = {
-    (codec.tag, str) match {
+   * Parse a ordinal schema from string.
+   *
+   * @param str The string to parse
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[OrdinalSchema]` if successful, `None` otherwise.
+   */
+  def fromShortString(str: String, cdc: Codec): Option[OrdinalSchema[cdc.C]] = {
+    (cdc.tag, str) match {
       case (Some(tag), Pattern(null)) => Some(OrdinalSchema()(tag))
-      case (Some(tag), Pattern(domain)) => parseSet(codec, domain).map(OrdinalSchema(_)(tag))
+      case (Some(tag), Pattern(domain)) => parseSet(cdc, domain).map(OrdinalSchema(_)(tag))
       case _ => None
     }
   }
 }
 
-/** Schema for date variables. */
+/**
+ * Schema for date variables.
+ *
+ * @param dates The optional values of the variable.
+ *
+ * @note The constructor is private to ensure a clean interface as provided by the `apply` methods of the companion
+ *       object.
+ */
 case class DateSchema[T: ClassTag] private (dates: Option[Either[(T, T), Set[T]]])(
   implicit ev: T => Date) extends Schema with SchemaParameters {
   type S = T
@@ -334,22 +360,46 @@ case class DateSchema[T: ClassTag] private (dates: Option[Either[(T, T), Set[T]]
   protected def typeString(): String = classTag[T].runtimeClass.getName
 }
 
+/** Companion object to `DateSchema`. */
 object DateSchema extends SchemaParameters {
+  /** Pattern for matching short string date schema. */
   val Pattern = (Type.Date.name + """(?:\((?:(.*?))?\))?""").r
 
+  /** Construct an unbounded date schema. */
   def apply[T: ClassTag]()(implicit ev: T => Date): DateSchema[T] = DateSchema[T](None)
+
+  /**
+   * Construct a date schema with bounded range.
+   *
+   * @param lower The lower bound (minimum value).
+   * @param upper The upper bound (maximum value).
+   */
   def apply[T: ClassTag](lower: T, upper: T)(implicit ev: T => Date): DateSchema[T] = {
     DateSchema[T](Some(Left((lower, upper))))
   }
+
+  /**
+   * Construct a date schema with a set of valid dates.
+   *
+   * @param domain The set of legal values.
+   */
   def apply[T: ClassTag](domain: Set[T])(implicit ev: T => Date): DateSchema[T] = DateSchema[T](Some(Right(domain)))
 
-  def fromShortString(str: String, codec: Codec): Option[DateSchema[codec.C]] = {
-    (codec.tag, codec.date, str) match {
+  /**
+   * Parse a date schema from string.
+   *
+   * @param str The string to parse
+   * @param cdc The codec to parse with.
+   *
+   * @return A `Some[DateSchema]` if successful, `None` otherwise.
+   */
+  def fromShortString(str: String, cdc: Codec): Option[DateSchema[cdc.C]] = {
+    (cdc.tag, cdc.date, str) match {
       case (Some(tag), Some(ev), Pattern(null)) => Some(DateSchema()(tag, ev))
       case (Some(tag), Some(ev), Pattern("")) => Some(DateSchema()(tag, ev))
       case (Some(tag), Some(ev), RangePattern(range)) =>
-        parseRange(codec, range).map { case (lower, upper) => DateSchema(lower, upper)(tag, ev) }
-      case (Some(tag), Some(ev), Pattern(domain)) => parseSet(codec, domain).map(DateSchema(_)(tag, ev))
+        parseRange(cdc, range).map { case (lower, upper) => DateSchema(lower, upper)(tag, ev) }
+      case (Some(tag), Some(ev), Pattern(domain)) => parseSet(cdc, domain).map(DateSchema(_)(tag, ev))
       case _ => None
     }
   }
@@ -359,3 +409,4 @@ object DateSchema extends SchemaParameters {
 
 /** Schema for structured data variables. */
 trait StructuredSchema extends Schema
+

@@ -17,7 +17,6 @@ package au.com.cba.omnia.grimlock.framework.distribution
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility._
 
@@ -124,7 +123,7 @@ private[grimlock] case class QuantileImpl[P <: Position, S <: Position with Expa
 
   def present(pos: S, out: O): Option[Cell[Q]] = {
     if (!out._2.isNaN || nan) {
-      position(pos, out._1).map(Cell(_, Content(ContinuousSchema(DoubleCodex), round(out._2))))
+      position(pos, out._1).map(Cell(_, Content(ContinuousSchema[Double](), round(out._2))))
     } else {
       None
     }

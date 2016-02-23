@@ -31,70 +31,76 @@ trait Structured
 
 /** Base trait for variable values. */
 trait Value {
+  /** Type of  the value. */
   type V
 
+  /** The encapsulated value. */
   val value: V
 
   /** The codex used to encode/decode this value. */
   val codec: Codec { type C = V }
 
   /**
-    * Check for equality with `that`.
-    *
-    * @param that Value to compare against.
-    */
+   * Check for equality with `that`.
+   *
+   * @param that Value to compare against.
+   */
   def equ(that: Valueable): Boolean = evaluate(that, Equal)
 
   /**
-    * Check for in-equality with `that`.
-    *
-    * @param that Value to compare against.
-    */
+   * Check for in-equality with `that`.
+   *
+   * @param that Value to compare against.
+   */
   def neq(that: Valueable): Boolean = !(this equ that)
 
   /**
-    * Check for for match with `that` regular expression.
-    *
-    * @param that Regular expression to match against.
-    *
-    * @note This always applies `toShortString` method before matching.
-    */
+   * Check for for match with `that` regular expression.
+   *
+   * @param that Regular expression to match against.
+   *
+   * @note This always applies `toShortString` method before matching.
+   */
   def like(that: Regex): Boolean = that.pattern.matcher(this.toShortString).matches
 
+  // Note: These next 4 methods implement comparison in a non-standard way when comparing two objects that can't be
+  //       compared. In such cases the result is always false. This is the desired behaviour for the 'which' method
+  //       (i.e. a filter).
+
   /**
-    * Check if `this` is less than `that`.
-    *
-    * @param that Value to compare against.
-    *
-    * @note If `that` is of a different type than `this`, then the result is always `false`.
-    */
+   * Check if `this` is less than `that`.
+   *
+   * @param that Value to compare against.
+   *
+   * @note If `that` is of a different type than `this`, then the result is always `false`.
+   */
   def lss(that: Valueable): Boolean = evaluate(that, Less)
 
   /**
-    * Check if `this` is less or equal to `that`.
-    *
-    * @param that Value to compare against.
-    *
-    * @note If `that` is of a different type than `this`, then the result is always `false`.
-    */
+   * Check if `this` is less or equal to `that`.
+   *
+   * @param that Value to compare against.
+   *
+   * @note If `that` is of a different type than `this`, then the result is always `false`.
+   */
   def leq(that: Valueable): Boolean = evaluate(that, LessEqual)
 
   /**
-    * Check if `this` is greater than `that`.
-    *
-    * @param that Value to compare against.
-    *
-    * @note If `that` is of a different type than `this`, then the result is always `false`.
-    */
+   * Check if `this` is greater than `that`.
+   *
+   * @param that Value to compare against.
+   *
+   * @note If `that` is of a different type than `this`, then the result is always `false`.
+   */
   def gtr(that: Valueable): Boolean = evaluate(that, Greater)
 
   /**
-    * Check if `this` is greater or equal to `that`.
-    *
-    * @param that Value to compare against.
-    *
-    * @note If `that` is of a different type than `this`, then the result is always `false`.
-    */
+   * Check if `this` is greater or equal to `that`.
+   *
+   * @param that Value to compare against.
+   *
+   * @note If `that` is of a different type than `this`, then the result is always `false`.
+   */
   def geq(that: Valueable): Boolean = evaluate(that, GreaterEqual)
 
   /** Return value as `java.util.Date`. */
@@ -128,23 +134,31 @@ trait Value {
   }
 }
 
-
+/** Compantion object to the `Value` trait. */
 object Value {
+  /** Define an ordering between 2 values. Only use with values of the same type. */
   val Ordering: Ordering[Value] = new Ordering[Value] {
     def compare(x: Value, y: Value): Int = {
       x.codec.compare(x, y).getOrElse(throw new Exception("unable to compare different values."))
     }
   }
 
-  // TODO: This introduces a cyclic reference - is there a way around it?
-  //def fromShortString(str: String, codec: Codec): Option[Value { type V = codec.C }] = codec.decode(str)
+  /**
+   * Parse a value from string.
+   *
+   * @param str The string to parse.
+   * @param cdc The codec to decode with.
+   *
+   * @return A `Some[Value]` if successful, `None` otherwise.
+   */
+  def fromShortString(str: String, cdc: Codec): Option[Value { type V = cdc.C }] = cdc.decode(str)
 }
 
 /**
  * Value for when the data is of type `java.util.Date`
  *
  * @param value A `java.util.Date`.
- * @param codec The codex used for encoding/decoding `value`.
+ * @param codec The codec used for encoding/decoding `value`.
  */
 case class DateValue(value: Date, codec: Codec { type C = Date } = DateCodec()) extends Value {
   type V = Date
@@ -152,7 +166,9 @@ case class DateValue(value: Date, codec: Codec { type C = Date } = DateCodec()) 
   override def asDate = Some(value)
 }
 
+/** Companion object to `DateValue` case class. */
 object DateValue {
+  /** Convenience constructure that returns a `DateValue` from a date and format string. */
   def apply(value: Date, format: String): DateValue = DateValue(value, DateCodec(format))
 }
 
@@ -167,6 +183,7 @@ case class StringValue(value: String, codec: Codec { type C = String } = StringC
 
   override def asString = Some(value)
 }
+
 /**
  * Value for when the data is of type `Double`.
  *
@@ -220,12 +237,14 @@ case class StructuredValue[U <: Structured, C <: StructuredCodec { type C = U }]
 
 /** Trait for transforming a type `T` into a `Value`. */
 trait Valueable extends java.io.Serializable {
+  /** Type of the actual value. */
   type T
 
-  // TODO: Is it necessary to know the specific type of `Value`, or is knowledge of `V` sufficient?
+  /** Return a `Value` for this type `T`. */
   def apply(): Value { type V = T }
 }
 
+/** Companion object to the `Valuable` trait. */
 object Valueable {
   /** Converts a `Value` to a `Value`; that is, it's a pass through. */
   implicit def VV[T <: Value](t: T): Valueable { type T = t.V } = {
@@ -235,6 +254,7 @@ object Valueable {
       def apply(): Value { type V = T } = t
     }
   }
+
   /** Converts a `String` to a `Value`. */
   implicit def SV(t: String): Valueable { type T = String } = {
     new Valueable {
@@ -243,6 +263,7 @@ object Valueable {
       def apply(): Value { type V = T } = StringValue(t)
     }
   }
+
   /** Converts a `Double` to a `Value`. */
   implicit def DV(t: Double): Valueable { type T = Double } = {
     new Valueable {
@@ -251,6 +272,7 @@ object Valueable {
       def apply(): Value { type V = T } = DoubleValue(t)
     }
   }
+
   /** Converts a `Long` to a `Value`. */
   implicit def LV(t: Long): Valueable { type T = Long } = {
     new Valueable {
@@ -259,6 +281,7 @@ object Valueable {
       def apply(): Value { type V = T } = LongValue(t)
     }
   }
+
   /** Converts a `Int` to a `Value`. */
   implicit def IV(t: Int): Valueable { type T = Long } = {
     new Valueable {
@@ -267,6 +290,7 @@ object Valueable {
       def apply(): Value { type V = T } = LongValue(t)
     }
   }
+
   /** Converts a `Boolean` to a `Value`. */
   implicit def BV(t: Boolean): Valueable { type T = Boolean } = {
     new Valueable {
@@ -276,3 +300,4 @@ object Valueable {
     }
   }
 }
+
