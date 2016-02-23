@@ -15,7 +15,6 @@
 package au.com.cba.omnia.grimlock.framework.content.metadata
 
 import au.com.cba.omnia.grimlock.framework._
-import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.encoding._
 
 import java.util.Date

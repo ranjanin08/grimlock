@@ -65,15 +65,15 @@ object TestSparkReader {
       .flatMap {
         _.trim.split(java.util.regex.Pattern.quote("|"), 4) match {
           case Array(i, f, e, v) =>
-            val schema = e match {
-              case StringCodex.name => NominalSchema[String]()
+            val content = e match {
+              case "string" => StringCodec.decode(v).map { case c => Content(NominalSchema[String](), c) }
               case _ => scala.util.Try(v.toLong).toOption match {
-                case Some(_) => ContinuousSchema[Long](Long.MinValue, Long.MaxValue)
-                case None => ContinuousSchema[Double](Double.MinValue, Double.MaxValue)
+                case Some(_) => LongCodec.decode(v).map { case c => Content(ContinuousSchema[Long](), c) }
+                case None => DoubleCodec.decode(v).map { case c => Content(ContinuousSchema[Double](), c) }
               }
             }
 
-            schema.decode(v).map { case c => Cell(Position3D(i, f, hashDate(v)), c) }
+            content.map { case c => Cell(Position3D(i, f, hashDate(v)), c) }
           case _ => None
         }
       }
