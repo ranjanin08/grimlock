@@ -47,61 +47,61 @@ import com.twitter.scalding.typed.{ TypedPipe, ValuePipe }
 
 trait TestMatrix extends TestGrimlock {
 
-  val data1 = List(Cell(Position1D("foo"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position1D("bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position1D("baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val data1 = List(Cell(Position1D("foo"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position1D("bar"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position1D("baz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val data2 = List(Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val data2 = List(Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val data3 = List(Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val data3 = List(Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateVaue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val num1 = List(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position1D("qux"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val num1 = List(Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position1D("bar"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position1D("baz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position1D("qux"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val num2 = List(Cell(Position2D("foo", 1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("qux", 1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val num2 = List(Cell(Position2D("foo", 1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("qux", 1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 12.56)))
 
-  val num3 = List(Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val num3 = List(Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 12.56)))
 }
 
 class TestScaldingMatrixNames extends TestMatrix {
@@ -593,35 +593,35 @@ class TestSparkMatrixTypes extends TestMatrixTypes {
 
 trait TestMatrixSize extends TestMatrix {
 
-  val dataA = List(Cell(Position2D(1, 1), Content(OrdinalSchema(StringCodex), "a")),
-    Cell(Position2D(2, 2), Content(OrdinalSchema(StringCodex), "b")),
-    Cell(Position2D(3, 3), Content(OrdinalSchema(StringCodex), "c")))
+  val dataA = List(Cell(Position2D(1, 1), Content(OrdinalSchema[String](), "a")),
+    Cell(Position2D(2, 2), Content(OrdinalSchema[String](), "b")),
+    Cell(Position2D(3, 3), Content(OrdinalSchema[String](), "c")))
 
-  val result1 = List(Cell(Position1D("First"), Content(DiscreteSchema(LongCodex), 4)))
+  val result1 = List(Cell(Position1D("First"), Content(DiscreteSchema[Long](), 4)))
 
-  val result2 = List(Cell(Position1D("First"), Content(DiscreteSchema(LongCodex), 4)))
+  val result2 = List(Cell(Position1D("First"), Content(DiscreteSchema[Long](), 4)))
 
-  val result3 = List(Cell(Position1D("First"), Content(DiscreteSchema(LongCodex), 4)))
+  val result3 = List(Cell(Position1D("First"), Content(DiscreteSchema[Long](), 4)))
 
-  val result4 = List(Cell(Position1D("First"), Content(DiscreteSchema(LongCodex), data2.length)))
+  val result4 = List(Cell(Position1D("First"), Content(DiscreteSchema[Long](), data2.length)))
 
-  val result5 = List(Cell(Position1D("Second"), Content(DiscreteSchema(LongCodex), 4)))
+  val result5 = List(Cell(Position1D("Second"), Content(DiscreteSchema[Long](), 4)))
 
-  val result6 = List(Cell(Position1D("Second"), Content(DiscreteSchema(LongCodex), data2.length)))
+  val result6 = List(Cell(Position1D("Second"), Content(DiscreteSchema[Long](), data2.length)))
 
-  val result7 = List(Cell(Position1D("First"), Content(DiscreteSchema(LongCodex), 4)))
+  val result7 = List(Cell(Position1D("First"), Content(DiscreteSchema[Long](), 4)))
 
-  val result8 = List(Cell(Position1D("First"), Content(DiscreteSchema(LongCodex), data3.length)))
+  val result8 = List(Cell(Position1D("First"), Content(DiscreteSchema[Long](), data3.length)))
 
-  val result9 = List(Cell(Position1D("Second"), Content(DiscreteSchema(LongCodex), 4)))
+  val result9 = List(Cell(Position1D("Second"), Content(DiscreteSchema[Long](), 4)))
 
-  val result10 = List(Cell(Position1D("Second"), Content(DiscreteSchema(LongCodex), data3.length)))
+  val result10 = List(Cell(Position1D("Second"), Content(DiscreteSchema[Long](), data3.length)))
 
-  val result11 = List(Cell(Position1D("Third"), Content(DiscreteSchema(LongCodex), 1)))
+  val result11 = List(Cell(Position1D("Third"), Content(DiscreteSchema[Long](), 1)))
 
-  val result12 = List(Cell(Position1D("Third"), Content(DiscreteSchema(LongCodex), data3.length)))
+  val result12 = List(Cell(Position1D("Third"), Content(DiscreteSchema[Long](), data3.length)))
 
-  val result13 = List(Cell(Position1D("Second"), Content(DiscreteSchema(LongCodex), 3)))
+  val result13 = List(Cell(Position1D("Second"), Content(DiscreteSchema[Long](), 3)))
 }
 
 class TestScaldingMatrixSize extends TestMatrixSize {
@@ -788,14 +788,14 @@ class TestSparkMatrixSize extends TestMatrixSize {
 
 trait TestMatrixShape extends TestMatrix {
 
-  val result1 = List(Cell(Position1D("First"), Content(DiscreteSchema(LongCodex), 4)))
+  val result1 = List(Cell(Position1D("First"), Content(DiscreteSchema[Long](), 4)))
 
-  val result2 = List(Cell(Position1D("First"), Content(DiscreteSchema(LongCodex), 4)),
-    Cell(Position1D("Second"), Content(DiscreteSchema(LongCodex), 4)))
+  val result2 = List(Cell(Position1D("First"), Content(DiscreteSchema[Long](), 4)),
+    Cell(Position1D("Second"), Content(DiscreteSchema[Long](), 4)))
 
-  val result3 = List(Cell(Position1D("First"), Content(DiscreteSchema(LongCodex), 4)),
-    Cell(Position1D("Second"), Content(DiscreteSchema(LongCodex), 4)),
-    Cell(Position1D("Third"), Content(DiscreteSchema(LongCodex), 1)))
+  val result3 = List(Cell(Position1D("First"), Content(DiscreteSchema[Long](), 4)),
+    Cell(Position1D("Second"), Content(DiscreteSchema[Long](), 4)),
+    Cell(Position1D("Third"), Content(DiscreteSchema[Long](), 1)))
 }
 
 class TestScaldingMatrixShape extends TestMatrixShape {
@@ -842,132 +842,132 @@ class TestSparkMatrixShape extends TestMatrixShape {
 
 trait TestMatrixSlice extends TestMatrix {
 
-  val result1 = List(Cell(Position1D("baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position1D("foo"), Content(OrdinalSchema(StringCodex), "3.14")))
+  val result1 = List(Cell(Position1D("baz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position1D("foo"), Content(OrdinalSchema[String](), "3.14")))
 
-  val result2 = List(Cell(Position1D("bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result2 = List(Cell(Position1D("bar"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result3 = List(Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result3 = List(Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result4 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result4 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result5 = List(Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result5 = List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result6 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result6 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result7 = List(Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result7 = List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result8 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result8 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result9 = List(Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result9 = List(Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result10 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result10 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result11 = List(Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result11 = List(Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result12 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result12 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result13 = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result13 = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result14 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result14 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result15 = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result15 = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result16 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result16 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result17 = List(Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result17 = List(Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result18 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result18 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
   val result19 = List()
 
   val result20 = data3.sortBy(_.position)
 
-  val result21 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result21 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result22 = List(Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")))
+  val result22 = List(Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")))
 }
 
 class TestScaldingMatrixSlice extends TestMatrixSlice {
@@ -1334,8 +1334,8 @@ trait TestMatrixWhich extends TestMatrix {
 object TestMatrixWhich {
 
   def predicate[P <: Position](cell: Cell[P]): Boolean = {
-    (cell.content.schema == NominalSchema(StringCodex)) ||
-    (cell.content.schema.codex.isInstanceOf[Codex.DateCodex]) ||
+    (cell.content.schema == NominalSchema[String]()) ||
+    (cell.content.value.codec.isInstanceOf[DateCodec]) ||
     (cell.content.value equ "12.56")
   }
 }
@@ -1738,13 +1738,13 @@ class TestSparkMatrixWhich extends TestMatrixWhich {
 
 trait TestMatrixGet extends TestMatrix {
 
-  val result1 = List(Cell(Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result1 = List(Cell(Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result2 = List(Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result2 = List(Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result3 = List(Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result3 = List(Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 }
 
 class TestScaldingMatrixGet extends TestMatrixGet {
@@ -1813,134 +1813,134 @@ trait TestMatrixCompact extends TestMatrix {
   val result1 = data1.map { case c => c.position -> c.content }.toMap
 
   val result2 = Map(
-        Position1D("foo") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "3.14"),
-          Position1D(2) -> Content(ContinuousSchema(DoubleCodex), 6.28),
-          Position1D(3) -> Content(NominalSchema(StringCodex), "9.42"),
-          Position1D(4) -> Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-            (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-        Position1D("bar") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "6.28"),
-          Position1D(2) -> Content(ContinuousSchema(DoubleCodex), 12.56),
-          Position1D(3) -> Content(OrdinalSchema(LongCodex), 19)),
-        Position1D("baz") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "9.42"),
-          Position1D(2) -> Content(DiscreteSchema(LongCodex), 19)),
-        Position1D("qux") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "12.56")))
+        Position1D("foo") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "3.14"),
+          Position1D(2) -> Content(ContinuousSchema[Double](), 6.28),
+          Position1D(3) -> Content(NominalSchema[String](), "9.42"),
+          Position1D(4) -> Content(DateSchema[java.util.Date](),
+            DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+        Position1D("bar") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "6.28"),
+          Position1D(2) -> Content(ContinuousSchema[Double](), 12.56),
+          Position1D(3) -> Content(OrdinalSchema[Long](), 19)),
+        Position1D("baz") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "9.42"),
+          Position1D(2) -> Content(DiscreteSchema[Long](), 19)),
+        Position1D("qux") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "12.56")))
 
   val result3 = Map(
-        Position1D(1) -> Map(Position1D("foo") -> Content(OrdinalSchema(StringCodex), "3.14"),
-          Position1D("bar") -> Content(OrdinalSchema(StringCodex), "6.28"),
-          Position1D("baz") -> Content(OrdinalSchema(StringCodex), "9.42"),
-          Position1D("qux") -> Content(OrdinalSchema(StringCodex), "12.56")),
-        Position1D(2) -> Map(Position1D("foo") -> Content(ContinuousSchema(DoubleCodex), 6.28),
-          Position1D("bar") -> Content(ContinuousSchema(DoubleCodex), 12.56),
-          Position1D("baz") -> Content(DiscreteSchema(LongCodex), 19)),
-        Position1D(3) -> Map(Position1D("foo") -> Content(NominalSchema(StringCodex), "9.42"),
-          Position1D("bar") -> Content(OrdinalSchema(LongCodex), 19)),
-        Position1D(4) -> Map(Position1D("foo") -> Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+        Position1D(1) -> Map(Position1D("foo") -> Content(OrdinalSchema[String](), "3.14"),
+          Position1D("bar") -> Content(OrdinalSchema[String](), "6.28"),
+          Position1D("baz") -> Content(OrdinalSchema[String](), "9.42"),
+          Position1D("qux") -> Content(OrdinalSchema[String](), "12.56")),
+        Position1D(2) -> Map(Position1D("foo") -> Content(ContinuousSchema[Double](), 6.28),
+          Position1D("bar") -> Content(ContinuousSchema[Double](), 12.56),
+          Position1D("baz") -> Content(DiscreteSchema[Long](), 19)),
+        Position1D(3) -> Map(Position1D("foo") -> Content(NominalSchema[String](), "9.42"),
+          Position1D("bar") -> Content(OrdinalSchema[Long](), 19)),
+        Position1D(4) -> Map(Position1D("foo") -> Content(DateSchema[java.util.Date](),
+          DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
   val result4 = Map(
-        Position1D(1) -> Map(Position1D("foo") -> Content(OrdinalSchema(StringCodex), "3.14"),
-          Position1D("bar") -> Content(OrdinalSchema(StringCodex), "6.28"),
-          Position1D("baz") -> Content(OrdinalSchema(StringCodex), "9.42"),
-          Position1D("qux") -> Content(OrdinalSchema(StringCodex), "12.56")),
-        Position1D(2) -> Map(Position1D("foo") -> Content(ContinuousSchema(DoubleCodex), 6.28),
-          Position1D("bar") -> Content(ContinuousSchema(DoubleCodex), 12.56),
-          Position1D("baz") -> Content(DiscreteSchema(LongCodex), 19)),
-        Position1D(3) -> Map(Position1D("foo") -> Content(NominalSchema(StringCodex), "9.42"),
-          Position1D("bar") -> Content(OrdinalSchema(LongCodex), 19)),
-        Position1D(4) -> Map(Position1D("foo") -> Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+        Position1D(1) -> Map(Position1D("foo") -> Content(OrdinalSchema[String](), "3.14"),
+          Position1D("bar") -> Content(OrdinalSchema[String](), "6.28"),
+          Position1D("baz") -> Content(OrdinalSchema[String](), "9.42"),
+          Position1D("qux") -> Content(OrdinalSchema[String](), "12.56")),
+        Position1D(2) -> Map(Position1D("foo") -> Content(ContinuousSchema[Double](), 6.28),
+          Position1D("bar") -> Content(ContinuousSchema[Double](), 12.56),
+          Position1D("baz") -> Content(DiscreteSchema[Long](), 19)),
+        Position1D(3) -> Map(Position1D("foo") -> Content(NominalSchema[String](), "9.42"),
+          Position1D("bar") -> Content(OrdinalSchema[Long](), 19)),
+        Position1D(4) -> Map(Position1D("foo") -> Content(DateSchema[java.util.Date](),
+          DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
   val result5 = Map(
-        Position1D("foo") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "3.14"),
-          Position1D(2) -> Content(ContinuousSchema(DoubleCodex), 6.28),
-          Position1D(3) -> Content(NominalSchema(StringCodex), "9.42"),
-          Position1D(4) -> Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-            (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-        Position1D("bar") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "6.28"),
-          Position1D(2) -> Content(ContinuousSchema(DoubleCodex), 12.56),
-          Position1D(3) -> Content(OrdinalSchema(LongCodex), 19)),
-        Position1D("baz") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "9.42"),
-          Position1D(2) -> Content(DiscreteSchema(LongCodex), 19)),
-        Position1D("qux") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "12.56")))
+        Position1D("foo") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "3.14"),
+          Position1D(2) -> Content(ContinuousSchema[Double](), 6.28),
+          Position1D(3) -> Content(NominalSchema[String](), "9.42"),
+          Position1D(4) -> Content(DateSchema[java.util.Date](),
+            DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+        Position1D("bar") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "6.28"),
+          Position1D(2) -> Content(ContinuousSchema[Double](), 12.56),
+          Position1D(3) -> Content(OrdinalSchema[Long](), 19)),
+        Position1D("baz") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "9.42"),
+          Position1D(2) -> Content(DiscreteSchema[Long](), 19)),
+        Position1D("qux") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "12.56")))
 
   val result6 = Map(
-        Position1D("foo") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema(StringCodex), "3.14"),
-          Position2D(2, "xyz") -> Content(ContinuousSchema(DoubleCodex), 6.28),
-          Position2D(3, "xyz") -> Content(NominalSchema(StringCodex), "9.42"),
-          Position2D(4, "xyz") -> Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-            (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-        Position1D("bar") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema(StringCodex), "6.28"),
-          Position2D(2, "xyz") -> Content(ContinuousSchema(DoubleCodex), 12.56),
-          Position2D(3, "xyz") -> Content(OrdinalSchema(LongCodex), 19)),
-        Position1D("baz") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema(StringCodex), "9.42"),
-          Position2D(2, "xyz") -> Content(DiscreteSchema(LongCodex), 19)),
-        Position1D("qux") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema(StringCodex), "12.56")))
+        Position1D("foo") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema[String](), "3.14"),
+          Position2D(2, "xyz") -> Content(ContinuousSchema[Double](), 6.28),
+          Position2D(3, "xyz") -> Content(NominalSchema[String](), "9.42"),
+          Position2D(4, "xyz") -> Content(DateSchema[java.util.Date](),
+            DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+        Position1D("bar") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema[String](), "6.28"),
+          Position2D(2, "xyz") -> Content(ContinuousSchema[Double](), 12.56),
+          Position2D(3, "xyz") -> Content(OrdinalSchema[Long](), 19)),
+        Position1D("baz") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema[String](), "9.42"),
+          Position2D(2, "xyz") -> Content(DiscreteSchema[Long](), 19)),
+        Position1D("qux") -> Map(Position2D(1, "xyz") -> Content(OrdinalSchema[String](), "12.56")))
 
   val result7 = Map(
-        Position2D(1, "xyz") -> Map(Position1D("foo") -> Content(OrdinalSchema(StringCodex), "3.14"),
-          Position1D("bar") -> Content(OrdinalSchema(StringCodex), "6.28"),
-          Position1D("baz") -> Content(OrdinalSchema(StringCodex), "9.42"),
-          Position1D("qux") -> Content(OrdinalSchema(StringCodex), "12.56")),
-        Position2D(2, "xyz") -> Map(Position1D("foo") -> Content(ContinuousSchema(DoubleCodex), 6.28),
-          Position1D("bar") -> Content(ContinuousSchema(DoubleCodex), 12.56),
-          Position1D("baz") -> Content(DiscreteSchema(LongCodex), 19)),
-        Position2D(3, "xyz") -> Map(Position1D("foo") -> Content(NominalSchema(StringCodex), "9.42"),
-          Position1D("bar") -> Content(OrdinalSchema(LongCodex), 19)),
-        Position2D(4, "xyz") -> Map(Position1D("foo") -> Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+        Position2D(1, "xyz") -> Map(Position1D("foo") -> Content(OrdinalSchema[String](), "3.14"),
+          Position1D("bar") -> Content(OrdinalSchema[String](), "6.28"),
+          Position1D("baz") -> Content(OrdinalSchema[String](), "9.42"),
+          Position1D("qux") -> Content(OrdinalSchema[String](), "12.56")),
+        Position2D(2, "xyz") -> Map(Position1D("foo") -> Content(ContinuousSchema[Double](), 6.28),
+          Position1D("bar") -> Content(ContinuousSchema[Double](), 12.56),
+          Position1D("baz") -> Content(DiscreteSchema[Long](), 19)),
+        Position2D(3, "xyz") -> Map(Position1D("foo") -> Content(NominalSchema[String](), "9.42"),
+          Position1D("bar") -> Content(OrdinalSchema[Long](), 19)),
+        Position2D(4, "xyz") -> Map(Position1D("foo") -> Content(DateSchema[java.util.Date](),
+          DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
   val result8 = Map(
-        Position1D(1) -> Map(Position2D("foo", "xyz") -> Content(OrdinalSchema(StringCodex), "3.14"),
-          Position2D("bar", "xyz") -> Content(OrdinalSchema(StringCodex), "6.28"),
-          Position2D("baz", "xyz") -> Content(OrdinalSchema(StringCodex), "9.42"),
-          Position2D("qux", "xyz") -> Content(OrdinalSchema(StringCodex), "12.56")),
-        Position1D(2) -> Map(Position2D("foo", "xyz") -> Content(ContinuousSchema(DoubleCodex), 6.28),
-          Position2D("bar", "xyz") -> Content(ContinuousSchema(DoubleCodex), 12.56),
-          Position2D("baz", "xyz") -> Content(DiscreteSchema(LongCodex), 19)),
-        Position1D(3) -> Map(Position2D("foo", "xyz") -> Content(NominalSchema(StringCodex), "9.42"),
-          Position2D("bar", "xyz") -> Content(OrdinalSchema(LongCodex), 19)),
-        Position1D(4) -> Map(Position2D("foo", "xyz") -> Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+        Position1D(1) -> Map(Position2D("foo", "xyz") -> Content(OrdinalSchema[String](), "3.14"),
+          Position2D("bar", "xyz") -> Content(OrdinalSchema[String](), "6.28"),
+          Position2D("baz", "xyz") -> Content(OrdinalSchema[String](), "9.42"),
+          Position2D("qux", "xyz") -> Content(OrdinalSchema[String](), "12.56")),
+        Position1D(2) -> Map(Position2D("foo", "xyz") -> Content(ContinuousSchema[Double](), 6.28),
+          Position2D("bar", "xyz") -> Content(ContinuousSchema[Double](), 12.56),
+          Position2D("baz", "xyz") -> Content(DiscreteSchema[Long](), 19)),
+        Position1D(3) -> Map(Position2D("foo", "xyz") -> Content(NominalSchema[String](), "9.42"),
+          Position2D("bar", "xyz") -> Content(OrdinalSchema[Long](), 19)),
+        Position1D(4) -> Map(Position2D("foo", "xyz") -> Content(DateSchema[java.util.Date](),
+          DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
   val result9 = Map(
-        Position2D("foo", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "3.14"),
-          Position1D(2) -> Content(ContinuousSchema(DoubleCodex), 6.28),
-          Position1D(3) -> Content(NominalSchema(StringCodex), "9.42"),
-          Position1D(4) -> Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-            (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-        Position2D("bar", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "6.28"),
-          Position1D(2) -> Content(ContinuousSchema(DoubleCodex), 12.56),
-          Position1D(3) -> Content(OrdinalSchema(LongCodex), 19)),
-        Position2D("baz", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "9.42"),
-          Position1D(2) -> Content(DiscreteSchema(LongCodex), 19)),
-        Position2D("qux", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema(StringCodex), "12.56")))
+        Position2D("foo", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "3.14"),
+          Position1D(2) -> Content(ContinuousSchema[Double](), 6.28),
+          Position1D(3) -> Content(NominalSchema[String](), "9.42"),
+          Position1D(4) -> Content(DateSchema[java.util.Date](),
+            DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+        Position2D("bar", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "6.28"),
+          Position1D(2) -> Content(ContinuousSchema[Double](), 12.56),
+          Position1D(3) -> Content(OrdinalSchema[Long](), 19)),
+        Position2D("baz", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "9.42"),
+          Position1D(2) -> Content(DiscreteSchema[Long](), 19)),
+        Position2D("qux", "xyz") -> Map(Position1D(1) -> Content(OrdinalSchema[String](), "12.56")))
 
   val result10 = Map(Position1D("xyz") -> Map(
-        Position2D("foo", 1) -> Content(OrdinalSchema(StringCodex), "3.14"),
-        Position2D("bar", 1) -> Content(OrdinalSchema(StringCodex), "6.28"),
-        Position2D("baz", 1) -> Content(OrdinalSchema(StringCodex), "9.42"),
-        Position2D("qux", 1) -> Content(OrdinalSchema(StringCodex), "12.56"),
-        Position2D("foo", 2) -> Content(ContinuousSchema(DoubleCodex), 6.28),
-        Position2D("bar", 2) -> Content(ContinuousSchema(DoubleCodex), 12.56),
-        Position2D("baz", 2) -> Content(DiscreteSchema(LongCodex), 19),
-        Position2D("foo", 3) -> Content(NominalSchema(StringCodex), "9.42"),
-        Position2D("bar", 3) -> Content(OrdinalSchema(LongCodex), 19),
-        Position2D("foo", 4) -> Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+        Position2D("foo", 1) -> Content(OrdinalSchema[String](), "3.14"),
+        Position2D("bar", 1) -> Content(OrdinalSchema[String](), "6.28"),
+        Position2D("baz", 1) -> Content(OrdinalSchema[String](), "9.42"),
+        Position2D("qux", 1) -> Content(OrdinalSchema[String](), "12.56"),
+        Position2D("foo", 2) -> Content(ContinuousSchema[Double](), 6.28),
+        Position2D("bar", 2) -> Content(ContinuousSchema[Double](), 12.56),
+        Position2D("baz", 2) -> Content(DiscreteSchema[Long](), 19),
+        Position2D("foo", 3) -> Content(NominalSchema[String](), "9.42"),
+        Position2D("bar", 3) -> Content(OrdinalSchema[Long](), 19),
+        Position2D("foo", 4) -> Content(DateSchema[java.util.Date](),
+          DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
   val result11 = Map(
-        Position2D("foo", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema(StringCodex), "3.14")),
-        Position2D("foo", 2) -> Map(Position1D("xyz") -> Content(ContinuousSchema(DoubleCodex), 6.28)),
-        Position2D("foo", 3) -> Map(Position1D("xyz") -> Content(NominalSchema(StringCodex), "9.42")),
-        Position2D("foo", 4) -> Map(Position1D("xyz") -> Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-          (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-        Position2D("bar", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema(StringCodex), "6.28")),
-        Position2D("bar", 2) -> Map(Position1D("xyz") -> Content(ContinuousSchema(DoubleCodex), 12.56)),
-        Position2D("bar", 3) -> Map(Position1D("xyz") -> Content(OrdinalSchema(LongCodex), 19)),
-        Position2D("baz", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema(StringCodex), "9.42")),
-        Position2D("baz", 2) -> Map(Position1D("xyz") -> Content(DiscreteSchema(LongCodex), 19)),
-        Position2D("qux", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema(StringCodex), "12.56")))
+        Position2D("foo", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema[String](), "3.14")),
+        Position2D("foo", 2) -> Map(Position1D("xyz") -> Content(ContinuousSchema[Double](), 6.28)),
+        Position2D("foo", 3) -> Map(Position1D("xyz") -> Content(NominalSchema[String](), "9.42")),
+        Position2D("foo", 4) -> Map(Position1D("xyz") -> Content(DateSchema[java.util.Date](),
+          DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+        Position2D("bar", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema[String](), "6.28")),
+        Position2D("bar", 2) -> Map(Position1D("xyz") -> Content(ContinuousSchema[Double](), 12.56)),
+        Position2D("bar", 3) -> Map(Position1D("xyz") -> Content(OrdinalSchema[Long](), 19)),
+        Position2D("baz", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema[String](), "9.42")),
+        Position2D("baz", 2) -> Map(Position1D("xyz") -> Content(DiscreteSchema[Long](), 19)),
+        Position2D("qux", 1) -> Map(Position1D("xyz") -> Content(OrdinalSchema[String](), "12.56")))
 }
 
 class TestScaldingMatrixCompact extends TestMatrixCompact {
@@ -2082,292 +2082,292 @@ trait TestMatrixSummarise extends TestMatrix {
 
   type W = Map[Position1D, Double]
 
-  val result1 = List(Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position1D("qux"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result1 = List(Cell(Position1D("bar"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position1D("baz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position1D("qux"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result2 = List(Cell(Position1D(1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position1D(2), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position1D(3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position1D(4), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result2 = List(Cell(Position1D(1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position1D(2), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position1D(3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position1D(4), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result3 = List(Cell(Position1D(1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position1D(2), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position1D(3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position1D(4), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result3 = List(Cell(Position1D(1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position1D(2), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position1D(3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position1D(4), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result4 = List(Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position1D("qux"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result4 = List(Cell(Position1D("bar"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position1D("baz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position1D("qux"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result5 = List(Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position1D("qux"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result5 = List(Cell(Position1D("bar"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position1D("baz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position1D("qux"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result6 = List(Cell(Position2D(1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D(2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D(3, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D(4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result6 = List(Cell(Position2D(1, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D(2, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D(3, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D(4, "xyz"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result7 = List(Cell(Position1D(1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position1D(2), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position1D(3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position1D(4), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result7 = List(Cell(Position1D(1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position1D(2), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position1D(3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position1D(4), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result8 = List(Cell(Position2D("bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("baz", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("qux", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result8 = List(Cell(Position2D("bar", "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("baz", "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("qux", "xyz"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result9 = List(Cell(Position1D("xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)))
+  val result9 = List(Cell(Position1D("xyz"), Content(ContinuousSchema[Double](), 18.84)))
 
-  val result10 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("foo", 1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 1), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result10 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("foo", 1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 1), Content(ContinuousSchema[Double](), 12.56)))
 
   val result11 = List(
-    Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
-    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 3))),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
-    Cell(Position1D("qux"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 4))))
+    Cell(Position1D("bar"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+    Cell(Position1D("baz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 3))),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+    Cell(Position1D("qux"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 4))))
 
   val result12 = List(
-    Cell(Position1D(1), Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
-    Cell(Position1D(2), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
-    Cell(Position1D(3), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 6))),
-    Cell(Position1D(4), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 8))))
+    Cell(Position1D(1), Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+    Cell(Position1D(2), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+    Cell(Position1D(3), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 6))),
+    Cell(Position1D(4), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 8))))
 
   val result13 = List(
-    Cell(Position1D(1), Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
-    Cell(Position1D(2), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
-    Cell(Position1D(3), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 6))),
-    Cell(Position1D(4), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 8))))
+    Cell(Position1D(1), Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+    Cell(Position1D(2), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+    Cell(Position1D(3), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 6))),
+    Cell(Position1D(4), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 8))))
 
   val result14 = List(
-    Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
-    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 3))),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
-    Cell(Position1D("qux"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 4))))
+    Cell(Position1D("bar"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+    Cell(Position1D("baz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 3))),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+    Cell(Position1D("qux"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 4))))
 
   val result15 = List(
-    Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
-    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 3))),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
-    Cell(Position1D("qux"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 4))))
+    Cell(Position1D("bar"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+    Cell(Position1D("baz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 3))),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+    Cell(Position1D("qux"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 4))))
 
-  val result16 = List(Cell(Position2D(1, "xyz"), Content(ContinuousSchema(DoubleCodex),
+  val result16 = List(Cell(Position2D(1, "xyz"), Content(ContinuousSchema[Double](),
       (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
-    Cell(Position2D(2, "xyz"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
-    Cell(Position2D(3, "xyz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 6))),
-    Cell(Position2D(4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 8))))
+    Cell(Position2D(2, "xyz"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+    Cell(Position2D(3, "xyz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 6))),
+    Cell(Position2D(4, "xyz"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 8))))
 
   val result17 = List(
-    Cell(Position1D(1), Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
-    Cell(Position1D(2), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
-    Cell(Position1D(3), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 6))),
-    Cell(Position1D(4), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 8))))
+    Cell(Position1D(1), Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+    Cell(Position1D(2), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+    Cell(Position1D(3), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 6))),
+    Cell(Position1D(4), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 8))))
 
   val result18 = List(
-    Cell(Position2D("bar", "xyz"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
-    Cell(Position2D("baz", "xyz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 3))),
-    Cell(Position2D("foo", "xyz"), Content(ContinuousSchema(DoubleCodex),
+    Cell(Position2D("bar", "xyz"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+    Cell(Position2D("baz", "xyz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 3))),
+    Cell(Position2D("foo", "xyz"), Content(ContinuousSchema[Double](),
       (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
-    Cell(Position2D("qux", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 4))))
+    Cell(Position2D("qux", "xyz"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 4))))
 
-  val result19 = List(Cell(Position1D("xyz"), Content(ContinuousSchema(DoubleCodex),
+  val result19 = List(Cell(Position1D("xyz"), Content(ContinuousSchema[Double](),
     (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 3.14)))
 
-  val result20 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 6.28 / 3.14)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56 / 3.14)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 18.84 / 3.14)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 9.42 / 3.14)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 18.84 / 3.14)),
-    Cell(Position2D("foo", 1), Content(ContinuousSchema(DoubleCodex), 3.14 / 3.14)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28 / 3.14)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42 / 3.14)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 12.56 / 3.14)),
-    Cell(Position2D("qux", 1), Content(ContinuousSchema(DoubleCodex), 12.56 / 3.14)))
+  val result20 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 6.28 / 3.14)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56 / 3.14)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 18.84 / 3.14)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 9.42 / 3.14)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 18.84 / 3.14)),
+    Cell(Position2D("foo", 1), Content(ContinuousSchema[Double](), 3.14 / 3.14)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28 / 3.14)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42 / 3.14)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 12.56 / 3.14)),
+    Cell(Position2D("qux", 1), Content(ContinuousSchema[Double](), 12.56 / 3.14)))
 
-  val result21 = List(Cell(Position2D("bar", "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("baz", "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", "min"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("qux", "min"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result21 = List(Cell(Position2D("bar", "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("baz", "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", "min"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("qux", "min"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result22 = List(Cell(Position1D("max"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position1D("min"), Content(ContinuousSchema(DoubleCodex), 3.14)))
+  val result22 = List(Cell(Position1D("max"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position1D("min"), Content(ContinuousSchema[Double](), 3.14)))
 
-  val result23 = List(Cell(Position2D("bar", "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("baz", "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", "min"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("qux", "min"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result23 = List(Cell(Position2D("bar", "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("baz", "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", "min"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("qux", "min"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result24 = List(Cell(Position2D(1, "max"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D(1, "min"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D(2, "max"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D(2, "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D(3, "max"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D(3, "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D(4, "max"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D(4, "min"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result24 = List(Cell(Position2D(1, "max"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D(1, "min"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D(2, "max"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D(2, "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D(3, "max"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D(3, "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D(4, "max"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D(4, "min"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result25 = List(Cell(Position2D(1, "max"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D(1, "min"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D(2, "max"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D(2, "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D(3, "max"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D(3, "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D(4, "max"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D(4, "min"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result25 = List(Cell(Position2D(1, "max"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D(1, "min"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D(2, "max"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D(2, "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D(3, "max"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D(3, "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D(4, "max"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D(4, "min"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result26 = List(Cell(Position2D("bar", "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("baz", "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", "min"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("qux", "min"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result26 = List(Cell(Position2D("bar", "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("baz", "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", "min"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("qux", "min"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result27 = List(Cell(Position2D("bar", "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("baz", "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", "min"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("qux", "min"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result27 = List(Cell(Position2D("bar", "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("baz", "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", "min"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("qux", "min"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result28 = List(Cell(Position3D(1, "xyz", "max"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D(1, "xyz", "min"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D(2, "xyz", "max"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D(2, "xyz", "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D(3, "xyz", "max"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D(3, "xyz", "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D(4, "xyz", "max"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D(4, "xyz", "min"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result28 = List(Cell(Position3D(1, "xyz", "max"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D(1, "xyz", "min"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D(2, "xyz", "max"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D(2, "xyz", "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D(3, "xyz", "max"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D(3, "xyz", "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D(4, "xyz", "max"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D(4, "xyz", "min"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result29 = List(Cell(Position2D(1, "max"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D(1, "min"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D(2, "max"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D(2, "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D(3, "max"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D(3, "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D(4, "max"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D(4, "min"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result29 = List(Cell(Position2D(1, "max"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D(1, "min"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D(2, "max"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D(2, "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D(3, "max"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D(3, "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D(4, "max"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D(4, "min"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result30 = List(Cell(Position3D("bar", "xyz", "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("baz", "xyz", "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("foo", "xyz", "min"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("qux", "xyz", "min"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result30 = List(Cell(Position3D("bar", "xyz", "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("baz", "xyz", "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("foo", "xyz", "min"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("qux", "xyz", "min"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result31 = List(Cell(Position2D("xyz", "max"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("xyz", "min"), Content(ContinuousSchema(DoubleCodex), 3.14)))
+  val result31 = List(Cell(Position2D("xyz", "max"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("xyz", "min"), Content(ContinuousSchema[Double](), 3.14)))
 
-  val result32 = List(Cell(Position3D("bar", 1, "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "min"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "min"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("baz", 1, "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("baz", 2, "min"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("foo", 1, "min"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "min"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "min"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("foo", 4, "min"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 1, "min"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result32 = List(Cell(Position3D("bar", 1, "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "min"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "min"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("baz", 1, "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("baz", 2, "min"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("foo", 1, "min"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "min"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "min"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("foo", 4, "min"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 1, "min"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result33 = List(Cell(Position2D("bar", "sum"), Content(ContinuousSchema(DoubleCodex), 6.28 / 2)),
-    Cell(Position2D("baz", "sum"), Content(ContinuousSchema(DoubleCodex), 9.42 * (1.0 / 3))),
-    Cell(Position2D("foo", "sum"), Content(ContinuousSchema(DoubleCodex), 3.14 / 1)),
-    Cell(Position2D("qux", "sum"), Content(ContinuousSchema(DoubleCodex), 12.56 / 4)))
+  val result33 = List(Cell(Position2D("bar", "sum"), Content(ContinuousSchema[Double](), 6.28 / 2)),
+    Cell(Position2D("baz", "sum"), Content(ContinuousSchema[Double](), 9.42 * (1.0 / 3))),
+    Cell(Position2D("foo", "sum"), Content(ContinuousSchema[Double](), 3.14 / 1)),
+    Cell(Position2D("qux", "sum"), Content(ContinuousSchema[Double](), 12.56 / 4)))
 
-  val result34 = List(Cell(Position1D("sum.1"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position1D("sum.2"), Content(ContinuousSchema(DoubleCodex), 31.40)))
+  val result34 = List(Cell(Position1D("sum.1"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position1D("sum.2"), Content(ContinuousSchema[Double](), 31.40)))
 
   val result35 = List(Cell(Position2D("bar", "sum"),
-      Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
-    Cell(Position2D("baz", "sum"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 3))),
+      Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+    Cell(Position2D("baz", "sum"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 3))),
     Cell(Position2D("foo", "sum"),
-      Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
-    Cell(Position2D("qux", "sum"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 4))))
+      Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+    Cell(Position2D("qux", "sum"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 4))))
 
   val result36 = List(Cell(Position2D(1, "sum.1"),
-      Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
-    Cell(Position2D(1, "sum.2"), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28 + 9.42 + 12.56)),
-    Cell(Position2D(2, "sum.1"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
-    Cell(Position2D(2, "sum.2"), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56 + 18.84)),
-    Cell(Position2D(3, "sum.1"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 6))),
-    Cell(Position2D(3, "sum.2"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position2D(4, "sum.1"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 8))),
-    Cell(Position2D(4, "sum.2"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+      Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+    Cell(Position2D(1, "sum.2"), Content(ContinuousSchema[Double](), 3.14 + 6.28 + 9.42 + 12.56)),
+    Cell(Position2D(2, "sum.1"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+    Cell(Position2D(2, "sum.2"), Content(ContinuousSchema[Double](), 6.28 + 12.56 + 18.84)),
+    Cell(Position2D(3, "sum.1"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 6))),
+    Cell(Position2D(3, "sum.2"), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position2D(4, "sum.1"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 8))),
+    Cell(Position2D(4, "sum.2"), Content(ContinuousSchema[Double](), 12.56)))
 
   val result37 = List(Cell(Position2D(1, "sum.1"),
-      Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
-    Cell(Position2D(1, "sum.2"), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28 + 9.42 + 12.56)),
-    Cell(Position2D(2, "sum.1"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
-    Cell(Position2D(2, "sum.2"), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56 + 18.84)),
-    Cell(Position2D(3, "sum.1"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 6))),
-    Cell(Position2D(3, "sum.2"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position2D(4, "sum.1"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 8))),
-    Cell(Position2D(4, "sum.2"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+      Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+    Cell(Position2D(1, "sum.2"), Content(ContinuousSchema[Double](), 3.14 + 6.28 + 9.42 + 12.56)),
+    Cell(Position2D(2, "sum.1"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+    Cell(Position2D(2, "sum.2"), Content(ContinuousSchema[Double](), 6.28 + 12.56 + 18.84)),
+    Cell(Position2D(3, "sum.1"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 6))),
+    Cell(Position2D(3, "sum.2"), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position2D(4, "sum.1"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 8))),
+    Cell(Position2D(4, "sum.2"), Content(ContinuousSchema[Double](), 12.56)))
 
   val result38 = List(Cell(Position2D("bar", "sum"),
-      Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
-    Cell(Position2D("baz", "sum"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 3))),
+      Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+    Cell(Position2D("baz", "sum"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 3))),
     Cell(Position2D("foo", "sum"),
-      Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
-    Cell(Position2D("qux", "sum"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 4))))
+      Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+    Cell(Position2D("qux", "sum"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 4))))
 
   val result39 = List(Cell(Position2D("bar", "sum"),
-      Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
-    Cell(Position2D("baz", "sum"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 3))),
+      Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+    Cell(Position2D("baz", "sum"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 3))),
     Cell(Position2D("foo", "sum"),
-      Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
-    Cell(Position2D("qux", "sum"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 4))))
+      Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+    Cell(Position2D("qux", "sum"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 4))))
 
   val result40 = List(Cell(Position3D(1, "xyz", "sum.1"),
-      Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
-    Cell(Position3D(1, "xyz", "sum.2"), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28 + 9.42 + 12.56)),
+      Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+    Cell(Position3D(1, "xyz", "sum.2"), Content(ContinuousSchema[Double](), 3.14 + 6.28 + 9.42 + 12.56)),
     Cell(Position3D(2, "xyz", "sum.1"),
-      Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
-    Cell(Position3D(2, "xyz", "sum.2"), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56 + 18.84)),
-    Cell(Position3D(3, "xyz", "sum.1"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 6))),
-    Cell(Position3D(3, "xyz", "sum.2"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position3D(4, "xyz", "sum.1"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 8))),
-    Cell(Position3D(4, "xyz", "sum.2"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+      Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+    Cell(Position3D(2, "xyz", "sum.2"), Content(ContinuousSchema[Double](), 6.28 + 12.56 + 18.84)),
+    Cell(Position3D(3, "xyz", "sum.1"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 6))),
+    Cell(Position3D(3, "xyz", "sum.2"), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position3D(4, "xyz", "sum.1"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 8))),
+    Cell(Position3D(4, "xyz", "sum.2"), Content(ContinuousSchema[Double](), 12.56)))
 
   val result41 = List(Cell(Position2D(1, "sum.1"),
-      Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
-    Cell(Position2D(1, "sum.2"), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28 + 9.42 + 12.56)),
-    Cell(Position2D(2, "sum.1"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
-    Cell(Position2D(2, "sum.2"), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56 + 18.84)),
-    Cell(Position2D(3, "sum.1"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 6))),
-    Cell(Position2D(3, "sum.2"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position2D(4, "sum.1"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 8))),
-    Cell(Position2D(4, "sum.2"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+      Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 2))),
+    Cell(Position2D(1, "sum.2"), Content(ContinuousSchema[Double](), 3.14 + 6.28 + 9.42 + 12.56)),
+    Cell(Position2D(2, "sum.1"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 4))),
+    Cell(Position2D(2, "sum.2"), Content(ContinuousSchema[Double](), 6.28 + 12.56 + 18.84)),
+    Cell(Position2D(3, "sum.1"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 6))),
+    Cell(Position2D(3, "sum.2"), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position2D(4, "sum.1"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 8))),
+    Cell(Position2D(4, "sum.2"), Content(ContinuousSchema[Double](), 12.56)))
 
   val result42 = List(Cell(Position3D("bar", "xyz", "sum"),
-      Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
-    Cell(Position3D("baz", "xyz", "sum"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) * (1.0 / 3))),
+      Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) * (1.0 / 2))),
+    Cell(Position3D("baz", "xyz", "sum"), Content(ContinuousSchema[Double](), (9.42 + 18.84) * (1.0 / 3))),
     Cell(Position3D("foo", "xyz", "sum"),
-      Content(ContinuousSchema(DoubleCodex), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
-    Cell(Position3D("qux", "xyz", "sum"), Content(ContinuousSchema(DoubleCodex), 12.56 * (1.0 / 4))))
+      Content(ContinuousSchema[Double](), (3.14 + 6.28 + 9.42 + 12.56) * (1.0 / 1))),
+    Cell(Position3D("qux", "xyz", "sum"), Content(ContinuousSchema[Double](), 12.56 * (1.0 / 4))))
 
-  val result43 = List(Cell(Position2D("xyz", "sum.1"), Content(ContinuousSchema(DoubleCodex),
+  val result43 = List(Cell(Position2D("xyz", "sum.1"), Content(ContinuousSchema[Double](),
       (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 3.14)),
-    Cell(Position2D("xyz", "sum.2"), Content(ContinuousSchema(DoubleCodex),
+    Cell(Position2D("xyz", "sum.2"), Content(ContinuousSchema[Double](),
       (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 6.28)))
 
-  val result44 = List(Cell(Position3D("bar", 1, "sum"), Content(ContinuousSchema(DoubleCodex), 6.28 / 3.14)),
-    Cell(Position3D("bar", 2, "sum"), Content(ContinuousSchema(DoubleCodex), 12.56 / 3.14)),
-    Cell(Position3D("bar", 3, "sum"), Content(ContinuousSchema(DoubleCodex), 18.84 / 3.14)),
-    Cell(Position3D("baz", 1, "sum"), Content(ContinuousSchema(DoubleCodex), 9.42 / 3.14)),
-    Cell(Position3D("baz", 2, "sum"), Content(ContinuousSchema(DoubleCodex), 18.84 / 3.14)),
-    Cell(Position3D("foo", 1, "sum"), Content(ContinuousSchema(DoubleCodex), 3.14 / 3.14)),
-    Cell(Position3D("foo", 2, "sum"), Content(ContinuousSchema(DoubleCodex), 6.28 / 3.14)),
-    Cell(Position3D("foo", 3, "sum"), Content(ContinuousSchema(DoubleCodex), 9.42 / 3.14)),
-    Cell(Position3D("foo", 4, "sum"), Content(ContinuousSchema(DoubleCodex), 12.56 / 3.14)),
-    Cell(Position3D("qux", 1, "sum"), Content(ContinuousSchema(DoubleCodex), 12.56 / 3.14)))
+  val result44 = List(Cell(Position3D("bar", 1, "sum"), Content(ContinuousSchema[Double](), 6.28 / 3.14)),
+    Cell(Position3D("bar", 2, "sum"), Content(ContinuousSchema[Double](), 12.56 / 3.14)),
+    Cell(Position3D("bar", 3, "sum"), Content(ContinuousSchema[Double](), 18.84 / 3.14)),
+    Cell(Position3D("baz", 1, "sum"), Content(ContinuousSchema[Double](), 9.42 / 3.14)),
+    Cell(Position3D("baz", 2, "sum"), Content(ContinuousSchema[Double](), 18.84 / 3.14)),
+    Cell(Position3D("foo", 1, "sum"), Content(ContinuousSchema[Double](), 3.14 / 3.14)),
+    Cell(Position3D("foo", 2, "sum"), Content(ContinuousSchema[Double](), 6.28 / 3.14)),
+    Cell(Position3D("foo", 3, "sum"), Content(ContinuousSchema[Double](), 9.42 / 3.14)),
+    Cell(Position3D("foo", 4, "sum"), Content(ContinuousSchema[Double](), 12.56 / 3.14)),
+    Cell(Position3D("qux", 1, "sum"), Content(ContinuousSchema[Double](), 12.56 / 3.14)))
 }
 
 object TestMatrixSummarise {
@@ -3247,37 +3247,37 @@ trait TestMatrixSubset extends TestMatrix {
 
   val ext = "foo"
 
-  val result1 = List(Cell(Position1D("foo"), Content(OrdinalSchema(StringCodex), "3.14")))
+  val result1 = List(Cell(Position1D("foo"), Content(OrdinalSchema[String](), "3.14")))
 
-  val result2 = List(Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result2 = List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result3 = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result3 = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result4 = List(Cell(Position1D("foo"), Content(OrdinalSchema(StringCodex), "3.14")))
+  val result4 = List(Cell(Position1D("foo"), Content(OrdinalSchema[String](), "3.14")))
 
-  val result5 = List(Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result5 = List(Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result6 = List(Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result6 = List(Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 }
 
 object TestMatrixSubset {
@@ -3374,31 +3374,31 @@ class TestSparkMatrixSubset extends TestMatrixSubset {
 
 class TestMatrixDomain extends TestMatrix {
 
-  val dataA = List(Cell(Position1D(1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position1D(2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position1D(3), Content(ContinuousSchema(DoubleCodex), 9.42)))
+  val dataA = List(Cell(Position1D(1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position1D(2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position1D(3), Content(ContinuousSchema[Double](), 9.42)))
 
-  val dataB = List(Cell(Position2D(1, 3), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D(2, 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D(3, 1), Content(ContinuousSchema(DoubleCodex), 9.42)))
+  val dataB = List(Cell(Position2D(1, 3), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D(2, 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D(3, 1), Content(ContinuousSchema[Double](), 9.42)))
 
-  val dataC = List(Cell(Position3D(1, 1, 1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D(2, 2, 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D(3, 3, 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D(1, 2, 3), Content(ContinuousSchema(DoubleCodex), 0)))
+  val dataC = List(Cell(Position3D(1, 1, 1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D(2, 2, 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D(3, 3, 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D(1, 2, 3), Content(ContinuousSchema[Double](), 0)))
 
-  val dataD = List(Cell(Position4D(1, 4, 2, 3), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position4D(2, 3, 1, 4), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position4D(3, 2, 4, 1), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position4D(4, 1, 3, 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position4D(1, 2, 3, 4), Content(ContinuousSchema(DoubleCodex), 0)))
+  val dataD = List(Cell(Position4D(1, 4, 2, 3), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position4D(2, 3, 1, 4), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position4D(3, 2, 4, 1), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position4D(4, 1, 3, 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position4D(1, 2, 3, 4), Content(ContinuousSchema[Double](), 0)))
 
-  val dataE = List(Cell(Position5D(1, 5, 4, 3, 2), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position5D(2, 1, 5, 4, 3), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position5D(3, 2, 1, 5, 4), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position5D(4, 3, 2, 1, 5), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position5D(5, 4, 3, 2, 1), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position5D(1, 2, 3, 4, 5), Content(ContinuousSchema(DoubleCodex), 0)))
+  val dataE = List(Cell(Position5D(1, 5, 4, 3, 2), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position5D(2, 1, 5, 4, 3), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position5D(3, 2, 1, 5, 4), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position5D(4, 3, 2, 1, 5), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position5D(5, 4, 3, 2, 1), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position5D(1, 2, 3, 4, 5), Content(ContinuousSchema[Double](), 0)))
 
   val result1 = List(Position1D(1), Position1D(2), Position1D(3))
 
@@ -3486,196 +3486,196 @@ class TestSparkMatrixDomain extends TestMatrixDomain {
 
 trait TestMatrixJoin extends TestMatrix {
 
-  val dataA = List(Cell(Position2D("bar", 5), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("baz", 5), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("qux", 5), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position2D("bar", 6), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("baz", 6), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("bar", 7), Content(OrdinalSchema(LongCodex), 19)))
+  val dataA = List(Cell(Position2D("bar", 5), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("baz", 5), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("qux", 5), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position2D("bar", 6), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("baz", 6), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("bar", 7), Content(OrdinalSchema[Long](), 19)))
 
-  val dataB = List(Cell(Position2D("foo.2", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("bar.2", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("baz.2", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo.2", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("bar.2", 3), Content(OrdinalSchema(LongCodex), 19)))
+  val dataB = List(Cell(Position2D("foo.2", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("bar.2", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("baz.2", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo.2", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("bar.2", 3), Content(OrdinalSchema[Long](), 19)))
 
-  val dataC = List(Cell(Position2D("foo.2", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("bar.2", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("baz.2", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo.2", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("bar.2", 3), Content(OrdinalSchema(LongCodex), 19)))
+  val dataC = List(Cell(Position2D("foo.2", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("bar.2", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("baz.2", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo.2", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("bar.2", 3), Content(OrdinalSchema[Long](), 19)))
 
-  val dataD = List(Cell(Position2D("bar", 5), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("baz", 5), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("qux", 5), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position2D("bar", 6), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("baz", 6), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("bar", 7), Content(OrdinalSchema(LongCodex), 19)))
+  val dataD = List(Cell(Position2D("bar", 5), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("baz", 5), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("qux", 5), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position2D("bar", 6), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("baz", 6), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("bar", 7), Content(OrdinalSchema[Long](), 19)))
 
-  val dataE = List(Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema(LongCodex), 19)))
+  val dataE = List(Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema[Long](), 19)))
 
-  val dataF = List(Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)))
+  val dataF = List(Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Long](), 19)))
 
-  val dataG = List(Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)))
+  val dataG = List(Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Long](), 19)))
 
-  val dataH = List(Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema(LongCodex), 19)))
+  val dataH = List(Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema[Long](), 19)))
 
-  val dataI = List(Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)))
+  val dataI = List(Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Long](), 19)))
 
-  val dataJ = List(Cell(Position3D("bar", 1, "xyz.2"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("baz", 1, "xyz.2"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("qux", 1, "xyz.2"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position3D("bar", 2, "xyz.2"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("baz", 2, "xyz.2"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("bar", 3, "xyz.2"), Content(OrdinalSchema(LongCodex), 19)))
+  val dataJ = List(Cell(Position3D("bar", 1, "xyz.2"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("baz", 1, "xyz.2"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("qux", 1, "xyz.2"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position3D("bar", 2, "xyz.2"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("baz", 2, "xyz.2"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("bar", 3, "xyz.2"), Content(OrdinalSchema[Long](), 19)))
 
-  val result1 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("bar", 5), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 6), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 7), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 5), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 6), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position2D("qux", 5), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result1 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("bar", 5), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 6), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 7), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("baz", 5), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 6), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position2D("qux", 5), Content(OrdinalSchema[String](), "12.56")))
 
-  val result2 = List(Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("bar.2", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar.2", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("baz.2", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo.2", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo.2", 3), Content(NominalSchema(StringCodex), "9.42")))
+  val result2 = List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("bar.2", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar.2", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("baz.2", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo.2", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo.2", 3), Content(NominalSchema[String](), "9.42")))
 
-  val result3 = List(Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("bar.2", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar.2", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("baz.2", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo.2", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo.2", 3), Content(NominalSchema(StringCodex), "9.42")))
+  val result3 = List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("bar.2", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar.2", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("baz.2", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo.2", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo.2", 3), Content(NominalSchema[String](), "9.42")))
 
-  val result4 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("bar", 5), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 6), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 7), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 5), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 6), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position2D("qux", 5), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result4 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("bar", 5), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 6), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 7), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("baz", 5), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 6), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position2D("qux", 5), Content(OrdinalSchema[String](), "12.56")))
 
-  val result5 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result5 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result6 = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")))
+  val result6 = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[String](), "9.42")))
 
-  val result7 = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")))
+  val result7 = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[String](), "9.42")))
 
-  val result8 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result8 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("bar", 5, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 6, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 7, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("baz", 5, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 6, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position3D("qux", 5, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result9 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result9 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("bar.2", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar.2", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("baz.2", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("foo.2", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo.2", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result10 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 1, "xyz.2"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 2, "xyz.2"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("bar", 3, "xyz.2"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 1, "xyz.2"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 2, "xyz.2"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position3D("qux", 1, "xyz.2"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result10 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 1, "xyz.2"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 2, "xyz.2"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("bar", 3, "xyz.2"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 1, "xyz.2"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("baz", 2, "xyz.2"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position3D("qux", 1, "xyz.2"), Content(OrdinalSchema[String](), "12.56")))
 }
 
 class TestScaldingMatrixJoin extends TestMatrixJoin {
@@ -3824,159 +3824,159 @@ class TestSparkMatrixJoin extends TestMatrixJoin {
 
 trait TestMatrixUnique extends TestMatrix {
 
-  val result1 = List(Content(OrdinalSchema(StringCodex), "12.56"),
-    Content(OrdinalSchema(StringCodex), "3.14"),
-    Content(OrdinalSchema(StringCodex), "6.28"),
-    Content(OrdinalSchema(StringCodex), "9.42"))
+  val result1 = List(Content(OrdinalSchema[String](), "12.56"),
+    Content(OrdinalSchema[String](), "3.14"),
+    Content(OrdinalSchema[String](), "6.28"),
+    Content(OrdinalSchema[String](), "9.42"))
 
-  val result2 = List((Position1D("bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position1D("baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    (Position1D("foo"), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result2 = List((Position1D("bar"), Content(OrdinalSchema[String](), "6.28")),
+    (Position1D("baz"), Content(OrdinalSchema[String](), "9.42")),
+    (Position1D("foo"), Content(OrdinalSchema[String](), "3.14")),
+    (Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result3 = List(Content(ContinuousSchema(DoubleCodex), 12.56),
-    Content(ContinuousSchema(DoubleCodex), 6.28),
-    Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")),
-    Content(DiscreteSchema(LongCodex), 19),
-    Content(NominalSchema(StringCodex), "9.42"),
-    Content(OrdinalSchema(LongCodex), 19),
-    Content(OrdinalSchema(StringCodex), "12.56"),
-    Content(OrdinalSchema(StringCodex), "3.14"),
-    Content(OrdinalSchema(StringCodex), "6.28"),
-    Content(OrdinalSchema(StringCodex), "9.42"))
+  val result3 = List(Content(ContinuousSchema[Double](), 12.56),
+    Content(ContinuousSchema[Double](), 6.28),
+    Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+    Content(DiscreteSchema[Long](), 19),
+    Content(NominalSchema[String](), "9.42"),
+    Content(OrdinalSchema[Long](), 19),
+    Content(OrdinalSchema[String](), "12.56"),
+    Content(OrdinalSchema[String](), "3.14"),
+    Content(OrdinalSchema[String](), "6.28"),
+    Content(OrdinalSchema[String](), "9.42"))
 
-  val result4 = List((Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    (Position1D("bar"), Content(OrdinalSchema(LongCodex), 19)),
-    (Position1D("bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position1D("baz"), Content(DiscreteSchema(LongCodex), 19)),
-    (Position1D("baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    (Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    (Position1D("foo"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    (Position1D("foo"), Content(NominalSchema(StringCodex), "9.42")),
-    (Position1D("foo"), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result4 = List((Position1D("bar"), Content(ContinuousSchema[Double](), 12.56)),
+    (Position1D("bar"), Content(OrdinalSchema[Long](), 19)),
+    (Position1D("bar"), Content(OrdinalSchema[String](), "6.28")),
+    (Position1D("baz"), Content(DiscreteSchema[Long](), 19)),
+    (Position1D("baz"), Content(OrdinalSchema[String](), "9.42")),
+    (Position1D("foo"), Content(ContinuousSchema[Double](), 6.28)),
+    (Position1D("foo"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    (Position1D("foo"), Content(NominalSchema[String](), "9.42")),
+    (Position1D("foo"), Content(OrdinalSchema[String](), "3.14")),
+    (Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result5 = List((Position1D(1), Content(OrdinalSchema(StringCodex), "12.56")),
-    (Position1D(1), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position1D(1), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position1D(1), Content(OrdinalSchema(StringCodex), "9.42")),
-    (Position1D(2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    (Position1D(2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    (Position1D(2), Content(DiscreteSchema(LongCodex), 19)),
-    (Position1D(3), Content(NominalSchema(StringCodex), "9.42")),
-    (Position1D(3), Content(OrdinalSchema(LongCodex), 19)),
-    (Position1D(4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result5 = List((Position1D(1), Content(OrdinalSchema[String](), "12.56")),
+    (Position1D(1), Content(OrdinalSchema[String](), "3.14")),
+    (Position1D(1), Content(OrdinalSchema[String](), "6.28")),
+    (Position1D(1), Content(OrdinalSchema[String](), "9.42")),
+    (Position1D(2), Content(ContinuousSchema[Double](), 12.56)),
+    (Position1D(2), Content(ContinuousSchema[Double](), 6.28)),
+    (Position1D(2), Content(DiscreteSchema[Long](), 19)),
+    (Position1D(3), Content(NominalSchema[String](), "9.42")),
+    (Position1D(3), Content(OrdinalSchema[Long](), 19)),
+    (Position1D(4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result6 = List((Position1D(1), Content(OrdinalSchema(StringCodex), "12.56")),
-    (Position1D(1), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position1D(1), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position1D(1), Content(OrdinalSchema(StringCodex), "9.42")),
-    (Position1D(2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    (Position1D(2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    (Position1D(2), Content(DiscreteSchema(LongCodex), 19)),
-    (Position1D(3), Content(NominalSchema(StringCodex), "9.42")),
-    (Position1D(3), Content(OrdinalSchema(LongCodex), 19)),
-    (Position1D(4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result6 = List((Position1D(1), Content(OrdinalSchema[String](), "12.56")),
+    (Position1D(1), Content(OrdinalSchema[String](), "3.14")),
+    (Position1D(1), Content(OrdinalSchema[String](), "6.28")),
+    (Position1D(1), Content(OrdinalSchema[String](), "9.42")),
+    (Position1D(2), Content(ContinuousSchema[Double](), 12.56)),
+    (Position1D(2), Content(ContinuousSchema[Double](), 6.28)),
+    (Position1D(2), Content(DiscreteSchema[Long](), 19)),
+    (Position1D(3), Content(NominalSchema[String](), "9.42")),
+    (Position1D(3), Content(OrdinalSchema[Long](), 19)),
+    (Position1D(4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result7 = List((Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    (Position1D("bar"), Content(OrdinalSchema(LongCodex), 19)),
-    (Position1D("bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position1D("baz"), Content(DiscreteSchema(LongCodex), 19)),
-    (Position1D("baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    (Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    (Position1D("foo"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    (Position1D("foo"), Content(NominalSchema(StringCodex), "9.42")),
-    (Position1D("foo"), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result7 = List((Position1D("bar"), Content(ContinuousSchema[Double](), 12.56)),
+    (Position1D("bar"), Content(OrdinalSchema[Long](), 19)),
+    (Position1D("bar"), Content(OrdinalSchema[String](), "6.28")),
+    (Position1D("baz"), Content(DiscreteSchema[Long](), 19)),
+    (Position1D("baz"), Content(OrdinalSchema[String](), "9.42")),
+    (Position1D("foo"), Content(ContinuousSchema[Double](), 6.28)),
+    (Position1D("foo"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    (Position1D("foo"), Content(NominalSchema[String](), "9.42")),
+    (Position1D("foo"), Content(OrdinalSchema[String](), "3.14")),
+    (Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result8 = List(Content(ContinuousSchema(DoubleCodex), 12.56),
-    Content(ContinuousSchema(DoubleCodex), 6.28),
-    Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")),
-    Content(DiscreteSchema(LongCodex), 19),
-    Content(NominalSchema(StringCodex), "9.42"),
-    Content(OrdinalSchema(LongCodex), 19),
-    Content(OrdinalSchema(StringCodex), "12.56"),
-    Content(OrdinalSchema(StringCodex), "3.14"),
-    Content(OrdinalSchema(StringCodex), "6.28"),
-    Content(OrdinalSchema(StringCodex), "9.42"))
+  val result8 = List(Content(ContinuousSchema[Double](), 12.56),
+    Content(ContinuousSchema[Double](), 6.28),
+    Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
+    Content(DiscreteSchema[Long](), 19),
+    Content(NominalSchema[String](), "9.42"),
+    Content(OrdinalSchema[Long](), 19),
+    Content(OrdinalSchema[String](), "12.56"),
+    Content(OrdinalSchema[String](), "3.14"),
+    Content(OrdinalSchema[String](), "6.28"),
+    Content(OrdinalSchema[String](), "9.42"))
 
-  val result9 = List((Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    (Position1D("bar"), Content(OrdinalSchema(LongCodex), 19)),
-    (Position1D("bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position1D("baz"), Content(DiscreteSchema(LongCodex), 19)),
-    (Position1D("baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    (Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    (Position1D("foo"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    (Position1D("foo"), Content(NominalSchema(StringCodex), "9.42")),
-    (Position1D("foo"), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result9 = List((Position1D("bar"), Content(ContinuousSchema[Double](), 12.56)),
+    (Position1D("bar"), Content(OrdinalSchema[Long](), 19)),
+    (Position1D("bar"), Content(OrdinalSchema[String](), "6.28")),
+    (Position1D("baz"), Content(DiscreteSchema[Long](), 19)),
+    (Position1D("baz"), Content(OrdinalSchema[String](), "9.42")),
+    (Position1D("foo"), Content(ContinuousSchema[Double](), 6.28)),
+    (Position1D("foo"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    (Position1D("foo"), Content(NominalSchema[String](), "9.42")),
+    (Position1D("foo"), Content(OrdinalSchema[String](), "3.14")),
+    (Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result10 = List((Position2D(1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    (Position2D(1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position2D(1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position2D(1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    (Position2D(2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    (Position2D(2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    (Position2D(2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    (Position2D(3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    (Position2D(3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    (Position2D(4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result10 = List((Position2D(1, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    (Position2D(1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    (Position2D(1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    (Position2D(1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    (Position2D(2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    (Position2D(2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    (Position2D(2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    (Position2D(3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    (Position2D(3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    (Position2D(4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result11 = List((Position1D(1), Content(OrdinalSchema(StringCodex), "12.56")),
-    (Position1D(1), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position1D(1), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position1D(1), Content(OrdinalSchema(StringCodex), "9.42")),
-    (Position1D(2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    (Position1D(2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    (Position1D(2), Content(DiscreteSchema(LongCodex), 19)),
-    (Position1D(3), Content(NominalSchema(StringCodex), "9.42")),
-    (Position1D(3), Content(OrdinalSchema(LongCodex), 19)),
-    (Position1D(4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result11 = List((Position1D(1), Content(OrdinalSchema[String](), "12.56")),
+    (Position1D(1), Content(OrdinalSchema[String](), "3.14")),
+    (Position1D(1), Content(OrdinalSchema[String](), "6.28")),
+    (Position1D(1), Content(OrdinalSchema[String](), "9.42")),
+    (Position1D(2), Content(ContinuousSchema[Double](), 12.56)),
+    (Position1D(2), Content(ContinuousSchema[Double](), 6.28)),
+    (Position1D(2), Content(DiscreteSchema[Long](), 19)),
+    (Position1D(3), Content(NominalSchema[String](), "9.42")),
+    (Position1D(3), Content(OrdinalSchema[Long](), 19)),
+    (Position1D(4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result12 = List((Position2D("bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    (Position2D("bar", "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    (Position2D("bar", "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position2D("baz", "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    (Position2D("baz", "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    (Position2D("foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    (Position2D("foo", "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    (Position2D("foo", "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    (Position2D("foo", "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position2D("qux", "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result12 = List((Position2D("bar", "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    (Position2D("bar", "xyz"), Content(OrdinalSchema[Long](), 19)),
+    (Position2D("bar", "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    (Position2D("baz", "xyz"), Content(DiscreteSchema[Long](), 19)),
+    (Position2D("baz", "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    (Position2D("foo", "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    (Position2D("foo", "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    (Position2D("foo", "xyz"), Content(NominalSchema[String](), "9.42")),
+    (Position2D("foo", "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    (Position2D("qux", "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result13 = List((Position1D("xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    (Position1D("xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    (Position1D("xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    (Position1D("xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    (Position1D("xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    (Position1D("xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    (Position1D("xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    (Position1D("xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position1D("xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position1D("xyz"), Content(OrdinalSchema(StringCodex), "9.42")))
+  val result13 = List((Position1D("xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    (Position1D("xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    (Position1D("xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    (Position1D("xyz"), Content(DiscreteSchema[Long](), 19)),
+    (Position1D("xyz"), Content(NominalSchema[String](), "9.42")),
+    (Position1D("xyz"), Content(OrdinalSchema[Long](), 19)),
+    (Position1D("xyz"), Content(OrdinalSchema[String](), "12.56")),
+    (Position1D("xyz"), Content(OrdinalSchema[String](), "3.14")),
+    (Position1D("xyz"), Content(OrdinalSchema[String](), "6.28")),
+    (Position1D("xyz"), Content(OrdinalSchema[String](), "9.42")))
 
-  val result14 = List((Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    (Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    (Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    (Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    (Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    (Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    (Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    (Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    (Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    (Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result14 = List((Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    (Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    (Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    (Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    (Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    (Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    (Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    (Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    (Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    (Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 }
 
 class TestScaldingMatrixUnique extends TestMatrixUnique {
@@ -4157,733 +4157,733 @@ trait TestMatrixPairwise extends TestMatrix {
 
   val ext = 1.0
 
-  val dataA = List(Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 2)))
+  val dataA = List(Cell(Position1D("bar"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position1D("baz"), Content(ContinuousSchema[Double](), 2)))
 
-  val dataB = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 4)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 5)))
+  val dataB = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 4)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 5)))
 
-  val dataC = List(Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 4)))
+  val dataC = List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 4)))
 
-  val dataD = List(Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 4)))
+  val dataD = List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 4)))
 
-  val dataE = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 4)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 5)))
+  val dataE = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 4)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 5)))
 
-  val dataF = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 5)))
+  val dataF = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 4)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 5)))
 
-  val dataG = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)))
+  val dataG = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 4)))
 
-  val dataH = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)))
+  val dataH = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 4)))
 
-  val dataI = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 5)))
+  val dataI = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 4)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 5)))
 
-  val dataJ = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)))
+  val dataJ = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 4)))
 
-  val dataK = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 5)))
+  val dataK = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 4)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 5)))
 
-  val dataL = List(Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 2)))
+  val dataL = List(Cell(Position1D("bar"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position1D("baz"), Content(ContinuousSchema[Double](), 2)))
 
-  val dataM = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 4)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 5)))
+  val dataM = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 4)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 5)))
 
-  val dataN = List(Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 4)))
+  val dataN = List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 4)))
 
-  val dataO = List(Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 4)))
+  val dataO = List(Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 4)))
 
-  val dataP = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 4)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 5)))
+  val dataP = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 4)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 5)))
 
-  val dataQ = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 5)))
+  val dataQ = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 4)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 5)))
 
-  val dataR = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)))
+  val dataR = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 4)))
 
-  val dataS = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)))
+  val dataS = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 4)))
 
-  val dataT = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 5)))
+  val dataT = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 4)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 5)))
 
-  val dataU = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)))
+  val dataU = List(Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 4)))
 
-  val dataV = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 2)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 3)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 4)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 5)))
+  val dataV = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 2)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 3)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 4)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 5)))
 
-  val result1 = List(Cell(Position1D("(baz+bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position1D("(foo+bar)"), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28)),
-    Cell(Position1D("(foo+baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42)),
-    Cell(Position1D("(qux+bar)"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position1D("(qux+baz)"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position1D("(qux+foo)"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)))
+  val result1 = List(Cell(Position1D("(baz+bar)"), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position1D("(foo+bar)"), Content(ContinuousSchema[Double](), 3.14 + 6.28)),
+    Cell(Position1D("(foo+baz)"), Content(ContinuousSchema[Double](), 3.14 + 9.42)),
+    Cell(Position1D("(qux+bar)"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position1D("(qux+baz)"), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position1D("(qux+foo)"), Content(ContinuousSchema[Double](), 12.56 + 3.14)))
 
-  val result2 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56)),
-    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28)),
-    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56)),
-    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42)),
-    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84)),
-    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)))
+  val result2 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Double](), 18.84 + 12.56)),
+    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Double](), 3.14 + 6.28)),
+    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Double](), 6.28 + 12.56)),
+    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Double](), 3.14 + 9.42)),
+    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Double](), 6.28 + 18.84)),
+    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema[Double](), 12.56 + 3.14)))
 
-  val result3 = List(Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 9.42)),
-    Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3.14)),
-    Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28)),
-    Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3.14)),
-    Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56)),
-    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28)),
-    Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14)),
-    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)),
-    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+  val result3 = List(Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema[Double](), 18.84 + 9.42)),
+    Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema[Double](), 6.28 + 3.14)),
+    Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema[Double](), 12.56 - 6.28)),
+    Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema[Double](), 18.84 - 9.42)),
+    Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema[Double](), 6.28 - 3.14)),
+    Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 6.28)),
+    Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3.14)),
+    Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 12.56)),
+    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 6.28)),
+    Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3.14)),
+    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3.14)),
+    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 6.28)),
+    Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 9.42)))
 
-  val result4 = List(Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 9.42)),
-    Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3.14)),
-    Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28)),
-    Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3.14)),
-    Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56)),
-    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28)),
-    Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14)),
-    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)),
-    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+  val result4 = List(Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema[Double](), 18.84 + 9.42)),
+    Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema[Double](), 6.28 + 3.14)),
+    Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema[Double](), 12.56 - 6.28)),
+    Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema[Double](), 18.84 - 9.42)),
+    Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema[Double](), 6.28 - 3.14)),
+    Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 6.28)),
+    Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3.14)),
+    Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 12.56)),
+    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 6.28)),
+    Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3.14)),
+    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3.14)),
+    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 6.28)),
+    Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 9.42)))
 
-  val result5 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56)),
-    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28)),
-    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56)),
-    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42)),
-    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84)),
-    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)))
+  val result5 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Double](), 18.84 + 12.56)),
+    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Double](), 3.14 + 6.28)),
+    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Double](), 6.28 + 12.56)),
+    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Double](), 3.14 + 9.42)),
+    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Double](), 6.28 + 18.84)),
+    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema[Double](), 12.56 + 3.14)))
 
   val result6 = List(
-    Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56)),
-    Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28)),
-    Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56)),
-    Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42)),
-    Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84)),
-    Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position3D("(qux+foo)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)))
+    Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84 + 12.56)),
+    Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14 + 6.28)),
+    Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28 + 12.56)),
+    Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14 + 9.42)),
+    Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28 + 18.84)),
+    Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position3D("(qux+foo)", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3.14)))
 
   val result7 = List(
-    Cell(Position2D("(2|xyz+1|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(2|xyz+1|xyz)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 9.42)),
-    Cell(Position2D("(2|xyz+1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3.14)),
-    Cell(Position2D("(2|xyz-1|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("(2|xyz-1|xyz)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("(2|xyz-1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("(3|xyz+1|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28)),
-    Cell(Position2D("(3|xyz+1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3.14)),
-    Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56)),
-    Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position2D("(3|xyz-1|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28)),
-    Cell(Position2D("(3|xyz-1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14)),
-    Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("(4|xyz+1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)),
-    Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(4|xyz+3|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position2D("(4|xyz-1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("(4|xyz-3|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+    Cell(Position2D("(2|xyz+1|xyz)", "bar"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(2|xyz+1|xyz)", "baz"), Content(ContinuousSchema[Double](), 18.84 + 9.42)),
+    Cell(Position2D("(2|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Double](), 6.28 + 3.14)),
+    Cell(Position2D("(2|xyz-1|xyz)", "bar"), Content(ContinuousSchema[Double](), 12.56 - 6.28)),
+    Cell(Position2D("(2|xyz-1|xyz)", "baz"), Content(ContinuousSchema[Double](), 18.84 - 9.42)),
+    Cell(Position2D("(2|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Double](), 6.28 - 3.14)),
+    Cell(Position2D("(3|xyz+1|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 6.28)),
+    Cell(Position2D("(3|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3.14)),
+    Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 12.56)),
+    Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position2D("(3|xyz-1|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 6.28)),
+    Cell(Position2D("(3|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3.14)),
+    Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position2D("(4|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3.14)),
+    Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(4|xyz+3|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position2D("(4|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 6.28)),
+    Cell(Position2D("(4|xyz-3|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 9.42)))
 
   val result8 = List(
-    Cell(Position3D("(2+1)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position3D("(2+1)", "baz", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 9.42)),
-    Cell(Position3D("(2+1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3.14)),
-    Cell(Position3D("(2-1)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position3D("(2-1)", "baz", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position3D("(2-1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position3D("(3+1)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28)),
-    Cell(Position3D("(3+1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3.14)),
-    Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56)),
-    Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position3D("(3-1)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28)),
-    Cell(Position3D("(3-1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14)),
-    Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position3D("(4+1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)),
-    Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position3D("(4+3)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position3D("(4-1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position3D("(4-3)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+    Cell(Position3D("(2+1)", "bar", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position3D("(2+1)", "baz", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 9.42)),
+    Cell(Position3D("(2+1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 3.14)),
+    Cell(Position3D("(2-1)", "bar", "xyz"), Content(ContinuousSchema[Double](), 12.56 - 6.28)),
+    Cell(Position3D("(2-1)", "baz", "xyz"), Content(ContinuousSchema[Double](), 18.84 - 9.42)),
+    Cell(Position3D("(2-1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 6.28 - 3.14)),
+    Cell(Position3D("(3+1)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 6.28)),
+    Cell(Position3D("(3+1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3.14)),
+    Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 12.56)),
+    Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position3D("(3-1)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 - 6.28)),
+    Cell(Position3D("(3-1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 - 3.14)),
+    Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position3D("(4+1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3.14)),
+    Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position3D("(4+3)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position3D("(4-1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 - 6.28)),
+    Cell(Position3D("(4-3)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 - 9.42)))
 
   val result9 = List(
-    Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42)),
-    Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84)),
-    Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position2D("(qux|xyz+foo|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)))
+    Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema[Double](), 18.84 + 12.56)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 3.14 + 6.28)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema[Double](), 6.28 + 12.56)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema[Double](), 3.14 + 9.42)),
+    Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema[Double](), 6.28 + 18.84)),
+    Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position2D("(qux|xyz+foo|xyz)", 1), Content(ContinuousSchema[Double](), 12.56 + 3.14)))
 
   val result10 = List()
 
   val result11 = List(
-    Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28)),
-    Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56)),
-    Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 12.56)),
-    Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28)),
-    Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56)),
-    Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 18.84)),
-    Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 9.42)),
-    Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28)),
-    Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 12.56)),
-    Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 18.84)),
-    Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42)),
-    Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 18.84)),
-    Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 6.28)),
-    Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56)),
-    Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84)),
-    Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 9.42)),
-    Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84)),
-    Cell(Position2D("(foo|2+foo|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3.14)),
-    Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 12.56)),
-    Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 9.42)),
-    Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84)),
-    Cell(Position2D("(foo|3+foo|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3.14)),
-    Cell(Position2D("(foo|3+foo|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28)),
-    Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 12.56)),
-    Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 18.84)),
-    Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 18.84)),
-    Cell(Position2D("(foo|4+foo|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)),
-    Cell(Position2D("(foo|4+foo|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(foo|4+foo|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 12.56)),
-    Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 18.84)),
-    Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 18.84)),
-    Cell(Position2D("(qux|1+foo|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14)),
-    Cell(Position2D("(qux|1+foo|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28)),
-    Cell(Position2D("(qux|1+foo|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42)),
-    Cell(Position2D("(qux|1+foo|4)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 12.56)))
+    Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 6.28)),
+    Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 12.56)),
+    Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 12.56)),
+    Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 6.28)),
+    Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 12.56)),
+    Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 18.84)),
+    Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 9.42)),
+    Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 6.28)),
+    Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 12.56)),
+    Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 18.84)),
+    Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 9.42)),
+    Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 18.84)),
+    Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 6.28)),
+    Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 12.56)),
+    Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 18.84)),
+    Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 9.42)),
+    Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 18.84)),
+    Cell(Position2D("(foo|2+foo|1)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 3.14)),
+    Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 12.56)),
+    Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 9.42)),
+    Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 18.84)),
+    Cell(Position2D("(foo|3+foo|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3.14)),
+    Cell(Position2D("(foo|3+foo|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 6.28)),
+    Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 12.56)),
+    Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 18.84)),
+    Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 18.84)),
+    Cell(Position2D("(foo|4+foo|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3.14)),
+    Cell(Position2D("(foo|4+foo|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(foo|4+foo|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 12.56)),
+    Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 18.84)),
+    Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 18.84)),
+    Cell(Position2D("(qux|1+foo|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3.14)),
+    Cell(Position2D("(qux|1+foo|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28)),
+    Cell(Position2D("(qux|1+foo|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42)),
+    Cell(Position2D("(qux|1+foo|4)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 12.56)))
 
-  val result12 = List(Cell(Position1D("(baz+bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position1D("(foo+bar)"), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28 + 1)),
-    Cell(Position1D("(foo+baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42 + 1)),
-    Cell(Position1D("(qux+bar)"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position1D("(qux+baz)"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position1D("(qux+foo)"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)))
+  val result12 = List(Cell(Position1D("(baz+bar)"), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position1D("(foo+bar)"), Content(ContinuousSchema[Double](), 3.14 + 6.28 + 1)),
+    Cell(Position1D("(foo+baz)"), Content(ContinuousSchema[Double](), 3.14 + 9.42 + 1)),
+    Cell(Position1D("(qux+bar)"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position1D("(qux+baz)"), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position1D("(qux+foo)"), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)))
 
-  val result13 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56 + 1)),
-    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28 + 1)),
-    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56 + 1)),
-    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84 + 1)),
-    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42 + 1)),
-    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84 + 1)),
-    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)))
+  val result13 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Double](), 18.84 + 12.56 + 1)),
+    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Double](), 3.14 + 6.28 + 1)),
+    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Double](), 6.28 + 12.56 + 1)),
+    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Double](), 9.42 + 18.84 + 1)),
+    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Double](), 3.14 + 9.42 + 1)),
+    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Double](), 6.28 + 18.84 + 1)),
+    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)))
 
   val result14 = List(
-    Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 9.42 + 1)),
-    Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3.14 + 1)),
-    Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28 - 1)),
-    Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42 - 1)),
-    Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14 - 1)),
-    Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28 + 1)),
-    Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3.14 + 1)),
-    Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56 + 1)),
-    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28 - 1)),
-    Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14 - 1)),
-    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56 - 1)),
-    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28 - 1)),
-    Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)),
-    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14 - 1)),
-    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28 - 1)),
-    Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42 - 1)))
+    Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema[Double](), 18.84 + 9.42 + 1)),
+    Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema[Double](), 6.28 + 3.14 + 1)),
+    Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema[Double](), 12.56 - 6.28 - 1)),
+    Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema[Double](), 18.84 - 9.42 - 1)),
+    Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema[Double](), 6.28 - 3.14 - 1)),
+    Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 6.28 + 1)),
+    Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3.14 + 1)),
+    Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 12.56 + 1)),
+    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 6.28 - 1)),
+    Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3.14 - 1)),
+    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 12.56 - 1)),
+    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 6.28 - 1)),
+    Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)),
+    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3.14 - 1)),
+    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 6.28 - 1)),
+    Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 9.42 - 1)))
 
   val result15 = List(
-    Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 9.42 + 1)),
-    Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3.14 + 1)),
-    Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28 - 1)),
-    Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42 - 1)),
-    Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14 - 1)),
-    Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28 + 1)),
-    Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3.14 + 1)),
-    Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56 + 1)),
-    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28 - 1)),
-    Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14 - 1)),
-    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56 - 1)),
-    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28 - 1)),
-    Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)),
-    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14 - 1)),
-    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28 - 1)),
-    Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42 - 1)))
+    Cell(Position2D("(2+1)", "bar"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(2+1)", "baz"), Content(ContinuousSchema[Double](), 18.84 + 9.42 + 1)),
+    Cell(Position2D("(2+1)", "foo"), Content(ContinuousSchema[Double](), 6.28 + 3.14 + 1)),
+    Cell(Position2D("(2-1)", "bar"), Content(ContinuousSchema[Double](), 12.56 - 6.28 - 1)),
+    Cell(Position2D("(2-1)", "baz"), Content(ContinuousSchema[Double](), 18.84 - 9.42 - 1)),
+    Cell(Position2D("(2-1)", "foo"), Content(ContinuousSchema[Double](), 6.28 - 3.14 - 1)),
+    Cell(Position2D("(3+1)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 6.28 + 1)),
+    Cell(Position2D("(3+1)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3.14 + 1)),
+    Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 12.56 + 1)),
+    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position2D("(3-1)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 6.28 - 1)),
+    Cell(Position2D("(3-1)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3.14 - 1)),
+    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 12.56 - 1)),
+    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 6.28 - 1)),
+    Cell(Position2D("(4+1)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)),
+    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(4+3)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position2D("(4-1)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3.14 - 1)),
+    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 6.28 - 1)),
+    Cell(Position2D("(4-3)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 9.42 - 1)))
 
-  val result16 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56 + 1)),
-    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28 + 1)),
-    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56 + 1)),
-    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84 + 1)),
-    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42 + 1)),
-    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84 + 1)),
-    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)))
+  val result16 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Double](), 18.84 + 12.56 + 1)),
+    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Double](), 3.14 + 6.28 + 1)),
+    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Double](), 6.28 + 12.56 + 1)),
+    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Double](), 9.42 + 18.84 + 1)),
+    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Double](), 3.14 + 9.42 + 1)),
+    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Double](), 6.28 + 18.84 + 1)),
+    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position2D("(qux+foo)", 1), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)))
 
   val result17 = List(
-    Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56 + 1)),
-    Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28 + 1)),
-    Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56 + 1)),
-    Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84 + 1)),
-    Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42 + 1)),
-    Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84 + 1)),
-    Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position3D("(qux+foo)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)))
+    Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84 + 12.56 + 1)),
+    Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14 + 6.28 + 1)),
+    Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28 + 12.56 + 1)),
+    Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42 + 18.84 + 1)),
+    Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14 + 9.42 + 1)),
+    Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28 + 18.84 + 1)),
+    Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position3D("(qux+foo)", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)))
 
   val result18 = List(
-    Cell(Position2D("(2|xyz+1|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(2|xyz+1|xyz)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 9.42 + 1)),
-    Cell(Position2D("(2|xyz+1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3.14 + 1)),
-    Cell(Position2D("(2|xyz-1|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28 - 1)),
-    Cell(Position2D("(2|xyz-1|xyz)", "baz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42 - 1)),
-    Cell(Position2D("(2|xyz-1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14 - 1)),
-    Cell(Position2D("(3|xyz+1|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28 + 1)),
-    Cell(Position2D("(3|xyz+1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3.14 + 1)),
-    Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56 + 1)),
-    Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position2D("(3|xyz-1|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28 - 1)),
-    Cell(Position2D("(3|xyz-1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14 - 1)),
-    Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56 - 1)),
-    Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28 - 1)),
-    Cell(Position2D("(4|xyz+1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)),
-    Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(4|xyz+3|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position2D("(4|xyz-1|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14 - 1)),
-    Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28 - 1)),
-    Cell(Position2D("(4|xyz-3|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42 - 1)))
+    Cell(Position2D("(2|xyz+1|xyz)", "bar"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(2|xyz+1|xyz)", "baz"), Content(ContinuousSchema[Double](), 18.84 + 9.42 + 1)),
+    Cell(Position2D("(2|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Double](), 6.28 + 3.14 + 1)),
+    Cell(Position2D("(2|xyz-1|xyz)", "bar"), Content(ContinuousSchema[Double](), 12.56 - 6.28 - 1)),
+    Cell(Position2D("(2|xyz-1|xyz)", "baz"), Content(ContinuousSchema[Double](), 18.84 - 9.42 - 1)),
+    Cell(Position2D("(2|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Double](), 6.28 - 3.14 - 1)),
+    Cell(Position2D("(3|xyz+1|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 6.28 + 1)),
+    Cell(Position2D("(3|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3.14 + 1)),
+    Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 12.56 + 1)),
+    Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position2D("(3|xyz-1|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 6.28 - 1)),
+    Cell(Position2D("(3|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3.14 - 1)),
+    Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 12.56 - 1)),
+    Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 6.28 - 1)),
+    Cell(Position2D("(4|xyz+1|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)),
+    Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(4|xyz+3|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position2D("(4|xyz-1|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3.14 - 1)),
+    Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 6.28 - 1)),
+    Cell(Position2D("(4|xyz-3|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 9.42 - 1)))
 
   val result19 = List(
-    Cell(Position3D("(2+1)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position3D("(2+1)", "baz", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 9.42 + 1)),
-    Cell(Position3D("(2+1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3.14 + 1)),
-    Cell(Position3D("(2-1)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28 - 1)),
-    Cell(Position3D("(2-1)", "baz", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42 - 1)),
-    Cell(Position3D("(2-1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14 - 1)),
-    Cell(Position3D("(3+1)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28 + 1)),
-    Cell(Position3D("(3+1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3.14 + 1)),
-    Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56 + 1)),
-    Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position3D("(3-1)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28 - 1)),
-    Cell(Position3D("(3-1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14 - 1)),
-    Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56 - 1)),
-    Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28 - 1)),
-    Cell(Position3D("(4+1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)),
-    Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position3D("(4+3)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position3D("(4-1)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14 - 1)),
-    Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28 - 1)),
-    Cell(Position3D("(4-3)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42 - 1)))
+    Cell(Position3D("(2+1)", "bar", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position3D("(2+1)", "baz", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 9.42 + 1)),
+    Cell(Position3D("(2+1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 3.14 + 1)),
+    Cell(Position3D("(2-1)", "bar", "xyz"), Content(ContinuousSchema[Double](), 12.56 - 6.28 - 1)),
+    Cell(Position3D("(2-1)", "baz", "xyz"), Content(ContinuousSchema[Double](), 18.84 - 9.42 - 1)),
+    Cell(Position3D("(2-1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 6.28 - 3.14 - 1)),
+    Cell(Position3D("(3+1)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 6.28 + 1)),
+    Cell(Position3D("(3+1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3.14 + 1)),
+    Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 12.56 + 1)),
+    Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position3D("(3-1)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 - 6.28 - 1)),
+    Cell(Position3D("(3-1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 - 3.14 - 1)),
+    Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 - 12.56 - 1)),
+    Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 - 6.28 - 1)),
+    Cell(Position3D("(4+1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)),
+    Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position3D("(4+3)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position3D("(4-1)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 - 3.14 - 1)),
+    Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 - 6.28 - 1)),
+    Cell(Position3D("(4-3)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 - 9.42 - 1)))
 
   val result20 = List(
-    Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56 + 1)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28 + 1)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56 + 1)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84 + 1)),
-    Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42 + 1)),
-    Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84 + 1)),
-    Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position2D("(qux|xyz+foo|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)))
+    Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema[Double](), 18.84 + 12.56 + 1)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 3.14 + 6.28 + 1)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema[Double](), 6.28 + 12.56 + 1)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema[Double](), 9.42 + 18.84 + 1)),
+    Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema[Double](), 3.14 + 9.42 + 1)),
+    Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema[Double](), 6.28 + 18.84 + 1)),
+    Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position2D("(qux|xyz+foo|xyz)", 1), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)))
 
   val result21 = List()
 
   val result22 = List(
-    Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28 + 1)),
-    Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56 + 1)),
-    Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 12.56 + 1)),
-    Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84 + 1)),
-    Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 6.28 + 1)),
-    Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 12.56 + 1)),
-    Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 18.84 + 1)),
-    Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 9.42 + 1)),
-    Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 6.28 + 1)),
-    Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 12.56 + 1)),
-    Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 18.84 + 1)),
-    Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 9.42 + 1)),
-    Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 18.84 + 1)),
-    Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 6.28 + 1)),
-    Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 12.56 + 1)),
-    Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84 + 1)),
-    Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 9.42 + 1)),
-    Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 18.84 + 1)),
-    Cell(Position2D("(foo|2+foo|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3.14 + 1)),
-    Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 12.56 + 1)),
-    Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84 + 1)),
-    Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 9.42 + 1)),
-    Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 18.84 + 1)),
-    Cell(Position2D("(foo|3+foo|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3.14 + 1)),
-    Cell(Position2D("(foo|3+foo|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 6.28 + 1)),
-    Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 12.56 + 1)),
-    Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 18.84 + 1)),
-    Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 18.84 + 1)),
-    Cell(Position2D("(foo|4+foo|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)),
-    Cell(Position2D("(foo|4+foo|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(foo|4+foo|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 12.56 + 1)),
-    Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 18.84 + 1)),
-    Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 18.84 + 1)),
-    Cell(Position2D("(qux|1+foo|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3.14 + 1)),
-    Cell(Position2D("(qux|1+foo|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 6.28 + 1)),
-    Cell(Position2D("(qux|1+foo|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 9.42 + 1)),
-    Cell(Position2D("(qux|1+foo|4)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 12.56 + 1)))
+    Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 6.28 + 1)),
+    Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 12.56 + 1)),
+    Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 12.56 + 1)),
+    Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 18.84 + 1)),
+    Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 6.28 + 1)),
+    Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 12.56 + 1)),
+    Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 18.84 + 1)),
+    Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 9.42 + 1)),
+    Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 6.28 + 1)),
+    Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 12.56 + 1)),
+    Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 18.84 + 1)),
+    Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 9.42 + 1)),
+    Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 18.84 + 1)),
+    Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 6.28 + 1)),
+    Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 12.56 + 1)),
+    Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 18.84 + 1)),
+    Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 9.42 + 1)),
+    Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 18.84 + 1)),
+    Cell(Position2D("(foo|2+foo|1)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 3.14 + 1)),
+    Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 12.56 + 1)),
+    Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 18.84 + 1)),
+    Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 9.42 + 1)),
+    Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 18.84 + 1)),
+    Cell(Position2D("(foo|3+foo|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3.14 + 1)),
+    Cell(Position2D("(foo|3+foo|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 6.28 + 1)),
+    Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 12.56 + 1)),
+    Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 18.84 + 1)),
+    Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 18.84 + 1)),
+    Cell(Position2D("(foo|4+foo|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)),
+    Cell(Position2D("(foo|4+foo|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(foo|4+foo|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 12.56 + 1)),
+    Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 18.84 + 1)),
+    Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 18.84 + 1)),
+    Cell(Position2D("(qux|1+foo|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3.14 + 1)),
+    Cell(Position2D("(qux|1+foo|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 6.28 + 1)),
+    Cell(Position2D("(qux|1+foo|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 9.42 + 1)),
+    Cell(Position2D("(qux|1+foo|4)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 12.56 + 1)))
 
-  val result23 = List(Cell(Position1D("(baz+bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 + 1)),
-    Cell(Position1D("(foo+bar)"), Content(ContinuousSchema(DoubleCodex), 3.14 + 1)),
-    Cell(Position1D("(foo+baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 + 2)),
-    Cell(Position1D("(qux+bar)"), Content(ContinuousSchema(DoubleCodex), 12.56 + 1)),
-    Cell(Position1D("(qux+baz)"), Content(ContinuousSchema(DoubleCodex), 12.56 + 2)))
+  val result23 = List(Cell(Position1D("(baz+bar)"), Content(ContinuousSchema[Double](), 9.42 + 1)),
+    Cell(Position1D("(foo+bar)"), Content(ContinuousSchema[Double](), 3.14 + 1)),
+    Cell(Position1D("(foo+baz)"), Content(ContinuousSchema[Double](), 3.14 + 2)),
+    Cell(Position1D("(qux+bar)"), Content(ContinuousSchema[Double](), 12.56 + 1)),
+    Cell(Position1D("(qux+baz)"), Content(ContinuousSchema[Double](), 12.56 + 2)))
 
-  val result24 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 1)),
-    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 2)),
-    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 1)),
-    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 2)),
-    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 3)),
-    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 4)),
-    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 5)),
-    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 1)),
-    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 4)))
+  val result24 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Double](), 9.42 + 1)),
+    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Double](), 18.84 + 2)),
+    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Double](), 3.14 + 1)),
+    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Double](), 6.28 + 2)),
+    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Double](), 9.42 + 3)),
+    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Double](), 3.14 + 4)),
+    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Double](), 6.28 + 5)),
+    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Double](), 12.56 + 1)),
+    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Double](), 12.56 + 4)))
 
-  val result25 = List(Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1)),
-    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3)),
-    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 1)),
-    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3)),
-    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3)),
-    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3)))
+  val result25 = List(Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 1)),
+    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3)),
+    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 1)),
+    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3)),
+    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3)),
+    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3)))
 
-  val result26 = List(Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1)),
-    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3)),
-    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 1)),
-    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3)),
-    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3)),
-    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3)))
+  val result26 = List(Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 1)),
+    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3)),
+    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 1)),
+    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3)),
+    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3)),
+    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3)))
 
-  val result27 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 1)),
-    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 2)),
-    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 1)),
-    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 2)),
-    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 3)),
-    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 4)),
-    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 5)),
-    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 1)),
-    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 4)))
+  val result27 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Double](), 9.42 + 1)),
+    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Double](), 18.84 + 2)),
+    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Double](), 3.14 + 1)),
+    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Double](), 6.28 + 2)),
+    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Double](), 9.42 + 3)),
+    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Double](), 3.14 + 4)),
+    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Double](), 6.28 + 5)),
+    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Double](), 12.56 + 1)),
+    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Double](), 12.56 + 4)))
 
-  val result28 = List(Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 1)),
-    Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 2)),
-    Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 1)),
-    Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 2)),
-    Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3)),
-    Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 4)),
-    Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 5)),
-    Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 1)),
-    Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 4)))
+  val result28 = List(Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42 + 1)),
+    Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84 + 2)),
+    Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14 + 1)),
+    Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28 + 2)),
+    Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3)),
+    Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14 + 4)),
+    Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28 + 5)),
+    Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 + 1)),
+    Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 + 4)))
 
   val result29 = List(
-    Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1)),
-    Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3)),
-    Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 1)),
-    Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3)),
-    Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3)),
-    Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3)))
+    Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 1)),
+    Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3)),
+    Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 1)),
+    Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3)),
+    Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3)),
+    Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3)))
 
   val result30 = List(
-    Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1)),
-    Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3)),
-    Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 1)),
-    Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3)),
-    Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3)),
-    Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3)))
+    Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 1)),
+    Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3)),
+    Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 - 1)),
+    Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 - 3)),
+    Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3)),
+    Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 - 3)))
 
   val result31 = List(
-    Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 1)),
-    Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 2)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 1)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 2)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 3)),
-    Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 4)),
-    Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 5)),
-    Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 1)),
-    Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 4)))
+    Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 9.42 + 1)),
+    Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema[Double](), 18.84 + 2)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 3.14 + 1)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema[Double](), 6.28 + 2)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema[Double](), 9.42 + 3)),
+    Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema[Double](), 3.14 + 4)),
+    Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema[Double](), 6.28 + 5)),
+    Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 12.56 + 1)),
+    Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema[Double](), 12.56 + 4)))
 
   val result32 = List()
 
   val result33 = List(
-    Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 1)),
-    Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1)),
-    Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 2)),
-    Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 1)),
-    Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 2)),
-    Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3)),
-    Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1)),
-    Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 2)),
-    Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 3)),
-    Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 4)),
-    Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 1)),
-    Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 2)),
-    Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 3)),
-    Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 4)),
-    Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 5)),
-    Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 1)),
-    Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 2)),
-    Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3)),
-    Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 4)),
-    Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 5)),
-    Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 1)),
-    Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 2)),
-    Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3)),
-    Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 4)),
-    Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 5)),
-    Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 1)),
-    Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 2)),
-    Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3)),
-    Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 4)),
-    Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 5)),
-    Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 1)),
-    Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 2)),
-    Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3)),
-    Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 4)),
-    Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 5)))
+    Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 1)),
+    Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 1)),
+    Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 2)),
+    Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 1)),
+    Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 2)),
+    Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3)),
+    Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 1)),
+    Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 2)),
+    Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 3)),
+    Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 4)),
+    Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 1)),
+    Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 2)),
+    Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 3)),
+    Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 4)),
+    Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 5)),
+    Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 1)),
+    Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 2)),
+    Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 3)),
+    Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 4)),
+    Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 5)),
+    Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 1)),
+    Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 2)),
+    Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3)),
+    Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 4)),
+    Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 5)),
+    Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 1)),
+    Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 2)),
+    Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3)),
+    Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 4)),
+    Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 5)),
+    Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 1)),
+    Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 2)),
+    Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3)),
+    Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 4)),
+    Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 5)))
 
-  val result34 = List(Cell(Position1D("(baz+bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 + 1 + 1)),
-    Cell(Position1D("(foo+bar)"), Content(ContinuousSchema(DoubleCodex), 3.14 + 1 + 1)),
-    Cell(Position1D("(foo+baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 + 2 + 1)),
-    Cell(Position1D("(qux+bar)"), Content(ContinuousSchema(DoubleCodex), 12.56 + 1 + 1)),
-    Cell(Position1D("(qux+baz)"), Content(ContinuousSchema(DoubleCodex), 12.56 + 2 + 1)))
+  val result34 = List(Cell(Position1D("(baz+bar)"), Content(ContinuousSchema[Double](), 9.42 + 1 + 1)),
+    Cell(Position1D("(foo+bar)"), Content(ContinuousSchema[Double](), 3.14 + 1 + 1)),
+    Cell(Position1D("(foo+baz)"), Content(ContinuousSchema[Double](), 3.14 + 2 + 1)),
+    Cell(Position1D("(qux+bar)"), Content(ContinuousSchema[Double](), 12.56 + 1 + 1)),
+    Cell(Position1D("(qux+baz)"), Content(ContinuousSchema[Double](), 12.56 + 2 + 1)))
 
   val result35 = List(
-    Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 1 + 1)),
-    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 2 + 1)),
-    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 1 + 1)),
-    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 2 + 1)),
-    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 3 + 1)),
-    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 4 + 1)),
-    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 5 + 1)),
-    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 1 + 1)),
-    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 4 + 1)))
+    Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Double](), 9.42 + 1 + 1)),
+    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Double](), 18.84 + 2 + 1)),
+    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Double](), 3.14 + 1 + 1)),
+    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Double](), 6.28 + 2 + 1)),
+    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Double](), 9.42 + 3 + 1)),
+    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Double](), 3.14 + 4 + 1)),
+    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Double](), 6.28 + 5 + 1)),
+    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Double](), 12.56 + 1 + 1)),
+    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Double](), 12.56 + 4 + 1)))
 
-  val result36 = List(Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1 + 1)),
-    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3 + 1)),
-    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 1 - 1)),
-    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3 - 1)),
-    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3 + 1)),
-    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3 - 1)))
+  val result36 = List(Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 1 + 1)),
+    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3 + 1)),
+    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 1 - 1)),
+    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3 - 1)),
+    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3 + 1)),
+    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3 - 1)))
 
-  val result37 = List(Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1 + 1)),
-    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3 + 1)),
-    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 1 - 1)),
-    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3 - 1)),
-    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3 + 1)),
-    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3 - 1)))
+  val result37 = List(Cell(Position2D("(3+2)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 1 + 1)),
+    Cell(Position2D("(3+2)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3 + 1)),
+    Cell(Position2D("(3-2)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 1 - 1)),
+    Cell(Position2D("(3-2)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3 - 1)),
+    Cell(Position2D("(4+2)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3 + 1)),
+    Cell(Position2D("(4-2)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3 - 1)))
 
-  val result38 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 1 + 1)),
-    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 2 + 1)),
-    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 1 + 1)),
-    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 2 + 1)),
-    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 3 + 1)),
-    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 4 + 1)),
-    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 5 + 1)),
-    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 1 + 1)),
-    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 4 + 1)))
+  val result38 = List(Cell(Position2D("(baz+bar)", 1), Content(ContinuousSchema[Double](), 9.42 + 1 + 1)),
+    Cell(Position2D("(baz+bar)", 2), Content(ContinuousSchema[Double](), 18.84 + 2 + 1)),
+    Cell(Position2D("(foo+bar)", 1), Content(ContinuousSchema[Double](), 3.14 + 1 + 1)),
+    Cell(Position2D("(foo+bar)", 2), Content(ContinuousSchema[Double](), 6.28 + 2 + 1)),
+    Cell(Position2D("(foo+bar)", 3), Content(ContinuousSchema[Double](), 9.42 + 3 + 1)),
+    Cell(Position2D("(foo+baz)", 1), Content(ContinuousSchema[Double](), 3.14 + 4 + 1)),
+    Cell(Position2D("(foo+baz)", 2), Content(ContinuousSchema[Double](), 6.28 + 5 + 1)),
+    Cell(Position2D("(qux+bar)", 1), Content(ContinuousSchema[Double](), 12.56 + 1 + 1)),
+    Cell(Position2D("(qux+baz)", 1), Content(ContinuousSchema[Double](), 12.56 + 4 + 1)))
 
   val result39 = List(
-    Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 1 + 1)),
-    Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 2 + 1)),
-    Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 1 + 1)),
-    Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 2 + 1)),
-    Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3 + 1)),
-    Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 4 + 1)),
-    Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 5 + 1)),
-    Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 1 + 1)),
-    Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 4 + 1)))
+    Cell(Position3D("(baz+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42 + 1 + 1)),
+    Cell(Position3D("(baz+bar)", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84 + 2 + 1)),
+    Cell(Position3D("(foo+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14 + 1 + 1)),
+    Cell(Position3D("(foo+bar)", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28 + 2 + 1)),
+    Cell(Position3D("(foo+bar)", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3 + 1)),
+    Cell(Position3D("(foo+baz)", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14 + 4 + 1)),
+    Cell(Position3D("(foo+baz)", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28 + 5 + 1)),
+    Cell(Position3D("(qux+bar)", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 + 1 + 1)),
+    Cell(Position3D("(qux+baz)", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 + 4 + 1)))
 
   val result40 = List(
-    Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1 + 1)),
-    Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3 + 1)),
-    Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema(DoubleCodex), 18.84 - 1 - 1)),
-    Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3 - 1)),
-    Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3 + 1)),
-    Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3 - 1)))
+    Cell(Position2D("(3|xyz+2|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 + 1 + 1)),
+    Cell(Position2D("(3|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 + 3 + 1)),
+    Cell(Position2D("(3|xyz-2|xyz)", "bar"), Content(ContinuousSchema[Double](), 18.84 - 1 - 1)),
+    Cell(Position2D("(3|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Double](), 9.42 - 3 - 1)),
+    Cell(Position2D("(4|xyz+2|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 + 3 + 1)),
+    Cell(Position2D("(4|xyz-2|xyz)", "foo"), Content(ContinuousSchema[Double](), 12.56 - 3 - 1)))
 
   val result41 = List(
-    Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1 + 1)),
-    Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3 + 1)),
-    Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 - 1 - 1)),
-    Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3 - 1)),
-    Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3 + 1)),
-    Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3 - 1)))
+    Cell(Position3D("(3+2)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 1 + 1)),
+    Cell(Position3D("(3+2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3 + 1)),
+    Cell(Position3D("(3-2)", "bar", "xyz"), Content(ContinuousSchema[Double](), 18.84 - 1 - 1)),
+    Cell(Position3D("(3-2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 9.42 - 3 - 1)),
+    Cell(Position3D("(4+2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3 + 1)),
+    Cell(Position3D("(4-2)", "foo", "xyz"), Content(ContinuousSchema[Double](), 12.56 - 3 - 1)))
 
   val result42 = List(
-    Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 9.42 + 1 + 1)),
-    Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 18.84 + 2 + 1)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 1 + 1)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 2 + 1)),
-    Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema(DoubleCodex), 9.42 + 3 + 1)),
-    Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 3.14 + 4 + 1)),
-    Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema(DoubleCodex), 6.28 + 5 + 1)),
-    Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 1 + 1)),
-    Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema(DoubleCodex), 12.56 + 4 + 1)))
+    Cell(Position2D("(baz|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 9.42 + 1 + 1)),
+    Cell(Position2D("(baz|xyz+bar|xyz)", 2), Content(ContinuousSchema[Double](), 18.84 + 2 + 1)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 3.14 + 1 + 1)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 2), Content(ContinuousSchema[Double](), 6.28 + 2 + 1)),
+    Cell(Position2D("(foo|xyz+bar|xyz)", 3), Content(ContinuousSchema[Double](), 9.42 + 3 + 1)),
+    Cell(Position2D("(foo|xyz+baz|xyz)", 1), Content(ContinuousSchema[Double](), 3.14 + 4 + 1)),
+    Cell(Position2D("(foo|xyz+baz|xyz)", 2), Content(ContinuousSchema[Double](), 6.28 + 5 + 1)),
+    Cell(Position2D("(qux|xyz+bar|xyz)", 1), Content(ContinuousSchema[Double](), 12.56 + 1 + 1)),
+    Cell(Position2D("(qux|xyz+baz|xyz)", 1), Content(ContinuousSchema[Double](), 12.56 + 4 + 1)))
 
   val result43 = List()
 
   val result44 = List(
-    Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 1 + 1)),
-    Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1 + 1)),
-    Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 2 + 1)),
-    Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 1 + 1)),
-    Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 2 + 1)),
-    Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3 + 1)),
-    Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 1 + 1)),
-    Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 2 + 1)),
-    Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 3 + 1)),
-    Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 + 4 + 1)),
-    Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 1 + 1)),
-    Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 2 + 1)),
-    Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 3 + 1)),
-    Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 4 + 1)),
-    Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 + 5 + 1)),
-    Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 1 + 1)),
-    Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 2 + 1)),
-    Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 3 + 1)),
-    Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 4 + 1)),
-    Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 + 5 + 1)),
-    Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 1 + 1)),
-    Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 2 + 1)),
-    Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 3 + 1)),
-    Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 4 + 1)),
-    Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 + 5 + 1)),
-    Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 1 + 1)),
-    Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 2 + 1)),
-    Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3 + 1)),
-    Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 4 + 1)),
-    Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 5 + 1)),
-    Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 1 + 1)),
-    Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 2 + 1)),
-    Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 3 + 1)),
-    Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 4 + 1)),
-    Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 + 5 + 1)))
+    Cell(Position2D("(bar|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 1 + 1)),
+    Cell(Position2D("(bar|3+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 1 + 1)),
+    Cell(Position2D("(bar|3+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 2 + 1)),
+    Cell(Position2D("(baz|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 1 + 1)),
+    Cell(Position2D("(baz|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 2 + 1)),
+    Cell(Position2D("(baz|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3 + 1)),
+    Cell(Position2D("(baz|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 1 + 1)),
+    Cell(Position2D("(baz|2+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 2 + 1)),
+    Cell(Position2D("(baz|2+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 3 + 1)),
+    Cell(Position2D("(baz|2+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 18.84 + 4 + 1)),
+    Cell(Position2D("(foo|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 1 + 1)),
+    Cell(Position2D("(foo|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 2 + 1)),
+    Cell(Position2D("(foo|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 3 + 1)),
+    Cell(Position2D("(foo|1+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 4 + 1)),
+    Cell(Position2D("(foo|1+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 3.14 + 5 + 1)),
+    Cell(Position2D("(foo|2+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 1 + 1)),
+    Cell(Position2D("(foo|2+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 2 + 1)),
+    Cell(Position2D("(foo|2+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 3 + 1)),
+    Cell(Position2D("(foo|2+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 4 + 1)),
+    Cell(Position2D("(foo|2+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 6.28 + 5 + 1)),
+    Cell(Position2D("(foo|3+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 1 + 1)),
+    Cell(Position2D("(foo|3+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 2 + 1)),
+    Cell(Position2D("(foo|3+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 3 + 1)),
+    Cell(Position2D("(foo|3+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 4 + 1)),
+    Cell(Position2D("(foo|3+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 9.42 + 5 + 1)),
+    Cell(Position2D("(foo|4+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 1 + 1)),
+    Cell(Position2D("(foo|4+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 2 + 1)),
+    Cell(Position2D("(foo|4+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3 + 1)),
+    Cell(Position2D("(foo|4+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 4 + 1)),
+    Cell(Position2D("(foo|4+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 5 + 1)),
+    Cell(Position2D("(qux|1+bar|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 1 + 1)),
+    Cell(Position2D("(qux|1+bar|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 2 + 1)),
+    Cell(Position2D("(qux|1+bar|3)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 3 + 1)),
+    Cell(Position2D("(qux|1+baz|1)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 4 + 1)),
+    Cell(Position2D("(qux|1+baz|2)", "xyz"), Content(ContinuousSchema[Double](), 12.56 + 5 + 1)))
 
   def plus[P <: Position](slice: Slice[P]) = Locate.PrependPairwiseSelectedStringToRemainder[P](slice, "(%1$s+%2$s)")
 
@@ -4899,7 +4899,7 @@ object TestMatrixPairwise {
 
     def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
       plus.compute(left, right).map {
-        case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema(DoubleCodex), d + ext))
+        case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema[Double](), d + ext))
       }
     }
   }
@@ -4911,7 +4911,7 @@ object TestMatrixPairwise {
 
     def computeWithValue(left: Cell[P], right: Cell[P], ext: V): TraversableOnce[Cell[Q]] = {
       minus.compute(left, right).map {
-        case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema(DoubleCodex), d - ext))
+        case Cell(pos, Content(_, DoubleValue(d))) => Cell(pos, Content(ContinuousSchema[Double](), d - ext))
       }
     }
   }
@@ -5567,192 +5567,192 @@ class TestSparkMatrixPairwise extends TestMatrixPairwise {
 
 trait TestMatrixChange extends TestMatrix {
 
-  val result1 = List(Cell(Position1D("bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position1D("baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result1 = List(Cell(Position1D("bar"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position1D("baz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result2 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result2 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result3 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result3 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result4 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result4 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result5 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result5 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result6 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result6 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result7 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result7 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result8 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result8 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result9 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result9 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result10 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result10 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result11 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result11 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 }
 
 class TestScaldingMatrixChange extends TestMatrixChange {
 
   "A Matrix.change" should "return its first over data in 1D" in {
     toPipe(data1)
-      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), InMemory())
+      .change(Over(First), "foo", ContinuousSchema[Double](), InMemory())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over data in 2D" in {
     toPipe(data2)
-      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default())
+      .change(Over(First), "foo", ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along data in 2D" in {
     toPipe(data2)
-      .change(Along(First), List(3, 4), ContinuousSchema(DoubleCodex), Default(Reducers(123)))
+      .change(Along(First), List(3, 4), ContinuousSchema[Double](), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over data in 2D" in {
     toPipe(data2)
-      .change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Unbalanced(Reducers(123)))
+      .change(Over(Second), List(3, 4), ContinuousSchema[Double](), Unbalanced(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along data in 2D" in {
     toPipe(data2)
-      .change(Along(Second), "foo", ContinuousSchema(DoubleCodex), InMemory())
+      .change(Along(Second), "foo", ContinuousSchema[Double](), InMemory())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over data in 3D" in {
     toPipe(data3)
-      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default())
+      .change(Over(First), "foo", ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along data in 3D" in {
     toPipe(data3)
       .change(Along(First), List(Position2D(3, "xyz"), Position2D(4, "xyz")),
-        ContinuousSchema(DoubleCodex), Default(Reducers(123)))
+        ContinuousSchema[Double](), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over data in 3D" in {
     toPipe(data3)
-      .change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Unbalanced(Reducers(123)))
+      .change(Over(Second), List(3, 4), ContinuousSchema[Double](), Unbalanced(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along data in 3D" in {
     toPipe(data3)
-      .change(Along(Second), Position2D("foo", "xyz"), ContinuousSchema(DoubleCodex), InMemory())
+      .change(Along(Second), Position2D("foo", "xyz"), ContinuousSchema[Double](), InMemory())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over data in 3D" in {
     toPipe(data3)
-      .change(Over(Third), List("xyz"), ContinuousSchema(DoubleCodex), Default())
+      .change(Over(Third), List("xyz"), ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along data in 3D" in {
     toPipe(data3)
-      .change(Along(Third), Position2D("foo", 1), ContinuousSchema(DoubleCodex), Default(Reducers(123)))
+      .change(Along(Third), Position2D("foo", 1), ContinuousSchema[Double](), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return with empty data - InMemory" in {
     toPipe(data3)
-      .change(Over(First), List.empty[Position1D], ContinuousSchema(DoubleCodex), InMemory())
+      .change(Over(First), List.empty[Position1D], ContinuousSchema[Double](), InMemory())
       .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 
   it should "return with empty data - Default" in {
     toPipe(data3)
-      .change(Over(First), List.empty[Position1D], ContinuousSchema(DoubleCodex), Default())
+      .change(Over(First), List.empty[Position1D], ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 }
@@ -5761,194 +5761,194 @@ class TestSparkMatrixChange extends TestMatrixChange {
 
   "A Matrix.change" should "return its first over data in 1D" in {
     toRDD(data1)
-      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default())
+      .change(Over(First), "foo", ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its first over data in 2D" in {
     toRDD(data2)
-      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default(Reducers(12)))
+      .change(Over(First), "foo", ContinuousSchema[Double](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
   it should "return its first along data in 2D" in {
     toRDD(data2)
-      .change(Along(First), List(3, 4), ContinuousSchema(DoubleCodex), Default())
+      .change(Along(First), List(3, 4), ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe result3
   }
 
   it should "return its second over data in 2D" in {
     toRDD(data2)
-      .change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Default(Reducers(12)))
+      .change(Over(Second), List(3, 4), ContinuousSchema[Double](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its second along data in 2D" in {
     toRDD(data2)
-      .change(Along(Second), "foo", ContinuousSchema(DoubleCodex), Default())
+      .change(Along(Second), "foo", ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
   it should "return its first over data in 3D" in {
     toRDD(data3)
-      .change(Over(First), "foo", ContinuousSchema(DoubleCodex), Default(Reducers(12)))
+      .change(Over(First), "foo", ContinuousSchema[Double](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result6
   }
 
   it should "return its first along data in 3D" in {
     toRDD(data3)
-      .change(Along(First), List(Position2D(3, "xyz"), Position2D(4, "xyz")), ContinuousSchema(DoubleCodex), Default())
+      .change(Along(First), List(Position2D(3, "xyz"), Position2D(4, "xyz")), ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its second over data in 3D" in {
     toRDD(data3)
-      .change(Over(Second), List(3, 4), ContinuousSchema(DoubleCodex), Default(Reducers(12)))
+      .change(Over(Second), List(3, 4), ContinuousSchema[Double](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
   it should "return its second along data in 3D" in {
     toRDD(data3)
-      .change(Along(Second), Position2D("foo", "xyz"), ContinuousSchema(DoubleCodex), Default())
+      .change(Along(Second), Position2D("foo", "xyz"), ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe result9
   }
 
   it should "return its third over data in 3D" in {
     toRDD(data3)
-      .change(Over(Third), List("xyz"), ContinuousSchema(DoubleCodex), Default(Reducers(12)))
+      .change(Over(Third), List("xyz"), ContinuousSchema[Double](), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result10
   }
 
   it should "return its third along data in 3D" in {
     toRDD(data3)
-      .change(Along(Third), Position2D("foo", 1), ContinuousSchema(DoubleCodex), Default())
+      .change(Along(Third), Position2D("foo", 1), ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe result11
   }
 
   it should "return with empty data - Default" in {
     toRDD(data3)
-      .change(Over(First), List.empty[Position1D], ContinuousSchema(DoubleCodex), Default())
+      .change(Over(First), List.empty[Position1D], ContinuousSchema[Double](), Default())
       .toList.sortBy(_.position) shouldBe data3.sortBy(_.position)
   }
 }
 
 trait TestMatrixSet extends TestMatrix {
 
-  val dataA = List(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position1D("quxx"), Content(ContinuousSchema(DoubleCodex), 2)))
+  val dataA = List(Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position1D("quxx"), Content(ContinuousSchema[Double](), 2)))
 
-  val dataB = List(Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("quxx", 5), Content(ContinuousSchema(DoubleCodex), 2)))
+  val dataB = List(Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("quxx", 5), Content(ContinuousSchema[Double](), 2)))
 
-  val dataC = List(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("quxx", 5, "abc"), Content(ContinuousSchema(DoubleCodex), 2)))
+  val dataC = List(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("quxx", 5, "abc"), Content(ContinuousSchema[Double](), 2)))
 
-  val result1 = List(Cell(Position1D("bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position1D("baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result1 = List(Cell(Position1D("bar"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position1D("baz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result2 = List(Cell(Position1D("bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position1D("baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position1D("quxx"), Content(ContinuousSchema(DoubleCodex), 1)))
+  val result2 = List(Cell(Position1D("bar"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position1D("baz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position1D("qux"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position1D("quxx"), Content(ContinuousSchema[Double](), 1)))
 
-  val result3 = List(Cell(Position1D("bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position1D("baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position1D("quxx"), Content(ContinuousSchema(DoubleCodex), 2)))
+  val result3 = List(Cell(Position1D("bar"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position1D("baz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position1D("qux"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position1D("quxx"), Content(ContinuousSchema[Double](), 2)))
 
-  val result4 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result4 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result5 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position2D("quxx", 5), Content(ContinuousSchema(DoubleCodex), 1)))
+  val result5 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position2D("quxx", 5), Content(ContinuousSchema[Double](), 1)))
 
-  val result6 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position2D("quxx", 5), Content(ContinuousSchema(DoubleCodex), 2)))
+  val result6 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position2D("quxx", 5), Content(ContinuousSchema[Double](), 2)))
 
-  val result7 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result7 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result8 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position3D("quxx", 5, "abc"), Content(ContinuousSchema(DoubleCodex), 1)))
+  val result8 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position3D("quxx", 5, "abc"), Content(ContinuousSchema[Double](), 1)))
 
-  val result9 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)),
-    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position3D("quxx", 5, "abc"), Content(ContinuousSchema(DoubleCodex), 2)))
+  val result9 = List(Cell(Position3D("bar", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 1)),
+    Cell(Position3D("foo", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position3D("quxx", 5, "abc"), Content(ContinuousSchema[Double](), 2)))
 }
 
 class TestScaldingMatrixSet extends TestMatrixSet {
 
   "A Matrix.set" should "return its updated data in 1D" in {
     toPipe(data1)
-      .set(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
+      .set(Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 1)), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its updated and added data in 1D" in {
     toPipe(data1)
       .set(List("foo", "quxx")
-        .map { case pos => Cell(Position1D(pos), Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(123)))
+        .map { case pos => Cell(Position1D(pos), Content(ContinuousSchema[Double](), 1)) }, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -5960,14 +5960,14 @@ class TestScaldingMatrixSet extends TestMatrixSet {
 
   it should "return its updated data in 2D" in {
     toPipe(data2)
-      .set(Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1)), Default(Reducers(123)))
+      .set(Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 1)), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its updated and added data in 2D" in {
     toPipe(data2)
       .set(List(Position2D("foo", 2), Position2D("quxx", 5))
-        .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default())
+        .map { case pos => Cell(pos, Content(ContinuousSchema[Double](), 1)) }, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
@@ -5979,14 +5979,14 @@ class TestScaldingMatrixSet extends TestMatrixSet {
 
   it should "return its updated data in 3D" in {
     toPipe(data3)
-      .set(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
+      .set(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 1)), Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its updated and added data in 3D" in {
     toPipe(data3)
       .set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc"))
-        .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(123)))
+        .map { case pos => Cell(pos, Content(ContinuousSchema[Double](), 1)) }, Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -6001,13 +6001,13 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   "A Matrix.set" should "return its updated data in 1D" in {
     toRDD(data1)
-      .set(Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
+      .set(Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 1)), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its updated and added data in 1D" in {
     toRDD(data1)
-      .set(List("foo", "quxx").map { case pos => Cell(Position1D(pos), Content(ContinuousSchema(DoubleCodex), 1)) },
+      .set(List("foo", "quxx").map { case pos => Cell(Position1D(pos), Content(ContinuousSchema[Double](), 1)) },
         Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
@@ -6020,14 +6020,14 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   it should "return its updated data in 2D" in {
     toRDD(data2)
-      .set(Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 1)), Default(Reducers(12)))
+      .set(Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 1)), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result4
   }
 
   it should "return its updated and added data in 2D" in {
     toRDD(data2)
       .set(List(Position2D("foo", 2), Position2D("quxx", 5))
-        .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default())
+        .map { case pos => Cell(pos, Content(ContinuousSchema[Double](), 1)) }, Default())
       .toList.sortBy(_.position) shouldBe result5
   }
 
@@ -6039,14 +6039,14 @@ class TestSparkMatrixSet extends TestMatrixSet {
 
   it should "return its updated data in 3D" in {
     toRDD(data3)
-      .set(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 1)), Default())
+      .set(Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 1)), Default())
       .toList.sortBy(_.position) shouldBe result7
   }
 
   it should "return its updated and added data in 3D" in {
     toRDD(data3)
       .set(List(Position3D("foo", 2, "xyz"), Position3D("quxx", 5, "abc"))
-        .map { case pos => Cell(pos, Content(ContinuousSchema(DoubleCodex), 1)) }, Default(Reducers(12)))
+        .map { case pos => Cell(pos, Content(ContinuousSchema[Double](), 1)) }, Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result8
   }
 
@@ -6060,159 +6060,159 @@ class TestSparkMatrixSet extends TestMatrixSet {
 trait TestMatrixTransform extends TestMatrix {
 
   val ext = Map(
-    Position1D("foo") -> Map(Position1D("max.abs") -> Content(ContinuousSchema(DoubleCodex), 3.14),
-      Position1D("mean") -> Content(ContinuousSchema(DoubleCodex), 3.14),
-      Position1D("sd") -> Content(ContinuousSchema(DoubleCodex), 1)),
-    Position1D("bar") -> Map(Position1D("max.abs") -> Content(ContinuousSchema(DoubleCodex), 6.28),
-      Position1D("mean") -> Content(ContinuousSchema(DoubleCodex), 3.14),
-      Position1D("sd") -> Content(ContinuousSchema(DoubleCodex), 2)),
-    Position1D("baz") -> Map(Position1D("max.abs") -> Content(ContinuousSchema(DoubleCodex), 9.42),
-      Position1D("mean") -> Content(ContinuousSchema(DoubleCodex), 3.14),
-      Position1D("sd") -> Content(ContinuousSchema(DoubleCodex), 3)),
-    Position1D("qux") -> Map(Position1D("max.abs") -> Content(ContinuousSchema(DoubleCodex), 12.56),
-      Position1D("mean") -> Content(ContinuousSchema(DoubleCodex), 3.14),
-      Position1D("sd") -> Content(ContinuousSchema(DoubleCodex), 4)))
+    Position1D("foo") -> Map(Position1D("max.abs") -> Content(ContinuousSchema[Double](), 3.14),
+      Position1D("mean") -> Content(ContinuousSchema[Double](), 3.14),
+      Position1D("sd") -> Content(ContinuousSchema[Double](), 1)),
+    Position1D("bar") -> Map(Position1D("max.abs") -> Content(ContinuousSchema[Double](), 6.28),
+      Position1D("mean") -> Content(ContinuousSchema[Double](), 3.14),
+      Position1D("sd") -> Content(ContinuousSchema[Double](), 2)),
+    Position1D("baz") -> Map(Position1D("max.abs") -> Content(ContinuousSchema[Double](), 9.42),
+      Position1D("mean") -> Content(ContinuousSchema[Double](), 3.14),
+      Position1D("sd") -> Content(ContinuousSchema[Double](), 3)),
+    Position1D("qux") -> Map(Position1D("max.abs") -> Content(ContinuousSchema[Double](), 12.56),
+      Position1D("mean") -> Content(ContinuousSchema[Double](), 3.14),
+      Position1D("sd") -> Content(ContinuousSchema[Double](), 4)))
 
-  val result1 = List(Cell(Position1D("bar.ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position1D("baz.ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position1D("foo.ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position1D("qux.ind"), Content(DiscreteSchema(LongCodex), 1)))
+  val result1 = List(Cell(Position1D("bar.ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position1D("baz.ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position1D("foo.ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position1D("qux.ind"), Content(DiscreteSchema[Long](), 1)))
 
-  val result2 = List(Cell(Position2D("bar.ind", 1), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("bar.ind", 2), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("bar.ind", 3), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("bar=19", 3), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("bar=6.28", 1), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("baz.ind", 1), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("baz.ind", 2), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("baz=9.42", 1), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("foo.ind", 1), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("foo.ind", 2), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("foo.ind", 3), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("foo.ind", 4), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("foo=3.14", 1), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("foo=9.42", 3), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("qux.ind", 1), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("qux=12.56", 1), Content(DiscreteSchema(LongCodex), 1)))
+  val result2 = List(Cell(Position2D("bar.ind", 1), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("bar.ind", 2), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("bar.ind", 3), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("bar=19", 3), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("bar=6.28", 1), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("baz.ind", 1), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("baz.ind", 2), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("baz=9.42", 1), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("foo.ind", 1), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("foo.ind", 2), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("foo.ind", 3), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("foo.ind", 4), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("foo=3.14", 1), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("foo=9.42", 3), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("qux.ind", 1), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("qux=12.56", 1), Content(DiscreteSchema[Long](), 1)))
 
-  val result3 = List(Cell(Position3D("bar.ind", 1, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("bar.ind", 2, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("bar.ind", 3, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("bar=19", 3, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("bar=6.28", 1, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("baz.ind", 1, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("baz.ind", 2, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("baz=9.42", 1, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo.ind", 1, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo.ind", 2, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo.ind", 3, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo.ind", 4, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo=3.14", 1, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo=9.42", 3, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("qux.ind", 1, "xyz"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("qux=12.56", 1, "xyz"), Content(DiscreteSchema(LongCodex), 1)))
+  val result3 = List(Cell(Position3D("bar.ind", 1, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("bar.ind", 2, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("bar.ind", 3, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("bar=19", 3, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("bar=6.28", 1, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("baz.ind", 1, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("baz.ind", 2, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("baz=9.42", 1, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo.ind", 1, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo.ind", 2, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo.ind", 3, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo.ind", 4, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo=3.14", 1, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo=9.42", 3, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("qux.ind", 1, "xyz"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("qux=12.56", 1, "xyz"), Content(DiscreteSchema[Long](), 1)))
 
-  val result4 = List(Cell(Position1D("bar.n"), Content(ContinuousSchema(DoubleCodex), 6.28 / 6.28)),
-    Cell(Position1D("bar.s"), Content(ContinuousSchema(DoubleCodex), (6.28 - 3.14) / 2)),
-    Cell(Position1D("baz.n"), Content(ContinuousSchema(DoubleCodex), 9.42 / 9.42)),
-    Cell(Position1D("baz.s"), Content(ContinuousSchema(DoubleCodex), (9.42 - 3.14) / 3)),
-    Cell(Position1D("foo.n"), Content(ContinuousSchema(DoubleCodex), 3.14 / 3.14)),
-    Cell(Position1D("foo.s"), Content(ContinuousSchema(DoubleCodex), (3.14 - 3.14) / 1)),
-    Cell(Position1D("qux.n"), Content(ContinuousSchema(DoubleCodex), 12.56 / 12.56)),
-    Cell(Position1D("qux.s"), Content(ContinuousSchema(DoubleCodex), (12.56 - 3.14) / 4)))
+  val result4 = List(Cell(Position1D("bar.n"), Content(ContinuousSchema[Double](), 6.28 / 6.28)),
+    Cell(Position1D("bar.s"), Content(ContinuousSchema[Double](), (6.28 - 3.14) / 2)),
+    Cell(Position1D("baz.n"), Content(ContinuousSchema[Double](), 9.42 / 9.42)),
+    Cell(Position1D("baz.s"), Content(ContinuousSchema[Double](), (9.42 - 3.14) / 3)),
+    Cell(Position1D("foo.n"), Content(ContinuousSchema[Double](), 3.14 / 3.14)),
+    Cell(Position1D("foo.s"), Content(ContinuousSchema[Double](), (3.14 - 3.14) / 1)),
+    Cell(Position1D("qux.n"), Content(ContinuousSchema[Double](), 12.56 / 12.56)),
+    Cell(Position1D("qux.s"), Content(ContinuousSchema[Double](), (12.56 - 3.14) / 4)))
 
-  val result5 = List(Cell(Position2D("bar.n", 1), Content(ContinuousSchema(DoubleCodex), 6.28 / 6.28)),
-    Cell(Position2D("bar.n", 2), Content(ContinuousSchema(DoubleCodex), 12.56 / 6.28)),
-    Cell(Position2D("bar.n", 3), Content(ContinuousSchema(DoubleCodex), 18.84 / 6.28)),
-    Cell(Position2D("baz.n", 1), Content(ContinuousSchema(DoubleCodex), 9.42 / 9.42)),
-    Cell(Position2D("baz.n", 2), Content(ContinuousSchema(DoubleCodex), 18.84 / 9.42)),
-    Cell(Position2D("foo.n", 1), Content(ContinuousSchema(DoubleCodex), 3.14 / 3.14)),
-    Cell(Position2D("foo.n", 2), Content(ContinuousSchema(DoubleCodex), 6.28 / 3.14)),
-    Cell(Position2D("foo.n", 3), Content(ContinuousSchema(DoubleCodex), 9.42 / 3.14)),
-    Cell(Position2D("foo.n", 4), Content(ContinuousSchema(DoubleCodex), 12.56 / 3.14)),
-    Cell(Position2D("qux.n", 1), Content(ContinuousSchema(DoubleCodex), 12.56 / 12.56)))
+  val result5 = List(Cell(Position2D("bar.n", 1), Content(ContinuousSchema[Double](), 6.28 / 6.28)),
+    Cell(Position2D("bar.n", 2), Content(ContinuousSchema[Double](), 12.56 / 6.28)),
+    Cell(Position2D("bar.n", 3), Content(ContinuousSchema[Double](), 18.84 / 6.28)),
+    Cell(Position2D("baz.n", 1), Content(ContinuousSchema[Double](), 9.42 / 9.42)),
+    Cell(Position2D("baz.n", 2), Content(ContinuousSchema[Double](), 18.84 / 9.42)),
+    Cell(Position2D("foo.n", 1), Content(ContinuousSchema[Double](), 3.14 / 3.14)),
+    Cell(Position2D("foo.n", 2), Content(ContinuousSchema[Double](), 6.28 / 3.14)),
+    Cell(Position2D("foo.n", 3), Content(ContinuousSchema[Double](), 9.42 / 3.14)),
+    Cell(Position2D("foo.n", 4), Content(ContinuousSchema[Double](), 12.56 / 3.14)),
+    Cell(Position2D("qux.n", 1), Content(ContinuousSchema[Double](), 12.56 / 12.56)))
 
-  val result6 = List(Cell(Position3D("bar.n", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 / 6.28)),
-    Cell(Position3D("bar.n", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 / 6.28)),
-    Cell(Position3D("bar.n", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 / 6.28)),
-    Cell(Position3D("baz.n", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 / 9.42)),
-    Cell(Position3D("baz.n", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84 / 9.42)),
-    Cell(Position3D("foo.n", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14 / 3.14)),
-    Cell(Position3D("foo.n", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28 / 3.14)),
-    Cell(Position3D("foo.n", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42 / 3.14)),
-    Cell(Position3D("foo.n", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 / 3.14)),
-    Cell(Position3D("qux.n", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56 / 12.56)))
+  val result6 = List(Cell(Position3D("bar.n", 1, "xyz"), Content(ContinuousSchema[Double](), 6.28 / 6.28)),
+    Cell(Position3D("bar.n", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56 / 6.28)),
+    Cell(Position3D("bar.n", 3, "xyz"), Content(ContinuousSchema[Double](), 18.84 / 6.28)),
+    Cell(Position3D("baz.n", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42 / 9.42)),
+    Cell(Position3D("baz.n", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84 / 9.42)),
+    Cell(Position3D("foo.n", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14 / 3.14)),
+    Cell(Position3D("foo.n", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28 / 3.14)),
+    Cell(Position3D("foo.n", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42 / 3.14)),
+    Cell(Position3D("foo.n", 4, "xyz"), Content(ContinuousSchema[Double](), 12.56 / 3.14)),
+    Cell(Position3D("qux.n", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56 / 12.56)))
 
-  val result7 = List(Cell(Position2D("bar.ind", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("baz.ind", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("foo.ind", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("qux.ind", "ind"), Content(DiscreteSchema(LongCodex), 1)))
+  val result7 = List(Cell(Position2D("bar.ind", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("baz.ind", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("foo.ind", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("qux.ind", "ind"), Content(DiscreteSchema[Long](), 1)))
 
-  val result8 = List(Cell(Position3D("bar.ind", 1, "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("bar.ind", 2, "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("bar.ind", 3, "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("bar=19", 3, "bin"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("bar=6.28", 1, "bin"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("baz.ind", 1, "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("baz.ind", 2, "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("baz=9.42", 1, "bin"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo.ind", 1, "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo.ind", 2, "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo.ind", 3, "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo.ind", 4, "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo=3.14", 1, "bin"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("foo=9.42", 3, "bin"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("qux.ind", 1, "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("qux=12.56", 1, "bin"), Content(DiscreteSchema(LongCodex), 1)))
+  val result8 = List(Cell(Position3D("bar.ind", 1, "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("bar.ind", 2, "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("bar.ind", 3, "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("bar=19", 3, "bin"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("bar=6.28", 1, "bin"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("baz.ind", 1, "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("baz.ind", 2, "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("baz=9.42", 1, "bin"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo.ind", 1, "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo.ind", 2, "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo.ind", 3, "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo.ind", 4, "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo=3.14", 1, "bin"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("foo=9.42", 3, "bin"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("qux.ind", 1, "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("qux=12.56", 1, "bin"), Content(DiscreteSchema[Long](), 1)))
 
-  val result9 = List(Cell(Position4D("bar.ind", 1, "xyz", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("bar.ind", 2, "xyz", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("bar.ind", 3, "xyz", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("bar=19", 3, "xyz", "bin"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("bar=6.28", 1, "xyz", "bin"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("baz.ind", 1, "xyz", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("baz.ind", 2, "xyz", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("baz=9.42", 1, "xyz", "bin"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("foo.ind", 1, "xyz", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("foo.ind", 2, "xyz", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("foo.ind", 3, "xyz", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("foo.ind", 4, "xyz", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("foo=3.14", 1, "xyz", "bin"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("foo=9.42", 3, "xyz", "bin"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("qux.ind", 1, "xyz", "ind"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position4D("qux=12.56", 1, "xyz", "bin"), Content(DiscreteSchema(LongCodex), 1)))
+  val result9 = List(Cell(Position4D("bar.ind", 1, "xyz", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("bar.ind", 2, "xyz", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("bar.ind", 3, "xyz", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("bar=19", 3, "xyz", "bin"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("bar=6.28", 1, "xyz", "bin"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("baz.ind", 1, "xyz", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("baz.ind", 2, "xyz", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("baz=9.42", 1, "xyz", "bin"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("foo.ind", 1, "xyz", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("foo.ind", 2, "xyz", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("foo.ind", 3, "xyz", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("foo.ind", 4, "xyz", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("foo=3.14", 1, "xyz", "bin"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("foo=9.42", 3, "xyz", "bin"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("qux.ind", 1, "xyz", "ind"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position4D("qux=12.56", 1, "xyz", "bin"), Content(DiscreteSchema[Long](), 1)))
 
-  val result10 = List(Cell(Position2D("bar.n", "nrm"), Content(ContinuousSchema(DoubleCodex), 6.28 / 6.28)),
-    Cell(Position2D("bar.s", "std"), Content(ContinuousSchema(DoubleCodex), (6.28 - 3.14) / 2)),
-    Cell(Position2D("baz.n", "nrm"), Content(ContinuousSchema(DoubleCodex), 9.42 / 9.42)),
-    Cell(Position2D("baz.s", "std"), Content(ContinuousSchema(DoubleCodex), (9.42 - 3.14) / 3)),
-    Cell(Position2D("foo.n", "nrm"), Content(ContinuousSchema(DoubleCodex), 3.14 / 3.14)),
-    Cell(Position2D("foo.s", "std"), Content(ContinuousSchema(DoubleCodex), (3.14 - 3.14) / 1)),
-    Cell(Position2D("qux.n", "nrm"), Content(ContinuousSchema(DoubleCodex), 12.56 / 12.56)),
-    Cell(Position2D("qux.s", "std"), Content(ContinuousSchema(DoubleCodex), (12.56 - 3.14) / 4)))
+  val result10 = List(Cell(Position2D("bar.n", "nrm"), Content(ContinuousSchema[Double](), 6.28 / 6.28)),
+    Cell(Position2D("bar.s", "std"), Content(ContinuousSchema[Double](), (6.28 - 3.14) / 2)),
+    Cell(Position2D("baz.n", "nrm"), Content(ContinuousSchema[Double](), 9.42 / 9.42)),
+    Cell(Position2D("baz.s", "std"), Content(ContinuousSchema[Double](), (9.42 - 3.14) / 3)),
+    Cell(Position2D("foo.n", "nrm"), Content(ContinuousSchema[Double](), 3.14 / 3.14)),
+    Cell(Position2D("foo.s", "std"), Content(ContinuousSchema[Double](), (3.14 - 3.14) / 1)),
+    Cell(Position2D("qux.n", "nrm"), Content(ContinuousSchema[Double](), 12.56 / 12.56)),
+    Cell(Position2D("qux.s", "std"), Content(ContinuousSchema[Double](), (12.56 - 3.14) / 4)))
 
-  val result11 = List(Cell(Position3D("bar.n", 1, "nrm"), Content(ContinuousSchema(DoubleCodex), 6.28 / 6.28)),
-    Cell(Position3D("bar.n", 2, "nrm"), Content(ContinuousSchema(DoubleCodex), 12.56 / 6.28)),
-    Cell(Position3D("bar.n", 3, "nrm"), Content(ContinuousSchema(DoubleCodex), 18.84 / 6.28)),
-    Cell(Position3D("baz.n", 1, "nrm"), Content(ContinuousSchema(DoubleCodex), 9.42 / 9.42)),
-    Cell(Position3D("baz.n", 2, "nrm"), Content(ContinuousSchema(DoubleCodex), 18.84 / 9.42)),
-    Cell(Position3D("foo.n", 1, "nrm"), Content(ContinuousSchema(DoubleCodex), 3.14 / 3.14)),
-    Cell(Position3D("foo.n", 2, "nrm"), Content(ContinuousSchema(DoubleCodex), 6.28 / 3.14)),
-    Cell(Position3D("foo.n", 3, "nrm"), Content(ContinuousSchema(DoubleCodex), 9.42 / 3.14)),
-    Cell(Position3D("foo.n", 4, "nrm"), Content(ContinuousSchema(DoubleCodex), 12.56 / 3.14)),
-    Cell(Position3D("qux.n", 1, "nrm"), Content(ContinuousSchema(DoubleCodex), 12.56 / 12.56)))
+  val result11 = List(Cell(Position3D("bar.n", 1, "nrm"), Content(ContinuousSchema[Double](), 6.28 / 6.28)),
+    Cell(Position3D("bar.n", 2, "nrm"), Content(ContinuousSchema[Double](), 12.56 / 6.28)),
+    Cell(Position3D("bar.n", 3, "nrm"), Content(ContinuousSchema[Double](), 18.84 / 6.28)),
+    Cell(Position3D("baz.n", 1, "nrm"), Content(ContinuousSchema[Double](), 9.42 / 9.42)),
+    Cell(Position3D("baz.n", 2, "nrm"), Content(ContinuousSchema[Double](), 18.84 / 9.42)),
+    Cell(Position3D("foo.n", 1, "nrm"), Content(ContinuousSchema[Double](), 3.14 / 3.14)),
+    Cell(Position3D("foo.n", 2, "nrm"), Content(ContinuousSchema[Double](), 6.28 / 3.14)),
+    Cell(Position3D("foo.n", 3, "nrm"), Content(ContinuousSchema[Double](), 9.42 / 3.14)),
+    Cell(Position3D("foo.n", 4, "nrm"), Content(ContinuousSchema[Double](), 12.56 / 3.14)),
+    Cell(Position3D("qux.n", 1, "nrm"), Content(ContinuousSchema[Double](), 12.56 / 12.56)))
 
   val result12 = List(
-    Cell(Position4D("bar.n", 1, "xyz", "nrm"), Content(ContinuousSchema(DoubleCodex), 6.28 / 6.28)),
-    Cell(Position4D("bar.n", 2, "xyz", "nrm"), Content(ContinuousSchema(DoubleCodex), 12.56 / 6.28)),
-    Cell(Position4D("bar.n", 3, "xyz", "nrm"), Content(ContinuousSchema(DoubleCodex), 18.84 / 6.28)),
-    Cell(Position4D("baz.n", 1, "xyz", "nrm"), Content(ContinuousSchema(DoubleCodex), 9.42 / 9.42)),
-    Cell(Position4D("baz.n", 2, "xyz", "nrm"), Content(ContinuousSchema(DoubleCodex), 18.84 / 9.42)),
-    Cell(Position4D("foo.n", 1, "xyz", "nrm"), Content(ContinuousSchema(DoubleCodex), 3.14 / 3.14)),
-    Cell(Position4D("foo.n", 2, "xyz", "nrm"), Content(ContinuousSchema(DoubleCodex), 6.28 / 3.14)),
-    Cell(Position4D("foo.n", 3, "xyz", "nrm"), Content(ContinuousSchema(DoubleCodex), 9.42 / 3.14)),
-    Cell(Position4D("foo.n", 4, "xyz", "nrm"), Content(ContinuousSchema(DoubleCodex), 12.56 / 3.14)),
-    Cell(Position4D("qux.n", 1, "xyz", "nrm"), Content(ContinuousSchema(DoubleCodex), 12.56 / 12.56)))
+    Cell(Position4D("bar.n", 1, "xyz", "nrm"), Content(ContinuousSchema[Double](), 6.28 / 6.28)),
+    Cell(Position4D("bar.n", 2, "xyz", "nrm"), Content(ContinuousSchema[Double](), 12.56 / 6.28)),
+    Cell(Position4D("bar.n", 3, "xyz", "nrm"), Content(ContinuousSchema[Double](), 18.84 / 6.28)),
+    Cell(Position4D("baz.n", 1, "xyz", "nrm"), Content(ContinuousSchema[Double](), 9.42 / 9.42)),
+    Cell(Position4D("baz.n", 2, "xyz", "nrm"), Content(ContinuousSchema[Double](), 18.84 / 9.42)),
+    Cell(Position4D("foo.n", 1, "xyz", "nrm"), Content(ContinuousSchema[Double](), 3.14 / 3.14)),
+    Cell(Position4D("foo.n", 2, "xyz", "nrm"), Content(ContinuousSchema[Double](), 6.28 / 3.14)),
+    Cell(Position4D("foo.n", 3, "xyz", "nrm"), Content(ContinuousSchema[Double](), 9.42 / 3.14)),
+    Cell(Position4D("foo.n", 4, "xyz", "nrm"), Content(ContinuousSchema[Double](), 12.56 / 3.14)),
+    Cell(Position4D("qux.n", 1, "xyz", "nrm"), Content(ContinuousSchema[Double](), 12.56 / 12.56)))
 
   type W = Map[Position1D, Map[Position1D, Content]]
 
@@ -6455,163 +6455,163 @@ trait TestMatrixSlide extends TestMatrix {
 
   val ext = Map("one" -> 1, "two" -> 2)
 
-  val result1 = List(Cell(Position1D("1*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position1D("1*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14)),
-    Cell(Position1D("1*(foo-qux)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 12.56)),
-    Cell(Position1D("2*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 2 * (6.28 - 9.42))),
-    Cell(Position1D("2*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 2 * (9.42 - 3.14))),
-    Cell(Position1D("2*(foo-qux)"), Content(ContinuousSchema(DoubleCodex), 2 * (3.14 - 12.56))))
+  val result1 = List(Cell(Position1D("1*(bar-baz)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position1D("1*(baz-foo)"), Content(ContinuousSchema[Double](), 9.42 - 3.14)),
+    Cell(Position1D("1*(foo-qux)"), Content(ContinuousSchema[Double](), 3.14 - 12.56)),
+    Cell(Position1D("2*(bar-baz)"), Content(ContinuousSchema[Double](), 2 * (6.28 - 9.42))),
+    Cell(Position1D("2*(baz-foo)"), Content(ContinuousSchema[Double](), 2 * (9.42 - 3.14))),
+    Cell(Position1D("2*(foo-qux)"), Content(ContinuousSchema[Double](), 2 * (3.14 - 12.56))))
 
-  val result2 = List(Cell(Position2D("bar", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
-    Cell(Position2D("bar", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
-    Cell(Position2D("baz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
-    Cell(Position2D("foo", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
-    Cell(Position2D("foo", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position2D("foo", "1*(3-4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
+  val result2 = List(Cell(Position2D("bar", "1*(1-2)"), Content(ContinuousSchema[Double](), 6.28 - 12.56)),
+    Cell(Position2D("bar", "1*(2-3)"), Content(ContinuousSchema[Double](), 12.56 - 18.84)),
+    Cell(Position2D("baz", "1*(1-2)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)),
+    Cell(Position2D("foo", "1*(1-2)"), Content(ContinuousSchema[Double](), 3.14 - 6.28)),
+    Cell(Position2D("foo", "1*(2-3)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position2D("foo", "1*(3-4)"), Content(ContinuousSchema[Double](), 9.42 - 12.56)))
 
-  val result3 = List(Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
-    Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 18.84)),
-    Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)))
+  val result3 = List(Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema[Double](), 3.14 - 9.42)),
+    Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema[Double](), 6.28 - 18.84)),
+    Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)))
 
-  val result4 = List(Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
-    Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 18.84)),
-    Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)))
+  val result4 = List(Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema[Double](), 3.14 - 9.42)),
+    Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema[Double](), 6.28 - 18.84)),
+    Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)))
 
-  val result5 = List(Cell(Position2D("bar", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
-    Cell(Position2D("bar", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
-    Cell(Position2D("baz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
-    Cell(Position2D("foo", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
-    Cell(Position2D("foo", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position2D("foo", "1*(3-4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
+  val result5 = List(Cell(Position2D("bar", "1*(1-2)"), Content(ContinuousSchema[Double](), 6.28 - 12.56)),
+    Cell(Position2D("bar", "1*(2-3)"), Content(ContinuousSchema[Double](), 12.56 - 18.84)),
+    Cell(Position2D("baz", "1*(1-2)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)),
+    Cell(Position2D("foo", "1*(1-2)"), Content(ContinuousSchema[Double](), 3.14 - 6.28)),
+    Cell(Position2D("foo", "1*(2-3)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position2D("foo", "1*(3-4)"), Content(ContinuousSchema[Double](), 9.42 - 12.56)))
 
   val result6 = List(
-    Cell(Position2D("bar", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
-    Cell(Position2D("bar", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
-    Cell(Position2D("baz", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
-    Cell(Position2D("foo", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
-    Cell(Position2D("foo", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position2D("foo", "1*(3|xyz-4|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
+    Cell(Position2D("bar", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema[Double](), 6.28 - 12.56)),
+    Cell(Position2D("bar", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema[Double](), 12.56 - 18.84)),
+    Cell(Position2D("baz", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)),
+    Cell(Position2D("foo", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema[Double](), 3.14 - 6.28)),
+    Cell(Position2D("foo", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position2D("foo", "1*(3|xyz-4|xyz)"), Content(ContinuousSchema[Double](), 9.42 - 12.56)))
 
   val result7 = List(
-    Cell(Position3D(1, "xyz", "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position3D(1, "xyz", "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
-    Cell(Position3D(1, "xyz", "1*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position3D(2, "xyz", "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position3D(2, "xyz", "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 18.84)),
-    Cell(Position3D(3, "xyz", "1*(foo-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)))
+    Cell(Position3D(1, "xyz", "1*(baz-bar)"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position3D(1, "xyz", "1*(foo-baz)"), Content(ContinuousSchema[Double](), 3.14 - 9.42)),
+    Cell(Position3D(1, "xyz", "1*(qux-foo)"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position3D(2, "xyz", "1*(baz-bar)"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position3D(2, "xyz", "1*(foo-baz)"), Content(ContinuousSchema[Double](), 6.28 - 18.84)),
+    Cell(Position3D(3, "xyz", "1*(foo-bar)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)))
 
   val result8 = List(
-    Cell(Position2D(1, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D(1, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
-    Cell(Position2D(1, "1*(qux|xyz-foo|xyz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position2D(2, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D(2, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 18.84)),
-    Cell(Position2D(3, "1*(foo|xyz-bar|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)))
+    Cell(Position2D(1, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position2D(1, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema[Double](), 3.14 - 9.42)),
+    Cell(Position2D(1, "1*(qux|xyz-foo|xyz)"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position2D(2, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position2D(2, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema[Double](), 6.28 - 18.84)),
+    Cell(Position2D(3, "1*(foo|xyz-bar|xyz)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)))
 
   val result9 = List(
-    Cell(Position3D("bar", "xyz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
-    Cell(Position3D("bar", "xyz", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
-    Cell(Position3D("baz", "xyz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
-    Cell(Position3D("foo", "xyz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
-    Cell(Position3D("foo", "xyz", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position3D("foo", "xyz", "1*(3-4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
+    Cell(Position3D("bar", "xyz", "1*(1-2)"), Content(ContinuousSchema[Double](), 6.28 - 12.56)),
+    Cell(Position3D("bar", "xyz", "1*(2-3)"), Content(ContinuousSchema[Double](), 12.56 - 18.84)),
+    Cell(Position3D("baz", "xyz", "1*(1-2)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)),
+    Cell(Position3D("foo", "xyz", "1*(1-2)"), Content(ContinuousSchema[Double](), 3.14 - 6.28)),
+    Cell(Position3D("foo", "xyz", "1*(2-3)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position3D("foo", "xyz", "1*(3-4)"), Content(ContinuousSchema[Double](), 9.42 - 12.56)))
 
   val result10 = List(
-    Cell(Position2D("xyz", "1*(bar|1-bar|2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
-    Cell(Position2D("xyz", "1*(bar|2-bar|3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
-    Cell(Position2D("xyz", "1*(bar|3-baz|1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("xyz", "1*(baz|1-baz|2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
-    Cell(Position2D("xyz", "1*(baz|2-foo|1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 3.14)),
-    Cell(Position2D("xyz", "1*(foo|1-foo|2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
-    Cell(Position2D("xyz", "1*(foo|2-foo|3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position2D("xyz", "1*(foo|3-foo|4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)),
-    Cell(Position2D("xyz", "1*(foo|4-qux|1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 12.56)))
+    Cell(Position2D("xyz", "1*(bar|1-bar|2)"), Content(ContinuousSchema[Double](), 6.28 - 12.56)),
+    Cell(Position2D("xyz", "1*(bar|2-bar|3)"), Content(ContinuousSchema[Double](), 12.56 - 18.84)),
+    Cell(Position2D("xyz", "1*(bar|3-baz|1)"), Content(ContinuousSchema[Double](), 18.84 - 9.42)),
+    Cell(Position2D("xyz", "1*(baz|1-baz|2)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)),
+    Cell(Position2D("xyz", "1*(baz|2-foo|1)"), Content(ContinuousSchema[Double](), 18.84 - 3.14)),
+    Cell(Position2D("xyz", "1*(foo|1-foo|2)"), Content(ContinuousSchema[Double](), 3.14 - 6.28)),
+    Cell(Position2D("xyz", "1*(foo|2-foo|3)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position2D("xyz", "1*(foo|3-foo|4)"), Content(ContinuousSchema[Double](), 9.42 - 12.56)),
+    Cell(Position2D("xyz", "1*(foo|4-qux|1)"), Content(ContinuousSchema[Double](), 12.56 - 12.56)))
 
   val result11 = List()
 
-  val result12 = List(Cell(Position1D("1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position1D("1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
-    Cell(Position1D("1*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position1D("2*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 2 * (9.42 - 6.28))),
-    Cell(Position1D("2*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 2 * (3.14 - 9.42))),
-    Cell(Position1D("2*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 2 * (12.56 - 3.14))))
+  val result12 = List(Cell(Position1D("1*(baz-bar)"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position1D("1*(foo-baz)"), Content(ContinuousSchema[Double](), 3.14 - 9.42)),
+    Cell(Position1D("1*(qux-foo)"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position1D("2*(baz-bar)"), Content(ContinuousSchema[Double](), 2 * (9.42 - 6.28))),
+    Cell(Position1D("2*(foo-baz)"), Content(ContinuousSchema[Double](), 2 * (3.14 - 9.42))),
+    Cell(Position1D("2*(qux-foo)"), Content(ContinuousSchema[Double](), 2 * (12.56 - 3.14))))
 
-  val result13 = List(Cell(Position2D("bar", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
-    Cell(Position2D("bar", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
-    Cell(Position2D("baz", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
-    Cell(Position2D("foo", "1*(1-2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
-    Cell(Position2D("foo", "1*(2-3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position2D("foo", "1*(3-4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
+  val result13 = List(Cell(Position2D("bar", "1*(1-2)"), Content(ContinuousSchema[Double](), 6.28 - 12.56)),
+    Cell(Position2D("bar", "1*(2-3)"), Content(ContinuousSchema[Double](), 12.56 - 18.84)),
+    Cell(Position2D("baz", "1*(1-2)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)),
+    Cell(Position2D("foo", "1*(1-2)"), Content(ContinuousSchema[Double](), 3.14 - 6.28)),
+    Cell(Position2D("foo", "1*(2-3)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position2D("foo", "1*(3-4)"), Content(ContinuousSchema[Double](), 9.42 - 12.56)))
 
-  val result14 = List(Cell(Position2D(1, "1*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position2D(1, "1*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14)),
-    Cell(Position2D(1, "1*(foo-qux)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 12.56)),
-    Cell(Position2D(2, "1*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
-    Cell(Position2D(2, "1*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28)),
-    Cell(Position2D(3, "1*(bar-foo)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)))
+  val result14 = List(Cell(Position2D(1, "1*(bar-baz)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position2D(1, "1*(baz-foo)"), Content(ContinuousSchema[Double](), 9.42 - 3.14)),
+    Cell(Position2D(1, "1*(foo-qux)"), Content(ContinuousSchema[Double](), 3.14 - 12.56)),
+    Cell(Position2D(2, "1*(bar-baz)"), Content(ContinuousSchema[Double](), 12.56 - 18.84)),
+    Cell(Position2D(2, "1*(baz-foo)"), Content(ContinuousSchema[Double](), 18.84 - 6.28)),
+    Cell(Position2D(3, "1*(bar-foo)"), Content(ContinuousSchema[Double](), 18.84 - 9.42)))
 
-  val result15 = List(Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
-    Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 18.84)),
-    Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)))
+  val result15 = List(Cell(Position2D(1, "1*(baz-bar)"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position2D(1, "1*(foo-baz)"), Content(ContinuousSchema[Double](), 3.14 - 9.42)),
+    Cell(Position2D(1, "1*(qux-foo)"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position2D(2, "1*(baz-bar)"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position2D(2, "1*(foo-baz)"), Content(ContinuousSchema[Double](), 6.28 - 18.84)),
+    Cell(Position2D(3, "1*(foo-bar)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)))
 
-  val result16 = List(Cell(Position2D("bar", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position2D("bar", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D("baz", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("foo", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position2D("foo", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D("foo", "1*(4-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+  val result16 = List(Cell(Position2D("bar", "1*(2-1)"), Content(ContinuousSchema[Double](), 12.56 - 6.28)),
+    Cell(Position2D("bar", "1*(3-2)"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position2D("baz", "1*(2-1)"), Content(ContinuousSchema[Double](), 18.84 - 9.42)),
+    Cell(Position2D("foo", "1*(2-1)"), Content(ContinuousSchema[Double](), 6.28 - 3.14)),
+    Cell(Position2D("foo", "1*(3-2)"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position2D("foo", "1*(4-3)"), Content(ContinuousSchema[Double](), 12.56 - 9.42)))
 
   val result17 = List(
-    Cell(Position2D("bar", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
-    Cell(Position2D("bar", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
-    Cell(Position2D("baz", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
-    Cell(Position2D("foo", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
-    Cell(Position2D("foo", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position2D("foo", "1*(3|xyz-4|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)))
+    Cell(Position2D("bar", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema[Double](), 6.28 - 12.56)),
+    Cell(Position2D("bar", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema[Double](), 12.56 - 18.84)),
+    Cell(Position2D("baz", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)),
+    Cell(Position2D("foo", "1*(1|xyz-2|xyz)"), Content(ContinuousSchema[Double](), 3.14 - 6.28)),
+    Cell(Position2D("foo", "1*(2|xyz-3|xyz)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position2D("foo", "1*(3|xyz-4|xyz)"), Content(ContinuousSchema[Double](), 9.42 - 12.56)))
 
   val result18 = List(
-    Cell(Position3D(1, "xyz", "1*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position3D(1, "xyz", "1*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 3.14)),
-    Cell(Position3D(1, "xyz", "1*(foo-qux)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 12.56)),
-    Cell(Position3D(2, "xyz", "1*(bar-baz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
-    Cell(Position3D(2, "xyz", "1*(baz-foo)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 6.28)),
-    Cell(Position3D(3, "xyz", "1*(bar-foo)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)))
+    Cell(Position3D(1, "xyz", "1*(bar-baz)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position3D(1, "xyz", "1*(baz-foo)"), Content(ContinuousSchema[Double](), 9.42 - 3.14)),
+    Cell(Position3D(1, "xyz", "1*(foo-qux)"), Content(ContinuousSchema[Double](), 3.14 - 12.56)),
+    Cell(Position3D(2, "xyz", "1*(bar-baz)"), Content(ContinuousSchema[Double](), 12.56 - 18.84)),
+    Cell(Position3D(2, "xyz", "1*(baz-foo)"), Content(ContinuousSchema[Double](), 18.84 - 6.28)),
+    Cell(Position3D(3, "xyz", "1*(bar-foo)"), Content(ContinuousSchema[Double](), 18.84 - 9.42)))
 
   val result19 = List(
-    Cell(Position2D(1, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position2D(1, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 9.42)),
-    Cell(Position2D(1, "1*(qux|xyz-foo|xyz)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 3.14)),
-    Cell(Position2D(2, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position2D(2, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 18.84)),
-    Cell(Position2D(3, "1*(foo|xyz-bar|xyz)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)))
+    Cell(Position2D(1, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position2D(1, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema[Double](), 3.14 - 9.42)),
+    Cell(Position2D(1, "1*(qux|xyz-foo|xyz)"), Content(ContinuousSchema[Double](), 12.56 - 3.14)),
+    Cell(Position2D(2, "1*(baz|xyz-bar|xyz)"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position2D(2, "1*(foo|xyz-baz|xyz)"), Content(ContinuousSchema[Double](), 6.28 - 18.84)),
+    Cell(Position2D(3, "1*(foo|xyz-bar|xyz)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)))
 
   val result20 = List(
-    Cell(Position3D("bar", "xyz", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 6.28)),
-    Cell(Position3D("bar", "xyz", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 12.56)),
-    Cell(Position3D("baz", "xyz", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position3D("foo", "xyz", "1*(2-1)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 3.14)),
-    Cell(Position3D("foo", "xyz", "1*(3-2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 6.28)),
-    Cell(Position3D("foo", "xyz", "1*(4-3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 9.42)))
+    Cell(Position3D("bar", "xyz", "1*(2-1)"), Content(ContinuousSchema[Double](), 12.56 - 6.28)),
+    Cell(Position3D("bar", "xyz", "1*(3-2)"), Content(ContinuousSchema[Double](), 18.84 - 12.56)),
+    Cell(Position3D("baz", "xyz", "1*(2-1)"), Content(ContinuousSchema[Double](), 18.84 - 9.42)),
+    Cell(Position3D("foo", "xyz", "1*(2-1)"), Content(ContinuousSchema[Double](), 6.28 - 3.14)),
+    Cell(Position3D("foo", "xyz", "1*(3-2)"), Content(ContinuousSchema[Double](), 9.42 - 6.28)),
+    Cell(Position3D("foo", "xyz", "1*(4-3)"), Content(ContinuousSchema[Double](), 12.56 - 9.42)))
 
   val result21 = List(
-    Cell(Position2D("xyz", "1*(bar|1-bar|2)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 12.56)),
-    Cell(Position2D("xyz", "1*(bar|2-bar|3)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 18.84)),
-    Cell(Position2D("xyz", "1*(bar|3-baz|1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 9.42)),
-    Cell(Position2D("xyz", "1*(baz|1-baz|2)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 18.84)),
-    Cell(Position2D("xyz", "1*(baz|2-foo|1)"), Content(ContinuousSchema(DoubleCodex), 18.84 - 3.14)),
-    Cell(Position2D("xyz", "1*(foo|1-foo|2)"), Content(ContinuousSchema(DoubleCodex), 3.14 - 6.28)),
-    Cell(Position2D("xyz", "1*(foo|2-foo|3)"), Content(ContinuousSchema(DoubleCodex), 6.28 - 9.42)),
-    Cell(Position2D("xyz", "1*(foo|3-foo|4)"), Content(ContinuousSchema(DoubleCodex), 9.42 - 12.56)),
-    Cell(Position2D("xyz", "1*(foo|4-qux|1)"), Content(ContinuousSchema(DoubleCodex), 12.56 - 12.56)))
+    Cell(Position2D("xyz", "1*(bar|1-bar|2)"), Content(ContinuousSchema[Double](), 6.28 - 12.56)),
+    Cell(Position2D("xyz", "1*(bar|2-bar|3)"), Content(ContinuousSchema[Double](), 12.56 - 18.84)),
+    Cell(Position2D("xyz", "1*(bar|3-baz|1)"), Content(ContinuousSchema[Double](), 18.84 - 9.42)),
+    Cell(Position2D("xyz", "1*(baz|1-baz|2)"), Content(ContinuousSchema[Double](), 9.42 - 18.84)),
+    Cell(Position2D("xyz", "1*(baz|2-foo|1)"), Content(ContinuousSchema[Double](), 18.84 - 3.14)),
+    Cell(Position2D("xyz", "1*(foo|1-foo|2)"), Content(ContinuousSchema[Double](), 3.14 - 6.28)),
+    Cell(Position2D("xyz", "1*(foo|2-foo|3)"), Content(ContinuousSchema[Double](), 6.28 - 9.42)),
+    Cell(Position2D("xyz", "1*(foo|3-foo|4)"), Content(ContinuousSchema[Double](), 9.42 - 12.56)),
+    Cell(Position2D("xyz", "1*(foo|4-qux|1)"), Content(ContinuousSchema[Double](), 12.56 - 12.56)))
 
   val result22 = List()
 }
@@ -6637,7 +6637,7 @@ object TestMatrixSlide {
 
     def present(pos: S, out: O): TraversableOnce[Cell[S#M]] = {
       Some(Cell[S#M](pos.append(times + "*(" + out._2.toShortString("|") + "-" + out._3.toShortString("|") + ")"),
-        Content(ContinuousSchema(DoubleCodex), times * out._1)))
+        Content(ContinuousSchema[Double](), times * out._1)))
     }
   }
 
@@ -6661,7 +6661,7 @@ object TestMatrixSlide {
 
     def presentWithValue(pos: S, out: O, ext: V): TraversableOnce[Cell[S#M]] = {
       Some(Cell[S#M](pos.append(ext(key) + "*(" + out._2.toShortString("|") + "-" + out._3.toShortString("|") + ")"),
-        Content(ContinuousSchema(DoubleCodex), ext(key) * out._1)))
+        Content(ContinuousSchema[Double](), ext(key) * out._1)))
     }
   }
 }
@@ -6970,233 +6970,233 @@ class TestSparkMatrixSlide extends TestMatrixSlide {
 
 trait TestMatrixFill extends TestMatrix {
 
-  val result0 = List(Cell(Position1D("bar"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position1D("baz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position1D("foo"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position1D("qux"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result0 = List(Cell(Position1D("bar"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position1D("baz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position1D("foo"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position1D("qux"), Content(ContinuousSchema[Double](), 12.56)))
 
-  val result1 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("bar", 4), Content(ContinuousSchema(DoubleCodex), 0)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("baz", 3), Content(ContinuousSchema(DoubleCodex), 0)),
-    Cell(Position2D("baz", 4), Content(ContinuousSchema(DoubleCodex), 0)),
-    Cell(Position2D("foo", 1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 2), Content(ContinuousSchema(DoubleCodex), 0)),
-    Cell(Position2D("qux", 3), Content(ContinuousSchema(DoubleCodex), 0)),
-    Cell(Position2D("qux", 4), Content(ContinuousSchema(DoubleCodex), 0)))
+  val result1 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("bar", 4), Content(ContinuousSchema[Double](), 0)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("baz", 3), Content(ContinuousSchema[Double](), 0)),
+    Cell(Position2D("baz", 4), Content(ContinuousSchema[Double](), 0)),
+    Cell(Position2D("foo", 1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 2), Content(ContinuousSchema[Double](), 0)),
+    Cell(Position2D("qux", 3), Content(ContinuousSchema[Double](), 0)),
+    Cell(Position2D("qux", 4), Content(ContinuousSchema[Double](), 0)))
 
-  val result2 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 0)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 0)),
-    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 0)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 0)),
-    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 0)),
-    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 0)))
+  val result2 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Double](), 0)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Double](), 0)),
+    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Double](), 0)),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Double](), 0)),
+    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Double](), 0)),
+    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Double](), 0)))
 
-  val result3 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("bar", 4), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) / 3)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("baz", 3), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position2D("baz", 4), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position2D("foo", 1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 2), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position2D("qux", 3), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position2D("qux", 4), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)))
+  val result3 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("bar", 4), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) / 3)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("baz", 3), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position2D("baz", 4), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position2D("foo", 1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 2), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position2D("qux", 3), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position2D("qux", 4), Content(ContinuousSchema[Double](), (12.56) / 1)))
 
-  val result4 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("bar", 4), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("baz", 3), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position2D("baz", 4), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position2D("foo", 1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 2), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) / 3)),
-    Cell(Position2D("qux", 3), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position2D("qux", 4), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)))
+  val result4 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("bar", 4), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("baz", 3), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position2D("baz", 4), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position2D("foo", 1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 2), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) / 3)),
+    Cell(Position2D("qux", 3), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position2D("qux", 4), Content(ContinuousSchema[Double](), (12.56) / 1)))
 
-  val result5 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("bar", 4), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("baz", 3), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position2D("baz", 4), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position2D("foo", 1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 2), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) / 3)),
-    Cell(Position2D("qux", 3), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position2D("qux", 4), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)))
+  val result5 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("bar", 4), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("baz", 3), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position2D("baz", 4), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position2D("foo", 1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 2), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) / 3)),
+    Cell(Position2D("qux", 3), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position2D("qux", 4), Content(ContinuousSchema[Double](), (12.56) / 1)))
 
-  val result6 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("bar", 4), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) / 3)),
-    Cell(Position2D("baz", 1), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("baz", 2), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position2D("baz", 3), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position2D("baz", 4), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position2D("foo", 1), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("foo", 4), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("qux", 2), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position2D("qux", 3), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position2D("qux", 4), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)))
+  val result6 = List(Cell(Position2D("bar", 1), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("bar", 4), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) / 3)),
+    Cell(Position2D("baz", 1), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("baz", 2), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position2D("baz", 3), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position2D("baz", 4), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position2D("foo", 1), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("foo", 4), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("qux", 2), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position2D("qux", 3), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position2D("qux", 4), Content(ContinuousSchema[Double](), (12.56) / 1)))
 
-  val result7 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) / 3)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)))
+  val result7 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) / 3)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)))
 
-  val result8 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) / 3)),
-    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)))
+  val result8 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) / 3)),
+    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)))
 
-  val result9 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) / 3)),
-    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)))
+  val result9 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) / 3)),
+    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)))
 
-  val result10 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (6.28 + 12.56 + 18.84) / 3)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (9.42 + 18.84) / 2)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)),
-    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), (12.56) / 1)))
+  val result10 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Double](), (6.28 + 12.56 + 18.84) / 3)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Double](), (9.42 + 18.84) / 2)),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)),
+    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Double](), (12.56) / 1)))
 
-  val result11 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema(DoubleCodex),
+  val result11 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("bar", 4, "xyz"), Content(ContinuousSchema[Double](),
       (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema(DoubleCodex),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("baz", 3, "xyz"), Content(ContinuousSchema[Double](),
       (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)),
-    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema(DoubleCodex),
+    Cell(Position3D("baz", 4, "xyz"), Content(ContinuousSchema[Double](),
       (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema(DoubleCodex),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 2, "xyz"), Content(ContinuousSchema[Double](),
       (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)),
-    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema(DoubleCodex),
+    Cell(Position3D("qux", 3, "xyz"), Content(ContinuousSchema[Double](),
       (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)),
-    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema(DoubleCodex),
+    Cell(Position3D("qux", 4, "xyz"), Content(ContinuousSchema[Double](),
       (3.14 + 2 * 6.28 + 2 * 9.42 + 3 * 12.56 + 2 * 18.84) / 10)))
 
-  val result12 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result12 = List(Cell(Position3D("bar", 1, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("bar", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("baz", 1, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("baz", 2, "xyz"), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position3D("foo", 1, "xyz"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D("foo", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D("foo", 4, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("qux", 1, "xyz"), Content(ContinuousSchema[Double](), 12.56)))
 }
 
 class TestScaldingMatrixFill extends TestMatrixFill {
 
   "A Matrix.fill" should "return its filled data in 1D" in {
     toPipe(num1)
-      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
+      .fillHomogeneous(Content(ContinuousSchema[Double](), 0), Default())
       .toList.sortBy(_.position) shouldBe result0
   }
 
   it should "return its filled data in 2D" in {
     toPipe(num2)
-      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
+      .fillHomogeneous(Content(ContinuousSchema[Double](), 0), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its filled data in 3D" in {
     toPipe(num3)
-      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default(Reducers(123)))
+      .fillHomogeneous(Content(ContinuousSchema[Double](), 0), Default(Reducers(123)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -7319,19 +7319,19 @@ class TestSparkMatrixFill extends TestMatrixFill {
 
   "A Matrix.fill" should "return its filled data in 1D" in {
     toRDD(num1)
-      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
+      .fillHomogeneous(Content(ContinuousSchema[Double](), 0), Default())
       .toList.sortBy(_.position) shouldBe result0
   }
 
   it should "return its filled data in 2D" in {
     toRDD(num2)
-      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default())
+      .fillHomogeneous(Content(ContinuousSchema[Double](), 0), Default())
       .toList.sortBy(_.position) shouldBe result1
   }
 
   it should "return its filled data in 3D" in {
     toRDD(num3)
-      .fillHomogeneous(Content(ContinuousSchema(DoubleCodex), 0), Default(Reducers(12)))
+      .fillHomogeneous(Content(ContinuousSchema[Double](), 0), Default(Reducers(12)))
       .toList.sortBy(_.position) shouldBe result2
   }
 
@@ -7449,135 +7449,135 @@ trait TestMatrixRename extends TestMatrix {
 
   val ext = ".new"
 
-  val result1 = List(Cell(Position1D("bar.new"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position1D("baz.new"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position1D("foo.new"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position1D("qux.new"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result1 = List(Cell(Position1D("bar.new"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position1D("baz.new"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position1D("foo.new"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position1D("qux.new"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result2 = List(Cell(Position2D("bar.new", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar.new", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar.new", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz.new", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz.new", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo.new", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo.new", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo.new", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo.new", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux.new", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result2 = List(Cell(Position2D("bar.new", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar.new", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar.new", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz.new", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz.new", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo.new", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo.new", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo.new", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo.new", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux.new", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result3 = List(Cell(Position2D("bar", "1.new"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", "2.new"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", "3.new"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", "1.new"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", "2.new"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", "1.new"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", "2.new"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", "3.new"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", "4.new"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux", "1.new"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result3 = List(Cell(Position2D("bar", "1.new"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", "2.new"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", "3.new"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", "1.new"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", "2.new"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", "1.new"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", "2.new"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", "3.new"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", "4.new"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux", "1.new"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result4 = List(Cell(Position3D("bar.new", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar.new", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar.new", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz.new", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz.new", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo.new", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo.new", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo.new", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo.new", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux.new", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result4 = List(Cell(Position3D("bar.new", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar.new", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar.new", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz.new", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz.new", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo.new", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo.new", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo.new", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo.new", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux.new", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result5 = List(Cell(Position3D("bar", "1.new", "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", "2.new", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", "3.new", "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", "1.new", "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", "2.new", "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", "1.new", "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", "2.new", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", "3.new", "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", "4.new", "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", "1.new", "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result5 = List(Cell(Position3D("bar", "1.new", "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", "2.new", "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", "3.new", "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", "1.new", "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", "2.new", "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", "1.new", "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", "2.new", "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", "3.new", "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", "4.new", "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", "1.new", "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result6 = List(Cell(Position3D("bar", 1, "xyz.new"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz.new"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz.new"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz.new"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz.new"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz.new"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz.new"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz.new"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz.new"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", 1, "xyz.new"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result6 = List(Cell(Position3D("bar", 1, "xyz.new"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz.new"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz.new"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz.new"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz.new"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz.new"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz.new"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz.new"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz.new"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", 1, "xyz.new"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result7 = List(Cell(Position1D("bar.new"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position1D("baz.new"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position1D("foo.new"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position1D("qux.new"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result7 = List(Cell(Position1D("bar.new"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position1D("baz.new"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position1D("foo.new"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position1D("qux.new"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result8 = List(Cell(Position2D("bar.new", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar.new", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar.new", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz.new", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz.new", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo.new", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo.new", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo.new", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo.new", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux.new", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result8 = List(Cell(Position2D("bar.new", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar.new", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar.new", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz.new", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz.new", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo.new", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo.new", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo.new", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo.new", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux.new", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result9 = List(Cell(Position2D("bar", "1.new"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", "2.new"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", "3.new"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", "1.new"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", "2.new"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", "1.new"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", "2.new"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", "3.new"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", "4.new"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux", "1.new"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result9 = List(Cell(Position2D("bar", "1.new"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", "2.new"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", "3.new"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", "1.new"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", "2.new"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", "1.new"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", "2.new"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", "3.new"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", "4.new"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux", "1.new"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result10 = List(Cell(Position3D("bar.new", 1, "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar.new", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar.new", 3, "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz.new", 1, "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz.new", 2, "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo.new", 1, "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo.new", 2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo.new", 3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo.new", 4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux.new", 1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result10 = List(Cell(Position3D("bar.new", 1, "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar.new", 2, "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar.new", 3, "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz.new", 1, "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz.new", 2, "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo.new", 1, "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo.new", 2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo.new", 3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo.new", 4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux.new", 1, "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result11 = List(Cell(Position3D("bar", "1.new", "xyz"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", "2.new", "xyz"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", "3.new", "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", "1.new", "xyz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", "2.new", "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", "1.new", "xyz"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", "2.new", "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", "3.new", "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", "4.new", "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", "1.new", "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result11 = List(Cell(Position3D("bar", "1.new", "xyz"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", "2.new", "xyz"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", "3.new", "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", "1.new", "xyz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", "2.new", "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", "1.new", "xyz"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", "2.new", "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", "3.new", "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", "4.new", "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", "1.new", "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result12 = List(Cell(Position3D("bar", 1, "xyz.new"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "xyz.new"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "xyz.new"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "xyz.new"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "xyz.new"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "xyz.new"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "xyz.new"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "xyz.new"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "xyz.new"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", 1, "xyz.new"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result12 = List(Cell(Position3D("bar", 1, "xyz.new"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "xyz.new"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "xyz.new"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "xyz.new"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "xyz.new"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "xyz.new"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "xyz.new"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "xyz.new"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "xyz.new"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", 1, "xyz.new"), Content(OrdinalSchema[String](), "12.56")))
 }
 
 object TestMatrixRename {
@@ -7745,77 +7745,77 @@ trait TestMatrixSquash extends TestMatrix {
 
   val ext = "ext"
 
-  val result1 = List(Cell(Position1D(1), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position1D(2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position1D(3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position1D(4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result1 = List(Cell(Position1D(1), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position1D(2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position1D(3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position1D(4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result2 = List(Cell(Position1D("bar"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position1D("baz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position1D("foo"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result2 = List(Cell(Position1D("bar"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position1D("baz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position1D("foo"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result3 = List(Cell(Position2D(1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position2D(2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D(3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D(4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result3 = List(Cell(Position2D(1, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position2D(2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D(3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D(4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result4 = List(Cell(Position2D("bar", "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux", "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result4 = List(Cell(Position2D("bar", "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux", "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result5 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result5 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 
-  val result6 = List(Cell(Position1D(1), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position1D(2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position1D(3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position1D(4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result6 = List(Cell(Position1D(1), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position1D(2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position1D(3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position1D(4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result7 = List(Cell(Position1D("bar"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position1D("baz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position1D("foo"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position1D("qux"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result7 = List(Cell(Position1D("bar"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position1D("baz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position1D("foo"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position1D("qux"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result8 = List(Cell(Position2D(1, "xyz"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position2D(2, "xyz"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D(3, "xyz"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D(4, "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result8 = List(Cell(Position2D(1, "xyz"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position2D(2, "xyz"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D(3, "xyz"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D(4, "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result9 = List(Cell(Position2D("bar", "xyz"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", "xyz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", "xyz"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux", "xyz"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result9 = List(Cell(Position2D("bar", "xyz"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", "xyz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", "xyz"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux", "xyz"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result10 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result10 = List(Cell(Position2D("bar", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux", 1), Content(OrdinalSchema[String](), "12.56")))
 }
 
 object TestMatrixSquash {
@@ -7971,65 +7971,65 @@ class TestSparkMatrixSquash extends TestMatrixSquash {
 
 trait TestMatrixMelt extends TestMatrix {
 
-  val result1 = List(Cell(Position1D("1.bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position1D("1.baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position1D("1.foo"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position1D("1.qux"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position1D("2.bar"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position1D("2.baz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position1D("2.foo"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position1D("3.bar"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position1D("3.foo"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position1D("4.foo"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result1 = List(Cell(Position1D("1.bar"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position1D("1.baz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position1D("1.foo"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position1D("1.qux"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position1D("2.bar"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position1D("2.baz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position1D("2.foo"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position1D("3.bar"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position1D("3.foo"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position1D("4.foo"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result2 = List(Cell(Position1D("bar.1"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position1D("bar.2"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position1D("bar.3"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position1D("baz.1"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position1D("baz.2"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position1D("foo.1"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position1D("foo.2"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position1D("foo.3"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position1D("foo.4"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position1D("qux.1"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result2 = List(Cell(Position1D("bar.1"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position1D("bar.2"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position1D("bar.3"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position1D("baz.1"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position1D("baz.2"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position1D("foo.1"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position1D("foo.2"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position1D("foo.3"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position1D("foo.4"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position1D("qux.1"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result3 = List(Cell(Position2D(1, "xyz.bar"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D(1, "xyz.baz"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D(1, "xyz.foo"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D(1, "xyz.qux"), Content(OrdinalSchema(StringCodex), "12.56")),
-    Cell(Position2D(2, "xyz.bar"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D(2, "xyz.baz"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D(2, "xyz.foo"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D(3, "xyz.bar"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D(3, "xyz.foo"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D(4, "xyz.foo"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))))
+  val result3 = List(Cell(Position2D(1, "xyz.bar"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D(1, "xyz.baz"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D(1, "xyz.foo"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D(1, "xyz.qux"), Content(OrdinalSchema[String](), "12.56")),
+    Cell(Position2D(2, "xyz.bar"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D(2, "xyz.baz"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D(2, "xyz.foo"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D(3, "xyz.bar"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D(3, "xyz.foo"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D(4, "xyz.foo"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))))
 
-  val result4 = List(Cell(Position2D("bar", "xyz.1"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar", "xyz.2"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar", "xyz.3"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz", "xyz.1"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz", "xyz.2"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo", "xyz.1"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo", "xyz.2"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo", "xyz.3"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", "xyz.4"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux", "xyz.1"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result4 = List(Cell(Position2D("bar", "xyz.1"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar", "xyz.2"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar", "xyz.3"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz", "xyz.1"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz", "xyz.2"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo", "xyz.1"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo", "xyz.2"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo", "xyz.3"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo", "xyz.4"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux", "xyz.1"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result5 = List(Cell(Position2D("bar.xyz", 1), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("bar.xyz", 2), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position2D("bar.xyz", 3), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position2D("baz.xyz", 1), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("baz.xyz", 2), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position2D("foo.xyz", 1), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("foo.xyz", 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("foo.xyz", 3), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo.xyz", 4), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position2D("qux.xyz", 1), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result5 = List(Cell(Position2D("bar.xyz", 1), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("bar.xyz", 2), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position2D("bar.xyz", 3), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position2D("baz.xyz", 1), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("baz.xyz", 2), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position2D("foo.xyz", 1), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("foo.xyz", 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("foo.xyz", 3), Content(NominalSchema[String](), "9.42")),
+    Cell(Position2D("foo.xyz", 4), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position2D("qux.xyz", 1), Content(OrdinalSchema[String](), "12.56")))
 }
 
 class TestScaldingMatrixMelt extends TestMatrixMelt {
@@ -8102,171 +8102,171 @@ trait TestMatrixExpand extends TestMatrix {
 
   val ext = "abc"
 
-  val result1 = List(Cell(Position2D("bar", "abc"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("baz", "abc"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", "abc"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("qux", "abc"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result1 = List(Cell(Position2D("bar", "abc"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("baz", "abc"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("foo", "abc"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("qux", "abc"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result2 = List(Cell(Position3D("bar", "abc", "def"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("baz", "abc", "def"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", "abc", "def"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("qux", "abc", "def"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result2 = List(Cell(Position3D("bar", "abc", "def"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("baz", "abc", "def"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("foo", "abc", "def"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("qux", "abc", "def"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result3 = List(Cell(Position4D("bar", "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position4D("baz", "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position4D("foo", "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position4D("qux", "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result3 = List(Cell(Position4D("bar", "abc", "def", "ghi"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position4D("baz", "abc", "def", "ghi"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position4D("foo", "abc", "def", "ghi"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position4D("qux", "abc", "def", "ghi"), Content(OrdinalSchema[String](), "12.56")))
 
   val result4 = List(
-    Cell(Position5D("bar", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position5D("baz", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position5D("foo", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position5D("qux", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema(StringCodex), "12.56")))
+    Cell(Position5D("bar", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position5D("baz", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position5D("foo", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position5D("qux", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result5 = List(Cell(Position3D("bar", 1, "abc"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "abc"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "abc"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "abc"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "abc"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "abc"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "abc"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "abc"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "abc"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", 1, "abc"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result5 = List(Cell(Position3D("bar", 1, "abc"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "abc"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "abc"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "abc"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "abc"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "abc"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "abc"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "abc"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "abc"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", 1, "abc"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result6 = List(Cell(Position4D("bar", 1, "abc", "def"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position4D("bar", 2, "abc", "def"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position4D("bar", 3, "abc", "def"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position4D("baz", 1, "abc", "def"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position4D("baz", 2, "abc", "def"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position4D("foo", 1, "abc", "def"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position4D("foo", 2, "abc", "def"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position4D("foo", 3, "abc", "def"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position4D("foo", 4, "abc", "def"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position4D("qux", 1, "abc", "def"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result6 = List(Cell(Position4D("bar", 1, "abc", "def"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position4D("bar", 2, "abc", "def"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position4D("bar", 3, "abc", "def"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position4D("baz", 1, "abc", "def"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position4D("baz", 2, "abc", "def"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position4D("foo", 1, "abc", "def"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position4D("foo", 2, "abc", "def"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position4D("foo", 3, "abc", "def"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position4D("foo", 4, "abc", "def"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position4D("qux", 1, "abc", "def"), Content(OrdinalSchema[String](), "12.56")))
 
   val result7 = List(
-    Cell(Position5D("bar", 1, "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position5D("bar", 2, "abc", "def", "ghi"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position5D("bar", 3, "abc", "def", "ghi"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position5D("baz", 1, "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position5D("baz", 2, "abc", "def", "ghi"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position5D("foo", 1, "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position5D("foo", 2, "abc", "def", "ghi"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position5D("foo", 3, "abc", "def", "ghi"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position5D("foo", 4, "abc", "def", "ghi"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position5D("qux", 1, "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "12.56")))
+    Cell(Position5D("bar", 1, "abc", "def", "ghi"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position5D("bar", 2, "abc", "def", "ghi"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position5D("bar", 3, "abc", "def", "ghi"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position5D("baz", 1, "abc", "def", "ghi"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position5D("baz", 2, "abc", "def", "ghi"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position5D("foo", 1, "abc", "def", "ghi"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position5D("foo", 2, "abc", "def", "ghi"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position5D("foo", 3, "abc", "def", "ghi"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position5D("foo", 4, "abc", "def", "ghi"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position5D("qux", 1, "abc", "def", "ghi"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result8 = List(Cell(Position4D("bar", 1, "xyz", "abc"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position4D("bar", 2, "xyz", "abc"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position4D("bar", 3, "xyz", "abc"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position4D("baz", 1, "xyz", "abc"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position4D("baz", 2, "xyz", "abc"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position4D("foo", 1, "xyz", "abc"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position4D("foo", 2, "xyz", "abc"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position4D("foo", 3, "xyz", "abc"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position4D("foo", 4, "xyz", "abc"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position4D("qux", 1, "xyz", "abc"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result8 = List(Cell(Position4D("bar", 1, "xyz", "abc"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position4D("bar", 2, "xyz", "abc"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position4D("bar", 3, "xyz", "abc"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position4D("baz", 1, "xyz", "abc"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position4D("baz", 2, "xyz", "abc"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position4D("foo", 1, "xyz", "abc"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position4D("foo", 2, "xyz", "abc"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position4D("foo", 3, "xyz", "abc"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position4D("foo", 4, "xyz", "abc"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position4D("qux", 1, "xyz", "abc"), Content(OrdinalSchema[String](), "12.56")))
 
   val result9 = List(
-    Cell(Position5D("bar", 1, "xyz", "abc", "def"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position5D("bar", 2, "xyz", "abc", "def"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position5D("bar", 3, "xyz", "abc", "def"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position5D("baz", 1, "xyz", "abc", "def"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position5D("baz", 2, "xyz", "abc", "def"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position5D("foo", 1, "xyz", "abc", "def"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position5D("foo", 2, "xyz", "abc", "def"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position5D("foo", 3, "xyz", "abc", "def"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position5D("foo", 4, "xyz", "abc", "def"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position5D("qux", 1, "xyz", "abc", "def"), Content(OrdinalSchema(StringCodex), "12.56")))
+    Cell(Position5D("bar", 1, "xyz", "abc", "def"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position5D("bar", 2, "xyz", "abc", "def"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position5D("bar", 3, "xyz", "abc", "def"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position5D("baz", 1, "xyz", "abc", "def"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position5D("baz", 2, "xyz", "abc", "def"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position5D("foo", 1, "xyz", "abc", "def"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position5D("foo", 2, "xyz", "abc", "def"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position5D("foo", 3, "xyz", "abc", "def"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position5D("foo", 4, "xyz", "abc", "def"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position5D("qux", 1, "xyz", "abc", "def"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result10 = List(Cell(Position2D("bar", "abc"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position2D("baz", "abc"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position2D("foo", "abc"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position2D("qux", "abc"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result10 = List(Cell(Position2D("bar", "abc"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position2D("baz", "abc"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position2D("foo", "abc"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position2D("qux", "abc"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result11 = List(Cell(Position3D("bar", "abc", "def"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("baz", "abc", "def"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", "abc", "def"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("qux", "abc", "def"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result11 = List(Cell(Position3D("bar", "abc", "def"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("baz", "abc", "def"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("foo", "abc", "def"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("qux", "abc", "def"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result12 = List(Cell(Position4D("bar", "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position4D("baz", "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position4D("foo", "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position4D("qux", "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result12 = List(Cell(Position4D("bar", "abc", "def", "ghi"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position4D("baz", "abc", "def", "ghi"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position4D("foo", "abc", "def", "ghi"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position4D("qux", "abc", "def", "ghi"), Content(OrdinalSchema[String](), "12.56")))
 
   val result13 = List(
-    Cell(Position5D("bar", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position5D("baz", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position5D("foo", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position5D("qux", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema(StringCodex), "12.56")))
+    Cell(Position5D("bar", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position5D("baz", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position5D("foo", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position5D("qux", "abc", "def", "ghi", "jkl"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result14 = List(Cell(Position3D("bar", 1, "abc"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position3D("bar", 2, "abc"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position3D("bar", 3, "abc"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position3D("baz", 1, "abc"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position3D("baz", 2, "abc"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position3D("foo", 1, "abc"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position3D("foo", 2, "abc"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D("foo", 3, "abc"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position3D("foo", 4, "abc"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position3D("qux", 1, "abc"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result14 = List(Cell(Position3D("bar", 1, "abc"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position3D("bar", 2, "abc"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position3D("bar", 3, "abc"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position3D("baz", 1, "abc"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position3D("baz", 2, "abc"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position3D("foo", 1, "abc"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position3D("foo", 2, "abc"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D("foo", 3, "abc"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position3D("foo", 4, "abc"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position3D("qux", 1, "abc"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result15 = List(Cell(Position4D("bar", 1, "abc", "def"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position4D("bar", 2, "abc", "def"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position4D("bar", 3, "abc", "def"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position4D("baz", 1, "abc", "def"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position4D("baz", 2, "abc", "def"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position4D("foo", 1, "abc", "def"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position4D("foo", 2, "abc", "def"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position4D("foo", 3, "abc", "def"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position4D("foo", 4, "abc", "def"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position4D("qux", 1, "abc", "def"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result15 = List(Cell(Position4D("bar", 1, "abc", "def"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position4D("bar", 2, "abc", "def"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position4D("bar", 3, "abc", "def"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position4D("baz", 1, "abc", "def"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position4D("baz", 2, "abc", "def"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position4D("foo", 1, "abc", "def"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position4D("foo", 2, "abc", "def"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position4D("foo", 3, "abc", "def"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position4D("foo", 4, "abc", "def"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position4D("qux", 1, "abc", "def"), Content(OrdinalSchema[String](), "12.56")))
 
   val result16 = List(
-    Cell(Position5D("bar", 1, "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position5D("bar", 2, "abc", "def", "ghi"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position5D("bar", 3, "abc", "def", "ghi"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position5D("baz", 1, "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position5D("baz", 2, "abc", "def", "ghi"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position5D("foo", 1, "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position5D("foo", 2, "abc", "def", "ghi"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position5D("foo", 3, "abc", "def", "ghi"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position5D("foo", 4, "abc", "def", "ghi"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position5D("qux", 1, "abc", "def", "ghi"), Content(OrdinalSchema(StringCodex), "12.56")))
+    Cell(Position5D("bar", 1, "abc", "def", "ghi"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position5D("bar", 2, "abc", "def", "ghi"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position5D("bar", 3, "abc", "def", "ghi"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position5D("baz", 1, "abc", "def", "ghi"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position5D("baz", 2, "abc", "def", "ghi"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position5D("foo", 1, "abc", "def", "ghi"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position5D("foo", 2, "abc", "def", "ghi"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position5D("foo", 3, "abc", "def", "ghi"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position5D("foo", 4, "abc", "def", "ghi"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position5D("qux", 1, "abc", "def", "ghi"), Content(OrdinalSchema[String](), "12.56")))
 
-  val result17 = List(Cell(Position4D("bar", 1, "xyz", "abc"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position4D("bar", 2, "xyz", "abc"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position4D("bar", 3, "xyz", "abc"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position4D("baz", 1, "xyz", "abc"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position4D("baz", 2, "xyz", "abc"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position4D("foo", 1, "xyz", "abc"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position4D("foo", 2, "xyz", "abc"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position4D("foo", 3, "xyz", "abc"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position4D("foo", 4, "xyz", "abc"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position4D("qux", 1, "xyz", "abc"), Content(OrdinalSchema(StringCodex), "12.56")))
+  val result17 = List(Cell(Position4D("bar", 1, "xyz", "abc"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position4D("bar", 2, "xyz", "abc"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position4D("bar", 3, "xyz", "abc"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position4D("baz", 1, "xyz", "abc"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position4D("baz", 2, "xyz", "abc"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position4D("foo", 1, "xyz", "abc"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position4D("foo", 2, "xyz", "abc"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position4D("foo", 3, "xyz", "abc"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position4D("foo", 4, "xyz", "abc"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position4D("qux", 1, "xyz", "abc"), Content(OrdinalSchema[String](), "12.56")))
 
   val result18 = List(
-    Cell(Position5D("bar", 1, "xyz", "abc", "def"), Content(OrdinalSchema(StringCodex), "6.28")),
-    Cell(Position5D("bar", 2, "xyz", "abc", "def"), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position5D("bar", 3, "xyz", "abc", "def"), Content(OrdinalSchema(LongCodex), 19)),
-    Cell(Position5D("baz", 1, "xyz", "abc", "def"), Content(OrdinalSchema(StringCodex), "9.42")),
-    Cell(Position5D("baz", 2, "xyz", "abc", "def"), Content(DiscreteSchema(LongCodex), 19)),
-    Cell(Position5D("foo", 1, "xyz", "abc", "def"), Content(OrdinalSchema(StringCodex), "3.14")),
-    Cell(Position5D("foo", 2, "xyz", "abc", "def"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position5D("foo", 3, "xyz", "abc", "def"), Content(NominalSchema(StringCodex), "9.42")),
-    Cell(Position5D("foo", 4, "xyz", "abc", "def"), Content(DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")),
-      (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00"))),
-    Cell(Position5D("qux", 1, "xyz", "abc", "def"), Content(OrdinalSchema(StringCodex), "12.56")))
+    Cell(Position5D("bar", 1, "xyz", "abc", "def"), Content(OrdinalSchema[String](), "6.28")),
+    Cell(Position5D("bar", 2, "xyz", "abc", "def"), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position5D("bar", 3, "xyz", "abc", "def"), Content(OrdinalSchema[Long](), 19)),
+    Cell(Position5D("baz", 1, "xyz", "abc", "def"), Content(OrdinalSchema[String](), "9.42")),
+    Cell(Position5D("baz", 2, "xyz", "abc", "def"), Content(DiscreteSchema[Long](), 19)),
+    Cell(Position5D("foo", 1, "xyz", "abc", "def"), Content(OrdinalSchema[String](), "3.14")),
+    Cell(Position5D("foo", 2, "xyz", "abc", "def"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position5D("foo", 3, "xyz", "abc", "def"), Content(NominalSchema[String](), "9.42")),
+    Cell(Position5D("foo", 4, "xyz", "abc", "def"), Content(DateSchema[java.util.Date](),
+      DateValue((new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")).parse("2000-01-01 12:56:00")))),
+    Cell(Position5D("qux", 1, "xyz", "abc", "def"), Content(OrdinalSchema[String](), "12.56")))
 }
 
 object TestMatrixExpand {
@@ -8543,43 +8543,43 @@ class TestSparkMatrixExpand extends TestMatrixExpand {
 
 trait TestMatrixPermute extends TestMatrix {
 
-  val dataA = List(Cell(Position2D(1, 3), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D(2, 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D(3, 1), Content(ContinuousSchema(DoubleCodex), 9.42)))
+  val dataA = List(Cell(Position2D(1, 3), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D(2, 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D(3, 1), Content(ContinuousSchema[Double](), 9.42)))
 
-  val dataB = List(Cell(Position3D(1, 2, 3), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position3D(2, 2, 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D(3, 2, 1), Content(ContinuousSchema(DoubleCodex), 9.42)))
+  val dataB = List(Cell(Position3D(1, 2, 3), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position3D(2, 2, 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D(3, 2, 1), Content(ContinuousSchema[Double](), 9.42)))
 
-  val dataC = List(Cell(Position4D(1, 2, 3, 4), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position4D(2, 2, 2, 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position4D(1, 1, 4, 4), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position4D(4, 1, 3, 2), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val dataC = List(Cell(Position4D(1, 2, 3, 4), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position4D(2, 2, 2, 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position4D(1, 1, 4, 4), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position4D(4, 1, 3, 2), Content(ContinuousSchema[Double](), 12.56)))
 
-  val dataD = List(Cell(Position5D(1, 2, 3, 4, 5), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position5D(2, 2, 2, 2, 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position5D(1, 1, 3, 5, 5), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position5D(4, 4, 4, 1, 1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position5D(5, 4, 3, 2, 1), Content(ContinuousSchema(DoubleCodex), 18.84)))
+  val dataD = List(Cell(Position5D(1, 2, 3, 4, 5), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position5D(2, 2, 2, 2, 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position5D(1, 1, 3, 5, 5), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position5D(4, 4, 4, 1, 1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position5D(5, 4, 3, 2, 1), Content(ContinuousSchema[Double](), 18.84)))
 
-  val result1 = List(Cell(Position2D(1, 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D(2, 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D(3, 1), Content(ContinuousSchema(DoubleCodex), 3.14)))
+  val result1 = List(Cell(Position2D(1, 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D(2, 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D(3, 1), Content(ContinuousSchema[Double](), 3.14)))
 
-  val result2 = List(Cell(Position3D(2, 1, 3), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position3D(2, 2, 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position3D(2, 3, 1), Content(ContinuousSchema(DoubleCodex), 3.14)))
+  val result2 = List(Cell(Position3D(2, 1, 3), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position3D(2, 2, 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position3D(2, 3, 1), Content(ContinuousSchema[Double](), 3.14)))
 
-  val result3 = List(Cell(Position4D(2, 2, 2, 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position4D(2, 3, 4, 1), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position4D(4, 3, 1, 2), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position4D(4, 4, 1, 1), Content(ContinuousSchema(DoubleCodex), 9.42)))
+  val result3 = List(Cell(Position4D(2, 2, 2, 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position4D(2, 3, 4, 1), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position4D(4, 3, 1, 2), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position4D(4, 4, 1, 1), Content(ContinuousSchema[Double](), 9.42)))
 
-  val result4 = List(Cell(Position5D(1, 4, 4, 1, 4), Content(ContinuousSchema(DoubleCodex), 12.56)),
-    Cell(Position5D(2, 2, 2, 2, 2), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position5D(2, 4, 5, 1, 3), Content(ContinuousSchema(DoubleCodex), 18.84)),
-    Cell(Position5D(4, 2, 1, 5, 3), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position5D(5, 1, 1, 5, 3), Content(ContinuousSchema(DoubleCodex), 9.42)))
+  val result4 = List(Cell(Position5D(1, 4, 4, 1, 4), Content(ContinuousSchema[Double](), 12.56)),
+    Cell(Position5D(2, 2, 2, 2, 2), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position5D(2, 4, 5, 1, 3), Content(ContinuousSchema[Double](), 18.84)),
+    Cell(Position5D(4, 2, 1, 5, 3), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position5D(5, 1, 1, 5, 3), Content(ContinuousSchema[Double](), 9.42)))
 }
 
 class TestScaldingMatrixPermute extends TestMatrixPermute {
@@ -8684,23 +8684,23 @@ class TestSparkMatrixToVector extends TestMatrixToVector {
 
 trait TestMatrixMaterialise extends TestMatrix {
 
-  val data = List(("a", "one", Content(ContinuousSchema(DoubleCodex), 3.14)),
-    ("a", "two", Content(NominalSchema(StringCodex), "foo")),
-    ("a", "three", Content(DiscreteSchema(LongCodex), 42)),
-    ("b", "one", Content(ContinuousSchema(DoubleCodex), 6.28)),
-    ("b", "two", Content(DiscreteSchema(LongCodex), 123)),
-    ("b", "three", Content(ContinuousSchema(DoubleCodex), 9.42)),
-    ("c", "two", Content(NominalSchema(StringCodex), "bar")),
-    ("c", "three", Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val data = List(("a", "one", Content(ContinuousSchema[Double](), 3.14)),
+    ("a", "two", Content(NominalSchema[String](), "foo")),
+    ("a", "three", Content(DiscreteSchema[Long](), 42)),
+    ("b", "one", Content(ContinuousSchema[Double](), 6.28)),
+    ("b", "two", Content(DiscreteSchema[Long](), 123)),
+    ("b", "three", Content(ContinuousSchema[Double](), 9.42)),
+    ("c", "two", Content(NominalSchema[String](), "bar")),
+    ("c", "three", Content(ContinuousSchema[Double](), 12.56)))
 
-  val result = List(Cell(Position2D("a", "one"), Content(ContinuousSchema(DoubleCodex), 3.14)),
-    Cell(Position2D("a", "two"), Content(NominalSchema(StringCodex), "foo")),
-    Cell(Position2D("a", "three"), Content(DiscreteSchema(LongCodex), 42)),
-    Cell(Position2D("b", "one"), Content(ContinuousSchema(DoubleCodex), 6.28)),
-    Cell(Position2D("b", "two"), Content(DiscreteSchema(LongCodex), 123)),
-    Cell(Position2D("b", "three"), Content(ContinuousSchema(DoubleCodex), 9.42)),
-    Cell(Position2D("c", "two"), Content(NominalSchema(StringCodex), "bar")),
-    Cell(Position2D("c", "three"), Content(ContinuousSchema(DoubleCodex), 12.56)))
+  val result = List(Cell(Position2D("a", "one"), Content(ContinuousSchema[Double](), 3.14)),
+    Cell(Position2D("a", "two"), Content(NominalSchema[String](), "foo")),
+    Cell(Position2D("a", "three"), Content(DiscreteSchema[Long](), 42)),
+    Cell(Position2D("b", "one"), Content(ContinuousSchema[Double](), 6.28)),
+    Cell(Position2D("b", "two"), Content(DiscreteSchema[Long](), 123)),
+    Cell(Position2D("b", "three"), Content(ContinuousSchema[Double](), 9.42)),
+    Cell(Position2D("c", "two"), Content(NominalSchema[String](), "bar")),
+    Cell(Position2D("c", "three"), Content(ContinuousSchema[Double](), 12.56)))
 }
 
 class TestScaldingMatrixMaterialise extends TestMatrixMaterialise {
@@ -8774,53 +8774,53 @@ class TestSparkMatrixToText extends TestMatrixToText {
 
 trait TestMatrixReshape extends TestMatrix {
 
-  val dataA = List(Cell(Position2D("foo", "letter"), Content(NominalSchema(StringCodex), "a")),
-    Cell(Position2D("foo", "number"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position2D("bar", "letter"), Content(NominalSchema(StringCodex), "b")),
-    Cell(Position2D("bar", "number"), Content(DiscreteSchema(LongCodex), 2)),
-    Cell(Position2D("baz", "letter"), Content(NominalSchema(StringCodex), "a")),
-    Cell(Position2D("qux", "number"), Content(DiscreteSchema(LongCodex), 2)))
+  val dataA = List(Cell(Position2D("foo", "letter"), Content(NominalSchema[String](), "a")),
+    Cell(Position2D("foo", "number"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position2D("bar", "letter"), Content(NominalSchema[String](), "b")),
+    Cell(Position2D("bar", "number"), Content(DiscreteSchema[Long](), 2)),
+    Cell(Position2D("baz", "letter"), Content(NominalSchema[String](), "a")),
+    Cell(Position2D("qux", "number"), Content(DiscreteSchema[Long](), 2)))
 
-  val dataB = List(Cell(Position3D("foo", "letter", true), Content(NominalSchema(StringCodex), "a")),
-    Cell(Position3D("foo", "number", true), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("bar", "letter", true), Content(NominalSchema(StringCodex), "b")),
-    Cell(Position3D("bar", "number", true), Content(DiscreteSchema(LongCodex), 2)),
-    Cell(Position3D("baz", "letter", true), Content(NominalSchema(StringCodex), "a")),
-    Cell(Position3D("qux", "number", true), Content(DiscreteSchema(LongCodex), 2)),
-    Cell(Position3D("foo", "number", false), Content(DiscreteSchema(LongCodex), 3)),
-    Cell(Position3D("bar", "letter", false), Content(NominalSchema(StringCodex), "c")),
-    Cell(Position3D("baz", "number", false), Content(DiscreteSchema(LongCodex), 4)),
-    Cell(Position3D("qux", "letter", false), Content(NominalSchema(StringCodex), "d")))
+  val dataB = List(Cell(Position3D("foo", "letter", true), Content(NominalSchema[String](), "a")),
+    Cell(Position3D("foo", "number", true), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("bar", "letter", true), Content(NominalSchema[String](), "b")),
+    Cell(Position3D("bar", "number", true), Content(DiscreteSchema[Long](), 2)),
+    Cell(Position3D("baz", "letter", true), Content(NominalSchema[String](), "a")),
+    Cell(Position3D("qux", "number", true), Content(DiscreteSchema[Long](), 2)),
+    Cell(Position3D("foo", "number", false), Content(DiscreteSchema[Long](), 3)),
+    Cell(Position3D("bar", "letter", false), Content(NominalSchema[String](), "c")),
+    Cell(Position3D("baz", "number", false), Content(DiscreteSchema[Long](), 4)),
+    Cell(Position3D("qux", "letter", false), Content(NominalSchema[String](), "d")))
 
-  val result1 = List(Cell(Position3D("bar", "letter", "a"), Content(NominalSchema(StringCodex), "b")),
-    Cell(Position3D("bar", "number", "NA"), Content(DiscreteSchema(LongCodex), 2)),
-    Cell(Position3D("foo", "letter", "a"), Content(NominalSchema(StringCodex), "a")),
-    Cell(Position3D("foo", "number", "NA"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("qux", "number", "NA"), Content(DiscreteSchema(LongCodex), 2)))
+  val result1 = List(Cell(Position3D("bar", "letter", "a"), Content(NominalSchema[String](), "b")),
+    Cell(Position3D("bar", "number", "NA"), Content(DiscreteSchema[Long](), 2)),
+    Cell(Position3D("foo", "letter", "a"), Content(NominalSchema[String](), "a")),
+    Cell(Position3D("foo", "number", "NA"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("qux", "number", "NA"), Content(DiscreteSchema[Long](), 2)))
 
-  val result2 = List(Cell(Position3D("bar", "number", "b"), Content(DiscreteSchema(LongCodex), 2)),
-    Cell(Position3D("foo", "number", "a"), Content(DiscreteSchema(LongCodex), 1)),
-    Cell(Position3D("qux", "number", "NA"), Content(DiscreteSchema(LongCodex), 2)))
+  val result2 = List(Cell(Position3D("bar", "number", "b"), Content(DiscreteSchema[Long](), 2)),
+    Cell(Position3D("foo", "number", "a"), Content(DiscreteSchema[Long](), 1)),
+    Cell(Position3D("qux", "number", "NA"), Content(DiscreteSchema[Long](), 2)))
 
-  val result3 = List(Cell(Position4D("bar", "letter", false, "d"), Content(NominalSchema(StringCodex), "c")),
-    Cell(Position4D("bar", "letter", true, "NA"), Content(NominalSchema(StringCodex), "b")),
-    Cell(Position4D("bar", "number", true, "2"), Content(DiscreteSchema(LongCodex), 2)),
-    Cell(Position4D("baz", "letter", true, "NA"), Content(NominalSchema(StringCodex), "a")),
-    Cell(Position4D("baz", "number", false, "NA"), Content(DiscreteSchema(LongCodex), 4)),
-    Cell(Position4D("foo", "letter", true, "NA"), Content(NominalSchema(StringCodex), "a")),
-    Cell(Position4D("foo", "number", false, "NA"), Content(DiscreteSchema(LongCodex), 3)),
-    Cell(Position4D("foo", "number", true, "2"), Content(DiscreteSchema(LongCodex), 1)))
+  val result3 = List(Cell(Position4D("bar", "letter", false, "d"), Content(NominalSchema[String](), "c")),
+    Cell(Position4D("bar", "letter", true, "NA"), Content(NominalSchema[String](), "b")),
+    Cell(Position4D("bar", "number", true, "2"), Content(DiscreteSchema[Long](), 2)),
+    Cell(Position4D("baz", "letter", true, "NA"), Content(NominalSchema[String](), "a")),
+    Cell(Position4D("baz", "number", false, "NA"), Content(DiscreteSchema[Long](), 4)),
+    Cell(Position4D("foo", "letter", true, "NA"), Content(NominalSchema[String](), "a")),
+    Cell(Position4D("foo", "number", false, "NA"), Content(DiscreteSchema[Long](), 3)),
+    Cell(Position4D("foo", "number", true, "2"), Content(DiscreteSchema[Long](), 1)))
 
-  val result4 = List(Cell(Position4D("bar", "letter", false, "NA"), Content(NominalSchema(StringCodex), "c")),
-    Cell(Position4D("bar", "letter", true, "2"), Content(NominalSchema(StringCodex), "b")),
-    Cell(Position4D("baz", "letter", true, "NA"), Content(NominalSchema(StringCodex), "a")),
-    Cell(Position4D("foo", "letter", true, "1"), Content(NominalSchema(StringCodex), "a")),
-    Cell(Position4D("qux", "letter", false, "NA"), Content(NominalSchema(StringCodex), "d")))
+  val result4 = List(Cell(Position4D("bar", "letter", false, "NA"), Content(NominalSchema[String](), "c")),
+    Cell(Position4D("bar", "letter", true, "2"), Content(NominalSchema[String](), "b")),
+    Cell(Position4D("baz", "letter", true, "NA"), Content(NominalSchema[String](), "a")),
+    Cell(Position4D("foo", "letter", true, "1"), Content(NominalSchema[String](), "a")),
+    Cell(Position4D("qux", "letter", false, "NA"), Content(NominalSchema[String](), "d")))
 
-  val result5 = List(Cell(Position4D("bar", "letter", false, "b"), Content(NominalSchema(StringCodex), "c")),
-    Cell(Position4D("baz", "number", false, "NA"), Content(DiscreteSchema(LongCodex), 4)),
-    Cell(Position4D("foo", "number", false, "1"), Content(DiscreteSchema(LongCodex), 3)),
-    Cell(Position4D("qux", "letter", false, "NA"), Content(NominalSchema(StringCodex), "d")))
+  val result5 = List(Cell(Position4D("bar", "letter", false, "b"), Content(NominalSchema[String](), "c")),
+    Cell(Position4D("baz", "number", false, "NA"), Content(DiscreteSchema[Long](), 4)),
+    Cell(Position4D("foo", "number", false, "1"), Content(DiscreteSchema[Long](), 3)),
+    Cell(Position4D("qux", "letter", false, "NA"), Content(NominalSchema[String](), "d")))
 }
 
 object TestMatrixReshape {

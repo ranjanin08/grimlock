@@ -17,12 +17,11 @@ package au.com.cba.omnia.grimlock
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
-import au.com.cba.omnia.grimlock.framework.encoding._
 import au.com.cba.omnia.grimlock.framework.position._
 
 class TestExtractWithKey extends TestGrimlock {
 
-  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema[Double](), 1.0))
   val ext = Map(Position1D("ghi") -> 3.14)
 
   "A ExtractWithKey" should "extract with key" in {
@@ -41,7 +40,7 @@ class TestExtractWithKey extends TestGrimlock {
 
 class TestExtractWithDimension extends TestGrimlock {
 
-  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema[Double](), 1.0))
   val ext = Map(Position1D("abc") -> 3.14)
 
   "A ExtractWithDimension" should "extract with First" in {
@@ -60,7 +59,7 @@ class TestExtractWithDimension extends TestGrimlock {
 
 class TestExtractWithDimensionAndKey extends TestGrimlock {
 
-  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema[Double](), 1.0))
   val ext = Map(Position1D("abc") -> Map(Position1D(123) -> 3.14))
 
   "A ExtractWithDimensionAndKey" should "extract with First" in {
@@ -91,8 +90,8 @@ class TestExtractWithDimensionAndKey extends TestGrimlock {
 
 class TestExtractWithPosition extends TestGrimlock {
 
-  val cell1 = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
-  val cell2 = Cell(Position2D("cba", "fed"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell1 = Cell(Position2D("abc", "def"), Content(ContinuousSchema[Double](), 1.0))
+  val cell2 = Cell(Position2D("cba", "fed"), Content(ContinuousSchema[Double](), 1.0))
   val ext = Map(Position2D("abc", "def") -> 3.14)
 
   "A ExtractWithPosition" should "extract with key" in {
@@ -111,8 +110,8 @@ class TestExtractWithPosition extends TestGrimlock {
 
 class TestExtractWithPositionAndKey extends TestGrimlock {
 
-  val cell1 = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
-  val cell2 = Cell(Position2D("cba", "fed"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell1 = Cell(Position2D("abc", "def"), Content(ContinuousSchema[Double](), 1.0))
+  val cell2 = Cell(Position2D("cba", "fed"), Content(ContinuousSchema[Double](), 1.0))
   val ext = Map(Position2D("abc", "def") -> Map(Position1D("xyz") -> 3.14))
 
   "A ExtractWithPositionAndKey" should "extract with key" in {
@@ -139,7 +138,7 @@ class TestExtractWithPositionAndKey extends TestGrimlock {
 
 class TestExtractWithSelected extends TestGrimlock {
 
-  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema[Double](), 1.0))
   val ext = Map(Position1D("abc") -> 3.14)
 
   "A ExtractWithSelected" should "extract with Over" in {
@@ -160,7 +159,7 @@ class TestExtractWithSelected extends TestGrimlock {
 
 class TestExtractWithSelectedAndKey extends TestGrimlock {
 
-  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell = Cell(Position2D("abc", "def"), Content(ContinuousSchema[Double](), 1.0))
   val ext = Map(Position1D("abc") -> Map(Position1D("xyz") -> 3.14))
 
   "A ExtractWithSelectedAndKey" should "extract with Over" in {
@@ -191,9 +190,9 @@ class TestExtractWithSelectedAndKey extends TestGrimlock {
 
 class TestExtractWithSlice extends TestGrimlock {
 
-  val cell1 = Cell(Position2D("abc", "def"), Content(ContinuousSchema(DoubleCodex), 1))
-  val cell2 = Cell(Position2D("cba", "def"), Content(ContinuousSchema(DoubleCodex), 1))
-  val cell3 = Cell(Position2D("abc", "fed"), Content(ContinuousSchema(DoubleCodex), 1))
+  val cell1 = Cell(Position2D("abc", "def"), Content(ContinuousSchema[Double](), 1.0))
+  val cell2 = Cell(Position2D("cba", "def"), Content(ContinuousSchema[Double](), 1.0))
+  val cell3 = Cell(Position2D("abc", "fed"), Content(ContinuousSchema[Double](), 1.0))
   val ext = Map(Position1D("abc") -> Map(Position1D("def") -> 3.14))
 
   "A ExtractWithSlice" should "extract with Over" in {
