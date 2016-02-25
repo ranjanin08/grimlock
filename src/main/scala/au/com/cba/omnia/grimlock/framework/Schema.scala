@@ -48,7 +48,7 @@ trait Schema {
   }
 
   override def toString(): String = {
-    this.getClass.getName + square(typeString()) + "(" + paramString(false, s => s.toString) + ")"
+    this.getClass.getSimpleName + square(typeString()) + "(" + paramString(false, s => s.toString) + ")"
   }
 
   protected def paramString(short: Boolean, f: (S) => String): String
@@ -109,9 +109,17 @@ trait SchemaParameters {
   }
 
   protected def writeSet[S](short: Boolean, set: Set[S], f: (S) => String): String = {
-    val args = set.map(f(_).replaceAll(",", "\\\\,")).mkString(",")
+    if (set.isEmpty) {
+      ""
+    } else {
+      val args = set.map(f(_).replaceAll(",", "\\\\,")).mkString(",")
 
-    if (short) { args } else { "Set(" + args + ")" }
+      if (short) {
+        args
+      } else {
+        "Set(" + args + ")"
+      }
+    }
   }
 }
 
@@ -144,7 +152,7 @@ case class ContinuousSchema[T: ClassTag] private (range: Option[(T, T)])(
   def validate(value: Value { type V = S }): Boolean = validateRange(value)
 
   protected def paramString(short: Boolean, f: (S) => String): String = writeRange(short, range, f)
-  protected def typeString(): String = classTag[T].runtimeClass.getSimpleName
+  protected def typeString(): String = classTag[T].runtimeClass.getName.capitalize
 }
 
 /** Companion object to `ContinuousSchema` case class. */
@@ -205,7 +213,7 @@ case class DiscreteSchema[T: ClassTag] private (range: Option[(T, T)], step: Opt
   protected def paramString(short: Boolean, f: (S) => String): String = {
     step.map { s => writeRange(short, range, f) + "," + f(s) }.getOrElse("")
   }
-  protected def typeString(): String = classTag[T].runtimeClass.getSimpleName
+  protected def typeString(): String = classTag[T].runtimeClass.getName.capitalize
 }
 
 /** Companion object to `DiscreteSchema` case class. */
@@ -269,7 +277,11 @@ trait CategoricalSchema[T] extends Schema with SchemaParameters {
 case class NominalSchema[T: ClassTag](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
   val kind = Type.Nominal
 
-  protected def typeString(): String = classTag[T].runtimeClass.getSimpleName
+  protected def typeString(): String = {
+    val name = classTag[T].runtimeClass.getName
+
+    if (name.contains(".")) { if (name == "java.lang.String") { "String" } else { name } } else { name.capitalize }
+  }
 }
 
 /** Companion object to `NominalSchema` case class. */
@@ -302,7 +314,11 @@ object NominalSchema extends SchemaParameters {
 case class OrdinalSchema[T: ClassTag](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
   val kind = Type.Ordinal
 
-  protected def typeString(): String = classTag[T].runtimeClass.getSimpleName
+  protected def typeString(): String = {
+    val name = classTag[T].runtimeClass.getName
+
+    if (name.contains(".")) { if (name == "java.lang.String") { "String" } else { name } } else { name.capitalize }
+  }
 }
 
 /** Companion object to `OrdinalSchema`. */

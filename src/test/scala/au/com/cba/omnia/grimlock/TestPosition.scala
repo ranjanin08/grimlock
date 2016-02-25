@@ -105,8 +105,8 @@ class TestPosition1D extends TestGrimlock {
     a [IndexOutOfBoundsException] shouldBe thrownBy { pos.update(Fifth, 123) }
   }
 
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 
   it should "return a over map" in {
     pos.over.toMapValue(Position0D(), con1) shouldBe con1
@@ -221,8 +221,8 @@ class TestPosition2D extends TestGrimlock {
     a [IndexOutOfBoundsException] shouldBe thrownBy { pos.permute(List(First, Second, Third)) }
   }
 
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 
   it should "return a over map" in {
     pos.over.toMapValue(Position1D("xyz"), con1) shouldBe Map(Position1D("xyz") -> con1)
@@ -357,8 +357,8 @@ class TestPosition3D extends TestGrimlock {
     a [IndexOutOfBoundsException] shouldBe thrownBy { pos.permute(List(First, Second, Third, Fourth)) }
   }
 
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 
   it should "return a over map" in {
     pos.over.toMapValue(Position2D("xyz", 456), con1) shouldBe Map(Position2D("xyz", 456) -> con1)
@@ -526,8 +526,8 @@ class TestPosition4D extends TestGrimlock {
     a [IndexOutOfBoundsException] shouldBe thrownBy { pos.permute(List(First, Second, Third, Fourth, Fifth)) }
   }
 
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 
   it should "return a over map" in {
     pos.over.toMapValue(Position3D("xyz", 456, "abc"), con1) shouldBe Map(Position3D("xyz", 456, "abc") -> con1)
@@ -788,8 +788,8 @@ class TestPosition5D extends TestGrimlock {
     pos.permute(List(Fifth, Fourth, Third, Second, First)) shouldBe Position5D("baz", 456, "bar", 123, "foo")
   }
 
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 
   it should "return a over map" in {
     pos.over.toMapValue(Position4D("xyz", 456, "abc", 123), con1) shouldBe

@@ -24,9 +24,9 @@ class TestCell extends TestGrimlock {
 
   "A Cell" should "return its string" in {
     Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toString(".", true) shouldBe
-      "Position2D(StringValue(foo),LongValue(123)).Content(ContinuousSchema[Double](),DoubleValue(3.14))"
+      "Position2D(StringValue(foo,StringCodec),LongValue(123,LongCodec)).Content(ContinuousSchema[Double](),DoubleValue(3.14,DoubleCodec))"
     Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toString(".", false) shouldBe
-      "foo.123.continuous.double.3.14"
+      "foo.123.double.continuous.3.14"
     Cell(Position2D("foo", 123), Content(ContinuousSchema[Double](), 3.14)).toString(".", false, false) shouldBe
       "foo.123.3.14"
   }
@@ -47,16 +47,16 @@ class TestCell extends TestGrimlock {
   val dictionary = Map("123" -> schema)
 
   "A Cell" should "parse 1D" in {
-    Cell.parse1D(":", LongCodec)("123:continuous:double:3.14") shouldBe
+    Cell.parse1D(":", LongCodec)("123:double:continuous:3.14") shouldBe
       Some(Left(Cell(Position1D(123), Content(ContinuousSchema[Double](), 3.14))))
-    Cell.parse1D(":", LongCodec)("abc:continuous:double:3.14") shouldBe
-      Some(Right("Unable to decode: 'abc:continuous:double:3.14'"))
-    Cell.parse1D(":", LongCodec)("123:continuous:double:abc") shouldBe
-      Some(Right("Unable to decode: '123:continuous:double:abc'"))
-    Cell.parse1D(":", LongCodec)("123:continuous:double:3:14") shouldBe
-      Some(Right("Unable to decode: '123:continuous:double:3:14'"))
-    Cell.parse1D(":", LongCodec)("123:continuous|double:3.14") shouldBe
-      Some(Right("Unable to split: '123:continuous|double:3.14'"))
+    Cell.parse1D(":", LongCodec)("abc:double:continuous:3.14") shouldBe
+      Some(Right("Unable to decode: 'abc:double:continuous:3.14'"))
+    Cell.parse1D(":", LongCodec)("123:double:continuous:abc") shouldBe
+      Some(Right("Unable to decode: '123:double:continuous:abc'"))
+    Cell.parse1D(":", LongCodec)("123:double:continuous:3:14") shouldBe
+      Some(Right("Unable to decode: '123:double:continuous:3:14'"))
+    Cell.parse1D(":", LongCodec)("123:double|continuous:3.14") shouldBe
+      Some(Right("Unable to split: '123:double|continuous:3.14'"))
   }
 
   "A Cell" should "parse 1D with dictionary" in {
@@ -86,18 +86,18 @@ class TestCell extends TestGrimlock {
   }
 
   "A Cell" should "parse 2D" in {
-    Cell.parse2D(":", LongCodec, StringCodec)("123:def:continuous:double:3.14") shouldBe
+    Cell.parse2D(":", LongCodec, StringCodec)("123:def:double:continuous:3.14") shouldBe
       Some(Left(Cell(Position2D(123, "def"), Content(ContinuousSchema[Double](), 3.14))))
-    Cell.parse2D(":", LongCodec, StringCodec)("abc:def:continuous:double:3.14") shouldBe
+    Cell.parse2D(":", LongCodec, StringCodec)("abc:def:double:continuous:3.14") shouldBe
       Some(Right("Unable to decode: 'abc:def:continuous:double:3.14'"))
-    Cell.parse2D(":", StringCodec, LongCodec)("abc:def:continuous:double:3.14") shouldBe
-      Some(Right("Unable to decode: 'abc:def:continuous:double:3.14'"))
-    Cell.parse2D(":", LongCodec, StringCodec)("123:def:continuous:double:abc") shouldBe
-      Some(Right("Unable to decode: '123:def:continuous:double:abc'"))
-    Cell.parse2D(":", LongCodec, StringCodec)("123:def:continuous:double:3:14") shouldBe
-      Some(Right("Unable to decode: '123:def:continuous:double:3:14'"))
-    Cell.parse2D(":", LongCodec, StringCodec)("123:def:continuous|double:3.14") shouldBe
-      Some(Right("Unable to split: '123:def:continuous|double:3.14'"))
+    Cell.parse2D(":", StringCodec, LongCodec)("abc:def:double:continuous:3.14") shouldBe
+      Some(Right("Unable to decode: 'abc:def:double:continuous:3.14'"))
+    Cell.parse2D(":", LongCodec, StringCodec)("123:def:double:continuous:abc") shouldBe
+      Some(Right("Unable to decode: '123:def:double:continuous:abc'"))
+    Cell.parse2D(":", LongCodec, StringCodec)("123:def:double:continuous:3:14") shouldBe
+      Some(Right("Unable to decode: '123:def:double:continuous:3:14'"))
+    Cell.parse2D(":", LongCodec, StringCodec)("123:def:double|continuous:3.14") shouldBe
+      Some(Right("Unable to split: '123:def:double|continuous:3.14'"))
   }
 
   "A Cell" should "parse 2D with dictionary" in {
@@ -131,20 +131,20 @@ class TestCell extends TestGrimlock {
   }
 
   "A Cell" should "parse 3D" in {
-    Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:continuous:double:3.14") shouldBe
+    Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:double:continuous:3.14") shouldBe
       Some(Left(Cell(Position3D(123, "def", "ghi"), Content(ContinuousSchema[Double](), 3.14))))
-    Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("abc:def:ghi:continuous:double:3.14") shouldBe
+    Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("abc:def:ghi:double:continuous:3.14") shouldBe
       Some(Right("Unable to decode: 'abc:def:ghi:continuous:double:3.14'"))
-    Cell.parse3D(":", StringCodec, LongCodec, StringCodec)("def:abc:ghi:continuous:double:3.14") shouldBe
+    Cell.parse3D(":", StringCodec, LongCodec, StringCodec)("def:abc:ghi:double:continuous:3.14") shouldBe
       Some(Right("Unable to decode: 'def:abc:ghi:continuous:double:3.14'"))
-    Cell.parse3D(":", StringCodec, StringCodec, LongCodec)("def:ghi:abc:continuous:double:3.14") shouldBe
+    Cell.parse3D(":", StringCodec, StringCodec, LongCodec)("def:ghi:abc:double:continuous:3.14") shouldBe
       Some(Right("Unable to decode: 'def:ghi:abc:continuous:double:3.14'"))
-    Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:continuous:double:abc") shouldBe
+    Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:double:continuous:abc") shouldBe
       Some(Right("Unable to decode: '123:def:ghi:continuous:double:abc'"))
-    Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:continuous:double:3:14") shouldBe
+    Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:double:continuous:3:14") shouldBe
       Some(Right("Unable to decode: '123:def:ghi:continuous:double:3:14'"))
-    Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:continuous|double:3.14") shouldBe
-      Some(Right("Unable to split: '123:def:ghi:continuous|double:3.14'"))
+    Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:double|continuous:3.14") shouldBe
+      Some(Right("Unable to split: '123:def:ghi:double|continuous:3.14'"))
   }
 
   "A Cell" should "parse 3D with dictionary" in {
@@ -186,29 +186,29 @@ class TestCell extends TestGrimlock {
 
   "A Cell" should "parse 4D" in {
     Cell.parse4D(":", LongCodec, StringCodec, StringCodec, StringCodec)(
-      "123:def:ghi:klm:continuous:double:3.14") shouldBe
+      "123:def:ghi:klm:double:continuous:3.14") shouldBe
         Some(Left(Cell(Position4D(123, "def", "ghi", "klm"), Content(ContinuousSchema[Double](), 3.14))))
     Cell.parse4D(":", LongCodec, StringCodec, StringCodec, StringCodec)(
-      "abc:def:ghi:klm:continuous:double:3.14") shouldBe
-        Some(Right("Unable to decode: 'abc:def:ghi:klm:continuous:double:3.14'"))
+      "abc:def:ghi:klm:double:continuous:3.14") shouldBe
+        Some(Right("Unable to decode: 'abc:def:ghi:klm:double:continuous:3.14'"))
     Cell.parse4D(":", StringCodec, LongCodec, StringCodec, StringCodec)(
-      "def:abc:ghi:klm:continuous:double:3.14") shouldBe
-        Some(Right("Unable to decode: 'def:abc:ghi:klm:continuous:double:3.14'"))
+      "def:abc:ghi:klm:double:continuous:3.14") shouldBe
+        Some(Right("Unable to decode: 'def:abc:ghi:klm:double:continuous:3.14'"))
     Cell.parse4D(":", StringCodec, StringCodec, LongCodec, StringCodec)(
-      "def:ghi:abc:klm:continuous:double:3.14") shouldBe
-        Some(Right("Unable to decode: 'def:ghi:abc:klm:continuous:double:3.14'"))
+      "def:ghi:abc:klm:double:continuous:3.14") shouldBe
+        Some(Right("Unable to decode: 'def:ghi:abc:klm:double:continuous:3.14'"))
     Cell.parse4D(":", StringCodec, StringCodec, StringCodec, LongCodec)(
-      "def:ghi:klm:abc:continuous:double:3.14") shouldBe
-        Some(Right("Unable to decode: 'def:ghi:klm:abc:continuous:double:3.14'"))
+      "def:ghi:klm:abc:double:continuous:3.14") shouldBe
+        Some(Right("Unable to decode: 'def:ghi:klm:abc:double:continuous:3.14'"))
     Cell.parse4D(":", LongCodec, StringCodec, StringCodec, StringCodec)(
-      "123:def:ghi:klm:continuous:double:abc") shouldBe
-        Some(Right("Unable to decode: '123:def:ghi:klm:continuous:double:abc'"))
+      "123:def:ghi:klm:double:continuous:abc") shouldBe
+        Some(Right("Unable to decode: '123:def:ghi:klm:double:continuous:abc'"))
     Cell.parse4D(":", LongCodec, StringCodec, StringCodec, StringCodec)(
-      "123:def:ghi:klm:continuous:double:3:14") shouldBe
-        Some(Right("Unable to decode: '123:def:ghi:klm:continuous:double:3:14'"))
+      "123:def:ghi:klm:double:continuous:3:14") shouldBe
+        Some(Right("Unable to decode: '123:def:ghi:klm:double:continuous:3:14'"))
     Cell.parse4D(":", LongCodec, StringCodec, StringCodec, StringCodec)(
-      "123:def:ghi:klm:continuous|double:3.14") shouldBe
-        Some(Right("Unable to split: '123:def:ghi:klm:continuous|double:3.14'"))
+      "123:def:ghi:klm:double|continuous:3.14") shouldBe
+        Some(Right("Unable to split: '123:def:ghi:klm:double|continuous:3.14'"))
   }
 
   "A Cell" should "parse 4D with dictionary" in {
@@ -260,32 +260,32 @@ class TestCell extends TestGrimlock {
 
   "A Cell" should "parse 5D" in {
     Cell.parse5D(":", LongCodec, StringCodec, StringCodec, StringCodec, StringCodec)(
-      "123:def:ghi:klm:xyz:continuous:double:3.14") shouldBe
+      "123:def:ghi:klm:xyz:double:continuous:3.14") shouldBe
         Some(Left(Cell(Position5D(123, "def", "ghi", "klm", "xyz"), Content(ContinuousSchema[Double](), 3.14))))
     Cell.parse5D(":", LongCodec, StringCodec, StringCodec, StringCodec, StringCodec)(
-      "abc:def:ghi:klm:xyz:continuous:double:3.14") shouldBe
-        Some(Right("Unable to decode: 'abc:def:ghi:klm:xyz:continuous:double:3.14'"))
+      "abc:def:ghi:klm:xyz:double:continuous:3.14") shouldBe
+        Some(Right("Unable to decode: 'abc:def:ghi:klm:xyz:double:continuous:3.14'"))
     Cell.parse5D(":", StringCodec, LongCodec, StringCodec, StringCodec, StringCodec)(
-      "def:abc:ghi:klm:xyz:continuous:double:3.14") shouldBe
-        Some(Right("Unable to decode: 'def:abc:ghi:klm:xyz:continuous:double:3.14'"))
+      "def:abc:ghi:klm:xyz:double:continuous:3.14") shouldBe
+        Some(Right("Unable to decode: 'def:abc:ghi:klm:xyz:double:continuous:3.14'"))
     Cell.parse5D(":", StringCodec, StringCodec, LongCodec, StringCodec, StringCodec)(
-      "def:ghi:abc:klm:xyz:continuous:double:3.14") shouldBe
-        Some(Right("Unable to decode: 'def:ghi:abc:klm:xyz:continuous:double:3.14'"))
+      "def:ghi:abc:klm:xyz:double:continuous:3.14") shouldBe
+        Some(Right("Unable to decode: 'def:ghi:abc:klm:xyz:double:continuous:3.14'"))
     Cell.parse5D(":", StringCodec, StringCodec, StringCodec, LongCodec, StringCodec)(
-      "def:ghi:klm:abc:xyz:continuous:double:3.14") shouldBe
-        Some(Right("Unable to decode: 'def:ghi:klm:abc:xyz:continuous:double:3.14'"))
+      "def:ghi:klm:abc:xyz:double:continuous:3.14") shouldBe
+        Some(Right("Unable to decode: 'def:ghi:klm:abc:xyz:double:continuous:3.14'"))
     Cell.parse5D(":", StringCodec, StringCodec, StringCodec, StringCodec, LongCodec)(
-      "def:ghi:klm:xyz:abc:continuous:double:3.14") shouldBe
-        Some(Right("Unable to decode: 'def:ghi:klm:xyz:abc:continuous:double:3.14'"))
+      "def:ghi:klm:xyz:abc:double:continuous:3.14") shouldBe
+        Some(Right("Unable to decode: 'def:ghi:klm:xyz:abc:double:continuous:3.14'"))
     Cell.parse5D(":", LongCodec, StringCodec, StringCodec, StringCodec, StringCodec)(
-      "123:def:ghi:klm:xyz:continuous:double:abc") shouldBe
-        Some(Right("Unable to decode: '123:def:ghi:klm:xyz:continuous:double:abc'"))
+      "123:def:ghi:klm:xyz:double:continuous:abc") shouldBe
+        Some(Right("Unable to decode: '123:def:ghi:klm:xyz:double:continuous:abc'"))
     Cell.parse5D(":", LongCodec, StringCodec, StringCodec, StringCodec, StringCodec)(
-      "123:def:ghi:klm:xyz:continuous:double:3:14") shouldBe
-        Some(Right("Unable to decode: '123:def:ghi:klm:xyz:continuous:double:3:14'"))
+      "123:def:ghi:klm:xyz:double:continuous:3:14") shouldBe
+        Some(Right("Unable to decode: '123:def:ghi:klm:xyz:double:continuous:3:14'"))
     Cell.parse5D(":", LongCodec, StringCodec, StringCodec, StringCodec, StringCodec)(
-      "123:def:ghi:klm:xyz:continuous|double:3.14") shouldBe
-        Some(Right("Unable to split: '123:def:ghi:klm:xyz:continuous|double:3.14'"))
+      "123:def:ghi:klm:xyz:double|continuous:3.14") shouldBe
+        Some(Right("Unable to split: '123:def:ghi:klm:xyz:double|continuous:3.14'"))
   }
 
   "A Cell" should "parse 5D with dictionary" in {

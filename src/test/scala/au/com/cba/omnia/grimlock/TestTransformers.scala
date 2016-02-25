@@ -23,9 +23,9 @@ import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.library.transform._
 
 trait TestTransformers extends TestGrimlock {
-  def getLongContent(value: Long): Content = Content(DiscreteSchema(LongCodex), value)
-  def getDoubleContent(value: Double): Content = Content(ContinuousSchema(DoubleCodex), value)
-  def getStringContent(value: String): Content = Content(NominalSchema(StringCodex), value)
+  def getLongContent(value: Long): Content = Content(DiscreteSchema[Long](), value)
+  def getDoubleContent(value: Double): Content = Content(ContinuousSchema[Double](), value)
+  def getStringContent(value: String): Content = Content(NominalSchema[String](), value)
 
   def extractor[P <: Position](dim: Dimension, key: String)(
     implicit ev: PosDimDep[P, dim.type]): Extract[P, Map[Position1D, Map[Position1D, Content]], Double] = {
@@ -743,16 +743,16 @@ class TestCut extends TestTransformers {
 
   "A Cut" should "present" in {
     Cut(binExtractor).presentWithValue(cell, ext) shouldBe List(Cell(Position1D("foo"),
-      Content(OrdinalSchema[Codex.StringCodex](StringCodex,
-        List("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]", "(4.0,5.0]")), "(3.0,4.0]")))
+      Content(OrdinalSchema[String](
+        Set("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]", "(4.0,5.0]")), "(3.0,4.0]")))
   }
 
   it should "present with name" in {
     Cut(binExtractor)
       .andThenRelocate(Locate.RenameDimension(First, "%1$s.cut"))
       .presentWithValue(cell, ext).toList shouldBe List(Cell(Position1D("foo.cut"),
-        Content(OrdinalSchema[Codex.StringCodex](StringCodex,
-          List("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]", "(4.0,5.0]")), "(3.0,4.0]")))
+        Content(OrdinalSchema[String](
+          Set("(0.0,1.0]", "(1.0,2.0]", "(2.0,3.0]", "(3.0,4.0]", "(4.0,5.0]")), "(3.0,4.0]")))
   }
 
   it should "not present with missing bins" in {
@@ -770,18 +770,18 @@ class TestCompare extends TestTransformers {
 
   "A Compare" should "present" in {
     Compare(equ(3.1415)).present(cell) shouldBe List(Cell(Position1D("foo"),
-      Content(NominalSchema(BooleanCodex), true)))
+      Content(NominalSchema[Boolean](), true)))
     Compare(equ(3.3)).present(cell) shouldBe List(Cell(Position1D("foo"),
-      Content(NominalSchema(BooleanCodex), false)))
+      Content(NominalSchema[Boolean](), false)))
   }
 
   it should "present with name" in {
     Compare(equ(3.1415))
       .andThenRelocate(Locate.RenameDimension(First, "%1$s.cmp"))
-      .present(cell).toList shouldBe List(Cell(Position1D("foo.cmp"), Content(NominalSchema(BooleanCodex), true)))
+      .present(cell).toList shouldBe List(Cell(Position1D("foo.cmp"), Content(NominalSchema[Boolean](), true)))
     Compare(equ(3.3))
       .andThenRelocate(Locate.RenameDimension(First, "%1$s.cmp"))
-      .present(cell).toList shouldBe List(Cell(Position1D("foo.cmp"), Content(NominalSchema(BooleanCodex), false)))
+      .present(cell).toList shouldBe List(Cell(Position1D("foo.cmp"), Content(NominalSchema[Boolean](), false)))
   }
 }
 
@@ -1001,17 +1001,17 @@ class TestWithPrepareTransformer extends TestTransformers {
 
   def prepare(cell: Cell[Position1D]): Content = {
     cell.content.value match {
-      case DoubleValue(2) => cell.content
-      case DoubleValue(4) => getStringContent("not.supported")
-      case DoubleValue(8) => getLongContent(8)
+      case d: DoubleValue if (d.value == 2) => cell.content
+      case d: DoubleValue if (d.value == 4) => getStringContent("not.supported")
+      case d: DoubleValue if (d.value == 8) => getLongContent(8)
     }
   }
 
   def prepareWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
     (cell.content.value, ext(cell.position).value) match {
-      case (DoubleValue(2), DoubleValue(d)) => getDoubleContent(2 * d)
-      case (DoubleValue(4), _) => getStringContent("not.supported")
-      case (DoubleValue(8), DoubleValue(d)) => getLongContent(d.toLong)
+      case (c: DoubleValue, d: DoubleValue) if (c.value == 2) => getDoubleContent(2 * d.value)
+      case (c: DoubleValue, _) if (c.value == 4) => getStringContent("not.supported")
+      case (c: DoubleValue, d: DoubleValue) if (c.value == 8) => getLongContent(d.value.toLong)
     }
   }
 
@@ -1054,17 +1054,17 @@ class TestAndThenMutateTransformer extends TestTransformers {
 
   def mutate(cell: Cell[Position1D]): Content = {
     cell.position match {
-      case Position1D(StringValue("x")) => cell.content
-      case Position1D(StringValue("y")) => getStringContent("not.supported")
-      case Position1D(StringValue("z")) => getLongContent(8)
+      case Position1D(StringValue("x", _)) => cell.content
+      case Position1D(StringValue("y", _)) => getStringContent("not.supported")
+      case Position1D(StringValue("z", _)) => getLongContent(8)
     }
   }
 
   def mutateWithValue(cell: Cell[Position1D], ext: Map[Position1D, Content]): Content = {
     (cell.position, ext(cell.position).value) match {
-      case (Position1D(StringValue("x")), DoubleValue(d)) => getDoubleContent(2 * d)
-      case (Position1D(StringValue("y")), _) => getStringContent("not.supported")
-      case (Position1D(StringValue("z")), DoubleValue(d)) => getLongContent(d.toLong)
+      case (Position1D(StringValue("x", _)), DoubleValue(d, _)) => getDoubleContent(2 * d)
+      case (Position1D(StringValue("y", _)), _) => getStringContent("not.supported")
+      case (Position1D(StringValue("z", _)), DoubleValue(d, _)) => getLongContent(d.toLong)
     }
   }
 

@@ -20,255 +20,113 @@ import au.com.cba.omnia.grimlock.framework.encoding._
 class TestContinuousSchema extends TestGrimlock {
 
   "A ContinuousSchema" should "return its string representation" in {
-    ContinuousSchema(DoubleCodex).toString shouldBe "ContinuousSchema(DoubleCodex)"
-    ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).toString shouldBe
-      "ContinuousSchema(DoubleCodex,-3.1415,1.4142)"
+    ContinuousSchema[Double]().toString shouldBe "ContinuousSchema[Double]()"
+    ContinuousSchema[Double](-3.1415, 1.4142).toString shouldBe "ContinuousSchema[Double](-3.1415,1.4142)"
 
-    ContinuousSchema(LongCodex).toString shouldBe "ContinuousSchema(LongCodex)"
-    ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).toString shouldBe "ContinuousSchema(LongCodex,-1,1)"
+    ContinuousSchema[Long]().toString shouldBe "ContinuousSchema[Long]()"
+    ContinuousSchema[Long](-1, 1).toString shouldBe "ContinuousSchema[Long](-1,1)"
   }
 
   it should "validate a correct value" in {
-    ContinuousSchema(DoubleCodex).isValid(DoubleValue(1)) shouldBe true
-    ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).isValid(DoubleValue(1)) shouldBe true
+    ContinuousSchema[Double]().validate(DoubleValue(1)) shouldBe true
+    ContinuousSchema[Double](-3.1415, 1.4142).validate(DoubleValue(1)) shouldBe true
 
-    ContinuousSchema(LongCodex).isValid(LongValue(1)) shouldBe true
-    ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).isValid(LongValue(1)) shouldBe true
+    ContinuousSchema[Long]().validate(LongValue(1)) shouldBe true
+    ContinuousSchema[Long](-1, 1).validate(LongValue(1)) shouldBe true
   }
 
   it should "not validate an incorrect value" in {
-    ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).isValid(DoubleValue(4)) shouldBe false
-    ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).isValid(DoubleValue(-4)) shouldBe false
+    ContinuousSchema[Double](-3.1415, 1.4142).validate(DoubleValue(4)) shouldBe false
+    ContinuousSchema[Double](-3.1415, 1.4142).validate(DoubleValue(-4)) shouldBe false
 
-    ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).isValid(LongValue(4)) shouldBe false
-    ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).isValid(LongValue(-4)) shouldBe false
-  }
-
-  it should "not validate an invalid value" in {
-    ContinuousSchema(DoubleCodex).isValid(StringValue("a")) shouldBe false
-    ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).isValid(StringValue("a")) shouldBe false
-    ContinuousSchema(LongCodex).isValid(StringValue("a")) shouldBe false
-    ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).isValid(StringValue("a")) shouldBe false
-  }
-
-  it should "decode a correct value" in {
-    ContinuousSchema(DoubleCodex).decode("1").map(_.value) shouldBe Some(DoubleValue(1))
-    ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).decode("1").map(_.value) shouldBe
-      Some(DoubleValue(1))
-
-    ContinuousSchema(LongCodex).decode("1").map(_.value) shouldBe Some(LongValue(1))
-    ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).decode("1").map(_.value) shouldBe Some(LongValue(1))
-  }
-
-  it should "not decode an incorrect value" in {
-    ContinuousSchema(DoubleCodex).decode("a") shouldBe None
-    ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).decode("4") shouldBe None
-    ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).decode("-4") shouldBe None
-    ContinuousSchema[Codex.DoubleCodex](DoubleCodex, -3.1415, 1.4142).decode("a") shouldBe None
-
-    ContinuousSchema(LongCodex).decode("a") shouldBe None
-    ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).decode("4") shouldBe None
-    ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).decode("-4") shouldBe None
-    ContinuousSchema[Codex.LongCodex](LongCodex, -1, 1).decode("a") shouldBe None
+    ContinuousSchema[Long](-1, 1).validate(LongValue(4)) shouldBe false
+    ContinuousSchema[Long](-1, 1).validate(LongValue(-4)) shouldBe false
   }
 }
 
 class TestDiscreteSchema extends TestGrimlock {
 
   "A DiscreteSchema" should "return its string representation" in {
-    DiscreteSchema(LongCodex).toString shouldBe "DiscreteSchema(LongCodex)"
-    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).toString shouldBe "DiscreteSchema(LongCodex,-1,1,1)"
+    DiscreteSchema[Long]().toString shouldBe "DiscreteSchema[Long]()"
+    DiscreteSchema[Long](-1, 1, 1).toString shouldBe "DiscreteSchema[Long](-1,1,1)"
   }
 
   it should "validate a correct value" in {
-    DiscreteSchema(LongCodex).isValid(LongValue(1)) shouldBe true
-    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).isValid(LongValue(1)) shouldBe true
-    DiscreteSchema[Codex.LongCodex](LongCodex, -4, 4, 2).isValid(LongValue(2)) shouldBe true
+    DiscreteSchema[Long]().validate(LongValue(1)) shouldBe true
+    DiscreteSchema[Long](-1, 1, 1).validate(LongValue(1)) shouldBe true
+    DiscreteSchema[Long](-4, 4, 2).validate(LongValue(2)) shouldBe true
   }
 
   it should "not validate an incorrect value" in {
-    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).isValid(LongValue(4)) shouldBe false
-    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).isValid(LongValue(-4)) shouldBe false
-    DiscreteSchema[Codex.LongCodex](LongCodex, -4, 4, 2).isValid(LongValue(3)) shouldBe false
-  }
-
-  it should "not validate an invalid value" in {
-    DiscreteSchema(LongCodex).isValid(DoubleValue(1)) shouldBe false
-    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).isValid(DoubleValue(1)) shouldBe false
-    DiscreteSchema(LongCodex).isValid(StringValue("a")) shouldBe false
-    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).isValid(StringValue("a")) shouldBe false
-  }
-
-  it should "decode a correct value" in {
-    DiscreteSchema(LongCodex).decode("1").map(_.value) shouldBe Some(LongValue(1))
-    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).decode("1").map(_.value) shouldBe Some(LongValue(1))
-  }
-
-  it should "not decode an incorrect value" in {
-    DiscreteSchema(LongCodex).decode("3.1415") shouldBe None
-    DiscreteSchema(LongCodex).decode("a") shouldBe None
-    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).decode("4") shouldBe None
-    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).decode("-4") shouldBe None
-    DiscreteSchema[Codex.LongCodex](LongCodex, -4, 4, 2).decode("3") shouldBe None
-    DiscreteSchema[Codex.LongCodex](LongCodex, -1, 1, 1).decode("a") shouldBe None
+    DiscreteSchema[Long](-1, 1, 1).validate(LongValue(4)) shouldBe false
+    DiscreteSchema[Long](-1, 1, 1).validate(LongValue(-4)) shouldBe false
+    DiscreteSchema[Long](-4, 4, 2).validate(LongValue(3)) shouldBe false
   }
 }
 
 class TestNominalSchema extends TestGrimlock {
 
   "A NominalSchema" should "return its string representation" in {
-    NominalSchema(LongCodex).toString shouldBe "NominalSchema(LongCodex)"
-    NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).toString shouldBe "NominalSchema(LongCodex,1,2,3)"
+    NominalSchema[Long]().toString shouldBe "NominalSchema[Long]()"
+    NominalSchema[Long](Set[Long](1,2,3)).toString shouldBe "NominalSchema[Long](Set(1,2,3))"
 
-    NominalSchema(DoubleCodex).toString shouldBe "NominalSchema(DoubleCodex)"
-    NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).toString shouldBe
-      "NominalSchema(DoubleCodex,1.0,2.0,3.0)"
+    NominalSchema[Double]().toString shouldBe "NominalSchema[Double]()"
+    NominalSchema[Double](Set[Double](1,2,3)).toString shouldBe "NominalSchema[Double](Set(1.0,2.0,3.0))"
 
-    NominalSchema(StringCodex).toString shouldBe "NominalSchema(StringCodex)"
-    NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).toString shouldBe
-      "NominalSchema(StringCodex,a,b,c)"
+    NominalSchema[String]().toString shouldBe "NominalSchema[String]()"
+    NominalSchema[String](Set("a","b","c")).toString shouldBe "NominalSchema[String](Set(a,b,c))"
   }
 
   it should "validate a correct value" in {
-    NominalSchema(LongCodex).isValid(LongValue(1)) shouldBe true
-    NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(LongValue(1)) shouldBe true
+    NominalSchema[Long]().validate(LongValue(1)) shouldBe true
+    NominalSchema[Long](Set[Long](1,2,3)).validate(LongValue(1)) shouldBe true
 
-    NominalSchema(DoubleCodex).isValid(DoubleValue(1)) shouldBe true
-    NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(DoubleValue(1)) shouldBe true
+    NominalSchema[Double]().validate(DoubleValue(1)) shouldBe true
+    NominalSchema[Double](Set[Double](1,2,3)).validate(DoubleValue(1)) shouldBe true
 
-    NominalSchema(StringCodex).isValid(StringValue("a")) shouldBe true
-    NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(StringValue("a")) shouldBe true
+    NominalSchema[String]().validate(StringValue("a")) shouldBe true
+    NominalSchema[String](Set("a","b","c")).validate(StringValue("a")) shouldBe true
   }
 
   it should "not validate an incorrect value" in {
-    NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(LongValue(4)) shouldBe false
+    NominalSchema[Long](Set[Long](1,2,3)).validate(LongValue(4)) shouldBe false
 
-    NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(DoubleValue(4)) shouldBe false
+    NominalSchema[Double](Set[Double](1,2,3)).validate(DoubleValue(4)) shouldBe false
 
-    NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(StringValue("d")) shouldBe false
-  }
-
-  it should "not validate an invalid value" in {
-    NominalSchema(LongCodex).isValid(DoubleValue(1)) shouldBe false
-    NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(DoubleValue(1)) shouldBe false
-    NominalSchema(LongCodex).isValid(StringValue("a")) shouldBe false
-    NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(StringValue("a")) shouldBe false
-
-    NominalSchema(DoubleCodex).isValid(LongValue(1)) shouldBe false
-    NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(LongValue(1)) shouldBe false
-    NominalSchema(DoubleCodex).isValid(StringValue("a")) shouldBe false
-    NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(StringValue("a")) shouldBe false
-
-    NominalSchema(StringCodex).isValid(LongValue(1)) shouldBe false
-    NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(LongValue(1)) shouldBe false
-    NominalSchema(StringCodex).isValid(DoubleValue(1)) shouldBe false
-    NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(DoubleValue(1)) shouldBe false
-  }
-
-  it should "decode a correct value" in {
-    NominalSchema(LongCodex).decode("1").map(_.value) shouldBe Some(LongValue(1))
-    NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).decode("1").map(_.value) shouldBe Some(LongValue(1))
-
-    NominalSchema(DoubleCodex).decode("1").map(_.value) shouldBe Some(DoubleValue(1))
-    NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).decode("1").map(_.value) shouldBe
-      Some(DoubleValue(1))
-
-    NominalSchema(StringCodex).decode("a").map(_.value) shouldBe Some(StringValue("a"))
-    NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).decode("a").map(_.value) shouldBe
-      Some(StringValue("a"))
-  }
-
-  it should "not decode an incorrect value" in {
-    NominalSchema(LongCodex).decode("3.1415") shouldBe None
-    NominalSchema(LongCodex).decode("a") shouldBe None
-    NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).decode("4") shouldBe None
-    NominalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).decode("a") shouldBe None
-
-    NominalSchema(DoubleCodex).decode("a") shouldBe None
-    NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).decode("4") shouldBe None
-    NominalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).decode("a") shouldBe None
-
-    NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).decode("1") shouldBe None
-    NominalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).decode("d") shouldBe None
+    NominalSchema[String](Set("a","b","c")).validate(StringValue("d")) shouldBe false
   }
 }
 
 class TestOrdinalSchema extends TestGrimlock {
 
   "A OrdinalSchema" should "return its string representation" in {
-    OrdinalSchema(LongCodex).toString shouldBe "OrdinalSchema(LongCodex)"
-    OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).toString shouldBe "OrdinalSchema(LongCodex,1,2,3)"
+    OrdinalSchema[Long]().toString shouldBe "OrdinalSchema[Long]()"
+    OrdinalSchema[Long](Set[Long](1,2,3)).toString shouldBe "OrdinalSchema[Long](Set(1,2,3))"
 
-    OrdinalSchema(DoubleCodex).toString shouldBe "OrdinalSchema(DoubleCodex)"
-    OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).toString shouldBe
-      "OrdinalSchema(DoubleCodex,1.0,2.0,3.0)"
+    OrdinalSchema[Double]().toString shouldBe "OrdinalSchema[Double]()"
+    OrdinalSchema[Double](Set[Double](1,2,3)).toString shouldBe "OrdinalSchema[Double](Set(1.0,2.0,3.0))"
 
-    OrdinalSchema(StringCodex).toString shouldBe "OrdinalSchema(StringCodex)"
-    OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).toString shouldBe
-      "OrdinalSchema(StringCodex,a,b,c)"
+    OrdinalSchema[String]().toString shouldBe "OrdinalSchema[String]()"
+    OrdinalSchema[String](Set("a","b","c")).toString shouldBe "OrdinalSchema[String](Set(a,b,c))"
   }
 
   it should "validate a correct value" in {
-    OrdinalSchema(LongCodex).isValid(LongValue(1)) shouldBe true
-    OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(LongValue(1)) shouldBe true
+    OrdinalSchema[Long]().validate(LongValue(1)) shouldBe true
+    OrdinalSchema[Long](Set[Long](1,2,3)).validate(LongValue(1)) shouldBe true
 
-    OrdinalSchema(DoubleCodex).isValid(DoubleValue(1)) shouldBe true
-    OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(DoubleValue(1)) shouldBe true
+    OrdinalSchema[Double]().validate(DoubleValue(1)) shouldBe true
+    OrdinalSchema[Double](Set[Double](1,2,3)).validate(DoubleValue(1)) shouldBe true
 
-    OrdinalSchema(StringCodex).isValid(StringValue("a")) shouldBe true
-    OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(StringValue("a")) shouldBe true
+    OrdinalSchema[String]().validate(StringValue("a")) shouldBe true
+    OrdinalSchema[String](Set("a","b","c")).validate(StringValue("a")) shouldBe true
   }
 
   it should "not validate an incorrect value" in {
-    OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(LongValue(4)) shouldBe false
+    OrdinalSchema[Long](Set[Long](1,2,3)).validate(LongValue(4)) shouldBe false
 
-    OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(DoubleValue(4)) shouldBe false
+    OrdinalSchema[Double](Set[Double](1,2,3)).validate(DoubleValue(4)) shouldBe false
 
-    OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(StringValue("d")) shouldBe false
-  }
-
-  it should "not validate an invalid value" in {
-    OrdinalSchema(LongCodex).isValid(DoubleValue(1)) shouldBe false
-    OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(DoubleValue(1)) shouldBe false
-    OrdinalSchema(LongCodex).isValid(StringValue("a")) shouldBe false
-    OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).isValid(StringValue("a")) shouldBe false
-
-    OrdinalSchema(DoubleCodex).isValid(LongValue(1)) shouldBe false
-    OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(LongValue(1)) shouldBe false
-    OrdinalSchema(DoubleCodex).isValid(StringValue("a")) shouldBe false
-    OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).isValid(StringValue("a")) shouldBe false
-
-    OrdinalSchema(StringCodex).isValid(LongValue(1)) shouldBe false
-    OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(LongValue(1)) shouldBe false
-    OrdinalSchema(StringCodex).isValid(DoubleValue(1)) shouldBe false
-    OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).isValid(DoubleValue(1)) shouldBe false
-  }
-
-  it should "decode a correct value" in {
-    OrdinalSchema(LongCodex).decode("1").map(_.value) shouldBe Some(LongValue(1))
-    OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).decode("1").map(_.value) shouldBe Some(LongValue(1))
-
-    OrdinalSchema(DoubleCodex).decode("1").map(_.value) shouldBe Some(DoubleValue(1))
-    OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).decode("1").map(_.value) shouldBe
-      Some(DoubleValue(1))
-
-    OrdinalSchema(StringCodex).decode("a").map(_.value) shouldBe Some(StringValue("a"))
-    OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).decode("a").map(_.value) shouldBe
-      Some(StringValue("a"))
-  }
-
-  it should "not decode an incorrect value" in {
-    OrdinalSchema(LongCodex).decode("3.1415") shouldBe None
-    OrdinalSchema(LongCodex).decode("a") shouldBe None
-    OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).decode("4") shouldBe None
-    OrdinalSchema[Codex.LongCodex](LongCodex, List[Long](1,2,3)).decode("a") shouldBe None
-
-    OrdinalSchema(DoubleCodex).decode("a") shouldBe None
-    OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).decode("4") shouldBe None
-    OrdinalSchema[Codex.DoubleCodex](DoubleCodex, List[Double](1,2,3)).decode("a") shouldBe None
-
-    OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).decode("1") shouldBe None
-    OrdinalSchema[Codex.StringCodex](StringCodex, List("a","b","c")).decode("d") shouldBe None
+    OrdinalSchema[String](Set("a","b","c")).validate(StringValue("d")) shouldBe false
   }
 }
 
@@ -278,32 +136,13 @@ class TestDateSchema extends TestGrimlock {
   val dtfmt = new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 
   "A DateSchema" should "return its string representation" in {
-    DateSchema(DateCodex("yyyy-MM-dd")).toString shouldBe "DateSchema(DateCodex(yyyy-MM-dd))"
-    DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")).toString shouldBe "DateSchema(DateCodex(yyyy-MM-dd hh:mm:ss))"
+    DateSchema[java.util.Date]().toString shouldBe "DateSchema[java.util.Date]()"
   }
 
   it should "validate a correct value" in {
-    DateSchema(DateCodex("yyyy-MM-dd"))
-      .isValid(DateValue(dfmt.parse("2001-01-01"), DateCodex("yyyy-MM-dd"))) shouldBe true
-    DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss"))
-      .isValid(DateValue(dtfmt.parse("2001-01-01 01:02:02"), DateCodex("yyyy-MM-dd hh:mm:ss"))) shouldBe true
-  }
-
-  it should "not validate an invalid value" in {
-    DateSchema(DateCodex("yyyy-MM-dd")).isValid(LongValue(1)) shouldBe false
-    DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")).isValid(LongValue(1)) shouldBe false
-  }
-
-  it should "decode a correct value" in {
-    DateSchema(DateCodex("yyyy-MM-dd")).decode("2001-01-01").map(_.value) shouldBe
-      Some(DateValue(dfmt.parse("2001-01-01"), DateCodex("yyyy-MM-dd")))
-    DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")).decode("2001-01-01 01:02:02").map(_.value) shouldBe
-      Some(DateValue(dtfmt.parse("2001-01-01 01:02:02"), DateCodex("yyyy-MM-dd hh:mm:ss")))
-  }
-
-  it should "not decode an incorrect value" in {
-    DateSchema(DateCodex("yyyy-MM-dd")).decode("a") shouldBe None
-    DateSchema(DateCodex("yyyy-MM-dd hh:mm:ss")).decode("a") shouldBe None
+    DateSchema[java.util.Date]().validate(DateValue(dfmt.parse("2001-01-01"), DateCodec("yyyy-MM-dd"))) shouldBe true
+    DateSchema[java.util.Date]().validate(DateValue(dtfmt.parse("2001-01-01 01:02:02"),
+      DateCodec("yyyy-MM-dd hh:mm:ss"))) shouldBe true
   }
 }
 

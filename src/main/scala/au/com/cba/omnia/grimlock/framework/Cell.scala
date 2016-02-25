@@ -444,7 +444,7 @@ object Cell {
     line.trim.split(Pattern.quote(separator), split + 3).splitAt(split) match {
       case (pos, Array(s, c, v)) =>
         mc(codecs, pos, v, (v: String) => Content.fromShortString(c + separator + s + separator + v))
-          .map(Left(_)) orElse Some(Right("\"Unable to decode: '\" + line + \"'\""))
+          .map(Left(_)) orElse Some(Right("Unable to decode: '" + line + "'"))
       case _ => Some(Right("Unable to split: '" + line + "'"))
     }
 
@@ -454,7 +454,7 @@ object Cell {
     line.trim.split(Pattern.quote(separator), split + 1).splitAt(split) match {
       case (pos, Array(v)) =>
         mc(codecs, pos, v, schema)
-          .map(Left(_)) orElse Some(Right("\"Unable to decode: '\" + line + \"'\""))
+          .map(Left(_)) orElse Some(Right("Unable to decode: '" + line + "'"))
       case _ => Some(Right("Unable to split: '" + line + "'"))
     }
   }
@@ -471,7 +471,7 @@ object Cell {
       case (pos, Array(v)) => getD(pos) match {
         case Some(decoder) =>
           mc(codecs, pos, v, decoder)
-            .map(Left(_)) orElse Some(Right("\"Unable to decode: '\" + line + \"'\""))
+            .map(Left(_)) orElse Some(Right("Unable to decode: '" + line + "'"))
         case _ => Some(Right("Missing schema for: '" + line + "'"))
       }
       case _ => Some(Right("Unable to split: '" + line + "'"))

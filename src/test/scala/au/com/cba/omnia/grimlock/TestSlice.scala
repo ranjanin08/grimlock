@@ -22,8 +22,8 @@ import au.com.cba.omnia.grimlock.framework.position._
 
 trait TestSlice extends TestGrimlock {
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
-  val con1 = Content(ContinuousSchema(LongCodex), 1)
-  val con2 = Content(ContinuousSchema(LongCodex), 2)
+  val con1 = Content(ContinuousSchema[Long](), 1)
+  val con2 = Content(ContinuousSchema[Long](), 2)
 }
 
 trait TestSlicePosition1D extends TestSlice {
@@ -141,8 +141,8 @@ class TestAlongPosition2D extends TestSlicePosition2D {
 }
 
 trait TestSlicePosition3D extends TestSlice {
-  val pos1 = Position3D(3, "b", DateValue(dfmt.parse("2001-01-01"), DateCodex()))
-  val pos2 = Position3D(-3, "y", DateValue(dfmt.parse("1999-01-01"), DateCodex()))
+  val pos1 = Position3D(3, "b", DateValue(dfmt.parse("2001-01-01"), DateCodec()))
+  val pos2 = Position3D(-3, "y", DateValue(dfmt.parse("1999-01-01"), DateCodec()))
 }
 
 class TestOverPosition3D extends TestSlicePosition3D {
@@ -206,8 +206,8 @@ class TestAlongPosition3D extends TestSlicePosition3D {
 }
 
 trait TestSlicePosition4D extends TestSlice {
-  val pos1 = Position4D(4, "c", DateValue(dfmt.parse("2002-01-01"), DateCodex()), "foo")
-  val pos2 = Position4D(-4, "x", DateValue(dfmt.parse("1998-01-01"), DateCodex()), "oof")
+  val pos1 = Position4D(4, "c", DateValue(dfmt.parse("2002-01-01"), DateCodec()), "foo")
+  val pos2 = Position4D(-4, "x", DateValue(dfmt.parse("1998-01-01"), DateCodec()), "oof")
 }
 
 class TestOverPosition4D extends TestSlicePosition4D {
@@ -271,8 +271,8 @@ class TestAlongPosition4D extends TestSlicePosition4D {
 }
 
 trait TestSlicePosition5D extends TestSlice {
-  val pos1 = Position5D(5, "d", DateValue(dfmt.parse("2003-01-01"), DateCodex()), "bar", 3.1415)
-  val pos2 = Position5D(-5, "w", DateValue(dfmt.parse("1997-01-01"), DateCodex()), "rab", -3.1415)
+  val pos1 = Position5D(5, "d", DateValue(dfmt.parse("2003-01-01"), DateCodec()), "bar", 3.1415)
+  val pos2 = Position5D(-5, "w", DateValue(dfmt.parse("1997-01-01"), DateCodec()), "rab", -3.1415)
 }
 
 class TestOverPosition5D extends TestSlicePosition5D {
