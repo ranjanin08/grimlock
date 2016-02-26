@@ -375,7 +375,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       .pipe(command)
       .flatMap(parser(_))
 
-    (result.collect { case Left(c) => c }, result.collect { case Right(e) => e })
+    (result.collect { case Right(c) => c }, result.collect { case Left(e) => e })
   }
 
   def subset(samplers: Sampleable[P]): U[Cell[P]] = {
@@ -763,14 +763,14 @@ object Matrix extends Consume with DistributedData with Environment {
     implicit ctx: C): (U[Cell[P]], U[String]) = {
     val rdd = ctx.context.textFile(file).flatMap { parser(_) }
 
-    (rdd.collect { case Left(c) => c }, rdd.collect { case Right(e) => e })
+    (rdd.collect { case Right(c) => c }, rdd.collect { case Left(e) => e })
   }
 
   def loadSequence[K <: Writable, V <: Writable, P <: Position](file: String, parser: Cell.SequenceParser[K, V, P])(
     implicit ctx: C, ev1: Manifest[K], ev2: Manifest[V]): (U[Cell[P]], U[String]) = {
     val pipe = ctx.context.sequenceFile[K, V](file).flatMap { case (k, v) => parser(k, v) }
 
-    (pipe.collect { case Left(c) => c }, pipe.collect { case Right(e) => e })
+    (pipe.collect { case Right(c) => c }, pipe.collect { case Left(e) => e })
   }
 
   /** Conversion from `U[Cell[Position1D]]` to a Spark `Matrix1D`. */

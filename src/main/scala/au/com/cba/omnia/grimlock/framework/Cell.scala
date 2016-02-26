@@ -156,10 +156,10 @@ object Cell {
   type Predicate[P <: Position] = Cell[P] => Boolean
 
   /** Type for parsing a string into either a `Cell[P]` or an error message. */
-  type TextParser[P <: Position] = (String) => TraversableOnce[Either[Cell[P], String]]
+  type TextParser[P <: Position] = (String) => TraversableOnce[Either[String, Cell[P]]]
 
   /** Type for parsing a key value tuple into either a `Cell[P]` or an error message. */
-  type SequenceParser[K <: Writable, V <: Writable, P <: Position] = (K, V) => TraversableOnce[Either[Cell[P], String]]
+  type SequenceParser[K <: Writable, V <: Writable, P <: Position] = (K, V) => TraversableOnce[Either[String, Cell[P]]]
 
   /**
    * Parse a line into a `Cell[Position1D]`.
@@ -169,7 +169,7 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse1D(separator: String = "|", first: Codec = StringCodec)(
-    line: String): Option[Either[Cell[Position1D], String]] = {
+    line: String): Option[Either[String, Cell[Position1D]]] = {
     parseXD[Position1D, Tuple1[Codec]](1, separator, Tuple1(first), line)
   }
 
@@ -182,7 +182,7 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse1DWithDictionary(dict: Map[String, Content.Parser], separator: String = "|", first: Codec = StringCodec)(
-    line: String): Option[Either[Cell[Position1D], String]] = {
+    line: String): Option[Either[String, Cell[Position1D]]] = {
     parseXDWithDictionary[Position1D, Tuple1[Codec], First.type](1, First, dict, separator, Tuple1(first), line)
   }
 
@@ -195,7 +195,7 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse1DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec)(
-    line: String): Option[Either[Cell[Position1D], String]] = {
+    line: String): Option[Either[String, Cell[Position1D]]] = {
     parseXDWithSchema[Position1D, Tuple1[Codec]](1, schema, separator, Tuple1(first), line)
   }
 
@@ -208,7 +208,7 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse2D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec)(
-    line: String): Option[Either[Cell[Position2D], String]] = {
+    line: String): Option[Either[String, Cell[Position2D]]] = {
     parseXD[Position2D, (Codec, Codec)](2, separator, (first, second), line)
   }
 
@@ -224,7 +224,7 @@ object Cell {
    */
   def parse2DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
     first: Codec = StringCodec, second: Codec = StringCodec)(line: String)(
-      implicit ev:PosDimDep[Position2D, D]): Option[Either[Cell[Position2D], String]] = {
+      implicit ev:PosDimDep[Position2D, D]): Option[Either[String, Cell[Position2D]]] = {
     parseXDWithDictionary[Position2D, (Codec, Codec), D](2, dim, dict, separator, (first, second), line)
   }
 
@@ -238,7 +238,7 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse2DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
-    second: Codec = StringCodec)(line: String): Option[Either[Cell[Position2D], String]] = {
+    second: Codec = StringCodec)(line: String): Option[Either[String, Cell[Position2D]]] = {
     parseXDWithSchema[Position2D, (Codec,Codec)](2, schema, separator, (first, second), line)
   }
 
@@ -252,7 +252,7 @@ object Cell {
    * @param line      The line to parse.
    */
   def parse3D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
-    third: Codec = StringCodec)(line: String): Option[Either[Cell[Position3D], String]] = {
+    third: Codec = StringCodec)(line: String): Option[Either[String, Cell[Position3D]]] = {
     parseXD[Position3D, (Codec, Codec, Codec)](3, separator, (first, second, third), line)
   }
 
@@ -269,7 +269,7 @@ object Cell {
    */
   def parse3DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
     first: Codec = StringCodec, second: Codec = StringCodec, third: Codec = StringCodec)(line: String)(
-      implicit ev: PosDimDep[Position3D, D]): Option[Either[Cell[Position3D], String]] = {
+      implicit ev: PosDimDep[Position3D, D]): Option[Either[String, Cell[Position3D]]] = {
     parseXDWithDictionary[Position3D, (Codec, Codec, Codec), D](3, dim, dict, separator, (first, second, third), line)
   }
 
@@ -285,7 +285,7 @@ object Cell {
    */
   def parse3DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
     second: Codec = StringCodec, third: Codec = StringCodec)(
-      line: String): Option[Either[Cell[Position3D], String]] = {
+      line: String): Option[Either[String, Cell[Position3D]]] = {
     parseXDWithSchema[Position3D, (Codec,Codec, Codec)](3, schema, separator, (first, second, third), line)
   }
 
@@ -301,7 +301,7 @@ object Cell {
    */
   def parse4D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
     third: Codec = StringCodec, fourth: Codec = StringCodec)(
-      line: String): Option[Either[Cell[Position4D], String]] = {
+      line: String): Option[Either[String, Cell[Position4D]]] = {
     parseXD[Position4D, (Codec, Codec, Codec, Codec)](4, separator, (first, second, third, fourth), line)
   }
 
@@ -319,7 +319,7 @@ object Cell {
    */
   def parse4DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
     first: Codec = StringCodec, second: Codec = StringCodec, third: Codec = StringCodec, fourth: Codec = StringCodec)(
-      line: String)(implicit ev: PosDimDep[Position4D, D]): Option[Either[Cell[Position4D], String]] = {
+      line: String)(implicit ev: PosDimDep[Position4D, D]): Option[Either[String, Cell[Position4D]]] = {
     parseXDWithDictionary[Position4D, (Codec, Codec, Codec, Codec), D](4, dim, dict, separator,
       (first, second, third, fourth), line)
   }
@@ -337,7 +337,7 @@ object Cell {
    */
   def parse4DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
     second: Codec = StringCodec, third: Codec = StringCodec, fourth: Codec = StringCodec)(
-      line: String): Option[Either[Cell[Position4D], String]] = {
+      line: String): Option[Either[String, Cell[Position4D]]] = {
     parseXDWithSchema[Position4D, (Codec,Codec, Codec, Codec)](4, schema, separator,
       (first, second, third, fourth), line)
   }
@@ -355,7 +355,7 @@ object Cell {
    */
   def parse5D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
     third: Codec = StringCodec, fourth: Codec = StringCodec, fifth: Codec = StringCodec)(
-      line: String): Option[Either[Cell[Position5D], String]] = {
+      line: String): Option[Either[String, Cell[Position5D]]] = {
     parseXD[Position5D, (Codec, Codec, Codec, Codec, Codec)](5, separator, (first, second, third, fourth, fifth), line)
   }
 
@@ -375,7 +375,7 @@ object Cell {
   def parse5DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
     first: Codec = StringCodec, second: Codec = StringCodec, third: Codec = StringCodec, fourth: Codec = StringCodec,
       fifth: Codec = StringCodec)(line: String)(
-        implicit ev: PosDimDep[Position5D, D]): Option[Either[Cell[Position5D], String]] = {
+        implicit ev: PosDimDep[Position5D, D]): Option[Either[String, Cell[Position5D]]] = {
     parseXDWithDictionary[Position5D, (Codec, Codec, Codec, Codec, Codec), D](5, dim, dict, separator,
       (first, second, third, fourth, fifth), line)
   }
@@ -394,7 +394,7 @@ object Cell {
    */
   def parse5DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
     second: Codec = StringCodec, third: Codec = StringCodec, fourth: Codec = StringCodec, fifth: Codec = StringCodec)(
-      line: String): Option[Either[Cell[Position5D], String]] = {
+      line: String): Option[Either[String, Cell[Position5D]]] = {
     parseXDWithSchema[Position5D, (Codec, Codec,Codec, Codec, Codec)](5, schema, separator,
       (first, second, third, fourth, fifth), line)
   }
@@ -408,7 +408,7 @@ object Cell {
    * @param line      The line to parse.
    */
   def parseTable(columns: List[(String, Content.Parser)], pkeyIndex: Int = 0, separator: String = "\u0001")(
-    line: String): List[Either[Cell[Position2D], String]] = {
+    line: String): List[Either[String, Cell[Position2D]]] = {
     val parts = line.trim.split(Pattern.quote(separator), columns.length)
 
     (parts.length == columns.length) match {
@@ -418,12 +418,12 @@ object Cell {
         columns.zipWithIndex.flatMap {
           case ((name, decoder), idx) if (idx != pkeyIndex) =>
             decoder(parts(idx)) match {
-              case Some(con) => Some(Left(Cell(Position2D(pkey, name), con)))
-              case _ => Some(Right("Unable to decode: '" + line + "'"))
+              case Some(con) => Some(Right(Cell(Position2D(pkey, name), con)))
+              case _ => Some(Left("Unable to decode: '" + line + "'"))
             }
           case _ => None
         }
-      case _ => List(Right("Unable to split: '" + line + "'"))
+      case _ => List(Left("Unable to split: '" + line + "'"))
     }
   }
 
@@ -440,28 +440,28 @@ object Cell {
   }
 
   private def parseXD[R <: Position, P <: Product](split: Int, separator: String = "|", codecs: P, line: String)(
-    implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[Cell[R], String]] =
+    implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[String, Cell[R]]] =
     line.trim.split(Pattern.quote(separator), split + 3).splitAt(split) match {
       case (pos, Array(c, s, v)) =>
         mc(codecs, pos, v, (v: String) => Content.fromShortString(c + separator + s + separator + v, separator))
-          .map(Left(_)) orElse Some(Right("Unable to decode: '" + line + "'"))
-      case _ => Some(Right("Unable to split: '" + line + "'"))
+          .map(Right(_)) orElse Some(Left("Unable to decode: '" + line + "'"))
+      case _ => Some(Left("Unable to split: '" + line + "'"))
     }
 
   private def parseXDWithSchema[R <: Position, P <: Product](split: Int, schema: Content.Parser,
     separator: String = "|", codecs: P, line: String)(
-      implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[Cell[R], String]] = {
+      implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[String, Cell[R]]] = {
     line.trim.split(Pattern.quote(separator), split + 1).splitAt(split) match {
       case (pos, Array(v)) =>
         mc(codecs, pos, v, schema)
-          .map(Left(_)) orElse Some(Right("Unable to decode: '" + line + "'"))
-      case _ => Some(Right("Unable to split: '" + line + "'"))
+          .map(Right(_)) orElse Some(Left("Unable to decode: '" + line + "'"))
+      case _ => Some(Left("Unable to split: '" + line + "'"))
     }
   }
 
   private def parseXDWithDictionary[R <: Position, P <: Product, D <: Dimension](split: Int, dim: D,
     dict: Map[String, Content.Parser], separator: String = "|", codecs: P, line: String)(
-      implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[Cell[R], String]] = {
+      implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[String, Cell[R]]] = {
     def getD(positions: Array[String]): Option[Content.Parser] = for {
       pos <- Try(positions(dim.index)).toOption
       decoder <- dict.get(pos)
@@ -471,10 +471,10 @@ object Cell {
       case (pos, Array(v)) => getD(pos) match {
         case Some(decoder) =>
           mc(codecs, pos, v, decoder)
-            .map(Left(_)) orElse Some(Right("Unable to decode: '" + line + "'"))
-        case _ => Some(Right("Missing schema for: '" + line + "'"))
+            .map(Right(_)) orElse Some(Left("Unable to decode: '" + line + "'"))
+        case _ => Some(Left("Missing schema for: '" + line + "'"))
       }
-      case _ => Some(Right("Unable to split: '" + line + "'"))
+      case _ => Some(Left("Unable to split: '" + line + "'"))
     }
   }
 }

@@ -42,7 +42,7 @@ object Dictionary {
           val parts = line.split(Pattern.quote(separator))
 
           List(key, encoding, schema).exists(_ >= parts.length) match {
-            case true => Right("unable to parse: '" + line + "'")
+            case true => Left("unable to parse: '" + line + "'")
             case false =>
               val parser = Codec.fromShortString(parts(encoding))
                 .flatMap {
@@ -51,13 +51,13 @@ object Dictionary {
                 }
 
               parser match {
-                case Some(p) => Left((parts(key), p))
-                case None => Right("unable to decode '" + line + "'")
+                case Some(p) => Right((parts(key), p))
+                case None => Left("unable to decode '" + line + "'")
               }
           }
       }
 
-    (result.collect { case Left(entry) => entry }.toMap, result.collect { case Right(error) => error })
+    (result.collect { case Right(entry) => entry }.toMap, result.collect { case Left(error) => error })
   }
 }
 
