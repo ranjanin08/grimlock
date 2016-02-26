@@ -89,7 +89,7 @@ class TestCell extends TestGrimlock {
     Cell.parse2D(":", LongCodec, StringCodec)("123:def:double:continuous:3.14") shouldBe
       Some(Left(Cell(Position2D(123, "def"), Content(ContinuousSchema[Double](), 3.14))))
     Cell.parse2D(":", LongCodec, StringCodec)("abc:def:double:continuous:3.14") shouldBe
-      Some(Right("Unable to decode: 'abc:def:continuous:double:3.14'"))
+      Some(Right("Unable to decode: 'abc:def:double:continuous:3.14'"))
     Cell.parse2D(":", StringCodec, LongCodec)("abc:def:double:continuous:3.14") shouldBe
       Some(Right("Unable to decode: 'abc:def:double:continuous:3.14'"))
     Cell.parse2D(":", LongCodec, StringCodec)("123:def:double:continuous:abc") shouldBe
@@ -134,15 +134,15 @@ class TestCell extends TestGrimlock {
     Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:double:continuous:3.14") shouldBe
       Some(Left(Cell(Position3D(123, "def", "ghi"), Content(ContinuousSchema[Double](), 3.14))))
     Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("abc:def:ghi:double:continuous:3.14") shouldBe
-      Some(Right("Unable to decode: 'abc:def:ghi:continuous:double:3.14'"))
+      Some(Right("Unable to decode: 'abc:def:ghi:double:continuous:3.14'"))
     Cell.parse3D(":", StringCodec, LongCodec, StringCodec)("def:abc:ghi:double:continuous:3.14") shouldBe
-      Some(Right("Unable to decode: 'def:abc:ghi:continuous:double:3.14'"))
+      Some(Right("Unable to decode: 'def:abc:ghi:double:continuous:3.14'"))
     Cell.parse3D(":", StringCodec, StringCodec, LongCodec)("def:ghi:abc:double:continuous:3.14") shouldBe
-      Some(Right("Unable to decode: 'def:ghi:abc:continuous:double:3.14'"))
+      Some(Right("Unable to decode: 'def:ghi:abc:double:continuous:3.14'"))
     Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:double:continuous:abc") shouldBe
-      Some(Right("Unable to decode: '123:def:ghi:continuous:double:abc'"))
+      Some(Right("Unable to decode: '123:def:ghi:double:continuous:abc'"))
     Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:double:continuous:3:14") shouldBe
-      Some(Right("Unable to decode: '123:def:ghi:continuous:double:3:14'"))
+      Some(Right("Unable to decode: '123:def:ghi:double:continuous:3:14'"))
     Cell.parse3D(":", LongCodec, StringCodec, StringCodec)("123:def:ghi:double|continuous:3.14") shouldBe
       Some(Right("Unable to split: '123:def:ghi:double|continuous:3.14'"))
   }

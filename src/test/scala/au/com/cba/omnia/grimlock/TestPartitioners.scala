@@ -37,19 +37,19 @@ trait TestHashPartitioners extends TestGrimlock {
 
   // In scalding REPL:
   //
-  // import au.com.cba.omnia.grimlock.encoding._
+  // import au.com.cba.omnia.grimlock.framework.encoding._
   //
-  // List(1, 3, 4).map { case i => math.abs(LongValue(i).hashCode % 10) }
+  // List(4, 14, 35).map { case i => math.abs(LongValue(i).hashCode % 10) }
   // ->  List(4, 9, 0)
   //
-  // List("b", "a", "c").map { case s => math.abs(StringValue(s).hashCode % 10) }
+  // List("p", "g", "h").map { case s => math.abs(StringValue(s).hashCode % 10) }
   // ->  List(6, 8, 0)
 
   val dfmt = new java.text.SimpleDateFormat("yyyy-MM-dd")
 
-  val cell1 = Cell(Position2D(1, "b"), Content(ContinuousSchema[Double](), 3.14))
-  val cell2 = Cell(Position2D(3, "a"), Content(ContinuousSchema[Double](), 3.14))
-  val cell3 = Cell(Position2D(4, "c"), Content(ContinuousSchema[Double](), 3.14))
+  val cell1 = Cell(Position2D(4, "p"), Content(ContinuousSchema[Double](), 3.14))
+  val cell2 = Cell(Position2D(14, "g"), Content(ContinuousSchema[Double](), 3.14))
+  val cell3 = Cell(Position2D(35, "h"), Content(ContinuousSchema[Double](), 3.14))
 }
 
 class TestBinaryHashSplit extends TestHashPartitioners {

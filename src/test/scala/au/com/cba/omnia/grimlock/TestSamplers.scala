@@ -62,7 +62,7 @@ class TestHashSample extends TestSample {
   it should "select 50% correctly" in {
     val obj = HashSample[Position2D](Second, 5, 10)
 
-    (1 to 10000).map { case i => if (obj.select(toCell(Position2D(2 * i, i)))) 1 else 0 }.sum shouldBe 5000 +- 50
+    (1 to 10000).map { case i => if (obj.select(toCell(Position2D(2 * i, i)))) 1 else 0 }.sum shouldBe 5000 +- 100
   }
 
   it should "select 75% correctly" in {

@@ -442,8 +442,8 @@ object Cell {
   private def parseXD[R <: Position, P <: Product](split: Int, separator: String = "|", codecs: P, line: String)(
     implicit mc: CellFactory.Aux[P, Option[Cell[R]]]): Option[Either[Cell[R], String]] =
     line.trim.split(Pattern.quote(separator), split + 3).splitAt(split) match {
-      case (pos, Array(s, c, v)) =>
-        mc(codecs, pos, v, (v: String) => Content.fromShortString(c + separator + s + separator + v))
+      case (pos, Array(c, s, v)) =>
+        mc(codecs, pos, v, (v: String) => Content.fromShortString(c + separator + s + separator + v, separator))
           .map(Left(_)) orElse Some(Right("Unable to decode: '" + line + "'"))
       case _ => Some(Right("Unable to split: '" + line + "'"))
     }
