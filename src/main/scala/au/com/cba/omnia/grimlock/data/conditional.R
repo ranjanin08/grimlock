@@ -16,5 +16,5 @@ df <- melt(df, id.vars = 'id', measure.vars = c('hair', 'eye', 'gender', 'value'
 df$type <- sapply(df$variable, function(v) ifelse(v == 'value', 'discrete', 'nominal'))
 df$encoding <- sapply(df$variable, function(v) ifelse(v == 'value', 'long', 'string'))
 
-write.table(df[, c('id', 'variable', 'type', 'encoding', 'value')],
+write.table(df[, c('id', 'variable', 'encoding', 'type', 'value')],
             file="exampleConditional.txt", quote=F, sep='|', row.names=F, col.names=F)

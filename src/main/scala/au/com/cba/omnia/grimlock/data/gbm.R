@@ -8,7 +8,7 @@ set.seed(1234)
 
 # read data from standard in
 df <- read.table(file("stdin"), sep='|', stringsAsFactors=F,
-                 col.names=c('entity.id', 'feature', 'hash', 'type', 'encoding', 'value'))
+                 col.names=c('entity.id', 'feature', 'hash', 'encoding', 'type', 'value'))
 
 # get unique entity id with hash code, this is used to split the data into train test
 hash <- unique(df[, c("entity.id", "hash")])
@@ -35,6 +35,6 @@ best.iter <- gbm.perf(model, plot.it=F, method="OOB")
 scores <- predict(model, test, best.iter, type="response")
 
 # generate output data and write the result to standard out (to be read my grimlock library)
-output <- data.frame(entity.id=test$entity.id, type='continuous', encoding='double', gbm=scores)
+output <- data.frame(entity.id=test$entity.id, encoding='double', type='continuous', gbm=scores)
 write.table(output, file="", sep="|", quote=F, row.names=F)
 

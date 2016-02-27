@@ -176,7 +176,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @param slice Encapsulates the dimension(s) for which the names are to be returned.
    * @param tuner The tuner for the job.
    *
-   * @return A `U[(slice.S, Long)]` of the distinct position(s) together with a unique index.
+   * @return A `U[slice.S]` of the distinct position(s).
    */
   def names[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: ClassTag[slice.S],
     ev3: NamesTuners#V[T]): U[slice.S]
@@ -192,7 +192,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @param operators The pairwise operators to apply.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
+   * @return A `U[Cell[Q]]` where the content contains the pairwise values.
    */
   def pairwise[Q <: Position, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: Operable[P, Q], tuner: T)(
     implicit ev1: slice.S =!= Position0D, ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
@@ -207,7 +207,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @param value     The user supplied value.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
+   * @return A `U[Cell[Q]]` where the content contains the pairwise values.
    */
   def pairwiseWithValue[Q <: Position, W, T <: Tuner](slice: Slice[P], comparer: Comparer,
     operators: OperableWithValue[P, Q, W], value: E[W], tuner: T)(implicit ev1: slice.S =!= Position0D,
@@ -222,7 +222,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @param operators The pairwise operators to apply.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
+   * @return A `U[Cell[Q]]` where the content contains the pairwise values.
    */
   def pairwiseBetween[Q <: Position, T <: Tuner](slice: Slice[P], comparer: Comparer, that: M,
     operators: Operable[P, Q], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: PosExpDep[slice.R, Q],
@@ -238,7 +238,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @param value     The user supplied value.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[slice.R#M]]` where the content contains the pairwise values.
+   * @return A `U[Cell[Q]]` where the content contains the pairwise values.
    */
   def pairwiseBetweenWithValue[Q <: Position, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: M,
     operators: OperableWithValue[P, Q, W], value: E[W], tuner: T)(implicit ev1: slice.S =!= Position0D,
@@ -355,7 +355,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @param ascending Indicator if the data should be sorted ascending or descending.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[slice.S#M]]` with the derived data.
+   * @return A `U[Cell[Q]]` with the derived data.
    */
   def slide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Tuner](
     slice: Slice[P], windows: Windowable[P, S, R, Q], ascending: Boolean = true, tuner: T)(
@@ -371,7 +371,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @param ascending Indicator if the data should be sorted ascending or descending.
    * @param tuner     The tuner for the job.
    *
-   * @return A `U[Cell[slice.S#M]]` with the derived data.
+   * @return A `U[Cell[Q]]` with the derived data.
    */
   def slideWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](
     slice: Slice[P], windows: WindowableWithValue[P, S, R, Q, W], value: E[W], ascendig: Boolean = true, tuner: T)(
@@ -505,7 +505,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @param transformers The transformer(s) to apply to the content.
    * @param value        A `E` holding a user supplied value.
    *
-   * @return A `U[Cell[P]]` with the transformed cells.
+   * @return A `U[Cell[Q]]` with the transformed cells.
    */
   def transformWithValue[Q <: Position, W](transformers: TransformableWithValue[P, Q, W], value: E[W])(
     implicit ev: PosIncDep[P, Q]): U[Cell[Q]]
@@ -545,7 +545,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @param slice Encapsulates the dimension(s) along which to find unique contents.
    * @param tuner The tuner for the job.
    *
-   * @return A `U[Cell[slice.S]]` consisting of the unique values.
+   * @return A `U[(slice.S, Content)]` consisting of the unique values for each selected position.
    *
    * @note Comparison is performed based on the string representation of the `slice.S` and `Content`.
    */
@@ -656,6 +656,16 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
 trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePosition] { self: Matrix[P] =>
   type ReshapeTuners <: OneOf
 
+  /**
+   * Reshape a coordinate into it's own dimension.
+   *
+   * @param dim        The dimension to reshape.
+   * @param coordinate The coordinate (in `dim`) to reshape into its own dimension.
+   * @param locate     A locator that defines the coordinate for the new dimension.
+   * @param tuner      The tuner for the job.
+   *
+   * @return A `U[Cell[Q]]` with reshaped dimensions.
+   */
   def reshape[Q <: Position, T <: Tuner](dim: Dimension, coordinate: Valueable,
     locate: Locate.FromCellAndOptionalValue[P, Q], tuner: T)(implicit ev1: PosDimDep[P, dim.D], ev2: PosExpDep[P, Q],
       ev3: ClassTag[P#L], ev4: ReshapeTuners#V[T]): U[Cell[Q]]
