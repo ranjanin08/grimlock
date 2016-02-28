@@ -165,7 +165,7 @@ object Cell {
    * Parse a line into a `Cell[Position1D]`.
    *
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
+   * @param first     The codec for decoding the first dimension.
    * @param line      The line to parse.
    */
   def parse1D(separator: String = "|", first: Codec = StringCodec)(
@@ -178,7 +178,7 @@ object Cell {
    *
    * @param dict      The dictionary describing the features in the data.
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
+   * @param first     The codec for decoding the first dimension.
    * @param line      The line to parse.
    */
   def parse1DWithDictionary(dict: Map[String, Content.Parser], separator: String = "|", first: Codec = StringCodec)(
@@ -191,7 +191,7 @@ object Cell {
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
+   * @param first     The codec for decoding the first dimension.
    * @param line      The line to parse.
    */
   def parse1DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec)(
@@ -203,8 +203,8 @@ object Cell {
    * Parse a line into a `Cell[Position2D]`.
    *
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
    * @param line      The line to parse.
    */
   def parse2D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec)(
@@ -218,8 +218,8 @@ object Cell {
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
    * @param line      The line to parse.
    */
   def parse2DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
@@ -233,8 +233,8 @@ object Cell {
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
    * @param line      The line to parse.
    */
   def parse2DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
@@ -246,9 +246,9 @@ object Cell {
    * Parse a line into a `Cell[Position3D]`.
    *
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
+   * @param third     The codec for decoding the third dimension.
    * @param line      The line to parse.
    */
   def parse3D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
@@ -262,9 +262,9 @@ object Cell {
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
+   * @param third     The codec for decoding the third dimension.
    * @param line      The line to parse.
    */
   def parse3DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
@@ -278,9 +278,9 @@ object Cell {
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
+   * @param third     The codec for decoding the third dimension.
    * @param line      The line to parse.
    */
   def parse3DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
@@ -293,10 +293,10 @@ object Cell {
    * Parse a line into a `Cell[Position4D]`.
    *
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
+   * @param third     The codec for decoding the third dimension.
+   * @param fourth    The codec for decoding the fourth dimension.
    * @param line      The line to parse.
    */
   def parse4D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
@@ -311,10 +311,10 @@ object Cell {
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
+   * @param third     The codec for decoding the third dimension.
+   * @param fourth    The codec for decoding the fourth dimension.
    * @param line      The line to parse.
    */
   def parse4DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
@@ -329,10 +329,10 @@ object Cell {
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
+   * @param third     The codec for decoding the third dimension.
+   * @param fourth    The codec for decoding the fourth dimension.
    * @param line      The line to parse.
    */
   def parse4DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,
@@ -346,11 +346,11 @@ object Cell {
    * Parse a line into a `Cell[Position5D]`.
    *
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
-   * @param fifth     The codex for decoding the fifth dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
+   * @param third     The codec for decoding the third dimension.
+   * @param fourth    The codec for decoding the fourth dimension.
+   * @param fifth     The codec for decoding the fifth dimension.
    * @param line      The line to parse.
    */
   def parse5D(separator: String = "|", first: Codec = StringCodec, second: Codec = StringCodec,
@@ -365,11 +365,11 @@ object Cell {
    * @param dict      The dictionary describing the features in the data.
    * @param dim       The dimension on which to apply the dictionary.
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
-   * @param fifth     The codex for decoding the fifth dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
+   * @param third     The codec for decoding the third dimension.
+   * @param fourth    The codec for decoding the fourth dimension.
+   * @param fifth     The codec for decoding the fifth dimension.
    * @param line      The line to parse.
    */
   def parse5DWithDictionary[D <: Dimension](dict: Map[String, Content.Parser], dim: D, separator: String = "|",
@@ -385,11 +385,11 @@ object Cell {
    *
    * @param schema    The schema for decoding the data.
    * @param separator The column separator.
-   * @param first     The codex for decoding the first dimension.
-   * @param second    The codex for decoding the second dimension.
-   * @param third     The codex for decoding the third dimension.
-   * @param fourth    The codex for decoding the fourth dimension.
-   * @param fifth     The codex for decoding the fifth dimension.
+   * @param first     The codec for decoding the first dimension.
+   * @param second    The codec for decoding the second dimension.
+   * @param third     The codec for decoding the third dimension.
+   * @param fourth    The codec for decoding the fourth dimension.
+   * @param fifth     The codec for decoding the fifth dimension.
    * @param line      The line to parse.
    */
   def parse5DWithSchema(schema: Content.Parser, separator: String = "|", first: Codec = StringCodec,

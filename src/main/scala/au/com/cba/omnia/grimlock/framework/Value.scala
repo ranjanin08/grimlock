@@ -37,7 +37,7 @@ trait Value {
   /** The encapsulated value. */
   val value: V
 
-  /** The codex used to encode/decode this value. */
+  /** The codec used to encode/decode this value. */
   val codec: Codec { type C = V }
 
   /**

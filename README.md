@@ -59,14 +59,14 @@ The position is, essentially, a list of N coordinates (__Value__). The content c
                   Schema         Value
 ```
 
-Lastly, the __Codex__ singleton objects can be used to parse and write the basic data types used in both coordinates and values.
+Lastly, the __Codec__ singleton objects can be used to parse and write the basic data types used in both coordinates and values.
 
 ```
   Schema       Value
      ^ 1         ^ 1
      |           |
      | 1         | 1
-   Codex       Codex
+   Codec       Codec
 ```
 
 ### Working with Dimensions
@@ -89,9 +89,9 @@ Grimlock supports performing operations along all directions of the matrix.  Thi
 
 ### Data Format
 
-The basic data format used by Grimlock (though others are supported) is a column-oriented pipe separated file (each row is a single cell). The first N fields are the coordinates, optionally followed by the variable type and codex (again pipe separated). If the variable type and codex are omitted from the data then they have to be provided by a __Dictionary__. The last field of each row is the value.
+The basic data format used by Grimlock (though others are supported) is a column-oriented pipe separated file (each row is a single cell). The first N fields are the coordinates, optionally followed by the variable type and codec (again pipe separated). If the variable type and codec are omitted from the data then they have to be provided by a __Dictionary__. The last field of each row is the value.
 
-In the example below the first field is a coordinate identifying an instance, the second field is a coordinate identifying a feature. The third and fourth columns are the variable type and codex respectively. The last column has the actual value.
+In the example below the first field is a coordinate identifying an instance, the second field is a coordinate identifying a feature. The third and fourth columns are the variable type and codec respectively. The last column has the actual value.
 
 ```
 > head <path to>/grimlock/src/main/scala/au/com/cba/omnia/grimlock/data/exampleInput.txt
@@ -108,7 +108,7 @@ iid:0066848|fid:H|string|nominal|B
 ...
 ```
 
-If the type and codex were omitted then the data would look as follows:
+If the type and codec were omitted then the data would look as follows:
 
 ```
 iid:0064402|fid:B|H
