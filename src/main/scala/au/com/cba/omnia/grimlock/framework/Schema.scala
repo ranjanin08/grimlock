@@ -109,15 +109,23 @@ trait SchemaParameters {
   }
 
   protected def writeSet[S](short: Boolean, set: Set[S], f: (S) => String): String = {
-    if (set.isEmpty) {
+    writeList(short, set.toList, f, "Set")
+  }
+
+  protected def writeOrderedSet[S : Ordering](short: Boolean, set: Set[S], f: (S) => String): String = {
+    writeList(short, set.toList.sorted, f, "Set")
+  }
+
+  private def writeList[S](short: Boolean, list: List[S], f: (S) => String, name: String): String = {
+    if (list.isEmpty) {
       ""
     } else {
-      val args = set.map(f(_).replaceAll(",", "\\\\,")).mkString(",")
+      val args = list.map(f(_).replaceAll(",", "\\\\,")).mkString(",")
 
       if (short) {
         args
       } else {
-        "Set(" + args + ")"
+        name + "(" + args + ")"
       }
     }
   }
@@ -266,7 +274,9 @@ trait CategoricalSchema[T] extends Schema with SchemaParameters {
 
   def validate(value: Value { type V = S }): Boolean = domain.isEmpty || domain.contains(value.value)
 
-  protected def paramString(short: Boolean, f: (S) => String): String = writeSet(short, domain, f)
+  protected def shortName(name: String): String = {
+    if (name.contains(".")) { if (name == "java.lang.String") { "String" } else { name } } else { name.capitalize }
+  }
 }
 
 /**
@@ -277,11 +287,8 @@ trait CategoricalSchema[T] extends Schema with SchemaParameters {
 case class NominalSchema[T: ClassTag](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
   val kind = Type.Nominal
 
-  protected def typeString(): String = {
-    val name = classTag[T].runtimeClass.getName
-
-    if (name.contains(".")) { if (name == "java.lang.String") { "String" } else { name } } else { name.capitalize }
-  }
+  protected def paramString(short: Boolean, f: (S) => String): String = writeSet(short, domain, f)
+  protected def typeString(): String = shortName(classTag[T].runtimeClass.getName)
 }
 
 /** Companion object to `NominalSchema` case class. */
@@ -311,14 +318,11 @@ object NominalSchema extends SchemaParameters {
  *
  * @param domain The optional values of the variable.
  */
-case class OrdinalSchema[T: ClassTag](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
+case class OrdinalSchema[T: ClassTag: Ordering](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
   val kind = Type.Ordinal
 
-  protected def typeString(): String = {
-    val name = classTag[T].runtimeClass.getName
-
-    if (name.contains(".")) { if (name == "java.lang.String") { "String" } else { name } } else { name.capitalize }
-  }
+  protected def paramString(short: Boolean, f: (S) => String): String = writeOrderedSet(short, domain, f)
+  protected def typeString(): String = shortName(classTag[T].runtimeClass.getName)
 }
 
 /** Companion object to `OrdinalSchema`. */
@@ -335,9 +339,9 @@ object OrdinalSchema extends SchemaParameters {
    * @return A `Some[OrdinalSchema]` if successful, `None` otherwise.
    */
   def fromShortString(str: String, cdc: Codec): Option[OrdinalSchema[cdc.C]] = {
-    (cdc.tag, str) match {
-      case (Some(tag), Pattern(null)) => Some(OrdinalSchema()(tag))
-      case (Some(tag), Pattern(domain)) => parseSet(cdc, domain).map(OrdinalSchema(_)(tag))
+    (cdc.tag, cdc.ordering, str) match {
+      case (Some(tag), Some(ord), Pattern(null)) => Some(OrdinalSchema()(tag, ord))
+      case (Some(tag), Some(ord), Pattern(domain)) => parseSet(cdc, domain).map(OrdinalSchema(_)(tag, ord))
       case _ => None
     }
   }

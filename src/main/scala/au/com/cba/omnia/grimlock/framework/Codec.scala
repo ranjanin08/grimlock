@@ -60,6 +60,9 @@ trait Codec {
   /** Return an optional ClassTag for this data type. */
   def tag(): Option[ClassTag[C]]
 
+  /** Return an optional Ordering for this data type. */
+  def ordering(): Option[Ordering[C]] = None
+
   /** Return an optional date type class for this data type. */
   def date(): Option[C => Date] = None
 
@@ -102,7 +105,7 @@ case class DateCodec(format: String = "yyyy-MM-dd") extends Codec {
 
   def compare(x: Value, y: Value): Option[Int] = {
     (x.asDate, y.asDate) match {
-      case (Some(l), Some(r)) => Some(l.getTime().compare(r.getTime()))
+      case (Some(l), Some(r)) => Some(cmp(l, r))
       case _ => None
     }
   }
@@ -110,7 +113,10 @@ case class DateCodec(format: String = "yyyy-MM-dd") extends Codec {
   def toShortString() = s"date(${format})"
 
   def tag(): Option[ClassTag[C]] = Some(classTag[C])
+  override def ordering(): Option[Ordering[C]] = Some(new Ordering[C] { def compare(x: C, y: C): Int = cmp(x, y) })
   override def date(): Option[C => Date] = Some(c => c)
+
+  private def cmp(x: C, y: C): Int = x.getTime().compare(y.getTime())
 }
 
 /** Companion object to DateCodec. */
@@ -167,6 +173,7 @@ case object StringCodec extends Codec {
   }
 
   def tag(): Option[ClassTag[C]] = Some(classTag[C])
+  override def ordering(): Option[Ordering[C]] = Some(Ordering.String)
 }
 
 /** Codec for dealing with `Double`. */
@@ -203,6 +210,7 @@ case object DoubleCodec extends Codec {
   }
 
   def tag(): Option[ClassTag[C]] = Some(classTag[C])
+  override def ordering(): Option[Ordering[C]] = Some(Ordering.Double)
   override def numeric(): Option[Numeric[C]] = Some(Numeric.DoubleIsFractional)
 }
 
@@ -240,6 +248,7 @@ case object LongCodec extends Codec {
   }
 
   def tag(): Option[ClassTag[C]] = Some(classTag[C])
+  override def ordering(): Option[Ordering[C]] = Some(Ordering.Long)
   override def numeric(): Option[Numeric[C]] = Some(Numeric.LongIsIntegral)
   override def integral(): Option[Integral[C]] = Some(Numeric.LongIsIntegral)
 }
@@ -278,6 +287,7 @@ case object BooleanCodec extends Codec {
   }
 
   def tag(): Option[ClassTag[C]] = Some(classTag[C])
+  override def ordering(): Option[Ordering[C]] = Some(Ordering.Boolean)
 }
 
 /** Base trait for dealing with structured data. */

@@ -295,6 +295,7 @@ case class Cut[P <: Position, W](bins: Extract[P, W, List[Double]]) extends Tran
       case (true, Some(v), Some(b)) =>
         val bstr = b.sliding(2).map("(" + _.mkString(",") + "]").toList
 
+        // TODO: Add correct Ordering to bstr
         Some(Cell(cell.position, Content(OrdinalSchema[String](bstr.toSet), bstr(b.lastIndexWhere(_ < v)))))
       case _ => None
     }
