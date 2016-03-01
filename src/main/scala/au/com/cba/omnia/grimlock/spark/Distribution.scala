@@ -36,11 +36,10 @@ trait ApproximateDistribution[P <: Position] extends FwApproximateDistribution[P
 
   import SparkImplicits._
 
-  type HistogramTuners = TP2
-  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
+  type HistogramTuners[T] = TP2[T]
+  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : HistogramTuners](slice: Slice[P],
     name: Locate.FromSelectedAndContent[S, Q], filter: Boolean, tuner: T = Default())(
-      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q],
-        ev4: HistogramTuners#V[T]): U[Cell[Q]] = {
+      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q]): U[Cell[Q]] = {
     data
       .filter { case c => (!filter || c.content.schema.kind.isSpecialisationOf(Type.Categorical)) }
       .flatMap { case c => name(slice.selected(c.position), c.content).map((_, 1L)) }

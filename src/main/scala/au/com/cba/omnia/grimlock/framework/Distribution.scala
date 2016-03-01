@@ -27,7 +27,7 @@ import scala.reflect.ClassTag
 trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
 
   /** Specifies tuners permitted on a call to `histogram`. */
-  type HistogramTuners <: OneOf
+  type HistogramTuners[_]
 
   /**
    * Compute histogram.
@@ -41,9 +41,9 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
    *
    * @note The histogram is computed on the positions returned by `position`.
    */
-  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
+  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : HistogramTuners](slice: Slice[P],
     position: Locate.FromSelectedAndContent[S, Q], filter: Boolean = true, tuner: T)(
-      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q], ev4: HistogramTuners#V[T]): U[Cell[Q]]
+      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `quantile`. */
   type QuantileTuners[_]

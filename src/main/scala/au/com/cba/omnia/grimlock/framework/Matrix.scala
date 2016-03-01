@@ -39,7 +39,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
   type M <: Matrix[P]
 
   /** Specifies tuners permitted on a call to `change`. */
-  type ChangeTuners <: OneOf
+  type ChangeTuners[_]
 
   /**
    * Change the variable type of `positions` in a matrix.
@@ -51,11 +51,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[Cell[P]]' with the changed contents.
    */
-  def change[I, T <: Tuner](slice: Slice[P], positions: I, schema: Content.Parser, tuner: T)(
-    implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S], ev3: ChangeTuners#V[T]): U[Cell[P]]
+  def change[I, T <: Tuner : ChangeTuners](slice: Slice[P], positions: I, schema: Content.Parser, tuner: T)(
+    implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `compact` functions. */
-  type CompactTuners <: OneOf
+  type CompactTuners[_]
 
   /**
    * Compacts a matrix to a `Map`.
@@ -76,8 +76,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @note Avoid using this for very large matrices.
    */
-  def compact[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: ClassTag[slice.S],
-    ev3: CompactTuners#V[T]): E[Map[slice.S, slice.C]]
+  def compact[T <: Tuner : CompactTuners](slice: Slice[P], tuner: T)
+                                         (implicit
+                                          ev1: slice.S =!= Position0D,
+                                          ev2: ClassTag[slice.S]
+                                         ): E[Map[slice.S, slice.C]]
 
   /** Specifies tuners permitted on a call to `domain`. */
   type DomainTuners[T]
@@ -109,7 +112,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
     implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `fill` with homogeneous data. */
-  type FillHomogeneousTuners <: OneOf
+  type FillHomogeneousTuners[_]
 
   /**
    * Fill a matrix with `value`.
@@ -119,11 +122,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[Cell[P]]` where all missing values have been filled in.
    */
-  def fillHomogeneous[T <: Tuner](value: Content, tuner: T)(implicit ev1: ClassTag[P],
-    ev2: FillHomogeneousTuners#V[T]): U[Cell[P]]
+  def fillHomogeneous[T <: Tuner : FillHomogeneousTuners](value: Content, tuner: T)
+                                                         (implicit ev1: ClassTag[P]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `get`. */
-  type GetTuners <: OneOf
+  type GetTuners[_]
 
   /**
    * Return contents of a matrix at `positions`.
@@ -133,8 +136,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[Cell[P]]' of the `positions` together with their content.
    */
-  def get[I, T <: Tuner](positions: I, tuner: T)(implicit ev1: PositionDistributable[I, P, U], ev2: ClassTag[P],
-    ev3: GetTuners#V[T]): U[Cell[P]]
+  def get[I, T <: Tuner : GetTuners](positions: I, tuner: T)(implicit ev1: PositionDistributable[I, P, U], ev2: ClassTag[P]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `join`. */
   type JoinTuners[_]
@@ -166,7 +168,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
   def materialise[T <: Tuner : MaterialiseTuners](tuner: T): List[Cell[P]]
 
   /** Specifies tuners permitted on a call to `names`. */
-  type NamesTuners <: OneOf
+  type NamesTuners[_]
 
   /**
    * Returns the distinct position(s) (or names) for a given `slice`.
@@ -176,8 +178,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[slice.S]` of the distinct position(s).
    */
-  def names[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D, ev2: ClassTag[slice.S],
-    ev3: NamesTuners#V[T]): U[slice.S]
+  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T)
+                       (implicit
+                        ev1: slice.S =!= Position0D,
+                        ev2: ClassTag[slice.S]): U[slice.S]
 
   /** Specifies tuners permitted on a call to `pairwise` functions. */
   type PairwiseTuners <: OneOf
@@ -285,7 +289,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
   def saveAsText(file: String, writer: TextWriter = Cell.toString())(implicit ctx: C): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `set` functions. */
-  type SetTuners <: OneOf
+  type SetTuners[_]
 
   /**
    * Set the `values` in a matrix.
@@ -295,10 +299,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[Cell[P]]' with the `values` set.
    */
-  def set[T <: Tuner](values: Matrixable[P, U], tuner: T)(implicit ev1: ClassTag[P], ev2: SetTuners#V[T]): U[Cell[P]]
+  def set[T <: Tuner : SetTuners](values: Matrixable[P, U], tuner: T)(implicit ev1: ClassTag[P]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `shape`. */
-  type ShapeTuners <: OneOf
+  type ShapeTuners[_]
 
   /**
    * Returns the shape of the matrix.
@@ -308,10 +312,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @return A `U[Cell[Position1D]]`. The position consists of a string value with the name of the dimension
    *         (`dim.toString`). The content has the actual size in it as a discrete variable.
    */
-  def shape[T <: Tuner](tuner: T)(implicit ev: ShapeTuners#V[T]): U[Cell[Position1D]]
+  def shape[T <: Tuner : ShapeTuners](tuner: T): U[Cell[Position1D]]
 
   /** Specifies tuners permitted on a call to `shape`. */
-  type SizeTuners <: OneOf
+  type SizeTuners[_]
 
   /**
    * Returns the size of the matrix in dimension `dim`.
@@ -323,11 +327,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @return A `U[Cell[Position1D]]`. The position consists of a string value with the name of the dimension
    *         (`dim.toString`). The content has the actual size in it as a discrete variable.
    */
-  def size[T <: Tuner](dim: Dimension, distinct: Boolean = false, tuner: T)(implicit ev1: PosDimDep[P, dim.D],
-    ev2: SizeTuners#V[T]): U[Cell[Position1D]]
+  def size[T <: Tuner : SizeTuners](dim: Dimension, distinct: Boolean = false, tuner: T)
+                                   (implicit ev1: PosDimDep[P, dim.D]): U[Cell[Position1D]]
 
   /** Specifies tuners permitted on a call to `slice`. */
-  type SliceTuners <: OneOf
+  type SliceTuners[_]
 
   /**
    * Slice a matrix.
@@ -339,8 +343,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[Cell[P]]' of the remaining content.
    */
-  def slice[I, T <: Tuner](slice: Slice[P], positions: I, keep: Boolean, tuner: T)(
-    implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S], ev3: SliceTuners#V[T]): U[Cell[P]]
+  def slice[I, T <: Tuner : SliceTuners](slice: Slice[P], positions: I, keep: Boolean, tuner: T)(
+    implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `slide` functions. */
   type SlideTuners[_]
@@ -432,7 +436,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
   def subsetWithValue[W](samplers: SampleableWithValue[P, W], value: E[W]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `summarise` functions. */
-  type SummariseTuners <: OneOf
+  type SummariseTuners[_]
 
   /**
    * Summarise a matrix and return the aggregates.
@@ -443,9 +447,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summarise[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
+  def summarise[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : SummariseTuners](slice: Slice[P],
     aggregators: Aggregatable[P, S, Q], tuner: T)(implicit ev1: slice.S =:= S, ev2: PosIncDep[S, Q],
-      ev3: ClassTag[slice.S], ev4: SummariseTuners#V[T]): U[Cell[Q]]
+      ev3: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
    * Summarise a matrix, using a user supplied value, and return the aggregates.
@@ -457,9 +461,9 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[Cell[Q]]` with the aggregates.
    */
-  def summariseWithValue[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
+  def summariseWithValue[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : SummariseTuners](slice: Slice[P],
     aggregators: AggregatableWithValue[P, S, Q, W], value: E[W], tuner: T)(implicit ev1: slice.S =:= S,
-      ev2: PosIncDep[S, Q], ev3: ClassTag[slice.S], ev4: SummariseTuners#V[T]): U[Cell[Q]]
+      ev2: PosIncDep[S, Q], ev3: ClassTag[slice.S]): U[Cell[Q]]
 
   /**
    * Convert all cells to key value tuples.
@@ -509,7 +513,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
     implicit ev: PosIncDep[P, Q]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `types`. */
-  type TypesTuners <: OneOf
+  type TypesTuners[_]
 
   /**
    * Returns the variable type of the content(s) for a given `slice`.
@@ -522,11 +526,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @see [[Types]]
    */
-  def types[T <: Tuner](slice: Slice[P], specific: Boolean = false, tuner: T)(implicit ev1: slice.S =!= Position0D,
-    ev2: ClassTag[slice.S], ev3: TypesTuners#V[T]): U[(slice.S, Type)]
+  def types[T <: Tuner : TypesTuners](slice: Slice[P], specific: Boolean = false, tuner: T)(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S]): U[(slice.S, Type)]
 
   /** Specifies tuners permitted on a call to `unique` functions. */
-  type UniqueTuners <: OneOf
+  type UniqueTuners[_]
 
   /**
    * Return the unique (distinct) contents of an entire matrix.
@@ -535,7 +539,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @note Comparison is performed based on the string representation of the `Content`.
    */
-  def unique[T <: Tuner](tuner: T)(implicit ev: UniqueTuners#V[T]): U[Content]
+  def unique[T <: Tuner : UniqueTuners](tuner: T): U[Content]
 
   /**
    * Return the unique (distinct) contents along a dimension.
@@ -547,11 +551,11 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @note Comparison is performed based on the string representation of the `slice.S` and `Content`.
    */
-  def uniqueByPositions[T <: Tuner](slice: Slice[P], tuner: T)(implicit ev1: slice.S =!= Position0D,
-    ev2: UniqueTuners#V[T]): U[(slice.S, Content)]
+  def uniqueByPositions[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T)
+                                                  (implicit ev1: slice.S =!= Position0D): U[(slice.S, Content)]
 
   /** Specifies tuners permitted on a call to `which` functions. */
-  type WhichTuners <: OneOf
+  type WhichTuners[_]
 
   /**
    * Query the contents of a matrix and return the positions of those that match the predicate.
@@ -573,9 +577,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[P]` of the positions for which the content matches predicates.
    */
-  def whichByPositions[I, T <: Tuner](slice: Slice[P], predicates: I, tuner: T)(
-    implicit ev1: Predicateable[I, P, slice.S, U], ev2: ClassTag[slice.S], ev3: ClassTag[P],
-      ev4: WhichTuners#V[T]): U[P]
+  def whichByPositions[I, T <: Tuner : WhichTuners](slice: Slice[P], predicates: I, tuner: T)(
+    implicit ev1: Predicateable[I, P, slice.S, U], ev2: ClassTag[slice.S], ev3: ClassTag[P]): U[P]
 
   // TODO: Add more compile-time type checking
   // TODO: Add label join operations
@@ -622,7 +625,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
     ev2: PosDimDep[P, into.D], ne: dim.D =!= into.D): U[Cell[P#L]]
 
   /** Specifies tuners permitted on a call to `squash` functions. */
-  type SquashTuners <: OneOf
+  type SquashTuners[_]
 
   /**
    * Squash a dimension of a matrix.
@@ -633,8 +636,8 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squash[T <: Tuner](dim: Dimension, squasher: Squashable[P], tuner: T)(implicit ev1: PosDimDep[P, dim.D],
-    ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
+  def squash[T <: Tuner : SquashTuners](dim: Dimension, squasher: Squashable[P], tuner: T)(implicit ev1: PosDimDep[P, dim.D],
+    ev2: ClassTag[P#L]): U[Cell[P#L]]
 
   /**
    * Squash a dimension of a matrix with a user supplied value.
@@ -646,13 +649,13 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
    *
    * @return A `U[Cell[P#L]]` with the dimension `dim` removed.
    */
-  def squashWithValue[W, T <: Tuner](dim: Dimension, squasher: SquashableWithValue[P, W], value: E[W],
-    tuner: T)(implicit ev1: PosDimDep[P, dim.D], ev2: ClassTag[P#L], ev3: SquashTuners#V[T]): U[Cell[P#L]]
+  def squashWithValue[W, T <: Tuner : SquashTuners](dim: Dimension, squasher: SquashableWithValue[P, W], value: E[W],
+    tuner: T)(implicit ev1: PosDimDep[P, dim.D], ev2: ClassTag[P#L]): U[Cell[P#L]]
 }
 
 /** Base trait for methods that reshapes the number of dimension of a matrix. */
 trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePosition] { self: Matrix[P] =>
-  type ReshapeTuners <: OneOf
+  type ReshapeTuners[_]
 
   /**
    * Reshape a coordinate into it's own dimension.
@@ -664,9 +667,9 @@ trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePos
    *
    * @return A `U[Cell[Q]]` with reshaped dimensions.
    */
-  def reshape[Q <: Position, T <: Tuner](dim: Dimension, coordinate: Valueable,
+  def reshape[Q <: Position, T <: Tuner : ReshapeTuners](dim: Dimension, coordinate: Valueable,
     locate: Locate.FromCellAndOptionalValue[P, Q], tuner: T)(implicit ev1: PosDimDep[P, dim.D], ev2: PosExpDep[P, Q],
-      ev3: ClassTag[P#L], ev4: ReshapeTuners#V[T]): U[Cell[Q]]
+      ev3: ClassTag[P#L]): U[Cell[Q]]
 }
 
 /** Base trait for 1D specific operations. */

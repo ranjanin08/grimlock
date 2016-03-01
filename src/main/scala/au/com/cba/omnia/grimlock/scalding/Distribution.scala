@@ -37,11 +37,10 @@ trait ApproximateDistribution[P <: Position] extends FwApproximateDistribution[P
 
   import ScaldingImplicits._
 
-  type HistogramTuners = TP2
-  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner](slice: Slice[P],
+  type HistogramTuners[T] = TP2[T]
+  def histogram[S <: Position with ExpandablePosition, Q <: Position, T <: Tuner : HistogramTuners](slice: Slice[P],
     name: Locate.FromSelectedAndContent[S, Q], filter: Boolean, tuner: T = Default())(
-      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q],
-        ev4: HistogramTuners#V[T]): U[Cell[Q]] = {
+      implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q]): U[Cell[Q]] = {
     data
       .filter { case c => (!filter || c.content.schema.kind.isSpecialisationOf(Type.Categorical)) }
       .flatMap { case c => name(slice.selected(c.position), c.content) }
@@ -51,7 +50,7 @@ trait ApproximateDistribution[P <: Position] extends FwApproximateDistribution[P
       .map { case (p, s) => Cell(p, Content(DiscreteSchema[Long](), s)) }
   }
 
-  type QuantileTuners[T] = Aux2[T]
+  type QuantileTuners[T] = TP2[T]
   def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : QuantileTuners](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
       count: Extract[P, W, Long], value: E[W], filter: Boolean, nan: Boolean, tuner: T = Default())(

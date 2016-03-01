@@ -14,7 +14,6 @@
 
 package au.com.cba.omnia.grimlock.framework
 
-import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 
 /** Base trait for tuner parameters. */
@@ -115,11 +114,18 @@ object Unbalanced {
 
 /** Some common sets of default permitted tuners. */
 private[grimlock] trait DefaultTuners {
-  protected type TP2 = OneOf2[Default[NoParameters], Default[Reducers]]
 
-  // TODO
   protected type TP1[T] = T In IsA[Default[NoParameters]]#Or[Nothing]
-  protected type TP3[T] = T In IsA[Default[NoParameters]]#Or[Default[Reducers]]#Or[Default[Sequence2[Reducers, Reducers]]]
-  protected type Aux2[T] = T In IsA[Default[NoParameters]]#Or[Default[Reducers]]
+
+  protected type TP2[T] = T In IsA[Default[NoParameters]]#Or[Default[Reducers]]
+
+  protected type TP3[T] = T In IsA[Default[NoParameters]]#
+    Or[Default[Reducers]]#
+    Or[Default[Sequence2[Reducers, Reducers]]]
+
+  protected type TP4[T] = T In IsA[InMemory[NoParameters]]#
+    Or[Default[NoParameters]]#
+    Or[Default[Reducers]]#
+    Or[Unbalanced[Reducers]]
 }
 
