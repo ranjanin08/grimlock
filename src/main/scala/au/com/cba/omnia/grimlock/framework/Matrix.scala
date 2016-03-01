@@ -90,7 +90,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
   def domain[T <: Tuner : DomainTuners](tuner: T): U[P]
 
   /** Specifies tuners permitted on a call to `fill` with hetrogeneous data. */
-  type FillHeterogeneousTuners <: OneOf
+  type FillHeterogeneousTuners[_]
 
   /**
    * Fill a matrix with `values` for a given `slice`.
@@ -105,9 +105,8 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *       the join is an inner join, any positions in the matrix that aren't in `values` are filtered
    *       from the resulting matrix.
    */
-  def fillHeterogeneous[S <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[S]], tuner: T)(
-    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S,
-      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]]
+  def fillHeterogeneous[S <: Position, T <: Tuner : FillHeterogeneousTuners](slice: Slice[P], values: U[Cell[S]], tuner: T)(
+    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `fill` with homogeneous data. */
   type FillHomogeneousTuners <: OneOf
@@ -138,7 +137,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
     ev3: GetTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `join`. */
-  type JoinTuners <: OneOf
+  type JoinTuners[_]
 
   /**
    * Join two matrices.
@@ -150,8 +149,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @return A `U[Cell[P]]` consisting of the inner-join of the two matrices.
    */
   // TODO: Add inner/left/right/outer join functionality?
-  def join[T <: Tuner](slice: Slice[P], that: M, tuner: T)(implicit ev1: P =!= Position1D, ev2: ClassTag[slice.S],
-    ev3: JoinTuners#V[T]): U[Cell[P]]
+  def join[T <: Tuner : JoinTuners](slice: Slice[P], that: M, tuner: T)(implicit ev1: P =!= Position1D, ev2: ClassTag[slice.S]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `materialise`. */
   type MaterialiseTuners[_]

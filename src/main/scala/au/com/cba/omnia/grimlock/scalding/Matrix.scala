@@ -216,11 +216,10 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     //type DomainTuners = TP1
   type DomainTuners[T] = TP1[T]
 
-  type FillHeterogeneousTuners = OneOf4[InMemory[NoParameters], InMemory[Reducers],
-                                        Default[NoParameters], Default[Reducers]]
-  def fillHeterogeneous[S <: Position, T <: Tuner](slice: Slice[P], values: U[Cell[S]], tuner: T = Default())(
-    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S,
-      ev4: FillHeterogeneousTuners#V[T]): U[Cell[P]] = {
+  type FillHeterogeneousTuners[T] = T In IsA[InMemory[NoParameters]]#Or[InMemory[Reducers]]#Or[Default[NoParameters]]#Or[Default[Reducers]]
+
+  def fillHeterogeneous[S <: Position, T <: Tuner : FillHeterogeneousTuners](slice: Slice[P], values: U[Cell[S]], tuner: T = Default())(
+    implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S): U[Cell[P]] = {
     val vals = values.groupBy { case c => c.position.asInstanceOf[slice.S] }
     val dense = tuner match {
       case InMemory(_) =>
@@ -274,11 +273,16 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     }
   }
 
-  type JoinTuners = OneOf7[InMemory[NoParameters], InMemory[Reducers],
-                           Default[NoParameters], Default[Reducers], Default[Sequence2[Reducers, Reducers]],
-                           Unbalanced[Reducers], Unbalanced[Sequence2[Reducers, Reducers]]]
-  def join[T <: Tuner](slice: Slice[P], that: M, tuner: T = Default())(implicit ev1: P =!= Position1D,
-    ev2: ClassTag[slice.S], ev3: JoinTuners#V[T]): U[Cell[P]] = {
+  type JoinTuners[T] = T In IsA[InMemory[NoParameters]]#
+    Or[InMemory[Reducers]]#
+    Or[Default[NoParameters]]#
+    Or[Default[Reducers]]#
+    Or[Default[Sequence2[Reducers, Reducers]]]#
+    Or[Unbalanced[Reducers]]#
+    Or[Unbalanced[Sequence2[Reducers, Reducers]]]
+
+  def join[T <: Tuner : JoinTuners](slice: Slice[P], that: M, tuner: T = Default())(implicit ev1: P =!= Position1D,
+    ev2: ClassTag[slice.S]): U[Cell[P]] = {
     val (p1, p2) = (tuner, tuner.parameters) match {
       case (_, Sequence2(f, s)) => (f, s)
       case (InMemory(_), p) => (p, NoParameters())
@@ -302,7 +306,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     }
   }
 
-  type MaterialiseTuners[T] = IsA[Default[Execution]]#Or[Nothing]
+  type MaterialiseTuners[T] = T In IsA[Default[Execution]]#Or[Nothing]
   def materialise[T <: Tuner : MaterialiseTuners](tuner: T): List[Cell[P]] = {
     val context = tuner.parameters match {
       case Execution(ctx) => ctx
