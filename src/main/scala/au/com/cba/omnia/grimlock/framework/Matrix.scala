@@ -80,14 +80,14 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
     ev3: CompactTuners#V[T]): E[Map[slice.S, slice.C]]
 
   /** Specifies tuners permitted on a call to `domain`. */
-  type DomainTuners <: OneOf
+  type DomainTuners[T]
 
   /**
    * Return all possible positions of a matrix.
    *
    * @param tuner The tuner for the job.
    */
-  def domain[T <: Tuner](tuner: T)(implicit ev: DomainTuners#V[T]): U[P]
+  def domain[T <: Tuner : DomainTuners](tuner: T): U[P]
 
   /** Specifies tuners permitted on a call to `fill` with hetrogeneous data. */
   type FillHeterogeneousTuners <: OneOf
@@ -154,7 +154,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
     ev3: JoinTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `materialise`. */
-  type MaterialiseTuners <: OneOf
+  type MaterialiseTuners[_]
 
   /**
    * Returns the matrix as in in-memory list of cells.
@@ -165,7 +165,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @note Avoid using this for very large matrices.
    */
-  def materialise[T <: Tuner](tuner: T)(implicit ev: MaterialiseTuners#V[T]): List[Cell[P]]
+  def materialise[T <: Tuner : MaterialiseTuners](tuner: T): List[Cell[P]]
 
   /** Specifies tuners permitted on a call to `names`. */
   type NamesTuners <: OneOf
@@ -345,7 +345,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
     implicit ev1: PositionDistributable[I, slice.S, U], ev2: ClassTag[slice.S], ev3: SliceTuners#V[T]): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `slide` functions. */
-  type SlideTuners <: OneOf
+  type SlideTuners[_]
 
   /**
    * Create window based derived data.
@@ -357,10 +357,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[Cell[Q]]` with the derived data.
    */
-  def slide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Tuner](
+  def slide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Tuner: SlideTuners](
     slice: Slice[P], windows: Windowable[P, S, R, Q], ascending: Boolean = true, tuner: T)(
       implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D, ev4: PosExpDep[S, Q],
-        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]]
+        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Create window based derived data with a user supplied value.
@@ -373,10 +373,10 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    *
    * @return A `U[Cell[Q]]` with the derived data.
    */
-  def slideWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](
+  def slideWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : SlideTuners](
     slice: Slice[P], windows: WindowableWithValue[P, S, R, Q, W], value: E[W], ascendig: Boolean = true, tuner: T)(
       implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D, ev4: PosExpDep[S, Q],
-        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]]
+        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]]
 
   /**
    * Partition a matrix according to `partitioner`.

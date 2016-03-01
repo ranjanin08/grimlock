@@ -60,6 +60,7 @@ import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.utility.OneOf._
 import au.com.cba.omnia.grimlock.framework.window._
+import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 
 import au.com.cba.omnia.grimlock.scalding.distribution._
 import au.com.cba.omnia.grimlock.scalding.environment._
@@ -212,7 +213,8 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       .sum(semigroup)
   }
 
-  type DomainTuners = TP1
+    //type DomainTuners = TP1
+  type DomainTuners[T] = TP1[T]
 
   type FillHeterogeneousTuners = OneOf4[InMemory[NoParameters], InMemory[Reducers],
                                         Default[NoParameters], Default[Reducers]]
@@ -300,8 +302,8 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     }
   }
 
-  type MaterialiseTuners = OneOf1[Default[Execution]]
-  def materialise[T <: Tuner](tuner: T)(implicit ev: MaterialiseTuners#V[T]): List[Cell[P]] = {
+  type MaterialiseTuners[T] = IsA[Default[Execution]]#Or[Nothing]
+  def materialise[T <: Tuner : MaterialiseTuners](tuner: T): List[Cell[P]] = {
     val context = tuner.parameters match {
       case Execution(ctx) => ctx
     }
@@ -436,14 +438,12 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     }
   }
 
-  type SlideTuners = OneOf4[Default[NoParameters],
-                            Default[Redistribute],
-                            Default[Reducers],
-                            Default[Sequence2[Redistribute, Reducers]]]
-  def slide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Tuner](
+  type SlideTuners[T] = T In IsA[Default[NoParameters]]#Or[Default[Redistribute]]#Or[Default[Reducers]]#Or[Default[Sequence2[Redistribute, Reducers]]]
+
+  def slide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Tuner : SlideTuners](
     slice: Slice[P], windows: Windowable[P, S, R, Q], ascending: Boolean = true, tuner: T = Default())(
       implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D, ev4: PosExpDep[S, Q],
-        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]] = {
+        ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
     val window = windows()
     val (partitions, reducers) = tuner.parameters match {
       case Sequence2(rp @ Redistribute(_), rr @ Reducers(_)) => (rp, rr)
@@ -468,10 +468,10 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       }
   }
 
-  def slideWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](
+  def slideWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : SlideTuners](
     slice: Slice[P], windows: WindowableWithValue[P, S, R, Q, W], value: E[W], ascending: Boolean = true,
       tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D,
-        ev4: PosExpDep[S, Q], ev5: ClassTag[slice.S], ev6: ClassTag[slice.R], ev7: SlideTuners#V[T]): U[Cell[Q]] = {
+        ev4: PosExpDep[S, Q], ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
     val window = windows()
     val (partitions, reducers) = tuner.parameters match {
       case Sequence2(rp @ Redistribute(_), rr @ Reducers(_)) => (rp, rr)
@@ -969,9 +969,9 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    *
    * @return A `U[Cell[Position1D]]` with all pairwise Gini indices.
    */
-  def gini[ST <: Tuner, WT <: Tuner, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(),
+  def gini[ST <: Tuner, WT <: Tuner : SlideTuners, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(),
     wtuner: WT = Default(), ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R],
-      ev3: SummariseTuners#V[ST], ev4: SlideTuners#V[WT], ev5: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
+      ev3: SummariseTuners#V[ST], ev5: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
@@ -1140,7 +1140,7 @@ object Matrix extends Consume with DistributedData with Environment {
  */
 case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends FwMatrix1D with Matrix[Position1D]
   with ApproximateDistribution[Position1D] {
-  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position1D] = names(Over(First))
+  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position1D] = names(Over(First))
 
   def saveAsIV(file: String, dictionary: String, separator: String)(implicit ctx: C): U[Cell[Position1D]] = {
     import ctx._
@@ -1163,7 +1163,7 @@ case class Matrix1D(data: TypedPipe[Cell[Position1D]]) extends FwMatrix1D with M
 case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D with Matrix[Position2D]
   with ReduceableMatrix[Position2D] with ReshapeableMatrix[Position2D] with MatrixDistance
     with ApproximateDistribution[Position2D] {
-  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position2D] = {
+  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position2D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
       .cross(names(Over(Second)).map { case Position1D(c) => c })
@@ -1310,7 +1310,7 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D with M
  */
 case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends FwMatrix3D with Matrix[Position3D]
   with ReduceableMatrix[Position3D] with ReshapeableMatrix[Position3D] with ApproximateDistribution[Position3D] {
-  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position3D] = {
+  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position3D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
       .cross(names(Over(Second)).map { case Position1D(c) => c })
@@ -1350,7 +1350,7 @@ case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends FwMatrix3D with M
  */
 case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends FwMatrix4D with Matrix[Position4D]
   with ReduceableMatrix[Position4D] with ReshapeableMatrix[Position4D] with ApproximateDistribution[Position4D] {
-  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position4D] = {
+  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position4D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
       .cross(names(Over(Second)).map { case Position1D(c) => c })
@@ -1398,7 +1398,7 @@ case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends FwMatrix4D with M
  */
 case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends FwMatrix5D with Matrix[Position5D]
   with ReduceableMatrix[Position5D] with ReshapeableMatrix[Position5D] with ApproximateDistribution[Position5D] {
-  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position5D] = {
+  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position5D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
       .cross(names(Over(Second)).map { case Position1D(c) => c })
@@ -1450,7 +1450,7 @@ case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends FwMatrix5D with M
  */
 case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends FwMatrix6D with Matrix[Position6D]
   with ReduceableMatrix[Position6D] with ReshapeableMatrix[Position6D] with ApproximateDistribution[Position6D] {
-  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position6D] = {
+  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position6D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
       .cross(names(Over(Second)).map { case Position1D(c) => c })
@@ -1508,7 +1508,7 @@ case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends FwMatrix6D with M
  */
 case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends FwMatrix7D with Matrix[Position7D]
   with ReduceableMatrix[Position7D] with ReshapeableMatrix[Position7D] with ApproximateDistribution[Position7D] {
-  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position7D] = {
+  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position7D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
       .cross(names(Over(Second)).map { case Position1D(c) => c })
@@ -1570,7 +1570,7 @@ case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends FwMatrix7D with M
  */
 case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends FwMatrix8D with Matrix[Position8D]
   with ReduceableMatrix[Position8D] with ReshapeableMatrix[Position8D] with ApproximateDistribution[Position8D] {
-  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position8D] = {
+  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position8D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
       .cross(names(Over(Second)).map { case Position1D(c) => c })
@@ -1636,7 +1636,7 @@ case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends FwMatrix8D with M
  */
 case class Matrix9D(data: TypedPipe[Cell[Position9D]]) extends FwMatrix9D with Matrix[Position9D]
   with ReduceableMatrix[Position9D] with ApproximateDistribution[Position9D] {
-  def domain[T <: Tuner](tuner: T = Default())(implicit ev: DomainTuners#V[T]): U[Position9D] = {
+  def domain[T <: Tuner : DomainTuners](tuner: T = Default()): U[Position9D] = {
     names(Over(First))
       .map { case Position1D(c) => c }
       .cross(names(Over(Second)).map { case Position1D(c) => c })

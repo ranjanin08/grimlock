@@ -48,12 +48,11 @@ trait ApproximateDistribution[P <: Position] extends FwApproximateDistribution[P
       .map { case (p, s) => Cell(p, Content(DiscreteSchema[Long](), s)) }
   }
 
-  type QuantileTuners = TP1
-  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
+  type QuantileTuners[T] = TP1[T]
+  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : QuantileTuners](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
       count: Extract[P, W, Long], value: E[W], filter: Boolean, nan: Boolean, tuner: T = Default())(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
-          ev5: QuantileTuners#V[T]): U[Cell[Q]] = {
+        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]] = {
     val q = QuantileImpl[P, S, Q, W](probs, count, quantiser, name, nan)
 
     data

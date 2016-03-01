@@ -46,7 +46,7 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
       implicit ev1: PosExpDep[slice.S, Q], ev2: slice.S =:= S, ev3: ClassTag[Q], ev4: HistogramTuners#V[T]): U[Cell[Q]]
 
   /** Specifies tuners permitted on a call to `quantile`. */
-  type QuantileTuners <: OneOf
+  type QuantileTuners[_]
 
   /**
    * Compute sample quantiles.
@@ -65,11 +65,10 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
    *
    * @note Non numeric values result in `NaN` quantiles, while missing counts result in no quantiles.
    */
-  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner](slice: Slice[P],
+  def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : QuantileTuners](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
       count: Extract[P, W, Long], value: E[W], filter: Boolean = true, nan: Boolean = false, tuner: T)(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S],
-          ev5: QuantileTuners#V[T]): U[Cell[Q]]
+        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]]
 }
 
 private[grimlock] case class QuantileImpl[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](

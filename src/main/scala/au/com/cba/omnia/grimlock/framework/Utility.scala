@@ -186,6 +186,28 @@ trait OneOf {
   type V[X]
 }
 
+trait UnionTypes {
+  type Not[A] = A => Nothing
+  type NotNot[A] = Not[Not[A]]
+
+  trait Disjunction {
+    self =>
+    type D
+    type Or[S] = Disjunction {
+      type D = self.D with Not[S]
+    }
+  }
+
+  type IsA[T] = {
+    type Or[S] = (Disjunction {type D = Not[T]})#Or[S]
+  }
+
+  type Contains[S, T <: Disjunction] = NotNot[S] <:< Not[T#D]
+  type In[S, T <: Disjunction] = Contains[S, T]
+}
+
+object UnionTypes extends UnionTypes
+
 /** Companion object to `OneOf` trait. */
 object OneOf {
   private type Not[X] = X => Nothing
