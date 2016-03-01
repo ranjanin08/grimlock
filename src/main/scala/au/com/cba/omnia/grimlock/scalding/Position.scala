@@ -21,7 +21,7 @@ import au.com.cba.omnia.grimlock.framework.position.{
   _
 }
 import au.com.cba.omnia.grimlock.framework.utility._
-import au.com.cba.omnia.grimlock.framework.utility.OneOf._
+import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 
 import au.com.cba.omnia.grimlock.scalding._
 
@@ -35,9 +35,9 @@ import scala.reflect.ClassTag
  * @param data The `TypedPipe[Position]`.
  */
 case class Positions[P <: Position](data: TypedPipe[P]) extends FwPositions[P] with Persist[P] {
-  type NamesTuners = OneOf1[Default[NoParameters]]
-  def names[T <: Tuner](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
-    ev2: ClassTag[slice.S], ev3: NamesTuners#V[T]): U[slice.S] = {
+  type NamesTuners[T] = T In IsA[Default[NoParameters]]#Or[Nothing]
+  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    ev2: ClassTag[slice.S]): U[slice.S] = {
     data.map { case p => slice.selected(p) }.distinct(Position.Ordering[slice.S]())
   }
 

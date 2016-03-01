@@ -16,7 +16,6 @@ package au.com.cba.omnia.grimlock.framework.partition
 
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.position._
-import au.com.cba.omnia.grimlock.framework.utility._
 
 import scala.reflect.ClassTag
 
@@ -66,7 +65,7 @@ trait Partitions[P <: Position, I] extends Persist[(I, Cell[P])] {
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])]
 
   /** Specifies tuners permitted on a call to `forAll`. */
-  type ForAllTuners <: OneOf
+  type ForAllTuners[_]
 
   /**
    * Apply function `fn` to all partitions.
@@ -80,8 +79,8 @@ trait Partitions[P <: Position, I] extends Persist[(I, Cell[P])] {
    * @note This will pull all partition ids into memory, so only use this if there is sufficient memory
    *       available to keep all (distinct) partition ids in memory.
    */
-  def forAll[Q <: Position, T <: Tuner](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I] = List(), tuner: T)(
-    implicit ev1: ClassTag[I], ev2: ForAllTuners#V[T]): U[(I, Cell[Q])]
+  def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I] = List(), tuner: T)(
+    implicit ev1: ClassTag[I]): U[(I, Cell[Q])]
 
   /**
    * Apply function `fn` to each partition in `ids`.
@@ -103,14 +102,14 @@ trait Partitions[P <: Position, I] extends Persist[(I, Cell[P])] {
   def get(id: I): U[Cell[P]]
 
   /** Specifies tuners permitted on a call to `ids`. */
-  type IdsTuners <: OneOf
+  type IdsTuners[_]
 
   /**
    * Return the partition identifiers.
    *
    * @param tuner The tuner for the job.
    */
-  def ids[T <: Tuner](tuner: T)(implicit ev1: ClassTag[I], ev2: IdsTuners#V[T]): U[I]
+  def ids[T <: Tuner : IdsTuners](tuner: T)(implicit ev1: ClassTag[I]): U[I]
 
   /**
    * Merge partitions into a single matrix.

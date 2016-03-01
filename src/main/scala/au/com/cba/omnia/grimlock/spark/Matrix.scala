@@ -54,7 +54,7 @@ import au.com.cba.omnia.grimlock.framework.sample._
 import au.com.cba.omnia.grimlock.framework.squash._
 import au.com.cba.omnia.grimlock.framework.transform._
 import au.com.cba.omnia.grimlock.framework.utility._
-import au.com.cba.omnia.grimlock.framework.utility.OneOf._
+import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 import au.com.cba.omnia.grimlock.framework.window._
 
 import au.com.cba.omnia.grimlock.spark.distribution._
@@ -212,42 +212,41 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     data.map { case c => slice.selected(c.position) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
   }
 
-  type PairwiseTuners = OneOf6[Default[NoParameters],
-                               Default[Reducers],
-                               Default[Sequence2[Reducers, Reducers]],
-                               Default[Sequence2[Reducers, Sequence2[Reducers, Reducers]]],
-                               Default[Sequence2[Sequence2[Reducers, Reducers], Reducers]],
-                               Default[Sequence2[Sequence2[Reducers, Reducers], Sequence2[Reducers, Reducers]]]]
-  def pairwise[Q <: Position, T <: Tuner](slice: Slice[P], comparer: Comparer, operators: Operable[P, Q],
+  type PairwiseTuners[T] = T In IsA[Default[NoParameters]]#
+    Or[Default[Reducers]]#
+    Or[Default[Sequence2[Reducers, Reducers]]]#
+    Or[Default[Sequence2[Reducers, Sequence2[Reducers, Reducers]]]]#
+    Or[Default[Sequence2[Sequence2[Reducers, Reducers], Reducers]]]#
+    Or[Default[Sequence2[Sequence2[Reducers, Reducers], Sequence2[Reducers, Reducers]]]]
+
+  def pairwise[Q <: Position, T <: Tuner : PairwiseTuners](slice: Slice[P], comparer: Comparer, operators: Operable[P, Q],
     tuner: T = Default())(implicit ev1: slice.S =!= Position0D, ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S],
-      ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+      ev4: ClassTag[slice.R]): U[Cell[Q]] = {
     val operator = operators()
 
     pairwiseTuples(slice, comparer, tuner)(data, data).flatMap { case (lc, rc) => operator.compute(lc, rc) }
   }
 
-  def pairwiseWithValue[Q <: Position, W, T <: Tuner](slice: Slice[P], comparer: Comparer,
+  def pairwiseWithValue[Q <: Position, W, T <: Tuner : PairwiseTuners](slice: Slice[P], comparer: Comparer,
     operators: OperableWithValue[P, Q, W], value: E[W], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
-      ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
-        ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+      ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R]): U[Cell[Q]] = {
     val operator = operators()
 
     pairwiseTuples(slice, comparer, tuner)(data, data)
       .flatMap { case (lc, rc) => operator.computeWithValue(lc, rc, value) }
   }
 
-  def pairwiseBetween[Q <: Position, T <: Tuner](slice: Slice[P], comparer: Comparer, that: M,
+  def pairwiseBetween[Q <: Position, T <: Tuner : PairwiseTuners](slice: Slice[P], comparer: Comparer, that: M,
     operators: Operable[P, Q], tuner: T = Default())(implicit ev1: slice.S =!= Position0D, ev2: PosExpDep[slice.R, Q],
-      ev3: ClassTag[slice.S], ev4: ClassTag[slice.R], ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+      ev3: ClassTag[slice.S], ev4: ClassTag[slice.R]): U[Cell[Q]] = {
     val operator = operators()
 
     pairwiseTuples(slice, comparer, tuner)(data, that.data).flatMap { case (lc, rc) => operator.compute(lc, rc) }
   }
 
-  def pairwiseBetweenWithValue[Q <: Position, W, T <: Tuner](slice: Slice[P], comparer: Comparer, that: M,
+  def pairwiseBetweenWithValue[Q <: Position, W, T <: Tuner : PairwiseTuners](slice: Slice[P], comparer: Comparer, that: M,
     operators: OperableWithValue[P, Q, W], value: E[W], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
-      ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R],
-        ev5: PairwiseTuners#V[T]): U[Cell[Q]] = {
+      ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R]): U[Cell[Q]] = {
     val operator = operators()
 
     pairwiseTuples(slice, comparer, tuner)(data, that.data)
@@ -604,10 +603,10 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    * @param slice  Encapsulates the dimension for which to compute correlations.
    * @param stuner The summarise tuner for the job.
    * @param ptuner The pairwise tuner for the job.
-   * @return A `U[Cell[Position1D]]` with all pairwise correlations.
+    * @return A `U[Cell[Position1D]]` with all pairwise correlations.
    */
-  def correlation[ST <: Tuner : SummariseTuners, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(), ptuner: PT = Default())(
-    implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R], ev4: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
+  def correlation[ST <: Tuner : SummariseTuners, PT <: Tuner : PairwiseTuners](slice: Slice[Position2D], stuner: ST = Default(), ptuner: PT = Default())(
+    implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
@@ -643,10 +642,10 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    * @param slice  Encapsulates the dimension for which to compute mutual information.
    * @param stuner The summarise tuner for the job.
    * @param ptuner The pairwise tuner for the job.
-   * @return A `U[Cell[Position1D]]` with all pairwise mutual information.
+    * @return A `U[Cell[Position1D]]` with all pairwise mutual information.
    */
-  def mutualInformation[ST <: Tuner : SummariseTuners, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(),
-    ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R], ev4: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
+  def mutualInformation[ST <: Tuner : SummariseTuners, PT <: Tuner : PairwiseTuners](slice: Slice[Position2D], stuner: ST = Default(),
+    ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DRMC2M2D(data: U[Cell[slice.R#M]]): Matrix2D = Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
     val dim = slice match {
@@ -701,10 +700,10 @@ trait MatrixDistance { self: Matrix[Position2D] with ReduceableMatrix[Position2D
    * @param stuner The summarise tuner for the job.
    * @param wtuner The window tuner for the job.
    * @param ptuner The pairwise tuner for the job.
-   * @return A `U[Cell[Position1D]]` with all pairwise Gini indices.
+    * @return A `U[Cell[Position1D]]` with all pairwise Gini indices.
    */
-  def gini[ST <: Tuner : SummariseTuners, WT <: Tuner : SlideTuners, PT <: Tuner](slice: Slice[Position2D], stuner: ST = Default(),
-    wtuner: WT = Default(), ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R], ev5: PairwiseTuners#V[PT]): U[Cell[Position1D]] = {
+  def gini[ST <: Tuner : SummariseTuners, WT <: Tuner : SlideTuners, PT <: Tuner : PairwiseTuners](slice: Slice[Position2D], stuner: ST = Default(),
+    wtuner: WT = Default(), ptuner: PT = Default())(implicit ev1: ClassTag[slice.S], ev2: ClassTag[slice.R]): U[Cell[Position1D]] = {
     implicit def UP2DSC2M1D(data: U[Cell[slice.S]]): Matrix1D = Matrix1D(data.asInstanceOf[U[Cell[Position1D]]])
     implicit def UP2DSMC2M2D(data: U[Cell[slice.S#M]]): Matrix2D = Matrix2D(data.asInstanceOf[U[Cell[Position2D]]])
 
