@@ -154,7 +154,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   //type DomainTuners = TP1
   type DomainTuners[T] = TP1[T]
 
-  type FillHeterogeneousTuners[T] = Aux3[T]
+  type FillHeterogeneousTuners[T] = TP3[T]
   def fillHeterogeneous[S <: Position, T <: Tuner : FillHeterogeneousTuners](slice: Slice[P], values: U[Cell[S]], tuner: T = Default())(
     implicit ev1: ClassTag[P], ev2: ClassTag[slice.S], ev3: slice.S =:= S): U[Cell[P]] = {
     val (p1, p2) = tuner.parameters match {
@@ -188,7 +188,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       .map { case (_, (c, _)) => c }
   }
 
-  type JoinTuners[T] = Aux3[T]
+  type JoinTuners[T] = TP3[T]
   def join[T <: Tuner : JoinTuners](slice: Slice[P], that: M, tuner: T = Default())(implicit ev1: P =!= Position1D,
     ev2: ClassTag[slice.S]): U[Cell[P]] = {
     val (p1, p2) = tuner.parameters match {

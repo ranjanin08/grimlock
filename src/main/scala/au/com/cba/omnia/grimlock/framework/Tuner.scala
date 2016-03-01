@@ -119,7 +119,7 @@ private[grimlock] trait DefaultTuners {
 
   // TODO
   protected type TP1[T] = T In IsA[Default[NoParameters]]#Or[Nothing]
-  protected type Aux3[T] = T In IsA[Default[NoParameters]]#Or[Default[Reducers]]#Or[Default[Sequence2[Reducers, Reducers]]]
+  protected type TP3[T] = T In IsA[Default[NoParameters]]#Or[Default[Reducers]]#Or[Default[Sequence2[Reducers, Reducers]]]
   protected type Aux2[T] = T In IsA[Default[NoParameters]]#Or[Default[Reducers]]
 }
 
