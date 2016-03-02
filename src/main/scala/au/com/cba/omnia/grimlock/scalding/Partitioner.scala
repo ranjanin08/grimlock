@@ -35,7 +35,7 @@ case class Partitions[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])])
   with Persist[(I, Cell[P])] {
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  type ForAllTuners[T] = T In IsA[Default[Execution]]#Or[Default[Sequence2[Reducers, Execution]]]
+  type ForAllTuners[T] = T In OneOf[Default[Execution]]#Or[Default[Sequence2[Reducers, Execution]]]
   def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T)(
     implicit ev1: ClassTag[I]): U[(I, Cell[Q])] = {
     val (context, identifiers) = tuner.parameters match {
@@ -61,7 +61,7 @@ case class Partitions[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])])
 
   def get(id: I): U[Cell[P]] = data.collect { case (i, c) if (id == i) => c }
 
-  type IdsTuners[T] = T In IsA[Default[NoParameters]]#Or[Default[Reducers]]
+  type IdsTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
 
   def ids[T <: Tuner : IdsTuners](tuner: T = Default())(implicit ev1: ClassTag[I]): U[I] = {
     val keys = Grouped(data.map { case (i, _) => (i, ()) })

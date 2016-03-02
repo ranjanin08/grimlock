@@ -191,12 +191,17 @@ trait UnionTypes {
     }
   }
 
-  type IsA[T] = {
+  type OneOf[T] = {
     type Or[S] = (Disjunction {type D = Not[T]})#Or[S]
   }
 
+
+
+
   type Contains[S, T <: Disjunction] = NotNot[S] <:< Not[T#D]
   type In[S, T <: Disjunction] = Contains[S, T]
+
+  //type Is[S, T <: Disjunction] = Contains[S, IsA[T]#Or[Nothing]]
 }
 
 object UnionTypes extends UnionTypes

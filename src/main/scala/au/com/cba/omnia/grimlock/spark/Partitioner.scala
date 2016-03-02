@@ -38,7 +38,7 @@ case class Partitions[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]) exten
 
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
-  type ForAllTuners[T] = T In IsA[Default[NoParameters]]#Or[Default[Reducers]]
+  type ForAllTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
   def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T = Default())(
     implicit ev1: ClassTag[I]): U[(I, Cell[Q])] = {
     forEach(ids(tuner).toLocalIterator.toList.filter(!exclude.contains(_)), fn)
@@ -52,7 +52,7 @@ case class Partitions[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]) exten
 
   def get(id: I): U[Cell[P]] = data.collect { case (i, c) if (id == i) => c }
 
-  type IdsTuners[T] = T In IsA[Default[NoParameters]]#Or[Default[Reducers]]
+  type IdsTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
   def ids[T <: Tuner : IdsTuners](tuner: T = Default())(implicit ev1: ClassTag[I]): U[I] = {
     data.keys.tunedDistinct(tuner.parameters)
   }

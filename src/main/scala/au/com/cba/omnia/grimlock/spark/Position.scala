@@ -39,7 +39,7 @@ case class Positions[P <: Position](data: RDD[P]) extends FwPositions[P] with Pe
 
   import SparkImplicits._
 
-  type NamesTuners[T] = T In IsA[Default[NoParameters]]#Or[Default[Reducers]]
+  type NamesTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
   def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
     ev2: ClassTag[slice.S]): U[slice.S] = {
     data.map { case p => slice.selected(p) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())

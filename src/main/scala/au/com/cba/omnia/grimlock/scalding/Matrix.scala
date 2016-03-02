@@ -210,7 +210,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     //type DomainTuners = TP1
   type DomainTuners[T] = TP1[T]
 
-  type FillHeterogeneousTuners[T] = T In IsA[InMemory[NoParameters]]#
+  type FillHeterogeneousTuners[T] = T In OneOf[InMemory[NoParameters]]#
     Or[InMemory[Reducers]]#
     Or[Default[NoParameters]]#
     Or[Default[Reducers]]
@@ -270,7 +270,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     }
   }
 
-  type JoinTuners[T] = T In IsA[InMemory[NoParameters]]#
+  type JoinTuners[T] = T In OneOf[InMemory[NoParameters]]#
     Or[InMemory[Reducers]]#
     Or[Default[NoParameters]]#
     Or[Default[Reducers]]#
@@ -303,7 +303,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     }
   }
 
-  type MaterialiseTuners[T] = T In IsA[Default[Execution]]#Or[Nothing]
+  type MaterialiseTuners[T] = T In OneOf[Default[Execution]]#Or[Nothing]
   def materialise[T <: Tuner : MaterialiseTuners](tuner: T): List[Cell[P]] = {
     val context = tuner.parameters match {
       case Execution(ctx) => ctx
@@ -325,7 +325,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       .tunedDistinct(tuner.parameters)
   }
 
-  type PairwiseTuners[T] = T In IsA[InMemory[NoParameters]]#
+  type PairwiseTuners[T] = T In OneOf[InMemory[NoParameters]]#
     Or[Default[NoParameters]]#
     Or[Default[Reducers]]#
     Or[Default[Sequence2[Redistribute, Redistribute]]]#
@@ -435,7 +435,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     }
   }
 
-  type SlideTuners[T] = T In IsA[Default[NoParameters]]#
+  type SlideTuners[T] = T In OneOf[Default[NoParameters]]#
     Or[Default[Redistribute]]#
     Or[Default[Reducers]]#
     Or[Default[Sequence2[Redistribute, Reducers]]]

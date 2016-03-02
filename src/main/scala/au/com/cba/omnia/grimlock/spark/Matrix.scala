@@ -212,7 +212,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     data.map { case c => slice.selected(c.position) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
   }
 
-  type PairwiseTuners[T] = T In IsA[Default[NoParameters]]#
+  type PairwiseTuners[T] = T In OneOf[Default[NoParameters]]#
     Or[Default[Reducers]]#
     Or[Default[Sequence2[Reducers, Reducers]]]#
     Or[Default[Sequence2[Reducers, Sequence2[Reducers, Reducers]]]]#
