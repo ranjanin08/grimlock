@@ -303,7 +303,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     }
   }
 
-  type MaterialiseTuners[T] = T In OneOf[Default[Execution]]#Or[Nothing]
+  type MaterialiseTuners[T] = T Is Default[Execution]
   def materialise[T <: Tuner : MaterialiseTuners](tuner: T): List[Cell[P]] = {
     val context = tuner.parameters match {
       case Execution(ctx) => ctx

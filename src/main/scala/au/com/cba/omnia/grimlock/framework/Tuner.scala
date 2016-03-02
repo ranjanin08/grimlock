@@ -115,7 +115,7 @@ object Unbalanced {
 /** Some common sets of default permitted tuners. */
 private[grimlock] trait DefaultTuners {
 
-  protected type TP1[T] = T In OneOf[Default[NoParameters]]#Or[Nothing]
+  protected type TP1[T] = T Is Default[NoParameters]
 
   protected type TP2[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
 

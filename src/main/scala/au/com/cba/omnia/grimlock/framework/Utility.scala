@@ -200,8 +200,8 @@ trait UnionTypes {
 
   type Contains[S, T <: Disjunction] = NotNot[S] <:< Not[T#D]
   type In[S, T <: Disjunction] = Contains[S, T]
+  type Is[S, T] = Contains[S, OneOf[T]#Or[Nothing]]
 
-  //type Is[S, T <: Disjunction] = Contains[S, IsA[T]#Or[Nothing]]
 }
 
 object UnionTypes extends UnionTypes
