@@ -12,10 +12,13 @@ install:
 - ci/sbt-setup.sh
 - ci/sbt-setup-version.sh
 script:
-- sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci '; set fork in Test := false; test; package; assembly' && ci/sbt-deploy.sh && ci/gh-pages.sh
+- sbt -Dsbt.global.base=$TRAVIS_BUILD_DIR/ci '; set fork in Test := false; test; package;
+  assembly' && ci/sbt-deploy.sh && ci/sbt-gh-pages-ssh.sh
 after_script:
 - rm -rf ci
 env:
   global:
-  - secure: ZLm2hdvkshTqzDvxUeUv1JeQantfGSYMEvl7C97FXZfyZIsLY5YDxUKxHfy8iH51BT9/t50mpUFChNFP9PMx7JWTES4dW3L6CPP4w235Ch3m4DHc6Ftx6yR2ajgrV/5zpDgozka0CVTsTWevy84E308BZ/EH/nWJutt0Ub/iWOY=
-  - secure: ctmqG04eKEAPnwl35sxYv97+e8Mukmn46muNbacPvrD9Z5s3edu9xSqtwS0UCYV89AT0xQhJL0HJkR5yI0y0OU0tGaLPKMaytLt1LlgGRl2frQfVm9xF8efZMqqe3CJy49UkrGpva+ROfywuuSyIt2IN5xCjYFeZb5zDzxsiuno=
+    secure: Q15hB1HzA3snnmKZaErGwV3gjyA19EuDUIxA1Y8dcrLc876uMfizyPB3OTMJEzT4dh6Q0zeD21E13xdYm4oHqYS0KLbFR35hkx47vaJ5BL9cy0DT/alp6JmKT/B4/LrUJlEnjL0tqfHquDOq6X3rRJlinet9OR/qYCJmBLwgQk4=
+before_install:
+- openssl aes-256-cbc -K $encrypted_b4703176de36_key -iv $encrypted_b4703176de36_iv
+  -in .travis/deploy-key.enc -out .travis/deploy-key.pem -d
