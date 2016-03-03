@@ -20,13 +20,12 @@ import au.com.cba.omnia.grimlock.framework.position.{
   PositionDistributable => FwPositionDistributable,
   _
 }
-import au.com.cba.omnia.grimlock.framework.utility._
 import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
-
 import au.com.cba.omnia.grimlock.spark._
 import au.com.cba.omnia.grimlock.spark.environment._
 
 import org.apache.spark.rdd.RDD
+import shapeless.=:!=
 
 import scala.reflect.ClassTag
 
@@ -40,7 +39,7 @@ case class Positions[P <: Position](data: RDD[P]) extends FwPositions[P] with Pe
   import SparkImplicits._
 
   type NamesTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
-  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
     ev2: ClassTag[slice.S]): U[slice.S] = {
     data.map { case p => slice.selected(p) }.tunedDistinct(tuner.parameters)(Position.Ordering[slice.S]())
   }

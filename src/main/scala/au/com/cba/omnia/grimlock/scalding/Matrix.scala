@@ -74,6 +74,7 @@ import java.nio.file.attribute.PosixFilePermissions
 import java.nio.file.{ Files, Paths }
 
 import org.apache.hadoop.io.Writable
+import shapeless.=:!=
 
 import scala.collection.immutable.HashSet
 import scala.collection.JavaConverters._
@@ -192,7 +193,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
       .sum(semigroup)
   }
 
-  def compact[T <: Tuner : CompactTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+  def compact[T <: Tuner : CompactTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
     ev2: ClassTag[slice.S]): E[Map[slice.S, slice.C]] = {
     val semigroup = new com.twitter.algebird.Semigroup[Map[slice.S, slice.C]] {
       def plus(l: Map[slice.S, slice.C], r: Map[slice.S, slice.C]): Map[slice.S, slice.C] = l ++ r
@@ -278,7 +279,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     Or[Unbalanced[Reducers]]#
     Or[Unbalanced[Sequence2[Reducers, Reducers]]]
 
-  def join[T <: Tuner : JoinTuners](slice: Slice[P], that: M, tuner: T = Default())(implicit ev1: P =!= Position1D,
+  def join[T <: Tuner : JoinTuners](slice: Slice[P], that: M, tuner: T = Default())(implicit ev1: P =:!= Position1D,
     ev2: ClassTag[slice.S]): U[Cell[P]] = {
     val (p1, p2) = (tuner, tuner.parameters) match {
       case (_, Sequence2(f, s)) => (f, s)
@@ -318,7 +319,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   type NamesTuners[T] = TP2[T]
-  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+  def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
     ev2: ClassTag[slice.S]): U[slice.S] = {
     data
       .map { case c => slice.selected(c.position) }
@@ -341,7 +342,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
     Or[Unbalanced[Sequence2[Sequence2[Redistribute, Reducers], Sequence2[Redistribute, Reducers]]]]
 
   def pairwise[Q <: Position, T <: Tuner : PairwiseTuners](slice: Slice[P], comparer: Comparer, operators: Operable[P, Q],
-    tuner: T = Default())(implicit ev1: slice.S =!= Position0D, ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S],
+    tuner: T = Default())(implicit ev1: slice.S =:!= Position0D, ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S],
       ev4: ClassTag[slice.R]): U[Cell[Q]] = {
     val operator = operators()
 
@@ -349,7 +350,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   def pairwiseWithValue[Q <: Position, W, T <: Tuner : PairwiseTuners](slice: Slice[P], comparer: Comparer,
-    operators: OperableWithValue[P, Q, W], value: E[W], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    operators: OperableWithValue[P, Q, W], value: E[W], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
       ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R]): U[Cell[Q]] = {
     val operator = operators()
 
@@ -358,7 +359,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   def pairwiseBetween[Q <: Position, T <: Tuner : PairwiseTuners](slice: Slice[P], comparer: Comparer, that: M,
-    operators: Operable[P, Q], tuner: T = Default())(implicit ev1: slice.S =!= Position0D, ev2: PosExpDep[slice.R, Q],
+    operators: Operable[P, Q], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D, ev2: PosExpDep[slice.R, Q],
       ev3: ClassTag[slice.S], ev4: ClassTag[slice.R]): U[Cell[Q]] = {
     val operator = operators()
 
@@ -366,7 +367,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   def pairwiseBetweenWithValue[Q <: Position, W, T <: Tuner : PairwiseTuners](slice: Slice[P], comparer: Comparer, that: M,
-    operators: OperableWithValue[P, Q, W], value: E[W], tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+    operators: OperableWithValue[P, Q, W], value: E[W], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
       ev2: PosExpDep[slice.R, Q], ev3: ClassTag[slice.S], ev4: ClassTag[slice.R]): U[Cell[Q]] = {
     val operator = operators()
 
@@ -442,7 +443,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
 
   def slide[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, T <: Tuner : SlideTuners](
     slice: Slice[P], windows: Windowable[P, S, R, Q], ascending: Boolean = true, tuner: T = Default())(
-      implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D, ev4: PosExpDep[S, Q],
+      implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =:!= Position0D, ev4: PosExpDep[S, Q],
         ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
     val window = windows()
     val (partitions, reducers) = tuner.parameters match {
@@ -470,7 +471,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
 
   def slideWithValue[S <: Position with ExpandablePosition, R <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : SlideTuners](
     slice: Slice[P], windows: WindowableWithValue[P, S, R, Q, W], value: E[W], ascending: Boolean = true,
-      tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =!= Position0D,
+      tuner: T = Default())(implicit ev1: slice.S =:= S, ev2: slice.R =:= R, ev3: slice.R =:!= Position0D,
         ev4: PosExpDep[S, Q], ev5: ClassTag[slice.S], ev6: ClassTag[slice.R]): U[Cell[Q]] = {
     val window = windows()
     val (partitions, reducers) = tuner.parameters match {
@@ -654,7 +655,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   type TypesTuners[T] = TP2[T]
-  def types[T <: Tuner : TypesTuners](slice: Slice[P], specific: Boolean, tuner: T = Default())(implicit ev1: slice.S =!= Position0D,
+  def types[T <: Tuner : TypesTuners](slice: Slice[P], specific: Boolean, tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
     ev2: ClassTag[slice.S]): U[(slice.S, Type)] = {
     Grouped(data.map { case Cell(p, c) => (slice.selected(p), c.schema.kind) })
       .tuneReducers(tuner.parameters)
@@ -672,7 +673,7 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   def uniqueByPositions[T <: Tuner : UniqueTuners](slice: Slice[P], tuner: T = Default())
-                                   (implicit ev1: slice.S =!= Position0D): U[(slice.S, Content)] = {
+                                   (implicit ev1: slice.S =:!= Position0D): U[(slice.S, Content)] = {
     val ordering = new Ordering[Cell[slice.S]] {
       def compare(l: Cell[slice.S], r: Cell[slice.S]) = l.toString().compare(r.toString)
     }
@@ -787,7 +788,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends FwReduceab
   import ScaldingImplicits._
 
   def melt(dim: Dimension, into: Dimension, separator: String = ".")(implicit ev1: PosDimDep[P, dim.D],
-    ev2: PosDimDep[P, into.D], ne: dim.D =!= into.D): U[Cell[P#L]] = {
+    ev2: PosDimDep[P, into.D], ne: dim.D =:!= into.D): U[Cell[P#L]] = {
     data.map { case Cell(p, c) => Cell(p.melt(dim, into, separator), c) }
   }
 
@@ -1163,7 +1164,7 @@ case class Matrix2D(data: TypedPipe[Cell[Position2D]]) extends FwMatrix2D with M
   }
 
   def permute(dim1: Dimension, dim2: Dimension)(implicit ev1: PosDimDep[Position2D, dim1.D],
-    ev2: PosDimDep[Position2D, dim2.D], ev3: dim1.D =!= dim2.D): U[Cell[Position2D]] = {
+    ev2: PosDimDep[Position2D, dim2.D], ev3: dim1.D =:!= dim2.D): U[Cell[Position2D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2)), c) }
   }
 
