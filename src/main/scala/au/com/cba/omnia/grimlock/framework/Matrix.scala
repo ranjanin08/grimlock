@@ -788,7 +788,7 @@ trait Matrix3D extends Matrix[Position3D] with ReduceableMatrix[Position3D] with
    */
   def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension)(implicit ev1: PosDimDep[Position3D, dim1.D],
     ev2: PosDimDep[Position3D, dim2.D], ev3: PosDimDep[Position3D, dim3.D],
-      ev4: Distinct3[dim1.D, dim2.D, dim3.D]): U[Cell[Position3D]]
+      ev4: Distinct[(dim1.D, dim2.D, dim3.D)]): U[Cell[Position3D]]
 }
 
 /** Base trait for 4D specific operations. */
@@ -805,7 +805,7 @@ trait Matrix4D extends Matrix[Position4D] with ReduceableMatrix[Position4D] with
  def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension)(
    implicit ev1: PosDimDep[Position4D, dim1.D], ev2: PosDimDep[Position4D, dim2.D],
      ev3: PosDimDep[Position4D, dim3.D], ev4: PosDimDep[Position4D, dim4.D],
-       ev5: Distinct4[dim1.D, dim2.D, dim3.D, dim4.D]): U[Cell[Position4D]]
+       ev5: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D)]): U[Cell[Position4D]]
 }
 
 /** Base trait for 5D specific operations. */
@@ -823,7 +823,7 @@ trait Matrix5D extends Matrix[Position5D] with ReduceableMatrix[Position5D]
   def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension)(
     implicit ev1: PosDimDep[Position5D, dim1.D], ev2: PosDimDep[Position5D, dim2.D],
       ev3: PosDimDep[Position5D, dim3.D], ev4: PosDimDep[Position5D, dim4.D], ev5: PosDimDep[Position5D, dim5.D],
-        ev6: Distinct5[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D]): U[Cell[Position5D]]
+        ev6: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D, dim5.D)]): U[Cell[Position5D]]
 }
 
 /** Base trait for 6D specific operations. */
@@ -843,7 +843,7 @@ trait Matrix6D extends Matrix[Position6D] with ReduceableMatrix[Position6D] with
     implicit ev1: PosDimDep[Position6D, dim1.D], ev2: PosDimDep[Position6D, dim2.D],
       ev3: PosDimDep[Position6D, dim3.D], ev4: PosDimDep[Position6D, dim4.D],
         ev5: PosDimDep[Position6D, dim5.D], ev6: PosDimDep[Position6D, dim6.D],
-          ev7: Distinct6[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D]): U[Cell[Position6D]]
+          ev7: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D)]): U[Cell[Position6D]]
 }
 
 /** Base trait for 7D specific operations. */
@@ -864,7 +864,7 @@ trait Matrix7D extends Matrix[Position7D] with ReduceableMatrix[Position7D] with
     dim7: Dimension)(implicit ev1: PosDimDep[Position7D, dim1.D], ev2: PosDimDep[Position7D, dim2.D],
       ev3: PosDimDep[Position7D, dim3.D], ev4: PosDimDep[Position7D, dim4.D], ev5: PosDimDep[Position7D, dim5.D],
         ev6: PosDimDep[Position7D, dim6.D], ev7: PosDimDep[Position7D, dim7.D],
-          ev8: Distinct7[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D]): U[Cell[Position7D]]
+          ev8: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D)]): U[Cell[Position7D]]
 }
 
 /** Base trait for 8D specific operations. */
@@ -886,7 +886,7 @@ trait  Matrix8D extends Matrix[Position8D] with ReduceableMatrix[Position8D] wit
     dim7: Dimension, dim8: Dimension)(implicit ev1: PosDimDep[Position8D, dim1.D], ev2: PosDimDep[Position8D, dim2.D],
       ev3: PosDimDep[Position8D, dim3.D], ev4: PosDimDep[Position8D, dim4.D], ev5: PosDimDep[Position8D, dim5.D],
         ev6: PosDimDep[Position8D, dim6.D], ev7: PosDimDep[Position8D, dim7.D], ev8: PosDimDep[Position8D, dim8.D],
-          ev9: Distinct8[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D]): U[Cell[Position8D]]
+          ev9: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D)]): U[Cell[Position8D]]
 }
 
 /** Base trait for 9D specific operations. */
@@ -909,7 +909,7 @@ trait Matrix9D extends Matrix[Position9D] with ReduceableMatrix[Position9D] with
       ev2: PosDimDep[Position9D, dim2.D], ev3: PosDimDep[Position9D, dim3.D], ev4: PosDimDep[Position9D, dim4.D],
         ev5: PosDimDep[Position9D, dim5.D], ev6: PosDimDep[Position9D, dim6.D], ev7: PosDimDep[Position9D, dim7.D],
           ev8: PosDimDep[Position9D, dim8.D], ev9: PosDimDep[Position9D, dim9.D],
-            ev10: Distinct9[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D, dim9.D]): U[Cell[Position9D]]
+            ev10: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D, dim9.D)]): U[Cell[Position9D]]
 }
 
 /**

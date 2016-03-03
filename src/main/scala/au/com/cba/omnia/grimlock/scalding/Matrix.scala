@@ -1312,7 +1312,7 @@ case class Matrix3D(data: TypedPipe[Cell[Position3D]]) extends FwMatrix3D with M
 
   def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension)(implicit ev1: PosDimDep[Position3D, dim1.D],
     ev2: PosDimDep[Position3D, dim2.D], ev3: PosDimDep[Position3D, dim3.D],
-      ev4: Distinct3[dim1.D, dim2.D, dim3.D]): U[Cell[Position3D]] = {
+      ev4: Distinct[(dim1.D, dim2.D, dim3.D)]): U[Cell[Position3D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3)), c) }
   }
 
@@ -1354,7 +1354,7 @@ case class Matrix4D(data: TypedPipe[Cell[Position4D]]) extends FwMatrix4D with M
   def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension)(
     implicit ev1: PosDimDep[Position4D, dim1.D], ev2: PosDimDep[Position4D, dim2.D],
       ev3: PosDimDep[Position4D, dim3.D], ev4: PosDimDep[Position4D, dim4.D],
-        ev5: Distinct4[dim1.D, dim2.D, dim3.D, dim4.D]): U[Cell[Position4D]] = {
+        ev5: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D)]): U[Cell[Position4D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4)), c) }
   }
 
@@ -1403,7 +1403,7 @@ case class Matrix5D(data: TypedPipe[Cell[Position5D]]) extends FwMatrix5D with M
   def permute(dim1: Dimension, dim2: Dimension, dim3: Dimension, dim4: Dimension, dim5: Dimension)(
     implicit ev1: PosDimDep[Position5D, dim1.D], ev2: PosDimDep[Position5D, dim2.D],
       ev3: PosDimDep[Position5D, dim3.D], ev4: PosDimDep[Position5D, dim4.D], ev5: PosDimDep[Position5D, dim5.D],
-          ev6: Distinct5[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D]): U[Cell[Position5D]] = {
+          ev6: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D, dim5.D)]): U[Cell[Position5D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5)), c) }
   }
 
@@ -1457,7 +1457,7 @@ case class Matrix6D(data: TypedPipe[Cell[Position6D]]) extends FwMatrix6D with M
     implicit ev1: PosDimDep[Position6D, dim1.D], ev2: PosDimDep[Position6D, dim2.D],
       ev3: PosDimDep[Position6D, dim3.D], ev4: PosDimDep[Position6D, dim4.D],
         ev5: PosDimDep[Position6D, dim5.D], ev6: PosDimDep[Position6D, dim6.D],
-          ev7: Distinct6[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D]): U[Cell[Position6D]] = {
+          ev7: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D)]): U[Cell[Position6D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6)), c) }
   }
 
@@ -1516,7 +1516,7 @@ case class Matrix7D(data: TypedPipe[Cell[Position7D]]) extends FwMatrix7D with M
     dim7: Dimension)(implicit ev1: PosDimDep[Position7D, dim1.D], ev2: PosDimDep[Position7D, dim2.D],
       ev3: PosDimDep[Position7D, dim3.D], ev4: PosDimDep[Position7D, dim4.D], ev5: PosDimDep[Position7D, dim5.D],
         ev6: PosDimDep[Position7D, dim6.D], ev7: PosDimDep[Position7D, dim7.D],
-          ev8: Distinct7[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D]): U[Cell[Position7D]] = {
+          ev8: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D)]): U[Cell[Position7D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6, dim7)), c) }
   }
 
@@ -1579,7 +1579,7 @@ case class Matrix8D(data: TypedPipe[Cell[Position8D]]) extends FwMatrix8D with M
     dim7: Dimension, dim8: Dimension)(implicit ev1: PosDimDep[Position8D, dim1.D], ev2: PosDimDep[Position8D, dim2.D],
       ev3: PosDimDep[Position8D, dim3.D], ev4: PosDimDep[Position8D, dim4.D], ev5: PosDimDep[Position8D, dim5.D],
         ev6: PosDimDep[Position8D, dim6.D], ev7: PosDimDep[Position8D, dim7.D], ev8: PosDimDep[Position8D, dim8.D],
-            ev9: Distinct8[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D]): U[Cell[Position8D]] = {
+            ev9: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D)]): U[Cell[Position8D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6, dim7, dim8)), c) }
   }
 
@@ -1647,7 +1647,7 @@ case class Matrix9D(data: TypedPipe[Cell[Position9D]]) extends FwMatrix9D with M
       ev2: PosDimDep[Position9D, dim2.D], ev3: PosDimDep[Position9D, dim3.D], ev4: PosDimDep[Position9D, dim4.D],
         ev5: PosDimDep[Position9D, dim5.D], ev6: PosDimDep[Position9D, dim6.D], ev7: PosDimDep[Position9D, dim7.D],
           ev8: PosDimDep[Position9D, dim8.D], ev9: PosDimDep[Position9D, dim9.D],
-            ev10: Distinct9[dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D, dim9.D]): U[Cell[Position9D]] = {
+            ev10: Distinct[(dim1.D, dim2.D, dim3.D, dim4.D, dim5.D, dim6.D, dim7.D, dim8.D, dim9.D)]): U[Cell[Position9D]] = {
     data.map { case Cell(p, c) => Cell(p.permute(List(dim1, dim2, dim3, dim4, dim5, dim6, dim7, dim8, dim9)), c) }
   }
 
