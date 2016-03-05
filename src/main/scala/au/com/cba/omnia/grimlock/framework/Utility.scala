@@ -17,30 +17,6 @@ package au.com.cba.omnia.grimlock.framework.utility
 import shapeless._
 import shapeless.ops.hlist._
 
-    object Foo {
-
-    import scala.util.Random
-    import shapeless._, poly._, ops.hlist._
-
-    trait C[A]
-    case class D[A](a: A) extends C[A]
-
-    val r = new Random(0)
-    val Seq(b1T, b2T, b3F) = Seq.fill(3)(r.nextBoolean)
-    val lst = (b1T, D(1)) :: (b2T, D(2f)) :: (b3F, D(3d)) :: HNil
-
-    object booleanFilter extends Poly2 {
-      implicit def hnilFilter[T, A[X] <: C[X]] = at[(Boolean, A[T]), HNil]{ case((b,a), acc) => if(b) a :: acc else acc }
-
-      implicit def filter[T, A[X] <: C[X], ACC <: HList](implicit lub: LUBConstraint[ACC, C[_]]) =
-        at[(Boolean, A[T]), ACC]{ case ((b, a), acc) => if (b) a :: acc else acc }
-    }
-
-      def filter[L <: HList, F <: HList](l: L)(implicit
-                                               lub: LUBConstraint[L, (Boolean, C[_])],
-                                               rf: RightFolder.Aux[L, HNil.type, booleanFilter.type, F]): F =
-        l.foldRight(HNil)(booleanFilter)
-    }
 /** Base trait for ecaping special characters in a string. */
 trait Escape {
   /** The special character to escape. */
