@@ -19,7 +19,6 @@ import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => 
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 
-
 import au.com.cba.omnia.grimlock.spark._
 
 import org.apache.spark.rdd.RDD
@@ -39,8 +38,8 @@ case class Partitions[P <: Position, I: Ordering](data: RDD[(I, Cell[P])]) exten
   def add(id: I, partition: U[Cell[P]]): U[(I, Cell[P])] = data ++ (partition.map { case c => (id, c) })
 
   type ForAllTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
-  def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I], tuner: T = Default())(
-    implicit ev1: ClassTag[I]): U[(I, Cell[Q])] = {
+  def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I],
+    tuner: T = Default())(implicit ev1: ClassTag[I]): U[(I, Cell[Q])] = {
     forEach(ids(tuner).toLocalIterator.toList.filter(!exclude.contains(_)), fn)
   }
 

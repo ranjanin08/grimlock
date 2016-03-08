@@ -54,9 +54,7 @@ private[transform] object Transform {
 
 /** Create indicator variables. */
 case class Indicator[P <: Position]() extends Transformer[P, P] {
-  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = {
-    Some(Cell(cell.position, Content(DiscreteSchema[Long](), 1)))
-  }
+  def present(cell: Cell[P]): TraversableOnce[Cell[P]] = Some(Cell(cell.position, Content(DiscreteSchema[Long](), 1)))
 }
 
 /**

@@ -25,6 +25,7 @@ trait TunerParameters extends java.io.Serializable {
    * Create a sequence of tune operations.
    *
    * @param parameters The operations (parameters) to perform after this.
+   *
    * @return A sequence of `this` followed by `parameters`.
    */
   def |->[Q <: TunerParameters](parameters: Q): Sequence2[P, Q] = Sequence2(this.asInstanceOf[P], parameters)

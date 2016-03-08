@@ -60,9 +60,6 @@ case object ExampleEventSchema extends StructuredSchema {
   val kind = Type.Structured
 
   def validate(value: Value { type V = S }): Boolean = true
-
-  protected def paramString(short: Boolean, f: (S) => String): String = ""
-  protected def typeString(): String = ""
 }
 
 // Define a codec for dealing with the example event. Note that comparison, for this example, is simply comparison
@@ -93,8 +90,6 @@ case object ExampleEventCodec extends StructuredCodec {
   }
 
   def toShortString() = "exampleevent"
-
-  def tag(): Option[scala.reflect.ClassTag[C]] = None
 }
 
 // Transformer for denormalising events; that is, create a separate cell in the matrix for each (event, instance) pair.

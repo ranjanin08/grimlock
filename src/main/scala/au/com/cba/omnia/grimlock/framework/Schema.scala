@@ -39,10 +39,10 @@ trait Schema {
   def validate(value: Value { type V = S }): Boolean
 
   /**
-    * Return a consise (terse) string representation of a schema.
-    *
-    * @param codec The codec used to encode this schema's data.
-    */
+   * Return a consise (terse) string representation of a schema.
+   *
+   * @param codec The codec used to encode this schema's data.
+   */
   def toShortString(codec: Codec { type C = S }): String = {
     kind.toShortString + round(paramString(true, s => codec.encode(s)))
   }
@@ -51,8 +51,8 @@ trait Schema {
     this.getClass.getSimpleName + square(typeString()) + "(" + paramString(false, s => s.toString) + ")"
   }
 
-  protected def paramString(short: Boolean, f: (S) => String): String
-  protected def typeString(): String
+  protected def paramString(short: Boolean, f: (S) => String): String = ""
+  protected def typeString(): String = ""
 
   private def round(str: String): String = if (str.isEmpty) str else "(" + str + ")"
   private def square(str: String): String = if (str.isEmpty) str else "[" + str + "]"
@@ -81,7 +81,7 @@ object Schema {
 }
 
 /** Trait for dealing with schema parameters. */
-trait SchemaParameters {
+private[metadata] trait SchemaParameters {
   protected def parse(codec: Codec, value: String): Option[codec.C] = codec.decode(value).map(_.value)
 
   protected def parseRange(codec: Codec, range: String): Option[(codec.C, codec.C)] = {
@@ -159,8 +159,8 @@ case class ContinuousSchema[T: ClassTag] private (range: Option[(T, T)])(
 
   def validate(value: Value { type V = S }): Boolean = validateRange(value)
 
-  protected def paramString(short: Boolean, f: (S) => String): String = writeRange(short, range, f)
-  protected def typeString(): String = classTag[T].runtimeClass.getName.capitalize
+  override protected def paramString(short: Boolean, f: (S) => String): String = writeRange(short, range, f)
+  override protected def typeString(): String = classTag[T].runtimeClass.getName.capitalize
 }
 
 /** Companion object to `ContinuousSchema` case class. */
@@ -218,10 +218,10 @@ case class DiscreteSchema[T: ClassTag] private (range: Option[(T, T)], step: Opt
     validateRange(value) && step.map { case s => (value.value % s) == 0 }.getOrElse(true)
   }
 
-  protected def paramString(short: Boolean, f: (S) => String): String = {
+  override protected def paramString(short: Boolean, f: (S) => String): String = {
     step.map { s => writeRange(short, range, f) + "," + f(s) }.getOrElse("")
   }
-  protected def typeString(): String = classTag[T].runtimeClass.getName.capitalize
+  override protected def typeString(): String = classTag[T].runtimeClass.getName.capitalize
 }
 
 /** Companion object to `DiscreteSchema` case class. */
@@ -287,8 +287,8 @@ trait CategoricalSchema[T] extends Schema with SchemaParameters {
 case class NominalSchema[T: ClassTag](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
   val kind = Type.Nominal
 
-  protected def paramString(short: Boolean, f: (S) => String): String = writeSet(short, domain, f)
-  protected def typeString(): String = shortName(classTag[T].runtimeClass.getName)
+  override protected def paramString(short: Boolean, f: (S) => String): String = writeSet(short, domain, f)
+  override protected def typeString(): String = shortName(classTag[T].runtimeClass.getName)
 }
 
 /** Companion object to `NominalSchema` case class. */
@@ -321,8 +321,8 @@ object NominalSchema extends SchemaParameters {
 case class OrdinalSchema[T: ClassTag: Ordering](domain: Set[T] = Set[T]()) extends CategoricalSchema[T] {
   val kind = Type.Ordinal
 
-  protected def paramString(short: Boolean, f: (S) => String): String = writeOrderedSet(short, domain, f)
-  protected def typeString(): String = shortName(classTag[T].runtimeClass.getName)
+  override protected def paramString(short: Boolean, f: (S) => String): String = writeOrderedSet(short, domain, f)
+  override protected def typeString(): String = shortName(classTag[T].runtimeClass.getName)
 }
 
 /** Companion object to `OrdinalSchema`. */
@@ -369,14 +369,14 @@ case class DateSchema[T: ClassTag] private (dates: Option[Either[(T, T), Set[T]]
     }
   }
 
-  protected def paramString(short: Boolean, f: (S) => String): String = {
+  override protected def paramString(short: Boolean, f: (S) => String): String = {
     dates match {
       case None => ""
       case Some(Left(range)) => writeRange(short, Some(range), f)
       case Some(Right(domain)) => writeSet(short, domain, f)
     }
   }
-  protected def typeString(): String = classTag[T].runtimeClass.getName
+  override protected def typeString(): String = classTag[T].runtimeClass.getName
 }
 
 /** Companion object to `DateSchema`. */

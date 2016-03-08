@@ -14,16 +14,15 @@
 
 package au.com.cba.omnia.grimlock.framework.distribution
 
-import shapeless.=:!=
-
-import scala.math.BigDecimal
-import scala.reflect.ClassTag
-
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.content.metadata._
 import au.com.cba.omnia.grimlock.framework.position._
 
+import scala.math.BigDecimal
+import scala.reflect.ClassTag
+
+import shapeless.=:!=
 
 /** Trait for computing approximate distributions from a matrix. */
 trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
@@ -68,7 +67,8 @@ trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
   def quantile[S <: Position with ExpandablePosition, Q <: Position, W, T <: Tuner : QuantileTuners](slice: Slice[P],
     probs: List[Double], quantiser: Quantile.Quantiser, name: Locate.FromSelectedAndOutput[S, Double, Q],
       count: Extract[P, W, Long], value: E[W], filter: Boolean = true, nan: Boolean = false, tuner: T)(
-        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =:!= Position0D, ev4: ClassTag[slice.S]): U[Cell[Q]]
+        implicit ev1: slice.S =:= S, ev2: PosExpDep[slice.S, Q], ev3: slice.R =:!= Position0D,
+          ev4: ClassTag[slice.S]): U[Cell[Q]]
 }
 
 private[grimlock] case class QuantileImpl[P <: Position, S <: Position with ExpandablePosition, Q <: Position, W](

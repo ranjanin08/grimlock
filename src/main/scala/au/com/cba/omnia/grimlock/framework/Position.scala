@@ -14,15 +14,14 @@
 
 package au.com.cba.omnia.grimlock.framework.position
 
-import shapeless.=:!=
-
-import scala.reflect.ClassTag
-import scala.util.matching.Regex
-
 import au.com.cba.omnia.grimlock.framework._
 import au.com.cba.omnia.grimlock.framework.content._
 import au.com.cba.omnia.grimlock.framework.encoding._
 
+import scala.reflect.ClassTag
+import scala.util.matching.Regex
+
+import shapeless.=:!=
 
 /** Base trait for dealing with positions. */
 trait Position {
@@ -41,7 +40,8 @@ trait Position {
    *
    * @param dim   The dimension to set.
    * @param value The coordinate to set.
-    * @return A position of the same size as `this` but with `t` set at index `dim`.
+   *
+   * @return A position of the same size as `this` but with `t` set at index `dim`.
    */
   def update(dim: Dimension, value: Valueable): this.type = {
     same(coordinates.updated(getIndex(dim), value())).asInstanceOf[this.type]
@@ -51,7 +51,8 @@ trait Position {
    * Converts the position to a consise (terse) string.
    *
    * @param separator The separator to use between the coordinates.
-    * @return Short string representation.
+   *
+   * @return Short string representation.
    */
   def toShortString(separator: String): String = coordinates.map(_.toShortString).mkString(separator)
 
@@ -64,8 +65,10 @@ trait Position {
    * Compare this object with another position.
    *
    * @param that Position to compare against.
-    * @return x < 0 iff this < that, x = 0 iff this = that, x > 0 iff this > that.
-    * @note If the comparison is between two positions with different dimensions, then a comparison on the number of
+   *
+   * @return x < 0 iff this < that, x = 0 iff this = that, x > 0 iff this > that.
+   *
+   * @note If the comparison is between two positions with different dimensions, then a comparison on the number of
    *       dimensions is performed.
    */
   def compare(that: Position): Int = {
@@ -351,7 +354,8 @@ trait ReduceablePosition { self: Position =>
    * Remove the coordinate at dimension `dim`.
    *
    * @param dim The dimension to remove.
-    * @return A new position with dimension `dim` removed.
+   *
+   * @return A new position with dimension `dim` removed.
    */
   def remove(dim: Dimension): L = {
     val (h, t) = coordinates.splitAt(getIndex(dim))
@@ -365,9 +369,11 @@ trait ReduceablePosition { self: Position =>
    * @param dim       The dimension to remove.
    * @param into      The dimension into which to melt.
    * @param separator The separator to use in the new coordinate name.
-    * @return A new position with dimension `dim` removed. The coordinate at `unto` will be a string value consisting of
+   *
+   * @return A new position with dimension `dim` removed. The coordinate at `unto` will be a string value consisting of
    *         the string representations of the coordinates `dim` and `unto` separated by `separator`.
-    * @note `dim` and `into` must not be the same.
+   *
+   * @note `dim` and `into` must not be the same.
    */
   def melt(dim: Dimension, into: Dimension, separator: String): L = {
     val iidx = getIndex(into)
@@ -392,7 +398,8 @@ trait ExpandablePosition { self: Position =>
    * Prepend a coordinate to the position.
    *
    * @param value The coordinate to prepend.
-    * @return A new position with the coordinate `t` prepended.
+   *
+   * @return A new position with the coordinate `t` prepended.
    */
   def prepend(value: Valueable): M = more(value() +: coordinates)
 
@@ -400,7 +407,8 @@ trait ExpandablePosition { self: Position =>
    * Append a coordinate to the position.
    *
    * @param value The coordinate to append.
-    * @return A new position with the coordinate `t` appended.
+   *
+   * @return A new position with the coordinate `t` appended.
    */
   def append(value: Valueable): M = more(coordinates :+ value())
 
@@ -413,8 +421,10 @@ trait PermutablePosition { self: Position =>
    * Permute the order of coordinates.
    *
    * @param order The new ordering of the coordinates.
-    * @return A position of the same size as `this` but with the coordinates ordered according to `order`.
-    * @note The ordering must contain each dimension exactly once.
+   *
+   * @return A position of the same size as `this` but with the coordinates ordered according to `order`.
+   *
+   * @note The ordering must contain each dimension exactly once.
    */
   def permute(order: List[Dimension]): this.type = {
     same(order.map { case d => coordinates(getIndex(d)) }).asInstanceOf[this.type]
@@ -428,7 +438,8 @@ trait MapablePosition[P <: Position, T] {
    *
    * @param pos Position of the cell.
    * @param con Content of the cell.
-    * @return The value placed in a `Map` after a call to `toMap` on a `Slice`.
+   *
+   * @return The value placed in a `Map` after a call to `toMap` on a `Slice`.
    */
   def toMapValue(pos: P, con: Content): T
 
@@ -437,7 +448,8 @@ trait MapablePosition[P <: Position, T] {
    *
    * @param x An optional `Map` content value.
    * @param y The `Map` content value to combine with.
-    * @return The combined `Map` content value.
+   *
+   * @return The combined `Map` content value.
    */
   def combineMapValues(x: Option[T], y: T): T
 }
@@ -925,8 +937,10 @@ trait Positions[P <: Position] extends Persist[P] {
    *
    * @param slice Encapsulates the dimension(s) for which the names are to be returned.
    * @param tuner The tuner for the job.
-    * @return A `U[(Slice.S, Long)]` of the distinct position(s) together with a unique index.
-    * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
+   *
+   * @return A `U[(Slice.S, Long)]` of the distinct position(s) together with a unique index.
+   *
+   * @note The position(s) are returned with an index so the return value can be used in various `save` methods. The
    *       index itself is unique for each position but no ordering is defined.
    */
   def names[T <: Tuner : NamesTuners](slice: Slice[P], tuner: T)
@@ -937,7 +951,8 @@ trait Positions[P <: Position] extends Persist[P] {
    *
    * @param file   Name of the output file.
    * @param writer Writer that converts `P` to string.
-    * @return A `U[P]` which is this object's data.
+   *
+   * @return A `U[P]` which is this object's data.
    */
   def saveAsText(file: String, writer: TextWriter = Position.toString())(implicit ctx: C): U[P]
 
@@ -947,8 +962,10 @@ trait Positions[P <: Position] extends Persist[P] {
    * @param regex     The regular expression to match on.
    * @param keep      Indicator if the matched positions should be kept or removed.
    * @param spearator Separator used to convert each position to string.
-    * @return A `U[P]` with only the positions of interest.
-    * @note The matching is done by converting each position to its short string reprensentation and then applying the
+   *
+   * @return A `U[P]` with only the positions of interest.
+   *
+   * @note The matching is done by converting each position to its short string reprensentation and then applying the
    *       regular expression.
    */
   def slice(regex: Regex, keep: Boolean, separator: String)(implicit ev: ClassTag[P]): U[P] = {
@@ -960,7 +977,8 @@ trait Positions[P <: Position] extends Persist[P] {
    *
    * @param positions The positions to slice on.
    * @param keep      Indicator if the matched positions should be kept or removed.
-    * @return A `U[P]` with only the positions of interest.
+   *
+   * @return A `U[P]` with only the positions of interest.
    */
   def slice(positions: PositionListable[P], keep: Boolean)(implicit ev1: ClassTag[P]): U[P] = {
     slice(keep, p => positions().contains(p))

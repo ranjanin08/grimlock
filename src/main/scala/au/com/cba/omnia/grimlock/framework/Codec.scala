@@ -58,7 +58,7 @@ trait Codec {
   def toShortString(): String
 
   /** Return an optional ClassTag for this data type. */
-  def tag(): Option[ClassTag[C]]
+  def tag(): Option[ClassTag[C]] = None
 
   /** Return an optional Ordering for this data type. */
   def ordering(): Option[Ordering[C]] = None
@@ -112,7 +112,7 @@ case class DateCodec(format: String = "yyyy-MM-dd") extends Codec {
 
   def toShortString() = s"date(${format})"
 
-  def tag(): Option[ClassTag[C]] = Some(classTag[C])
+  override def tag(): Option[ClassTag[C]] = Some(classTag[C])
   override def ordering(): Option[Ordering[C]] = Some(new Ordering[C] { def compare(x: C, y: C): Int = cmp(x, y) })
   override def date(): Option[C => Date] = Some(c => c)
 
@@ -172,7 +172,7 @@ case object StringCodec extends Codec {
     }
   }
 
-  def tag(): Option[ClassTag[C]] = Some(classTag[C])
+  override def tag(): Option[ClassTag[C]] = Some(classTag[C])
   override def ordering(): Option[Ordering[C]] = Some(Ordering.String)
 }
 
@@ -209,7 +209,7 @@ case object DoubleCodec extends Codec {
     }
   }
 
-  def tag(): Option[ClassTag[C]] = Some(classTag[C])
+  override def tag(): Option[ClassTag[C]] = Some(classTag[C])
   override def ordering(): Option[Ordering[C]] = Some(Ordering.Double)
   override def numeric(): Option[Numeric[C]] = Some(Numeric.DoubleIsFractional)
 }
@@ -247,7 +247,7 @@ case object LongCodec extends Codec {
     }
   }
 
-  def tag(): Option[ClassTag[C]] = Some(classTag[C])
+  override def tag(): Option[ClassTag[C]] = Some(classTag[C])
   override def ordering(): Option[Ordering[C]] = Some(Ordering.Long)
   override def numeric(): Option[Numeric[C]] = Some(Numeric.LongIsIntegral)
   override def integral(): Option[Integral[C]] = Some(Numeric.LongIsIntegral)
@@ -286,7 +286,7 @@ case object BooleanCodec extends Codec {
     }
   }
 
-  def tag(): Option[ClassTag[C]] = Some(classTag[C])
+  override def tag(): Option[ClassTag[C]] = Some(classTag[C])
   override def ordering(): Option[Ordering[C]] = Some(Ordering.Boolean)
 }
 

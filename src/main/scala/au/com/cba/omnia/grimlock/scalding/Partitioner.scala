@@ -19,7 +19,6 @@ import au.com.cba.omnia.grimlock.framework.partition.{ Partition, Partitions => 
 import au.com.cba.omnia.grimlock.framework.position._
 import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 
-
 import au.com.cba.omnia.grimlock.scalding._
 
 import com.twitter.scalding.typed.{ Grouped, TypedPipe }
@@ -62,7 +61,6 @@ case class Partitions[P <: Position, I: Ordering](data: TypedPipe[(I, Cell[P])])
   def get(id: I): U[Cell[P]] = data.collect { case (i, c) if (id == i) => c }
 
   type IdsTuners[T] = T In OneOf[Default[NoParameters]]#Or[Default[Reducers]]
-
   def ids[T <: Tuner : IdsTuners](tuner: T = Default())(implicit ev1: ClassTag[I]): U[I] = {
     val keys = Grouped(data.map { case (i, _) => (i, ()) })
 

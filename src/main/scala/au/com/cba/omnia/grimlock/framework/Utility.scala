@@ -54,25 +54,34 @@ case class Replace(special: String, pattern: String = "\\%1$s") extends Escape {
   def escape(str: String): String = str.replaceAllLiterally(special, pattern.format(special))
 }
 
-/** Type class that ensures three types are different. */
-trait Distinct[P <: Product] {
+/** Trait that ensures types are different. */
+trait Distinct[P <: Product] { }
 
-}
-
+/** Companion object to `Distinct` trait. */
 object Distinct {
   implicit def default[P <: Product](implicit gen: Generic.Aux[P, HNil]) = new Distinct[P] {}
 
-  implicit def isDistinct[P <: Product, L <: HList, C <: Coproduct](implicit
-                                                                   gen: Generic.Aux[P, L],
-                                                                   toCoproduct: ToCoproduct.Aux[L, C],
-                                                                   toSum: ToSum.Aux[L, C]
-                                                                  ) = new Distinct[P] {}
+  implicit def isDistinct[P <: Product, L <: HList, C <: Coproduct](implicit gen: Generic.Aux[P, L],
+    toCoproduct: ToCoproduct.Aux[L, C], toSum: ToSum.Aux[L, C]) = new Distinct[P] {}
 }
 
+/** Trait for specifying a union of types. */
 trait UnionTypes {
-  type Not[A] = A => Nothing
-  type NotNot[A] = Not[Not[A]]
+  private type Not[A] = A => Nothing
+  private type NotNot[A] = Not[Not[A]]
 
+  private type Contains[S, T <: Disjunction] = NotNot[S] <:< Not[T#D]
+
+  /** Type for specifying `S` is `T`. */
+  type Is[S, T] = Contains[S, OneOf[T]#Or[Nothing]]
+
+  /** Type for specifying `S` must be in `T`. */
+  type In[S, T <: Disjunction] = Contains[S, T]
+
+  /** Defines values for `T`. */
+  type OneOf[T] = { type Or[S] = (Disjunction {type D = Not[T]})#Or[S] }
+
+  /** Defines alternative vaues for `T`. */
   trait Disjunction {
     self =>
     type D
@@ -80,18 +89,8 @@ trait UnionTypes {
       type D = self.D with Not[S]
     }
   }
-
-  type OneOf[T] = {
-    type Or[S] = (Disjunction {type D = Not[T]})#Or[S]
-  }
-
-
-
-
-  type Contains[S, T <: Disjunction] = NotNot[S] <:< Not[T#D]
-  type In[S, T <: Disjunction] = Contains[S, T]
-  type Is[S, T] = Contains[S, OneOf[T]#Or[Nothing]]
-
 }
 
+/** Companion object to `UnionTypes` trait. */
 object UnionTypes extends UnionTypes
+

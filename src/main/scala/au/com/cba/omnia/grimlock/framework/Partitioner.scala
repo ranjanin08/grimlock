@@ -79,8 +79,8 @@ trait Partitions[P <: Position, I] extends Persist[(I, Cell[P])] {
    * @note This will pull all partition ids into memory, so only use this if there is sufficient memory
    *       available to keep all (distinct) partition ids in memory.
    */
-  def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I] = List(), tuner: T)(
-    implicit ev1: ClassTag[I]): U[(I, Cell[Q])]
+  def forAll[Q <: Position, T <: Tuner : ForAllTuners](fn: (I, U[Cell[P]]) => U[Cell[Q]], exclude: List[I] = List(),
+    tuner: T)(implicit ev1: ClassTag[I]): U[(I, Cell[Q])]
 
   /**
    * Apply function `fn` to each partition in `ids`.

@@ -25,9 +25,10 @@ import au.com.cba.omnia.grimlock.spark._
 import au.com.cba.omnia.grimlock.spark.environment._
 
 import org.apache.spark.rdd.RDD
-import shapeless.=:!=
 
 import scala.reflect.ClassTag
+
+import shapeless.=:!=
 
 /**
  * Rich wrapper around a `RDD[Position]`.

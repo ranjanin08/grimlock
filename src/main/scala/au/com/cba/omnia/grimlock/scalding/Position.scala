@@ -26,9 +26,10 @@ import au.com.cba.omnia.grimlock.framework.utility.UnionTypes._
 import au.com.cba.omnia.grimlock.scalding._
 
 import com.twitter.scalding.typed.{ IterablePipe, TypedPipe }
-import shapeless.=:!=
 
 import scala.reflect.ClassTag
+
+import shapeless.=:!=
 
 /**
  * Rich wrapper around a `TypedPipe[Position]`.
