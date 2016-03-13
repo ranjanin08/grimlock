@@ -35,7 +35,8 @@ import scala.reflect.ClassTag
 import shapeless.=:!=
 
 /** Base trait for matrix operations. */
-trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultTuners with PositionOrdering {
+trait Matrix[P <: Position with CompactablePosition] extends Persist[Cell[P]] with UserData with DefaultTuners
+  with PositionOrdering {
   /** Self-type of a specific implementation of this API. */
   type M <: Matrix[P]
 
@@ -78,7 +79,7 @@ trait Matrix[P <: Position] extends Persist[Cell[P]] with UserData with DefaultT
    * @note Avoid using this for very large matrices.
    */
   def compact[T <: Tuner : CompactTuners](slice: Slice[P], tuner: T)(implicit ev1: slice.S =:!= Position0D,
-    ev2: ClassTag[slice.S]): E[Map[slice.S, slice.C]]
+    ev2: ClassTag[slice.S], ev3: Compactable[P]): E[Map[slice.S, P#C[slice.R]]]
 
   /** Specifies tuners permitted on a call to `domain`. */
   type DomainTuners[T]
@@ -606,7 +607,7 @@ trait Consume extends DistributedData with Environment {
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled. */
-trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] =>
+trait ReduceableMatrix[P <: Position with CompactablePosition with ReduceablePosition] { self: Matrix[P] =>
   /**
    * Melt one dimension of a matrix into another.
    *
@@ -652,7 +653,9 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] { self: Matrix[P] 
 }
 
 /** Base trait for methods that reshapes the number of dimension of a matrix. */
-trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePosition] { self: Matrix[P] =>
+trait ReshapeableMatrix[P <: Position with CompactablePosition with ExpandablePosition with ReduceablePosition] {
+  self: Matrix[P] =>
+
   type ReshapeTuners[_]
 
   /**

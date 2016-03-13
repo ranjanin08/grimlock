@@ -17,6 +17,7 @@ package au.com.cba.omnia.grimlock.spark
 import au.com.cba.omnia.grimlock.framework.{
   Cell,
   Consume,
+  Compactable,
   Default,
   ReshapeableMatrix => FwReshapeableMatrix,
   ExtractWithDimension,
@@ -114,7 +115,7 @@ private[spark] object SparkImplicits {
 }
 
 /** Base trait for matrix operations using a `RDD[Cell[P]]`. */
-trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserData {
+trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Persist[Cell[P]] with UserData {
   type M = Matrix[P]
 
   import SparkImplicits._
@@ -142,13 +143,12 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   def compact[T <: Tuner : CompactTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
-    ev2: ClassTag[slice.S]): E[Map[slice.S, slice.C]] = {
+    ev2: ClassTag[slice.S], ev3: Compactable[P]): E[Map[slice.S, P#C[slice.R]]] = {
     data
-      .map { case c => (c.position, slice.toMap(c)) }
-      .keyBy { case (p, m) => slice.selected(p) }
-      .tunedReduce(tuner.parameters, (l: (P, Map[slice.S, slice.C]), r: (P, Map[slice.S, slice.C])) =>
-        (l._1, slice.combineMaps(l._1, l._2, r._2)))
-      .map { case (_, (_, m)) => m }
+      .map { case c => (slice.selected(c.position), ev3.toMap(slice, c)) }
+      .tunedReduce(tuner.parameters,
+        (l: Map[slice.S, P#C[slice.R]], r: Map[slice.S, P#C[slice.R]]) => ev3.combineMaps(l, r))
+      .values
       .reduce { case (lm, rm) => lm ++ rm }
   }
 
@@ -535,7 +535,8 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled using a `RDD[Cell[P]]`. */
-trait ReduceableMatrix[P <: Position with ReduceablePosition] extends FwReduceableMatrix[P] { self: Matrix[P] =>
+trait ReduceableMatrix[P <: Position with CompactablePosition with ReduceablePosition] extends FwReduceableMatrix[P] {
+  self: Matrix[P] =>
 
   import SparkImplicits._
 
@@ -567,7 +568,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends FwReduceab
 }
 
 /** Base trait for methods that reshapes the number of dimension of a matrix using a `RDD[Cell[P]]`. */
-trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePosition]
+trait ReshapeableMatrix[P <: Position with CompactablePosition with ExpandablePosition with ReduceablePosition]
   extends FwReshapeableMatrix[P] { self: Matrix[P] =>
 
   import SparkImplicits._

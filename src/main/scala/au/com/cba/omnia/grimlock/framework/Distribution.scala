@@ -25,7 +25,7 @@ import scala.reflect.ClassTag
 import shapeless.=:!=
 
 /** Trait for computing approximate distributions from a matrix. */
-trait ApproximateDistribution[P <: Position] { self: Matrix[P] =>
+trait ApproximateDistribution[P <: Position with CompactablePosition] { self: Matrix[P] =>
 
   /** Specifies tuners permitted on a call to `histogram`. */
   type HistogramTuners[_]

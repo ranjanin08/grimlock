@@ -18,6 +18,7 @@ import au.com.cba.omnia.grimlock.framework.{
   Cell,
   Collate,
   Consume,
+  Compactable,
   Default,
   ReshapeableMatrix => FwReshapeableMatrix,
   ExtractWithDimension,
@@ -156,7 +157,7 @@ private[scalding] object ScaldingImplicits {
 }
 
 /** Base trait for matrix operations using a `TypedPipe[Cell[P]]`. */
-trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserData {
+trait Matrix[P <: Position with CompactablePosition] extends FwMatrix[P] with Persist[Cell[P]] with UserData {
   type M = Matrix[P]
 
   import ScaldingImplicits._
@@ -196,17 +197,17 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
   }
 
   def compact[T <: Tuner : CompactTuners](slice: Slice[P], tuner: T = Default())(implicit ev1: slice.S =:!= Position0D,
-    ev2: ClassTag[slice.S]): E[Map[slice.S, slice.C]] = {
-    val semigroup = new com.twitter.algebird.Semigroup[Map[slice.S, slice.C]] {
-      def plus(l: Map[slice.S, slice.C], r: Map[slice.S, slice.C]): Map[slice.S, slice.C] = l ++ r
+    ev2: ClassTag[slice.S], ev3: Compactable[P]): E[Map[slice.S, P#C[slice.R]]] = {
+    val semigroup = new com.twitter.algebird.Semigroup[Map[slice.S, P#C[slice.R]]] {
+      def plus(l: Map[slice.S, P#C[slice.R]], r: Map[slice.S, P#C[slice.R]]): Map[slice.S, P#C[slice.R]] = l ++ r
     }
 
     data
-      .map { case c => (c.position, slice.toMap(c)) }
-      .groupBy { case (p, m) => slice.selected(p) }
+      .map { case c => (slice.selected(c.position), ev3.toMap(slice, c)) }
+      .group
       .tuneReducers(tuner.parameters)
-      .reduce[(P, Map[slice.S, slice.C])] { case ((lp, lm), (rp, rm)) => (lp, slice.combineMaps(lp, lm, rm)) }
-      .map { case (_, (_, m)) => m }
+      .reduce[Map[slice.S, P#C[slice.R]]] { case (lm, rm) => ev3.combineMaps(lm, rm) }
+      .values
       .sum(semigroup)
   }
 
@@ -781,7 +782,8 @@ trait Matrix[P <: Position] extends FwMatrix[P] with Persist[Cell[P]] with UserD
 }
 
 /** Base trait for methods that reduce the number of dimensions or that can be filled using a `TypedPipe[Cell[P]]`. */
-trait ReduceableMatrix[P <: Position with ReduceablePosition] extends FwReduceableMatrix[P] { self: Matrix[P] =>
+trait ReduceableMatrix[P <: Position with CompactablePosition with ReduceablePosition] extends FwReduceableMatrix[P] {
+  self: Matrix[P] =>
 
   import ScaldingImplicits._
 
@@ -817,7 +819,7 @@ trait ReduceableMatrix[P <: Position with ReduceablePosition] extends FwReduceab
 }
 
 /** Base trait for methods that reshapes the number of dimension of a matrix using a `TypedPipe[Cell[P]]`. */
-trait ReshapeableMatrix[P <: Position with ExpandablePosition with ReduceablePosition]
+trait ReshapeableMatrix[P <: Position with CompactablePosition with ExpandablePosition with ReduceablePosition]
   extends FwReshapeableMatrix[P] { self: Matrix[P] =>
 
   import ScaldingImplicits._
